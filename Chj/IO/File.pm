@@ -773,9 +773,15 @@ sub xflush {
 
 sub xclose {
     my $self=shift;
-    close $self or croak "xclose ".$self->quotedname.": $!";
+    CORE::close $self or croak "xclose ".$self->quotedname.": $!";
     #delete $metadata{pack "I",$self};  # naja, currently just deletes it.
     $self->set_opened(0);
+}
+
+sub close {
+    my $s=shift;
+    CORE::close($s);
+    $s->set_opened (0);
 }
 
 sub xunlink {
@@ -835,7 +841,7 @@ sub DESTROY {
     local ($@,$!);
     #if (defined $metadata{pack "I",$self}) {
     if ($self->opened) {
-	close $self
+	CORE::close($self)
 	  or carp "$self DESTROY: close: $!";
 	#delete $metadata{pack "I",$self};  # naja, true und exists ist hier bissel gemischt.
 	#$self->set_opened(0); EH
