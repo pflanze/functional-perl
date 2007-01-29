@@ -161,6 +161,20 @@ sub pid {
     $metadata{pack"I",$self}
 }
 
+sub wait {
+    my $s=shift;
+    waitpid $metadata{pack"I",$s},0;
+    $?
+}
+
+sub finish {
+    my $s=shift;
+    $s->close;
+    my $rv= $s->wait;
+    delete$metadata{pack"I",$s};
+    $rv;
+}
+
 sub xfinish { # Note: does not throw on error exit codes. Just throws on errors closing.
     my $self=shift;
     $self->xclose;
@@ -193,11 +207,7 @@ sub DESTROY { # no exceptions thrown from here
     my $self=shift;
     local ($@,$!);
     if (defined $metadata{pack "I",$self}) {
-	local $@;
-	eval {
-	    $self->xfinish;
-	};
-	carp $@ if $@;
+	$self->finish;
     }
     $self->SUPER::DESTROY;
 }
