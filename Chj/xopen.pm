@@ -90,6 +90,8 @@ require Exporter;
 	       xopen_update
 	       devnull devzero
 	      );
+%EXPORT_TAGS= (all=> \@EXPORT_OK);
+
 use strict;
 use Carp;
 
