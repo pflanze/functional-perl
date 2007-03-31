@@ -59,6 +59,10 @@ Calls builtin, without/with error checking.
 
 Same as builtin readline, but checks $! for errors. (Not sure that really works.)
 
+=item xreadline_chomp
+
+Does xreadline and chomp's the result(s) (unless undefined).
+
 =item getline
 
 Same as <$self>. Added since MIME::Parse expects this method.
@@ -425,6 +429,22 @@ sub xreadline { ## todo: test error case. Difficult to do.
 ##çç todo: rest des files aufräumen !!!!
 
 	$$bufref
+    }
+}
+
+sub xreadline_chomp {
+    my $s=shift;
+    if (wantarray) {
+	map {
+	    chomp; $_
+	} $s->xreadline
+    } else {
+	if (defined (my $ln= $s->xreadline)) {
+	    chomp $ln;
+	    $ln
+	} else {
+	    return
+	}
     }
 }
 
