@@ -660,7 +660,7 @@ sub xsendfile_to {
 #    $offset and croak "xsendfile_to: offset argument not yet supported"; # es nützt nix wenn im ziel file schon was steht, auch wenn rewind gemacht wird, scheint wirklich bug in lib zu sein. 29. Okt 1999  SendFile.xs
     $count= 2**31-1 unless defined $count; ## well...
 
-    if (1&& $use_sendfile) {
+    if (0&&$use_sendfile) {#{Sat Jun 16 21:09:11 2007}: seems buggy, perhaps with big files (stream-cut script)
 	undef $!;
 	#my $oldoffset=$offset;
 	# Das Problem ist dass wenn ich count nicht angegeben bekomme, wie lange soll ich dann?
@@ -686,9 +686,27 @@ sub xsendfile_to {
     } else {
 	# pure perl:
 	my $buf;
-	while($self->xsysread($buf,$sendfile_bufsize)) {
-	    $out->xsysprint($buf);
-            #warn "wrote a piece" if $DEBUG;
+	if (defined $count) {
+	    my $tot=0;
+	    while ($tot<$count) {
+		my $cnt= $self->xsysread($buf,do {
+		    if (($tot+$sendfile_bufsize)<= $count) {
+			$sendfile_bufsize
+		    } else {
+			$count - $tot
+		    }
+		    #always hoping that floats are not a problem??..... so ugly prl.
+		});
+		last unless $cnt;
+		$tot+= $cnt;
+		$out->xsysprint($buf);
+		#warn "wrote a piece" if $DEBUG;
+	    }
+	} else {
+	    while($self->xsysread($buf,$sendfile_bufsize)) {
+		$out->xsysprint($buf);
+		#warn "wrote a piece" if $DEBUG;
+	    }
 	}
     }
 }
