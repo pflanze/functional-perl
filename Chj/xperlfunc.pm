@@ -51,6 +51,13 @@ These are exported by default.
 These are wrappers around stat; the x* functions die, the X* ones return undef on ENOENT errors (and still croak on other errors like permission problems).
 When successful, they return objects (based on array with the stat return values) with accessor methods.
 
+=item xlocaltime() or xlocaltime(unixtime)
+
+These are wrappers around localtime; it never dies, but returns
+objects (based on an array with the localtime values) with accessor
+methods. Additionally to the normal accessors, 'Year' and 'Mon' exist,
+which are in the "normal" (19xx..203x, 1..31) ranges.
+
 =back
 
 =head1 SPECIAL FUNCTIONS
@@ -135,6 +142,7 @@ require Exporter;
 	   xlstat
 	   Xstat
 	   Xlstat
+	   xlocaltime
 	   xreadlink
 	   xunlink
 	   xlink
@@ -503,6 +511,30 @@ sub Xlstat {
     sub is_blockdevice { Filetype_is_blockdevice(shift->filetype) }
     sub Filetype_is_pipe { shift == 1 } # or call it is_fifo?
     sub is_pipe { Filetype_is_pipe(shift->filetype) }
+}
+
+{
+    package Chj::xperlfunc::xlocaltime;
+    sub sec      { shift->[0] }
+    sub min      { shift->[1] }
+    sub hour     { shift->[2] }
+    sub mday     { shift->[3] }
+    sub mon      { shift->[4] }  # 0..11
+    sub year     { shift->[5] }  # -1900
+    sub wday     { shift->[6] }  # 0=sunday
+    sub yday     { shift->[7] }  # 0..36[45]
+    sub isdst    { shift->[8] }
+    sub Year     { shift->[5]+1900 }
+    sub Mon      { shift->[4]+1 }
+}
+
+sub xlocaltime (;$ ) {
+#    if (wantarray) {
+#	localtime($_[0]||time)
+#    } else {
+#why should I offer them in list context? just only dangerous?
+	bless [localtime($_[0]||time)], "Chj::xperlfunc::xlocaltime"
+#    }
 }
 
 
