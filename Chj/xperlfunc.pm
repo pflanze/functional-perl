@@ -152,6 +152,7 @@ require Exporter;
 	   xeval
 	   xwaitpid
 	   xxwaitpid
+	   xsysread
 	  );
 @EXPORT_OK=qw(
 	      xspawn
@@ -678,6 +679,19 @@ sub xfileno {
     croak "xfileno: '$arg' is not a filehandle nor a file descriptor number";
 }
 
+
+sub xsysread ( $ $ $ ; $ ) {
+    my $rv= do {
+	if (@_ == 4) {
+	    sysread $_[0], $_[1], $_[2], $_[3]
+	} else {
+	    sysread $_[0], $_[1], $_[2]
+	}
+    };
+    defined $rv or die "xsysread(".singlequote_many(@_)."): $!";
+    $rv
+}
+# ^- ok this is silly (is it?) since I've got Chj::IO::File. But that latter one is not yet complete, I'm debugging xreadline atm.
 
 1;
 __END__
