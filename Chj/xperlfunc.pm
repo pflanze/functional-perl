@@ -152,6 +152,8 @@ require Exporter;
 	   xeval
 	   xwaitpid
 	   xxwaitpid
+	   xwait
+	   xxwait
 	   xsysread
 	  );
 @EXPORT_OK=qw(
@@ -255,6 +257,21 @@ sub xxwaitpid ( $ ; $ ) {
     $? == 0 or die "xxwaitpid ($pid,$flags): child exited with status $?";
     $kid
 }
+
+sub xwait {
+    my $kid= wait;
+    defined $kid or die "xwait: $!";# when can this happen? EINTR?
+    wantarray ? ($kid, $?) : $kid
+}
+
+sub xxwait {
+    my $kid= wait;
+    defined $kid or die "xwait: $!";# when can this happen? EINTR?
+    my $status= $?;
+    $status == 0 or die "xxwait: child $kid exited with status $?";
+    $kid
+}
+# todo: turn $? in messages into nice view using my new status displayer.
 
 sub xrename {
     @_==2 or croak "xrename: wrong number of arguments";
