@@ -731,11 +731,29 @@ sub xsysread ( $ $ $ ; $ ) {
 # ^- ok this is silly (is it?) since I've got Chj::IO::File. But that latter one is not yet complete, I'm debugging xreadline atm.
 
 
-sub basename ($ ) { # the once "Filename" function (right?)
+sub basename ($ ) {
     my ($path)=@_;
-    $path=~ s|.*/||s;
-    $path
+    my $copy= $path;
+    $copy=~ s|.*/||s;
+    length($copy) ? $copy : do {
+	# path ending in slash--or empty from the start.
+	if ($path=~ s|/+\z||s) {
+	    if (length $path) {
+		$path
+	    } else {
+		# "/" ?
+		"/"  # or croak? no.
+	    }
+	} else {
+	    die "cannot get basename from empty string";
+	}
+    }
 }
+# well some fun to do?:
+# main> :d basename  "/fun/."
+#  $VAR1 = '.';
+# but the shell util acts the same way.
+
 
 sub dirname ($ ) {
     my ($path)=@_;
