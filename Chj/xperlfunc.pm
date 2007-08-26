@@ -119,6 +119,22 @@ a previous target. All the same it does the replace atomically.
 
 Does work with both filehandles and integer strings. Croaks if it's neither or there's an error.
 
+=item basename $pathstring
+
+Same as the shell util (or my old Filename function)
+
+=item dirname $pathstring
+
+Same as the shell util (or about as my old FolderOfThisFile function), except that it croaks if dirname of "/" or "." is requested.
+
+=item xmkdir_p $pathstring
+
+Works like unix's "mkdir -p": return false if the directory already exists, true if it (and, if necessary, it's parent(s)) has(/have) been created, croaks if some error happens on the way.
+
+=item xlink_p $frompath, $topath
+
+xlink's $frompath to $topath but 
+
 =back
 
 =cut
@@ -166,6 +182,10 @@ require Exporter;
 	      xlinkreplace
 	      xxcarefulrename
 	      xfileno
+	      basename
+	      dirname
+	      xmkdir_p
+	      xlink_p
 	     );
 use strict;
 use Carp;
@@ -709,6 +729,61 @@ sub xsysread ( $ $ $ ; $ ) {
     $rv
 }
 # ^- ok this is silly (is it?) since I've got Chj::IO::File. But that latter one is not yet complete, I'm debugging xreadline atm.
+
+
+sub basename ($ ) { # the once "Filename" function (right?)
+    my ($path)=@_;
+    $path=~ s|.*/||s;
+    $path
+}
+
+sub dirname ($ ) {
+    my ($path)=@_;
+    if ($path=~ s|/+[^/]+/*\z||) {
+	if (length $path) {
+	    $path
+	} else {
+	    "/"
+	}
+    } else {
+	# deviates from the shell in that dirname of . and / are errors. good?
+	if ($path=~ m|^/+\z|) {
+	    die "can't go out of file system"
+	} elsif ($path eq ".") {
+	    die "can't go above cur dir in a relative path";
+	} else {
+	    "."
+	}
+    }
+}
+
+sub xmkdir_p ($ );
+sub xmkdir_p ($ ) {
+    my ($path)=@_;
+    if (-d $path) {
+	#done
+	()
+    } else {
+	if (mkdir $path) {
+	    #done
+	    ()
+	} else {
+	    if ($!==ENOENT) {
+		xmkdir_p(dirname $path);
+		mkdir $path or die "could not mkdir('$path'): $!";
+	    } else {
+		die "could not mkdir('$path'): $!";
+	    }
+	}
+    }
+}
+
+sub xlink_p ($ $ ) {
+    my ($from,$to)=@_;
+    xmkdir_p (dirname $to);
+    xlink $from,$to
+}
+
 
 1;
 __END__
