@@ -738,6 +738,7 @@ sub basename ($ ) {
     length($copy) ? $copy : do {
 	# path ending in slash--or empty from the start.
 	if ($path=~ s|/+\z||s) {
+	    $path=~ s|.*/||s;
 	    if (length $path) {
 		$path
 	    } else {
