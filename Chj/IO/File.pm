@@ -712,6 +712,44 @@ sub xsendfile_to {
 }
 #*xsendfile= \&xsendfile_to; really?
 
+# same as xsendfile_to but use read/print from the buffering layer;
+# xsendfile_to should have been called xsyssendfile_to but now it's
+# probably too late right? and I'm resorting to this name:
+
+#sub xSendfile_to {
+#ah, better idea:
+sub xprintfile_to {
+    my $self=shift;
+    (@_>=1 and @_<=2) or croak "xprintfile_to needs 1-3 arguments";
+    my ($out,$offset,$count)=@_;
+    croak "xprintfile_to: offset currently not implemented" if $offset;
+    #almost-copy from xsendfile_to:
+    my $buf;
+    if (defined $count) {
+	my $tot=0;
+	while ($tot<$count) {
+	    my $cnt= $self->xread($buf,do {
+		if (($tot+$sendfile_bufsize)<= $count) {
+		    $sendfile_bufsize
+		} else {
+		    $count - $tot
+		}
+		#'always hoping that floats are not a problem??..... so ugly prl.'
+	    });
+	    last unless $cnt;
+	    $tot+= $cnt;
+	    $out->xprint($buf);
+	    #warn "wrote a piece" if $DEBUG;
+	}
+    } else {
+	while($self->xread($buf,$sendfile_bufsize)) {
+	    $out->xprint($buf);
+	    #warn "wrote a piece" if $DEBUG;
+	}
+    }
+    #/almostcopy
+}
+
 sub xrewind {
     my $self=shift;
     seek $self,0,0 or croak "xrewind on ".($self->quotedname).": $!";
