@@ -549,6 +549,31 @@ sub Xlstat {
     sub is_blockdevice { Filetype_is_blockdevice(shift->filetype) }
     sub Filetype_is_pipe { shift == 1 } # or call it is_fifo?
     sub is_pipe { Filetype_is_pipe(shift->filetype) }
+
+    # check whether "a file has changed"
+    sub equal_content {
+	my $s=shift;
+	my ($s2)=@_;
+	#UNIVERSAL::isa($s2,")
+	#defined ($s2) or Carp::croak "equal_content: missing argument";
+	#warn "s2='$s2'";
+	#ps remember EiD hatt ich method liste durchgeachert für sowas. function list ginge natürli in schm isili.wow.(aber lay out eh expand so unroll von looplist  manuell nötig?)
+	($s->dev == $s2->dev
+	 and $s->ino == $s2->ino
+	 and $s->size == $s2->size
+	 and $s->mtime == $s2->mtime)
+    }
+    sub equal {
+	my $s=shift;
+	my ($s2)=@_;
+	#defined ($s2) or Carp::croak "equal: missing argument"; does not help debugging if the argument is a number ("Can't call method "dev" without a package or object reference"), so just let it be.
+	# permissions:
+	($s->equal_content($s2)
+	 and $s->mode == $s2->mode
+	 and $s->uid == $s2->uid
+	 and $s->gid == $s2->gid
+	)
+    }
 }
 
 {
