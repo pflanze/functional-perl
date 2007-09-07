@@ -76,6 +76,9 @@ sub package_of_path_or_package {
 	package_of_path($1)
     } elsif ($path_or_package=~ m{^(\w+\:\:)*\w+\z}s) {
 	$path_or_package
+    } elsif ($path_or_package=~ m{^(\w+/)*\w+\z}s) {
+	$path_or_package=~ s|/|::|sg;
+	$path_or_package
     } else {
 	die "doesn't look sane: ".singlequote($path_or_package)
     }
