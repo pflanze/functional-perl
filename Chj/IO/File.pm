@@ -664,7 +664,7 @@ sub xsendfile_to {
 	undef $!;
 	#my $oldoffset=$offset;
 	# Das Problem ist dass wenn ich count nicht angegeben bekomme, wie lange soll ich dann?
-	IO::SendFile::sendfile(fileno $out, fileno $self,
+	IO::SendFile::sendfile(CORE::fileno $out, fileno $self,
 			       \ $offset,
 			       $count);# or die "xsendfile_to from ".($self->quotedname).": $!";
 	if ($!) {
@@ -789,11 +789,11 @@ sub dup2 {
 
 sub xdup2 {
     my $self=shift;
-    my $myfileno= fileno $self;
+    my $myfileno= CORE::fileno $self;
     defined $myfileno or croak "xdup2: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
     require POSIX;
     for my $dup (@_) {
-	my $fileno= $dup=~ /^\d+\z/s ? $dup : fileno $dup;
+	my $fileno= $dup=~ /^\d+\z/s ? $dup : CORE::fileno $dup;
 	defined $fileno or croak "xdup2: filehandle $dup returns no fileno (maybe it's closed?)";
 	#open $dup,'<&'.$myfileno or croak "?: $!";
 	# Works for reading handles. Problem: must use < or > depending on handle,
@@ -807,13 +807,13 @@ sub xdup2 {
 sub xdup {
     my $self=shift;
     warn "xdup: this method is unfinished and only can create output filehandles yet";
-    my $myfileno= fileno $self;
+    my $myfileno= CORE::fileno $self;
     defined $myfileno or croak "xdup: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
     require POSIX;
     my $fd= POSIX::dup($myfileno)
       or croak "xdup ".$self->quotedname." (fd $myfileno): $!";
     # turn an fd into a perl filehandle hm? ##shit. holy.
-    # IO::Handle has:            if ($io->fdopen(fileno(STDIN),"r")) {
+    # IO::Handle has:            if ($io->fdopen(CORE::fileno(STDIN),"r")) {
     # which works like:     open($io, _open_mode_string($mode) . '&' . $fd)
     # c library is soooo scheisse.
     ###TEMPORARY HACK:
@@ -896,7 +896,7 @@ sub xlinkunlink {
 if ($has_posix) { # cj Sat,  7 Feb 2004 14:49:13 +0100: noch nicht benötigt, einfach aus spass
     *stat= sub {
 	my $self=shift;
-	if (defined (my $fd=fileno($self))) {
+	if (defined (my $fd=CORE::fileno($self))) {
 	    POSIX::fstat($fd);
 	} else {
 	    (); ## oder die?
