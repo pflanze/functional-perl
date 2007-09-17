@@ -804,7 +804,7 @@ sub xdup2 {
     }
 }
 
-sub xdup {
+sub xdup { # (return objects)
     my $self=shift;
     warn "xdup: this method is unfinished and only can create output filehandles yet";
     my $myfileno= CORE::fileno $self;
@@ -821,6 +821,15 @@ sub xdup {
     open $new,">&=$fd" or die "xdup: error building perl fh from fd $fd";
     $new;
     ###hmm, isch es deshalb dass IO::Handle::fdopen schaut was wegen ob s schon n glob isch, weil: ich könnte glob behalten  dann fd wieder reinstopfen vielleicht?
+}
+
+sub xdupfd { # return integers
+    my $s=shift;
+    require POSIX;
+    my $myfileno= CORE::fileno $s;
+    defined $myfileno or croak "xdup: filehandle of ".($s->quotedname)." is undefined (maybe it's closed?)";
+    POSIX::dup($myfileno)
+	or croak "xdup ".$s->quotedname." (fd $myfileno): $!";
 }
 
 sub autoflush {
@@ -931,9 +940,13 @@ if ($has_posix) {
 	    undef
 	}
     };
+    *Fd_dev_path= sub {
+	my ($fileno)=@_;
+	$base . "/" . $fileno
+    };
     *fd_dev_path= sub {
 	my $s=shift;
-	$base . "/" . CORE::fileno($s)
+	Fd_dev_path(CORE::fileno($s))
     };
 }
 
