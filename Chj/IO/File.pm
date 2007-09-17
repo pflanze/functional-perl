@@ -911,6 +911,32 @@ if ($has_posix) { # cj Sat,  7 Feb 2004 14:49:13 +0100: noch nicht benötigt, ein
     };
 }
 
+# {Mon Sep 17 20:56:45 2007}
+# ich meinte ich haette das schon sonst irgendwie irgendwann irgendwo
+# gemacht. komisch aber scheint nicht hier. also hier (nochmal):
+# HEH nicht mal das ist hier ???:
+sub fileno {
+    my $s=shift;
+    CORE::fileno($s)
+}
+
+if ($has_posix) {
+    my $base= do {
+	if (-d "/dev/fd") {
+	    "/dev/fd"
+	} elsif (-d "/proc/self/fd") {
+	    "/proc/self/fd"
+	} else {
+	    warn "missing /dev/fd or /proc/self/fd, fd_dev_path method will not work";
+	    undef
+	}
+    };
+    *fd_dev_path= sub {
+	my $s=shift;
+	$base . "/" . CORE::fileno($s)
+    };
+}
+
 
 sub DESTROY {
     my $self=shift;
