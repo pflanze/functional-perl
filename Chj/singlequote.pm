@@ -23,6 +23,8 @@ package Chj::singlequote;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(singlequote);
 @EXPORT_OK=qw(singlequote_sh singlequote_many many);# importing many is rather depreciated.
+%EXPORT_TAGS=(all=>[qw(singlequote singlequote_sh singlequote_many)]);
+
 use strict;
 
 sub singlequote($ ;$ ) {
