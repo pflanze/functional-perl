@@ -172,6 +172,15 @@ sub new_receiver_with_stderr_to_fh {
     $self->xlaunch3($r,undef,$errfh,@_); ## ... (vgl oben)
 }
 
+sub new_inout {
+    my $class=shift;
+    require Chj::xsocketpair;
+    my ($self,$other)= Chj::xsocketpair();
+    bless $self, $class; # NOTE: this is bad practice: it makes quotedname appear "pipe" when it is in fact "socketpair", should inherit still from Chj::IO::Socketpair class, and the other one from Chj::IO::Pipe. So, should create new class that inherits from them both. (addbless could also be used to the rescue). The problem of those are that they aren't subclassing friendly for Chj::IO::Command. So I'd have to put the new_inout into it's own class, and let the user instantiate from there. that would be clean. Well, proxying (delegation) would be ok, too, if a bit bloaty.
+    $self->xlaunch3($other,$other,undef, @_)
+}
+
+
 sub pid {
     my $self=shift;
     $metadata{pack"I",$self}
