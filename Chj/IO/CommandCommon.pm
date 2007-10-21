@@ -15,7 +15,7 @@ Chj::IO::CommandCommon
 
 =head1 DESCRIPTION
 
-Common superclass (mixin) for Chj::IO::Command and Chj::IO::CommandBidirectional.
+Common superclass ('mixin'?) for Chj::IO::Command and Chj::IO::CommandBidirectional.
 
 =cut
 
@@ -29,6 +29,7 @@ use strict;
 use Chj::xperlfunc;
 use Chj::xpipe;
 use Carp;
+use NEXT;
 
 my %metadata; # numified => pid
 
@@ -150,7 +151,7 @@ sub DESTROY { # no exceptions thrown from here
     if (defined $metadata{pack "I",$self}) {
 	$self->finish;
     }
-    $self->SUPER::DESTROY;
+    $self->NEXT::DESTROY;
 }
 
 1;
