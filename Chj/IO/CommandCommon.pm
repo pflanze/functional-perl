@@ -7,52 +7,25 @@
 
 =head1 NAME
 
-Chj::IO::Command
+Chj::IO::CommandCommon
 
 =head1 SYNOPSIS
 
- use Chj::IO::Command;
- # my $mail= Chj::IO::Command->new_out("sendmail","-t");  or:
- # my $mail= Chj::IO::Command->new_writer("sendmail","-t"); or:
- my $mail= Chj::IO::Command->new_receiver("sendmail","-t");
- warn "sendmail has pid ".$mail->pid;
- $mail->xprint("From:..\nTo:..\n\n...");
- my $exitcode= $mail->xfinish;
- # my $date= Chj::IO::Command->new_in("date")->xcontent;
- # my $date= Chj::IO::Command->new_reader("date")->xcontent;
- my $date= Chj::IO::Command->new_sender("date")->xcontent;
- # there's also ->new_err, which allows to gather errors
- 
- # or catch stdout and stderr both together: 
- my $str= Chj::IO::Command->new_combinedsender("foo","bar","baz")->xcontent; 
+ - not to be used directly -
 
 =head1 DESCRIPTION
 
-Launches external commands with input or output pipes.
-Inherits from Chj::IO::Pipe.
-
-There is no support for multiple pipes to the same process.
-
-=head1 NOTE
-
-'new_in' does mean input from the view of the main process. May be a
-bit confusing, since it's stdout of the subprocess. Same thing for
-'new_out'.  Maybe the aliases 'new_reader' and 'new_writer' are a bit
-less confusing (true?).
-
-=head1 SEE ALSO
-
-L<Chj::IO::Pipe>, L<Chj::IO::File>
+Common superclass (mixin) for Chj::IO::Command and Chj::IO::CommandBidirectional.
 
 =cut
 
 #'
 
-package Chj::IO::Command;
+package Chj::IO::CommandCommon;
 
 use strict;
 
-use base "Chj::IO::Pipe";
+#use base "Chj::IO::Pipe"; nope, that has to be done using multiple inheritance from the subclass. This class must not have the same base as Chj::IO::Pipe's, for not confusing inheritance of quotedname().
 use Chj::xperlfunc;
 use Chj::xpipe;
 use Carp;
@@ -123,63 +96,6 @@ sub xlaunch3 {
 	->($self,\@cmd);
 }
 
-sub new_out {
-    my $class=shift;
-    local $^F=0;
-    my ($r,$self)=xpipe;
-    bless $self,$class;
-    $self->xlaunch($r,0,@_); ## und wie gebe ich den Namen an?
-    # goto form: würd hier auch nix helfen da oben hard codiert. EBEN: ich brauch ein
-    # croak das den Ort der Herkunft anzeigen kann. à la mein DEBUG().
-}
-*new_writer= *new_out;
-*new_write= *new_out;
-*new_receiver= *new_out;
-
-sub new_in {
-    my $class=shift;
-    local $^F=0;
-    my ($self,$w)=xpipe;
-    bless $self,$class;
-    $self->xlaunch($w,1,@_);
-}
-*new_reader= *new_in;
-*new_read= *new_in;
-*new_sender= *new_in;
-
-sub new_combinedsender {
-    my $class=shift;
-    local $^F=0;
-    my ($self,$w)=xpipe;
-    bless $self,$class;
-    $self->xlaunch3(undef,$w,$w,@_);
-}
-
-sub new_err {
-    my $class=shift;
-    local $^F=0;
-    my ($self,$w)=xpipe;
-    bless $self,$class;
-    $self->xlaunch($w,2,@_);
-}
-
-sub new_receiver_with_stderr_to_fh {
-    my $class=shift;
-    my $errfh=shift;
-    local $^F=0;
-    my ($r,$self)=xpipe;
-    bless $self,$class;
-    $self->xlaunch3($r,undef,$errfh,@_); ## ... (vgl oben)
-}
-
-sub new_inout {
-    my $class=shift;
-    require Chj::xsocketpair;
-    my ($self,$other)= Chj::xsocketpair();
-    bless $self, $class; # NOTE: this is bad practice: it makes quotedname appear "pipe" when it is in fact "socketpair", should inherit still from Chj::IO::Socketpair class, and the other one from Chj::IO::Pipe. So, should create new class that inherits from them both. (addbless could also be used to the rescue). The problem of those are that they aren't subclassing friendly for Chj::IO::Command. So I'd have to put the new_inout into it's own class, and let the user instantiate from there. that would be clean. Well, proxying (delegation) would be ok, too, if a bit bloaty.
-    $self->xlaunch3($other,$other,undef, @_)
-}
-
 
 sub pid {
     my $self=shift;
@@ -239,9 +155,6 @@ sub DESTROY { # no exceptions thrown from here
 
 1;
 
-__END__
-
- todo: damit meldungen per quotedname nich bloss als 'pipe' bezeichnet auch hier cmd bez. speichern.
- und: betrifft wohl File.pm:  xclose mehrfach: gibt invalid file desc  ischaber gefährlihc? !
-
-
+#  old comments: (from before partitioning into CommandCommon and subclasses)
+# todo: damit meldungen per quotedname nich bloss als 'pipe' bezeichnet auch hier cmd bez. speichern.
+# und: betrifft wohl File.pm:  xclose mehrfach: gibt invalid file desc  ischaber gefährlihc? !
