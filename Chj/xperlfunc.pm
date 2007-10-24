@@ -187,6 +187,7 @@ require Exporter;
 	      xmkdir_p
 	      xlink_p
 	     );
+%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 use strict;
 use Carp;
 use Chj::singlequote 'singlequote_many'; # the only dependency so far
