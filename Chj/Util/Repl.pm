@@ -364,7 +364,10 @@ sub run {
 		    $term->readline($$self[Prompt] or ($$self[Package]||$caller)."> ");
 		};
 		if ($@) {
-		    if ($@ eq "SIGINT\n") {
+		    if (!ref($@) and
+			($@ eq "SIGINT\n"
+			 or $@=~ /^SIGINT\n\t\w/s # when use Chj::Backtrace is in use
+			)) {
 			print $STDOUT "\n";
 			redo DO;
 		    } else {
