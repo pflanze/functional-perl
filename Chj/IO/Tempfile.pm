@@ -287,4 +287,10 @@ sub xputback { # swapin?   put back heisst etwa 'nachstellen'?
     $self->xreplace_or_withmode($basepath, $orwithmode);
 }
 
+sub basepath {
+    my $self=shift;
+    $metadata{pack"I",$self}[0]
+}
+
+
 1;
