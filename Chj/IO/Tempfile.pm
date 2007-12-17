@@ -235,23 +235,23 @@ sub _xlinkrename {
 
 sub xreplace_or_withmode {
     my $self=shift;
-    my ($targetpath,$orwithmode)=@_;
+    my ($targetpath,$orwithmode)=@_; # $orwithmode can be an integer, an octal string, or a stat object; in case of a stat object and if running as root, it also keeps uid/gid.
     my $path= $self->xpath;
     my ($uid,$gid,$mode);
     if (($uid,$gid,$mode)=(stat $targetpath)[4,5,2]) {
 	my $euid= (stat $path)[4]; # better than $> because of peculiarities
-	defined $euid or croak "xreplace: ?? can't stat own file '$path': $!";
+	defined $euid or croak "xreplace_or_withmode: ?? can't stat own file '$path': $!";
 	if ($euid == 0) {
 	    chown $uid,$gid, $path
-	      or croak "xreplace: chown '$path': $!";
+	      or croak "xreplace_or_withmode: chown '$path': $!";
 	} else {
 	    if ($uid != $euid) {
-		carp "xreplace: warning: cannot set owner of '$path' to $uid since we are not root";# ein zentraler mechanismus um warnings einzuhängen analog zu exceptions wäre halt eben schon noch interessant.
+		carp "xreplace_or_withmode: warning: cannot set owner of '$path' to $uid since we are not root";# ein zentraler mechanismus um warnings einzuhängen analog zu exceptions wäre halt eben schon noch interessant.
 		$mode &= 0777; # see below
 	    }
 	    chown $euid,$gid, $path
 	      or do {
-		  carp "xreplace: warning: could not set group of '$path' to $gid: $!";## only a warning, ok?
+		  carp "xreplace_or_withmode: warning: could not set group of '$path' to $gid: $!";## only a warning, ok?
 		  $mode &= 0777; # mask off setuid and such stuff. correct?
 	      };
 	}
@@ -260,22 +260,28 @@ sub xreplace_or_withmode {
 	_xlinkrename $targetpath, "$targetpath~";#backup filename konfig machen?
     } else {
 	if (defined $orwithmode) {
-	    if ($orwithmode=~ /^0/) {
-		$orwithmode= oct $orwithmode;
-		defined($orwithmode) or croak "xreplace_or_withmode: illegal octal withmode value given";##ach das kommt gar nie vor, bloss zu perl compile time mit constants, nicht hiermit.
+	    if (ref $orwithmode) {
+		# assuming stat object
+		$mode= $orwithmode->permissions;
+		if ($> == 0) {
+		    chown $orwithmode->uid, $orwithmode->gid, $path
+		      or croak "xreplace_or_withmode: chown '$path': $!";
+		}
+	    } else {
+		if ($orwithmode=~ /^0/) {
+		    $orwithmode= oct $orwithmode;
+		    defined($orwithmode) or croak "xreplace_or_withmode: illegal octal withmode value given";##ach das kommt gar nie vor, bloss zu perl compile time mit constants, nicht hiermit.
+		}
+		$mode= $orwithmode; # & 0777; # mask off dito, since we do not know which uid/gid the programmer meant. which is a bug in itself.   wellll , programmer should know what he's doing then, right?
 	    }
-	    $mode= $orwithmode; # & 0777; # mask off dito, since we do not know which uid/gid the programmer meant. which is a bug in itself.   wellll , programmer should know what he's doing then, right?
 	} else {
 	    croak "xreplace_or_withmode: error getting target permissions and no default mode given, stat '$targetpath': $!";
 	}
     }
     chmod $mode,$path
-      or croak "xreplace: chmod '$path': $!";
-    #rename $path,$targetpath
-    #  or croak "xreplace: rename $path,$targetpath: $!";
+      or croak "xreplace_or_withmode: chmod '$path': $!";
     $self->xrename($targetpath);
 }
-#*xreplace_or_withmode= \&xreplace;
 
 
 sub xputback { # swapin?   put back heisst etwa 'nachstellen'?
