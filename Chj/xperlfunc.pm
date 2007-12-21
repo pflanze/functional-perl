@@ -186,8 +186,7 @@ require Exporter;
 	      dirname
 	      xmkdir_p
 	      xlink_p
-	      xuser_uid
-	      xuser_uid_gid
+	      xgetpwnam
 	     );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 use strict;
@@ -831,26 +830,32 @@ sub xlink_p ($ $ ) {
     xlink $from,$to
 }
 
-sub xuser_uid ( $ ) {
-    my ($user)=@_;
-    my ($login,$pass,$uid,$gid) = getpwnam($user)
-      or die "xuser_uid: '$user' not in passwd file";
-    $uid
-}
+# sub xuser_uid ( $ ) {
+#     my ($user)=@_;
+#     my ($login,$pass,$uid,$gid) = getpwnam($user)
+#       or die "xuser_uid: '$user' not in passwd file";
+#     $uid
+# }
 {
-    package Chj::xperlfunc::User_uid_gid;
-    use Class::Array -fields=>-publica=>"uid","gid";
+    package Chj::xperlfunc::Getpwnam;
+    use Class::Array -fields=>-publica=>
+      qw(name passwd uid gid quota comment gcos dir shell expire);
+    sub maybe_get {
+	my $class=shift;
+	my ($user)=@_;
+	my $s= bless [ getpwnam ($user) ], $class;
+	if (@$s) {
+	    $s
+	} else {
+	    return
+	}
+    }
     end Class::Array;
 }
-sub xuser_uid_gid ( $ ) {
+sub xgetpwnam ( $ ) {
     my ($user)=@_;
-    my ($login,$pass,$uid,$gid) = getpwnam($user)
-      or croak "xuser_uid_gid: '$user' not in passwd file";
-    if (wantarray) {
-	($uid,$gid)
-    } else {
-	bless [$uid,$gid], "Chj::xperlfunc::User_uid_gid"
-    }
+    Chj::xperlfunc::Getpwnam->maybe_get($user)
+	or croak "xgetpwnam '$user' not in passwd file";
 }
 
 
