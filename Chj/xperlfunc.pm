@@ -234,7 +234,7 @@ sub xspawn {
 	exec @_;
 	select WRITE; $|=1;
 	print $!;
-	exit;# $? >>8; spielt ja keine Rolle mehr, eh nicht echt.
+	exit;
     }
 }
 
