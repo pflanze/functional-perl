@@ -218,7 +218,7 @@ sub xexec {
 sub xspawn {
     croak "xspawn: too few arguments" unless @_;
     local $^F=0;
-    pipe READ,WRITE;
+    pipe READ,WRITE or die "pipe: $!";
     if (my $pid= xfork) {
 	close WRITE;
 	local $_; #local $/; not really necessary
