@@ -59,7 +59,8 @@ sub MaybeInit {
 sub as_string {
     my $s=shift;
     MaybeInit;
-    $$signame[$$s[Number]]
+    my $maybe_str= $$signame[$$s[Number]];
+    defined $maybe_str ? $maybe_str : "<unknown signal (number $$s[Number])>"
 }
 
 end Class::Array;
