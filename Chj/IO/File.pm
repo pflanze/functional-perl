@@ -577,6 +577,17 @@ sub xcontent {
     $$ref
 }
 
+# bad copypaste..
+sub xcontentref {
+    my $self=shift;
+    undef $!; # neeeded!
+    local $/;
+    my $ref= \ scalar CORE::readline($self);
+    # ^- scalar is needed! or it will give undef on empty files.
+    croak "xcontentref on ".($self->quotedname).": $!" if $!;
+    $ref
+}
+
 sub syscontent { # prolly not that efficient
     my $self=shift;
     my $buf;
