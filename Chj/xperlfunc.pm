@@ -258,6 +258,7 @@ sub xlaunch { ## NA: todo: noch nicht fertig, insbesondere geht kommunikation ex
 
 sub xsystem {
     @_>0 or croak "xsystem: missing arguments";
+    no warnings;
     (system @_)>=0
       or croak "xsystem: could not start command '$_[0]': $!";
     $?
@@ -265,6 +266,7 @@ sub xsystem {
 
 sub xxsystem {
     @_>0 or croak "xxsystem: missing arguments";
+    no warnings;
     (system @_)>=0
       or croak "xxsystem: could not start command '$_[0]': $!";
     $?==0
