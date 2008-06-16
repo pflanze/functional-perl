@@ -1,6 +1,6 @@
 # Sun Oct 21 17:47:58 2007  Christian Jaeger, christian at jaeger mine nu
-# 
-# Copyright 2007 by Christian Jaeger
+#
+# Copyright 2007,2008 by Christian Jaeger
 # Published under the same terms as perl itself
 #
 # $Id$
@@ -22,9 +22,10 @@ Chj::IO::Command
  # my $date= Chj::IO::Command->new_reader("date")->xcontent;
  my $date= Chj::IO::Command->new_sender("date")->xcontent;
  # there's also ->new_err, which allows to gather errors
- 
- # or catch stdout and stderr both together: 
- my $str= Chj::IO::Command->new_combinedsender("foo","bar","baz")->xcontent; 
+
+ # or catch stdout and stderr both together:
+ my $str= Chj::IO::Command->new_combinedsender("foo","bar","baz")->xcontent;
+
 
 =head1 DESCRIPTION
 
@@ -42,7 +43,8 @@ less confusing (true?).
 
 =head1 SEE ALSO
 
-L<Chj::IO::CommandBidirectional>, L<Chj::IO::CommandCommon>, L<Chj::IO::Pipe>
+L<Chj::IO::CommandBidirectional>, L<Chj::IO::CommandCommon>, L<Chj::IO::Pipe>,
+L<Chj::IO::CommandStandalone>
 
 =cut
 
