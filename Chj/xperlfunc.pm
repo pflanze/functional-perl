@@ -32,6 +32,13 @@ Returns the exit code of the program (== $?);
 
 Same as xsystem but also croaks if $? != 0.
 
+=item xsystem_safe(..)
+
+=item xxsystem_safe(..)
+
+Same as the *xsystem calls but never run a shell, even if only one
+argument is given.
+
 =back
 
 =head1 ADDITIONAL FUNCTIONS
@@ -156,6 +163,8 @@ require Exporter;
 	   xexec
 	   xsystem
 	   xxsystem
+	   xsystem_safe
+	   xxsystem_safe
 	   xrename
 	   xmkdir
 	   xchmod
@@ -271,6 +280,23 @@ sub xxsystem {
       or croak "xxsystem: could not start command '$_[0]': $!";
     $?==0
       or croak "xxsystem: process terminated with ".exitcode($?);
+}
+
+sub xsystem_safe {
+    @_>0 or croak "xsystem_safe: missing arguments";
+    no warnings;
+    (system { $_[0] } @_)>=0
+      or croak "xsystem_safe: could not start command '$_[0]': $!";
+    $?
+}
+
+sub xxsystem_safe {
+    @_>0 or croak "xxsystem_safe: missing arguments";
+    no warnings;
+    (system { $_[0] } @_)>=0
+      or croak "xxsystem_safe: could not start command '$_[0]': $!";
+    $?==0
+      or croak "xxsystem_safe: process terminated with ".exitcode($?);
 }
 
 sub xwaitpid ( $ ; $ ) {
