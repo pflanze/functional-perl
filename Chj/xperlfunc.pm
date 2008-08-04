@@ -130,9 +130,11 @@ a previous target. All the same it does the replace atomically.
 Does work with both filehandles and integer strings. Croaks if it's
 neither or there's an error.
 
-=item basename $pathstring
+=item basename $pathstring [,$suffix]
 
-Same as the shell util (or my old Filename function)
+Same as the shell util of the same name, except that it croaks in a
+few cases (when an empty string is given, or when the given suffix
+doesn't match).
 
 =item dirname $pathstring
 
@@ -815,14 +817,16 @@ sub xsysread ( $ $ $ ; $ ) {
 # latter one is not yet complete, I'm debugging xreadline atm.
 
 
-sub basename ($ ) {
-    my ($path)=@_;
+sub basename ($ ; $ ) {
+    my ($path,$maybe_suffix)=@_;
     my $copy= $path;
     $copy=~ s|.*/||s;
+    my $res= do {
     length($copy) ? $copy : do {
 	# path ending in slash--or empty from the start.
 	if ($path=~ s|/+\z||s) {
 	    $path=~ s|.*/||s;
+	    #^this is necessary since we did it on $copy only, before!
 	    if (length $path) {
 		$path
 	    } else {
@@ -830,14 +834,25 @@ sub basename ($ ) {
 		"/"  # or croak? no.
 	    }
 	} else {
-	    die "cannot get basename from empty string";
+	    croak "basename(".singlequote_many(@_)
+	      ."): cannot get basename from empty string";
 	}
+    }};
+    if (defined $maybe_suffix and length $maybe_suffix) {
+	$res=~ s/\Q$maybe_suffix\E\z//
+	  or croak "basename (".singlequote_many(@_)
+	    ."): suffix does not match '$res'";
     }
+    $res
 }
 # well some fun to do?:
 # main> :d basename  "/fun/."
 #  $VAR1 = '.';
 # but the shell util acts the same way.
+
+#chris@novo:~$ basename foo/bar/cj.git/blabla  .git/blabla
+#blabla
+# so no, do not strip before basenaming, really do it afterwards as I do
 
 
 sub dirname ($ ) {
