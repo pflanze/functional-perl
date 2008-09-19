@@ -616,6 +616,18 @@ sub Xlstat {
     sub Filetype_is_pipe { shift == 1 } # or call it is_fifo?
     sub is_pipe { Filetype_is_pipe(shift->filetype) }
 
+    sub type {
+	my $s=shift;
+	if ($s->is_dir) { "dir" }
+	elsif ($s->is_link) { "link" }
+	elsif ($s->is_file) { "file" }
+	elsif ($s->is_socket) { "socket" }
+	elsif ($s->is_chardevice) { "chardevice" }
+	elsif ($s->is_blockdevice) { "blockdevice" }
+	elsif ($s->is_pipe) { "pipe" }
+	else { die "unknown type of filetype: ".$s->filetype }
+    }
+
     # check whether "a file has changed"
     sub equal_content {
 	my $s=shift;
