@@ -601,13 +601,10 @@ sub Xlstat {
 	goto &checkaccess_for_submask_by_uid_gids;
     }
 
-    # Wed, 15 Feb 2006 07:37:01 +0100
     sub Filetype_is_file { shift == 8 }
     sub is_file { Filetype_is_file(shift->filetype) } # call it is_normalfile ?
     sub Filetype_is_dir { shift == 4 }
     sub is_dir { Filetype_is_dir(shift->filetype) }
-    #sub is_symlink { # rather than calling it is_link?
-    #  -l sounds like link. but..
     sub Filetype_is_link { shift == 10 }
     sub is_link { Filetype_is_link(shift->filetype) }
     sub Filetype_is_socket { shift == 12 }
