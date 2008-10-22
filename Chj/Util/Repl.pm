@@ -48,6 +48,7 @@ For a list of all settable options see source of this module.
  - maybe '$ans->[1]->' method completion
  - fix problem with exception display w/o :l mode
  - with :v, already the output during computation should go to less, right? or introduce :V maybe?
+ - fix '$Foo ->bar<tab>' completion where $Foo just actually contains the classname (or even an object) at runtime ehr parsetime already.
 
 =item IDEAS
 
