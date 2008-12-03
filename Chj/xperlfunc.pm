@@ -169,6 +169,7 @@ require Exporter;
 	   xxsystem_safe
 	   xrename
 	   xmkdir
+	   xrmdir
 	   xchmod
 	   xchown
 	   xchdir
@@ -437,6 +438,16 @@ sub xmkdir {
 	croak "xmkdir: wrong number of arguments";
     }
 }
+
+sub xrmdir {
+    if (@_==1) {
+	rmdir $_[0]
+	  or croak "xrmdir($_[0]): $!";
+    } else {
+	croak "xrmdir: wrong number of arguments";
+    }
+}
+
 sub xchmod {
     @_>=1 or croak "xchmod: not enoug arguments"; # should it be >1?
     chmod shift,@_
