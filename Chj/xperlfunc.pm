@@ -618,6 +618,7 @@ sub Xlstat {
     sub is_dir { Filetype_is_dir(shift->filetype) }
     sub Filetype_is_link { shift == 10 }
     sub is_link { Filetype_is_link(shift->filetype) }
+    *is_symlink= \&is_link;
     sub Filetype_is_socket { shift == 12 }
     sub is_socket { Filetype_is_socket(shift->filetype) }
     sub Filetype_is_chardevice { shift == 2 }
