@@ -56,19 +56,13 @@ sub xtmpdir {
     @_<=2 or croak "xtmpdir expects 0 to 2 arguments";
     my ($opt_basepath,$opt_mask)=@_;
     my $basepath= defined($opt_basepath) ? $opt_basepath : "/tmp/";
-    #my $mask= defined($opt_mask) ? $opt_mask : 0777;# 0777 is the perl default, hope that won't change.
+    my $mask= defined($opt_mask) ? $opt_mask : 0700; # 0777 would be the perl default
     my $item;
     my $n= $MAXTRIES;
     TRY: {
 	$item= int(rand(999)*1000+rand(999));
 	my $path= "$basepath$item";
-	if (do {
-	    if (defined $opt_mask) {
-		mkdir $path,$opt_mask
-	    } else {
-		mkdir $path
-	    }
-	}) {
+	if (mkdir $path,$mask) {
 	    #my $self= [ $path ];
 	    #return bless $self,$class;   ### tja, ist halt eben kein fh; aber es wäre auch doof extra ein opendir zu machen für nix. Aber ein symbol?  !!!!
 	    my $self= $class->SUPER::new;
