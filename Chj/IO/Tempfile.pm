@@ -170,7 +170,7 @@ sub xlinkunlink { #well ist ein bisschen sinnlos, xlink reicht ja wenn dann bei 
 
 sub DESTROY {
     my $self=shift;
-    local ($@,$!);
+    local ($@,$!,$?);
     #$self->SUPER::DESTROY; # does close if needed, and remove metadata from File class.
     if (defined(my $path= $self->path)) {
 	if ($metadata{pack"I",$self}[1] == 1) {

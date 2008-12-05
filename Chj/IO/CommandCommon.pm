@@ -147,7 +147,7 @@ sub xxfinish { # does also throw on error exit codes.
 
 sub DESTROY { # no exceptions thrown from here
     my $self=shift;
-    local ($@,$!);
+    local ($@,$!,$?);
     if (defined $metadata{pack "I",$self}) {
 	$self->finish;
     }

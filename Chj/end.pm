@@ -50,6 +50,6 @@ sub end ( & ) {
 
 sub DESTROY {
     #warn "DESTROY";
-    local ($@,$!);# cj Mon, 05 Sep 2005 21:14:06 +0200
+    local ($@,$!,$?);
     &{$_[0]}
 }
