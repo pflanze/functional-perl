@@ -323,14 +323,16 @@ sub xxwaitpid ( $ ; $ ) {
 }
 
 sub xwait {
+    @_==0 or croak "xwait: expecting 0 arguments";
     my $kid= wait;
     defined $kid or die "xwait: $!";# when can this happen? EINTR?
     wantarray ? ($kid, $?) : $kid
 }
 
 sub xxwait {
+    @_==0 or croak "xxwait: expecting 0 arguments";
     my $kid= wait;
-    defined $kid or die "xwait: $!";# when can this happen? EINTR?
+    defined $kid or die "xxwait: $!";# when can this happen? EINTR?
     my $status= $?;
     $status == 0
 	or die "xxwait: child process $kid terminated with ".exitcode($?);
