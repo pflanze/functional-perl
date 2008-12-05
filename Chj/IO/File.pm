@@ -964,7 +964,7 @@ if ($has_posix) {
 
 sub DESTROY {
     my $self=shift;
-    local ($@,$!);
+    local ($@,$!,$?);
     #if (defined $metadata{pack "I",$self}) {
     if ($self->opened) {
 	CORE::close($self)

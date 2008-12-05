@@ -179,7 +179,7 @@ sub xclose {
 
 sub DESTROY {
     my $self=shift;
-    local ($@,$!);
+    local ($@,$!,$?);
     if ($metadata{pack "I",$self}[0]) {
 	closedir $self
 	  or carp "$self DESTROY: $!";
