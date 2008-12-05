@@ -140,7 +140,7 @@ sub xtmpfile {
 sub DESTROY {
     my $self=shift;
     #warn "DESTROY $self";
-    local ($@,$!);
+    local ($@,$!,$?);
     my $str= pack "I",$self;
     if (my $autoclean=$meta{$str}{autoclean}) {
 	rmdir $meta{$str}{path}
