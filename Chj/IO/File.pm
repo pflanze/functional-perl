@@ -880,6 +880,9 @@ sub close {
     $s->set_opened (0);
 }
 
+*xxfinish= \&xclose;
+*xfinish= \&xclose;
+
 sub xunlink {
     my $self=shift;
     my $path= $self->xpath;
