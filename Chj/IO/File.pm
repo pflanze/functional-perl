@@ -453,28 +453,28 @@ sub getline {
     <$self>
 }
 
-{
-my $BUFFER=""; ##### ççççtodo ins obj
-my @LINES;
 sub xreadline0 {
     my $self=shift;
-    if (@LINES) {
-    warn "xreadline0: shifting a line";
-	shift @LINES
+    local $/= "\0";
+    $self->xreadline
+}
+#^ 'since it would be tedious' to add  once again  wantarray checking and then mapping with a Chomp   we leave that up to the receiver, good idea?.
+sub xreadline0chop {
+    my $self=shift;
+    local $/= "\0";
+    # and yes we really *have* to differ. or it would give the number of items. SIGH.
+    if (wantarray) {
+	map {
+	    chop; $_
+	} $self->xreadline
     } else {
-	my $buf;
-    warn "xreadline0: reading buf";
-	#$self->xread($buf, 1.024*8);
-	$buf= $self->xcontent;####todo
-	$BUFFER.=$buf;
-	while ($BUFFER=~ s|(.*?)\0||s) {
-	    push @LINES,$1;
-	}
-    warn "xreadline0: done reading buf";
-	shift @LINES
+	my $str= $self->xreadline;
+	chop $str;
+	$str
     }
 }
-}
+
+
 {
     my $SLICE_LENGTH= 1024*8;
     my $LINEBREAK= "\n";# \r\n usw alles testen todo  und ins obj eben
