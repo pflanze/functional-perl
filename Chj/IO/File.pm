@@ -772,7 +772,7 @@ sub xseek {
       or croak "xseek on ".($self->quotedname).": $!";
 }
 sub seek {
-    my $self=shift;  @_==1 or @_==2 or croak "xseek: wrong number of arguments";
+    my $self=shift;  @_==1 or @_==2 or croak "seek: wrong number of arguments";
     seek $self,$_[0], defined $_[1] ? $_[1] : SEEK_SET;
 }
 
