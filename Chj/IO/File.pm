@@ -776,6 +776,25 @@ sub seek {
     seek $self,$_[0], defined $_[1] ? $_[1] : SEEK_SET;
 }
 
+sub xtell {
+    my $self=shift; @_==0 or croak "xtell: wrong number of arguments";
+    my $res= tell $self;
+    if ($res==-1) {
+	croak "xtell on ".($self->quotedname).": $!";
+    } else {
+	$res
+    }
+}
+sub tell {
+    my $self=shift; @_==0 or croak "tell: wrong number of arguments";
+    my $res= tell $self;
+    if ($res==-1) {
+	undef #I think that is smart, right?. Sense making?
+    } else {
+	$res
+    }
+}
+
 sub xtruncate {
     my $self=shift;
     my ($len)=@_;
