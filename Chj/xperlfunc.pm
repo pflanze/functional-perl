@@ -665,6 +665,25 @@ sub Xlstat {
 	 and $s->gid == $s2->gid
 	)
     }
+    # for simplicity (and in cases where I copy values in 'rows' (lists of methods)):
+    sub username {
+	my $s=shift;
+	scalar $s->getpw
+    }
+    sub groupname {
+	my $s=shift;
+	scalar $s->getgr
+    }
+    # note that those are sensitive to list context!:
+    # (and yes those should 'probably' return such objects as these, too..)
+    sub getpw {
+	my $s=shift;
+	getpwuid($s->uid)
+    }
+    sub getgr {
+	my $s=shift;
+	getgrgid($s->gid)
+    }
 }
 
 {
