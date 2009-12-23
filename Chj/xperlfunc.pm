@@ -190,6 +190,7 @@ require Exporter;
 	   xwait
 	   xxwait
 	   xsysread
+	   xchroot
 	  );
 @EXPORT_OK=qw(
 	      xspawn
@@ -806,6 +807,12 @@ sub xkill{
     my $sig=shift;
     kill $sig,@_
       or croak "xkill $sig @_: $!";
+}
+
+sub xchroot ( $ ) {
+    my ($rtd)=@_;
+    chroot $rtd
+      or die "could not chroot to '$rtd': $!";
 }
 
 sub xeval( $ ) { # meant for string eval only, of course.
