@@ -93,6 +93,19 @@ sub new_combinedsender {
     $self->xlaunch3(undef,$w,$w,@_);
 }
 
+sub new_with_maybe_stdin_stdout_stderr {
+    my $class=shift;
+    @_>3 or die "not enough arguments";
+    #my ($in,$out,$err)=@_;
+    my $in= shift;
+    my $out= shift;
+    my $err= shift;
+    local $^F=0;
+    # fake object, will this work?
+    my $self= bless {},$class;
+    $self->xlaunch3($in,$out,$err,@_);
+}
+
 sub new_err {
     my $class=shift;
     local $^F=0;
