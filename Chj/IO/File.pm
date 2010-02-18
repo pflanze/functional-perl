@@ -143,6 +143,13 @@ BEGIN {
 #use overload '<>'=> 'xreadline', fallback=>1;  ##?? fallback: warum wird stringify operation immer aufgerufen, kann ich das nicht lassen? ich hab gemeint fallback sei langsam, ist fallback "bloss" gemeint dass durchlöchert zu original zulässt?
 # ps. auch \&xreadline nützt nix gegen loop.
 
+use overload
+  '""' => "quotedname",
+  #and do *not* overload the others..: (fallback=>0 doesn't help, as it then just produces 'Operation "0+": no method found, argument in overloaded package')
+  '0+' => sub { $_[0] },
+  'bool' => sub { $_[0] };
+
+
 our $DEBUG=0;
 
 # my %metadata; # numified => name; only set when opened.
