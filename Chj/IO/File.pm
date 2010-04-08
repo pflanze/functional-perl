@@ -953,6 +953,13 @@ if ($has_posix) { # cj Sat,  7 Feb 2004 14:49:13 +0100: noch nicht benötigt, ein
     };
 }
 
+sub xstat {
+    my $s=shift;
+    require Chj::xperlfunc;
+    Chj::xperlfunc::xstat($s)
+}
+
+
 # {Mon Sep 17 20:56:45 2007}
 # ich meinte ich haette das schon sonst irgendwie irgendwann irgendwo
 # gemacht. komisch aber scheint nicht hier. also hier (nochmal):
