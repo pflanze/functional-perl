@@ -14,6 +14,8 @@ Chj::Backtrace
 =head1 DESCRIPTION
 
 
+TODO: breaks Chj::repl's signal catching. Surely others, too. What to do about it?
+
 =cut
 
 
