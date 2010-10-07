@@ -553,6 +553,7 @@ sub Xlstat {
 
     # test helpers:
     sub permissions { shift->[2] & 07777 }
+    sub permissions_oct { sprintf('%o',shift->permissions) } # 'copy' from Chj/BinHexOctDec.pm
     sub permissions_u { (shift->[2] & 00700) >> 6 }
     sub permissions_g { (shift->[2] & 00070) >> 3 }
     sub permissions_o { shift->[2] & 00007 }
