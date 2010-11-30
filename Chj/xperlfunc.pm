@@ -716,11 +716,11 @@ sub mk_caching_getANYid ( $ ) {
     # for performance:
     sub caching_getpw {
 	my $s=shift;
-	Chj::xperlfunc::getpwuid($s->uid);
+	Chj::xperlfunc::caching_getpwuid($s->uid);
     }
     sub caching_getgr {
 	my $s=shift;
-	Chj::xperlfunc::getgrgid($s->gid);
+	Chj::xperlfunc::caching_getgrgid($s->gid);
     }
     sub caching_username {
 	my $s=shift;
