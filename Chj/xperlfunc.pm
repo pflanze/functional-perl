@@ -207,7 +207,10 @@ require Exporter;
 	      xmkdir_p
 	      xlink_p
 	      xgetpwnam
-	     );
+	    );
+              # would we really want to export these?:
+	      #caching_getpwuid
+	      #caching_getgrgid
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 use strict;
 use Carp;
@@ -533,6 +536,28 @@ sub Xlstat {
     }
 }
 
+
+# caching variants of perlfuncs:
+
+sub mk_caching_getANYid ( $ ) {
+    my ($function)=@_;
+    my %cache;
+    sub {
+	@_==1 or die;
+	my ($id)= @_;
+	my $v;
+	if (not defined ($v= $cache{$id})) {
+	    $v= [
+		 &$function ($id)
+		];
+	    $cache{$id}=$v;
+	}
+	wantarray ? @$v : $$v[0]
+    }
+}
+*caching_getpwuid= mk_caching_getANYid (sub{getpwuid $_[0]});
+*caching_getgrgid= mk_caching_getANYid (sub{getgrgid $_[0]});
+
 {
     package Chj::xperlfunc::xstat;
     ## Alternative to arrays: hashes, so that slices like
@@ -668,6 +693,7 @@ sub Xlstat {
 	)
     }
     # for simplicity (and in cases where I copy values in 'rows' (lists of methods)):
+    # ATTENTION: these are non-caching! see below.
     sub username {
 	my $s=shift;
 	scalar $s->getpw
@@ -685,6 +711,24 @@ sub Xlstat {
     sub getgr {
 	my $s=shift;
 	getgrgid($s->gid)
+    }
+
+    # for performance:
+    sub caching_getpw {
+	my $s=shift;
+	Chj::xperlfunc::getpwuid($s->uid);
+    }
+    sub caching_getgr {
+	my $s=shift;
+	Chj::xperlfunc::getgrgid($s->gid);
+    }
+    sub caching_username {
+	my $s=shift;
+	scalar $s->caching_getpw
+    }
+    sub caching_groupname {
+	my $s=shift;
+	scalar $s->caching_getgr
     }
 }
 
