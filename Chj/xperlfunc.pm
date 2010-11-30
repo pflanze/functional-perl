@@ -541,8 +541,8 @@ sub Xlstat {
 
 # caching variants of perlfuncs:
 
-sub mk_caching_getANYid ( $ ) {
-    my ($function)=@_;
+sub mk_caching_getANYid {
+    my ($function,$scalarindex)=@_;
     my %cache;
     sub {
 	@_==1 or die;
@@ -554,14 +554,14 @@ sub mk_caching_getANYid ( $ ) {
 		];
 	    $cache{$id}=$v;
 	}
-	wantarray ? @$v : $$v[0]
+	wantarray ? @$v : $$v[$scalarindex]
     }
 }
-*caching_getpwuid= mk_caching_getANYid (sub{getpwuid $_[0]});
-*caching_getgrgid= mk_caching_getANYid (sub{getgrgid $_[0]});
+*caching_getpwuid= mk_caching_getANYid (sub{getpwuid $_[0]},0);
+*caching_getgrgid= mk_caching_getANYid (sub{getgrgid $_[0]},0);
 
-*caching_getpwnam= mk_caching_getANYid (sub{getpwnam $_[0]});
-*caching_getgrnam= mk_caching_getANYid (sub{getgrnam $_[0]});
+*caching_getpwnam= mk_caching_getANYid (sub{getpwnam $_[0]},2);
+*caching_getgrnam= mk_caching_getANYid (sub{getgrnam $_[0]},2);
 
 {
     package Chj::xperlfunc::xstat;
