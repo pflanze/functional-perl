@@ -207,6 +207,8 @@ require Exporter;
 	      xmkdir_p
 	      xlink_p
 	      xgetpwnam
+	      caching_getpwnam
+	      caching_getgrnam
 	    );
               # would we really want to export these?:
 	      #caching_getpwuid
@@ -557,6 +559,9 @@ sub mk_caching_getANYid ( $ ) {
 }
 *caching_getpwuid= mk_caching_getANYid (sub{getpwuid $_[0]});
 *caching_getgrgid= mk_caching_getANYid (sub{getgrgid $_[0]});
+
+*caching_getpwnam= mk_caching_getANYid (sub{getpwnam $_[0]});
+*caching_getgrnam= mk_caching_getANYid (sub{getgrnam $_[0]});
 
 {
     package Chj::xperlfunc::xstat;
