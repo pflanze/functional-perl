@@ -112,6 +112,17 @@ sub xtmpfile {
     $ret
 }
 
+# useful for when other code creates files in it (not tmpfiles): "rm -rf"
+
+sub rmrf {
+    my $s=shift;
+    require Chj::Shelllike::Rmrf;
+    Chj::Shelllike::Rmrf::Rmrf ($s->path);
+    # to avoid warning, and since recreation later on should be
+    # understood as independent process anyway, ok?:
+    $s->autoclean(0)
+}
+
 sub DESTROY {
     my $self=shift;
     #warn "DESTROY $self";
