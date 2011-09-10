@@ -968,6 +968,8 @@ sub dirname ($ ) {
 	    die "can't go out of file system"
 	} elsif ($path eq ".") {
 	    die "can't go above cur dir in a relative path";
+	} elsif ($path eq "") {
+	    die "can't take dirname of empty string";
 	} else {
 	    "."
 	}
