@@ -122,4 +122,13 @@ sub new_receiver_with_stderr_to_fh {
     $self->xlaunch3($r,undef,$errfh,@_); ## ... (vgl oben)
 }
 
+sub new_receiver_with_stdout_to_fh {
+    my $class=shift;
+    my $outfh=shift;
+    local $^F=0;
+    my ($r,$self)=xpipe;
+    bless $self,$class;
+    $self->xlaunch3($r,$outfh,undef,@_);
+}
+
 1
