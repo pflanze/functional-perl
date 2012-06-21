@@ -618,6 +618,11 @@ sub xprint {
     print $self @_ or croak "xprint to ".($self->quotedname).": $!";
 }
 
+sub xprintln {
+    my $self=shift;
+    print $self @_,"\n" or croak "xprintln to ".($self->quotedname).": $!";
+}
+
 # is there any need for something like xsysprint? Maybe once unicode is used!
 # I'll not write it yet.
 # Hm, oder doch:
