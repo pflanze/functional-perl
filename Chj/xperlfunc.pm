@@ -209,6 +209,8 @@ require Exporter;
 	      xgetpwnam
 	      caching_getpwnam
 	      caching_getgrnam
+	      xprint
+	      xprintln
 	    );
               # would we really want to export these?:
 	      #caching_getpwuid
@@ -1029,6 +1031,21 @@ sub xgetpwnam ( $ ) {
     my ($user)=@_;
     Chj::xperlfunc::Getpwnam->maybe_get($user)
 	or croak "xgetpwnam '$user' not in passwd file";
+}
+
+
+# xprint is already in Chj::IO::File, but don't always want to use the
+# method. No way to specify filehandle optionally with this, though --
+# but that's arguably the core of the difference.
+
+sub xprint {
+    print @_
+      or die "xprint: $!";
+}
+
+sub xprintln {
+    print @_,"\n"
+      or die "xprintln: $!";
 }
 
 
