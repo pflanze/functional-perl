@@ -118,6 +118,9 @@ package Chj::IO::File;
 
 use strict;
 
+our @ISA=("IO");
+sub import { };
+
 use Symbol;
 use Carp;
 use Fcntl qw(:DEFAULT :flock :seek :mode); # ist es dumm, es wirklich hiervon abhängig zu machen? aber mann, isch sons zum kotzen, will wirklich etwas besser (-> seek)
@@ -132,10 +135,10 @@ BEGIN {
     if ($@) {
 	$has_posix=0;
 	require Errno;
-	import Errno 'EINVAL';
+	Errno->import( 'EINVAL');
     } else {
 	$has_posix=1;
-	import POSIX 'EINVAL';
+	POSIX->import( 'EINVAL');
     }
 }
 
