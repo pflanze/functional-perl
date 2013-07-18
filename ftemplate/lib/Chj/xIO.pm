@@ -20,7 +20,7 @@ Chj::xopen modules.
 
 package Chj::xIO;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(xprint);
+@EXPORT=qw(xprint xprintln);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -29,6 +29,12 @@ use strict;
 sub xprint {
     my $fh=shift;
     print $fh @_
+      or die "printing to $fh: $!"
+}
+
+sub xprintln {
+    my $fh=shift;
+    print $fh @_,"\n"
       or die "printing to $fh: $!"
 }
 
