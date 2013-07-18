@@ -42,6 +42,7 @@ package Chj::FP2::Stream;
 	      stream_for_each
 	      stream_take
 	      stream_zip2
+	      stream2array
 	 );
 @EXPORT_OK=qw(F);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -217,6 +218,23 @@ sub F ($) {
 	$v
     }
 }
+
+sub stream2array ($) {
+    my ($l)=@_;
+    weaken $_[0];
+    my $res= [];
+    my $i=0;
+    $l= Force $l;
+    while (defined $l) {
+	my $v= car $l;
+	$$res[$i]= $v;
+	$l= Force cdr $l;
+	$i++;
+    }
+    $res
+}
+
+
 
 # calc> :d stream_for_each sub { print @_,"\n"}, stream_map sub {my $v=shift; $v*$v},  array2stream [10,11,13]
 # 100
