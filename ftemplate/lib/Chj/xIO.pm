@@ -27,13 +27,13 @@ package Chj::xIO;
 use strict;
 
 sub xprint {
-    my $fh=shift;
+    my $fh= UNIVERSAL::isa($_[0],"IO") ? shift : *STDOUT{IO};
     print $fh @_
       or die "printing to $fh: $!"
 }
 
 sub xprintln {
-    my $fh=shift;
+    my $fh= UNIVERSAL::isa($_[0],"IO") ? shift : *STDOUT{IO};
     print $fh @_,"\n"
       or die "printing to $fh: $!"
 }
