@@ -56,22 +56,34 @@ use Chj::FP2::List;
 use Scalar::Util 'weaken';
 
 sub stream_iota {
-    my ($n,$maybe_start)= @_;
+    my ($maybe_n,$maybe_start)= @_;
     my $start= $maybe_start || 0;
-    my $end = $start + $n;
-    my $rec; $rec= sub {
-	my ($i)=@_;
-	Delay {
-	    if ($i<$end) {
-		cons ($i, &$rec($i+1))
-	    } else {
-		undef
+    if (defined $maybe_n) {
+	my $end = $start + $maybe_n;
+	my $rec; $rec= sub {
+	    my ($i)=@_;
+	    Delay {
+		if ($i<$end) {
+		    cons ($i, &$rec($i+1))
+		} else {
+		    undef
+		}
 	    }
-	}
-    };
-    my $_rec= $rec;
-    weaken $rec;
-    &$_rec($start)
+	};
+	my $_rec= $rec;
+	weaken $rec;
+	@_=($start); goto $_rec;
+    } else {
+	my $rec; $rec= sub {
+	    my ($i)=@_;
+	    Delay {
+		cons ($i, &$rec($i+1))
+	    }
+	};
+	my $_rec= $rec;
+	weaken $rec;
+	@_=($start); goto $_rec;
+    }
 }
 
 sub stream_length ($) {
