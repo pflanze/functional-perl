@@ -56,7 +56,9 @@ use strict;
 use base qw(
 	    Chj::IO::CommandCommon
 	    Chj::IO::Pipe
+	    IO
 	   );
+sub import {};
 
 use Chj::xpipe;
 
