@@ -41,6 +41,7 @@ package Chj::FP2::Stream;
 	      array2stream
 	      stream_for_each
 	      stream_take
+	      stream_zip2
 	 );
 @EXPORT_OK=qw(F);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -92,6 +93,18 @@ sub stream_map ($ $) {
     Delay {
 	$l= Force $l;
 	$l and cons(&$fn(car $l), stream_map ($fn,cdr $l))
+    }
+}
+
+sub stream_zip2 ($$);
+sub stream_zip2 ($$) {
+    my ($l,$m)=@_;
+    do {weaken $_ if defined $_ } for @_; #needed?
+    Delay {
+	$l= Force $l;
+	$m= Force $m;
+	($l and $m) and
+	  cons([car $l, car $m], stream_zip2 (cdr $l, cdr $m))
     }
 }
 
@@ -200,6 +213,22 @@ sub F ($) {
 
 # write_sexpr( stream_take( stream_iota (1000000000), 2))
 # ->  ("0" "1")
+
+# calc> :d list2array F stream_zip2 stream_map (sub{$_[0]+10},stream_iota (5)), stream_iota (3)
+# $VAR1 = [
+#           [
+#             10,
+#             0
+#           ],
+#           [
+#             11,
+#             1
+#           ],
+#           [
+#             12,
+#             2
+#           ]
+#         ];
 
 
 1
