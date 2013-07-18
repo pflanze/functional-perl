@@ -26,11 +26,6 @@ Chj::FP2::Stream - functions for lazily generated, singly linked (purely functio
 
 Create and dissect sequences using pure functions. Lazily.
 
-=head1 BUGS
-
-Currently uses DelayLight. Still don't know really how to make Delay
-not leak memory.
-
 =cut
 
 
@@ -65,7 +60,7 @@ sub stream_iota {
     my $end = $start + $n;
     my $rec; $rec= sub {
 	my ($i)=@_;
-	DelayLight {
+	Delay {
 	    if ($i<$end) {
 		cons ($i, &$rec($i+1))
 	    } else {
@@ -80,6 +75,7 @@ sub stream_iota {
 
 sub stream_length ($) {
     my ($l)=@_;
+    weaken $_[0];
     my $len=0;
     $l= Force $l;
     while (defined $l) {
@@ -92,7 +88,8 @@ sub stream_length ($) {
 sub stream_map ($ $);
 sub stream_map ($ $) {
     my ($fn,$l)=@_;
-    DelayLight {
+    weaken $_[1];
+    Delay {
 	$l= Force $l;
 	$l and cons(&$fn(car $l), stream_map ($fn,cdr $l))
     }
@@ -101,7 +98,8 @@ sub stream_map ($ $) {
 sub stream_filter ($ $);
 sub stream_filter ($ $) {
     my ($fn,$l)=@_;
-    DelayLight {
+    weaken $_[1];
+    Delay {
 	$l= Force $l;
 	$l and do {
 	    my $a= car $l;
@@ -114,7 +112,8 @@ sub stream_filter ($ $) {
 sub stream_fold_right ($ $ $);
 sub stream_fold_right ($ $ $) {
     my ($fn,$start,$l)=@_;
-    DelayLight {
+    weaken $_[2];
+    Delay {
 	$l= Force $l;
 	if (pairP $l) {
 	    &$fn (car $l, stream_fold_right ($fn,$start,cdr $l))
@@ -131,7 +130,7 @@ sub stream__array_fold_right ($$$) {
     my ($fn,$tail,$a)=@_;
     my $rec; $rec= sub {
 	my ($i)=@_;
-	DelayLight {
+	Delay {
 	    if ($i < @$a) {
 		&$fn($$a[$i], &$rec($i+1))
 	    } else {
@@ -151,6 +150,7 @@ sub array2stream ($;$) {
 
 sub stream_for_each ($ $ ) {
     my ($proc, $s)=@_;
+    weaken $_[1];
   LP: {
 	$s= Force $s;
 	if (defined $s) {
@@ -164,7 +164,8 @@ sub stream_for_each ($ $ ) {
 sub stream_take ($ $);
 sub stream_take ($ $) {
     my ($s, $n)=@_;
-    DelayLight {
+    weaken $_[0];
+    Delay {
 	if ($n > 0) {
 	    $s= Force $s;
 	    cons(car $s, stream_take( cdr $s, $n - 1))
@@ -178,6 +179,8 @@ sub stream_take ($ $) {
 sub F ($);
 sub F ($) {
     my ($v)=@_;
+    #weaken $_[0]; since I usually use it interactively, and should
+    # only be good for short sequences, better don't
     if (promiseP $v) {
 	$v= Force $v;
 	if (pairP $v) {
