@@ -74,7 +74,8 @@ sub import {
 	    $s{ $$fields[$i] }= $_[$i];
 	}
 	bless \%s, $class
-    };
+    }
+      if @$fields;
     *{"${package}::_END_"}= sub {
 	for my $field (@$fields) {
 	    if (not $package->can($field)) {
