@@ -32,6 +32,17 @@ Chj::Struct
 
 Simpler than Class::Struct. Ok?
 
+_END_ does namespace cleaning: any sub that was defined before the use
+Chj::Struct call is removed by the _END_ call (those that are not the
+same sub ref anymore, i.e. have been redefined, are left
+unchanged). This means that if the 'use Chj::Struct' statement is put
+after any other (procedure-importing) 'use' statement, but before the
+definition of the methods, that the imported procedures can be used
+from within the defined methods, but are not around afterwards,
+i.e. they will not shadow super class methods. (Thanks to Matt S Trout
+for pointing out the idea.) To avoid the namespace cleaning, write
+_END__ instead of _END_.
+
 =cut
 
 
@@ -39,6 +50,43 @@ package Chj::Struct;
 
 use strict;
 use Carp;
+
+
+sub package_keys {
+    my ($package)=@_;
+    no strict 'refs';
+    [
+     map {
+	 if (my $c= *{"${package}::$_"}{CODE}) {
+	     [$_, $c]
+	 } else {
+	     ()
+	 }
+     }
+     keys %{$package."::"}
+    ]
+}
+
+sub package_delete {
+    my ($package,$keys)=@_;
+    #warn "package_delete '$package'";
+    no strict 'refs';
+    for (@$keys) {
+	my ($key,$val)= @$_;
+	no warnings 'once';
+	my $val2= *{"${package}::$key"}{CODE};
+	# check val to be equal so that it will work with Chj::ruse
+        if ($val2 and $val == $val2) {
+	    #warn "deleting ${package}::$key ($val)";
+	    delete ${$package."::"}{$key};
+	}
+    }
+}
+
+# sub package_wipe {
+#     my ($package)=@_;
+#     package_delete $package, package_keys $package
+# }
 
 sub require_package {
     my ($package)=@_;
@@ -65,6 +113,7 @@ sub import {
 	require_package $_ for @isa;
 	*{"${package}::ISA"}= (@isa==1 and ref($isa[0])) ? $isa[0] : \@isa;
     }
+    my $nonmethods= package_keys $package;
     *{"${package}::new"}= sub {
 	my $class=shift;
 	@_ <= @$fields
@@ -76,7 +125,8 @@ sub import {
 	bless \%s, $class
     }
       if @$fields;
-    *{"${package}::_END_"}= sub {
+    my $end= sub {
+	#warn "_END_ called for package '$package'";
 	for my $field (@$fields) {
 	    if (not $package->can($field)) {
 		*{"${package}::$field"}= sub {
@@ -86,6 +136,12 @@ sub import {
 	    }
 	}
 	1 # make module load succeed at the same time.
+    };
+    *{"${package}::_END__"}= $end;
+    *{"${package}::_END_"}= sub {
+	#warn "_END_ called for package '$package'";
+	package_delete $package, $nonmethods;
+	&$end;
     };
 }
 
