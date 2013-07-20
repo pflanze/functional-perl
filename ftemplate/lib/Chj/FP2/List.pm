@@ -28,7 +28,7 @@ package Chj::FP2::List;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(cons pairP nullP car cdr _car _cdr list);
 @EXPORT_OK=qw(string2list list_length list_reverse
-	      list2string list2array list2values write_sexpr
+	      list2string list2array rlist2array list2values write_sexpr
 	      array2list mixed_flatten
 	      list_map list_fold_right list2perlstring
 	      drop_while rtake_while take_while
@@ -163,10 +163,22 @@ sub list2array ($) {
     my $res= [];
     my $i=0;
     while (defined $l) {
-	my $v= car $l;
-	$$res[$i]= $v;
+	$$res[$i]= car $l;
 	$l= cdr $l;
 	$i++;
+    }
+    $res
+}
+
+sub rlist2array ($) {
+    my ($l)=@_;
+    my $res= [];
+    my $len= list_length $l;
+    my $i=$len;
+    while (defined $l) {
+	$i--;
+	$$res[$i]= car $l;
+	$l= cdr $l;
     }
     $res
 }
