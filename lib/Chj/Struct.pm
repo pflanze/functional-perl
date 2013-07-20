@@ -40,6 +40,16 @@ package Chj::Struct;
 use strict;
 use Carp;
 
+sub require_package {
+    my ($package)=@_;
+    no strict 'refs';
+    if (not keys %{$package."::"}) {
+	$package=~ s|::|/|g;
+	$package.=".pm";
+	require $package
+    }
+}
+
 sub import {
     my $_importpackage= shift;
     return unless @_;
@@ -52,6 +62,7 @@ sub import {
     }
     no strict 'refs';
     if (@isa) {
+	require_package $_ for @isa;
 	*{"${package}::ISA"}= (@isa==1 and ref($isa[0])) ? $isa[0] : \@isa;
     }
     *{"${package}::new"}= sub {
