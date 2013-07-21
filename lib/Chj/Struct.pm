@@ -98,6 +98,25 @@ sub require_package {
     }
 }
 
+sub all_fields {
+    my ($isa)=@_;
+    (
+     map {
+	 my ($package)=$_;
+	 no strict 'refs';
+	 if (my $fields= \@{"${package}::__Struct__fields"}) {
+	     (
+	      all_fields (\@{"${package}::ISA"}),
+	      @$fields
+	     )
+	 } else {
+	     () # don't even look at parent classes in that case, is
+                # that reasonable?
+	 }
+     } @$isa
+    )
+}
+
 sub import {
     my $_importpackage= shift;
     return unless @_;
@@ -113,18 +132,20 @@ sub import {
 	require_package $_ for @isa;
 	*{"${package}::ISA"}= (@isa==1 and ref($isa[0])) ? $isa[0] : \@isa;
     }
+    my $allfields=[ all_fields (\@isa), @$fields ];
+    # (^ ah, could store them in the package as well; but well, no
+    # worries)
     my $nonmethods= package_keys $package;
     *{"${package}::new"}= sub {
 	my $class=shift;
-	@_ <= @$fields
+	@_ <= @$allfields
 	  or croak "too many arguments to ${package}::new";
 	my %s;
 	for (my $i=0; $i< @_; $i++) {
-	    $s{ $$fields[$i] }= $_[$i];
+	    $s{ $$allfields[$i] }= $_[$i];
 	}
 	bless \%s, $class
-    }
-      if @$fields;
+    };
     my $end= sub {
 	#warn "_END_ called for package '$package'";
 	for my $field (@$fields) {
@@ -143,6 +164,7 @@ sub import {
 	package_delete $package, $nonmethods;
 	&$end;
     };
+    *{"${package}::__Struct__fields"}= $fields;
 }
 
 
