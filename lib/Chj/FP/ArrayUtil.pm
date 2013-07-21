@@ -22,6 +22,7 @@ package Chj::FP::ArrayUtil;
 @EXPORT_OK=qw(array_xone
 	      array_hashing_uniq
 	      array_fold
+	      array_every
 	      min
 	      max);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -55,7 +56,15 @@ sub array_fold ($$$) {
     }
     $start
 }
-		
+
+sub array_every ($$) {
+    my ($fn,$ary)=@_;
+    for (@$ary) {
+	return 0 unless &$fn($_);
+    }
+    1
+}
+
 sub min {
     my $x=shift;
     for (@_) {
@@ -72,4 +81,12 @@ sub max {
     $x
 }
 
+1
+
+__END__
+calc> :l array_every sub { ($_[0] % 2) == 0 }, [ 1, 2, 3 ]
+0
+calc> :l array_every sub { ($_[0] % 2) == 0 }, [ 2, 4, -6 ]
+1
+calc> :l array_every sub { ($_[0] % 2) == 0 }, [ ]
 1
