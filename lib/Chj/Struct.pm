@@ -27,6 +27,7 @@ Chj::Struct
          # make sense?)
  }
  new Bar (1,2)-> sum #=> 3
+ new_ Bar (a=>1,b=>2)-> sum # dito
 
 =head1 DESCRIPTION
 
@@ -135,6 +136,7 @@ sub import {
     my $allfields=[ all_fields (\@isa), @$fields ];
     # (^ ah, could store them in the package as well; but well, no
     # worries)
+    my $allfields_h= +{ map { ($_=>1) } @$allfields };
     my $nonmethods= package_keys $package;
     *{"${package}::new"}= sub {
 	my $class=shift;
@@ -143,6 +145,16 @@ sub import {
 	my %s;
 	for (my $i=0; $i< @_; $i++) {
 	    $s{ $$allfields[$i] }= $_[$i];
+	}
+	bless \%s, $class
+    };
+    *{"${package}::new_"}= sub {
+	my $class=shift;
+	@_ <= (@$allfields * 2)
+	  or croak "too many arguments to ${package}::new_";
+	my %s=@_;
+	for (keys %s) {
+	    $$allfields_h{$_} or die "unknown field '$_'";
 	}
 	bless \%s, $class
     };
