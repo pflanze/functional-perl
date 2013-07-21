@@ -19,15 +19,23 @@ Chj::FP::ArrayUtil
 package Chj::FP::ArrayUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(Array_hashing_uniq
-	      Array_fold
+@EXPORT_OK=qw(array_xone
+	      array_hashing_uniq
+	      array_fold
 	      min
 	      max);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
+use Carp;
 
-sub Array_hashing_uniq ($;$ ) {
+sub array_xone ($) {
+    my ($a)=@_;
+    @$a==1 or croak "expecting 1 element, got ".@$a;
+    $$a[0]
+}
+
+sub array_hashing_uniq ($;$ ) {
     my ($ary,$maybe_warn)=@_;
     my %seen;
     [
@@ -40,7 +48,7 @@ sub Array_hashing_uniq ($;$ ) {
     ]
 }
 
-sub Array_fold ($$$) {
+sub array_fold ($$$) {
     my ($fn,$start,$ary)=@_;
     for (@$ary) {
 	$start= &$fn($_,$start);
