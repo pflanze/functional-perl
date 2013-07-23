@@ -23,6 +23,8 @@ use strict;
 
 use Chj::PXML;
 
+our $nbsp= "\xa0";
+
 our $tags=
      [
           'a',
@@ -136,7 +138,7 @@ for (@$funcs) {
     *{"Chj::PXHTML::$name"}= $fn
 }
 
-our @EXPORT_OK= map { $$_[0] } @$funcs;
+our @EXPORT_OK= ('$nbsp', map { $$_[0] } @$funcs);
 our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
 {
