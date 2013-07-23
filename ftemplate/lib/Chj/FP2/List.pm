@@ -33,7 +33,8 @@ package Chj::FP2::List;
 	      list_map list_fold_right list2perlstring
 	      drop_while rtake_while take_while
 	      list_append
-	      every charlistP ldie);
+	      every charlistP ldie
+	      list__array_fold_right);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
