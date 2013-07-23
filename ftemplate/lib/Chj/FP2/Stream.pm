@@ -43,6 +43,7 @@ package Chj::FP2::Stream;
 	      stream_take
 	      stream_zip2
 	      stream2array
+	      stream_mixed_flatten
 	 );
 @EXPORT_OK=qw(F);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -52,7 +53,7 @@ use strict;
 use Chj::FP2::Lazy;
 
 #use Chj::FP2::Pair; ?
-use Chj::FP2::List;
+use Chj::FP2::List ":all";
 
 use Scalar::Util 'weaken';
 
@@ -234,6 +235,11 @@ sub stream2array ($) {
     $res
 }
 
+
+sub stream_mixed_flatten ($;$$) {
+    my ($v,$tail,$maybe_delay)=@_;
+    mixed_flatten ($v,$tail, $maybe_delay||\&DelayLight)
+}
 
 
 # calc> :d stream_for_each sub { print @_,"\n"}, stream_map sub {my $v=shift; $v*$v},  array2stream [10,11,13]
