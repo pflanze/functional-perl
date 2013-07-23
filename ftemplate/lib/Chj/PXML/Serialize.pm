@@ -30,6 +30,7 @@ use Data::Dumper;
 use Chj::PXML;
 use Chj::FP2::Lazy;
 use Chj::FP2::List;
+use Chj::FP2::Stream;
 use Chj::xIO;
 
 sub perhaps_dump {
@@ -75,9 +76,14 @@ sub pxml_print_fragment_fast ($ $ ) {
 			xprint $fh, " $k=\"", attribute_escape($$attrs{$k}),"\"";
 		    }
 		}
-		xprint $fh,">";
-		pxml_print_fragment_fast ($v->body, $fh);
-		xprint $fh,"</$n>";
+		my $body= $v->body;
+		if (nullP(Force(stream_mixed_flatten ($body)))) {
+		    xprint $fh,"/>";
+		} else {
+		    xprint $fh,">";
+		    pxml_print_fragment_fast ($body, $fh);
+		    xprint $fh,"</$n>";
+		}
 	    } elsif (pairP $v) {
 		pxml_print_fragment_fast (car $v, $fh);
 		#pxml_print_fragment_fast (cdr $v, $fh);
