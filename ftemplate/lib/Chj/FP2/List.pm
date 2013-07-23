@@ -32,6 +32,7 @@ package Chj::FP2::List;
 	      array2list mixed_flatten
 	      list_map list_fold_right list2perlstring
 	      drop_while rtake_while take_while
+	      list_append
 	      every charlistP ldie);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -251,6 +252,12 @@ sub list_fold_right ($ $ $) {
     }
 }
 
+sub list_append ($ $) {
+    my ($l1,$l2)=@_;
+    list_fold_right (\&cons, $l2, $l1)
+}
+
+
 sub list2perlstring ($) {
     my ($l)=@_;
     list2string
@@ -460,6 +467,14 @@ sub ldie {
 # ("3" "9" "10")$VAR1 = 1;
 # calc> :l $|=1; write_sexpr   (mixed_flatten [1,2, DelayLight { [3,9]}], undef, \&DelayLight )
 # ("1" "2" "3" "9")1
+
+# main> :d list2array  list_append (array2list (["a","b"]), array2list([1,2]))
+# $VAR1 = [
+#           'a',
+#           'b',
+#           1,
+#           2
+#         ];
 
 
 1
