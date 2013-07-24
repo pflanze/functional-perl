@@ -80,8 +80,16 @@ sub pxml_print_fragment_fast ($ $ ) {
 		if (# fast path
 		    not @$body
 		    or
+		    (@$body==1 and
+		     (not defined $$body[0]
+		      or
+		      (ref($$body[0]) eq "ARRAY" and not @{$$body[0]})
+		      or
+		      $$body[0] eq ""))
+		    #or
 		    # slow path
-		    nullP(Force(stream_mixed_flatten ($body)))) {
+		    #nullP(Force(stream_mixed_flatten ($body)))
+		   ) {
 		    xprint $fh,"/>";
 		} else {
 		    xprint $fh,">";
