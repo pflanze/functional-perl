@@ -41,6 +41,7 @@ package Chj::FP2::Stream;
 	      array2stream
 	      stream_for_each
 	      stream_take
+	      stream_take_while
 	      stream_zip2
 	      stream2array
 	      stream_mixed_flatten
@@ -202,6 +203,25 @@ sub stream_take ($ $) {
     }
 }
 
+sub stream_take_while ($ $);
+sub stream_take_while ($ $) {
+    my ($fn,$s)=@_;
+    weaken $_[1];
+    Delay {
+	$s= Force $s;
+	if ($s) {
+	    my $a= car $s;
+	    if (&$fn($a)) {
+		cons $a, stream_take_while($fn, cdr $s)
+	    } else {
+		undef
+	    }
+	} else {
+	    undef
+	}
+    }
+}
+
 # force everything deeply
 sub F ($);
 sub F ($) {
@@ -264,6 +284,12 @@ sub stream_mixed_flatten ($;$$) {
 #             12,
 #             2
 #           ]
+#         ];
+
+# calc> :d stream2array  F stream_take_while sub { my ($x)=@_; $x < 2 }, stream_iota 
+# $VAR1 = [
+#           0,
+#           1
 #         ];
 
 
