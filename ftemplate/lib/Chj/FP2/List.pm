@@ -365,7 +365,10 @@ sub mixed_flatten ($;$$) {
 		     },
 		     $tail,
 		     $v);
-		goto \&list__array_fold_right;
+		goto ($maybe_delay
+		      ? \&Chj::FP2::Stream::stream__array_fold_right
+		      #^ XX just expecting it to be loaded
+		      : \&list__array_fold_right);
 	    } else {
 		#warn "improper list: $v"; well that's part of the spec, man
 		cons ($v, $tail)
