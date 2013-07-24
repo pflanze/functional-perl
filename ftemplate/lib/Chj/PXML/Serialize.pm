@@ -77,7 +77,11 @@ sub pxml_print_fragment_fast ($ $ ) {
 		    }
 		}
 		my $body= $v->body;
-		if (nullP(Force(stream_mixed_flatten ($body)))) {
+		if (# fast path
+		    not @$body
+		    or
+		    # slow path
+		    nullP(Force(stream_mixed_flatten ($body)))) {
 		    xprint $fh,"/>";
 		} else {
 		    xprint $fh,">";
