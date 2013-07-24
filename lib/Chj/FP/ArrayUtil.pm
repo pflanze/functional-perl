@@ -21,6 +21,7 @@ package Chj::FP::ArrayUtil;
 @EXPORT=qw();
 @EXPORT_OK=qw(array_xone
 	      array_hashing_uniq
+	      array_zip2
 	      array_fold
 	      array_every
 	      min
@@ -47,6 +48,17 @@ sub array_hashing_uniq ($;$ ) {
 	 not $s
      } @$ary
     ]
+}
+
+sub array_zip2 ($$);
+sub array_zip2 ($$) {
+    my ($l,$m)=@_;
+    my @res;
+    my $len= min(scalar @$l, scalar @$m);
+    for (my $i=0; $i<$len; $i++) {
+	$res[$i]= [ $$l[$i], $$m[$i] ];
+    }
+    \@res
 }
 
 sub array_fold ($$$) {
