@@ -33,6 +33,7 @@ package Chj::FP2::List;
 	      list_map list_fold_right list2perlstring
 	      drop_while rtake_while take_while
 	      list_append
+	      list_zip2
 	      every charlistP ldie
 	      list__array_fold_right);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -232,6 +233,15 @@ sub write_sexpr ($ ; ) {
     my ($l,$fh)=@_;
     _write_sexpr ($l, $fh || *STDOUT{IO}, 0)
 }
+
+
+sub list_zip2 ($$);
+sub list_zip2 ($$) {
+    my ($l,$m)=@_;
+    ($l and $m) and
+      cons([car $l, car $m], list_zip2 (cdr $l, cdr $m))
+}
+
 
 sub list_map ($ $);
 sub list_map ($ $) {
