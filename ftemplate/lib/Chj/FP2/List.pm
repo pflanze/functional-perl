@@ -345,7 +345,7 @@ sub mixed_flatten ($;$$) {
 	    my $delay= $maybe_delay;
 	    &$delay
 	      (sub {
-		   mixed_flatten(Force($v), $tail, $delay)
+		   @_=(Force($v), $tail, $delay); goto \&mixed_flatten;
 	       });
 	} else {
 	    if (nullP $v) {
@@ -359,7 +359,9 @@ sub mixed_flatten ($;$$) {
 		@_= (sub {
 			 @_==2 or die;
 			 my ($v,$tail)=@_;
-			 mixed_flatten($v,$tail,$maybe_delay)
+			 no warnings 'recursion';
+			 # ^XX don't understand why it warns here
+			 @_=($v,$tail,$maybe_delay); goto \&mixed_flatten;
 		     },
 		     $tail,
 		     $v);
