@@ -67,8 +67,12 @@ sub pxml_print_fragment_fast ($ $ );
 sub pxml_print_fragment_fast ($ $ ) {
     my ($v,$fh)=@_;
   LP: {
-	if (ref $v) {
-	    if (UNIVERSAL::isa($v, "Chj::PXML")) {
+	## **NOTE**: this has seen some evil optimizations; before
+	## working on the code, please undo them first by using git
+	## revert.
+	if (my $ref= ref $v) {
+	    if ($ref eq "Chj::PXML" or $ref eq "Chj::PXML::PXHTML_") {
+	      PXML:
 		my $n= $v->name;
 		print $fh "<$n" or die $!;
 		if (my $attrs= $v->maybe_attributes) {
@@ -97,21 +101,30 @@ sub pxml_print_fragment_fast ($ $ ) {
 		    pxml_print_fragment_fast ($body, $fh);
 		    print $fh "</$n>" or die $!;
 		}
-	    } elsif (pairP $v) {
-		my $a;
+	    } elsif ($ref eq "Pair") {
+	      PAIR:
+		#my $a;
 		($a,$v)= $v->carcdr;
 		pxml_print_fragment_fast ($a, $fh);
 		#pxml_print_fragment_fast (cdr $v, $fh);
 		redo LP;
-	    } elsif (promiseP $v) {
+	    } elsif ($ref eq "Chj::FP2::Lazy::Promise"
+		     or
+		     $ref eq "Chj::FP2::Lazy::PromiseLight") {
+	      PROMISE:
 		#pxml_print_fragment_fast (Force($v), $fh);
 		$v= Force($v,1);
 		redo LP;
 	    } else {
-		if (ref ($v) eq "ARRAY") {
+		if ($ref eq "ARRAY") {
 		    pxml_print_fragment_fast ($_, $fh)
 			for (@$v);
 		} else {
+		    # slow fallback...  again, see above **NOTE** re
+		    # evil.
+		    goto PXML if (UNIVERSAL::isa($v, "Chj::PXML"));
+		    goto PAIR if pairP $v;
+		    goto PROMISE if promiseP $v;
 		    die "unexpected type of reference: ".(perhaps_dump $v);
 		}
 	    }
