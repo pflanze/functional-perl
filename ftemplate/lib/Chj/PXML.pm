@@ -54,4 +54,19 @@ sub set_body {
     bless [ $$s[0], $$s[1], $_[0] ], ref $s
 }
 
+
+# XML does not distinguish between void elements and non-void ones in
+# its syntactical representation; whether an element is printed in
+# self-closing representation is orthogonal and can rely simply on
+# whether the content of the particular element ('at runtime') is
+# empty.
+
+sub require_printing_nonvoid_elements_nonselfreferential  {
+    0
+}
+
+#sub void_element_h {
+#    undef
+#}
+
 1

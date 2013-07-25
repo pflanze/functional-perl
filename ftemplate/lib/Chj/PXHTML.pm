@@ -144,6 +144,14 @@ our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 {
     package Chj::PXML::PXHTML;
     our @ISA= "Chj::PXML";
+    # serialize to HTML5 compatible representation:
+    sub require_printing_nonvoid_elements_nonselfreferential  {
+	1
+    }
+    use Chj::PHTML5 '$html5_void_element_h';
+    sub void_element_h {
+	$html5_void_element_h
+    }
 }
 
 

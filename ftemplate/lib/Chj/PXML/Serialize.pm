@@ -66,9 +66,9 @@ sub content_escape {
     $str
 }
 
-sub pxml_print_fragment_fast ($ $ );
-sub pxml_print_fragment_fast ($ $ ) {
-    my ($v,$fh)=@_;
+sub _pxml_print_fragment_fast {
+    @_==4 or die;
+    my ($v,$fh,$html5compat,$void_element_h)=@_;
   LP: {
 	## **NOTE**: this has seen some evil optimizations; before
 	## working on the code, please undo them first by using git
@@ -85,42 +85,64 @@ sub pxml_print_fragment_fast ($ $ ) {
 		    }
 		}
 		my $body= $v->body;
-		if (# fast path
-		    not @$body
-		    or
-		    (@$body==1 and
-		     (not defined $$body[0]
-		      or
-		      (ref($$body[0]) eq "ARRAY" and not @{$$body[0]})
-		      or
-		      $$body[0] eq ""))
-		    #or
-		    # slow path
-		    #nullP(Force(stream_mixed_flatten ($body)))
-		   ) {
+		
+		my $looksempty=
+		  # fast path
+		  (not @$body
+		   or
+		   (@$body==1 and
+		    (not defined $$body[0]
+		     or
+		     (ref($$body[0]) eq "ARRAY" and not @{$$body[0]})
+		     or
+		     $$body[0] eq "")));
+
+		my $selfreferential;
+		if ($html5compat) {
+		    if ($$void_element_h{$n}) {
+			if ($looksempty) {
+			    $selfreferential=1;
+			} else {
+			    my $isempty=  # slow path
+			      nullP(Force(stream_mixed_flatten ($body)));
+			    $selfreferential = $isempty;
+			    warn "html5 compatible serialization requested "
+			      ."but got void element '$v' that is not empty"
+				if not $isempty;
+			}
+		    } else {
+			$selfreferential=0;
+		    }
+		} else {
+		    $selfreferential= $looksempty;
+		}
+		if ($selfreferential) {
 		    print $fh "/>" or die $!;
 		} else {
 		    print $fh ">" or die $!;
-		    pxml_print_fragment_fast ($body, $fh);
+		    _pxml_print_fragment_fast ($body, $fh,
+					       $html5compat, $void_element_h);
 		    print $fh "</$n>" or die $!;
 		}
 	    } elsif ($ref eq "Pair") {
 	      PAIR:
 		#my $a;
 		($a,$v)= $v->carcdr;
-		pxml_print_fragment_fast ($a, $fh);
-		#pxml_print_fragment_fast (cdr $v, $fh);
+		_pxml_print_fragment_fast ($a, $fh,
+					   $html5compat, $void_element_h);
+		#_pxml_print_fragment_fast (cdr $v, $fh);
 		redo LP;
 	    } elsif ($ref eq "Chj::FP2::Lazy::Promise"
 		     or
 		     $ref eq "Chj::FP2::Lazy::PromiseLight") {
 	      PROMISE:
-		#pxml_print_fragment_fast (Force($v), $fh);
+		#_pxml_print_fragment_fast (Force($v), $fh,
+		#                           $html5compat, $void_element_h);
 		$v= Force($v,1);
 		redo LP;
 	    } else {
 		if ($ref eq "ARRAY") {
-		    pxml_print_fragment_fast ($_, $fh)
+		    _pxml_print_fragment_fast ($_, $fh, $html5compat, $void_element_h)
 			for (@$v);
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
@@ -137,6 +159,37 @@ sub pxml_print_fragment_fast ($ $ ) {
 	    #print $fh content_escape($v) or die $!;
 	    $v=~ s/([&<>])/$content_escape{$1}/sg;
 	    print $fh $v or die $!;
+	}
+    }
+}
+
+sub pxml_print_fragment_fast ($ $ );
+sub pxml_print_fragment_fast ($ $ ) {
+    my ($v,$fh)=@_;
+    my $no_element= sub {
+	_pxml_print_fragment_fast($v,$fh,undef,undef);
+    };
+    my $with_first_element= sub {
+	my ($firstel)=@_;
+	my $html5compat= $firstel->
+	  require_printing_nonvoid_elements_nonselfreferential;
+	_pxml_print_fragment_fast($v,
+				  $fh,
+				  $html5compat,
+				  ($html5compat and $firstel->void_element_h));
+    };
+    if (UNIVERSAL::isa($v, "Chj::PXHTML")) {
+	&$with_first_element($v)
+    } else {
+	if (ref $v) {
+	    my $s= Force(stream_mixed_flatten ($v));
+	    if ($s) {
+		&$with_first_element(car $s);
+	    } else {
+		&$no_element
+	    }
+	} else {
+	    &$no_element
 	}
     }
 }
