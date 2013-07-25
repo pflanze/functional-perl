@@ -49,6 +49,9 @@ my %attribute_escape=
      '"'=> '&quot;');
 sub attribute_escape {
     my ($str)=@_;
+    return "" unless defined $str;
+    # XX or should attributes with undefined value be dropped? (Or,
+    # OTOH, should list processing be done?)
     $str=~ s/([&<>"])/$attribute_escape{$1}/sg;
     $str
 }
