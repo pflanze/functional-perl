@@ -92,6 +92,12 @@ sub cdr ($) {
     }
 }
 
+sub Pair::carcdr {
+    @{$_[0]}
+}
+## should I go back into OO mode after all....?
+
+
 sub list {
     my $res;
     for (my $i= $#_; $i>=0; $i--) {
