@@ -70,10 +70,11 @@ sub pxml_print_fragment_fast ($ $ ) {
 	if (ref $v) {
 	    if (UNIVERSAL::isa($v, "Chj::PXML")) {
 		my $n= $v->name;
-		xprint $fh,"<$n";
+		print $fh "<$n" or die $!;
 		if (my $attrs= $v->maybe_attributes) {
 		    for my $k (sort keys %$attrs) {
-			xprint $fh, " $k=\"", attribute_escape($$attrs{$k}),"\"";
+			print $fh " $k=\"", attribute_escape($$attrs{$k}),"\""
+			  or die $!;
 		    }
 		}
 		my $body= $v->body;
@@ -90,16 +91,17 @@ sub pxml_print_fragment_fast ($ $ ) {
 		    # slow path
 		    #nullP(Force(stream_mixed_flatten ($body)))
 		   ) {
-		    xprint $fh,"/>";
+		    print $fh "/>" or die $!;
 		} else {
-		    xprint $fh,">";
+		    print $fh ">" or die $!;
 		    pxml_print_fragment_fast ($body, $fh);
-		    xprint $fh,"</$n>";
+		    print $fh "</$n>" or die $!;
 		}
 	    } elsif (pairP $v) {
-		pxml_print_fragment_fast (car $v, $fh);
+		my $a;
+		($a,$v)= $v->carcdr;
+		pxml_print_fragment_fast ($a, $fh);
 		#pxml_print_fragment_fast (cdr $v, $fh);
-		$v= cdr $v;
 		redo LP;
 	    } elsif (promiseP $v) {
 		#pxml_print_fragment_fast (Force($v), $fh);
@@ -116,7 +118,9 @@ sub pxml_print_fragment_fast ($ $ ) {
 	} elsif (nullP $v) {
 	    # end of linked list, nothing
 	} else {
-	    xprint $fh,content_escape($v)
+	    #print $fh content_escape($v) or die $!;
+	    $v=~ s/([&<>])/$content_escape{$1}/sg;
+	    print $fh $v or die $!;
 	}
     }
 }
