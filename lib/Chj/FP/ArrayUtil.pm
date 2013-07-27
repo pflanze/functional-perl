@@ -23,6 +23,7 @@ package Chj::FP::ArrayUtil;
 	      array_hashing_uniq
 	      array_zip2
 	      array_fold
+	      array_join
 	      array_every
 	      min
 	      max);
@@ -69,6 +70,16 @@ sub array_fold ($$$) {
     $start
 }
 
+sub array_join ($$) {
+    my ($ary,$val)=@_;
+    my @res;
+    for (@$ary) {
+	push @res, $_, $val
+    }
+    pop @res;
+    \@res
+}
+
 sub array_every ($$) {
     my ($fn,$ary)=@_;
     for (@$ary) {
@@ -102,3 +113,13 @@ calc> :l array_every sub { ($_[0] % 2) == 0 }, [ 2, 4, -6 ]
 1
 calc> :l array_every sub { ($_[0] % 2) == 0 }, [ ]
 1
+calc> :d array_join [1,2,3],"a"
+$VAR1 = [
+          1,
+          'a',
+          2,
+          'a',
+          3
+        ];
+calc> :d array_join [],"a"
+$VAR1 = [];
