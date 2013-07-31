@@ -69,9 +69,16 @@ sub eval_test ($$) {
     my $resstr= Dumper $res;
 
     if ($gotstr eq $resstr) {
+      succ:
 	print "ok\n";
 	$$stat{success}++
     } else {
+	# second chance: compare ignoring utf8 flags on strings
+	local $Data::Dumper::Useperl = 1;
+	$gotstr= Dumper $got;
+	$resstr= Dumper $res;
+	goto succ if ($gotstr eq $resstr);
+
 	print "FAIL at $filename line $line:\n";
 	print "       got: $gotstr";
 	print "  expected: $resstr";
