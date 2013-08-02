@@ -774,21 +774,23 @@ sub xsendfile_to {
 	};
 	if ($@) { $use_sendfile=0; } else { $use_sendfile=1 };
     }
-    ## offset is unclear: from current position (skip like), or begin of file? (whence is missing)
+    ## offset is unclear: from current position (skip like), or begin
+    ## of file? (whence is missing)
     $offset ||= 0;
-#    $offset and croak "xsendfile_to: offset argument not yet supported"; # es nützt nix wenn im ziel file schon was steht, auch wenn rewind gemacht wird, scheint wirklich bug in lib zu sein. 29. Okt 1999  SendFile.xs
-    $count= 2**31-1 unless defined $count; ## well...
+    $count= 2**31-1
+      unless defined $count; ## well...
 
-    if (0&&$use_sendfile) {#{Sat Jun 16 21:09:11 2007}: seems buggy, perhaps with big files (stream-cut script)
+    if (0&&$use_sendfile) {
+	# seems buggy, perhaps with big files (stream-cut script)
 	undef $!;
-	#my $oldoffset=$offset;
-	# Das Problem ist dass wenn ich count nicht angegeben bekomme, wie lange soll ich dann?
 	IO::SendFile::sendfile(CORE::fileno $out, fileno $self,
 			       \ $offset,
-			       $count);# or die "xsendfile_to from ".($self->quotedname).": $!";
+			       $count);
+	# or die "xsendfile_to from ".($self->quotedname).": $!";
 	if ($!) {
 	    if ($!==EINVAL) {
-		warn "xsendfile_to: got EINVAL, trying non-sendfile version instead" if $DEBUG;
+		warn "xsendfile_to: got EINVAL, trying non-sendfile version instead"
+		  if $DEBUG;
 		#copy from below!
 		my $buf;
 		while($self->xsysread($buf,$sendfile_bufsize)) {
@@ -800,9 +802,14 @@ sub xsendfile_to {
 		croak "xsendfile_to from ".$self->quotedname.": $!" if $!;
 	    }
 	}
-	#warn "offset=$offset now";  no need to loop?, even alarm signals won't interrupt the sendfile call, surprisingly.
-	## should change position so that it's the same with pureperl and C implementation.
+	#warn "offset=$offset now"; no need to loop?, even alarm
+	#signals won't interrupt the sendfile call, surprisingly.
+	
+	## should change position so that it's the same with pureperl
+	## and C implementation.
     } else {
+	croak "offset not implemented" if $offset;
+
 	# pure perl:
 	my $buf;
 	if (defined $count) {
@@ -835,8 +842,6 @@ sub xsendfile_to {
 # xsendfile_to should have been called xsyssendfile_to but now it's
 # probably too late right? and I'm resorting to this name:
 
-#sub xSendfile_to {
-#ah, better idea:
 sub xprintfile_to {
     my $self=shift;
     (@_>=1 and @_<=2) or croak "xprintfile_to needs 1-3 arguments";
