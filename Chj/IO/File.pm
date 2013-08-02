@@ -85,6 +85,11 @@ read. Returns true if buf was read completely, false on EOF upon start
 of message. EOF after having read part but not all of buf results in
 an exception.
 
+=item xsyswritecompletely( buf [,length [,offset]])
+
+Like xsyswrite, but resumes writing upon interrupted system calls
+until everything is written. Does not return anything.
+
 =item content
 
 =item xcontent
@@ -387,6 +392,7 @@ sub xsysread { ## dito. (macht buffering einen sinn? oder besser der gefahren au
     $rv
 }
 
+# similar to xsyswritecompletely
 sub xsysreadcompletely {
     my $self=shift;
     my $len= $_[1];
@@ -451,6 +457,42 @@ sub xsyswrite {
     else {		croak "xsyswrite: wrong number of arguments" };
     defined $rv or croak "xsyswrite: from ".($self->quotedname).": $!";
     $rv
+}
+
+# similar to xsysreadcompletely
+sub xsyswritecompletely {
+    my $self=shift;
+    if (not (@_>=1 and @_<=3)) {
+	croak "xsyswritecompletely: wrong number of arguments"
+    }
+    my (undef,$maybe_len,$maybe_offset)=@_;
+    #   ^$buf
+    my $len= defined $maybe_len ? $maybe_len : length($_[0]);
+    my $offset= $maybe_offset||0;
+
+    # partial COPYPASTE from xsysreadcompletely
+    my $restlen= $len;
+    my $restoffset= $offset;
+  LP: {
+	my $rv= CORE::syswrite $self,$_[0],$restlen,$restoffset;
+	if (defined $rv) {
+	    $restlen -= $rv;
+	    $restoffset += $rv;
+	    die "bug" if $restlen < 0;
+	    if ($restlen > 0) {
+		redo LP;
+	    }
+	} else {
+	    my $errno= $! + 0;
+	    require Errno;
+	    if ($errno == Errno::EINTR()) {
+		warn "interrupted system call, redo"; #
+		redo LP;
+	    } else {
+		croak "xsyswritecompletely to ".($self->quotedname).": $!";
+	    }
+	}
+    }
 }
 
 #*OVERLOAD={}; GOPF und das ist nich mehr offenbar.?.
@@ -715,6 +757,9 @@ sub xsysprint { # (returns the number of chars written = length of all inputs)
     }
     $pos
 }
+
+# xsysprintcompletely would be complicated; use xsyswritecompletely
+# instead
 
 our $use_sendfile; # may be set by user if he likes.
 our $sendfile_bufsize= 4096*8; # is this somehow relevant for readahead?
