@@ -794,7 +794,7 @@ sub xsendfile_to {
 		#copy from below!
 		my $buf;
 		while($self->xsysread($buf,$sendfile_bufsize)) {
-		    $out->xsysprint($buf);
+		    $out->xsyswritecompletely($buf);
 		    #warn "wrote a piece" if $DEBUG;
 		}
 		#/copy
@@ -825,12 +825,12 @@ sub xsendfile_to {
 		});
 		last unless $cnt;
 		$tot+= $cnt;
-		$out->xsysprint($buf);
+		$out->xsyswritecompletely($buf);
 		#warn "wrote a piece" if $DEBUG;
 	    }
 	} else {
 	    while($self->xsysread($buf,$sendfile_bufsize)) {
-		$out->xsysprint($buf);
+		$out->xsyswritecompletely($buf);
 		#warn "wrote a piece" if $DEBUG;
 	    }
 	}
