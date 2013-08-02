@@ -77,6 +77,14 @@ Read a chunk of max length chars/bytes and return it. Return undef on end of fil
 
 # Yeah try it. Only string exception so far
 
+=item xsysreadcompletely( buf, length [,offset]) -> bool
+
+Like xsysread, but resumes reading upon intterrupted system calls and
+partial reads from pipes until the required length has been
+read. Returns true if buf was read completely, false on EOF upon start
+of message. EOF after having read part but not all of buf results in
+an exception.
+
 =item content
 
 =item xcontent
@@ -377,6 +385,53 @@ sub xsysread { ## dito. (macht buffering einen sinn? oder besser der gefahren au
     else {		croak "xsysread: wrong number of arguments" };
     defined $rv or croak "xsysread from ".($self->quotedname).": $!";
     $rv
+}
+
+sub xsysreadcompletely {
+    my $self=shift;
+    my $len= $_[1];
+    my $offset;
+    if (@_==2) {
+	$offset= 0;
+    } elsif (@_==3) {
+	$offset= $_[2];
+    } else {
+	croak "xsysreadcompletely: wrong number of arguments"
+    }
+    my $restlen= $len;
+    my $restoffset= $offset;
+  LP: {
+	my $rv= CORE::sysread $self,$_[0],$restlen,$restoffset;
+	if (defined $rv) {
+	    $restlen -= $rv;
+	    $restoffset += $rv;
+	    die "bug" if $restlen < 0;
+	    if ($restlen > 0) {
+		if ($rv==0) {
+		    if ($restlen == $len) {
+			# nothing was read
+			0
+		    } else {
+			croak "xsysreadcompletely: got EOF mid message";
+		    }
+		} else {
+		    redo LP;
+		}
+	    } else {
+		1
+		  # or $len? but that might actually be 0
+	    }
+	} else {
+	    my $errno= $! + 0;
+	    require Errno;
+	    if ($errno == Errno::EINTR()) {
+		#warn "interrupted system call, redo"; # yep happens
+		redo LP;
+	    } else {
+		croak "xsysreadcompletely from ".($self->quotedname).": $!";
+	    }
+	}
+    }
 }
 
 sub syswrite {
