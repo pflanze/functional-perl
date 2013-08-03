@@ -32,6 +32,7 @@ package Chj::FP::ArrayUtil;
 
 use strict;
 use Carp;
+use Chj::TEST;
 
 sub array_xone ($) {
     my ($a)=@_;
@@ -74,6 +75,10 @@ sub array_map {
     \@res
 }
 
+TEST{ array_map sub { $_[0]+1}, [1,2,20] } [ 2,3,21 ];
+TEST{ array_map sub { $_[0]+$_[1]}, [1,2,20], [-1,4] } [ 0,6 ];
+
+
 sub array_fold ($$$) {
     my ($fn,$start,$ary)=@_;
     for (@$ary) {
@@ -92,6 +97,17 @@ sub array_join ($$) {
     \@res
 }
 
+TEST{ array_join [1,2,3],"a" }
+        [
+          1,
+          'a',
+          2,
+          'a',
+          3
+        ];
+TEST{ array_join [],"a" } [];
+
+
 sub array_every ($$) {
     my ($fn,$ary)=@_;
     for (@$ary) {
@@ -99,6 +115,11 @@ sub array_every ($$) {
     }
     1
 }
+
+TEST{ array_every sub { ($_[0] % 2) == 0 }, [ 1, 2, 3 ] } 0;
+TEST{ array_every sub { ($_[0] % 2) == 0 }, [ 2, 4, -6 ] } 1;
+TEST{ array_every sub { ($_[0] % 2) == 0 }, [ ] } 1;
+
 
 sub min {
     my $x=shift;
@@ -117,21 +138,3 @@ sub max {
 }
 
 1
-
-__END__
-calc> :l array_every sub { ($_[0] % 2) == 0 }, [ 1, 2, 3 ]
-0
-calc> :l array_every sub { ($_[0] % 2) == 0 }, [ 2, 4, -6 ]
-1
-calc> :l array_every sub { ($_[0] % 2) == 0 }, [ ]
-1
-calc> :d array_join [1,2,3],"a"
-$VAR1 = [
-          1,
-          'a',
-          2,
-          'a',
-          3
-        ];
-calc> :d array_join [],"a"
-$VAR1 = [];
