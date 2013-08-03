@@ -411,92 +411,96 @@ sub ldie {
 }
 
 
-# main> :d list_length string2list "ao"
-# $VAR1 = 2;
-# main> :d list2string string2list "Hello"
-# $VAR1 = 'Hello';
-# main> :d list2string list_reverse string2list "Hello"
-# $VAR1 = 'olleH';
-# main> :d list2string list_reverse (fst rtake_while \&char_alphanumericP, string2list "Hello World")
-# $VAR1 = 'Hello';
+use Chj::TEST;
+use Chj::FP2::Values 'fst';
+use Chj::FP2::Char 'char_alphanumericP';
+
+TEST{ list_length string2list "ao" }
+  2;
+TEST{ list2string string2list "Hello" }
+  'Hello';
+TEST{ list2string list_reverse string2list "Hello" }
+  'olleH';
+TEST{ list2string list_reverse (fst rtake_while \&char_alphanumericP, string2list "Hello World") }
+  'Hello';
 
 # main> $|=1; write_sexpr cons("123",cons("4",undef));
 # ("123" "4")1
-# main> :d write_sexpr (string2list "Hello \"World\"")
+#TEST{ write_sexpr (string2list "Hello \"World\"")
 # ("H" "e" "l" "l" "o" " " "\"" "W" "o" "r" "l" "d" "\"")
-# main> :d write_sexpr (cons 1, 2)
+#TEST{ write_sexpr (cons 1, 2)
 # ("1" . "2")
-# main> :d write_sexpr cons(1, cons(cons(2, undef), undef))
+#TEST{ write_sexpr cons(1, cons(cons(2, undef), undef))
 # ("1" ("2"))
 
-# main> :l every \&char_alphanumericP, string2list "Hello"
-# 1
-# main> :l every \&char_alphanumericP, string2list "Hello "
-# 
-# main> :l list2perlstring string2list  "Hello"
-# 'Hello'
-# main> :l list2perlstring string2list  "Hello's"
-# 'Hello\'s'
+TEST{ every \&char_alphanumericP, string2list "Hello" }
+  1;
+TEST{ every \&char_alphanumericP, string2list "Hello " }
+  '';
+TEST{ list2perlstring string2list  "Hello" }
+  "'Hello'";
+TEST{ list2perlstring string2list  "Hello's" }
+  q{'Hello\'s'};
 
-# main> :d [list2values string2list "abc"]
-# $VAR1 = [
-#           'a',
-#           'b',
-#           'c'
-#         ];
+TEST{ [list2values string2list "abc"] }
+  [
+   'a',
+   'b',
+   'c'
+  ];
 
-# calc> :d list2string array2list [1,2,3]
-# $VAR1 = '123';
-# calc> :d list2array mixed_flatten [1,2,3]
-# $VAR1 = [
-#           1,
-#           2,
-#           3
-#         ];
-# calc> :d list2array mixed_flatten [1,2,[3,4]]
-# $VAR1 = [
-#           1,
-#           2,
-#           3,
-#           4
-#         ];
-# calc> :d list2array mixed_flatten [1,cons(2, [ string2list "ab" ,4])]
-# $VAR1 = [
-#           1,
-#           2,
-#           'a',
-#           'b',
-#           4
-#         ];
-# calc> :d list2string mixed_flatten [string2list "abc", string2list "def", "ghi"]
-# $VAR1 = 'abcdefghi';  # only works thanks to perl chars and strings being the same datatype
+TEST{ list2string array2list [1,2,3] }
+  '123';
+TEST{ list2array mixed_flatten [1,2,3] }
+  [
+   1,
+   2,
+   3
+  ];
+TEST{ list2array mixed_flatten [1,2,[3,4]] }
+  [
+   1,
+   2,
+   3,
+   4
+  ];
+TEST{ list2array mixed_flatten [1,cons(2, [ string2list "ab" ,4])] }
+  [
+   1,
+   2,
+   'a',
+   'b',
+   4
+  ];
+TEST{ list2string mixed_flatten [string2list "abc", string2list "def", "ghi"] }
+  'abcdefghi';  # only works thanks to perl chars and strings being the same datatype
 
-# calc> :d $|=1; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { 1+1 }, undef)}, undef, \&DelayLight)
+#TEST{ $|=1; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { 1+1 }, undef)}, undef, \&DelayLight) }
 # ("2")$VAR1 = 1;
-# calc> :d $|=1; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,Delay {2+1}] }, undef)}, undef, \&DelayLight)
+#TEST{ $|=1; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,Delay {2+1}] }, undef)}, undef, \&DelayLight)
 # ("2" "3")$VAR1 = 1;
 
-# calc> :d $|=1; sub countdown { my ($i)=@_; if ($i) { DelayLight {cons ($i, countdown($i-1))}} else {undef} }; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,countdown 10] }, undef)}, undef, \&DelayLight)
+#TEST{ $|=1; sub countdown { my ($i)=@_; if ($i) { DelayLight {cons ($i, countdown($i-1))}} else {undef} }; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,countdown 10] }, undef)}, undef, \&DelayLight)
 # ("2" ("10" "9" "8" "7" "6" "5" "4" "3" "2" "1"))$VAR1 = 1;
 
-# calc> :d list2array  Chj::FP2::List::list__array_fold_right \&cons, undef, [1,2,3]
-# $VAR1 = [
-#           1,
-#           2,
-#           3
-#         ];
-# calc> :d $|=1; write_sexpr  (mixed_flatten [DelayLight { [3,[9,10]]}], undef, \&DelayLight )
+TEST{ list2array  Chj::FP2::List::list__array_fold_right \&cons, undef, [1,2,3] }
+  [
+   1,
+   2,
+   3
+  ];
+#TEST{ $|=1; write_sexpr  (mixed_flatten [DelayLight { [3,[9,10]]}], undef, \&DelayLight )
 # ("3" "9" "10")$VAR1 = 1;
 # calc> :l $|=1; write_sexpr   (mixed_flatten [1,2, DelayLight { [3,9]}], undef, \&DelayLight )
 # ("1" "2" "3" "9")1
 
-# main> :d list2array  list_append (array2list (["a","b"]), array2list([1,2]))
-# $VAR1 = [
-#           'a',
-#           'b',
-#           1,
-#           2
-#         ];
+TEST{ list2array  list_append (array2list (["a","b"]), array2list([1,2])) }
+  [
+   'a',
+   'b',
+   1,
+   2
+  ];
 
 
 1
