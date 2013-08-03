@@ -34,7 +34,8 @@ package Chj::FP2::List;
 	      drop_while rtake_while take_while
 	      list_append
 	      list_zip2
-	      list_every charlistP ldie
+	      list_every list_any
+	      charlistP ldie
 	      list__array_fold_right);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -42,6 +43,7 @@ use strict;
 
 use Chj::FP2::Lazy;
 use Chj::xIO;
+use Chj::TEST;
 
 
 sub cons ($ $) {
@@ -319,21 +321,48 @@ sub take_while ($ $) {
 
 sub list_every ($ $) {
     my ($pred,$l)=@_;
-  EVERY: {
+  LP: {
 	if (pairP $l) {
 	    (&$pred (car $l)) and do {
 		$l= cdr $l;
-		redo EVERY;
+		redo LP;
 	    }
 	} elsif (nullP $l) {
 	    1
 	} else {
 	    # improper list
 	    # (XX check value instead? But that would be improper_every.)
-	    0
+	    #0
+	    die "improper list"
 	}
     }
 }
+
+sub list_any ($ $) {
+    my ($pred,$l)=@_;
+  LP: {
+	if (pairP $l) {
+	    (&$pred (car $l)) or do {
+		$l= cdr $l;
+		redo LP;
+	    }
+	} elsif (nullP $l) {
+	    0
+	} else {
+	    die "improper list"
+	}
+    }
+}
+
+TEST{ list_any sub { $_[0] % 2 }, array2list [2,4,8] }
+  0;
+TEST{ list_any sub { $_[0] % 2 }, array2list [] }
+  0;
+TEST{ list_any sub { $_[0] % 2 }, array2list [2,5,8]}
+  1;
+TEST{ list_any sub { $_[0] % 2 }, array2list [7] }
+  1;
+
 
 
 # Turn a mix of (nested) arrays and lists into a flat list.
@@ -411,7 +440,6 @@ sub ldie {
 }
 
 
-use Chj::TEST;
 use Chj::FP2::Values 'fst';
 use Chj::FP2::Char 'char_alphanumericP';
 
