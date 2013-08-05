@@ -77,16 +77,18 @@ sub read {
     my $self=shift;
     readdir $self
 }
-#sub xread {
-#    croak "xread not implemented - we cannot (generally) detect errors in readdir on unix";
-#}
-
 
 sub xread {
     my $self=shift;
-    $!=0; # NEEDED, CORE::readdir will not set it to 0. Thus maybe it will not even set any error? Hm, well, at least on end of dir it sets it to Bad file descriptor.
+    $!=0;
+    # ^ Needed, CORE::readdir will not set it to 0. Thus maybe it will
+    # not even set any error? Hm, well, at least on end of dir it sets
+    # it to Bad file descriptor.
     if (wantarray) {
-	my $res=[ CORE::readdir $self ];  # we *hope* that [ ] will never copy until the end as opposed to @res= which *might* (well probably (or I think IIRC I've even tested and confirmed it) does) copy all elements.
+	my $res=[ CORE::readdir $self ];
+	# we *hope* that [ ] will never copy until the end as opposed
+	# to @res= which *might* (well probably (or I think IIRC I've
+	# even tested and confirmed it) does) copy all elements.
 	if ($!){
 	    croak "xread: $!";
 	}
@@ -112,26 +114,6 @@ sub nread { # ignore . and .. entries
 	undef
     }
 }
-# sub xnread {
-#     my $self=shift;
-#     $!=0; # sigh, needed
-#     if (wantarray) {
-# 	my $res= [ grep { $_ ne '.' and $_ ne '..' } readdir $self ];
-# 	if ($!){
-# 	    croak "xnread: $!";
-# 	}
-# 	@$res
-#     } else {
-# 	while (defined (my $item=readdir $self)) {
-# 	    return $item unless $item eq '.' or $item eq '..';
-# 	}
-# 	if ($! and $! != EBADF){ # btw how should we trap a real EBADF ? (at least that should never happen if the directory has really been opened once; EBADF is a user error, reading from an unopened fd, right?)
-# 	    croak "xnread: $!";
-# 	}
-# 	undef
-#     }
-# }
-# cj 10.7.04 fuuuck auch dies geht nimmer (auf perl 5.6.1! ethlife) in manchen fällen. spurious xnread: Datei oder Verzeichnis nicht gefunden at /usr/local/lib/perl/5.6.1/Chj/FileStore/MIndex/NonsortedIterator.pm line 98
 
 sub xnread {
     my $self=shift;
