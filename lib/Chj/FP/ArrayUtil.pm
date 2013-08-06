@@ -26,6 +26,7 @@ package Chj::FP::ArrayUtil;
 	      array_fold
 	      array_join
 	      array_every
+	      array_any
 	      min
 	      max);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -119,6 +120,23 @@ sub array_every ($$) {
 TEST{ array_every sub { ($_[0] % 2) == 0 }, [ 1, 2, 3 ] } 0;
 TEST{ array_every sub { ($_[0] % 2) == 0 }, [ 2, 4, -6 ] } 1;
 TEST{ array_every sub { ($_[0] % 2) == 0 }, [ ] } 1;
+
+sub array_any ($$) {
+    my ($fn,$ary)=@_;
+    for (@$ary) {
+	return 1 if &$fn($_);
+    }
+    0
+}
+
+TEST{ array_any sub { $_[0] % 2 }, [2,4,8] }
+  0;
+TEST{ array_any sub { $_[0] % 2 }, [] }
+  0;
+TEST{ array_any sub { $_[0] % 2 }, [2,5,8]}
+  1;
+TEST{ array_any sub { $_[0] % 2 }, [7] }
+  1;
 
 
 sub min {
