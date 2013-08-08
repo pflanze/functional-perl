@@ -27,6 +27,7 @@ package Chj::FP::ArrayUtil;
 	      array_join
 	      array_every
 	      array_any
+	      array2coll
 	      min
 	      max);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -154,5 +155,18 @@ sub max {
     }
     $x
 }
+
+
+# turn array into a "collection" (hash mapping stringification to
+# value itself).
+
+sub array2coll ($) {
+    +{
+      map {
+	  $_=> $_
+      } @{$_[0]}
+     }
+}
+
 
 1
