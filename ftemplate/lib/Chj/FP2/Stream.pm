@@ -45,6 +45,7 @@ package Chj::FP2::Stream;
 	      stream_zip2
 	      stream2array
 	      stream_mixed_flatten
+	      stream_any
 	 );
 @EXPORT_OK=qw(F);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -52,11 +53,10 @@ package Chj::FP2::Stream;
 use strict;
 
 use Chj::FP2::Lazy;
-
 #use Chj::FP2::Pair; ?
 use Chj::FP2::List ":all";
-
 use Scalar::Util 'weaken';
+use Chj::TEST;
 
 sub stream_iota {
     my ($maybe_n,$maybe_start)= @_;
@@ -260,6 +260,33 @@ sub stream_mixed_flatten ($;$$) {
     my ($v,$tail,$maybe_delay)=@_;
     mixed_flatten ($v,$tail, $maybe_delay||\&DelayLight)
 }
+
+sub stream_any ($ $);
+sub stream_any ($ $) {
+    my ($pred,$l)=@_;
+    weaken $_[1];
+    $l= Force $l;
+    if (pairP $l) {
+	(&$pred (car $l)) or do{
+	    my $r= cdr $l;
+	    stream_any($pred,$r)
+	}
+    } elsif (nullP $l) {
+	0
+    } else {
+	die "improper list"
+    }
+}
+
+TEST{ stream_any sub { $_[0] % 2 }, array2stream [2,4,8] }
+  0;
+TEST{ stream_any sub { $_[0] % 2 }, array2stream [] }
+  0;
+TEST{ stream_any sub { $_[0] % 2 }, array2stream [2,5,8]}
+  1;
+TEST{ stream_any sub { $_[0] % 2 }, array2stream [7] }
+  1;
+
 
 
 # calc> :d stream_for_each sub { print @_,"\n"}, stream_map sub {my $v=shift; $v*$v},  array2stream [10,11,13]
