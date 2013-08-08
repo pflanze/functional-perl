@@ -297,27 +297,28 @@ TEST{ stream_any sub { $_[0] % 2 }, array2stream [7] }
 # write_sexpr( stream_take( stream_iota (1000000000), 2))
 # ->  ("0" "1")
 
-# calc> :d list2array F stream_zip2 stream_map (sub{$_[0]+10},stream_iota (5)), stream_iota (3)
-# $VAR1 = [
-#           [
-#             10,
-#             0
-#           ],
-#           [
-#             11,
-#             1
-#           ],
-#           [
-#             12,
-#             2
-#           ]
-#         ];
+TEST{ list2array F stream_zip2 stream_map (sub{$_[0]+10},stream_iota (5)),
+	stream_iota (3) }
+  [
+   [
+    10,
+    0
+   ],
+   [
+    11,
+    1
+   ],
+   [
+    12,
+    2
+   ]
+  ];
 
-# calc> :d stream2array  F stream_take_while sub { my ($x)=@_; $x < 2 }, stream_iota 
-# $VAR1 = [
-#           0,
-#           1
-#         ];
+TEST{ stream2array stream_take_while sub { my ($x)=@_; $x < 2 }, stream_iota }
+  [
+   0,
+   1
+  ];
 
 
 1
