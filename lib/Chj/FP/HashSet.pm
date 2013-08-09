@@ -20,6 +20,9 @@ Chj::FP::HashSet - set operations for hash tables
  hashset2array hashset_difference($A,$B) # -> ["b"]
  hashset_subset($B,$A) # -> false
  hashset_subset(+{b=>1},$A) # -> true
+ hashset_size($A) # -> 3
+ hashset_empty($A) # -> false
+ hashset_empty(+{}) # -> true
 
 =head1 DESCRIPTION
 
@@ -39,7 +42,10 @@ package Chj::FP::HashSet;
 	   hashset_union
 	   hashset_intersection
 	   hashset_difference
-	   hashset_subset);
+	   hashset_subset
+	   hashset_size
+	   hashset_empty
+	 );
 @EXPORT_OK=qw(hashset_add_hashset_d);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -97,6 +103,14 @@ sub hashset_subset ($ $) {
     1
 }
 
+sub hashset_size ($) {
+    scalar keys %{$_[0]}
+}
+
+sub hashset_empty ($) {
+    not keys %{$_[0]}
+}
+
 
 {
     use Chj::FP::ArrayUtil 'array2hashset';
@@ -111,6 +125,12 @@ sub hashset_subset ($ $) {
     TEST{ hashset_subset($B,$A) }
       0;
     TEST{ hashset_subset(+{b=>1},$A) }
+      1;
+    TEST{ hashset_size($A)}
+      3;
+    TEST{ hashset_empty($A)}
+      '';
+    TEST{ hashset_empty(+{})}
       1;
 }
 
