@@ -30,7 +30,7 @@ package Chj::FP2::List;
 @EXPORT_OK=qw(string2list list_length list_reverse
 	      list2string list2array rlist2array list2values write_sexpr
 	      array2list mixed_flatten
-	      list_map list_fold_right list2perlstring
+	      list_map list_mapn list_fold_right list2perlstring
 	      drop_while rtake_while take_while
 	      list_append
 	      list_zip2
@@ -256,6 +256,22 @@ sub list_map ($ $) {
     my ($fn,$l)=@_;
     $l and cons(&$fn(car $l), list_map ($fn,cdr $l))
 }
+
+# n-ary map
+sub list_mapn {
+    my $fn=shift;
+    for (@_) {
+	return undef unless defined $_
+    }
+    cons(&$fn(map {car $_} @_), list_mapn ($fn, map {cdr $_} @_))
+}
+
+TEST{ list2array list_mapn sub { [@_] }, array2list( [1,2,3]), string2list ("") }
+  [];
+TEST{ list2array list_mapn sub { [@_] }, array2list( [1,2,3]), string2list ("ab")}
+  [[1,'a'],
+   [2,'b']];
+
 
 sub list_fold_right ($ $ $);
 sub list_fold_right ($ $ $) {
