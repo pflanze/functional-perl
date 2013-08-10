@@ -24,6 +24,9 @@ Chj::FP::HashSet - set operations for hash tables
  hashset_empty($A) # -> false
  hashset_empty(+{}) # -> true
 
+ # a la diff tool:
+ hashset_diff($A,$B) # -> {b=>"-",d=>"+"}
+
 =head1 DESCRIPTION
 
 Hashsets are hash tables that are expected to have keys representing
@@ -45,6 +48,7 @@ package Chj::FP::HashSet;
 	   hashset_subset
 	   hashset_size
 	   hashset_empty
+	   hashset_diff
 	 );
 @EXPORT_OK=qw(hashset_add_hashset_d);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -112,6 +116,20 @@ sub hashset_empty ($) {
 }
 
 
+sub hashset_diff ($ $) {
+    my ($a,$b)=@_;
+    my %r;
+    for (keys %$a) {
+	$r{$_} = "-"
+	  unless exists $$b{$_};
+    }
+    for (keys %$b) {
+	$r{$_} = "+"
+	  unless exists $$a{$_};
+    }
+    \%r
+}
+
 {
     use Chj::FP::ArrayUtil 'array2hashset';
     my $A= array2hashset ["a","b","c"];
@@ -132,6 +150,8 @@ sub hashset_empty ($) {
       '';
     TEST{ hashset_empty(+{})}
       1;
+    TEST{ hashset_diff($A,$B) }
+      +{b=>"-",d=>"+"};
 }
 
 1
