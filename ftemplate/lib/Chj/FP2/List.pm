@@ -36,7 +36,7 @@ package Chj::FP2::List;
 	      list_zip2
 	      list_every list_any
 	      charlistP ldie
-	      list__array_fold_right);
+	      array_fold_right);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
@@ -118,7 +118,7 @@ sub string2list ($;$) {
     $tail
 }
 
-sub list__array_fold_right ($$$) {
+sub array_fold_right ($$$) {
     @_==3 or die;
     my ($fn,$tail,$a)=@_;
     my $i= @$a - 1;
@@ -131,7 +131,7 @@ sub list__array_fold_right ($$$) {
 
 sub array2list ($;$) {
     my ($a,$tail)=@_;
-    list__array_fold_right (\&cons, $tail, $a)
+    array_fold_right (\&cons, $tail, $a)
 }
 
 
@@ -419,7 +419,7 @@ sub mixed_flatten ($;$$) {
 		goto ($maybe_delay
 		      ? \&Chj::FP2::Stream::stream__array_fold_right
 		      #^ XX just expecting it to be loaded
-		      : \&list__array_fold_right);
+		      : \&array_fold_right);
 	    } else {
 		#warn "improper list: $v"; well that's part of the spec, man
 		cons ($v, $tail)
@@ -527,7 +527,7 @@ TEST{ list2string mixed_flatten [string2list "abc", string2list "def", "ghi"] }
 #TEST{ $|=1; sub countdown { my ($i)=@_; if ($i) { DelayLight {cons ($i, countdown($i-1))}} else {undef} }; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,countdown 10] }, undef)}, undef, \&DelayLight)
 # ("2" ("10" "9" "8" "7" "6" "5" "4" "3" "2" "1"))$VAR1 = 1;
 
-TEST{ list2array  Chj::FP2::List::list__array_fold_right \&cons, undef, [1,2,3] }
+TEST{ list2array  Chj::FP2::List::array_fold_right \&cons, undef, [1,2,3] }
   [
    1,
    2,
