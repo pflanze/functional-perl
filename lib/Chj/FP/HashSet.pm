@@ -41,7 +41,8 @@ keys.
 
 package Chj::FP::HashSet;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(hashset2array
+@EXPORT=qw(array2hashset
+	   hashset2array
 	   hashset_union
 	   hashset_intersection
 	   hashset_difference
@@ -55,6 +56,15 @@ package Chj::FP::HashSet;
 
 use strict;
 use Chj::TEST;
+
+sub array2hashset ($) {
+    +{
+      map {
+	  $_=> $_
+      } @{$_[0]}
+     }
+}
+
 
 sub hashset2array ($) {
     [
@@ -131,7 +141,6 @@ sub hashset_diff ($ $) {
 }
 
 {
-    use Chj::FP::ArrayUtil 'array2hashset';
     my $A= array2hashset ["a","b","c"];
     my $B= array2hashset ["a","c","d"];
     TEST{ hashset2array hashset_union($A,$B) }
