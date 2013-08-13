@@ -42,6 +42,7 @@ keys.
 package Chj::FP::HashSet;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(array2hashset
+	   array2lchashset
 	   hashset2array
 	   hashset_union
 	   hashset_intersection
@@ -61,6 +62,14 @@ sub array2hashset ($) {
     +{
       map {
 	  $_=> $_
+      } @{$_[0]}
+     }
+}
+
+sub array2lchashset ($) {
+    +{
+      map {
+	  lc($_)=> $_
       } @{$_[0]}
      }
 }
