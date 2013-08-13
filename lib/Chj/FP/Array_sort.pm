@@ -22,11 +22,20 @@ Chj::FP::Array_sort - 'sensible' sorting setup
 
 package Chj::FP::Array_sort;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(Array_sort On String_cmp Number_cmp Complement);
+@EXPORT=qw(Array_sort On String_cmp Number_cmp Complement
+	   the_method);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
+
+sub the_method ($) {
+    my ($method)=@_;
+    sub {
+	my $self=shift;
+	$self->$method(@_)
+    }
+}
 
 sub Array_sort ($ $) {
     my ($in,$cmp)=@_;
