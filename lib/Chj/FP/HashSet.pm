@@ -45,6 +45,7 @@ package Chj::FP::HashSet;
 	   array2lchashset
 	   hashset2array
 	   hashset_union
+	   hashset_union_defined
 	   hashset_intersection
 	   hashset_difference
 	   hashset_subset
@@ -95,6 +96,25 @@ sub hashset_union {
       for @_;
     \%r
 }
+
+# same as hashset_union but check definedness, not existence
+
+sub hashset_add_hashset_defined_d ($ $) {
+    my ($r,$s)=@_;
+    for (keys %$s) {
+	$$r{$_} = $$s{$_}
+	  unless defined $$r{$_};
+    }
+}
+
+sub hashset_union_defined {
+    my %r;
+    hashset_add_hashset_defined_d(\%r,$_)
+      for @_;
+    \%r
+}
+
+# /same
 
 sub hashset_intersection ($ $) {
     my ($a,$b)=@_;
