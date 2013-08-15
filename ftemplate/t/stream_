@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+our ($mydir, $myname);
+BEGIN {
+    $0=~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+
+use lib "$mydir/../lib";
+use lib "$mydir/../../perllib";##
+
+use Chj::FP2::Stream ":all";
+use Chj::TEST ':all';
+
+TEST{stream_length stream_iota 1000000}
+  1000000;
+
+run_tests;
