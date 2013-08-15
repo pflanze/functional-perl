@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 ulimit -S -v 20000
 
 exec "$0"_
