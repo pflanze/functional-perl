@@ -120,6 +120,7 @@ sub _pxml_print_fragment_fast {
 		    print $fh "/>" or die $!;
 		} else {
 		    print $fh ">" or die $!;
+		    no warnings "recursion"; # hu.
 		    _pxml_print_fragment_fast ($body, $fh,
 					       $html5compat, $void_element_h);
 		    print $fh "</$n>" or die $!;
@@ -142,6 +143,7 @@ sub _pxml_print_fragment_fast {
 		redo LP;
 	    } else {
 		if ($ref eq "ARRAY") {
+		    no warnings "recursion"; # hu.
 		    _pxml_print_fragment_fast ($_, $fh, $html5compat, $void_element_h)
 			for (@$v);
 		} else {
