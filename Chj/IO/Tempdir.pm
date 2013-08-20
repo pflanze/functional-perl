@@ -123,11 +123,22 @@ sub rmrf {
     $s->autoclean(0)
 }
 
+sub push_on_destruction {
+    my $self=shift;
+    @_==1 or die;
+    my $key= pack "I", $self;
+    my ($handler)=@_;
+    push @{$meta{$key}{on_destruction}}, $handler
+}
+
 sub DESTROY {
     my $self=shift;
     #warn "DESTROY $self";
     local ($@,$!,$?);
     my $str= pack "I",$self;
+    if (my $arr= $meta{$str}{on_destruction}) {
+	&$_($self) for @$arr
+    }
     if (my $autoclean=$meta{$str}{autoclean}) {
 	rmdir $meta{$str}{path}
 	  or do{
