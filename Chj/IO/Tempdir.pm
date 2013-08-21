@@ -49,11 +49,22 @@ sub stringify {
     $self->path
 }
 
+sub _Addslash ($) {
+    my ($str)=@_;
+    $str=~ m|/$|s ? $str : $str."/"
+}
+
 sub xtmpdir {
     my $class=shift;
     @_<=2 or croak "xtmpdir expects 0 to 2 arguments";
     my ($opt_basepath,$opt_mask)=@_;
-    my $basepath= defined($opt_basepath) ? $opt_basepath : "/tmp/";
+    my $basepath=
+      (defined($opt_basepath) ?
+       $opt_basepath
+       : $ENV{CHJ_TEMPDIR_BASEPATH}
+       || $ENV{CHJ_TEMPDIR} ?
+       _Addslash($ENV{CHJ_TEMPDIR})
+       : "/tmp/");
     my $mask= defined($opt_mask) ? $opt_mask : 0700; # 0777 would be the perl default
     my $item;
     my $n= $MAXTRIES;
