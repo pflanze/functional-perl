@@ -1,12 +1,17 @@
+COPYING
+MANIFEST
 README
 lib/Chj/FP2/Char.pm
 lib/Chj/FP2/Lazy.pm
 lib/Chj/FP2/List.pm
 lib/Chj/FP2/Stream.pm
 lib/Chj/FP2/Values.pm
+lib/Chj/PHTML5.pm
 lib/Chj/PXHTML.pm
 lib/Chj/PXML.pm
 lib/Chj/PXML/Serialize.pm
 lib/Chj/xIO.pm
+t/stream
+t/stream_
 test
 testlazy
