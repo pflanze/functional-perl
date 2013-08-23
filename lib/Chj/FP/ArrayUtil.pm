@@ -28,7 +28,9 @@ package Chj::FP::ArrayUtil;
 	      array_every
 	      array_any
 	      min
-	      max);
+	      max
+	      array_first
+	      array_rest);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
@@ -155,5 +157,13 @@ sub max {
     $x
 }
 
+sub array_first ($) {
+    $_[0][0]
+}
+
+sub array_rest ($) {
+    my ($a)= @_;
+    [ @$a[1..$#$a] ]
+}
 
 1
