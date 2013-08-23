@@ -10,9 +10,9 @@ Chj::FP::Array_sort - 'sensible' sorting setup
 
 =head1 SYNOPSIS
 
- use Chj::FP::Array_sort; # for Array_sort, On, String_cmp, Number_cmp
+ use Chj::FP::Array_sort; # for array_sort, on, string_cmp, number_cmp, complement
  use Chj::FP2::List;# for car in this example
- Array_sort $ary, On \&car, \&Number_cmp
+ array_sort $ary, on \&car, \&number_cmp
 
 =head1 DESCRIPTION
 
@@ -22,7 +22,7 @@ Chj::FP::Array_sort - 'sensible' sorting setup
 
 package Chj::FP::Array_sort;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(Array_sort On String_cmp Number_cmp Complement
+@EXPORT=qw(array_sort on string_cmp number_cmp complement
 	   the_method);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -37,7 +37,7 @@ sub the_method ($) {
     }
 }
 
-sub Array_sort ($ $) {
+sub array_sort ($ $) {
     my ($in,$cmp)=@_;
     [
      sort {
@@ -46,7 +46,7 @@ sub Array_sort ($ $) {
     ]
 }
 
-sub On ($ $) {
+sub on ($ $) {
     my ($select, $cmp)=@_;
     sub {
 	my ($a,$b)=@_;
@@ -54,15 +54,15 @@ sub On ($ $) {
     }
 }
 
-sub String_cmp ($ $) {
+sub string_cmp ($ $) {
     $_[0] cmp $_[1]
 }
 
-sub Number_cmp ($ $) {
+sub number_cmp ($ $) {
     $_[0] <=> $_[1]
 }
 
-sub Complement ($) {
+sub complement ($) {
     my ($cmp)=@_;
     sub {
 	-&$cmp(@_)
