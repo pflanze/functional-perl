@@ -1,0 +1,5 @@
+Handle tag and attribute names safely? For example:
+
+Chj::PXML->new("<>", {"/"=>1}, [])
+
+will currently serialize to something like <<> /="1"></<>>
