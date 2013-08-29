@@ -55,7 +55,8 @@ sub Force ($;$) {
 		$perhaps_promise= $v;
 		redo LP;
 	    } else {
-		$$perhaps_promise[1]
+		$perhaps_promise= $$perhaps_promise[1];
+		redo LP;
 	    }
 	} else {
 	    $perhaps_promise
