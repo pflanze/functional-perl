@@ -41,6 +41,13 @@ sub body {
     $_[0][2]
 }
 
+sub maybe_attribute {
+    @_==2 or die;
+    my $s=shift;
+    my ($name)=@_;
+    $$s[1] and $$s[1]{$name}
+}
+
 # functional setters
 sub set_attributes {
     my $s=shift;
