@@ -23,6 +23,7 @@ package Chj::FP::ArrayUtil;
 	      array_hashing_uniq
 	      array_zip2
 	      array_map
+	      array_map_with_i
 	      array_fold
 	      array_join
 	      array_every
@@ -81,6 +82,20 @@ sub array_map {
 TEST{ array_map sub { $_[0]+1}, [1,2,20] } [ 2,3,21 ];
 TEST{ array_map sub { $_[0]+$_[1]}, [1,2,20], [-1,4] } [ 0,6 ];
 
+# (should one use multi-arg stream_map with stream_iota instead?..)
+sub array_map_with_i {
+    @_>1 or die;
+    my $fn=shift;
+    my $len= min (map { scalar @$_ } @_);
+    my @res;
+    for (my $i=0; $i<$len; $i++) {
+	$res[$i]= &$fn ($i, map { $$_[$i] } @_);
+    }
+    \@res
+}
+
+TEST{ array_map_with_i sub { $_[0]+$_[1]+$_[2] }, [1,2,20], [-1,4] }
+  [ 0,7 ];
 
 sub array_fold ($$$) {
     my ($fn,$start,$ary)=@_;
