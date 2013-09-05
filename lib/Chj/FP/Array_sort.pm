@@ -29,11 +29,13 @@ package Chj::FP::Array_sort;
 
 use strict;
 
-sub the_method ($) {
-    my ($method)=@_;
+sub the_method {
+    my ($method,@args)=@_;
     sub {
 	my $self=shift;
-	$self->$method(@_)
+	$self->$method(@args,@_)
+	  # any reason to put args before or after _ ? So far I only
+	  # have args, no _.
     }
 }
 
