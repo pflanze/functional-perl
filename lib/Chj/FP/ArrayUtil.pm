@@ -30,6 +30,8 @@ package Chj::FP::ArrayUtil;
 	      array_any
 	      min
 	      max
+	      add
+	      array_sum
 	      array_first
 	      array_rest);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -170,6 +172,16 @@ sub max {
 	$x= $_ if $_ > $x
     }
     $x
+}
+
+sub add {
+    my $t=0;
+    $t+= $_ for @_;
+    $t
+}
+
+sub array_sum ($) {
+    array_fold \&add, 0, $_[0]
 }
 
 sub array_first ($) {
