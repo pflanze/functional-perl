@@ -33,7 +33,9 @@ package Chj::FP::ArrayUtil;
 	      add
 	      array_sum
 	      array_first
-	      array_rest);
+	      array_rest
+	      array2hash_group_by
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
@@ -192,5 +194,15 @@ sub array_rest ($) {
     my ($a)= @_;
     [ @$a[1..$#$a] ]
 }
+
+sub array2hash_group_by ($$) {
+    my ($ary,$on)=@_;
+    my %res;
+    for (@$ary) {
+	push @{$res{&$on ($_)}}, $_
+    }
+    \%res
+}
+
 
 1
