@@ -21,7 +21,9 @@ package Chj::PXML::Serialize;
 @EXPORT=qw(pxml_xhtml_print);
 @EXPORT_OK=qw(pxml_print_fragment
 	      pxml_xhtml_print_fast
-	      pxml_print_fragment_fast);
+	      pxml_print_fragment_fast
+	      putxmlfile
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
@@ -225,5 +227,15 @@ sub pxml_xhtml_print_fast ($ $ ;$ ) {
 sub pxml_xhtml_print ($ $ ;$ );
 *pxml_xhtml_print = *pxml_xhtml_print_fast;
 
+
+use Chj::xopen "xopen_write";#hrm.
+
+sub putxmlfile ($$) {
+    my ($path,$xml)=@_;
+    my $f= xopen_write $path;
+    binmode($f, ":utf8") or die;
+    pxml_print_fragment_fast ($xml, $f);
+    $f->xclose;
+}
 
 1
