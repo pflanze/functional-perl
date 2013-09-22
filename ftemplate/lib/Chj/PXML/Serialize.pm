@@ -234,6 +234,7 @@ sub putxmlfile ($$) {
     my ($path,$xml)=@_;
     my $f= xopen_write $path;
     binmode($f, ":utf8") or die;
+    $f->xprintln(q{<?xml version="1.0"?>});
     pxml_print_fragment_fast ($xml, $f);
     $f->xclose;
 }
