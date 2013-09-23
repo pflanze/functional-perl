@@ -40,6 +40,7 @@ package Chj::FP2::Stream;
 	      stream__array_fold_right
 	      array2stream
 	      stream_for_each
+	      stream_drop
 	      stream_take
 	      stream_take_while
 	      stream_drop_while
@@ -188,6 +189,18 @@ sub stream_for_each ($ $ ) {
 	    redo LP;
 	}
     }
+}
+
+sub stream_drop ($ $);
+sub stream_drop ($ $) {
+    my ($s, $n)=@_;
+    weaken $_[0];
+    while ($n > 0) {
+	$s= Force $s;
+	$s= cdr $s;
+	$n--
+    }
+    $s
 }
 
 sub stream_take ($ $);
