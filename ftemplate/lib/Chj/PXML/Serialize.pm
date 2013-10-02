@@ -23,6 +23,7 @@ package Chj::PXML::Serialize;
 	      pxml_xhtml_print_fast
 	      pxml_print_fragment_fast
 	      putxmlfile
+	      puthtmlfile
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -238,5 +239,15 @@ sub putxmlfile ($$) {
     pxml_print_fragment_fast ($xml, $f);
     $f->xclose;
 }
+
+sub puthtmlfile ($$;$) {
+    my ($path,$p,$maybe_lang)=@_;
+    #xmkdir_p dirname $path;
+    my $out= xopen_write($path);
+    binmode $out, ":utf8" or die;
+    pxml_xhtml_print_fast($p, $out, $maybe_lang||"en");
+    $out->xclose;
+}
+
 
 1
