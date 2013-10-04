@@ -197,6 +197,7 @@ sub stream_drop ($ $) {
     weaken $_[0];
     while ($n > 0) {
 	$s= Force $s;
+	die "stream too short" unless defined $s;
 	$s= cdr $s;
 	$n--
     }
