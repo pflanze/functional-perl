@@ -64,10 +64,11 @@ array with the stat return values) with accessor methods.
 
 These are wrappers around localtime; it never dies, but returns
 objects (based on an array with the localtime values) with accessor
-methods (including setters). Additionally to the normal accessors,
-'Year' and 'Mon' exist, which are in the "normal" (19xx..203x, 1..31)
-ranges. They also have a unixtime function to convert back to
-unixtime--this requires Time::Local to be loaded explicitely.
+methods (including chainable setters). Additionally to the normal
+accessors, 'Year' and 'Mon' exist, which are in the "normal"
+(19xx..203x, 1..31) ranges. They also have a unixtime function to
+convert back to unixtime--this requires Time::Local to be loaded
+explicitely.
 
 =back
 
@@ -755,17 +756,17 @@ sub mk_caching_getANYid {
     sub Year     { shift->[5]+1900 }
     sub Mon      { shift->[4]+1 }
 
-    sub set_sec      { my ($s,$v)=@_; $s->[0]=$v; }
-    sub set_min      { my ($s,$v)=@_; $s->[1]=$v;  }
-    sub set_hour     { my ($s,$v)=@_; $s->[2]=$v;  }
-    sub set_mday     { my ($s,$v)=@_; $s->[3]=$v;  }
-    sub set_mon      { my ($s,$v)=@_; $s->[4]=$v;  }  # 0..11
-    sub set_year     { my ($s,$v)=@_; $s->[5]=$v;  }  # -1900
-    sub set_wday     { my ($s,$v)=@_; $s->[6]=$v;  }  # 0=sunday
-    sub set_yday     { my ($s,$v)=@_; $s->[7]=$v;  }  # 0..36[45]
-    sub set_isdst    { my ($s,$v)=@_; $s->[8]=$v;  }
-    sub set_Year     { my ($s,$v)=@_; $s->[5]= $v - 1900 }
-    sub set_Mon      { my ($s,$v)=@_; $s->[4]= $v - 1 }
+    sub set_sec      { my ($s,$v)=@_; $s->[0]=$v; $s }
+    sub set_min      { my ($s,$v)=@_; $s->[1]=$v; $s }
+    sub set_hour     { my ($s,$v)=@_; $s->[2]=$v; $s }
+    sub set_mday     { my ($s,$v)=@_; $s->[3]=$v; $s }
+    sub set_mon      { my ($s,$v)=@_; $s->[4]=$v; $s }  # 0..11
+    sub set_year     { my ($s,$v)=@_; $s->[5]=$v; $s }  # -1900
+    sub set_wday     { my ($s,$v)=@_; $s->[6]=$v; $s }  # 0=sunday
+    sub set_yday     { my ($s,$v)=@_; $s->[7]=$v; $s }  # 0..36[45]
+    sub set_isdst    { my ($s,$v)=@_; $s->[8]=$v; $s }
+    sub set_Year     { my ($s,$v)=@_; $s->[5]= $v - 1900; $s }
+    sub set_Mon      { my ($s,$v)=@_; $s->[4]= $v - 1; $s }
 
     sub unixtime {
 	my $s=shift;
