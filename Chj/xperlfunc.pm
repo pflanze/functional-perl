@@ -768,12 +768,7 @@ sub mk_caching_getANYid {
 }
 
 sub xlocaltime (;$ ) {
-#    if (wantarray) {
-#	localtime($_[0]||time)
-#    } else {
-#why should I offer them in list context? just only dangerous?
-	bless [localtime($_[0]||time)], "Chj::xperlfunc::xlocaltime"
-#    }
+    bless [localtime($_[0]||time)], "Chj::xperlfunc::xlocaltime"
 }
 
 
