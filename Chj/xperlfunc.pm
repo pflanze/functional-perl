@@ -66,7 +66,8 @@ These are wrappers around localtime; it never dies, but returns
 objects (based on an array with the localtime values) with accessor
 methods (including setters). Additionally to the normal accessors,
 'Year' and 'Mon' exist, which are in the "normal" (19xx..203x, 1..31)
-ranges.
+ranges. They also have a unixtime function to convert back to
+unixtime--this requires Time::Local to be loaded explicitely.
 
 =back
 
@@ -765,6 +766,11 @@ sub mk_caching_getANYid {
     sub set_isdst    { my ($s,$v)=@_; $s->[8]=$v;  }
     sub set_Year     { my ($s,$v)=@_; $s->[5]= $v - 1900 }
     sub set_Mon      { my ($s,$v)=@_; $s->[4]= $v - 1 }
+
+    sub unixtime {
+	my $s=shift;
+	Time::Local::timelocal(@$s)
+    }
 }
 
 sub xlocaltime (;$ ) {
