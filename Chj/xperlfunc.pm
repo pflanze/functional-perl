@@ -66,9 +66,10 @@ These are wrappers around localtime; it never dies, but returns
 objects (based on an array with the localtime values) with accessor
 methods (including chainable setters). Additionally to the normal
 accessors, 'Year' and 'Mon' exist, which are in the "normal"
-(19xx..203x, 1..31) ranges. They also have a unixtime function to
-convert back to unixtime--this requires Time::Local to be loaded
-explicitely.
+(19xx..203x, 1..31) ranges, and 'Wday' which is 1..7 starting on
+Sunday and 'wDay' which is 0..6 starting on Monday. They also have a
+unixtime function to convert back to unixtime--this requires
+Time::Local to be loaded explicitely.
 
 =back
 
@@ -755,6 +756,8 @@ sub mk_caching_getANYid {
     sub isdst    { shift->[8] }
     sub Year     { shift->[5]+1900 }
     sub Mon      { shift->[4]+1 }
+    sub Wday     { shift->[6]+1 }  # 1=sunday
+    sub wDay     { my $d= shift->[6]; $d == 0 ? 6 : $d-1 }  # 0=monday
 
     sub set_sec      { my ($s,$v)=@_; $s->[0]=$v; $s }
     sub set_min      { my ($s,$v)=@_; $s->[1]=$v; $s }
@@ -762,11 +765,14 @@ sub mk_caching_getANYid {
     sub set_mday     { my ($s,$v)=@_; $s->[3]=$v; $s }
     sub set_mon      { my ($s,$v)=@_; $s->[4]=$v; $s }  # 0..11
     sub set_year     { my ($s,$v)=@_; $s->[5]=$v; $s }  # -1900
-    sub set_wday     { my ($s,$v)=@_; $s->[6]=$v; $s }  # 0=sunday
+    #sub set_wday     { my ($s,$v)=@_; $s->[6]=$v; $s }  # 0=sunday
     sub set_yday     { my ($s,$v)=@_; $s->[7]=$v; $s }  # 0..36[45]
     sub set_isdst    { my ($s,$v)=@_; $s->[8]=$v; $s }
     sub set_Year     { my ($s,$v)=@_; $s->[5]= $v - 1900; $s }
     sub set_Mon      { my ($s,$v)=@_; $s->[4]= $v - 1; $s }
+    #sub set_Wday
+    #sub set_wDay
+    # but those don't have any effect on timelocal anyway.
 
     sub unixtime {
 	my $s=shift;
