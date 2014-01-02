@@ -768,7 +768,8 @@ sub mk_caching_getANYid {
 }
 
 sub xlocaltime (;$ ) {
-    bless [localtime($_[0]||time)], "Chj::xperlfunc::xlocaltime"
+    bless [localtime(defined $_[0] ? $_[0] : time)],
+      "Chj::xperlfunc::xlocaltime"
 }
 
 
