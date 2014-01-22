@@ -37,6 +37,11 @@ sub _launch {
     sub {# curry unnecessary, but whatever
 	my $self=shift;
 	my ($cmd)=@_;
+	my $maybe_env;
+	if (ref($$cmd[0]) eq "HASH") {
+	    # env settings (since with "use threads" $ENV does not work!)
+	    $maybe_env= shift @$cmd;
+	}
 	@$cmd or die "$subname: missing cmd arguments";
 	my ($readerr,$writeerr)=xpipe;
 	if (my $pid= xfork) {
@@ -54,6 +59,17 @@ sub _launch {
 	    return $self
 	} else {
 	    &$closeinchild;
+	    if (defined $maybe_env) {
+		my @newcmd= ("/usr/bin/env");
+		my $env= $maybe_env;
+		for my $k (keys %$env) {
+		    die "invalid env key starting with '-': '$k'"
+		      if $k=~ /^-/;
+		    push @newcmd, "$k=$$env{$k}";
+		}
+		push @newcmd, @$cmd;
+		$cmd= \@newcmd;
+	    }
 	    if (ref($$cmd[0]) eq "CODE") {
 		my $code= shift @$cmd;
 		eval {
