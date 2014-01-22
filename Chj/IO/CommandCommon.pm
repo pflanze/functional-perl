@@ -28,6 +28,7 @@ use Chj::xperlfunc;
 use Chj::xpipe;
 use Carp;
 use NEXT;
+use Chj::singlequote 'singlequote_sh';
 
 my %metadata; # numified => pid
 
@@ -46,7 +47,9 @@ sub _launch {
 	    # or leave that to the user? the latter.
 	    my $err= $readerr->xcontent;
 	    if ($err) {
-		croak __PACKAGE__."::$subname: could not execute @$cmd: $err";
+		croak (__PACKAGE__."::$subname: could not execute "
+		       .join(" ",map{singlequote_sh $_}@$cmd)
+		       .": $err");
 	    }
 	    return $self
 	} else {
