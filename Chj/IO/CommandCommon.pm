@@ -1,9 +1,8 @@
 # Thu May 29 23:23:36 2003  Christian Jaeger, christian.jaeger@ethlife.ethz.ch
 # 
-# Copyright 2003 by Christian Jaeger
+# Copyright 2003-2014 by Christian Jaeger
 # Published under the same terms as perl itself.
 #
-# $Id$
 
 =head1 NAME
 
@@ -25,7 +24,6 @@ package Chj::IO::CommandCommon;
 
 use strict;
 
-#use base "Chj::IO::Pipe"; nope, that has to be done using multiple inheritance from the subclass. This class must not have the same base as Chj::IO::Pipe's, for not confusing inheritance of quotedname().
 use Chj::xperlfunc;
 use Chj::xpipe;
 use Carp;
@@ -35,7 +33,7 @@ my %metadata; # numified => pid
 
 sub _launch {
     my ($subname,$otherendclose,$closeinchild)=@_;
-    sub {# curry unnötig, aber was sells (so gewachsen)
+    sub {# curry unnecessary, but whatever
 	my $self=shift;
 	my ($cmd)=@_;
 	@$cmd or die "$subname: missing cmd arguments";
@@ -44,7 +42,8 @@ sub _launch {
 	    $metadata{pack"I",$self}=$pid;
 	    &$otherendclose;
 	    $writeerr->xclose; #" here it's clear that it's needed."
-	    # close all handles that have been given for redirections? or leave that to the user? the latter.
+	    # close all handles that have been given for redirections? 
+	    # or leave that to the user? the latter.
 	    my $err= $readerr->xcontent;
 	    if ($err) {
 		croak __PACKAGE__."::$subname: could not execute @$cmd: $err";
@@ -75,7 +74,10 @@ sub xlaunch {
     _launch
       ("xlaunch",
        sub {
-	   $otherend->xclose; # important; seems like it's not cleaned up and destroyed otherwise upon return from new_* methods [soon enough], xcontent and the like would block outside.
+	   $otherend->xclose;
+	   # ^important; seems like it's not cleaned up and destroyed
+	   # otherwise upon return from new_* methods [soon enough],
+	   # xcontent and the like would block outside.
        },
        sub {
 	   $otherend->xdup2($hdl);
@@ -117,7 +119,8 @@ sub finish {
     $rv;
 }
 
-sub xfinish { # Note: does not throw on error exit codes. Just throws on errors closing.
+sub xfinish { # Note: does not throw on error exit codes. Just throws
+              # on errors closing.
     my $self=shift;
     $self->xclose;
     waitpid $metadata{pack"I",$self},0;
@@ -129,21 +132,17 @@ sub xxfinish { # does also throw on error exit codes.
     my $self=shift;
     $self->xclose;
     waitpid $metadata{pack"I",$self},0;
-    delete$metadata{pack"I",$self};# das macht doch destructor oder? ah nein das erwartet genau dass dies gelöscht wurde. Na, hat eh nur pid drin.
+    delete $metadata{pack"I",$self};
     $?==0 or do {
 	if ($? & 127) {
-	    croak "xxfinish on ".$self->quotedname.": subcommand has been killed with signal ".($? & 127);
+	    croak ("xxfinish on ".$self->quotedname
+		   .": subcommand has been killed with signal ".($? & 127));
 	} else {
-	    croak "xxfinish on ".$self->quotedname.": subcommand gave error ".($? >>8);
+	    croak ("xxfinish on ".$self->quotedname
+		   .": subcommand gave error ".($? >>8));
 	}
     };
 }
-
-# sub stringify { # this class is not overloaded, but put it here so we can at least call it manually if needed.
-#     my $s=shift;
-#     #$s->pid  ;#HRMMM we do not have more data recorded.  noch schlimmer: ist undef nach beendigung. sigh
-# }
-# *name= \&stringify;#override name from super class. good?  todo
 
 sub DESTROY { # no exceptions thrown from here
     my $self=shift;
@@ -154,8 +153,4 @@ sub DESTROY { # no exceptions thrown from here
     $self->NEXT::DESTROY;
 }
 
-1;
-
-#  old comments: (from before partitioning into CommandCommon and subclasses)
-# todo: damit meldungen per quotedname nich bloss als 'pipe' bezeichnet auch hier cmd bez. speichern.
-# und: betrifft wohl File.pm:  xclose mehrfach: gibt invalid file desc  ischaber gefährlihc? !
+1
