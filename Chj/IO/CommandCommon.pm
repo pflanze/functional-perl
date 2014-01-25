@@ -138,6 +138,12 @@ sub finish {
     $rv;
 }
 
+sub finish_nowait {
+    my $s=shift;
+    $s->close;
+    delete$metadata{pack"I",$s};
+}
+
 sub xfinish { # Note: does not throw on error exit codes. Just throws
               # on errors closing.
     my $self=shift;
