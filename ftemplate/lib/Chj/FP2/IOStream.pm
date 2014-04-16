@@ -9,11 +9,12 @@ Chj::FP2::IOStream
 
 =head1 SYNOPSIS
 
- use Chj::FP2::IOStream ':all'; # xopendir_stream
- use Chj::FP2::Stream; # stream_filter
+ use Chj::FP2::IOStream ':all'; # xopendir_stream, xopendir_pathstream
+ use Chj::FP2::Stream; # stream_map
  use Chj::FP2::Lazy; # Force
  use Chj::FP2::List ':all'; # car
- my $paths= stream_filter sub { my ($item)= @_; "$base/$item" }, xopendir_stream $base;
+ my $paths= stream_map sub { my ($item)= @_; "$base/$item" }, xopendir_stream $base;
+ # which is the same as: my $paths= xopendir_pathstream $base;
  my $firstpath= car Force $paths;
  # etc.
 
@@ -31,7 +32,8 @@ careful.)
 package Chj::FP2::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(xopendir_stream);
+@EXPORT_OK=qw(xopendir_stream
+	      xopendir_pathstream);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
@@ -39,6 +41,8 @@ use strict;
 use Chj::FP2::Lazy;
 use Chj::xopendir;
 use Chj::FP2::List ':all';
+use Chj::FP2::Stream 'stream_map';
+
 
 sub xopendir_stream ($) {
     my ($path)=@_;
@@ -55,6 +59,14 @@ sub xopendir_stream ($) {
 	}
     };
     &$next
+}
+
+sub xopendir_pathstream ($) {
+    my ($base)=@_;
+    stream_map sub {
+	my ($item)= @_;
+	"$base/$item"
+    }, xopendir_stream $base
 }
 
 
