@@ -60,6 +60,9 @@ return undef on ENOENT errors (and still croak on other errors like
 permission problems).  When successful, they return objects (based on
 array with the stat return values) with accessor methods.
 
+If $Chj::xperlfunc::time_hires is true, these will use Time::HiRes'
+stat function; but there is no lstat in Time::HiRes !
+
 =item xlocaltime() or xlocaltime(unixtime)
 
 These are wrappers around localtime; it never dies, but returns
@@ -478,10 +481,21 @@ sub xchdir {
     chdir $_[0] or croak "xchdir '$_[0]': $!";
 }
 
+our $time_hires=0;
+
+sub stat_possiblyhires {
+    if ($time_hires) {
+	require Time::HiRes; # (that's not slow, right?)
+	Time::HiRes::stat(@_ ? @_ : $_)
+    } else {
+	stat(@_ ? @_ : $_)
+    }
+}
+
 sub xstat {
     my @r;
     @_<=1 or croak "xstat: too many arguments";
-    @r= stat(@_ ? @_ : $_);
+    @r= stat_possiblyhires(@_);
     @r or croak (@_ ? "xstat: '@_': $!" : "xstat: '$_': $!");
     if (wantarray) {
 	@r
@@ -490,6 +504,7 @@ sub xstat {
 	bless $self,'Chj::xperlfunc::xstat'
     }
 }
+
 sub xlstat {
     my @r;
     @_<=1 or croak "xlstat: too many arguments";
@@ -502,11 +517,12 @@ sub xlstat {
 	bless $self,'Chj::xperlfunc::xstat'
     }
 }
+
 use Carp 'cluck';
 sub Xstat {
     my @r;
     @_<=1 or croak "Xstat: too many arguments";
-    @r= stat(@_ ? @_ : $_);
+    @r= stat_possiblyhires(@_ ? @_ : $_);
     @r or do {
 	if ($!== ENOENT) {
 	    return;
