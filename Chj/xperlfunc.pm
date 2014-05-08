@@ -60,8 +60,8 @@ return undef on ENOENT errors (and still croak on other errors like
 permission problems).  When successful, they return objects (based on
 array with the stat return values) with accessor methods.
 
-If $Chj::xperlfunc::time_hires is true, these will use Time::HiRes'
-stat function; but there is no lstat in Time::HiRes !
+If $Chj::xperlfunc::time_hires is true, these will return floating
+point number strings for time stamps.
 
 =item xlocaltime() or xlocaltime(unixtime)
 
@@ -492,6 +492,15 @@ sub stat_possiblyhires {
     }
 }
 
+sub lstat_possiblyhires {
+    if ($time_hires) {
+	require Chj::Linux::HiRes;
+	Chj::Linux::HiRes::lstat(@_ ? @_ : $_)
+    } else {
+	lstat(@_ ? @_ : $_)
+    }
+}
+
 sub xstat {
     my @r;
     @_<=1 or croak "xstat: too many arguments";
@@ -508,7 +517,7 @@ sub xstat {
 sub xlstat {
     my @r;
     @_<=1 or croak "xlstat: too many arguments";
-    @r= lstat(@_ ? @_ : $_);
+    @r= lstat_possiblyhires(@_ ? @_ : $_);
     @r or croak (@_ ? "xlstat: '@_': $!" : "xlstat: '$_': $!");
     if (wantarray) {
 	@r
@@ -542,7 +551,7 @@ sub Xstat {
 sub Xlstat {
     my @r;
     @_<=1 or croak "Xlstat: too many arguments";
-    @r= lstat(@_ ? @_ : $_);
+    @r= lstat_possiblyhires(@_ ? @_ : $_);
     @r or do {
 	if ($!== ENOENT) {
 	    return;
