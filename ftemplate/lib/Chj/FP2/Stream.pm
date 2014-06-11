@@ -35,6 +35,7 @@ package Chj::FP2::Stream;
 	      stream_iota
 	      stream_length
 	      stream_map
+	      stream_map_with_tail
 	      stream_filter
 	      stream_fold_right
 	      stream__array_fold_right
@@ -110,6 +111,16 @@ sub stream_map ($ $) {
     Delay {
 	$l= Force $l;
 	$l and cons(&$fn(car $l), stream_map ($fn,cdr $l))
+    }
+}
+
+sub stream_map_with_tail ($ $ $);
+sub stream_map_with_tail ($ $ $) {
+    my ($fn,$l,$tail)=@_;
+    weaken $_[1];
+    Delay {
+	$l= Force $l;
+	defined($l) ? cons(&$fn(car $l), stream_map ($fn,cdr $l)) : $tail
     }
 }
 
