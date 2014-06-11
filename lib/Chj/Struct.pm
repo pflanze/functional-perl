@@ -161,10 +161,22 @@ sub import {
     my $end= sub {
 	#warn "_END_ called for package '$package'";
 	for my $field (@$fields) {
+	    # accessors
 	    if (not $package->can($field)) {
 		*{"${package}::$field"}= sub {
 		    my $s=shift;
 		    $$s{$field}
+		};
+	    }
+	    # functional setters
+	    my $field_set= $field."_set";
+	    if (not $package->can($field_set)) {
+		*{"${package}::$field_set"}= sub {
+		    my $s=shift;
+		    @_==1 or die "$field_set: need 1 argument";
+		    my $new= +{%$s};
+		    ($$new{$field})=@_;
+		    bless $new, ref $s
 		};
 	    }
 	}
