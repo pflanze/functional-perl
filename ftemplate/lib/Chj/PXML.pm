@@ -61,6 +61,11 @@ sub set_body {
     bless [ $$s[0], $$s[1], $_[0] ], ref $s
 }
 
+# or, follow the convention I've started to use of "tailing _set means
+# functional" (versus leading set_ normally meaning mutation):
+*body_set= *set_body;
+*attributes_set= *set_attributes;
+
 
 # XML does not distinguish between void elements and non-void ones in
 # its syntactical representation; whether an element is printed in
