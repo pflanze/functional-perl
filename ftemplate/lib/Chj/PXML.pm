@@ -66,6 +66,22 @@ sub set_body {
 *body_set= *set_body;
 *attributes_set= *set_attributes;
 
+# functional updaters
+
+sub attributes_update {
+     my $s=shift;
+     @_==1 or die;
+     my ($fn)=@_;
+     bless [ $$s[0], &$fn($$s[1]), $$s[2] ], ref $s
+ }
+
+sub body_update {
+     my $s=shift;
+     @_==1 or die;
+     my ($fn)=@_;
+     bless [ $$s[0], $$s[1], &$fn($$s[2]) ], ref $s
+}
+
 
 # XML does not distinguish between void elements and non-void ones in
 # its syntactical representation; whether an element is printed in
