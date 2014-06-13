@@ -42,6 +42,7 @@ package Chj::FP::ArrayUtil;
 use strict;
 use Carp;
 use Chj::TEST;
+use Chj::xperlfunc qw(min max);
 
 sub array_xone ($) {
     my ($a)=@_;
@@ -174,23 +175,6 @@ TEST{ array_any sub { $_[0] % 2 }, [2,5,8]}
   1;
 TEST{ array_any sub { $_[0] % 2 }, [7] }
   1;
-
-
-sub min {
-    my $x=shift;
-    for (@_) {
-	$x= $_ if $_ < $x
-    }
-    $x
-}
-
-sub max {
-    my $x=shift;
-    for (@_) {
-	$x= $_ if $_ > $x
-    }
-    $x
-}
 
 sub add {
     my $t=0;
