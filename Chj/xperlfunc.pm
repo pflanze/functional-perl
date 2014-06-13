@@ -82,10 +82,18 @@ These may be imported explicitely on demand.
 
 =over 4
 
-=item xLmtime($), XLmtime($)
+=item xLmtimed($), XLmtimed($)
 
 Those call lstat first, then if it's a symlink, also stat, then return
-the newer mtime of the two.
+an object with an mtime method that returns the newer mtime of the
+two. Other methods are is_link (about the original path) and is_dir
+and is_file (about the target path).
+
+NOTE: those only call lstat and stat once, they don't check whether
+the target is reached through several intermediate links or whether
+any directory in any of the paths has newer mtime. Thus the result
+can't be relied on for security (well, couldn't anyway since mtime can
+be set, of course).
 
 =item xspawn($;)
 
@@ -223,8 +231,8 @@ require Exporter;
 	      caching_getgrnam
 	      xprint
 	      xprintln
-	      xLmtime
-	      XLmtime
+	      xLmtimed
+	      XLmtimed
 	      min max
 	    );
               # would we really want to export these?:
@@ -793,28 +801,62 @@ sub max {
     $x
 }
 
+{
+    package Chj::xperlfunc::mtimed;
+    sub path     { shift->[0] }
+    sub mtime     { shift->[1] }
+    sub lstat     { shift->[2] }
+    sub maybe_stat    { shift->[3] }
+    # ---
+    sub xstat {
+	my $s=shift;
+	$$s[3] || die "Xstat gave file not found for: '$$s[0]'";
+    }
+    sub is_link {
+	shift->[2]->is_link
+    }
+    sub is_dir {
+	my $s=shift;
+	$s->is_link ? $s->xstat->is_dir : $s->lstat->is_dir
+    }
+    sub is_file {
+	my $s=shift;
+	$s->is_link ? $s->xstat->is_file : $s->lstat->is_file
+    }
+}
 
-sub XLmtime ($) {
+sub XLmtimed ($) {
     my ($path)=@_;
     if (my $ls= Xlstat $path) {
-	if ($ls->is_link) {
-	    if (my $s= Xstat $path) {
-		max ($ls->mtime, $s->mtime)
+	bless do {
+	    if ($ls->is_link) {
+		if (my $s= Xstat $path) {
+		    [$path,
+		     max ($ls->mtime, $s->mtime),
+		     $ls,
+		     $s]
+		} else {
+		    [$path,
+		     $ls->mtime,
+		     $ls,
+		     undef]
+		}
 	    } else {
-		$ls->mtime
+		[$path,
+		 $ls->mtime,
+		 $ls,
+		 undef]
 	    }
-	} else {
-	    $ls->mtime
-	}
+	}, "Chj::xperlfunc::mtimed"
     } else {
 	undef
     }
 }
 
-sub xLmtime ($) {
+sub xLmtimed ($) {
     my ($path)=@_;
-    my $t= XLmtime $path;
-    (defined $t) ? $t : die "xLmtime: '$path': $!"
+    my $t= XLmtimed $path;
+    (defined $t) ? $t : die "xLmtimed: '$path': $!"
 }
 
 
