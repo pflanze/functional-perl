@@ -82,6 +82,11 @@ These may be imported explicitely on demand.
 
 =over 4
 
+=item xLmtime($), XLmtime($)
+
+Those call lstat first, then if it's a symlink, also stat, then return
+the newer mtime of the two.
+
 =item xspawn($;)
 
 Like xsystem, but returns as soon as the command has been started successfully,
@@ -218,6 +223,9 @@ require Exporter;
 	      caching_getgrnam
 	      xprint
 	      xprintln
+	      xLmtime
+	      XLmtime
+	      min max
 	    );
               # would we really want to export these?:
 	      #caching_getpwuid
@@ -767,6 +775,48 @@ sub mk_caching_getANYid {
 	scalar $s->caching_getgr
     }
 }
+
+# XX forever, should find a permanent place for these
+sub min {
+    my $x=shift;
+    for (@_) {
+	$x= $_ if $_ < $x
+    }
+    $x
+}
+
+sub max {
+    my $x=shift;
+    for (@_) {
+	$x= $_ if $_ > $x
+    }
+    $x
+}
+
+
+sub XLmtime ($) {
+    my ($path)=@_;
+    if (my $ls= Xlstat $path) {
+	if ($ls->is_link) {
+	    if (my $s= Xstat $path) {
+		max ($ls->mtime, $s->mtime)
+	    } else {
+		$ls->mtime
+	    }
+	} else {
+	    $ls->mtime
+	}
+    } else {
+	undef
+    }
+}
+
+sub xLmtime ($) {
+    my ($path)=@_;
+    my $t= XLmtime $path;
+    (defined $t) ? $t : die "xLmtime: '$path': $!"
+}
+
 
 {
     package Chj::xperlfunc::xlocaltime;
