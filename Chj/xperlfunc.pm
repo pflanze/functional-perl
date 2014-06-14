@@ -95,6 +95,11 @@ any directory in any of the paths has newer mtime. Thus the result
 can't be relied on for security (well, couldn't anyway since mtime can
 be set, of course).
 
+=item xLmtime($), XLmtime($)
+
+Same as xLmtimed, XLmtimed but return the mtime value (or undef)
+instead of a wrapper object.
+
 =item xspawn($;)
 
 Like xsystem, but returns as soon as the command has been started successfully,
@@ -233,6 +238,8 @@ require Exporter;
 	      xprintln
 	      xLmtimed
 	      XLmtimed
+	      xLmtime
+	      XLmtime
 	      min max
 	    );
               # would we really want to export these?:
@@ -858,6 +865,21 @@ sub xLmtimed ($) {
     my $t= XLmtimed $path;
     (defined $t) ? $t : die "xLmtimed: '$path': $!"
 }
+
+sub xLmtime ($) {
+    my ($path)=@_;
+    xLmtimed ($path)->mtime
+}
+
+sub XLmtime ($) {
+    my ($path)=@_;
+    if (defined (my $s= XLmtimed ($path))) {
+	$s->mtime
+    } else {
+	undef
+    }
+}
+
 
 
 {
