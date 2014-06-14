@@ -29,8 +29,6 @@ package Chj::FP::ArrayUtil;
 	      array_join
 	      array_every
 	      array_any
-	      min
-	      max
 	      add
 	      array_sum
 	      array_first
