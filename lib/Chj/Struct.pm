@@ -138,6 +138,8 @@ sub import {
     # worries)
     my $allfields_h= +{ map { ($_=>1) } @$allfields };
     my $nonmethods= package_keys $package;
+
+    # constructor with positional parameters:
     *{"${package}::new"}= sub {
 	my $class=shift;
 	@_ <= @$allfields
@@ -148,6 +150,8 @@ sub import {
 	}
 	bless \%s, $class
     };
+
+    # constructor with keyword/value parameters:
     *{"${package}::new_"}= sub {
 	my $class=shift;
 	@_ <= (@$allfields * 2)
@@ -158,6 +162,7 @@ sub import {
 	}
 	bless \%s, $class
     };
+
     my $end= sub {
 	#warn "_END_ called for package '$package'";
 	for my $field (@$fields) {
@@ -188,6 +193,7 @@ sub import {
 	package_delete $package, $nonmethods;
 	&$end;
     };
+
     *{"${package}::__Struct__fields"}= $fields;
 }
 
