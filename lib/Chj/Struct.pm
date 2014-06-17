@@ -10,10 +10,15 @@ Chj::Struct
 
 =head1 SYNOPSIS
 
- use Chj::Struct Bar=> ["a","b"]=> ["Foo"];
+ sub hashP {ref ($_[0]) eq "HASH"}
+
+ use Chj::Struct Bar=> ["a", [\&hashP, "b"]]=> ["Foo"];
  # creates a constructor new that takes positional arguments and
  # copies them to a hash with the keys "a" and "b". Also, sets
  # @Bar::ISA to ("Foo"). [ ] around "Foo" are optional.
+ # If a field is specified as an array then the first entry is a
+ # predicate that receives the value in question, if it doesn't return
+ # true then an exception is thrown.
  {
    package Bar;
    # instead of use Chj::Struct Bar.. above, could use this:
@@ -43,6 +48,8 @@ from within the defined methods, but are not around afterwards,
 i.e. they will not shadow super class methods. (Thanks to Matt S Trout
 for pointing out the idea.) To avoid the namespace cleaning, write
 _END__ instead of _END_.
+
+See Chj::FP::Predicates for some useful predicates.
 
 =cut
 
@@ -118,6 +125,33 @@ sub all_fields {
     )
 }
 
+sub field_maybe_predicate ($) {
+    my ($s)=@_;
+    (ref $s) ? $$s[0] : undef
+}
+
+sub field_name ($) {
+    my ($s)=@_;
+    (ref $s) ? $$s[1] : $s
+}
+
+sub field_maybe_predicate_and_name ($) {
+    my ($s)=@_;
+    (ref $s) ? @$s : (undef, $s)
+}
+
+sub field_has_predicate ($) {
+    my ($s)=@_;
+    ref $s
+}
+
+
+sub Show ($) {
+    my ($v)=@_;
+    defined $v ? (ref $v ? $v : ($v=~ s/'/\\'/sg, "'$v'")) : "undef"
+}
+
+
 sub import {
     my $_importpackage= shift;
     return unless @_;
@@ -136,53 +170,93 @@ sub import {
     my $allfields=[ all_fields (\@isa), @$fields ];
     # (^ ah, could store them in the package as well; but well, no
     # worries)
-    my $allfields_h= +{ map { ($_=>1) } @$allfields };
+    my $allfields_name= [map {field_name $_} @$allfields];
+
+    # get list of package entries *before* setting
+    # accessors/constructors
     my $nonmethods= package_keys $package;
 
     # constructor with positional parameters:
+    my $allfields_i_with_predicate= do {
+	my $i=-1;
+	[ map {
+	    $i++;
+	    if (my $pred= field_maybe_predicate $_) {
+		[$pred, field_name ($_), $i]
+	    } else {
+		()
+	    }
+	} @$allfields ]
+    };
     *{"${package}::new"}= sub {
 	my $class=shift;
 	@_ <= @$allfields
 	  or croak "too many arguments to ${package}::new";
+	for (@$allfields_i_with_predicate) {
+	    my ($pred,$name,$i)=@$_;
+	    &$pred ($_[$i])
+	      or die "unacceptable value for field '$name': ".Show($_[$i]);
+	}
 	my %s;
 	for (my $i=0; $i< @_; $i++) {
-	    $s{ $$allfields[$i] }= $_[$i];
+	    $s{ $$allfields_name[$i] }= $_[$i];
 	}
 	bless \%s, $class
     };
 
     # constructor with keyword/value parameters:
+    my $allfields_h= +{ map { field_name($_)=> undef } @$allfields };
+    my $allfields_with_predicate= [grep { field_maybe_predicate $_ } @$allfields];
     *{"${package}::new_"}= sub {
 	my $class=shift;
 	@_ <= (@$allfields * 2)
 	  or croak "too many arguments to ${package}::new_";
 	my %s=@_;
 	for (keys %s) {
-	    $$allfields_h{$_} or die "unknown field '$_'";
+	    exists $$allfields_h{$_} or die "unknown field '$_'";
+	}
+	for (@$allfields_with_predicate) {
+	    my ($pred,$name)=@$_;
+	    &$pred ($s{$name})
+	      or die "unacceptable value for field '$name': ".Show($s{$name});
 	}
 	bless \%s, $class
     };
 
     my $end= sub {
 	#warn "_END_ called for package '$package'";
-	for my $field (@$fields) {
+	for my $_field (@$fields) {
+	    my ($maybe_predicate,$name)= field_maybe_predicate_and_name $_field;
 	    # accessors
-	    if (not $package->can($field)) {
-		*{"${package}::$field"}= sub {
+	    if (not $package->can($name)) {
+		*{"${package}::$name"}= sub {
 		    my $s=shift;
-		    $$s{$field}
+		    $$s{$name}
 		};
 	    }
 	    # functional setters
-	    my $field_set= $field."_set";
-	    if (not $package->can($field_set)) {
-		*{"${package}::$field_set"}= sub {
-		    my $s=shift;
-		    @_==1 or die "$field_set: need 1 argument";
-		    my $new= +{%$s};
-		    ($$new{$field})=@_;
-		    bless $new, ref $s
-		};
+	    my $name_set= $name."_set";
+	    if (not $package->can($name_set)) {
+		*{"${package}::$name_set"}=
+		  ($maybe_predicate ?
+		   sub {
+		       my $s=shift;
+		       @_==1 or die "$name_set: need 1 argument";
+		       my $v=shift;
+		       &$maybe_predicate($v)
+			 or die "unacceptable value for field '$name': ".Show($v);
+		       my $new= +{%$s};
+		       ($$new{$name})=@_;
+		       bless $new, ref $s
+		   }
+		   :
+		   sub {
+		       my $s=shift;
+		       @_==1 or die "$name_set: need 1 argument";
+		       my $new= +{%$s};
+		       ($$new{$name})=@_;
+		       bless $new, ref $s
+		   });
 	    }
 	}
 	1 # make module load succeed at the same time.
