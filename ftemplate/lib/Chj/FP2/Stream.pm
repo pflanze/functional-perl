@@ -39,7 +39,9 @@ package Chj::FP2::Stream;
 	      stream_filter
 	      stream_fold_right
 	      stream__array_fold_right
+	      stream__string_fold_right
 	      array2stream
+	      string2stream
 	      stream_for_each
 	      stream_drop
 	      stream_take
@@ -184,10 +186,35 @@ sub stream__array_fold_right ($$$) {
     &$rec_(0)
 }
 
+# mostly COPY PASTE of the above
+sub stream__string_fold_right ($$$) {
+    @_==3 or die;
+    my ($fn,$tail,$a)=@_;
+    my $rec; $rec= sub {
+	my ($i)=@_;
+	Delay {
+	    if ($i < length $a) {
+		&$fn(substr($a, $i, 1), &$rec($i+1))
+	    } else {
+		$tail
+	    }
+	}
+    };
+    my $rec_= $rec;
+    weaken $rec;
+    &$rec_(0)
+}
+
 sub array2stream ($;$) {
     my ($a,$tail)=@_;
     stream__array_fold_right (\&cons, $tail, $a)
 }
+
+sub string2stream ($;$) {
+    my ($str,$tail)=@_;
+    stream__string_fold_right (\&cons, $tail, $str)
+}
+
 
 sub stream_for_each ($ $ ) {
     my ($proc, $s)=@_;
@@ -370,5 +397,7 @@ TEST{stream2array  stream_take stream_drop_while( sub{ $_[0] < 10}, stream_iota 
    12
   ];
 
+TEST { join("", @{stream2array (string2stream("You're great."))}) }
+  'You\'re great.';
 
 1
