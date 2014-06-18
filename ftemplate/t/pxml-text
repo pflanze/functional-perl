@@ -1,0 +1,38 @@
+#!/usr/bin/perl -w
+
+# Wed Jun 18 03:48:27 BST 2014
+(my $email='ch%christianjaeger,ch')=~ tr/%,/@./;
+
+use strict;
+
+our ($mydir, $myname);
+BEGIN {
+    $0=~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+use Chj::PXHTML ":all";
+#use Chj::PXML::Serialize "pxml_print_fragment";
+# wow Perl doesn't complain about non-existing exported sub
+use Chj::PXML::Serialize "pxml_print_fragment_fast";
+
+
+#main> :d pxml_print_fragment_fast ( A({href=>"hah"}, "Hello ", I("World", B("!"))), *STDOUT{IO} )
+#$VAR1 = 1;
+#main> 
+#<a href="hah">Hello <i>World<b>!</b></i></a>chrisperl@novo:~/ml2json$ 
+
+use Chj::FP2::Lazy;
+use Chj::FP2::List;
+use Chj::FP2::Stream;
+use Chj::TEST ":all";
+
+TEST {  A({href=>"hah"}, "Hello ", I("World", undef, B("!")), cons(" ", string2stream("You're great.")))->text }
+  'Hello World! You\'re great.';
+
+#use Chj::ruse;
+use Chj::Backtrace; use Chj::repl; repl;
+
+run_tests;
+

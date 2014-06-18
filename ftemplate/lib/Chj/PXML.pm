@@ -83,6 +83,58 @@ sub body_update {
 }
 
 
+# "body text", a string, dropping tags; not having knowledge about
+# which XML tags have 'relevant body text', this returns all of it.
+
+# XX ugly: this is replicating part of the serializer. But don't want
+# to touch the code there... so, here goes. Really, better languages
+# have been created to write code in.
+
+# XX Depend on these? Chj::PXML::Serialize uses these, so any app that
+# serializes PXML would require them anyway.
+use Chj::FP2::Lazy;
+use Chj::FP2::List;
+
+sub _text {
+    my ($v)=@_;
+    if (defined $v) {
+	if (ref $v)  {
+	    if (UNIVERSAL::isa ($v, "Chj::PXML")) {
+		$v->text
+	    } elsif (UNIVERSAL::isa ($v, "ARRAY")) {
+		join("",
+		     map {
+			 _text ($_)
+		     } @$v);
+	    } elsif (UNIVERSAL::isa ($v, "CODE")) {
+		# correct? XX why does A(string2stream("You're
+		# great."))->text trigger this case?
+		_text (&$v ());
+	    } elsif (pairP $v) {
+		my ($a,$v2)= $v->carcdr;
+		_text ($a) . _text ($v2);
+	    } elsif (promiseP $v) {
+		_text (Force $v);
+	    } else {
+		die "don't know how to get text of: $v";
+	    }
+	} else {
+	    $v
+	}
+    } else {
+	""
+    }
+}
+
+sub text {
+    my $s=shift;
+    join("",
+	 map {
+	     _text ($_)
+	 } @{$s->body});
+}
+
+
 # XML does not distinguish between void elements and non-void ones in
 # its syntactical representation; whether an element is printed in
 # self-closing representation is orthogonal and can rely simply on
