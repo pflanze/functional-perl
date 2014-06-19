@@ -26,6 +26,7 @@ package Chj::FP::Predicates;
 	      booleanP
 	      hashP
 	      arrayP
+	      procedureP
 	      classP
 	 );
 @EXPORT_OK=qw();
@@ -68,6 +69,10 @@ sub hashP ($) {
 
 sub arrayP ($) {
     defined $_[0] and ref ($_[0]) eq "ARRAY"
+}
+
+sub procedureP ($) {
+    defined $_[0] and ref ($_[0]) eq "CODE"
 }
 
 sub classP ($) {
