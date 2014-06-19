@@ -23,7 +23,7 @@ package Chj::PHTML5;
 @EXPORT_OK=qw( $html5_void_elements $html5_void_element_h);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 # the set of tags that are allowed to be self-closing (<foo/>) without
 # semantical changes

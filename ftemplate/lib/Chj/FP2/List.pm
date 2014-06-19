@@ -39,7 +39,7 @@ package Chj::FP2::List;
 	      array_fold_right);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::FP2::Lazy;
 use Chj::xIO;

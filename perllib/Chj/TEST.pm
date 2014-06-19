@@ -37,7 +37,7 @@ package Chj::TEST;
 @EXPORT_OK=qw(run_tests);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 our $tests_by_package={};
 our $num_by_package={};

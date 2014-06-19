@@ -27,7 +27,7 @@ package Chj::FP::Array_sort;
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 sub the_method {
     my ($method,@args)=@_;

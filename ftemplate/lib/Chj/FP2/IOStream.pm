@@ -36,7 +36,7 @@ package Chj::FP2::IOStream;
 	      xopendir_pathstream);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::FP2::Lazy;
 use Chj::xopendir;

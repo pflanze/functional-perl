@@ -27,7 +27,7 @@ package Chj::PXML::Serialize;
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 use Data::Dumper;
 use Chj::PXML;

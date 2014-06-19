@@ -18,7 +18,7 @@ Chj::PXML
 
 package Chj::PXML;
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 # [ name, attributes, body ]
 

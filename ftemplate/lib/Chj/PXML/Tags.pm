@@ -25,7 +25,7 @@ wrappers are all uppercase, and "-" is replaced with "_".
 
 package Chj::PXML::Tags;
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::PXML ();
 

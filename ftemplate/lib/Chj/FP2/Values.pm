@@ -22,7 +22,7 @@ package Chj::FP2::Values;
 @EXPORT_OK=qw(fst snd);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 sub fst {
     $_[0]

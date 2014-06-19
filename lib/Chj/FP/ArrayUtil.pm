@@ -37,7 +37,7 @@ package Chj::FP::ArrayUtil;
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::TEST;
 use Chj::xperlfunc qw(min max);

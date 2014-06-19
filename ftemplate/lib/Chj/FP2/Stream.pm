@@ -55,7 +55,7 @@ package Chj::FP2::Stream;
 @EXPORT_OK=qw(F);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::FP2::Lazy;
 #use Chj::FP2::Pair; ?

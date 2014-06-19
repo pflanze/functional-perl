@@ -56,7 +56,7 @@ See Chj::FP::Predicates for some useful predicates.
 
 package Chj::Struct;
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 use Carp;
 
 
