@@ -27,7 +27,7 @@ package Chj::FP::Predicates;
 	      hashP
 	      arrayP
 	      procedureP
-	      classP
+	      instance_ofP
 	 );
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -75,8 +75,9 @@ sub procedureP ($) {
     defined $_[0] and ref ($_[0]) eq "CODE"
 }
 
-sub classP ($) {
+sub instance_ofP ($) {
     my ($cl)=@_;
+    stringP $cl or die "need class name string, got: $cl";
     sub ($) {
 	UNIVERSAL::isa ($_[0], $cl);
     }
