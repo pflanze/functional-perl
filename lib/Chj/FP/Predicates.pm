@@ -20,6 +20,7 @@ package Chj::FP::Predicates;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
 	      stringP
+	      nonnullstringP
 	      natural0P
 	      naturalP
 	      boolean01P
@@ -29,6 +30,10 @@ package Chj::FP::Predicates;
 	      procedureP
 	      class_nameP
 	      instance_ofP
+
+	      filenameP
+
+	      maybe
 	 );
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -37,6 +42,11 @@ use strict; use warnings FATAL => 'uninitialized';
 
 sub stringP ($) {
     not ref ($_[0]) # relax?
+}
+
+sub nonnullstringP ($) {
+    not ref ($_[0]) # relax?
+      and length $_[0]
 }
 
 sub natural0P ($) {
@@ -92,5 +102,22 @@ sub instance_ofP ($) {
     }
 }
 
+
+# should probably be in a filesystem lib instead?
+sub filenameP ($) {
+    my ($v)=@_;
+    (nonnullstringP ($v)
+     and !($v=~ m|/|)
+     and !($v eq ".")
+     and !($v eq ".."))
+}
+
+sub maybe ($) {
+    my ($pred)=@_;
+    sub ($) {
+	my ($v)=@_;
+	defined $v ? &$pred ($v) : 1
+    }
+}
 
 1
