@@ -619,8 +619,8 @@ sub mk_caching_getANYid {
 
 {
     package Chj::xperlfunc::xstat;
-    ## Alternative to arrays: hashes, so that slices like
-    ## ->{"dev","ino"} could be done? One can't have everything.
+    # (Alternative to arrays: hashes, so that slices like
+    # ->{"dev","ino"} could be done? But so what.)
     sub dev     { shift->[0] }
     sub ino     { shift->[1] }
     sub mode    { shift->[2] }
@@ -651,7 +651,7 @@ sub mk_caching_getANYid {
 
     # test helpers:
     sub permissions { shift->[2] & 07777 }
-    sub permissions_oct { sprintf('%o',shift->permissions) } # 'copy' from Chj/BinHexOctDec.pm
+    sub permissions_oct { sprintf('%o',shift->permissions) }
     sub permissions_u { (shift->[2] & 00700) >> 6 }
     sub permissions_g { (shift->[2] & 00070) >> 3 }
     sub permissions_o { shift->[2] & 00007 }
@@ -670,7 +670,6 @@ sub mk_caching_getANYid {
 	my ($mod,$uid,$gids)=@_; # the latter being an array ref!
 	return 1 if $uid==0;
 	if ($s->[4] == $uid) {
-	    #warn "uid do?";
 	    return !!($s->[2] & (00100 * $mod))
 	} else {
 	    if ($gids) {
@@ -678,20 +677,16 @@ sub mk_caching_getANYid {
 		    length($gid)==length($gid+0)
 			or Carp::croak "invalid gid argument '$gid' - maybe "
 			." you forgot to split '\$)'?";
-		    ## todo: what if one is member of group 0, is this special?
+		    # XXX: what if one is member of group 0, is this special?
 		    if ($s->[5] == $gid) {
 			if ($s->[2] & (00010 * $mod)) {
-			    #warn "gid yes";
 			    return 1;
 			} else {
-			    # groups stick just like users, so even if
-			    # others are allowed, we are not
+			    # even if others are allowed, we are not
 			    return 0;
 			}
 		    }
 		}
-		# check others
-		#warn "others. mod=$mod, uid=$uid, gids sind @$gids";
 		return !!($s->[2] & (00001 * $mod))
 	    } else {
 		Carp::croak "missing gids argument - might just be a ref to "
