@@ -635,6 +635,20 @@ sub mk_caching_getANYid {
     sub blksize { shift->[11] }
     sub blocks  { shift->[12] }
 
+    sub set_dev     { my $s= shift; ($s->[0])=@_; }
+    sub set_ino     { my $s= shift; ($s->[1])=@_; }
+    sub set_mode    { my $s= shift; ($s->[2])=@_; }
+    sub set_nlink   { my $s= shift; ($s->[3])=@_; }
+    sub set_uid     { my $s= shift; ($s->[4])=@_; }
+    sub set_gid     { my $s= shift; ($s->[5])=@_; }
+    sub set_rdev    { my $s= shift; ($s->[6])=@_; }
+    sub set_size    { my $s= shift; ($s->[7])=@_; }
+    sub set_atime   { my $s= shift; ($s->[8])=@_; }
+    sub set_mtime   { my $s= shift; ($s->[9])=@_; }
+    sub set_ctime   { my $s= shift; ($s->[10])=@_; }
+    sub set_blksize { my $s= shift; ($s->[11])=@_; }
+    sub set_blocks  { my $s= shift; ($s->[12])=@_; }
+
     # test helpers:
     sub permissions { shift->[2] & 07777 }
     sub permissions_oct { sprintf('%o',shift->permissions) } # 'copy' from Chj/BinHexOctDec.pm
