@@ -643,8 +643,7 @@ sub mk_caching_getANYid {
     sub permissions_o { shift->[2] & 00007 }
     sub permissions_s { (shift->[2] & 07000) >> 9 }
     sub setuid { !!(shift->[2] & 04000) }
-    # ^ no delight putting is_ in front. It is a boolean, if one
-    # cannot declare that in perl then pity
+    # ^ I have no desire to put is_ in front.
     sub setgid { !!(shift->[2] & 02000) }
     sub sticky { !!(shift->[2] & 01000) }
     sub filetype { (shift->[2] & 0170000) >> 12 } # 4*3bits
@@ -732,10 +731,6 @@ sub mk_caching_getANYid {
     sub equal_content {
 	my $s=shift;
 	my ($s2)=@_;
-	#UNIVERSAL::isa($s2,")
-	#defined ($s2) or Carp::croak "equal_content: missing argument";
-	#warn "s2='$s2'";
-	#ps remember EiD hatt ich method liste durchgeachert für sowas. function list ginge natürli in schm isili.wow.(aber lay out eh expand so unroll von looplist  manuell nötig?)
 	($s->dev == $s2->dev
 	 and $s->ino == $s2->ino
 	 and $s->size == $s2->size
