@@ -760,6 +760,12 @@ sub mk_caching_getANYid {
 	 and $s->gid == $s2->gid
 	)
     }
+    sub same_node {
+	my $s=shift;
+	my ($s2)=@_;
+	($s->ino == $s2->ino
+	 and $s->dev == $s2->dev)
+    }
     # for simplicity (and in cases where I copy values in 'rows' (lists of methods)):
     # ATTENTION: these are non-caching! see below.
     sub username {
