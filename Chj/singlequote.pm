@@ -1,11 +1,7 @@
-# Mon Aug  2 03:06:28 2004  Christian Jaeger, christian.jaeger@ethlife.ethz.ch
-# 
-# Copyright 2004 by Christian Jaeger
+#
+# Copyright 2004-2014 by Christian Jaeger, ch at christianjaeger . ch
 # Published under the same terms as perl itself
 #
-# $Id$
-
-# mann so lang hat das gebraucht bis ich das gmacht hab?.
 
 =head1 NAME
 
@@ -22,7 +18,8 @@ Chj::singlequote
 package Chj::singlequote;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(singlequote);
-@EXPORT_OK=qw(singlequote_sh singlequote_many many);# importing many is rather depreciated.
+@EXPORT_OK=qw(singlequote_sh singlequote_many many);
+# importing 'many' is probably not a good idea (depreciated)
 %EXPORT_TAGS=(all=>[qw(singlequote singlequote_sh singlequote_many)]);
 
 use strict;
@@ -59,4 +56,4 @@ sub many {
 *singlequote_many= \&many;
 
 
-1;
+1
