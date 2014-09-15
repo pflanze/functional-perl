@@ -1152,6 +1152,7 @@ sub dirname ($ ) {
 sub xmkdir_p ($ );
 sub xmkdir_p ($ ) {
     my ($path)=@_;
+    # (XX: see commit d1abd3c2 in megacopy for possible improvement)
     if (-d $path) {
 	#done
 	()
