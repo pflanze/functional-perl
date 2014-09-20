@@ -1,3 +1,6 @@
+This is a work in progress to prepare (maybe improve/adapt) existing
+modules for release to CPAN, possibly as one package.
+
 # functional-perl - A collection of libraries for functional programming in Perl 5
 
 We feel that the Scheme language approaches functional programming
