@@ -34,6 +34,7 @@ package Chj::FP2::Stream;
 @EXPORT=qw(
 	      stream_iota
 	      stream_length
+	      stream_append
 	      stream_map
 	      stream_map_with_tail
 	      stream_filter
@@ -42,6 +43,7 @@ package Chj::FP2::Stream;
 	      stream__string_fold_right
 	      array2stream
 	      string2stream
+	      stream2string
 	      stream_for_each
 	      stream_drop
 	      stream_take
@@ -105,6 +107,19 @@ sub stream_length ($) {
     }
     $len
 }
+
+sub stream_append ($$) {
+    my ($l1,$l2)=@_;
+    weaken $_[0];
+    weaken $_[1];
+    Delay {
+	$l1= Force $l1;
+	defined($l1) ? cons (car $l1, stream_append (cdr $l1, $l2)) : $l2
+    }
+}
+
+TEST{ stream2string (stream_append string2stream("Hello"), string2stream(" World")) }
+  'Hello World';
 
 sub stream_map ($ $);
 sub stream_map ($ $) {
@@ -215,6 +230,15 @@ sub string2stream ($;$) {
     stream__string_fold_right (\&cons, $tail, $str)
 }
 
+sub stream2string ($) {
+    my ($l)=@_;
+    my $str="";
+    while ($l= Force $l, defined $l) {
+	$str.= car $l;
+	$l= cdr $l;
+    }
+    $str
+}
 
 sub stream_for_each ($ $ ) {
     my ($proc, $s)=@_;
