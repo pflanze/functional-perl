@@ -41,10 +41,10 @@ use strict; use warnings FATAL => 'uninitialized';
 use Chj::FP2::Lazy;
 use Chj::xopendir;
 use Chj::FP2::List ':all';
-use Chj::FP2::Stream 'stream_map';
+use Chj::FP2::Stream 'stream_map', 'array2stream';
+use Chj::FP::Array_sort;
 
-
-sub xopendir_stream ($) {
+sub _xopendir_stream ($) {
     my ($path)=@_;
     my $d= xopendir $path;
     my $next; $next= sub {
@@ -61,12 +61,29 @@ sub xopendir_stream ($) {
     &$next
 }
 
-sub xopendir_pathstream ($) {
-    my ($base)=@_;
+sub _xopendir_stream_sorted ($$) {
+    my ($path,$cmp)=@_;
+    my $d= xopendir $path;
+    my $items= array_sort [$d->xnread], $cmp;
+    $d->xclose;
+    array2stream $items
+}
+
+sub xopendir_stream ($;$) {
+    my ($path,$maybe_cmp)=@_;
+    if ($maybe_cmp) {
+	_xopendir_stream_sorted $path,$maybe_cmp;
+    } else {
+	_xopendir_stream $path;
+    }
+}
+
+sub xopendir_pathstream ($;$) {
+    my ($base,$maybe_cmp)=@_;
     stream_map sub {
 	my ($item)= @_;
 	"$base/$item"
-    }, xopendir_stream $base
+    }, xopendir_stream $base,$maybe_cmp
 }
 
 
