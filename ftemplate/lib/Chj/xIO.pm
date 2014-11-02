@@ -21,7 +21,7 @@ Chj::xopen modules.
 package Chj::xIO;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(xprint xprintln);
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -37,6 +37,27 @@ sub xprintln {
     print $fh @_,"\n"
       or die "printing to $fh: $!"
 }
+
+
+# better place for these?
+
+use Chj::xopen ":all";
+
+sub xgetfile_utf8 ($) {
+    my ($path)=@_;
+    my $in= xopen_read ($path);
+    binmode $in, ":utf8" or die;
+    $in->xcontent
+}
+
+sub xputfile_utf8 ($$) {
+    my ($path,$str)=@_;
+    my $out= xopen_write($path);
+    binmode $out, ":utf8" or die;
+    $out->xprint($str);
+    $out->xclose;
+}
+
 
 
 1
