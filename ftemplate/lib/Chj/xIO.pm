@@ -42,6 +42,9 @@ sub xprintln {
 # better place for these?
 
 use Chj::xopen ":all";
+# ^ well, this voids the point of Chj::xIO (to avoid Chj::IO::*)
+use Chj::FP2::Lazy;
+use Chj::FP2::List;
 
 sub xgetfile_utf8 ($) {
     my ($path)=@_;
@@ -50,11 +53,32 @@ sub xgetfile_utf8 ($) {
     $in->xcontent
 }
 
+# print, not write, i.e. flatten nested structures out, but don't
+# print parens for lists etc., just print the contained basic types.
+sub xprint_object ($$);
+sub xprint_object ($$) {
+    my ($fh,$v)=@_;
+    if (ref $v) {
+	if (ref($v) eq "ARRAY") {
+	    xprint_object ($fh, $_) for @$v;
+	} elsif (pairP $v) {
+	    xprint_object ($fh, car $v);
+	    xprint_object ($fh, cdr $v);
+	} elsif (promiseP $v) {
+	    xprint_object ($fh, Force $v)
+	} else {
+	    die "don't know how to print a ".ref($v)." ('$v')";
+	}
+    } else {
+	xprint $fh, $v
+    }
+}
+
 sub xputfile_utf8 ($$) {
     my ($path,$str)=@_;
     my $out= xopen_write($path);
     binmode $out, ":utf8" or die;
-    $out->xprint($str);
+    xprint_object ($out, $str);
     $out->xclose;
 }
 
