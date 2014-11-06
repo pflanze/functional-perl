@@ -27,13 +27,20 @@ use Chj::Struct
   [[\&arrayP, "array"],
    [\&hashP, "hash"]];
 
+sub new_from_array {
+    my $cl=shift;
+    @_==1 or die;
+    my ($a)=@_;
+    my %h;
+    for my $i (0..$#$a) {
+	$h{$$a[$i]}= $i;
+    }
+    $cl->new ($a,\%h)
+}
+
 sub new_from_values {
     my $cl=shift;
-    my %h;
-    for my $i (0..$#_) {
-	$h{$_[$i]}= $i;
-    }
-    $cl->new ([@_],\%h)
+    $cl->new_from_array([@_])
 }
 
 sub contains {
