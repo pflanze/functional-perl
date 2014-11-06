@@ -50,13 +50,13 @@ sub maybe_position {
 
 sub maybe_following {
     my $s=shift;
-    my $i= $s->maybe_position(@_) // return undef;
+    my $i= $s->maybe_position(@_) // return;
     subarray2stream($$s{array}, $i+1)
 }
 
 sub maybe_previous {
     my $s=shift;
-    my $i= $s->maybe_position(@_) // return undef;
+    my $i= $s->maybe_position(@_) // return;
     subarray2stream_reverse($$s{array}, $i-1)
 }
 
@@ -78,8 +78,8 @@ TEST {
     our $c->maybe_position ("f")
 } 3;
 
-TEST { stream2array( our $c->maybe_following ("xx")) }
-  []; # ahh, XXX because undef is the same as the empty stream
+TEST { [ our $c->maybe_following ("xx")] }
+  [];
 TEST { stream2array( our $c->maybe_following ("c")) }
   [ 'f' ];
 TEST { stream2array( our $c->maybe_following ("b")) }
