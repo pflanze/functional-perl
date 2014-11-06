@@ -43,7 +43,7 @@ package Chj::FP2::Stream;
 	      stream__string_fold_right
 	      stream__subarray_fold_right stream__subarray_fold_right_reverse
 	      array2stream
-	      subarray2stream
+	      subarray2stream subarray2stream_reverse
 	      string2stream
 	      stream2string
 	      stream_for_each
@@ -263,6 +263,11 @@ sub array2stream ($;$) {
 sub subarray2stream ($$;$$) {
     my ($a, $start, $maybe_end, $tail)=@_;
     stream__subarray_fold_right (\&cons, $tail, $a, $start, $maybe_end)
+}
+
+sub subarray2stream_reverse ($$;$$) {
+    my ($a, $start, $maybe_end, $tail)=@_;
+    stream__subarray_fold_right_reverse (\&cons, $tail, $a, $start, $maybe_end)
 }
 
 
@@ -485,5 +490,11 @@ TEST { stream2string subarray2stream [split //, "Hello"], 1, 99 }
 
 TEST { stream2string subarray2stream [split //, "Hello"], 2 }
   'llo';
+
+TEST { stream2string subarray2stream_reverse  [split //, "Hello"], 1 }
+  'eH';
+
+TEST { stream2string subarray2stream_reverse  [split //, "Hello"], 1, 0 }
+  'e'; # dito. BTW it's consistent at least, $start not being 'after the element'(?) either.
 
 1
