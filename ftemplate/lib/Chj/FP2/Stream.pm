@@ -183,42 +183,44 @@ sub stream_fold_right ($ $ $) {
     }
 }
 
-sub stream__array_fold_right ($$$) {
-    @_==3 or die;
-    my ($fn,$tail,$a)=@_;
-    my $rec; $rec= sub {
-	my ($i)=@_;
-	Delay {
-	    if ($i < @$a) {
-		&$fn($$a[$i], &$rec($i+1))
-	    } else {
-		$tail
+sub make_stream__fold_right {
+    my ($length, $ref, $d, $whileP)=@_;
+    sub ($$$) {
+	@_==3 or die;
+	my ($fn,$tail,$a)=@_;
+	my $len= &$length ($a);
+	my $rec; $rec= sub {
+	    my ($i)=@_;
+	    Delay {
+		if (&$whileP($i,$len)) {
+		    &$fn(&$ref($a, $i), &$rec($i + $d))
+		} else {
+		    $tail
+		}
 	    }
-	}
-    };
-    my $rec_= $rec;
-    weaken $rec;
-    &$rec_(0)
+	};
+	my $rec_= $rec;
+	weaken $rec;
+	&$rec_(0)
+    }
 }
 
-# mostly COPY PASTE of the above
-sub stream__string_fold_right ($$$) {
-    @_==3 or die;
-    my ($fn,$tail,$a)=@_;
-    my $rec; $rec= sub {
-	my ($i)=@_;
-	Delay {
-	    if ($i < length $a) {
-		&$fn(substr($a, $i, 1), &$rec($i+1))
-	    } else {
-		$tail
-	    }
-	}
-    };
-    my $rec_= $rec;
-    weaken $rec;
-    &$rec_(0)
-}
+our $lt= sub { $_[0] < $_[1] };
+
+sub stream__array_fold_right ($$$);
+*stream__array_fold_right= make_stream__fold_right
+  (sub { scalar @{$_[0]} },
+   sub { $_[0][$_[1]] },
+   1,
+   $lt);
+
+sub stream__string_fold_right ($$$);
+*stream__string_fold_right= make_stream__fold_right
+  (sub { length $_[0] },
+   sub { substr $_[0], $_[1], 1 },
+   1,
+   $lt);
+
 
 sub array2stream ($;$) {
     my ($a,$tail)=@_;
