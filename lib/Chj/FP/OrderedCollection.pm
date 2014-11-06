@@ -48,13 +48,13 @@ sub maybe_position {
     $$s{hash}{$_[0]}
 }
 
-sub maybe_following {
+sub perhaps_following {
     my $s=shift;
     my $i= $s->maybe_position(@_) // return;
     subarray2stream($$s{array}, $i+1)
 }
 
-sub maybe_previous {
+sub perhaps_previous {
     my $s=shift;
     my $i= $s->maybe_position(@_) // return;
     subarray2stream_reverse($$s{array}, $i-1)
@@ -78,13 +78,13 @@ TEST {
     our $c->maybe_position ("f")
 } 3;
 
-TEST { [ our $c->maybe_following ("xx")] }
+TEST { [ our $c->perhaps_following ("xx")] }
   [];
-TEST { stream2array( our $c->maybe_following ("c")) }
+TEST { stream2array( our $c->perhaps_following ("c")) }
   [ 'f' ];
-TEST { stream2array( our $c->maybe_following ("b")) }
+TEST { stream2array( our $c->perhaps_following ("b")) }
   [ 'c', 'f' ];
-TEST { stream2array( our $c->maybe_previous ("c")) }
+TEST { stream2array( our $c->perhaps_previous ("c")) }
   [ 'b', 'a' ];
 
 
