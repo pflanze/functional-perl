@@ -22,6 +22,8 @@ use strict; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use Chj::FP::Predicates;
 use Chj::FP2::Stream qw(subarray2stream subarray2stream_reverse  stream2array);
+use Chj::FP2::Lazy;
+use Chj::FP2::List;
 
 use Chj::Struct
   [[\&arrayP, "array"],
@@ -67,6 +69,20 @@ sub perhaps_previous {
     subarray2stream_reverse($$s{array}, $i-1)
 }
 
+sub maybe_next {
+    my $s=shift;
+    my ($l)= $s->perhaps_following (@_) or return undef;
+    $l= Force ($l) // return undef; # parens are required. Wow Perl.
+    car $l
+}
+
+sub maybe_prev {
+    my $s=shift;
+    my ($l)= $s->perhaps_previous (@_) or return undef;
+    $l= Force ($l) // return undef;
+    car $l
+}
+
 
 TEST {
     our $c= Chj::FP::OrderedCollection->new_from_values(qw(a b c f));
@@ -93,6 +109,17 @@ TEST { stream2array( our $c->perhaps_following ("b")) }
   [ 'c', 'f' ];
 TEST { stream2array( our $c->perhaps_previous ("c")) }
   [ 'b', 'a' ];
+
+TEST { our $c->maybe_prev("c") }
+  'b';
+TEST { our $c->maybe_prev("a") }
+  undef;
+TEST { our $c->maybe_prev("xx") }
+  undef;
+TEST { our $c->maybe_next("a") }
+  'b';
+TEST { our $c->maybe_next("f") }
+  undef;
 
 
 _END_
