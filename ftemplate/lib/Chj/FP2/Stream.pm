@@ -41,6 +41,7 @@ package Chj::FP2::Stream;
 	      stream_fold_right
 	      stream__array_fold_right
 	      stream__string_fold_right
+	      stream__subarray_fold_right stream__subarray_fold_right_reverse
 	      array2stream
 	      string2stream
 	      stream2string
@@ -184,7 +185,7 @@ sub stream_fold_right ($ $ $) {
 }
 
 sub make_stream__fold_right {
-    my ($length, $ref, $d, $whileP)=@_;
+    my ($length, $ref, $start, $d, $whileP)=@_;
     sub ($$$) {
 	@_==3 or die;
 	my ($fn,$tail,$a)=@_;
@@ -201,25 +202,56 @@ sub make_stream__fold_right {
 	};
 	my $rec_= $rec;
 	weaken $rec;
-	&$rec_(0)
+	&$rec_($start)
     }
 }
 
 our $lt= sub { $_[0] < $_[1] };
+our $gt= sub { $_[0] > $_[1] };
+our $array_length= sub { scalar @{$_[0]} };
+our $array_ref= sub { $_[0][$_[1]] };
+our $string_length= sub { length $_[0] };
+our $string_ref= sub { substr $_[0], $_[1], 1 };
 
 sub stream__array_fold_right ($$$);
 *stream__array_fold_right= make_stream__fold_right
-  (sub { scalar @{$_[0]} },
-   sub { $_[0][$_[1]] },
+  ($array_length,
+   $array_ref,
+   0,
    1,
    $lt);
 
 sub stream__string_fold_right ($$$);
 *stream__string_fold_right= make_stream__fold_right
-  (sub { length $_[0] },
-   sub { substr $_[0], $_[1], 1 },
+  ($string_length,
+   $string_ref,
+   0,
    1,
    $lt);
+
+sub stream__subarray_fold_right ($$$$$) {
+    my ($fn,$tail,$a,$start,$maybe_end)=@_;
+    make_stream__fold_right ($array_length,
+			     $array_ref,
+			     $start,
+			     1,
+			     defined $maybe_end ?
+			     sub { $_[0] < $_[1] and $_[0] < $maybe_end }
+			     : $lt)
+      ->($fn,$tail,$a);
+}
+
+sub stream__subarray_fold_right_reverse ($$$$$) {
+    my ($fn,$tail,$a,$start,$maybe_end)=@_;
+    make_stream__fold_right ($array_length,
+			     $array_ref,
+			     $start,
+			     -1,
+			     defined $maybe_end ?
+			     sub { $_[0] >= 0 and $_[0] > $maybe_end }
+			     : sub { $_[0] >= 0 })
+      ->($fn,$tail,$a);
+}
 
 
 sub array2stream ($;$) {
@@ -425,5 +457,17 @@ TEST{stream2array  stream_take stream_drop_while( sub{ $_[0] < 10}, stream_iota 
 
 TEST { join("", @{stream2array (string2stream("You're great."))}) }
   'You\'re great.';
+
+TEST { stream2string stream__subarray_fold_right \&cons, string2stream("World"), [split //, "Hello"], 3, undef }
+  'loWorld';
+
+TEST { stream2string stream__subarray_fold_right \&cons, string2stream("World"), [split //, "Hello"], 3, 4 }
+  'lWorld';
+
+TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",undef), [split //, "Hello"], 1, undef }
+  'eHW';
+
+TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",undef), [split //, "Hello"], 2,0 }
+  'leW'; # hmm really? exclusive lower boundary?
 
 1
