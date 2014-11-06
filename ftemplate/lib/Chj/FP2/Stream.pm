@@ -43,6 +43,7 @@ package Chj::FP2::Stream;
 	      stream__string_fold_right
 	      stream__subarray_fold_right stream__subarray_fold_right_reverse
 	      array2stream
+	      subarray2stream
 	      string2stream
 	      stream2string
 	      stream_for_each
@@ -259,6 +260,12 @@ sub array2stream ($;$) {
     stream__array_fold_right (\&cons, $tail, $a)
 }
 
+sub subarray2stream ($$;$$) {
+    my ($a, $start, $maybe_end, $tail)=@_;
+    stream__subarray_fold_right (\&cons, $tail, $a, $start, $maybe_end)
+}
+
+
 sub string2stream ($;$) {
     my ($str,$tail)=@_;
     stream__string_fold_right (\&cons, $tail, $str)
@@ -469,5 +476,14 @@ TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",undef
 
 TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",undef), [split //, "Hello"], 2,0 }
   'leW'; # hmm really? exclusive lower boundary?
+
+TEST { stream2string subarray2stream [split //, "Hello"], 1, 3 }
+  'el';
+
+TEST { stream2string subarray2stream [split //, "Hello"], 1, 99 }
+  'ello';
+
+TEST { stream2string subarray2stream [split //, "Hello"], 2 }
+  'llo';
 
 1
