@@ -30,7 +30,28 @@ use Carp;
 use NEXT;
 use Chj::singlequote 'singlequote_sh';
 
-my %metadata; # numified => pid
+my %metadata; # numified => [pid, cmd+args]
+
+sub PID () {0}
+sub CMD_ARGS () {1}
+
+sub pid {
+    my $self=shift;
+    my $meta= $metadata{pack "I",$self} || die "missing metadata"; # ||[]; why?
+    $$meta[PID]
+}
+
+sub name {
+    my $self=shift;
+    my $meta= $metadata{pack "I",$self} || die "missing metadata";
+    $$meta[CMD_ARGS][0] # XX ok? what use is it?
+}
+
+sub quotedname {
+    my $self=shift;
+    my $meta= $metadata{pack "I",$self} || die "missing metadata";
+    join(" ", map { singlequote_sh $_ } @{$$meta[CMD_ARGS]})
+}
 
 sub _launch {
     my ($subname,$otherendclose,$closeinchild)=@_;
@@ -45,7 +66,8 @@ sub _launch {
 	@$cmd or die "$subname: missing cmd arguments";
 	my ($readerr,$writeerr)=xpipe;
 	if (my $pid= xfork) {
-	    $metadata{pack"I",$self}=$pid;
+	    $metadata{pack"I",$self}=
+	      [$pid, $cmd];
 	    &$otherendclose;
 	    $writeerr->xclose; #" here it's clear that it's needed."
 	    # close all handles that have been given for redirections? 
@@ -119,14 +141,9 @@ sub xlaunch3 {
 }
 
 
-sub pid {
-    my $self=shift;
-    $metadata{pack"I",$self}
-}
-
 sub wait {
     my $s=shift;
-    waitpid $metadata{pack"I",$s},0;
+    waitpid $s->pid,0;
     $?
 }
 
@@ -148,7 +165,7 @@ sub xfinish { # Note: does not throw on error exit codes. Just throws
               # on errors closing.
     my $self=shift;
     $self->xclose;
-    waitpid $metadata{pack"I",$self},0;
+    waitpid $self->pid,0;
     delete$metadata{pack"I",$self};
     $?
 }
@@ -156,17 +173,20 @@ sub xfinish { # Note: does not throw on error exit codes. Just throws
 sub xxfinish { # does also throw on error exit codes.
     my $self=shift;
     $self->xclose;
-    waitpid $metadata{pack"I",$self},0;
-    delete $metadata{pack"I",$self};
-    $?==0 or do {
+    waitpid $self->pid,0;
+    if ($?==0) {
+	delete $metadata{pack"I",$self};
+    } else {
+	my $qn= $self->quotedname;
+	delete $metadata{pack"I",$self}; # [XX really? or only in DESTROY?]
 	if ($? & 127) {
-	    croak ("xxfinish on ".$self->quotedname
+	    croak ("xxfinish on ".$qn
 		   .": subcommand has been killed with signal ".($? & 127));
 	} else {
-	    croak ("xxfinish on ".$self->quotedname
+	    croak ("xxfinish on ".$qn
 		   .": subcommand gave error ".($? >>8));
 	}
-    };
+    }
 }
 
 sub DESTROY { # no exceptions thrown from here
