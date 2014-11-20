@@ -21,7 +21,7 @@ Chj::xopen modules.
 package Chj::xIO;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(xprint xprintln);
-@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8);
+@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -82,6 +82,10 @@ sub xputfile_utf8 ($$) {
     $out->xclose;
 }
 
+sub xcopyfile_utf8 ($$) {
+    my ($src,$dest)=@_;
+    xputfile_utf8 ($dest, xgetfile_utf8 ($src));
+}
 
 
 1
