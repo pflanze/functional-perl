@@ -149,6 +149,14 @@ sub _pxml_print_fragment_fast {
 		    no warnings "recursion"; # hu.
 		    _pxml_print_fragment_fast ($_, $fh, $html5compat, $void_element_h)
 			for (@$v);
+		}
+		# 'Force' doesn't evaluate CODE (probably rightly so),
+		# thus need to be explicit if we want 'late binding'
+		# (e.g. reference to dynamic variables) during
+		# serialization
+		elsif ($ref eq "CODE") {
+		    $v= &$v();
+		    redo LP;
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
 		    # evil.
