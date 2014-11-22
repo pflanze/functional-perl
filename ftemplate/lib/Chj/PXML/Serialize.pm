@@ -83,7 +83,13 @@ sub _pxml_print_fragment_fast {
 		print $fh "<$n" or die $!;
 		if (my $attrs= $v->maybe_attributes) {
 		    for my $k (sort keys %$attrs) {
-			print $fh " $k=\"", attribute_escape($$attrs{$k}),"\""
+			my $v= $$attrs{$k};
+			# XX ugly, should have one place to evaluate
+			# things (like promises, too!)
+			if (ref($v) eq "CODE") {
+			    $v= &$v();
+			}
+			print $fh " $k=\"", attribute_escape($v),"\""
 			  or die $!;
 		    }
 		}
