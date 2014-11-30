@@ -1,6 +1,7 @@
 #
 # Copyright 2014 by Christian Jaeger, ch at christianjaeger ch
-# Published under the same terms as perl itself
+# This is free software, offered under the terms of the MIT License.
+# See the file COPYING that came bundled with this file.
 #
 
 =head1 NAME
