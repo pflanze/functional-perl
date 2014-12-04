@@ -19,7 +19,8 @@ Chj::FP::ArrayUtil
 package Chj::FP::ArrayUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(array_fst
+@EXPORT_OK=qw(array
+	      array_fst
 	      array_snd
 	      array_xone
 	      array_hashing_uniq
@@ -45,6 +46,10 @@ use strict; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::TEST;
 use Chj::xperlfunc qw(min max);
+
+sub array {
+    [@_]
+}
 
 sub array_fst ($) {
     $_[0][0]
