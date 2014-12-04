@@ -22,6 +22,7 @@ package Chj::FP::ArrayUtil;
 @EXPORT_OK=qw(array
 	      array_fst
 	      array_snd
+	      array_append
 	      array_xone
 	      array_hashing_uniq
 	      array_zip2
@@ -57,6 +58,10 @@ sub array_fst ($) {
 
 sub array_snd ($) {
     $_[0][1]
+}
+
+sub array_append {
+    [ map { @$_ } @_ ]
 }
 
 sub array_xone ($) {
