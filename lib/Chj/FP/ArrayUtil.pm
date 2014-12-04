@@ -23,6 +23,7 @@ package Chj::FP::ArrayUtil;
 	      array_fst
 	      array_snd
 	      array_append
+              array_reverse
 	      array_xone
 	      array_hashing_uniq
 	      array_zip2
@@ -62,6 +63,11 @@ sub array_snd ($) {
 
 sub array_append {
     [ map { @$_ } @_ ]
+}
+
+sub array_reverse ($) {
+    my ($v)=@_;
+    [ reverse @$v ]
 }
 
 sub array_xone ($) {
