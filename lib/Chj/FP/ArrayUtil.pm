@@ -25,6 +25,7 @@ package Chj::FP::ArrayUtil;
 	      array_map
 	      array_map_with_i
 	      array_map_with_islast
+	      array_filter
 	      array_fold
 	      array_join
 	      array_every
@@ -115,6 +116,25 @@ sub array_map_with_islast {
 
 TEST{ array_map_with_islast sub { $_[0] }, [1,2,20] }
   [ '','',1 ];
+
+
+sub array_filter ($$) {
+    @_==2 or die;
+    my ($fn,$v)=@_;
+    [
+     grep {
+	 &$fn($_)
+     } @$v
+    ]
+}
+
+sub even {
+    not ($_[0] % 2)
+}
+
+TEST { array_filter \&even, [qw(1 7 4 9 -5 0)] }
+  [ 4, 0 ];
+
 
 sub array_fold ($$$) {
     my ($fn,$start,$ary)=@_;
