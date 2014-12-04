@@ -28,6 +28,7 @@ package Chj::FP::ArrayUtil;
 	      array_map_with_i
 	      array_map_with_islast
 	      array_filter
+	      array_zip
 	      array_fold
 	      array_join
 	      array_every
@@ -144,6 +145,11 @@ sub even {
 
 TEST { array_filter \&even, [qw(1 7 4 9 -5 0)] }
   [ 4, 0 ];
+
+
+sub array_zip {
+    array_map \&array, @_
+}
 
 
 sub array_fold ($$$) {
