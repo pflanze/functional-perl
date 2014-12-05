@@ -10,7 +10,6 @@ Chj::FP::HashSet - set operations for hash tables
 
 =head1 SYNOPSIS
 
- use Chj::FP::ArrayUtil 'array2hashset';
  use Chj::FP::HashSet; # ":all";
 
  my $A= array2hashset ["a","b","c"];
