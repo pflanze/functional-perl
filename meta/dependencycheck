@@ -1,0 +1,62 @@
+#!/usr/bin/perl -w
+
+# dependencies of *this* script?: some modules => chj-perllib,
+# straceopens => chj-bin
+
+use strict; use warnings FATAL => 'uninitialized';
+
+use v5.10;
+use Chj::IO::Command;
+use Chj::xtmpfile;
+use lib "./lib";
+use Chj::FP::ArrayUtil ":all";
+use Chj::FP::Div ":all";
+use Chj::xperlfunc;
+use Chj::xopen 'xopen_read';
+
+$0 eq "meta/dependencycheck"
+  or die "run from functional-perl toplevel dir!";
+
+our $files= do {
+    my $files= Chj::IO::Command->new_sender(qw(git ls-files -z));
+    local $/="\0";
+    my $r= [ <$files> ];
+    $files->xxfinish;
+    $r
+};
+
+our $namespaces=
+  array_filter \&identity,
+  array_map sub {
+    my ($file)=@_;
+    $file=~ m{(Chj/.*)\.pm} ? do {
+	my $str= $1;
+	$str=~ s{/}{::}sg;
+	$str
+    } : undef;
+}, $files;
+
+our $out= xtmpfile;
+
+for my $ns (@$namespaces) {
+    my $tr= Chj::IO::Command->new_combinedsender
+      ("straceopens",
+       qw(perl -w -Mlib=./perllib -Mlib=./lib -Mlib=ftemplate/lib/),
+       "-M$ns", "-e", "");
+    $tr->xsendfile_to($out);
+    $tr->xxfinish;
+}
+
+$out->xclose;
+
+our $in= xopen_read $out->path; # bleh?
+our %o;
+while (<$in>) {
+    chomp;
+    $o{$_}++ if (m{^/} and m{/Chj/});
+}
+
+$in->xclose;
+
+say $_ for sort keys %o;
+
