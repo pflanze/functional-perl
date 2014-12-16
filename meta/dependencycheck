@@ -5,6 +5,11 @@
 
 use strict; use warnings FATAL => 'uninitialized';
 
+BEGIN {
+    $0 =~ m{^(?:\./+)?meta/+dependencycheck}
+      or die "Please run me from the functional-perl toplevel dir!";
+}
+
 use v5.10;
 use Chj::IO::Command;
 use Chj::xtmpfile;
@@ -13,9 +18,6 @@ use Chj::FP::ArrayUtil ":all";
 use Chj::FP::Div ":all";
 use Chj::xperlfunc;
 use Chj::xopen 'xopen_read';
-
-$0 eq "meta/dependencycheck"
-  or die "run from functional-perl toplevel dir!";
 
 our $files= do {
     my $files= Chj::IO::Command->new_sender(qw(git ls-files -z));
