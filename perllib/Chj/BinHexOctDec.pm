@@ -14,12 +14,13 @@ Chj::BinHexOctDec
 
 =head1 DESCRIPTION
 
-Data systems zeugs konversi
+Conversions between number bases.
 
-Same methods are convertig *from* the named format when used as constuctors,
-and the *to* the format when used on an object.
+The methods are overloaded both as class methods (to convert *from*
+that base) and object method (*to* that base).
 
-Note: does NOT croak on invalid input but insteda just soweit wie geht
+Note: does not die on invalid input. (Should this be considered a
+bug?)
 
 =head1 METHODS
 
@@ -76,4 +77,4 @@ sub hex {
 }
 
 
-1;
+1

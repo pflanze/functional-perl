@@ -11,8 +11,7 @@ Chj::Package::OfPath
 
 =head1 DESCRIPTION
 
-
-taken from /root/bin/perl_path2namespace
+(Taken from chj-bin's perl_path2namespace.)
 
 
 =cut
@@ -43,27 +42,25 @@ sub package_of_path {
 	$path= xrealpath $path;
     }
     warn "path=".singlequote($path) if $DEBUG;
-    if (-f $path) {
-	if (open IN,"<$path") {
-	    local $/;
-	    my $content= <IN>;
-	    close IN;
-	  CHECK:{
-		while ($content=~ m{\bpackage +([\w:]+)}g) {
-		    my $namespace= $1;
-		    if ($class=~ m/\Q$namespace\E$/) {
-			warn "cutting '$class' down to '$namespace'\n" if $DEBUG;
-			$class= $namespace;
-			last CHECK;
-		    }
-		}
-		die "could not find any package definition in '$path' matching it's path";
+
+    open IN,"<$path"
+      or die "could not open '$path': $!";
+
+    local $/;
+	my $content= <IN>;
+    close IN
+      or die "closing '$path': $!";
+  CHECK: {
+	while ($content=~ m{\bpackage +([\w:]+)}g) {
+	    my $namespace= $1;
+	    if ($class=~ m/\Q$namespace\E$/) {
+		warn "cutting '$class' down to '$namespace'\n" if $DEBUG;
+		$class= $namespace;
+		last CHECK;
 	    }
-	} else {
-	    die "could not open '$path': $!";
 	}
-    } else {
-	die "there is no such file as '$path'";
+	die "could not find any package definition in '$path' ".
+	  "matching its path";
     }
     $class
 }
