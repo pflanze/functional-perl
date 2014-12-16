@@ -1,9 +1,7 @@
-# Sat Apr 26 19:21:04 2003  Christian Jaeger, christian.jaeger@ethlife.ethz.ch
-# 
-# Copyright 2003 by Christian Jaeger
+#
+# Copyright (c) 2003-2014 by Christian Jaeger ch@christianjaeger.ch
 # Published under the same terms as perl itself.
 #
-# $Id$
 
 # Sun, 30 Nov 2003 23:19:05 +0100
 # heieiei. schon wieder ein bug. hatte in xopen_* funktionen optionale params gekillt.

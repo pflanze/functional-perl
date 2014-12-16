@@ -1,9 +1,7 @@
-# Sat Apr 26 18:16:52 2003  Christian Jaeger, christian.jaeger@ethlife.ethz.ch
-# 
-# Copyright 2003 by Christian Jaeger
+#
+# Copyright (c) 2003-2014 by Christian Jaeger ch@christianjaeger.ch
 # Published under the same terms as perl itself.
 #
-# $Id$
 
 =head1 NAME
 

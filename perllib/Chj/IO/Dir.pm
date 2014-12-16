@@ -1,10 +1,7 @@
-# Mon Jul 14 07:37:04 2003  Christian Jaeger, christian.jaeger@ethlife.ethz.ch
-# moved here from Chj::xopendir.
 #
-# Copyright 2003 by Christian Jaeger
+# Copyright (c) 2003-2014 by Christian Jaeger ch@christianjaeger.ch
 # Published under the same terms as perl itself.
 #
-# $Id$
 
 =head1 NAME
 
