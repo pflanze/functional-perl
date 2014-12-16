@@ -81,8 +81,8 @@ with long linked lists), this will make the interpreter run out of
 stack space, which will be reported as a segfault on most
 systems. There are two different remedies for this:
 
-    - increase system stack size by setting resource limits (e.g. by
-    using `ulimit` in Bash.)
+    - increase system stack size by changing the corresponding
+    resource limit (e.g. see `help ulimit` in Bash.)
 
     - don't let go of a deeply nested structure at once. Again, this
     is done by letting go of the outer layers (like the head of the
