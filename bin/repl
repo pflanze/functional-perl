@@ -7,8 +7,16 @@
 
 use strict; use warnings FATAL => 'uninitialized';
 
-$0=~ /([^\/]+)$/s or die "?";
-my $myname=$1;
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/lib";
+use lib "$mydir/../perllib";
+
+
 sub usage {
     print "$myname [ calculation(s) ]
   Evaluates the given string(s), or goes into interactive mode if
