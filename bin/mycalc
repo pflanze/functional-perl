@@ -1,0 +1,109 @@
+#!/usr/bin/perl -w
+
+# Don Nov 28 13:04:46 MET 2002
+# pflanze@gmx.ch
+
+use strict;
+
+$0=~ /([^\/]+)$/s or die "?";
+my $myname=$1;
+sub usage {
+	print "$myname [ calculation(s) ]
+  Evaluates the given string(s), or goes into interactive mode if
+  none given.
+
+  Interactive mode tricks:
+  - enter alone re-evaluates last entry. No need to push cursor up for that:)
+  - you can use \$variables (there's no strict vars in scope), or define
+    subroutines, whatever...:)
+  - the last result is stored in \$res; so you can enter '\$res+1' for example
+  - if you enter the pipe symbol | as the first char, text is read until
+    eof (ctl-d) is reached, thus multi-line entries are possible.
+
+  Options:
+  -H|--no-history  Do not save history to file. (It is still read in on startup.)
+";
+exit @_;
+}
+
+my $HISTFILE= "$ENV{HOME}/.${myname}_history";
+my $MAXHISTLEN= 100;
+
+my @files;
+my $opt_H;
+my @opt_M;
+for (my $i=0; $i<=$#ARGV; $i++) {
+    local $_=$ARGV[$i];
+    if (/^--?h(elp)?$/) {
+	usage
+    } elsif ($_ eq '--') {
+	push @files, @ARGV[$i+1..$#ARGV];
+	last;
+    } elsif ($_ eq '-H' or $_ eq '--no-history') {
+	$opt_H=1;
+    } elsif (/^-M(.*)/) {
+	if ($1) {
+	    push @opt_M,$1;
+	} else {
+	    my $arg= $ARGV[++$i];
+	    defined $arg or usage "missing argument to -M";
+	    push @opt_M,$arg;
+	}
+    } elsif (/^-/) {
+	warn "Unknown option '$_'\n";
+	usage(1)
+    } else {
+	push @files, $_
+    }
+}
+#usage unless @files;
+
+eval {
+    require Chj::BinHexOctDec;
+};
+warn $@ if $@;
+if (@opt_M) {
+    require 'Chj/Package/OfPath.pm';
+    Chj::Package::OfPath->import('package_of_path_or_package');
+    eval "package $myname; ".join(";",map{"use $_"} #<-make "use $_;" statements
+				  map {
+				      #my @p=split /=/,$_;
+				      #my $p=shift @p;# package part.
+				      #$p." ".join(", ",map{"'$_'"}@p)
+				      # hm, (cj 20.8.04) the above expected: calc -MChj::Trash=path_quote=path_dequote
+				      # well, just adding the comma to the split would be enough.but..
+				      my $a=$_;
+				      $a=~ s/([^=]+)//s or die "invalid -M option '$_'";
+				      my $path_or_package= $1;
+				      my $p= package_of_path_or_package($path_or_package);
+				      #use Chj::singlequote; warn "path_or_package=".singlequote($path_or_package); warn "p=".singlequote($p);
+				      if ($a=~ s/^=//s) {
+					  $p." ".join(", ",map{"'$_'"} split /,/,$a)
+				      } else {
+					  $p
+				      }
+				  }
+				  @opt_M);
+    die $@ if $@;
+}
+
+
+if (@files) {
+    for (@files) {
+	my $res= eval $_; die $@ if $@; print "$res\n";
+    }
+}
+
+else {
+
+    require Chj::Util::Repl;
+    my $repl= new Chj::Util::Repl;
+    #$repl->set_prompt("$myname> "); nope, let the repl do that itself so that it follows package changes through :package command. We would need a callback otherwise..
+    $repl->set_historypath($opt_H ? undef : $HISTFILE);
+    $repl->set_maxhistlen($MAXHISTLEN);
+    $repl->set_package($myname);
+    eval "package $myname; use Data::Dumper;";
+    $repl->run;
+
+}
+
