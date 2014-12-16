@@ -69,9 +69,7 @@ package Chj::xopen;
 @ISA='Exporter';
 require Exporter;
 @EXPORT= qw(xopen);
-@EXPORT_OK= qw(xopen_input xopen_output  xopen_read xopen_write
-	       xopen_append xopen_readwrite
-	       xopen_update
+@EXPORT_OK= qw(xopen_read xopen_write xopen_append xopen_update
 	       devnull devzero
 	      );
 %EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
@@ -98,7 +96,6 @@ sub xopen_read($) {
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
 }
-*xopen_input= \&xopen_read;
 
 sub xopen_write($) {
     if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
@@ -112,7 +109,6 @@ sub xopen_write($) {
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
 }
-*xopen_output= \&xopen_write;
 
 sub xopen_append($) {
     if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
@@ -139,7 +135,6 @@ sub xopen_update($) {
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
 }
-*xopen_readwrite= \&xopen_update;
 
 our $devnull;
 sub devnull {
