@@ -69,7 +69,8 @@ Same as <$self>. Added since MIME::Parse expects this method.
 
 =item xreadchunk ( length )
 
-Read a chunk of max length chars/bytes and return it. Return undef on end of file.
+Read a chunk of max length chars/bytes and return it. Return undef on
+end of file.
 
 # IDEA: xxreadchunk that throws exception on end of file? So no check needed.
 
@@ -98,11 +99,15 @@ Returns full contents. Latter also checks $! for errors (see above).
 
 =item seek / xseek
 
-Only special thing is that if you only give one argument, it does imply SEEK_SET as the whence value. (Hmmm well, there's also xrewind for xseek(0) purpose.)
+Only special thing is that if you only give one argument, it does
+imply SEEK_SET as the whence value. (Hmmm well, there's also xrewind
+for xseek(0) purpose.)
 
 =item truncate / xtruncate
 
-Totally normal. Just let me state that if your file pointer will not be changed by this call, so be sure to call xrewind as well if you plan to continue to write to the file handle.
+Totally normal. Just let me state that if your file pointer will not
+be changed by this call, so be sure to call xrewind as well if you
+plan to continue to write to the file handle.
 
 =back
 
@@ -158,14 +163,14 @@ our $DEBUG=0;
 
 my %filemetadata; # numified => [ opened, name, path , xreadline_backwards:data  ]
 
-sub set_path { # setzt auch name
+sub set_path { # sets name, too
     my $self=shift;
     my ($path)=@_;
     my $meta= $filemetadata{pack "I",$self}||[];
     $$meta[1]= $path;
     $$meta[2]= $path;
 }
-sub unset_path { # setzt auch name
+sub unset_path { # sets name, too
     my $self=shift;
     my ($path)=@_;
     my $meta= $filemetadata{pack "I",$self}||[];
@@ -217,11 +222,12 @@ sub _quote {
 	$alternative||"undef"
     }
 }
+
 sub quotedname {
     my $self=shift;
-    #_quote($self->name)   "xdup: filehandle of undef is undefined (maybe it's closed?)" is not very helpful
     _quote(scalar $self->name,"(no filename)")
 }
+
 sub _numquote {
     my ($num)=@_;
     if (defined $num) {
@@ -231,21 +237,15 @@ sub _numquote {
     }
 }
 
+
 sub new {
     my $class=shift;
-    my $self;
-    #if (local (*glob)=@_) {
-    #	$self= *glob{IO};   ## naja, das ist ziemlich beschiss, denn ich klaue ihn mir, mache kein creator mehr !  Sollte wohl eher eine bless method machen?
-    #} else {
-	$self= gensym;
-    #}
+    my $self= gensym;
     bless $self,$class
 }
 
-#sub bless {
 
-
-sub xopen { ## should i prototype arguments?
+sub xopen { # should I prototype arguments?
     my $proto=shift;
     my $self= ref $proto ? $proto : $proto->new;
     my $rv;
@@ -291,6 +291,7 @@ sub xsysopen {
     $self->set_opened_path(1,$_[0]);
     $self
 }
+
 sub sysopen {
     my $proto=shift;
     my $self= ref $proto ? $proto : $proto->new;
@@ -307,6 +308,7 @@ sub sysopen {
     $self->set_opened_path(1,$_[0]);
     $self
 }
+
 
 sub read {
     my $self=shift;
