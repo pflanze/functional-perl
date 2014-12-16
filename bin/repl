@@ -5,7 +5,7 @@
 # Published under the same terms as perl itself
 #
 
-use strict;
+use strict; use warnings FATAL => 'uninitialized';
 
 $0=~ /([^\/]+)$/s or die "?";
 my $myname=$1;
