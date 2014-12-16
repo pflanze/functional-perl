@@ -25,7 +25,7 @@ package Chj::Package::OfPath;
 	     );
 
 use strict;
-use Chj::Cwd::realpath 'xrealpath';
+use Cwd 'abs_path';
 use Chj::singlequote;
 
 our $DEBUG=0;
@@ -39,7 +39,9 @@ sub package_of_path {
     if ($path=~ m{^/}) {
 	# absolute
     } else {
-	$path= xrealpath $path;
+	my $p= abs_path $path
+	  or die "abs_path '$path': $!";
+	$path= $p;
     }
     warn "path=".singlequote($path) if $DEBUG;
 
