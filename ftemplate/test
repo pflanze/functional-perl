@@ -2,7 +2,17 @@
 
 use strict; use warnings FATAL => 'uninitialized';
 
-use lib "./lib";
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/lib";
+use lib "$mydir/../perllib";
+#use lib "$mydir/../lib";
+
+
 use Chj::PXHTML ':all';
 use Chj::PXML::Serialize;
 
