@@ -1,8 +1,7 @@
-package Chj::BinHexOctDec;
-
-# Sat Mar 15 16:38:58 2003  Christian Jaeger, christian.jaeger@ethlife.ethz.ch
 #
-# $Id$
+# Copyright 2003-2014 by Christian Jaeger, ch at christianjaeger . ch
+# Published under the same terms as perl itself
+#
 
 =head1 NAME
 
@@ -31,6 +30,8 @@ Note: does NOT croak on invalid input but insteda just soweit wie geht
 
 =cut
 
+
+package Chj::BinHexOctDec;
 
 use strict;
 
