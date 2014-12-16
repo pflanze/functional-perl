@@ -136,9 +136,7 @@ sub import { };
 
 use Symbol;
 use Carp;
-use Fcntl qw(:DEFAULT :flock :seek :mode); # ist es dumm, es wirklich hiervon abhängig zu machen? aber mann, isch sons zum kotzen, will wirklich etwas besser (-> seek)
-# ACH mann: dafür hatte ich xrewind?
-
+use Fcntl qw(:DEFAULT :flock :seek :mode);
 
 my $has_posix;
 BEGIN {
@@ -156,39 +154,9 @@ BEGIN {
 }
 
 
-#use overload '<>'=> 'xreadline', fallback=>1;  ##?? fallback: warum wird stringify operation immer aufgerufen, kann ich das nicht lassen? ich hab gemeint fallback sei langsam, ist fallback "bloss" gemeint dass durchlöchert zu original zulässt?
-# ps. auch \&xreadline nützt nix gegen loop.
-
 our $DEBUG=0;
 
-# my %metadata; # numified => name; only set when opened.
-
-# sub name {
-#     my $self=shift;
-#     $metadata{pack "I",$self}
-# }
-
-#sub *path=\&name; # 30.11.03 komisch dass ich name wollte. AHA: name ist mit < usw. oder sogar | shit.
-#my %path; # 
-# sub path {
-#     croak "path() not supported on this class (since open path arguments are not always filepaths :/)";
-#     # könnte mal in zukunft ganze kotze ändern. weil xopen und xtmpfile in verschiednen klassen liegen, und derzeit path in Tempfile klasse lexical gespeichert, ist das natürlich müll. set_path methode nötig. ärger für performance.
-#     # ps noch was zu berücksichtigen: in dieser klasse wird name durch close auf undef gesetzt (damit destruktor weiss wann file already closed ist).
-# }
-
-# neue Regeln:
-# - name ist für display, path für pfadbasierte funktionalität.
-# - name wird auch durch set_path und unset_path weitergeführt. " (deleted)" oder " (former ...)"
-# - ob close gemacht werden muss wird anhand neuem flag rausgefunden.
-# Ob sich das wirklich lohnt ? ?   rename eines tempfiles macht nun  path(), set_path(), name(), set_name() aufrufe? nur für schönkorrektes möglicherweise noch benötigten displays oder möglicherweise nochmals benötigten path. und accessors nur weil eben.
-# na immerhin *path und *name methoden in gleicher klasse vorschreiben d.h. können direkt auf metadaten gehen.
-
-# kotz. name wirklich mit oldname katz? das dann gequoted???  gequoted war es schon mit < ? < raus nehmen? welche fälle gabgibt es genau in open pfaden? <&1 und so halt auch. die werden dann eben nicht renamed sind nicht rename bar da path nicht gesetzt.
-# also kein old  wenn set_path ausgeführt wurde annahme dass schon weiss dass der nun gilt.
-
 my %filemetadata; # numified => [ opened, name, path , xreadline_backwards:data  ]
-
-# cj 22.10.04: würde gerne ein  true_if_flushed_or_closed flag machen   damit ich  bei move operationen  sicher sein kann dass eben siegreich gewesen vorher  aber: müsste dafür auch wissen welches die letzte operation war, weil könnte nach flush ja wieder weiter schreiben. ob es doch keine so gute idee isch, xflush ins IO::Tempfile::xputback reinzutun?  na, mal closed flag machen.  EEEEH habe ja schon opened flag!!!
 
 sub set_path { # setzt auch name
     my $self=shift;
@@ -495,7 +463,6 @@ sub xsyswritecompletely {
     }
 }
 
-#*OVERLOAD={}; GOPF und das ist nich mehr offenbar.?.
 sub xreadline { ## todo: test error case. Difficult to do.
     my $self=shift;
     ##carp "xreadline invocation";
