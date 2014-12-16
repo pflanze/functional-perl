@@ -88,3 +88,14 @@ systems. There are two different remedies for this:
     is done by letting go of the outer layers (like the head of the
     list) in a timely manner, thus the same solutions as discussed on
     "Leak potential" apply.
+
+
+## Installation
+
+For simplicity during development there is no installer support,
+instead the bundled scripts modify the library load path to find the
+files locally.
+
+To use `bin/repl` interactively, `Term::ReadLine::Gnu` is
+necessary. On Debian systems, install `libterm-readline-gnu-perl`, or
+install from CPAN (run `cpan`, then `install Term::ReadLine::Gnu`.)
