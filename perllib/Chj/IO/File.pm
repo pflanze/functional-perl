@@ -465,36 +465,18 @@ sub xsyswritecompletely {
 
 sub xreadline { ## todo: test error case. Difficult to do.
     my $self=shift;
-    ##carp "xreadline invocation";
     undef $!; # needed!
     if (wantarray) {
 	my $lines= [ CORE::readline($self) ];
-	#bless $self,$class;
 	if ($!) {
 	    croak "xreadline from ".($self->quotedname).": $!";
 	}
 	@$lines
     } else {
-	#my $bufref= \ (scalar <$self>);  geht wenn kein overload aktiv sondern xreadline method call.
-	#eval 'no overload \'<>\';'; die if $@;  nicht mal das hilft?????
 	my $bufref= \ (scalar CORE::readline($self)); # dito
-	#bless $self,$class;
-	#my $coderef= overload::Method($self,'<>'); # nützt ebenfalls nichts. Das Schlimme ist also dass man <> NIE overloaden kann wenn man die originalfunktion noch braucht. Weil die originalfunktion ist schon erreichbar, aber die ruft ihrerseits wiederum die overloadete auf. ???!!!
-	#warn "<>-coderef ist: $coderef";
-	#my $bufref= \ (scalar $coderef->($self));
-
-#	if ($!) {
-#	    my $err="$!";
-#	    croak "xreadline from ".($self->quotedname).": $err";
-#	}
-#GOSH.
-	# Sun, 28 Dec 2003 03:00:25 +0100
-	# das Problem mit diesem Code ist, dass behind the scene doch nur ein read geschieht.
-	# Fehlerhandling in perl 5.8.2 ist jedenfalls müll, und readline tut doch erst nachhinein
-	# zeilen brechen. so what und warum nicht ich selber?.
-	# read(3, "insgesamt 9\n-rw-rw-r--    1 chri"..., 4096) = 323
-##çç todo: rest des files aufräumen !!!!
-
+	if ($!) {
+	    croak "xreadline from ".($self->quotedname).": $!";
+	}
 	$$bufref
     }
 }
