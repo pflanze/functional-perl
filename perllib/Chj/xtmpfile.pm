@@ -24,8 +24,8 @@ use strict;
 use Chj::IO::Tempfile;
 
 sub xtmpfile {
-    unshift @_,'Chj::IO::Tempfile'; # pass einfach auf!!! dassdich nicht vertippst hier.
+    unshift @_,'Chj::IO::Tempfile';
     goto &Chj::IO::Tempfile::xtmpfile;
 }
 
-1;
+1

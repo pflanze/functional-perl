@@ -15,7 +15,6 @@ Returns a list of all perl CORE functions
 
 =cut
 
-#'
 
 package Chj::Util::Repl::corefuncs;
 @ISA="Exporter"; require Exporter;

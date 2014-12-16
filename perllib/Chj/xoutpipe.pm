@@ -28,13 +28,6 @@ L<Chj::IO::File>, L<Chj::xsysopen>, L<Chj::xopendir>
 
 =cut
 
-#     my $rv= $p->xfinish; # close and waitpid?  AH scheisse. Wo soll ich die pid hintun.
-
-#use ...
-#  die "UNFERTIG";
-
-# cj Sat,  9 Oct 2004 01:27:42 +0200
-# finishing it.
 
 package Chj::xoutpipe;
 @ISA='Exporter';
@@ -49,4 +42,4 @@ sub xoutpipe {
 *Chj::xoutpipe= \&xoutpipe;
 
 
-1;
+1

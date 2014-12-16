@@ -63,17 +63,14 @@ Completion:
 
 =cut
 
-#'
-
-# Changelog:
-# cj Mon, 19 Jul 2004 01:40:36 +0200: add check if $ENV{HOME}
-
 
 package Chj::Util::Repl;
 
 use strict;
 
-sub myeval {# this has to be at the top before any lexicals are defined! so that lexicals from this module are not active in the eval'ed code.
+sub myeval {# this has to be at the top before any lexicals are
+            # defined! so that lexicals from this module are not
+            # active in the eval'ed code.
     eval $_[0]
 }
 
@@ -98,7 +95,7 @@ use Class::Array -fields=>
 sub new {
     my $class=shift;
     my$self= $class->SUPER::new;
-    $$self[Historypath]="$ENV{HOME}/.perl-repl_history" if $ENV{HOME};# check is important heh
+    $$self[Historypath]= "$ENV{HOME}/.perl-repl_history" if $ENV{HOME};
     $$self[MaxHistLen]= 100;
     #$$self[Prompt]= "repl> ";
     #$$self[Package]="repl";
@@ -106,12 +103,13 @@ sub new {
     $$self[DoRepeatWhenEmpty]=1;
     $$self[DoCatchExceptions]=1;
     $$self[KeepResultIn]="res";
-    $$self[Pager]= $ENV{PAGER}||"less"; #ischn't that senselees to look up for nothing if we want to override it? issch't it besser to make an accessor.
+    $$self[Pager]= $ENV{PAGER} || "less";
     $self
 }
 
-sub splitpackage { #todo auslagern?.
-    my ($package)=@_;#may be partial.
+# (move to some lib?)
+sub splitpackage {
+    my ($package)=@_; # may be partial.
     if ($package=~ /(.*)::(.*)/s) {
 	($1,$2)
     } else {
@@ -120,11 +118,9 @@ sub splitpackage { #todo auslagern?.
 }
 
 my $PACKAGE= qr/\w+(?:::\w+)*/;
+
 use Chj::Util::Repl::corefuncs();
-our @builtins=  # those cannot be fetched from any namespace as it seems.
-  #do {
-  #    my $txt=<<'END';
-  Chj::Util::Repl::corefuncs;
+our @builtins= Chj::Util::Repl::corefuncs;
 
 
 sub __signalhandler { die "SIGINT\n" }

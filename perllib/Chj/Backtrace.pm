@@ -52,7 +52,9 @@ sub import {
     $SIG{__DIE__} = sub {
 	$DB::single=1 if $singlestep;
 	if ($only_confess_if_not_already) {
-	    if (!$do_confess_objects and ref $_[0]) { # exception object  (ah well, confess macht diesen check sowieso!)
+	    if (!$do_confess_objects and ref $_[0]) {
+		# exception object
+		# (ah well, confess does that check anyway!)
 		die @_
 	    } else {
 		#print STDERR "\n------\n@_\n------\n";
