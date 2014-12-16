@@ -841,23 +841,30 @@ sub xprintfile_to {
     #/almostcopy
 }
 
+
 sub xrewind {
     my $self=shift;
-    seek $self,0,0 or croak "xrewind on ".($self->quotedname).": $!";
-    sysseek $self,0,0 or croak "xrewind on ".($self->quotedname).": $!";
+    seek $self,0,0
+      or croak "xrewind on ".($self->quotedname).": $!";
+    sysseek $self,0,0
+      or croak "xrewind on ".($self->quotedname).": $!";
 }
+
 sub xseek {
-    my $self=shift;  @_==1 or @_==2 or croak "xseek: wrong number of arguments";
+    my $self=shift;  @_==1 or @_==2
+      or croak "xseek: wrong number of arguments";
     seek $self,$_[0], defined $_[1] ? $_[1] : SEEK_SET
       or croak "xseek on ".($self->quotedname).": $!";
 }
+
 sub seek {
     my $self=shift;  @_==1 or @_==2 or croak "seek: wrong number of arguments";
     seek $self,$_[0], defined $_[1] ? $_[1] : SEEK_SET;
 }
 
 sub xtell {
-    my $self=shift; @_==0 or croak "xtell: wrong number of arguments";
+    my $self=shift; @_==0
+      or croak "xtell: wrong number of arguments";
     my $res= tell $self;
     if ($res==-1) {
 	croak "xtell on ".($self->quotedname).": $!";
@@ -865,28 +872,34 @@ sub xtell {
 	$res
     }
 }
+
 sub tell {
-    my $self=shift; @_==0 or croak "tell: wrong number of arguments";
+    my $self=shift; @_==0
+      or croak "tell: wrong number of arguments";
     my $res= tell $self;
     if ($res==-1) {
-	undef #I think that is smart, right?. Sense making?
+	undef
     } else {
 	$res
     }
 }
 
+
 sub xtruncate {
     my $self=shift;
     my ($len)=@_;
     $len||=0;
-    truncate ($self,$len) or croak "xtruncate on ".($self->quotedname).": $!";
+    truncate ($self,$len)
+      or croak "xtruncate on ".($self->quotedname).": $!";
 }
+
 sub truncate {
     my $self=shift;
     my ($len)=@_;
     $len||=0;
     truncate ($self,$len);
 }
+
 
 sub dup2 {
     my $self=shift;
@@ -900,15 +913,17 @@ sub dup2 {
 sub xdup2 {
     my $self=shift;
     my $myfileno= CORE::fileno $self;
-    defined $myfileno or croak "xdup2: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
+    defined $myfileno
+      or croak "xdup2: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
     require POSIX;
     for my $dup (@_) {
 	my $fileno= $dup=~ /^\d+\z/s ? $dup : CORE::fileno $dup;
-	defined $fileno or croak "xdup2: filehandle $dup returns no fileno (maybe it's closed?)";
+	defined $fileno
+	  or croak "xdup2: filehandle $dup returns no fileno (maybe it's closed?)";
 	#open $dup,'<&'.$myfileno or croak "?: $!";
 	# Works for reading handles. Problem: must use < or > depending on handle,
 	# even +> does not work instead of <.
-	# So:
+	# Thus instead:
 	POSIX::dup2($myfileno,$fileno)
 	  or croak "xdup2 ".$self->quotedname." (fd $myfileno) to $dup (fd $fileno): $!";
     }
@@ -918,26 +933,28 @@ sub xdup { # (return objects)
     my $self=shift;
     warn "xdup: this method is unfinished and only can create output filehandles yet";
     my $myfileno= CORE::fileno $self;
-    defined $myfileno or croak "xdup: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
+    defined $myfileno
+      or croak "xdup: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
     require POSIX;
     my $fd= POSIX::dup($myfileno)
       or croak "xdup ".$self->quotedname." (fd $myfileno): $!";
-    # turn an fd into a perl filehandle hm? ##shit. holy.
-    # IO::Handle has:            if ($io->fdopen(CORE::fileno(STDIN),"r")) {
-    # which works like:     open($io, _open_mode_string($mode) . '&' . $fd)
-    # c library is soooo scheisse.
-    ###TEMPORARY HACK:
+    # turn an fd into a perl filehandle:
+    #  IO::Handle has:            if ($io->fdopen(CORE::fileno(STDIN),"r")) {
+    #  which works like:     open($io, _open_mode_string($mode) . '&' . $fd)
+    # XX HACK:
     my $new= ref($self)->new;
-    open $new,">&=$fd" or die "xdup: error building perl fh from fd $fd";
-    $new;
-    ###hmm, isch es deshalb dass IO::Handle::fdopen schaut was wegen ob s schon n glob isch, weil: ich könnte glob behalten  dann fd wieder reinstopfen vielleicht?
+    open $new,">&=$fd"
+      or die "xdup: error building perl fh from fd $fd";
+    $new
+      # XX hm IO::Handle::fdopen is checkint if it's a glob already
 }
 
 sub xdupfd { # return integers
     my $s=shift;
     require POSIX;
     my $myfileno= CORE::fileno $s;
-    defined $myfileno or croak "xdup: filehandle of ".($s->quotedname)." is undefined (maybe it's closed?)";
+    defined $myfileno
+      or croak "xdup: filehandle of ".($s->quotedname)." is undefined (maybe it's closed?)";
     POSIX::dup($myfileno)
 	or croak "xdup ".$s->quotedname." (fd $myfileno): $!";
 }
@@ -948,7 +965,8 @@ sub autoflush {
 	my ($v)=@_;
 	my $old=select $self;my $oldv=$|; $|=$v; select $old; $oldv
     } else {
-	defined wantarray or croak "autoflush: used in void context without arguments (note that this is ".__PACKAGE__.", not IO::Handle)";
+	defined wantarray
+	  or croak "autoflush: used in void context without arguments (note that this is ".__PACKAGE__.", not IO::Handle)";
 	my $old=select $self;my $oldv=$|; select $old; $oldv
     }
 }
@@ -969,7 +987,6 @@ sub xflush {
 sub xclose {
     my $self=shift;
     CORE::close $self or croak "xclose ".$self->quotedname.": $!";
-    #delete $metadata{pack "I",$self};  # naja, currently just deletes it.
     $self->set_opened(0);
 }
 
@@ -989,6 +1006,7 @@ sub xunlink {
       or croak "xunlink '$path': $!";
     $self->unset_path;
 }
+
 sub xlink {
     my $self=shift;
     my ($newpath)=@_;
@@ -996,6 +1014,7 @@ sub xlink {
     link $path,$newpath
       or croak "xlink '$path','$newpath': $!";
 }
+
 sub xrename {
     my $self=shift;
     my ($to)=@_;
@@ -1004,6 +1023,7 @@ sub xrename {
       or croak "xrename '$path' to '$to': $!";
     $self->set_path($to);
 }
+
 sub xlinkunlink {
     my $self=shift;
     my ($newpath)=@_;
@@ -1015,23 +1035,24 @@ sub xlinkunlink {
     $self->set_path($newpath);
 }
 
-if ($has_posix) { # cj Sat,  7 Feb 2004 14:49:13 +0100: noch nicht benötigt, einfach aus spass
+
+if ($has_posix) { # untested?
     *stat= sub {
 	my $self=shift;
 	if (defined (my $fd=CORE::fileno($self))) {
 	    POSIX::fstat($fd);
 	} else {
-	    (); ## oder die?
+	    (); ## or die?
 	}
     };
-    # todo: noch ein xstat, das wie perlfunc xstat geht   well ugly bisle
-    # und: sowieso: accessors per class array like  na  Chj::IO::Stat::mtime ?
-    # oder eben importierbar,  as s_mtime
 } else {
     *stat= sub {
-	die "this system does not have POSIX so we can't fstat; if you wish you could stat the saved filename instead, though that could be dangerous; died";
+	die ("this system does not have POSIX so we can't fstat; ".
+	     "if you wish you could stat the saved filename instead, ".
+	     "though that could be dangerous; died");
     };
 }
+
 
 sub xstat {
     my $s=shift;
@@ -1040,14 +1061,11 @@ sub xstat {
 }
 
 
-# {Mon Sep 17 20:56:45 2007}
-# ich meinte ich haette das schon sonst irgendwie irgendwann irgendwo
-# gemacht. komisch aber scheint nicht hier. also hier (nochmal):
-# HEH nicht mal das ist hier ???:
 sub fileno {
     my $s=shift;
     CORE::fileno($s)
-}
+  }
+
 
 if ($has_posix) {
     my $base= do {
@@ -1074,15 +1092,12 @@ if ($has_posix) {
 sub DESTROY {
     my $self=shift;
     local ($@,$!,$?);
-    #if (defined $metadata{pack "I",$self}) {
     if ($self->opened) {
 	CORE::close($self)
 	  or carp "$self DESTROY: close: $!";
-	#delete $metadata{pack "I",$self};  # naja, true und exists ist hier bissel gemischt.
-	#$self->set_opened(0); EH
     }
     delete $filemetadata{pack "I",$self};
-    #warn "closed $self";##
 }
 
-1;
+
+1
