@@ -21,7 +21,7 @@ Chj::Util::Repl - read-eval-print loop
 Enters an interactive read-eval-print loop.
 Term::ReadLine with history is active.
 The loop can be exited by typing ctl-d.
-Entering the empty string re-eval's the last entry.
+Entering the empty string re-evaluates the last entry.
 Some autocompletion exists.
 
 There are some special commands:
@@ -30,11 +30,13 @@ There are some special commands:
 
 =item :package Foo
 
-Use  package Foo for subsequent entries and ->run calls on the same Repl object.
+Use package Foo for subsequent entries and ->run calls on the same
+Repl object.
 
 =item :l code
 
-Eval code in list context, print the result as one element per line, and store it as array ref in $res
+Eval code in list context, print the result as one element per line,
+and store it as array ref in $res
 
 =back
 
@@ -78,6 +80,7 @@ use Chj::Class::methodnames;
 use Chj::xoutpipe();
 use Chj::end();
 use Chj::xtmpfile;
+use POSIX;
 
 use Class::Array -fields=>
   -publica=> (
@@ -87,7 +90,9 @@ use Class::Array -fields=>
 	      'Package', # undef= use caller's package
 	      'DoCatchINT',
 	      'DoRepeatWhenEmpty',
-	      'DoCatchExceptions',#well, without this true, not even the history would be written currently, bound to be changed
+	      'DoCatchExceptions', # well, without this true, not even
+                                   # the history would be written
+                                   # currently, bound to be changed
 	      'KeepResultIn',
 	      'Pager',
 	     );
@@ -126,70 +131,83 @@ our @builtins= Chj::Util::Repl::corefuncs;
 sub __signalhandler { die "SIGINT\n" }
 
 our $term; # local'ized but old value is reused if present.
+
 our $current_history; # local'ized; array(s).
+
 sub run {
     my $self=shift;
 
     my $caller=caller(0);
-    #local $SIG{INT}=
-    #  $$self[DoCatchINT] ? sub { die "SIGINT\n" } : $SIG{INT}; ##ok?
     my $oldsigint= $SIG{INT};
-    #man perlipc:
-    use POSIX;
-    #sigaction SIGINT, new POSIX::SigAction sub { die "SIGINT\n" }
-    sigaction SIGINT, new POSIX::SigAction __PACKAGE__.'::__signalhandler'  # the only way to make it work in both perl 5.6 and 5.8 as it seems
-      or die "Error setting SIGALRM handler: $!\n";
+    # It seems this is the only way to make signal handlers work in
+    # both perl 5.6 and 5.8:
+    sigaction SIGINT,
+      new POSIX::SigAction __PACKAGE__.'::__signalhandler'
+	or die "Error setting SIGALRM handler: $!\n";
 
     require Term::ReadLine;
-    # only start one of them, do not nest (reason for segfaults i suppose). okay?.
+    # only start one readline instance, do not nest (otherwise seem to
+    # lead to segfaults). okay?.
     local our $term = $term || new Term::ReadLine 'Repl';
-    # ok das scheint zwar zu gehen und evtl. helfen, aber history die in subrepl's term aufgebaut wird, wird dann nach quit auch in parent sein. zwar nicht gesaved, aber drin. (ps sollt ich nestlevel mit als filename verwenden? damit die nested histories auch separat gespeichert werden  nicht bloss .calc_history und .perl-repl_history)
-    #nun, Term::ReadLine ist ein hash Term::ReadLine=HASH(0x8435090) und der hat history dort drin?
-    #ah nein, die eignetlichen historydaten sind nicht im hash. tja. also neusetzen jedesmal.
+    # This means that the history from nested repls will also show up
+    # in the history of the parent repl. Not saved, but within the
+    # readline instance. (Correct?)
+    # XX: idea: add nesting level to history filename?
 
     my $attribs= $term->Attribs;
     local $attribs->{attempted_completion_function}= sub {
 	my ($text, $line, $start, $end) = @_;
-	#warn "start=$start, end=$end, text='$text', line='$line'";
-	my $partie= substr($line,0,$end);# nicht $start, ausser ich wolle echt so komische ersetzereien machen.
-	#print $STDERR "partie='$partie'";
-	$attribs->{completion_append_character}=" ";#reset to the default before deciding upon it.
+	my $part= substr($line,0,$end);
+
+	#reset to the default before deciding upon it:
+	$attribs->{completion_append_character}=" ";
+
 	my @matches= do {
 	    # arrow completion:
-	    if ($partie=~ /(.*)\$(\w+)\s*->\s*([{\[]\s*)?(\w*)\z/s) {
-		# need to know the class of that thing. either statically (huh) or just peek at it
-		my ($pre,$varnam,$brace,$alreadywritten)=($1,$2,$3,$4);# muss ich echt selber schauen was er schon geschrieben hat und dann meine liste von values bei jedem mal ausfiltern?(->neinoffenbardochnicht¿)
+	    if (my ($pre,$varnam,$brace,$alreadywritten)=
+		$part=~ /(.*)\$(\w+)\s*->\s*([{\[]\s*)?(\w*)\z/s) {
+		# need to know the class of that thing
 		no strict 'refs';
 		my $r;
-		if (my $val= do{
-		    # try to get the value, or at least the package.
-		    $ { ($$self[Package]||$caller)."::".$varnam }
-		      or
-			# if I could run code side-effect free... or compile-only and disassemble....
-			do {
-			    # try to parse the perl myself. not very probable to succeed but who knows?
-			    if ($partie=~ /.*(?:^|;)\s*(?:(?:my|our)\s+)?\$$varnam\s*=\s*(?:new\w*\s+($PACKAGE)|($PACKAGE)\s*->\s*new)/s) { # .* at the begin to force the latest possible match, ok?  my/our ist optional weil eh kein use strict herrscht.
-				$r=$1;#warn "success: r=$r";
-				1
-			    } else {#warn "no success";
-				0
-			    }
-			}
-		}) {
-		    #warn "jo, habe n value von \$$varnam gekriegt";
+		if (my $val=
+		    (
+		     # try to get the value, or at least the package.
+		     $ { ($$self[Package]||$caller)."::".$varnam }
+
+		     or
+		     do {
+			 # (if I could run code side-effect free... or
+			 # compile-only and disassemble....)  Try to
+			 # parse the perl myself
+			 if ($part=~ /.* # force latest possible match (ok?)
+				      (?:^|;)\s*
+				      (?:(?:my|our)\s+)?
+				      # ^ optional for no 'use strict'
+				      \$$varnam
+				      \s*=\s*
+				      (?:new\w*\s+($PACKAGE)
+				      |($PACKAGE)\s*->\s*new)
+				     /sx) {
+			     $r=$1;
+			     1
+			 } else {
+			     0
+			 }
+		     })) {
+		    #warn "got value from \$$varnam";
 		    if ($r||=ref($val)) {
 			if ($r eq 'HASH') {
-			    #("{") #scheisse, es wird ein space hintendrangetan obwohl ich doch gar nöd fertighabenwollte.
+			    #("{")
 			    #("{hallo}","{ballo}")
 			    if ($brace) {
 				map {"$_}"} keys %$val
 			    } else {
 				#("{")
 				map {"{$_}"} keys %$val
-				  #????????warum muss ich hier nun nicht mehr grep mit alreadywritten machen?????
+				  #(why no need for grep alreadywritten here?)
 			    }
 			}
-			elsif ($r eq 'ARRAY') { #hum, rausfinden ob es classarray isch und wenn dann, evtl fullyqualified, fieldconstants rausgeben?
+			elsif ($r eq 'ARRAY') {
 			    ("[")
 			}
 			elsif ($r eq 'CODE') {
@@ -207,15 +225,17 @@ sub run {
 			else {
 			    # object
 			    my @a= methodnames($r);
-			    #print $STDERR "[",join(",",@a),"]";
 			    grep {
-				# it has to match the already-written part of the string
-#				/^\Q$alreadywritten\E/
-#				  and
-# gar nöd nötig. warum dachte ich??? evtl. wurde  $attribs->{completion_word} wieder gelöscht oder so
-				    # exclude some of the possible methodnames:
-				    # - all-uppercase when characters are contained.
-				    not(/[A-Z]/ and uc($_) eq $_)
+				# (no need to check for matching the
+				# already-written part of the string
+				# here (with something like
+				# /^\Q$alreadywritten\E/), why? Maybe
+				# $attribs->{completion_word} was
+				# deleted or?)
+
+				# exclude some of the possible methodnames:
+				# - all-uppercase when characters are contained.
+				not(/[A-Z]/ and uc($_) eq $_)
 			    } @a
 			}
 		    } else {
@@ -225,50 +245,49 @@ sub run {
 		    #warn "no value von \$$varnam";
 		    ()
 		}
-	    #} elsif ($partie=~ /\"(.*)\z/) {
-	    } elsif ($partie=~ tr/"/"/ % 2) { # odd number of quotes means we are inside
-		#print $STDERR ".";
+	    } elsif ($part=~ tr/"/"/ % 2) {
+		# odd number of quotes means we are inside
 		()
-	    } elsif ($partie=~ tr/'/'/ % 2) { # odd number of quotes means we are inside
-		#print $STDERR ".";
+	    } elsif ($part=~ tr/'/'/ % 2) {
+		# odd number of quotes means we are inside
 		()
-	    } elsif ($partie=~ /(^|.)\s*(${PACKAGE}(?:::)?)\z/s
-		or
-		$partie=~ /([\$\@\%\*\&])\s*(${PACKAGE}(?:::)?|)\z/s  # |) is on purpose, accept the empty string, that's better than )? which leaves undef behind.
-	       ) { # namespace completion
-		####????? warum ersch jetzt gesehen?: my ($partialpackage)=@_;
+	    } elsif ($part=~ /(^|.)\s*(${PACKAGE}(?:::)?)\z/s
+		     or
+		     $part=~ /([\$\@\%\*\&])
+			      \s*
+			      (${PACKAGE}(?:::)?|)
+			      # ^ accept the empty string
+			      \z/sx) {
+		# namespace completion
 		my ($sigil,$partialpackage)=($1,$2);
-		#if ($sigil) {
-		#    $sigil
-		# if not containing colons, might also be a subroutine (heck, or anything!) of current package
+
 		no strict 'refs';
-# 		#if ($partialpackage=~ /::/) {
-# 		    # really fully qualified
-# 		    #my $upper= nextupperpackage($partialpackage);
-# 		#    my ($upperpackage,$localpart)= splitpackage($partialpackage);
-# 		    # localpart is '' if partialpackage ends in ::
-# 		} else {
-# 		    # not necessarily fully qualified
-# 		}
+
 	        my ($upperpackage,$localpart)= splitpackage($partialpackage);
 		#warn "upperpackage='$upperpackage', localpart='$localpart'\n";
-		# if upperpackage is empty, it might also be a non-fully qualified, i.e. local, partial identifier.
-		#grep {
-		#    /^\E$localpart\Q/
-		#}
-		my $validsigil=do{
-		    $sigil and do {
-			my $h={ '$'=>'SCALAR',
-                                '@'=>'ARRAY',
-                                '%'=>'HASH', # 'SCALAR',##?? 'HASH',  hm problem liegt bei readline, mit einem space nach % gehts auch. need a better completion function than the one from gnu realine? :/
-                                '*'=>'SCALAR',  # really 'GLOB', but that would make it invisible. SCALAR matches everything, which is what we want. strange, huh? heh.
-                                '&'=>'CODE' }; #'};
-			#$h->{$sigil} ? $sigil : ''
-			$h->{$sigil}
-		    };
-		};
+
+		# if upperpackage is empty, it might also be a
+		# non-fully qualified, i.e. local, partial identifier.
+		
+		my $validsigil=
+		  ($sigil and
+		   +{
+		     '$'=>'SCALAR',
+		     '@'=>'ARRAY',
+		     '%'=>'HASH',
+		     # ^ (problem with readline library, with a space
+		     # after % it works too; need better completion
+		     # function than the one from gnu readline?) 
+		     # (years later: what was this?)
+		     '*'=>'SCALAR',
+		     # ^ really 'GLOB', but that would make it
+		     # invisible. SCALAR matches everything, which is
+		     # what we want.
+		     '&'=>'CODE'
+		    }->{$sigil});
 		#print $STDERR "<$validsigil>";
-		my $symbols_for_package= sub{
+
+		my $symbols_for_package= sub {
 		    my ($package)=@_;
 		    grep {
 			# only show 'usable' ones.
@@ -277,72 +296,80 @@ sub run {
 			if ($validsigil) {
 			    #print $STDERR ".$validsigil.";
 			    grep {
-				/::\z/  # either it's a namespace which we want to see regardless of type, or: type exists
-				  or
-				*{ $package."::".$_ }{$validsigil}
-			    }
-			    keys %{ $package."::" }
+				(/::\z/
+				 # either it's a namespace which we
+				 # want to see regardless of type, or:
+				 # type exists
+				 or
+				 *{ $package."::".$_ }{$validsigil})
+			    } keys %{ $package."::" }
 			} else {
 			    keys %{ $package."::" }
 			}
 		    }
 		};
-		my @a=do {
-		    ($symbols_for_package->($upperpackage),
+		my @a=
+		  ($symbols_for_package->($upperpackage),
 
-		     length($upperpackage) ?
-		     () :
-		     ($symbols_for_package->($self->[Package]||$caller),
-		      ($validsigil ? () : @builtins))
-		    )
-		};
+		   length($upperpackage) ?
+		   () :
+		   ($symbols_for_package->($self->[Package]||$caller),
+		    ($validsigil ? () : @builtins))
+		  );
+
 		#print $STDOUT Data::Dumper::Dumper(\@a);
-		#("HAHAHA")
-		# ach so muss wirklich ganzes teil wieder ranstellen. nun ja nöd so schlecht sieht man es realistischer immer das ganze package
-		# hm, nun fehlt nur noch dass, falls es mit :: aufhört, oder auch generell, nicht space anhängt bei der completion.
-		#$attribs->{completion_append_character}=""; oder unten wenn es nicht stört dass nie.
-		#och ich wollte nur wenn es NICHT auf :: endet. muss ich den space an den einzelnen vervollständiger fügen.
+
+		# Now, if it ends in ::, or even generally, care about
+		# it not appending space on completion:
 		$attribs->{completion_append_character}="";
-		map {
-		    if (/::\z/) {
-			$_
-		    } else {
-			"$_ "
-		    }
-		} do {
-		    if (length $upperpackage) {
-			map {
-			    $upperpackage."::$_"
-			} @a
-		    } else {
-			@a
-		    }
-		}
+
+		(
+		 map {
+		     if (/::\z/) {
+			 $_
+		     } else {
+			 "$_ "
+		     }
+		 }
+		 (length ($upperpackage) ?
+		  map {
+		      $upperpackage."::$_"
+		  } @a
+		  : @a)
+		)
 	    } else {
 		()
 	    }
 	};
 	if (@matches) {
 	    #print $STDERR "<".join(",",@matches).">";
-	    $attribs->{completion_word}= \@matches;# sort is not necessary.
-	    #$attribs->{completion_append_character}="";#gool.
-	    return $term->completion_matches($text,
-					     $attribs->{list_completion_function})
+
+	    $attribs->{completion_word}= \@matches;
+	    # (no sorting necessary)
+
+	    return
+	      $term->completion_matches
+		($text,
+		 $attribs->{list_completion_function})
 	} else {
 	    # restore defaults.
 	    $attribs->{completion_append_character}=" ";
 	    return ()
 	}
     };
-    my $OUT = $term->OUT || *STDOUT;## * korrekt?
+
+    my $OUT = $term->OUT || *STDOUT;## * correct?
     my $STDOUT= $OUT; my $STDERR= $OUT;
 
     my ($oldinput);
     {
 	my @history;
-	local $current_history= \@history;# this is what nested repl's will use to restore the history in the $term object
+	local $current_history= \@history;
+	# ^ this is what nested repl's will use to restore the history
+	# in the $term object
 	if (defined $$self[Historypath]) {
-	    # clean history of C based object before we re-add the saved one:
+	    # clean history of C based object before we re-add the
+	    # saved one:
 	    $term->clear_history;
 	    if (open HIST,"<$$self[Historypath]"){
 		@history= <HIST>;
@@ -353,56 +380,67 @@ sub run {
 		}
 	    }
 	}
-	$term->MinLine(undef); # do not add input to history automatically. -> allows me to do it myself.
-	#sub myreadline {
-	my $myreadline=sub {
-	  DO:{
-		my $line= eval {
-		    $term->readline($$self[Prompt] or ($$self[Package]||$caller)."> ");
-		};
-		if ($@) {
-		    if (!ref($@) and
-			($@ eq "SIGINT\n"
-			 or $@=~ /^SIGINT\n\t\w/s # when use Chj::Backtrace is in use
-			)) {
-			print $STDOUT "\n";
-			redo DO;
-		    } else {
-			die $@
-		    }
-		}
-		return $line;
+	# do not add input to history automatically (-> allows me to
+	# do it myself):
+	$term->MinLine(undef);
+
+	my $myreadline= sub {
+	  DO: {
+	      my $line;
+	      eval {
+		  $line=
+		      $term->readline
+		      ($$self[Prompt]
+		       or
+		       ($$self[Package]||$caller)."> ");
+		  1
+	      } || do {
+		  if (!ref($@) and
+		      ($@ eq "SIGINT\n"
+		       or $@=~ /^SIGINT\n\t\w/s
+		       # ^ when Chj::Backtrace is in use
+		      )) {
+		      print $STDOUT "\n";
+		      redo DO;
+		  } else {
+		      die $@
+		  }
+	      };
+	      return $line;
 	    }
 	};
+
 	while ( defined (my $input = &$myreadline) ) {
 	    my $res;
 	    my ($evaluator,$error);
 	    #my $_end=Chj::end{undef $evaluator}; #nötig?
-	    if (length($input)) {
+
+	    if (length $input) {
 		my ($cmd,$args)=
 		  $input=~ /^ *\:(\w+)\b(.*)/s ?
 		    ($1,$2)
 		      :(undef,$input);
-		$evaluator=sub {
-		    $res= myeval "package ".($$self[Package]||$caller)."; no strict 'vars'; $args";
-		    #$oldinput= $input;# na könnte man auch nach draussen nehmen?
-		    # eh, nein , ist ja eben eh no nöd fertig. todo. eben durch evaluatorbehalten lösen.
+
+		$evaluator= sub {
+		    $res= myeval ("package ".($$self[Package]||$caller).";".
+				  "no strict 'vars'; $args");
 		    $oldinput= $args;
 		    $error=$@;
-		    #$evaluator= sub{ (defined $res ? $res : 'undef'), "\n"};##copy from below
-		    #warn "default evaluator called";
-		    #$DB::single=1;
 		    (defined $res ? $res : 'undef'), "\n"
 		};
+
 		if (defined $cmd) {
 		    # special command
 		    sub xonesymbol {#well, symbol is wrong name
 			my ($str)=@_;
-			$str=~ /^\s*(\S+)\s*\z/s or die "exactly one non-quoted argument must be given\n";
+			$str=~ /^\s*(\S+)\s*\z/s
+			    or die "exactly one non-quoted argument must be given\n";
 			$1
 		    }
-		    my $help=sub {
-			#$evaluator=sub{ ...  könnte man hier auch so lösen doch. könnte man logik bissel vereinf.
+
+		    my $help= sub {
+			# (could also do $evaluator=sub{ ...  and thus
+			# simplify the logic?)
 			print $STDOUT "Repl help:\n";
 			print $STDOUT "currently these commands are implemented:\n";
 			print $STDOUT ":package \$pack   use \$pack as new compilation package\n";
@@ -441,7 +479,6 @@ sub run {
 				       };
 				   },
 				   v=>sub {
-				       #warn "opening pager $$self[Pager]";
 				       my $o= Chj::xoutpipe ($$self[Pager]);
 				       #$o->xprint($flag_l ? @$res : $res); ## ist es hacky, res zu nehmen, "also kein echtes chaining"
 				       $o->xprint(&$evaluator); #EH nein.  eben doch einfach @data irgendwie sowas irgend.  ah ps von wegen $res  vs @res   ein lmbd kann quasi beides (sein oder/als auch liefern) hehe.   oder nun mal umgestellt eben auf value  print usserhalb.
@@ -451,7 +488,7 @@ sub run {
 				       $evaluator= undef;
 				   },
 				  );
-		    while(length $cmd){
+		    while (length $cmd) {
 			if (my $sub= $commands{$cmd}) {
 			    eval {
 				&$sub
@@ -476,37 +513,46 @@ sub run {
 		    # $evaluator already set.
 		}
 	    } elsif ($$self[DoRepeatWhenEmpty] and defined $oldinput) {
-		# todo: keep same evaluator as last time or so. so that list context etc is kept as well.
+		# (XX: keep same evaluator as last time, so that list
+		# context etc is preserved as well?)
 		$res=
-		  myeval "package ".($$self[Package]||$caller)."; no strict 'vars'; $oldinput";
+		    myeval ("package ".($$self[Package]||$caller).";".
+			    "no strict 'vars'; $oldinput");
 		$error=$@;
 		$evaluator= sub{ (defined $res ? $res : 'undef'), "\n"};##copy from above. ps wenn ich  einfach  erster step ist wert producen  mache,  und   ja  irgend  dann wär easier.  tun.
 	    } else {
 		next;
 	    }
 	    # Wed, 02 Feb 2005 18:53:20 +0100  was macht  das -^.
+
 	    if (ref $error or $error) {
 		if (!$$self[DoCatchExceptions]) {
 		    die $error
 		}
-		my $err= (UNIVERSAL::can($error,"plain") ?  # e.g. EiD style wrapped "normal" exceptions have this method for formatting as plaintext in a programmer sense
+		my $err= (UNIVERSAL::can($error,"plain") ?
+			  # e.g. EiD style wrapped "normal" exceptions
+			  # have this method for formatting as
+			  # 'plaintext' (in a programmer's sense)
 			  $error->plain
 			  : "$error");
 		chomp $err;
-		$err.="\n";
-		print $STDERR $err;
+		print $STDERR $err."\n";
 	    } else {
-		if($evaluator) {
-		    print $OUT (&$evaluator);# komisch, klammern nötig sonst entsteht komischer müll, 'A h  d%' statt '1' und so.
+		if ($evaluator) {
+		    print $OUT (&$evaluator);
+		    # odd, parens necessary otherwise getting noise,
+		    # 'A h d%' instead of '1' etc.
 		}
 		if (my $varname= $$self[KeepResultIn]) {
-		    $varname= ($$self[Package]||$caller)."::$varname" unless $varname=~ /::/;
+		    $varname= ($$self[Package]||$caller)."::$varname"
+			unless $varname=~ /::/;
 		    no strict 'refs';
 		    $$varname= $res;
 		    #print "kept '$res' in '$varname', it is now '$$varname'\n";
 		}
 	    }
-	    if (length $input and ((!defined $history[-1]) or $history[-1] ne $input)) {
+	    if (length $input and
+		((!defined $history[-1]) or $history[-1] ne $input)) {
 		push @history,$input;
 		chomp $input;
 		$term->addhistory($input);
@@ -528,8 +574,12 @@ sub run {
 		warn "could not write history file: $@"
 	    }
 	}
-	$SIG{INT}= defined($oldsigint)? $oldsigint : "DEFAULT";  ##is there no other return path from sub run? should I use DESTROY objects like in C++ for this??  -> nein keine return's aber wenn exceptions not trapped gehts fehl.
+	$SIG{INT}= defined($oldsigint)? $oldsigint : "DEFAULT";
+	# (Is there no other return path from sub run? should I use
+	# DESTROY objects for this? -> nope, no returns, but if
+	# exceptions not trapped it would fail)
     }
+
     # restore previous history, if any
     if ($current_history) {
 	$term->clear_history;
@@ -542,7 +592,7 @@ sub run {
 
 
 end Class::Array;
-# tja: for backwards compatibility:
+# for backwards compatibility:
 *set_maxhistlen= *set_maxHistLen{CODE};
 *set_docatchint= *set_doCatchINT{CODE};
 *set_dorepeatwhenempty= *set_doRepeatWhenEmpty{CODE};
