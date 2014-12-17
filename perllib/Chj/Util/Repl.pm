@@ -81,6 +81,13 @@ use Chj::xoutpipe();
 use Chj::xtmpfile;
 use POSIX;
 
+sub xone_nonwhitespace {
+    my ($str)=@_;
+    $str=~ /^\s*(\S+)\s*\z/s
+	or die "exactly one non-quoted argument must be given";
+    $1
+}
+
 use Class::Array -fields=>
   -publica=> (
 	      'Historypath', #undef=none, but a default is set
@@ -419,9 +426,14 @@ sub run {
 		    ($1,$2)
 		      :(undef,$input);
 
-		$evaluator= sub {
-		    $res= myeval ("package ".($$self[Package]||$caller).";".
-				  "no strict 'vars'; $args");
+		my $eval_args= sub {
+		    myeval ("package ".($$self[Package]||$caller)."; ".
+			    "no strict 'vars'; $args")
+		};
+
+		# default evaluator
+ 		$evaluator= sub {
+		    $res= &$eval_args;
 		    $oldinput= $args;
 		    $error=$@;
 		    (defined $res ? $res : 'undef'), "\n"
@@ -429,12 +441,6 @@ sub run {
 
 		if (defined $cmd) {
 		    # special command
-		    sub xonesymbol {#well, symbol is wrong name
-			my ($str)=@_;
-			$str=~ /^\s*(\S+)\s*\z/s
-			    or die "exactly one non-quoted argument must be given\n";
-			$1
-		    }
 
 		    my $help= sub {
 			# (could also do $evaluator=sub{ ...  and thus
@@ -448,44 +454,46 @@ sub run {
 			print $STDOUT "Some commands may be chained, like :vl means view list output one line per item in the pager.\n";
 			print $STDOUT "(But in contrast, at the time being, in :ld or :dl the leftmost command just overrides the other.)\n";
 		    };
-		    my %commands= (
-				   package=>sub{
-				       $$self[Package]= xonesymbol($args);
-				   },
-				   p=>sub{## might be replaced in later version with sth else!
-				       $$self[Package]= xonesymbol($args);
-				   },
-				   h=>$help,
-				   help=>$help,
-				   l=>sub {
-				       ## ps. todo should refactor so that the empty==reeval case also works with this
-				       $res=
-					 [ myeval "package ".($$self[Package]||$caller)."; no strict 'vars'; $args" ];
-				       $error=$@;
-				       $evaluator=sub{ map { "$_\n" } @$res};
-				       # then later still print the ref? hm. need to go below anyway, so:
-				       #$oldinput= $input; just plain wrong
-				       #$input=$args; not much sense since emptyness will then eval w/o :l - see above todo
-				   },
-				   d=>sub {
-				       $res=
-					 [ myeval "package ".($$self[Package]||$caller)."; no strict 'vars'; $args" ];
-				       $error=$@;
-				       $evaluator= sub{
-					   require Data::Dumper;
-					   Data::Dumper::Dumper(@$res);
-				       };
-				   },
-				   v=>sub {
-				       my $o= Chj::xoutpipe ($$self[Pager]);
-				       #$o->xprint($flag_l ? @$res : $res); ## ist es hacky, res zu nehmen, "also kein echtes chaining"
-				       $o->xprint(&$evaluator); #EH nein.  eben doch einfach @data irgendwie sowas irgend.  ah ps von wegen $res  vs @res   ein lmbd kann quasi beides (sein oder/als auch liefern) hehe.   oder nun mal umgestellt eben auf value  print usserhalb.
-				       $o->xfinish;
-				       #$flag_noprint=1;#hmm. oder nichts von hier returnen?  aber $res soll doch der Wert bleiben?.
-				       # ah, nice idea:
-				       $evaluator= undef;
-				   },
-				  );
+
+		    my $set_package= sub {
+			# (no package parsing, trust user)
+			$$self[Package]= xone_nonwhitespace($args);
+		    };
+
+		    my %commands=
+			(
+			 package=> $set_package,
+			 p=> $set_package,
+			 h=> $help,
+			 help=> $help,
+			 l=> sub {
+			     ## ps. todo should refactor so that the empty==reeval case also works with this
+			     $res= [ &$eval_args ];
+			     $error= $@;
+			     $evaluator= sub { map { "$_\n" } @$res};
+			     # then later still print the ref? hm. need to go below anyway, so:
+			     #$oldinput= $input; just plain wrong
+			     #$input=$args; not much sense since emptyness will then eval w/o :l - see above todo
+			 },
+			 d=> sub {
+			     $res= [ &$eval_args ];
+			     $error= $@;
+			     $evaluator= sub {
+				 require Data::Dumper;
+				 Data::Dumper::Dumper(@$res);
+			     };
+			 },
+			 v=> sub {
+			     my $o= Chj::xoutpipe ($$self[Pager]);
+			     #$o->xprint($flag_l ? @$res : $res); ## ist es hacky, res zu nehmen, "also kein echtes chaining"
+			     $o->xprint(&$evaluator); #EH nein.  eben doch einfach @data irgendwie sowas irgend.  ah ps von wegen $res  vs @res   ein lmbd kann quasi beides (sein oder/als auch liefern) hehe.   oder nun mal umgestellt eben auf value  print usserhalb.
+			     $o->xfinish;
+			     #$flag_noprint=1;#hmm. oder nichts von hier returnen?  aber $res soll doch der Wert bleiben?.
+			     # ah, nice idea:
+			     $evaluator= undef;
+			 },
+			);
+
 		    while (length $cmd) {
 			if (my $sub= $commands{$cmd}) {
 			    eval {
@@ -511,8 +519,8 @@ sub run {
 		    # $evaluator already set.
 		}
 	    } elsif ($$self[DoRepeatWhenEmpty] and defined $oldinput) {
-		# (XX: keep same evaluator as last time, so that list
-		# context etc is preserved as well?)
+		# (XX: keep same $evaluator, so that list context etc
+		# is preserved as well?)
 		$res=
 		    myeval ("package ".($$self[Package]||$caller).";".
 			    "no strict 'vars'; $oldinput");
