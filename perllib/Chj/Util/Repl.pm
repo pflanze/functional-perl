@@ -88,6 +88,12 @@ sub xone_nonwhitespace {
     $1
 }
 
+sub xchoose_from ($$) {
+    my ($h,$key)=@_;
+    exists $$h{$key} ? $$h{$key} : die "unknown key '$key'";
+}
+
+
 use Class::Array -fields=>
   -publica=> (
 	      'Historypath', #undef=none, but a default is set
@@ -96,11 +102,11 @@ use Class::Array -fields=>
 	      'Package', # undef= use caller's package
 	      'DoCatchINT',
 	      'DoRepeatWhenEmpty',
-	      'DoCatchExceptions', # well, without this true, not even
-                                   # the history would be written
-                                   # currently, bound to be changed
 	      'KeepResultIn',
 	      'Pager',
+              'Mode_context', # char
+              'Mode_formatter', # char
+              'Mode_viewer', # char
 	     );
 
 sub new {
@@ -112,9 +118,11 @@ sub new {
     #$$self[Package]="repl";
     $$self[DoCatchINT]=1;
     $$self[DoRepeatWhenEmpty]=1;
-    $$self[DoCatchExceptions]=1;
     $$self[KeepResultIn]="res";
     $$self[Pager]= $ENV{PAGER} || "less";
+    $$self[Mode_context]= 'l';
+    $$self[Mode_formatter]= 'd';
+    $$self[Mode_viewer]= 'V';
     $self
 }
 
@@ -140,10 +148,55 @@ our $term; # local'ized but old value is reused if present.
 
 our $current_history; # local'ized; array(s).
 
+
+sub print_help {
+    my $self= shift;
+    my ($out)=@_;
+    my $selection= sub {
+	my ($method,$val)=@_;
+	$self->$method eq $val ? "->" : "  "
+    };
+    my $L= &$selection(context=> '1');
+    my $l= &$selection(context=> 'l');
+    my $s= &$selection(formatter=> 's');
+    my $d= &$selection(formatter=> 'd');
+    my $V= &$selection(viewer=> 'V');
+    my $v= &$selection(viewer=> 'v');
+    print $out qq{Repl help:
+currently these commands are implemented:
+  :package \$package   use \$package as new compilation package
+  :p \$package         currently alias to :package
+  :MODES code...       change some modes then evaluate code
+
+MODES are a combination of these characters, which change the
+previously used mode (indicated on the left):
+  context:
+$L 1  use scalar context
+$l l  use list context (default)
+  formatter:
+$s s  show stringification
+$d d  show dump (default)
+  viewer:
+$V V  no pager
+$v v  pipe to pager ($$self[Pager])
+};
+}
+
+
+sub eval_code {
+    my $self= shift;
+    my ($code, $get_package)=@_;
+    myeval ("package ".&$get_package()."; ".
+	    "no strict 'vars'; $code")
+}
+
+
 sub run {
     my $self=shift;
 
     my $caller=caller(0);
+    my $get_package= sub { $$self[Package] || $caller };
+
     my $oldsigint= $SIG{INT};
     # It seems this is the only way to make signal handlers work in
     # both perl 5.6 and 5.8:
@@ -178,7 +231,7 @@ sub run {
 		if (my $val=
 		    (
 		     # try to get the value, or at least the package.
-		     $ { ($$self[Package]||$caller)."::".$varnam }
+		     $ { &$get_package()."::".$varnam }
 
 		     or
 		     do {
@@ -367,7 +420,6 @@ sub run {
     my $OUT = $term->OUT || *STDOUT;## * correct?
     my $STDOUT= $OUT; my $STDERR= $OUT;
 
-    my ($oldinput);
     {
 	my @history;
 	local $current_history= \@history;
@@ -398,7 +450,7 @@ sub run {
 		      $term->readline
 		      ($$self[Prompt]
 		       or
-		       ($$self[Package]||$caller)."> ");
+		       &$get_package()."> ");
 		  1
 	      } || do {
 		  if (!ref($@) and
@@ -416,44 +468,17 @@ sub run {
 	    }
 	};
 
+	# for repetitions:
+	my $evaluator= sub { }; # noop
 	while ( defined (my $input = &$myreadline) ) {
-	    my $res;
-	    my ($evaluator,$error);
-
 	    if (length $input) {
 		my ($cmd,$args)=
 		  $input=~ /^ *\:(\w+)\b(.*)/s ?
 		    ($1,$2)
 		      :(undef,$input);
 
-		my $eval_args= sub {
-		    myeval ("package ".($$self[Package]||$caller)."; ".
-			    "no strict 'vars'; $args")
-		};
-
-		# default evaluator
- 		$evaluator= sub {
-		    $res= &$eval_args;
-		    $oldinput= $args;
-		    $error=$@;
-		    (defined $res ? $res : 'undef'), "\n"
-		};
-
 		if (defined $cmd) {
-		    # special command
-
-		    my $help= sub {
-			# (could also do $evaluator=sub{ ...  and thus
-			# simplify the logic?)
-			print $STDOUT "Repl help:\n";
-			print $STDOUT "currently these commands are implemented:\n";
-			print $STDOUT ":package \$pack   use \$pack as new compilation package\n";
-			print $STDOUT ":l ...           evaluate ... in list context and print list one item per line\n";
-			print $STDOUT ":d ...           evaluate ... in list context and print result through Data::Dumper\n";
-			print $STDOUT ":v ...           evaluate ... and pipe the result to the pager ($$self[Pager])\n";
-			print $STDOUT "Some commands may be chained, like :vl means view list output one line per item in the pager.\n";
-			print $STDOUT "(But in contrast, at the time being, in :ld or :dl the leftmost command just overrides the other.)\n";
-		    };
+		    # handle commands
 
 		    my $set_package= sub {
 			# (no package parsing, trust user)
@@ -462,101 +487,126 @@ sub run {
 
 		    my %commands=
 			(
+			 h=> sub { $self->print_help ($STDOUT) },
+			 help=> sub { $self->print_help ($STDOUT) },
 			 package=> $set_package,
 			 p=> $set_package,
-			 h=> $help,
-			 help=> $help,
-			 l=> sub {
-			     ## ps. todo should refactor so that the empty==reeval case also works with this
-			     $res= [ &$eval_args ];
-			     $error= $@;
-			     $evaluator= sub { map { "$_\n" } @$res};
-			     # then later still print the ref? hm. need to go below anyway, so:
-			     #$oldinput= $input; just plain wrong
-			     #$input=$args; not much sense since emptyness will then eval w/o :l - see above todo
-			 },
-			 d=> sub {
-			     $res= [ &$eval_args ];
-			     $error= $@;
-			     $evaluator= sub {
-				 require Data::Dumper;
-				 Data::Dumper::Dumper(@$res);
-			     };
-			 },
-			 v=> sub {
-			     my $o= Chj::xoutpipe ($$self[Pager]);
-			     #$o->xprint($flag_l ? @$res : $res); ## ist es hacky, res zu nehmen, "also kein echtes chaining"
-			     $o->xprint(&$evaluator); #EH nein.  eben doch einfach @data irgendwie sowas irgend.  ah ps von wegen $res  vs @res   ein lmbd kann quasi beides (sein oder/als auch liefern) hehe.   oder nun mal umgestellt eben auf value  print usserhalb.
-			     $o->xfinish;
-			     #$flag_noprint=1;#hmm. oder nichts von hier returnen?  aber $res soll doch der Wert bleiben?.
-			     # ah, nice idea:
-			     $evaluator= undef;
-			 },
+			 1=> sub { $$self[Mode_context]="1" },
+			 l=> sub { $$self[Mode_context]="l" },
+			 s=> sub { $$self[Mode_formatter]="s" },
+			 d=> sub { $$self[Mode_formatter]="d" },
+			 V=> sub { $$self[Mode_viewer]="V" },
+			 v=> sub { $$self[Mode_viewer]="v" },
 			);
 
 		    while (length $cmd) {
 			if (my $sub= $commands{$cmd}) {
-			    eval {
-				&$sub
-			    };
-			    print $STDOUT $@ if ref$@ or $@;
+			    &$sub;
 			    last;
 			} else {
 			    my $subcmd= chop $cmd;
 			    if (my $sub= $commands{$subcmd}) {
-				eval {
-				    &$sub
-				};
-				print $STDOUT $@ if ref$@ or $@;
+				&$sub;
+				last;
 			    } else {
-				print $STDOUT "unknown special command :$cmd\n";
+				print $STDERR "unknown command or mode :$cmd\n";
 				last;
 			    }
 			}
 		    }
-    #		next unless $flag_l;# excludes entry also from history, hrm. well ok except in the case of _l.
-		} else {
-		    # $evaluator already set.
 		}
-	    } elsif ($$self[DoRepeatWhenEmpty] and defined $oldinput) {
-		# (XX: keep same $evaluator, so that list context etc
-		# is preserved as well?)
-		$res=
-		    myeval ("package ".($$self[Package]||$caller).";".
-			    "no strict 'vars'; $oldinput");
-		$error=$@;
-		$evaluator= sub{ (defined $res ? $res : 'undef'), "\n"};##copy from above. ps wenn ich  einfach  erster step ist wert producen  mache,  und   ja  irgend  dann wär easier.  tun.
+
+		# build up evaluator
+
+		my $eval=
+		    xchoose_from
+		    (+{
+		       1=> sub {
+			   my $vals= [ scalar $self->eval_code ($args, $get_package) ];
+			   ($vals, $@)
+		       },
+		       l=> sub {
+			   my $vals= [ $self->eval_code ($args, $get_package) ];
+			   ($vals, $@)
+		       },
+		      },
+		     $self->mode_context);
+		
+		my $format_vals=
+		  xchoose_from
+		    (+{
+		       s=> sub {
+			   (
+			    join "",
+			    map {
+				(defined $_ ? $_ : 'undef'). "\n"
+			    } @_
+			   )
+		       },
+		       d=> sub {
+			   require Data::Dumper;
+			   scalar Data::Dumper::Dumper(@_);
+			   # don't forget the scalar here. *Sigh*.
+		       }
+		      },
+		     $self->mode_formatter);
+
+		my $view_string=
+		    xchoose_from
+		    (+{
+		       V=> sub {
+			   print $STDOUT $_[0]
+			     or die "print: $!";
+		       },
+		       v=> sub {
+			   eval {
+			       my $o= Chj::xoutpipe ($$self[Pager]);
+			       $o->xprint($_[0]);
+			       $o->xfinish;
+			       1
+			   } || do {
+			       print $STDERR "error piping to pager ".
+				 "$$self[Pager]: $@\n"
+				   or die $!;
+			   };
+		       },
+		      },
+		     $self->mode_viewer);
+
+		$evaluator= sub {
+		    my ($results,$error)= &$eval;
+
+		    &$view_string(do {
+			if (ref $error or $error) {
+			    my $err= (UNIVERSAL::can($error,"plain") ?
+				      # e.g. EiD style wrapped "normal" exceptions
+				      # have this method for formatting as
+				      # 'plaintext' (in a programmer's sense)
+				      $error->plain
+				      : "$error");
+			    chomp $err;
+			    $err."\n"; # no prefix? no safe way to differentiate.
+			} else {
+			    if (my $varname= $$self[KeepResultIn]) {
+				$varname= &$get_package()."::$varname"
+				  unless $varname=~ /::/;
+				no strict 'refs';
+				$$varname= $self->mode_context eq "1" ?
+				  $$results[0] : $results;
+			    }
+			    &$format_vals(@$results)
+			}
+		    });
+		};
+
+		&$evaluator;
+		
+	    } elsif ($$self[DoRepeatWhenEmpty]) {
+		&$evaluator;
 	    } else {
 		next;
 	    }
-	    # Wed, 02 Feb 2005 18:53:20 +0100  was macht  das -^.
 
-	    if (ref $error or $error) {
-		if (!$$self[DoCatchExceptions]) {
-		    die $error
-		}
-		my $err= (UNIVERSAL::can($error,"plain") ?
-			  # e.g. EiD style wrapped "normal" exceptions
-			  # have this method for formatting as
-			  # 'plaintext' (in a programmer's sense)
-			  $error->plain
-			  : "$error");
-		chomp $err;
-		print $STDERR $err."\n";
-	    } else {
-		if ($evaluator) {
-		    print $OUT (&$evaluator);
-		    # odd, parens necessary otherwise getting noise,
-		    # 'A h d%' instead of '1' etc.
-		}
-		if (my $varname= $$self[KeepResultIn]) {
-		    $varname= ($$self[Package]||$caller)."::$varname"
-			unless $varname=~ /::/;
-		    no strict 'refs';
-		    $$varname= $res;
-		    #print "kept '$res' in '$varname', it is now '$$varname'\n";
-		}
-	    }
 	    if (length $input and
 		((!defined $history[-1]) or $history[-1] ne $input)) {
 		push @history,$input;
@@ -602,13 +652,11 @@ end Class::Array;
 *set_maxhistlen= *set_maxHistLen{CODE};
 *set_docatchint= *set_doCatchINT{CODE};
 *set_dorepeatwhenempty= *set_doRepeatWhenEmpty{CODE};
-*set_docatchexceptions= *set_doCatchExceptions{CODE};
 *set_keepresultin= *set_keepResultIn{CODE};
 
 
 __END__
 todo:
-- evalscalarfix
 - Some::Package-><tab><tab>
 - Data::Dump::Streamer einbau
 - $hash->{<tab>
