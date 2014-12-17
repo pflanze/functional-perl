@@ -78,7 +78,6 @@ sub myeval {# this has to be at the top before any lexicals are
 
 use Chj::Class::methodnames;
 use Chj::xoutpipe();
-use Chj::end();
 use Chj::xtmpfile;
 use POSIX;
 
@@ -413,7 +412,6 @@ sub run {
 	while ( defined (my $input = &$myreadline) ) {
 	    my $res;
 	    my ($evaluator,$error);
-	    #my $_end=Chj::end{undef $evaluator}; #nötig?
 
 	    if (length $input) {
 		my ($cmd,$args)=
