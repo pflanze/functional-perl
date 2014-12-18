@@ -32,10 +32,76 @@ usage if @ARGV;
 use Chj::FP2::List ":all";
 use Chj::FP::ArrayUtil ":all";
 use Chj::FP::Array_sort ":all";
+use Chj::FP2::Stream ":all";
+use Chj::FP2::Lazy ":all";
 
 # for development/debugging
 use Chj::ruse;
 use Chj::Backtrace;
 use Chj::repl;
+
+sub mult {
+    my ($x,$y) = @_;
+    sub {
+	my ($z) = @_;
+	$x * $y - $z
+    }
+}
+
+sub fact {
+    my ($x) = @_;
+    warn "x=$x";
+    if ($x < 2) {
+	1
+    } else {
+	$x * fact ($x - 1)
+    }
+}
+
+our @bad_giveme;
+
+sub badfact {
+    my ($x) = @_;
+    my $res= 1;
+    while (1) {
+	push @bad_giveme, sub {
+	    ($x,$res)
+	};
+	if ($x < 2) {
+	    return $res;
+	} else {
+	    $res= $x * $res;
+	    $x = $x - 1;
+	}
+    }
+}	
+
+our @good_giveme;
+
+sub goodfact_iter {
+    my ($x, $res) = @_;
+    push @good_giveme, sub {
+	($x,$res)
+    };
+    if ($x < 2) {
+	return $res;
+    } else {
+	goodfact_iter($x - 1,  $x * $res)
+    }
+}	
+
+sub goodfact {
+    my ($x)= @_;
+    goodfact_iter($x, 1)
+}
+
+sub iota {
+    my ($from, $to)=@_;
+    if ($from >= $to) {
+	undef
+    } else {
+	cons $from, iota($from + 1, $to)
+    }
+}
 
 repl;
