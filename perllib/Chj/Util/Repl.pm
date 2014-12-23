@@ -24,23 +24,9 @@ The loop can be exited by typing ctl-d.
 Entering the empty string re-evaluates the last entry.
 Some autocompletion exists.
 
-There are some special commands:
-
-=over 4
-
-=item :package Foo
-
-Use package Foo for subsequent entries and ->run calls on the same
-Repl object.
-
-=item :l code
-
-Eval code in list context, print the result as one element per line,
-and store it as array ref in $res
-
-=back
-
-For a list of all settable options see source of this module.
+There are some special commands, they all start with ':'. Enter ':h'
+or ':help' or ':?' to get a help text including the currently active
+settings.
 
 =item TODO
 
