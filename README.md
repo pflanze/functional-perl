@@ -52,9 +52,11 @@ space used.  But Perl has the `goto \&func` construct which calls func
 without allocating a new stack frame; parameters need to be passed by
 assigning them to `@_`. With that, tail call optimization is possible,
 but instead of the system doing it automatically, it has to be
-specified explicitely. Admittedly the syntax for this is ugly; we're
-pondering writing a syntax extension (as a module, no need to change
-core Perl) that could be used like `tailcall foo (@args)`.
+specified explicitely. Admittedly the syntax for this is ugly; but
+thankfully there's already a module that improves on this:
+`Sub::Call::Tail`; see
+[intro/tailcalls_betterlooks](intro/tailcalls_betterlooks) for
+examples.
 
 - Leak potential: Scheme implementations are usually written with
 functional programs in mind and hence take care that they work

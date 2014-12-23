@@ -61,7 +61,7 @@ fun functional_fact_iter ($x, $res) {
 	# @_=($x - 1,  $x * $res);
 	# goto \&functional_fact_iter
 	#
-	# or, with nicer looks:
+	# or, with nicer looks, by using Sub::Call::Tail:
 	tail functional_fact_iter($x - 1,  $x * $res)
     }
 }
