@@ -28,6 +28,16 @@ There are some special commands, they all start with ':'. Enter ':h'
 or ':help' or ':?' to get a help text including the currently active
 settings.
 
+By default, the variable $res is set to either an array holding all
+the result values (in :l mode) or the result value (in :1 mode).
+
+By default, in :d mode, $VAR1 etc. (as shown by the Data::Dumper, but
+directly, i.e. preserving references and code refs) are set as
+well. (NOTE: this will retain memory for higher-numbered VAR's that
+are not overwritten by subsequent runs! Set ->doKeepResultsInVARX(0)
+to turn this off.)
+
+
 =item TODO
 
  - 'A::Class-> ' method completion
@@ -89,6 +99,7 @@ use Class::Array -fields=>
 	      'DoCatchINT',
 	      'DoRepeatWhenEmpty',
 	      'KeepResultIn',
+	      'DoKeepResultsInVARX',
 	      'Pager',
               'Mode_context', # char
               'Mode_formatter', # char
@@ -105,6 +116,7 @@ sub new {
     $$self[DoCatchINT]=1;
     $$self[DoRepeatWhenEmpty]=1;
     $$self[KeepResultIn]="res";
+    $$self[DoKeepResultsInVARX]= 1;
     $$self[Pager]= $ENV{PAGER} || "less";
     $$self[Mode_context]= 'l';
     $$self[Mode_formatter]= 'd';
@@ -532,6 +544,19 @@ sub run {
 			   )
 		       },
 		       d=> sub {
+			   # save values by side effect; UGLY? Fits
+			   # here just because we only want to set in
+			   # :d mode
+			   if ($$self[DoKeepResultsInVARX]) {
+			       no strict 'refs';
+			       for my $i (0..@_-1) {
+				   my $varname= &$get_package()."::VAR".($i+1);
+				   no strict 'refs';
+				   $$varname= $_[$i];
+			       }
+			   }
+
+			   # actually do the formatting job:
 			   require Data::Dumper;
 			   scalar Data::Dumper::Dumper(@_);
 			   # don't forget the scalar here. *Sigh*.
