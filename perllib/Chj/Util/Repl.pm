@@ -153,7 +153,8 @@ sub print_help {
     my $self= shift;
     my ($out)=@_;
     my $selection= sub {
-	my ($method,$val)=@_;
+	my ($meth,$val)=@_;
+	my $method= "mode_$meth";
 	$self->$method eq $val ? "->" : "  "
     };
     my $L= &$selection(context=> '1');
