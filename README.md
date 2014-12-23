@@ -117,3 +117,8 @@ this order:
     tailcalls
     tailcalls_betterlooks
 
+## See also
+
+A [post](https://news.ycombinator.com/item?id=8734719) about streams
+in Scheme mentioning the memory retention issues that even some Scheme
+implementations can have.
