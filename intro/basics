@@ -34,6 +34,9 @@ sub mult {
     }
 }
 
+
+# recursive factorial:
+
 sub fact {
     my ($x) = @_;
     warn "x=$x";
@@ -44,13 +47,16 @@ sub fact {
     }
 }
 
-our @bad_giveme;
 
-sub badfact {
+# iterative factorial:
+
+our @imperative_giveme;
+
+sub imperative_fact {
     my ($x) = @_;
     my $res= 1;
     while (1) {
-	push @bad_giveme, sub {
+	push @imperative_giveme, sub {
 	    ($x,$res)
 	};
 	if ($x < 2) {
@@ -62,23 +68,23 @@ sub badfact {
     }
 }	
 
-our @good_giveme;
+our @functional_giveme;
 
-sub goodfact_iter {
+sub functional_fact_iter {
     my ($x, $res) = @_;
-    push @good_giveme, sub {
+    push @functional_giveme, sub {
 	($x,$res)
     };
     if ($x < 2) {
 	return $res;
     } else {
-	goodfact_iter($x - 1,  $x * $res)
+	functional_fact_iter($x - 1,  $x * $res)
     }
 }	
 
-sub goodfact {
+sub functional_fact {
     my ($x)= @_;
-    goodfact_iter($x, 1)
+    functional_fact_iter($x, 1)
 }
 
 sub iota {
