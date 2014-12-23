@@ -1,8 +1,31 @@
 #!/usr/bin/perl -w
 
+
+# This file contains an intro to functions and the very basic parts of
+# functional programming:
+#
+#  1. what is a "repl"?
+#  2. what are closures?
+#  3. what is recursion?
+#  4. what is iteration, in imperative and functional ways?
+#  5. what are linked lists, and why are they the list data structure
+#     of choice for functional programs?
+#
+# 1-3 won't use any of the *functional-perl* code; it's really just
+# using standard Perl. 4 will use the List module from
+# *functional-perl*.
+
+
+# ------------------------------------------------------------------
+# (0) boilerplate (this will be familiar to Perlers)
+
+# This (together with the -w flag in the #! line at the top) is how to
+# set up Perl to treat undefined or ambiguous language into errors,
+# which is a good idea to always do.
 use strict; use warnings FATAL => 'uninitialized';
 
-# find modules from functional-perl working directory (not installed)
+# Find modules from the functional-perl working directory (not
+# installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
     my $location= (-l $0) ? abs_path ($0) : $0;
@@ -14,28 +37,118 @@ use lib "$mydir/../lib";
 use lib "$mydir/../ftemplate/lib";
 
 
-# example module use:
-use Chj::FP2::List ":all";
-use Chj::FP::ArrayUtil ":all";
-use Chj::FP::Array_sort ":all";
-use Chj::FP2::Stream ":all";
-use Chj::FP2::Lazy ":all";
-
 # for development/debugging
-use Chj::ruse;
-use Chj::Backtrace;
-use Chj::repl;
+#use Chj::ruse; # get the 'ruse' procedure which will reload modules;
+                # since we're putting the meat of the program into the
+                # main file, this won't help us here.
+use Chj::Backtrace; # show backtraces when an error happens
+use Chj::repl; # get the 'repl' procedure.
 
-sub mult {
+
+# ------------------------------------------------------------------
+# (1) Demonstrating the repl, which stands for read-eval-print loop:
+
+#repl;  # commented out since we want the functions further down to be
+        # defined before entering it; it is put at the end of the file
+        # instead
+
+# The repl allows to evaluate expressions without restarting the
+# program. It shows a prompt, reads a line of input, evaluates it, and
+# prints the result, and does this in an endless loop until you enter
+# <ctrl>-d at the prompt, at which point the repl procedure
+# returns. It has line editing, history and <tab> completion. Example:
+
+#main> 1+1
+#$VAR1 = 2;
+
+# The 'main' at the prompt indicates the namespace, which is main::
+# here.
+
+# Multiple values:
+
+#main> (1+1,2*2)
+#$VAR1 = 2;
+#$VAR2 = 4;
+#main> ()
+#main> 
+
+# An array:
+
+#main> [1+1,2*2]
+#$VAR1 = [
+#          2,
+#          4
+#        ];
+
+# An exception:
+
+#main> die "foo"
+#foo at (eval 84) line 1.
+#    (...and a back trace)
+
+# This will be used below to show how to use the definitions in this
+# file. Run `intro/basics` and do your own experiments!
+
+
+
+# ------------------------------------------------------------------
+# (2) Demonstrating closures:
+
+# 'sub' stands for 'subroutine', also called procedures, or
+# functions. "Function" implies that a value is returned. If we say
+# "pure function", then its *only* effect is to return a value.
+
+sub f {
+    # this is just how functions receive their arguments in Perl
+    # (ugly, yes, see the variant using 'fun' in the file `tailcalls`
+    # for a nicer way):
     my ($x,$y) = @_;
+    # $x and $y are fresh variables here ('my' means fresh and local
+    # to the scope), set to the arguments that were passed to 'f'
+
+    # The value of the last expression in a scope is also the value
+    # being returned by the scope (and in this case, the 'f'
+    # function). This is an anonymous function here (note that no name
+    # is given); it is called a "closure" as it "closes over"
+    # variables in its enclosing scope, i.e. $x and $y here.
     sub {
 	my ($z) = @_;
 	$x * $y - $z
     }
 }
 
+# See how f returns a subroutine as the result (its body is shown as
+# "DUMMY" for simplicity):
 
-# recursive factorial:
+#main> f(2,3)
+#$VAR1 = sub { "DUMMY" };
+
+# If we want to call that:
+
+#main> $VAR1->(4)
+#$VAR1 = 2;
+
+# 2 * 3 - 4, correct.
+
+# Capture the anonymous subroutines in variables (thus giving them
+# names, although those names are prefixed with '$' (they are 'SCALAR'
+# variables instead of the 'CODE' variables that 'sub name' sets)):
+
+#main> $g= f(2,3); $h= f(4,5); ()
+#main> $g->(4)
+#$VAR1 = 2;
+#main> $h->(4)
+#$VAR1 = 16;
+
+# Note how $g and $h remember the values that were passed to 'f' for
+# their creation.
+
+
+# ------------------------------------------------------------------
+# 3-4: we're defining the factorial function:
+#        f(n) = 1 * 2 * 3 * ... * n
+
+# (3) factorial using recursion:
 
 sub fact {
     my ($x) = @_;
@@ -47,45 +160,216 @@ sub fact {
     }
 }
 
+# The above definition is purely functional (except for the warn
+# statement): not only is the only effect of calling fact its return
+# value (again except for the warning, please consider that a
+# debugging feature, outside of the scope of program behaviour), but
+# it's also not using anything else than pure functions (let's treat
+# operators like '*', '-', '<' as functions) and variable bindings
+# inside.
 
-# iterative factorial:
+# With the variable binding, my $x = ... is meant. In pure functional
+# languages, variables are only ever assigned once (and immediately
+# upon its creation); they are usually called 'bindings' in those
+# languages, not variables. They bind a value to a name in a context;
+# the same name in the same context is guaranteed to always be the
+# same value in those languages. Note that this doesn't mean that $x
+# is constant: every invocation of 'fact' will bind its own instance
+# of $x to whatever argument was passed; but that same instance of $x
+# is never modified in this implementation of the factorial.
 
-our @imperative_giveme;
+
+# ------------------------------------------------------------------
+# (4) factorial using iteration:
+
+# (4a) iteration with a loop and variable mutation. Unlike (3), this
+# does not use space on the call stack; which is evident as there are
+# no nested procedure calls here. This means, that only one instance
+# of $x and $res respectively is created when calling
+# 'imperative_fact', and subsequently assigned new values; this is
+# *not* functional, but imperative programming.
+
+# To peek inside what's going on, we're going to save a closure from
+# every iteration step, so that we can call them later to show us the
+# values of the variables from their context.
+
+our @imperative_inspect; # array to hold the closures; 'our' means a
+                         # global variable, as opposed to 'my' which
+                         # is lexically accessible only. For a
+                         # variable to be accessible from 'repl', it
+                         # needs to be global (sadly)
 
 sub imperative_fact {
     my ($x) = @_;
     my $res= 1;
     while (1) {
-	push @imperative_giveme, sub {
+	# save closure for later inspection of $x and $res
+	push @imperative_inspect, sub {
 	    ($x,$res)
 	};
+
 	if ($x < 2) {
 	    return $res;
 	} else {
+	    # treat $res and $x not as immutable binding of a name to
+	    # a value, but as mutable memory location
 	    $res= $x * $res;
 	    $x = $x - 1;
 	}
     }
 }	
 
-our @functional_giveme;
 
-sub functional_fact_iter {
-    my ($x, $res) = @_;
-    push @functional_giveme, sub {
-	($x,$res)
-    };
-    if ($x < 2) {
-	return $res;
-    } else {
-	functional_fact_iter($x - 1,  $x * $res)
-    }
-}	
+#main> imperative_fact 4
+#$VAR1 = 24;
+#main> @imperative_inspect
+#$VAR1 = sub { "DUMMY" };
+#$VAR2 = sub { "DUMMY" };
+#$VAR3 = sub { "DUMMY" };
+#$VAR4 = sub { "DUMMY" };
+#main> $imperative_inspect[0]->()
+#$VAR1 = 1;
+#$VAR2 = 24;
+#main> $imperative_inspect[3]->()
+#$VAR1 = 1;
+#$VAR2 = 24;
+
+# Note how our captured closures all show the same values, namely the
+# last ones. Even though the closure that was captured in the first
+# loop iteration was created when the variables were different, by the
+# time we call it, the variables were mutated and don't bind to the
+# same values anymore. Ponder how this could be a dangerous feature in
+# bigger programs (and hence why functional programming avoids it.)
+
+# But note that from the outside, imperative_fact is still purely
+# functional (when ignoring the mutation of @imperative_inspect, which
+# again we do for debugging/inspection purposes only). Iff mutations
+# are kept localized, their danger is correspondingly low (it will
+# only matter when the code for imperative_fact is modified later on).
+
+
+
+# (4c) factorial still using iteration, but instead of using mutation,
+# again using pure functions internally. Note how this implements the
+# same algorithm as imperative_fact, but the looping happens by way of
+# calling the containing function instead of a while loop within
+# it. This way, $x and $res are new instances for every iteration;
+# they are not mutated and maintain the same value throughout their
+# lifetime.
 
 sub functional_fact {
     my ($x)= @_;
     functional_fact_iter($x, 1)
 }
+
+our @functional_inspect;
+
+sub functional_fact_iter {
+    my ($x, $res) = @_;
+    push @functional_inspect, sub {
+	($x,$res)
+    };
+    if ($x < 2) {
+	return $res;
+    } else {
+	# This is a tail call: it happens in tail position,
+	# i.e. there's nothing happening *after* this call within this
+	# function.
+	functional_fact_iter($x - 1,  $x * $res)
+
+	# In different words: when this sub-call returns a value, it
+	# will be immediately returned by the current call, too,
+	# without doing any further computation with it. Because of
+	# this, there's no need to keep space allocated (on the call
+	# stack) for the current context--it won't be used
+	# anymore. Dropping the current context at the same time as
+	# executing the tail call is what one calls "tail-call
+	# optimization". Perl does not do it automatically, thus this
+	# code will use stack space (not a real problem for factorial
+	# since it will not be a huge amount; cases where a loop can
+	# be repeated millions of times it would be a problem as Perl
+	# would run out of stack space). See the file `tailcalls` for
+	# a version that won't use stack space.
+    }
+}
+
+#main> functional_fact 4
+#$VAR1 = 24;
+#main> @functional_inspect
+#$VAR1 = sub { "DUMMY" };
+#$VAR2 = sub { "DUMMY" };
+#$VAR3 = sub { "DUMMY" };
+#$VAR4 = sub { "DUMMY" };
+#main> $functional_inspect[0]->()
+#$VAR1 = 4;
+#$VAR2 = 1;
+#main> $functional_inspect[3]->()
+#$VAR1 = 1;
+#$VAR2 = 24;
+
+# Note how the closures really remember the values that were in their
+# context when they were created.
+
+
+# ------------------------------------------------------------------
+# (5) Linked lists
+
+# If lists of values are implemented as arrays (slots in adjacent
+# memory locations), then the only way to initialize an array is to
+# write to it using mutation. If we want to stay purely functional, a
+# different data structure has to be used; singly linked lists are
+# commonly used for this purpose. (Trees are an alternative.)
+
+# Those are built from pairs of (val, rest), where rest is again a
+# pair, or the list end marker. Lisp calls the function to create a
+# pair 'cons', and the accessors to get val 'car' and rest 'cdr'
+# (sometimes aliased to 'first' and 'rest'; the reason to use 'car'
+# and 'cdr' is that pairs can be used as building blocks for other
+# things than lists, too, and because combinations of those names can
+# be shortened, e.g. car(car($x)) can be written as caar($x), or
+# car(cdr($x)) to cadr($x).)
+
+# For best fit with functional programming, the bare chains are passed
+# around, without any object wrapper.
+
+use Chj::FP2::List ":all"; # cons, car, cdr
+use Chj::FP::ArrayUtil ":all"; # list2array
+
+# main> cons(1,2)
+# $VAR1 = bless( [
+#                  1,
+#                  2
+#                ], 'Pair' );
+
+# As you can see, cons returns a Pair object simply containing the two arguments.
+
+# Let's build a list containing 3 elements; undef is used as the list
+# end marker.
+
+# main> cons(1, cons(2, cons(5, undef)))
+# $VAR1 = bless( [
+#                  1,
+#                  bless( [
+#                           2,
+#                           bless( [
+#                                    5,
+#                                    undef
+#                                  ], 'Pair' )
+#                         ], 'Pair' )
+#                ], 'Pair' );
+
+# This becomes ugly fast, so, turn it back into an array that Perl
+# will show nicely:
+
+# main> list2array $VAR1
+# $VAR1 = [
+#           1,
+#           2,
+#           5
+#         ];
+
+
+# Let's build a list functionally, using recursion:
 
 sub iota {
     my ($from, $to)=@_;
@@ -95,5 +379,68 @@ sub iota {
 	cons $from, iota($from + 1, $to)
     }
 }
+
+# main> list2array (iota (3, 8))
+# $VAR1 = [
+#           3,
+#           4,
+#           5,
+#           6,
+#           7
+#         ];
+
+# you could use write_sexpr to get Scheme-compatible formatting
+# instead (this needs the print to force a newline and hence flush the
+# buffer; you're first seeing the written output, then the return
+# value):
+
+# main> write_sexpr iota (3, 8); print "\n"
+# ("3" "4" "5" "6" "7")
+# $VAR1 = 1;
+
+
+# A preview on lazy lists, AKA functional streams:
+# those are linked lists, but computed on demand.
+
+use Chj::FP2::Stream ":all";
+use Chj::FP2::Lazy ":all";
+
+# main> stream_iota (4, 3)
+# $VAR1 = bless( [
+#                  sub { "DUMMY" },
+#                  undef
+#                ], 'Chj::FP2::Lazy::Promise' );
+
+# Instead of calculating the nested list data structure right away,
+# this just returns a "promise". (Details to be shown in another
+# intro, some time.)
+
+# stream_iota treats the arguments a bit different (second argument is
+# length, not last value; XX should this be changed?)
+
+# main> write_sexpr stream_iota (3, 5); print "\n"
+# ("3" "4" "5" "6" "7")
+# $VAR1 = 1;
+
+# `write_sexpr stream_iota (3)` would print an endless list:
+# stream_iota never ends it without the second argument.
+
+sub square {
+    my ($x)= @_;
+    $x * $x
+}
+
+# A function from a 'CODE' variable can be passed by prefixing it with
+# \& (yes, a bit ugly, too).
+
+# This creates an infinite stream of integers, maps it to its squares,
+# takes the first 10 values from it and prints those:
+
+# main> write_sexpr stream_take (stream_map (\&square, stream_iota 0), 10); print "\n"
+# ("0" "1" "4" "9" "16" "25" "36" "49" "64" "81")
+
+
+# ------------------------------------------------------------------
+# enter the repl for your experiments, see (0) above:
 
 repl;
