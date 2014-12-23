@@ -26,6 +26,9 @@ use Chj::repl;
 # number of arguments)
 use Function::Parameters qw(:strict);
 
+# This gives the 'tail' keyword, to avoid having to use 'goto' and @_
+# assignments:
+use Sub::Call::Tail;
 
 # ------------------------------------------------------------------
 
@@ -48,11 +51,14 @@ fun functional_fact_iter ($x, $res) {
 	#
 	#  functional_fact_iter($x - 1,  $x * $res)
 	#
-	# we're making use of Perl's goto $subroutine feature (see
+	# we could be making use of Perl's goto $subroutine feature (see
 	# `perldoc -f goto`):
-
-	@_=($x - 1,  $x * $res);
-	goto \&functional_fact_iter
+	#
+	# @_=($x - 1,  $x * $res);
+	# goto \&functional_fact_iter
+	#
+	# or, with nicer looks:
+	tail functional_fact_iter($x - 1,  $x * $res)
     }
 }
 
@@ -97,8 +103,7 @@ fun opt_odd ($n) {
     if ($n == 0) {
 	0
     } else {
-	@_=($n - 1);
-	goto \&opt_even
+	tail opt_even ($n - 1);
     }
 }
 
@@ -106,8 +111,7 @@ fun opt_even ($n) {
     if ($n == 0) {
 	1
     } else {
-	@_=($n - 1);
-	goto \&opt_odd
+	tail opt_odd ($n - 1);
     }
 }
 
