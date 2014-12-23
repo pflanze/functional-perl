@@ -14,20 +14,6 @@ use lib "$mydir/../lib";
 use lib "$mydir/../ftemplate/lib";
 
 
-sub usage {
-    print "$myname ...
-";
-    exit (@_ ? 1 : 0);
-}
-
-use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   ) or exit 1;
-usage if @ARGV;
-
-
 # example module use:
 use Chj::FP2::List ":all";
 use Chj::FP::ArrayUtil ":all";
