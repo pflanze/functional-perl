@@ -474,7 +474,7 @@ sub run {
 	while ( defined (my $input = &$myreadline) ) {
 	    if (length $input) {
 		my ($cmd,$args)=
-		  $input=~ /^ *\:(\w+)\b(.*)/s ?
+		  $input=~ /^ *\:(\?|\w+\b)(.*)/s ?
 		    ($1,$2)
 		      :(undef,$input);
 
@@ -490,6 +490,7 @@ sub run {
 			(
 			 h=> sub { $self->print_help ($STDOUT) },
 			 help=> sub { $self->print_help ($STDOUT) },
+			 '?'=> sub { $self->print_help ($STDOUT) },
 			 package=> $set_package,
 			 p=> $set_package,
 			 1=> sub { $$self[Mode_context]="1" },
