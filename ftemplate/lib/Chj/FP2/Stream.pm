@@ -12,13 +12,13 @@ Chj::FP2::Stream - functions for lazily generated, singly linked (purely functio
 
  use Chj::FP2::Stream ':all';
 
- stream_length stream_iota 5
+ stream_length stream_iota undef, 5
  # => 5;
- stream_length stream_iota 5000000
+ stream_length stream_iota undef, 5000000
  # => 5000000;
 
  use Chj::FP2::Lazy;
- Force stream_fold_right sub { my ($n,$rest)=@_; $n + Force $rest }, 0, stream_iota 5
+ Force stream_fold_right sub { my ($n,$rest)=@_; $n + Force $rest }, 0, stream_iota undef, 5
  # => 10;
 
 
@@ -68,7 +68,7 @@ use Scalar::Util 'weaken';
 use Chj::TEST;
 
 sub stream_iota {
-    my ($maybe_n,$maybe_start)= @_;
+    my ($maybe_start, $maybe_n)= @_;
     my $start= $maybe_start || 0;
     if (defined $maybe_n) {
 	my $end = $start + $maybe_n;
@@ -434,11 +434,11 @@ TEST{ stream_any sub { $_[0] % 2 }, array2stream [7] }
 # 121
 # 169
 
-# write_sexpr( stream_take( stream_iota (1000000000), 2))
+# write_sexpr( stream_take( stream_iota (0, 1000000000), 2))
 # ->  ("0" "1")
 
-TEST{ list2array F stream_zip2 stream_map (sub{$_[0]+10},stream_iota (5)),
-	stream_iota (3) }
+TEST{ list2array F stream_zip2 stream_map (sub{$_[0]+10}, stream_iota (0, 5)),
+	stream_iota (0, 3) }
   [
    [
     10,
