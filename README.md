@@ -106,3 +106,14 @@ files locally.
 To use `bin/repl` interactively, `Term::ReadLine::Gnu` is
 necessary. On Debian systems, install `libterm-readline-gnu-perl`, or
 install from CPAN (run `cpan`, then `install Term::ReadLine::Gnu`.)
+
+## Intro
+
+The [intro](intro/) directory contains scripts introducing the
+concepts (work in progress). The scripts are meant to be viewed in
+this order:
+
+    basics
+    tailcalls
+    tailcalls_betterlooks
+
