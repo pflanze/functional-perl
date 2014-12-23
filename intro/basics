@@ -249,7 +249,7 @@ sub imperative_fact {
 
 
 
-# (4c) factorial still using iteration, but instead of using mutation,
+# (4b) factorial still using iteration, but instead of using mutation,
 # again using pure functions internally. Note how this implements the
 # same algorithm as imperative_fact, but the looping happens by way of
 # calling the containing function instead of a while loop within
