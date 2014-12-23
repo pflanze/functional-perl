@@ -20,6 +20,10 @@ use lib "$mydir/../ftemplate/lib";
 use Chj::Backtrace;
 use Chj::repl;
 
+# You'll probably have to install the following two modules from CPAN
+# (not even Debian has them as packages): run `cpan`, then (perhaps
+# after configuration, just say `yes`): `install Function::Parameters`
+# and `install Sub::Call::Tail`
 
 # This gives the 'fun' keyword, to avoid having to pick up parameters
 # out of @_ (plus the :strict feature for automatic checking of the
