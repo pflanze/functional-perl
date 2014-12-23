@@ -20,6 +20,11 @@ Currently there are three parts/subdirectories in this repository:
 * `ftemplate`: for creating XML and HTML documents using functions;
    built on top of `lib`
 
+## Real-world use
+
+For a real program using these modules, see
+[ml2json](http://ml2json.christianjaeger.ch).
+
 ## Functional programming in Perl 5
 
 We feel that the Scheme language approaches functional programming
