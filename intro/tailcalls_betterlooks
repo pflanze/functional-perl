@@ -1,0 +1,124 @@
+#!/usr/bin/perl -w
+
+
+# This file shows how to use syntactical sugar additions to Perl to
+# make the code from the file `tailcalls` look better.
+
+# ------------------------------------------------------------------
+use strict; use warnings FATAL => 'uninitialized';
+
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../perllib";
+use lib "$mydir/../lib";
+use lib "$mydir/../ftemplate/lib";
+
+use Chj::Backtrace;
+use Chj::repl;
+
+
+# This gives the 'fun' keyword, to avoid having to pick up parameters
+# out of @_ (plus the :strict feature for automatic checking of the
+# number of arguments)
+use Function::Parameters qw(:strict);
+
+
+# ------------------------------------------------------------------
+
+# again, see (4b) in `basics` for basic explanations
+
+fun functional_fact ($x) {
+    functional_fact_iter($x, 1)
+}
+
+our @functional_inspect;
+
+fun functional_fact_iter ($x, $res) {
+    push @functional_inspect, fun {
+	($x,$res)
+    };
+    if ($x < 2) {
+	return $res;
+    } else {
+	# This is a tail call. Instead of doing it unoptimized like:
+	#
+	#  functional_fact_iter($x - 1,  $x * $res)
+	#
+	# we're making use of Perl's goto $subroutine feature (see
+	# `perldoc -f goto`):
+
+	@_=($x - 1,  $x * $res);
+	goto \&functional_fact_iter
+    }
+}
+
+
+# To really see the difference, here's a function that works for
+# higher number of iterations:
+
+fun odd ($n) {
+    if ($n == 0) {
+	0
+    } else {
+	even ($n - 1)
+    }
+}
+
+fun even ($n) {
+    if ($n == 0) {
+	1
+    } else {
+	odd ($n - 1)
+    }
+}
+
+# $ ulimit -S -v 200000; ./tailcalls
+# main> even 4
+# $VAR1 = 1;
+# main> even 5
+# $VAR1 = 0;
+# main> even 500
+# Deep recursion on subroutine "main::even" at ./tailcalls line 65.
+# Deep recursion on subroutine "main::odd" at ./tailcalls line 74.
+# $VAR1 = 1;
+# main> even 500000
+# Deep recursion on subroutine "main::even" at ./tailcalls line 65.
+# Deep recursion on subroutine "main::odd" at ./tailcalls line 74.
+# Out of memory!
+
+# You can see that Perl ran out of space for the stack.
+
+
+fun opt_odd ($n) {
+    if ($n == 0) {
+	0
+    } else {
+	@_=($n - 1);
+	goto \&opt_even
+    }
+}
+
+fun opt_even ($n) {
+    if ($n == 0) {
+	1
+    } else {
+	@_=($n - 1);
+	goto \&opt_odd
+    }
+}
+
+# $ ulimit -S -v 200000; ./tailcalls
+# main> opt_even 5000000
+# $VAR1 = 1;
+
+# Now it runs with little (and constant) memory usage.
+
+
+# ------------------------------------------------------------------
+# enter the repl for your experiments, see (0) in `basics`
+
+repl;
