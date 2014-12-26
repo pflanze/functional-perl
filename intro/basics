@@ -151,12 +151,12 @@ sub f {
 # (3) factorial using recursion:
 
 sub fact {
-    my ($x) = @_;
-    warn "x=$x";
-    if ($x < 2) {
+    my ($n) = @_;
+    warn "n=$n";
+    if ($n < 2) {
 	1
     } else {
-	$x * fact ($x - 1)
+	$n * fact ($n - 1)
     }
 }
 
@@ -168,14 +168,14 @@ sub fact {
 # operators like '*', '-', '<' as functions) and variable bindings
 # inside.
 
-# With the variable binding, my $x = ... is meant. In pure functional
+# With the variable binding, my $n = ... is meant. In pure functional
 # languages, variables are only ever assigned once (and immediately
 # upon its creation); they are usually called 'bindings' in those
 # languages, not variables. They bind a value to a name in a context;
 # the same name in the same context is guaranteed to always be the
-# same value in those languages. Note that this doesn't mean that $x
+# same value in those languages. Note that this doesn't mean that $n
 # is constant: every invocation of 'fact' will bind its own instance
-# of $x to whatever argument was passed; but that same instance of $x
+# of $n to whatever argument was passed; but that same instance of $n
 # is never modified in this implementation of the factorial.
 
 
@@ -185,7 +185,7 @@ sub fact {
 # (4a) iteration with a loop and variable mutation. Unlike (3), this
 # does not use space on the call stack; which is evident as there are
 # no nested procedure calls here. This means, that only one instance
-# of $x and $res respectively is created when calling
+# of $n and $res respectively is created when calling
 # 'imperative_fact', and subsequently assigned new values; this is
 # *not* functional, but imperative programming.
 
@@ -200,21 +200,21 @@ our @imperative_inspect; # array to hold the closures; 'our' means a
                          # needs to be global (sadly)
 
 sub imperative_fact {
-    my ($x) = @_;
+    my ($n) = @_;
     my $res= 1;
     while (1) {
-	# save closure for later inspection of $x and $res
+	# save closure for later inspection of $n and $res
 	push @imperative_inspect, sub {
-	    ($x,$res)
+	    ($n,$res)
 	};
 
-	if ($x < 2) {
+	if ($n < 2) {
 	    return $res;
 	} else {
-	    # treat $res and $x not as immutable binding of a name to
+	    # treat $res and $n not as immutable binding of a name to
 	    # a value, but as mutable memory location
-	    $res= $x * $res;
-	    $x = $x - 1;
+	    $res= $n * $res;
+	    $n = $n - 1;
 	}
     }
 }	
@@ -253,29 +253,29 @@ sub imperative_fact {
 # again using pure functions internally. Note how this implements the
 # same algorithm as imperative_fact, but the looping happens by way of
 # calling the containing function instead of a while loop within
-# it. This way, $x and $res are new instances for every iteration;
+# it. This way, $n and $res are new instances for every iteration;
 # they are not mutated and maintain the same value throughout their
 # lifetime.
 
 sub functional_fact {
-    my ($x)= @_;
-    functional_fact_iter($x, 1)
+    my ($n)= @_;
+    functional_fact_iter($n, 1)
 }
 
 our @functional_inspect;
 
 sub functional_fact_iter {
-    my ($x, $res) = @_;
+    my ($n, $res) = @_;
     push @functional_inspect, sub {
-	($x,$res)
+	($n,$res)
     };
-    if ($x < 2) {
+    if ($n < 2) {
 	return $res;
     } else {
 	# This is a tail call: it happens in tail position,
 	# i.e. there's nothing happening *after* this call within this
 	# function.
-	functional_fact_iter($x - 1,  $x * $res)
+	functional_fact_iter($n - 1,  $n * $res)
 
 	# In different words: when this sub-call returns a value, it
 	# will be immediately returned by the current call, too,
