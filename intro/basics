@@ -2,7 +2,7 @@
 
 
 # This file contains an intro to functions and the very basic parts of
-# functional programming:
+# functional programming, and to how to use `functional-perl`:
 #
 #  1. what is a "repl"?
 #  2. what are closures?
