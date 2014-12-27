@@ -168,30 +168,75 @@ sub fact {
 # operators like '*', '-', '<' as functions) and variable bindings
 # inside.
 
-# With the variable binding, my $n = ... is meant. In pure functional
-# languages, variables are only ever assigned once (and immediately
-# upon its creation); they are usually called 'bindings' in those
-# languages, not variables. They bind a value to a name in a context;
-# the same name in the same context is guaranteed to always be the
-# same value in those languages. Note that this doesn't mean that $n
-# is constant: every invocation of 'fact' will bind its own instance
-# of $n to whatever argument was passed; but that same instance of $n
-# is never modified in this implementation of the factorial.
+# With the 'variable binding', my $n = ... is meant. In pure
+# functional languages, variables are only ever assigned once (and
+# immediately upon their instantiation); they are usually called
+# 'bindings' in those languages, not variables. They bind a value to a
+# name in a context; the same name in the same context is guaranteed
+# to always be the same value in those languages, thus, a binding
+# doesn't vary (the same binding isn't variable). Note that this
+# doesn't mean that $n is constant: every invocation of 'fact' will
+# bind its own instance of $n to whatever argument was passed; but
+# that same instance of $n is never modified in this implementation of
+# the factorial.
 
 
 # ------------------------------------------------------------------
 # (4) factorial using iteration:
 
-# (4a) iteration with a loop and variable mutation. Unlike (3), this
-# does not use space on the call stack; which is evident as there are
-# no nested procedure calls here. This means, that only one instance
-# of $n and $res respectively is created when calling
-# 'imperative_fact', and subsequently assigned new values; this is
-# *not* functional, but imperative programming.
+# If you already know about the difference between iterative and
+# recursive algorithms, you could skip down to (4a).
+
+# The recursive algorithm above delays the multiplication until the
+# recursive call returns. fact(3) will calculate 3 * fact(2), which
+# has to evaluate fact(2) before the multiplication can be executed;
+# fact(2) will calculate 2 * fact(1), and fact(1) will return 1, after
+# which point the multiplication 2 * 1 => 2 can be executed, which
+# will be returned, at which point the multiplication 3 * 2 will be
+# executed. The steps that are not done yet, like "3 *", are called
+# continuations ("3 *" is the continuation of the evaluation of
+# "fact(2)", etc.), and are remembered implicitely by the Perl
+# interpreter on a stack (the Perl language-level stack, which is
+# implemented independently of the C stack). This means that
+# calculating fact for n will need n slots of space on the stack. This
+# is unlikely to be a problem here since fact for big values of n is
+# going to overflow Perl's number range anyway, but it's something to
+# be aware of since you *will* run out of stack space for some other
+# tasks when implementing them by way of recursion.
+
+# But the factorial can also be calculated in another way: instead of
+# carrying out the multiplication after getting the factorial for the
+# next smaller n, we can multiply by the next smaller n and then use
+# this for the next iteration. Effectively, instead of calculating
+
+#  4 * (3 * (2 * 1))
+
+# we can calculate
+
+#  ((4 * 3) * 2) * 1
+
+# which of course (thanks to the associativity of multiplication) will
+# give the same result (at least for exact numbers). If we evaluate
+# the multiplications in the same direction as the decrement of n
+# (i.e. towards the end condition), then the work continues only
+# towarts the end condition, and no pending work is piling up (no
+# continuations are to be remembered on the stack). Such an algorithm
+# is called *iterative*. This distinction is independent of the fact
+# whether we're implementing the algorithm with a programming language
+# that continues to the next evaluation step by way of calling a
+# function, or by way of using loop syntax. These two styles are shown
+# below:
+
+
+# (4a) iteration with a loop and variable mutation. This means, that
+# only one instance of $n and $res respectively is created when
+# calling 'imperative_fact', and subsequently assigned new values;
+# this is *not* functional, but imperative programming.
 
 # To peek inside what's going on, we're going to save a closure from
-# every iteration step, so that we can call them later to show us the
-# values of the variables from their context.
+# every iteration step, so that we can call those later to show us the
+# values of the variables that were in their context at the time of
+# their creation.
 
 our @imperative_inspect; # array to hold the closures; 'our' means a
                          # global variable, as opposed to 'my' which
@@ -236,16 +281,21 @@ sub imperative_fact {
 
 # Note how our captured closures all show the same values, namely the
 # last ones. Even though the closure that was captured in the first
-# loop iteration was created when the variables were different, by the
-# time we call it, the variables were mutated and don't bind to the
-# same values anymore. Ponder how this could be a dangerous feature in
-# bigger programs (and hence why functional programming avoids it.)
+# loop iteration was created when the variables held different values,
+# by the time we call it, the variables were mutated and don't bind to
+# the same values anymore. All of the closures in @imperative_inspect
+# refer to the same variable instances.
 
-# But note that from the outside, imperative_fact is still purely
-# functional (when ignoring the mutation of @imperative_inspect, which
-# again we do for debugging/inspection purposes only). Iff mutations
-# are kept localized, their danger is correspondingly low (it will
-# only matter when the code for imperative_fact is modified later on).
+# Ponder how this could be a dangerous feature in bigger programs (and
+# hence why functional programming avoids it.)
+
+# As an aside: note that as seen by the world *outside*,
+# imperative_fact is still purely functional (when ignoring the
+# mutation of @imperative_inspect, which again we do for
+# debugging/inspection purposes only). Iff mutations are kept
+# localized, their danger is correspondingly low (they will only
+# matter when working on the code within the scope that they are kept
+# to, i.e. when imperative_fact is modified later on).
 
 
 
@@ -284,12 +334,15 @@ sub functional_fact_iter {
 	# stack) for the current context--it won't be used
 	# anymore. Dropping the current context at the same time as
 	# executing the tail call is what one calls "tail-call
-	# optimization". Perl does not do it automatically, thus this
-	# code will use stack space (not a real problem for factorial
-	# since it will not be a huge amount; cases where a loop can
-	# be repeated millions of times it would be a problem as Perl
-	# would run out of stack space). See the file `tailcalls` for
-	# a version that won't use stack space.
+	# optimization".
+
+	# But: Perl does *not* carry out this optimization
+	# automatically, thus this code will still use stack space
+	# (not a real problem for factorial since it will not be a
+	# huge amount; cases where a loop can be repeated millions of
+	# times it would be a problem as Perl would run out of stack
+	# space). It can be specified explicitely, though. See the
+	# file `tailcalls` for a version that won't use stack space.
     }
 }
 
