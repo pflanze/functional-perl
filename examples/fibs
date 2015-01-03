@@ -1,0 +1,56 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../perllib";
+use lib "$mydir/../lib";
+use lib "$mydir/../ftemplate/lib";
+
+
+use Chj::Backtrace;
+use Chj::repl;
+
+use Chj::TEST;
+use Chj::FP2::List ":all";
+use Chj::FP::ArrayUtil "add";
+use Chj::FP2::Lazy ":all";
+use Chj::FP2::Stream ":all";
+
+
+# fibs :: [Integer]
+# fibs = 1:1:zipWith (+) fibs (tail fibs)
+# fib n = fibs!!n
+
+our $fibs; $fibs=
+  cons 1, cons 1, Delay { stream_zip_with \&add, Keep($fibs), cdr $fibs };
+
+sub fib {
+    my ($n)=@_;
+    stream_ref Keep($fibs), $n
+}
+
+TEST { stream2array stream_take Keep($fibs), 10 }
+        [
+          1,
+          1,
+          2,
+          3,
+          5,
+          8,
+          13,
+          21,
+          34,
+          55
+        ];
+
+TEST { fib 30 }
+  1346269;
+
+repl;
