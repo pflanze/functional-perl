@@ -32,6 +32,7 @@ Create and dissect sequences using pure functions. Lazily.
 package Chj::FP2::Stream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
+	      Keep
 	      stream_iota
 	      stream_length
 	      stream_append
@@ -68,6 +69,14 @@ use Chj::FP2::Lazy;
 use Chj::FP2::List ":all";
 use Scalar::Util 'weaken';
 use Chj::TEST;
+
+
+# protect a variable from being pruned by callees that prune their
+# arguments
+sub Keep ($) {
+    my ($v)=@_;
+    $v
+}
 
 sub stream_iota {
     my ($maybe_start, $maybe_n)= @_;
