@@ -53,6 +53,7 @@ package Chj::FP2::Stream;
 	      stream_drop_while
 	      stream_ref
 	      stream_zip2
+	      stream_zip_with
 	      stream2array
 	      stream_mixed_flatten
 	      stream_any
@@ -155,6 +156,20 @@ sub stream_zip2 ($$) {
 	  cons([car $l, car $m], stream_zip2 (cdr $l, cdr $m))
     }
 }
+
+sub stream_zip_with {
+    my ($f, $l1, $l2)= @_;
+    undef $_[1]; undef $_[2];
+    Delay
+    {
+	my $l1= Force $l1;
+	my $l2= Force $l2;
+	(defined $l1 and defined $l2) ?
+	  cons &$f(car $l1, car $l2), stream_zip_with ($f, cdr $l1, cdr $l2)
+	    : undef;
+    }
+}
+
 
 sub stream_filter ($ $);
 sub stream_filter ($ $) {
