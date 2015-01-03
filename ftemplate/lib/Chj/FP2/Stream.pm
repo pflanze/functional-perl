@@ -51,6 +51,7 @@ package Chj::FP2::Stream;
 	      stream_take
 	      stream_take_while
 	      stream_drop_while
+	      stream_ref
 	      stream_zip2
 	      stream2array
 	      stream_mixed_flatten
@@ -357,6 +358,21 @@ sub stream_drop_while ($ $) {
 	    }
 	}
 	$s
+    }
+}
+
+sub stream_ref ($ $) {
+    my ($s, $i)=@_;
+    weaken $_[0];
+  LP: {
+	$s= Force $s;
+	if ($i <= 0) {
+	    car $s
+	} else {
+	    $s= cdr $s;
+	    $i--;
+	    redo LP;
+	}
     }
 }
 
