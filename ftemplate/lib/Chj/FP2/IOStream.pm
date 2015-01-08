@@ -33,7 +33,8 @@ package Chj::FP2::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(xopendir_stream
-	      xopendir_pathstream);
+	      xopendir_pathstream
+	      xfile_lines);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -43,6 +44,8 @@ use Chj::xopendir;
 use Chj::FP2::List ':all';
 use Chj::FP2::Stream 'stream_map', 'array2stream';
 use Chj::FP::Array_sort;
+use Scalar::Util 'weaken';
+use Chj::FP::Array_sort 'the_method'; # XXX move to another module
 
 sub _xopendir_stream ($) {
     my ($path)=@_;
@@ -86,5 +89,52 @@ sub xopendir_pathstream ($;$) {
     }, xopendir_stream $base,$maybe_cmp
 }
 
+
+
+sub fh2stream ($$$) {
+    my ($fh, $read, $close)=@_;
+    my $next; $next= sub {
+	Delay {
+	    if (defined (my $item= &$read($fh))) {
+		cons $item, &$next
+	    } else {
+		&$close ($fh);
+		undef
+	    }
+	}
+    };
+    my $_next=$next; weaken $next;
+    &$_next
+}
+
+# And (all?, no, can't proxy 'xopen' for both in and out) some of the
+# Chj::xopen functions:
+
+use Chj::xopen qw(
+	      xopen_read
+	      xopen_write
+	      xopen_append
+	      xopen_update);
+
+sub make_open_stream {
+    my ($open,$read,$maybe_close)=@_;
+    my $close= $maybe_close // the_method ("xclose");
+    sub ($) {
+	fh2stream(scalar &$open(@_),
+		  $read,
+		  $close)
+    }
+}
+
+sub xfile_lines ($);
+*xfile_lines=
+  make_open_stream(\&xopen_read,
+		   the_method ("xreadline"));
+
+
+# XX these can be optimized (shortcutted instead of wrapped):
+
+#sub devnull
+#sub devzero
 
 1
