@@ -15,6 +15,7 @@ our ($mydir, $myname); BEGIN {
 }
 use lib "$mydir/lib";
 use lib "$mydir/../perllib";
+use lib "$mydir/../ftemplate/lib";
 
 
 sub usage {
