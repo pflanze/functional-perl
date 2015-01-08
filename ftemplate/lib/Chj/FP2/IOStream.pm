@@ -53,7 +53,7 @@ sub _xopendir_stream ($) {
 		cons $item, &$next
 	    } else {
 		$d->xclose;
-		undef $next;
+		undef $next; # XXX use weaken instead
 		undef
 	    }
 	}
