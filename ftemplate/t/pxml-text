@@ -10,7 +10,7 @@ BEGIN {
     $0=~ /(.*?)([^\/]+)\z/s or die "?";
     ($mydir, $myname)=($1,$2);
 }
-use lib "$mydir/../lib";
+use lib "$mydir/../../lib";
 
 use Chj::PXHTML ":all";
 #use Chj::PXML::Serialize "pxml_print_fragment";

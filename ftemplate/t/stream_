@@ -8,8 +8,7 @@ BEGIN {
     ($mydir, $myname)=($1,$2);
 }
 
-use lib "$mydir/../lib";
-use lib "$mydir/../../perllib";##
+use lib "$mydir/../../lib";
 
 use Chj::FP::Stream ":all";
 use Chj::TEST ':all';

@@ -9,9 +9,7 @@ our ($mydir, $myname); BEGIN {
     $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
     ($mydir, $myname)=($1,$2);
 }
-use lib "$mydir/../perllib";
 use lib "$mydir/../lib";
-use lib "$mydir/../ftemplate/lib";
 
 
 use Chj::Backtrace;
