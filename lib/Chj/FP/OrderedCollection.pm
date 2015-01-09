@@ -22,9 +22,9 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use Chj::FP::Predicates;
-use Chj::FP2::Stream qw(subarray2stream subarray2stream_reverse  stream2array);
-use Chj::FP2::Lazy;
-use Chj::FP2::List;
+use Chj::FP::Stream qw(subarray2stream subarray2stream_reverse  stream2array);
+use Chj::FP::Lazy;
+use Chj::FP::List;
 
 use Chj::Struct
   [[\&arrayP, "array"],

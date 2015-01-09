@@ -6,18 +6,18 @@
 
 =head1 NAME
 
-Chj::FP2::Stream - functions for lazily generated, singly linked (purely functional) lists
+Chj::FP::Stream - functions for lazily generated, singly linked (purely functional) lists
 
 =head1 SYNOPSIS
 
- use Chj::FP2::Stream ':all';
+ use Chj::FP::Stream ':all';
 
  stream_length stream_iota undef, 5
  # => 5;
  stream_length stream_iota undef, 5000000
  # => 5000000;
 
- use Chj::FP2::Lazy;
+ use Chj::FP::Lazy;
  Force stream_fold_right sub { my ($n,$rest)=@_; $n + Force $rest }, 0, stream_iota undef, 5
  # => 10;
 
@@ -29,7 +29,7 @@ Create and dissect sequences using pure functions. Lazily.
 =cut
 
 
-package Chj::FP2::Stream;
+package Chj::FP::Stream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
 	      Keep
@@ -64,9 +64,9 @@ package Chj::FP2::Stream;
 
 use strict; use warnings FATAL => 'uninitialized';
 
-use Chj::FP2::Lazy;
-#use Chj::FP2::Pair; ?
-use Chj::FP2::List ":all";
+use Chj::FP::Lazy;
+#use Chj::FP::Pair; ?
+use Chj::FP::List ":all";
 use Scalar::Util 'weaken';
 use Chj::TEST;
 

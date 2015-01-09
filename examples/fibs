@@ -18,10 +18,10 @@ use Chj::Backtrace;
 use Chj::repl;
 
 use Chj::TEST;
-use Chj::FP2::List ":all";
+use Chj::FP::List ":all";
 use Chj::FP::ArrayUtil "add";
-use Chj::FP2::Lazy ":all";
-use Chj::FP2::Stream ":all";
+use Chj::FP::Lazy ":all";
+use Chj::FP::Stream ":all";
 
 
 # fibs :: [Integer]

@@ -11,7 +11,7 @@ Chj::FP::Array_sort - 'sensible' sorting setup
 =head1 SYNOPSIS
 
  use Chj::FP::Array_sort; # for array_sort, on, string_cmp, number_cmp, complement
- use Chj::FP2::List;# for car in this example
+ use Chj::FP::List;# for car in this example
  array_sort $ary, on \&car, \&number_cmp
 
 =head1 DESCRIPTION

@@ -23,9 +23,9 @@ use Chj::PXML::Serialize "pxml_print_fragment_fast";
 #main> 
 #<a href="hah">Hello <i>World<b>!</b></i></a>chrisperl@novo:~/ml2json$ 
 
-use Chj::FP2::Lazy;
-use Chj::FP2::List;
-use Chj::FP2::Stream;
+use Chj::FP::Lazy;
+use Chj::FP::List;
+use Chj::FP::Stream;
 use Chj::TEST ":all";
 
 TEST {  A({href=>"hah"}, "Hello ", I("World", undef, B("!")), cons(" ", string2stream("You're great.")))->text }

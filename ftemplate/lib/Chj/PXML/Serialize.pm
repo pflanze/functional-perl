@@ -31,9 +31,9 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use Data::Dumper;
 use Chj::PXML;
-use Chj::FP2::Lazy;
-use Chj::FP2::List;
-use Chj::FP2::Stream;
+use Chj::FP::Lazy;
+use Chj::FP::List;
+use Chj::FP::Stream;
 use Chj::xIO;
 
 sub perhaps_dump {
@@ -142,9 +142,9 @@ sub _pxml_print_fragment_fast {
 					   $html5compat, $void_element_h);
 		#_pxml_print_fragment_fast (cdr $v, $fh);
 		redo LP;
-	    } elsif ($ref eq "Chj::FP2::Lazy::Promise"
+	    } elsif ($ref eq "Chj::FP::Lazy::Promise"
 		     or
-		     $ref eq "Chj::FP2::Lazy::PromiseLight") {
+		     $ref eq "Chj::FP::Lazy::PromiseLight") {
 	      PROMISE:
 		#_pxml_print_fragment_fast (Force($v), $fh,
 		#                           $html5compat, $void_element_h);

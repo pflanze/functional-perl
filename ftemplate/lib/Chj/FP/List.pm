@@ -6,11 +6,11 @@
 
 =head1 NAME
 
-Chj::FP2::List - singly linked (purely functional) lists
+Chj::FP::List - singly linked (purely functional) lists
 
 =head1 SYNOPSIS
 
- use Chj::FP2::List ':all';
+ use Chj::FP::List ':all';
  list2string(cons("H",cons("e",cons("l",cons("l",cons("o",undef))))))
  #-> "Hello"
 
@@ -24,7 +24,7 @@ nobody else does?
 =cut
 
 
-package Chj::FP2::List;
+package Chj::FP::List;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(cons pairP nullP car cdr _car _cdr list);
 @EXPORT_OK=qw(string2list list_length list_reverse
@@ -41,7 +41,7 @@ package Chj::FP2::List;
 
 use strict; use warnings FATAL => 'uninitialized';
 
-use Chj::FP2::Lazy;
+use Chj::FP::Lazy;
 use Chj::xIO; # 'xprint'
 # NOTE: since xIO has a circular dependendy on us, (depending on the
 # load order, ugh) xprint may not be defined yet, thus have to use it
@@ -420,7 +420,7 @@ sub mixed_flatten ($;$$) {
 		     $tail,
 		     $v);
 		goto ($maybe_delay
-		      ? \&Chj::FP2::Stream::stream__array_fold_right
+		      ? \&Chj::FP::Stream::stream__array_fold_right
 		      #^ XX just expecting it to be loaded
 		      : \&array_fold_right);
 	    } else {
@@ -432,7 +432,7 @@ sub mixed_flatten ($;$$) {
 }
 
 
-use Chj::FP2::Char 'charP';
+use Chj::FP::Char 'charP';
 
 sub charlistP ($) {
     my ($l)=@_;
@@ -459,8 +459,8 @@ sub ldie {
 }
 
 
-use Chj::FP2::Values 'fst';
-use Chj::FP2::Char 'char_alphanumericP';
+use Chj::FP::Values 'fst';
+use Chj::FP::Char 'char_alphanumericP';
 
 TEST{ list_length string2list "ao" }
   2;
@@ -530,7 +530,7 @@ TEST{ list2string mixed_flatten [string2list "abc", string2list "def", "ghi"] }
 #TEST{ $|=1; sub countdown { my ($i)=@_; if ($i) { DelayLight {cons ($i, countdown($i-1))}} else {undef} }; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,countdown 10] }, undef)}, undef, \&DelayLight)
 # ("2" ("10" "9" "8" "7" "6" "5" "4" "3" "2" "1"))$VAR1 = 1;
 
-TEST{ list2array  Chj::FP2::List::array_fold_right \&cons, undef, [1,2,3] }
+TEST{ list2array  Chj::FP::List::array_fold_right \&cons, undef, [1,2,3] }
   [
    1,
    2,

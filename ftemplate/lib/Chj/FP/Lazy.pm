@@ -6,7 +6,7 @@
 
 =head1 NAME
 
-Chj::FP2::Lazy
+Chj::FP::Lazy
 
 =head1 SYNOPSIS
 
@@ -16,7 +16,7 @@ Chj::FP2::Lazy
 =cut
 
 
-package Chj::FP2::Lazy;
+package Chj::FP::Lazy;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(Delay DelayLight Force promiseP);
 @EXPORT_OK=qw();
@@ -26,26 +26,26 @@ use strict; use warnings FATAL => 'uninitialized';
 
 
 sub Delay (&) {
-    bless [$_[0],undef], "Chj::FP2::Lazy::Promise"
+    bless [$_[0],undef], "Chj::FP::Lazy::Promise"
 }
 
 # not providing for caching (1-time-only evaluation)
 sub DelayLight (&) {
-    bless $_[0], "Chj::FP2::Lazy::PromiseLight"
+    bless $_[0], "Chj::FP::Lazy::PromiseLight"
 }
-@Chj::FP2::Lazy::PromiseLight::ISA= qw(Chj::FP2::Lazy::Promise);
+@Chj::FP::Lazy::PromiseLight::ISA= qw(Chj::FP::Lazy::Promise);
 
 sub promiseP ($) {
-    (UNIVERSAL::isa ($_[0], "Chj::FP2::Lazy::Promise"))
+    (UNIVERSAL::isa ($_[0], "Chj::FP::Lazy::Promise"))
 }
 
 sub Force ($;$) {
     my ($perhaps_promise,$nocache)=@_;
   LP: {
-	if (UNIVERSAL::isa ($perhaps_promise, "Chj::FP2::Lazy::PromiseLight")) {
+	if (UNIVERSAL::isa ($perhaps_promise, "Chj::FP::Lazy::PromiseLight")) {
 	    $perhaps_promise= &$perhaps_promise;
 	    redo LP;
-	} elsif (UNIVERSAL::isa ($perhaps_promise, "Chj::FP2::Lazy::Promise")) {
+	} elsif (UNIVERSAL::isa ($perhaps_promise, "Chj::FP::Lazy::Promise")) {
 	    if (my $thunk= $$perhaps_promise[0]) {
 		my $v= &$thunk;
 		unless ($nocache) {
@@ -65,7 +65,7 @@ sub Force ($;$) {
 }
 
 {
-    package Chj::FP2::Lazy::Promise;
+    package Chj::FP::Lazy::Promise;
 }
 
 1

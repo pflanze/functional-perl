@@ -14,8 +14,8 @@ use lib "$mydir/../perllib";
 
 
 use Chj::PXHTML ':all';
-use Chj::FP2::Lazy;
-use Chj::FP2::List;
+use Chj::FP::Lazy;
+use Chj::FP::List;
 use Chj::PXML::Serialize;
 
 use utf8;

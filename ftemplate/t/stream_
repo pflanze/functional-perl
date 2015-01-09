@@ -11,7 +11,7 @@ BEGIN {
 use lib "$mydir/../lib";
 use lib "$mydir/../../perllib";##
 
-use Chj::FP2::Stream ":all";
+use Chj::FP::Stream ":all";
 use Chj::TEST ':all';
 
 TEST{stream_length stream_iota 0, 1000000}
