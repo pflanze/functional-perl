@@ -149,7 +149,8 @@ sub stream_map_with_tail ($ $ $) {
     weaken $_[1];
     Delay {
 	$l= Force $l;
-	nullP($l) ? $tail : cons(&$fn(car $l), stream_map ($fn,cdr $l))
+	nullP $l ? $tail : cons(&$fn(car $l),
+				stream_map_with_tail ($fn, cdr $l, $tail))
     }
 }
 
@@ -477,6 +478,16 @@ TEST {
     \@v
 }
   [ 100, 121, 169 ];
+
+TEST {
+    my @v;
+    stream_for_each sub { push @v, @_ },
+      stream_map_with_tail( sub {my $v=shift; $v*$v},
+			    array2stream ([10,11,13]),
+			    array2stream ([1,2]));
+    \@v
+}
+  [ 100, 121, 169, 1, 2 ];
 
 TEST {
     stream2array
