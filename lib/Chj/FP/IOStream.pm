@@ -57,7 +57,7 @@ sub _xopendir_stream ($) {
 	    } else {
 		$d->xclose;
 		undef $next; # XXX use weaken instead
-		undef
+		null
 	    }
 	}
     };
@@ -99,7 +99,7 @@ sub fh2stream ($$$) {
 		cons $item, &$next
 	    } else {
 		&$close ($fh);
-		undef
+		null
 	    }
 	}
     };
