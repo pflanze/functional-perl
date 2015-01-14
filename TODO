@@ -1,3 +1,6 @@
+- clean up licensing (some files currently are MIT license even though
+  COPYING claims Perl licensing)
+
 - more `intro/`, more `examples/`
 
 - more tests?
