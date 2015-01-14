@@ -139,7 +139,7 @@ sub stream_map ($ $) {
     weaken $_[1];
     Delay {
 	$l= Force $l;
-	$l and cons(&$fn(car $l), stream_map ($fn,cdr $l))
+	nullP $l ? null : cons(&$fn(car $l), stream_map ($fn,cdr $l))
     }
 }
 
