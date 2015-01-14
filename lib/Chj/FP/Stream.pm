@@ -184,10 +184,10 @@ sub stream_filter ($ $) {
     weaken $_[1];
     Delay {
 	$l= Force $l;
-	$l and do {
+	nullP $l ? null : do {
 	    my $a= car $l;
 	    my $r= stream_filter ($fn,cdr $l);
-	    (&$fn($a) ? cons($a, $r) : $r)
+	    &$fn($a) ? cons($a, $r) : $r
 	}
     }
 }
@@ -476,6 +476,13 @@ TEST {
     \@v
 }
   [ 100, 121, 169 ];
+
+TEST {
+    stream2array
+      stream_filter sub { $_[0] % 2 },
+	stream_iota 0, 5;
+}
+  [ 1, 3 ];
 
 # write_sexpr( stream_take( stream_iota (0, 1000000000), 2))
 # ->  ("0" "1")
