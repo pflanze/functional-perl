@@ -11,9 +11,9 @@ Chj::FP::Stream - functions for lazily generated, singly linked (purely function
 
  use Chj::FP::Stream ':all';
 
- stream_length stream_iota undef, 5
+ stream_length stream_iota (101, 5)
  # => 5;
- stream_length stream_iota undef, 5000000
+ stream_length stream_iota (undef, 5000000)
  # => 5000000;
 
  use Chj::FP::Lazy;
@@ -88,7 +88,7 @@ sub stream_iota {
 		if ($i<$end) {
 		    cons ($i, &$rec($i+1))
 		} else {
-		    undef
+		    null
 		}
 	    }
 	};
@@ -113,7 +113,7 @@ sub stream_length ($) {
     weaken $_[0];
     my $len=0;
     $l= Force $l;
-    while (defined $l) {
+    while (!nullP $l) {
 	$len++;
 	$l= Force cdr $l;
     }
@@ -126,7 +126,7 @@ sub stream_append ($$) {
     weaken $_[1];
     Delay {
 	$l1= Force $l1;
-	defined($l1) ? cons (car $l1, stream_append (cdr $l1, $l2)) : $l2
+	nullP($l1) ? $l2 : cons (car $l1, stream_append (cdr $l1, $l2))
     }
 }
 
@@ -149,19 +149,19 @@ sub stream_map_with_tail ($ $ $) {
     weaken $_[1];
     Delay {
 	$l= Force $l;
-	defined($l) ? cons(&$fn(car $l), stream_map ($fn,cdr $l)) : $tail
+	nullP($l) ? $tail : cons(&$fn(car $l), stream_map ($fn,cdr $l))
     }
 }
 
 sub stream_zip2 ($$);
 sub stream_zip2 ($$) {
     my ($l,$m)=@_;
-    do {weaken $_ if defined $_ } for @_; #needed?
+    do {weaken $_ if promiseP $_ } for @_; #needed?
     Delay {
 	$l= Force $l;
 	$m= Force $m;
-	($l and $m) and
-	  cons([car $l, car $m], stream_zip2 (cdr $l, cdr $m))
+	(nullP $l or nullP $m) ? null
+	  : cons([car $l, car $m], stream_zip2 (cdr $l, cdr $m))
     }
 }
 
@@ -172,9 +172,8 @@ sub stream_zip_with {
     {
 	my $l1= Force $l1;
 	my $l2= Force $l2;
-	(defined $l1 and defined $l2) ?
-	  cons &$f(car $l1, car $l2), stream_zip_with ($f, cdr $l1, cdr $l2)
-	    : undef;
+	(nullP $l1 or nullP $l2) ? null
+	  : cons &$f(car $l1, car $l2), stream_zip_with ($f, cdr $l1, cdr $l2)
     }
 }
 
@@ -280,30 +279,32 @@ sub stream__subarray_fold_right_reverse ($$$$$) {
 
 
 sub array2stream ($;$) {
-    my ($a,$tail)=@_;
-    stream__array_fold_right (\&cons, $tail, $a)
+    my ($a,$maybe_tail)=@_;
+    stream__array_fold_right (\&cons, $maybe_tail//null, $a)
 }
 
 sub subarray2stream ($$;$$) {
-    my ($a, $start, $maybe_end, $tail)=@_;
-    stream__subarray_fold_right (\&cons, $tail, $a, $start, $maybe_end)
+    my ($a, $start, $maybe_end, $maybe_tail)=@_;
+    stream__subarray_fold_right
+      (\&cons, $maybe_tail//null, $a, $start, $maybe_end)
 }
 
 sub subarray2stream_reverse ($$;$$) {
-    my ($a, $start, $maybe_end, $tail)=@_;
-    stream__subarray_fold_right_reverse (\&cons, $tail, $a, $start, $maybe_end)
+    my ($a, $start, $maybe_end, $maybe_tail)=@_;
+    stream__subarray_fold_right_reverse
+      (\&cons, $maybe_tail//null, $a, $start, $maybe_end)
 }
 
 
 sub string2stream ($;$) {
-    my ($str,$tail)=@_;
-    stream__string_fold_right (\&cons, $tail, $str)
+    my ($str,$maybe_tail)=@_;
+    stream__string_fold_right (\&cons, $maybe_tail//null, $str)
 }
 
 sub stream2string ($) {
     my ($l)=@_;
     my $str="";
-    while ($l= Force $l, defined $l) {
+    while (($l= Force $l), !nullP $l) {
 	$str.= car $l;
 	$l= cdr $l;
     }
@@ -315,7 +316,7 @@ sub stream_for_each ($ $ ) {
     weaken $_[1];
   LP: {
 	$s= Force $s;
-	if (defined $s) {
+	if (!nullP $s) {
 	    &$proc(car $s);
 	    $s= cdr $s;
 	    redo LP;
@@ -329,7 +330,7 @@ sub stream_drop ($ $) {
     weaken $_[0];
     while ($n > 0) {
 	$s= Force $s;
-	die "stream too short" unless defined $s;
+	die "stream too short" if nullP $s;
 	$s= cdr $s;
 	$n--
     }
@@ -345,7 +346,7 @@ sub stream_take ($ $) {
 	    $s= Force $s;
 	    cons(car $s, stream_take( cdr $s, $n - 1))
 	} else {
-	    undef
+	    null
 	}
     }
 }
@@ -356,15 +357,15 @@ sub stream_take_while ($ $) {
     weaken $_[1];
     Delay {
 	$s= Force $s;
-	if ($s) {
+	if (nullP $s) {
+	    null
+	} else {
 	    my $a= car $s;
 	    if (&$fn($a)) {
 		cons $a, stream_take_while($fn, cdr $s)
 	    } else {
-		undef
+		null
 	    }
-	} else {
-	    undef
 	}
     }
 }
@@ -425,7 +426,7 @@ sub stream2array ($) {
     my $res= [];
     my $i=0;
     $l= Force $l;
-    while (defined $l) {
+    while (!nullP $l) {
 	my $v= car $l;
 	$$res[$i]= $v;
 	$l= Force cdr $l;
@@ -436,8 +437,8 @@ sub stream2array ($) {
 
 
 sub stream_mixed_flatten ($;$$) {
-    my ($v,$tail,$maybe_delay)=@_;
-    mixed_flatten ($v,$tail, $maybe_delay||\&DelayLight)
+    my ($v,$maybe_tail,$maybe_delay)=@_;
+    mixed_flatten ($v,$maybe_tail//null, $maybe_delay||\&DelayLight)
 }
 
 sub stream_any ($ $);
@@ -509,16 +510,22 @@ TEST{stream2array  stream_take stream_drop_while( sub{ $_[0] < 10}, stream_iota 
 TEST { join("", @{stream2array (string2stream("You're great."))}) }
   'You\'re great.';
 
-TEST { stream2string stream__subarray_fold_right \&cons, string2stream("World"), [split //, "Hello"], 3, undef }
+TEST { stream2string
+	 stream__subarray_fold_right
+	   (\&cons,
+	    string2stream("World"),
+	    [split //, "Hello"],
+	    3,
+	    undef) }
   'loWorld';
 
 TEST { stream2string stream__subarray_fold_right \&cons, string2stream("World"), [split //, "Hello"], 3, 4 }
   'lWorld';
 
-TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",undef), [split //, "Hello"], 1, undef }
+TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",null), [split //, "Hello"], 1, undef }
   'eHW';
 
-TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",undef), [split //, "Hello"], 2,0 }
+TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",null), [split //, "Hello"], 2,0 }
   'leW'; # hmm really? exclusive lower boundary?
 
 TEST { stream2string subarray2stream [split //, "Hello"], 1, 3 }

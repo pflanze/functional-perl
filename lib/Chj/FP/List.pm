@@ -10,22 +10,22 @@ Chj::FP::List - singly linked (purely functional) lists
 =head1 SYNOPSIS
 
  use Chj::FP::List ':all';
- list2string(cons("H",cons("e",cons("l",cons("l",cons("o",undef))))))
+ list2string(cons("H",cons("e",cons("l",cons("l",cons("o",null))))))
  #-> "Hello"
 
 =head1 DESCRIPTION
 
 Create and dissect sequences using pure functions.
 
-Note: uses "Pair" as the namespace (type name) of pairs. Hopefully
-nobody else does?
+Note: uses "Pair" and "Null" as namespaces for shorter
+dumps. Hopefully nobody else does?
 
 =cut
 
 
 package Chj::FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons pairP nullP car cdr head tail _car _cdr list);
+@EXPORT=qw(cons pairP null nullP car cdr head tail _car _cdr list);
 @EXPORT_OK=qw(string2list list_length list_reverse
 	      list2string list2array rlist2array list2values write_sexpr
 	      array2list mixed_flatten
@@ -58,8 +58,15 @@ sub pairP ($) {
     ref($v) eq "Pair"
 }
 
+# nil
+my $null= bless [],"Null";
+
+sub null () {
+    $null
+}
+
 sub nullP ($) {
-    not defined $_[0]
+    defined $_[0] and $_[0] eq $null
 }
 
 # leading underscore means: unsafe (but perhaps a tad faster)
@@ -112,7 +119,7 @@ sub Pair::carcdr {
 
 
 sub list {
-    my $res;
+    my $res=null;
     for (my $i= $#_; $i>=0; $i--) {
 	$res= cons ($_[$i],$res);
     }
@@ -120,7 +127,8 @@ sub list {
 }
 
 sub string2list ($;$) {
-    my ($str,$tail)=@_;
+    my ($str,$maybe_tail)=@_;
+    my $tail= $maybe_tail // null;
     my $i= length($str)-1;
     while ($i >= 0) {
 	$tail= cons(substr ($str,$i,1), $tail);
@@ -141,15 +149,15 @@ sub array_fold_right ($$$) {
 }
 
 sub array2list ($;$) {
-    my ($a,$tail)=@_;
-    array_fold_right (\&cons, $tail, $a)
+    my ($a,$maybe_tail)=@_;
+    array_fold_right (\&cons, $maybe_tail||null, $a)
 }
 
 
 sub list_length ($) {
     my ($l)=@_;
     my $len=0;
-    while (defined $l) {
+    while (!nullP $l) {
 	$len++;
 	$l= cdr $l;
     }
@@ -158,8 +166,8 @@ sub list_length ($) {
 
 sub list_reverse ($) {
     my ($l)=@_;
-    my $res;
-    while (defined $l) {
+    my $res=null;
+    while (!nullP $l) {
 	$res= cons car $l, $res;
 	$l= cdr $l;
     }
@@ -171,7 +179,7 @@ sub list2string ($) {
     my $len= list_length $l;
     my $res= " "x$len;
     my $i=0;
-    while (defined $l) {
+    while (!nullP $l) {
 	my $c= car $l;
 	substr($res,$i,1)= $c;
 	$l= cdr $l;
@@ -184,7 +192,7 @@ sub list2array ($) {
     my ($l)=@_;
     my $res= [];
     my $i=0;
-    while (defined $l) {
+    while (!nullP $l) {
 	$$res[$i]= car $l;
 	$l= cdr $l;
 	$i++;
@@ -197,7 +205,7 @@ sub rlist2array ($) {
     my $res= [];
     my $len= list_length $l;
     my $i=$len;
-    while (defined $l) {
+    while (!nullP $l) {
 	$i--;
 	$$res[$i]= car $l;
 	$l= cdr $l;
@@ -220,19 +228,17 @@ sub _write_sexpr ($ $ $) {
 	    xprint ($fh, $already_in_a_list ? ' ' : '(');
 	    _write_sexpr car $l, $fh, 0;
 	    my $d= Force (cdr $l, 1);
-	    if (defined $d) {
-		if (pairP $d) {
-		    # tail-calling _write_sexpr $d, $fh, 1
-		    $l=$d; $already_in_a_list=1; redo _WRITE_SEXPR;
-		} else {
-		    xprint ($fh, " . ");
-		    _write_sexpr $d, $fh, 0;
-		    xprint ($fh, ')');
-		}
+	    if (nullP $d) {
+		xprint ($fh, ')');
+	    } elsif (pairP $d) {
+		# tail-calling _write_sexpr $d, $fh, 1
+		$l=$d; $already_in_a_list=1; redo _WRITE_SEXPR;
 	    } else {
+		xprint ($fh, " . ");
+		_write_sexpr $d, $fh, 0;
 		xprint ($fh, ')');
 	    }
-	} elsif (not defined $l) {
+	} elsif (nullP $l) {
 	    xprint ($fh, "()");
 	} else {
 	    # normal perl things; should have a show method already
@@ -272,7 +278,7 @@ sub list_map ($ $) {
 sub list_mapn {
     my $fn=shift;
     for (@_) {
-	return undef unless defined $_
+	return null if nullP $_
     }
     cons(&$fn(map {car $_} @_), list_mapn ($fn, map {cdr $_} @_))
 }
@@ -316,7 +322,7 @@ sub list2perlstring ($) {
 		} else {
 		    $out
 		}
-	    }, cons("'",undef), $l)
+	    }, cons("'",null), $l)
 }
 
 
@@ -330,7 +336,7 @@ sub drop_while ($ $) {
 
 sub rtake_while ($ $) {
     my ($pred,$l)=@_;
-    my $res;
+    my $res=null;
     my $c;
     while ($l and &$pred($c= car $l)) {
 	$res= cons $c,$res;
@@ -401,7 +407,8 @@ TEST{ list_any sub { $_[0] % 2 }, array2list [7] }
 
 sub mixed_flatten ($;$$);
 sub mixed_flatten ($;$$) {
-    my ($v,$tail,$maybe_delay)=@_;
+    my ($v,$maybe_tail,$maybe_delay)=@_;
+    my $tail= $maybe_tail//null;
   LP: {
 	if ($maybe_delay and promiseP $v) {
 	    my $delay= $maybe_delay;
@@ -538,7 +545,7 @@ TEST{ list2string mixed_flatten [string2list "abc", string2list "def", "ghi"] }
 #TEST{ $|=1; sub countdown { my ($i)=@_; if ($i) { DelayLight {cons ($i, countdown($i-1))}} else {undef} }; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,countdown 10] }, undef)}, undef, \&DelayLight)
 # ("2" ("10" "9" "8" "7" "6" "5" "4" "3" "2" "1"))$VAR1 = 1;
 
-TEST{ list2array  Chj::FP::List::array_fold_right \&cons, undef, [1,2,3] }
+TEST{ list2array  Chj::FP::List::array_fold_right \&cons, null, [1,2,3] }
   [
    1,
    2,

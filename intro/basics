@@ -398,17 +398,17 @@ use Chj::FP::ArrayUtil ":all"; # list2array
 
 # As you can see, cons returns a Pair object simply containing the two arguments.
 
-# Let's build a list containing 3 elements; undef is used as the list
+# Let's build a list containing 3 elements; null is returning the list
 # end marker.
 
-# main> cons(1, cons(2, cons(5, undef)))
+# main> cons(1, cons(2, cons(5, null)))
 # $VAR1 = bless( [
 #                  1,
 #                  bless( [
 #                           2,
 #                           bless( [
 #                                    5,
-#                                    undef
+#                                    bless( [], 'Null' )
 #                                  ], 'Pair' )
 #                         ], 'Pair' )
 #                ], 'Pair' );
@@ -429,7 +429,7 @@ use Chj::FP::ArrayUtil ":all"; # list2array
 sub iota {
     my ($from, $to)=@_;
     if ($from >= $to) {
-	undef
+	null
     } else {
 	cons $from, iota($from + 1, $to)
     }
