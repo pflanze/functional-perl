@@ -376,12 +376,13 @@ sub stream_drop_while ($ $) {
     Delay {
       LP: {
 	    $s= Force $s;
-	    if ($s and &$pred(car $s)) {
+	    if (!nullP $s and &$pred(car $s)) {
 		$s= cdr $s;
 		redo LP;
+	    } else {
+		$s
 	    }
 	}
-	$s
     }
 }
 
