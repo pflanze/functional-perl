@@ -73,7 +73,7 @@ sub perhaps_previous {
 sub maybe_next {
     my $s=shift;
     my ($l)= $s->perhaps_following (@_) or return undef;
-    $l= Force ($l) // return undef; # parens are required. Wow Perl.
+    $l= Force ($l) // return undef;
     car $l
 }
 
