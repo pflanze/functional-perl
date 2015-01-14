@@ -517,6 +517,11 @@ TEST{stream2array  stream_take stream_drop_while( sub{ $_[0] < 10}, stream_iota 
    12
   ];
 
+TEST{stream2array
+       stream_drop_while( sub{ $_[0] < 10}, stream_iota (0, 5))}
+  [];
+
+
 TEST { join("", @{stream2array (string2stream("You're great."))}) }
   'You\'re great.';
 
