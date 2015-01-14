@@ -28,7 +28,6 @@ sub identity ($) {
     $_[0]
 }
 
-# copy from Chj::Env
 sub compose {
     my (@fn)= reverse @_;
     sub {
