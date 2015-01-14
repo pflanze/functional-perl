@@ -82,6 +82,8 @@ sub car ($) {
     my ($v)=@_;
     if (ref ($v) eq "Pair") {
 	$$v[0]
+    } elsif (promiseP $v) {
+	@_=Force $v; goto \&car;
     } else {
 	not_a_pair $v;
     }
@@ -93,6 +95,8 @@ sub cdr ($) {
     my ($v)=@_;
     if (ref ($v) eq "Pair") {
 	$$v[1]
+    } elsif (promiseP $v) {
+	@_=Force $v; goto \&cdr;
     } else {
 	not_a_pair $v;
     }
