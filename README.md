@@ -5,20 +5,21 @@ modules for release to CPAN, as either one or multiple packages.
 Please send [me](http://christianjaeger.ch/contact.html) your
 suggestions!
 
-## Sections
+## Parts
 
-Currently there are three parts/subdirectories in this repository:
+* `lib/Chj/FP/`: modules for functional programming (general)
 
-* `perllib`: a set of modules that the other parts are building upon
-    (plus some utilities like `Chj::repl`, `Chj::ruse`,
-    `Chj::Backtrace`).
-    Originally part of
-    [chj-perllib](https://github.com/pflanze/chj-perllib).
+* `lib/Chj/PXML*/*`, `lib/Chj/PXHTML.pm`: "templating system" for XML
+  and HTML by way of Perl functions
 
-* `lib`: modules for functional programming (general)
+* `ftemplate`: docs and tests for the Chj::PXML and Chj::PXHTML
+  classes
 
-* `ftemplate`: for creating XML and HTML documents using functions;
-   built on top of `lib`
+* some utilities: `Chj::repl`, `Chj::ruse`, `Chj::Backtrace`
+
+* modules that are used by the above; originally part of
+  [chj-perllib](https://github.com/pflanze/chj-perllib).
+
 
 ## Real-world use
 
