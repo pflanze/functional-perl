@@ -56,12 +56,12 @@ sub _xopendir_stream ($) {
 		cons $item, &$next
 	    } else {
 		$d->xclose;
-		undef $next; # XXX use weaken instead
 		null
 	    }
 	}
     };
-    &$next
+    my $_next=$next; weaken $next;
+    &$_next
 }
 
 sub _xopendir_stream_sorted ($$) {
