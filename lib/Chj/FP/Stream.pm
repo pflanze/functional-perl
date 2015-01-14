@@ -468,11 +468,14 @@ TEST{ stream_any sub { $_[0] % 2 }, array2stream [7] }
   1;
 
 
-
-# calc> :d stream_for_each sub { print @_,"\n"}, stream_map sub {my $v=shift; $v*$v},  array2stream [10,11,13]
-# 100
-# 121
-# 169
+TEST {
+    my @v;
+    stream_for_each sub { push @v, @_ },
+      stream_map sub {my $v=shift; $v*$v},
+	array2stream [10,11,13];
+    \@v
+}
+  [ 100, 121, 169 ];
 
 # write_sexpr( stream_take( stream_iota (0, 1000000000), 2))
 # ->  ("0" "1")
