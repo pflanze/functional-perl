@@ -17,7 +17,7 @@ use Chj::repl;
 
 use Chj::TEST;
 use Chj::FP::List ":all";
-use Chj::FP::ArrayUtil "add";
+use Chj::FP::Ops ":all";
 use Chj::FP::Lazy ":all";
 use Chj::FP::Stream ":all";
 

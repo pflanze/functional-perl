@@ -36,7 +36,6 @@ package Chj::FP::ArrayUtil;
 	      array_join
 	      array_every
 	      array_any
-	      add
 	      array_sum
 	      array_first
 	      array_rest
@@ -48,6 +47,7 @@ use strict; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::TEST;
 use Chj::xperlfunc qw(min max);
+use Chj::FP::Ops 'add';
 
 sub array {
     [@_]
@@ -225,12 +225,6 @@ TEST{ array_any sub { $_[0] % 2 }, [2,5,8]}
   1;
 TEST{ array_any sub { $_[0] % 2 }, [7] }
   1;
-
-sub add {
-    my $t=0;
-    $t+= $_ for @_;
-    $t
-}
 
 sub array_sum ($) {
     array_fold \&add, 0, $_[0]
