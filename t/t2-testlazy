@@ -1,0 +1,8 @@
+#!/bin/sh
+
+ftemplate/testlazy|head -c 1000 > t/testlazy-out
+if cmp t/testlazy-out t/testlazy-expected; then
+    echo "ok 1"
+else
+    echo "not ok 1"
+fi
