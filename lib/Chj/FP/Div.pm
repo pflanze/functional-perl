@@ -19,13 +19,21 @@ Chj::FP::Div
 package Chj::FP::Div;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(identity compose);
+@EXPORT_OK=qw(identity inc dec compose);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
 
 sub identity ($) {
     $_[0]
+}
+
+sub inc ($) {
+    $_[0] + 1
+}
+
+sub dec ($) {
+    $_[0] - 1
 }
 
 sub compose {
