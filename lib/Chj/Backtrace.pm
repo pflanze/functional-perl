@@ -3,7 +3,6 @@
 # Copyright 2004 by Chris Tarnutzer
 # Published under the same terms as perl itself
 #
-# $Id$
 
 =head1 NAME
 
