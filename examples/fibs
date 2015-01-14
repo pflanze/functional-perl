@@ -27,7 +27,7 @@ use Chj::FP::Stream ":all";
 # fib n = fibs!!n
 
 our $fibs; $fibs=
-  cons 1, cons 1, Delay { stream_zip_with \&add, Keep($fibs), cdr $fibs };
+  cons 1, cons 1, Delay { stream_zip_with \&add, Keep($fibs), tail $fibs };
 
 sub fib {
     my ($n)=@_;
