@@ -22,22 +22,13 @@ Chj::FP::Array_sort - 'sensible' sorting setup
 
 package Chj::FP::Array_sort;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(array_sort on string_cmp number_cmp complement
-	   the_method);
+@EXPORT=qw(array_sort on complement);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
 
-sub the_method {
-    my ($method,@args)=@_;
-    sub {
-	my $self=shift;
-	$self->$method(@args,@_)
-	  # any reason to put args before or after _ ? So far I only
-	  # have args, no _.
-    }
-}
+use Chj::FP::Ops qw(string_cmp number_cmp);
 
 sub array_sort ($ $) {
     my ($in,$cmp)=@_;
@@ -54,14 +45,6 @@ sub on ($ $) {
 	my ($a,$b)=@_;
 	&$cmp(&$select($a), &$select($b))
     }
-}
-
-sub string_cmp ($ $) {
-    $_[0] cmp $_[1]
-}
-
-sub number_cmp ($ $) {
-    $_[0] <=> $_[1]
 }
 
 sub complement ($) {

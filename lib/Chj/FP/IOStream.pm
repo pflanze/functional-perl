@@ -45,7 +45,7 @@ use Chj::FP::List ':all';
 use Chj::FP::Stream 'stream_map', 'array2stream';
 use Chj::FP::Array_sort;
 use Scalar::Util 'weaken';
-use Chj::FP::Array_sort 'the_method'; # XXX move to another module
+use Chj::FP::Ops 'the_method';
 
 sub _xopendir_stream ($) {
     my ($path)=@_;

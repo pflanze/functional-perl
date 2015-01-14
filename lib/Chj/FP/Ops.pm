@@ -20,6 +20,9 @@ There's no way to take a code reference to Perl operators, hence a
 subroutine wrapper is necessary to pass them as arguments. This module
 provides them.
 
+Also similarly, `the_method("foo")` returns a function that does a
+"foo" method call on its argument.
+
 =cut
 
 
@@ -33,6 +36,9 @@ package Chj::FP::Ops;
 		 div
 		 mod
 		 expt
+		 string_cmp
+		 number_cmp
+		 the_method
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -77,5 +83,24 @@ sub expt {
     my ($a,$b)=@_;
     $a ** $b
 }
+
+sub string_cmp ($ $) {
+    $_[0] cmp $_[1]
+}
+
+sub number_cmp ($ $) {
+    $_[0] <=> $_[1]
+}
+
+sub the_method {
+    my ($method,@args)=@_;
+    sub {
+	my $self=shift;
+	$self->$method(@args,@_)
+	  # any reason to put args before or after _ ? So far I only
+	  # have args, no _.
+    }
+}
+
 
 1
