@@ -108,7 +108,7 @@ sub run_tests {
     }
     print "===\n";
     print "=> $$stat{success} success(es), $$stat{fail} failure(s)\n";
-    ()
+    $$stat{fail}
 }
 
 
