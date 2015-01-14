@@ -398,30 +398,44 @@ use Chj::FP::ArrayUtil ":all"; # list2array
 
 # As you can see, cons returns a Pair object simply containing the two arguments.
 
+# Let's introduce Chj::TEST, it is useful to make sure the results we
+# show here actually are what the current functional-perl version
+# returns. TEST takes a block of code, and a value that the block of
+# code is expected to return.
+
+use Chj::TEST;
+
+TEST { cons(1,2) }
+  bless( [
+	  1,
+	  2
+	 ], 'Pair' );
+
+
 # Let's build a list containing 3 elements; null is returning the list
 # end marker.
 
-# main> cons(1, cons(2, cons(5, null)))
-# $VAR1 = bless( [
-#                  1,
-#                  bless( [
-#                           2,
-#                           bless( [
-#                                    5,
-#                                    bless( [], 'Null' )
-#                                  ], 'Pair' )
-#                         ], 'Pair' )
-#                ], 'Pair' );
+TEST { cons(1, cons(2, cons(5, null))) }
+  bless( [
+	  1,
+	  bless( [
+		  2,
+		  bless( [
+			  5,
+			  bless( [], 'Null' )
+			 ], 'Pair' )
+		 ], 'Pair' )
+         ], 'Pair' );
 
 # This becomes ugly fast, so, turn it back into an array that Perl
 # will show nicely:
 
-# main> list2array $VAR1
-# $VAR1 = [
-#           1,
-#           2,
-#           5
-#         ];
+TEST { list2array cons(1, cons(2, cons(5, null))) }
+  [
+   1,
+   2,
+   5
+  ];
 
 
 # Let's build a list functionally, using recursion:
