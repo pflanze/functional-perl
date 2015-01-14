@@ -1,0 +1,40 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+use Chj::xopen 'xopen_read';
+
+my $f = xopen_read "$mydir/../MANIFEST";
+our @module;
+while (<$f>) {
+    chomp;
+    next unless s/\.pm$//;
+    s|^lib/|| or die;
+    s|/|::|sg;
+    push @module, $_
+}
+$f->xclose;
+
+
+use Test::More;
+
+require_ok $_ for @module;
+
+is( eval { Chj::TEST::run_tests() } // do { diag $@; undef}, 0, "run_tests");
+
+done_testing;
+
+
+#use Chj::ruse;
+use Chj::Backtrace;
+#use Chj::repl;
+#repl;
