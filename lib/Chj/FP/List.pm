@@ -25,7 +25,7 @@ nobody else does?
 
 package Chj::FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons pairP nullP car cdr _car _cdr list);
+@EXPORT=qw(cons pairP nullP car cdr head tail _car _cdr list);
 @EXPORT_OK=qw(string2list list_length list_reverse
 	      list2string list2array rlist2array list2values write_sexpr
 	      array2list mixed_flatten
@@ -87,6 +87,8 @@ sub car ($) {
     }
 }
 
+sub head ($); *head=*car;
+
 sub cdr ($) {
     my ($v)=@_;
     if (ref ($v) eq "Pair") {
@@ -95,6 +97,9 @@ sub cdr ($) {
 	not_a_pair $v;
     }
 }
+
+sub tail ($); *tail= *cdr;
+
 
 sub Pair::carcdr {
     @{$_[0]}
