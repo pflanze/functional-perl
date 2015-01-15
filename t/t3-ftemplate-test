@@ -1,0 +1,9 @@
+#!/bin/sh
+
+../ftemplate/test 10001000
+
+if cmp out.xhtml t3-ftemplate-test.expected; then
+    echo "ok 1"
+else
+    echo "not ok 1"
+fi

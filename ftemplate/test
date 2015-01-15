@@ -39,7 +39,7 @@ our $numbers= {
 sub examplepage {
     my ($title)= @_;
     page("example page - $title",
-	 time,
+	 @ARGV ? $ARGV[0] : time,
 	 [
 	  H1($title),
 	  P("Garçon méchanique, \"1 < 2\" is true. ",
