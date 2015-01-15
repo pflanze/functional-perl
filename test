@@ -1,0 +1,14 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+use Test::Harness;
+
+our @t=
+  qw(
+	t1
+	t2-testlazy
+	t3-ftemplate-test
+   );
+
+runtests(map {"t/$_"} @t);
