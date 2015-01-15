@@ -1,8 +1,11 @@
-#!/bin/sh
+#!/usr/bin/perl -w
 
-ftemplate/testlazy|head -c 1000 > t/testlazy-out
-if cmp t/testlazy-out t/testlazy-expected; then
-    echo "ok 1"
-else
-    echo "not ok 1"
-fi
+use strict; use warnings FATAL => 'uninitialized';
+
+our $len= 1000;
+require "./test.pl";
+
+use Test::More tests=> 1;
+
+is readin ("ftemplate/testlazy|"), readin ("< t/testlazy-expected");
+
