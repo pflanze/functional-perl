@@ -3,7 +3,9 @@
 
 - more `intro/`, more `examples/`
 
-- more tests?
+- more tests:
+
+  - +-systematic stream leak testing
 
 [- additionally add old-style FP modules from chj-perllib?]
 
