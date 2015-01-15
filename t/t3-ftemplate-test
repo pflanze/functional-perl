@@ -1,9 +1,14 @@
-#!/bin/sh
+#!/usr/bin/perl -w
 
-../ftemplate/test 10001000
+use strict; use warnings FATAL => 'uninitialized';
 
-if cmp out.xhtml t3-ftemplate-test.expected; then
-    echo "ok 1"
-else
-    echo "not ok 1"
-fi
+our $len= 672;
+require "./test.pl";
+
+use Test::More tests=> 1;
+
+system ("ftemplate/test 10001000") == 0
+  or die;
+
+is readin ("< out.xhtml"), readin ("< t/t3-ftemplate-test.expected");
+
