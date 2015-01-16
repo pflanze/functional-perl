@@ -28,7 +28,7 @@ sub page {
 	    P(
 		"By ", A({href=> "http://christianjaeger.ch"},
 			 "Christian Jaeger"),
-		", last modified at ", localtime($mtime)."", " (or something).")))
+		", last modified at ", gmtime($mtime)."", " (or something).")))
 }
 
 our $numbers= {
