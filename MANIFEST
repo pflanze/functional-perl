@@ -1,4 +1,6 @@
+.gitignore
 COPYING
+MANIFEST
 README.md
 TODO
 bin/repl
@@ -65,3 +67,10 @@ lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
 meta/dependencycheck
+t/t1
+t/t2-testlazy
+t/t3-ftemplate-test
+t/t3-ftemplate-test.expected
+t/testlazy-expected
+test
+test.pl
