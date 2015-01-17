@@ -523,8 +523,18 @@ sub run {
 			     my ($maybe_level)=
 				 $args=~ /^i?\s*(\d+)?\s*\z/
 				 or die "expecting digits or no argument, got '$cmd'";
-			     print Dumper
-				 (PadWalker::peek_my($skip + ($maybe_level // 0)));
+			     my $lexicals= eval {
+				 PadWalker::peek_my($skip + ($maybe_level // 0));
+			     }; # XXX check exceptions
+
+			     if (defined $lexicals) {
+				 local $Data::Dumper::Terse= 1;
+				 for my $key (sort keys %$lexicals) {
+				     print "$key = ".Dumper(${$$lexicals{$key}});
+				 }
+			     } else {
+				 print "level too deep\n"
+			     }
 			     $args=""; # XX HACK
 			 }
 			);
