@@ -90,6 +90,22 @@ sub xchoose_from ($$) {
 }
 
 
+sub levels_to_user {
+    my $n=1;
+    while(1) {
+	my ($package, $filename, $line, $subroutine, $hasargs,
+	    $wantarray, $evaltext, $is_require, $hints, $bitmask, $hinthash)=
+		caller($n);
+	return $n
+	    if ($package ne 'Chj::Util::Repl'
+		and
+		$package ne 'Chj::repl');
+
+	$n++;
+    }
+}
+
+
 use Class::Array -fields=>
   -publica=> (
 	      'Historypath', #undef=none, but a default is set
@@ -161,6 +177,7 @@ sub print_help {
     my $d= &$selection(formatter=> 'd');
     my $V= &$selection(viewer=> 'V');
     my $v= &$selection(viewer=> 'v');
+    my $i= &$selection(viewer=> 'i');
     print $out qq{Repl help:
 currently these commands are implemented:
   :package \$package   use \$package as new compilation package
@@ -178,6 +195,7 @@ $d d  show dump (default)
   viewer:
 $V V  no pager
 $v v  pipe to pager ($$self[Pager])
+$i i [n]  inspect lexicals at level n (default: 0)
 };
 }
 
@@ -497,9 +515,22 @@ sub run {
 			 d=> sub { $$self[Mode_formatter]="d" },
 			 V=> sub { $$self[Mode_viewer]="V" },
 			 v=> sub { $$self[Mode_viewer]="v" },
+			 i=> sub {
+			     my $skip= levels_to_user;
+			     require PadWalker;
+			     use Data::Dumper;
+			     # XX clean up: don't want i in the regex
+			     my ($maybe_level)=
+				 $args=~ /^i?\s*(\d+)?\s*\z/
+				 or die "expecting digits or no argument, got '$cmd'";
+			     print Dumper
+				 (PadWalker::peek_my($skip + ($maybe_level // 0)));
+			     $args=""; # XX HACK
+			 }
 			);
 
 		    while (length $cmd) {
+			# XX why am I checking with and without chopping here?
 			if (my $sub= $commands{$cmd}) {
 			    &$sub;
 			    last;
