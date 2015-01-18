@@ -177,7 +177,7 @@ sub print_help {
     my $d= &$selection(formatter=> 'd');
     my $V= &$selection(viewer=> 'V');
     my $v= &$selection(viewer=> 'v');
-    my $i= &$selection(viewer=> 'i');
+    my $e= &$selection(viewer=> 'e');
     print $out qq{Repl help:
 currently these commands are implemented:
   :package \$package   use \$package as new compilation package
@@ -195,7 +195,7 @@ $d d  show dump (default)
   viewer:
 $V V  no pager
 $v v  pipe to pager ($$self[Pager])
-$i i [n]  inspect lexicals at level n (default: 0)
+$e e [n]  print lexical environment at level n (default: 0)
 };
 }
 
@@ -525,7 +525,7 @@ sub run {
 			 d=> sub { $$self[Mode_formatter]="d" },
 			 V=> sub { $$self[Mode_viewer]="V" },
 			 v=> sub { $$self[Mode_viewer]="v" },
-			 i=> sub {
+			 e=> sub {
 			     my $skip= levels_to_user;
 			     require PadWalker;
 			     use Data::Dumper;
