@@ -199,11 +199,21 @@ $i i [n]  inspect lexicals at level n (default: 0)
 };
 }
 
-
+our $eval_lexicals;
+use Chj::singlequote 'singlequote';
 sub eval_code {
     my $self= shift;
     my ($code, $get_package)=@_;
-    myeval ("package ".&$get_package()."; ".
+    my $skip= levels_to_user;
+    require PadWalker;
+    local $eval_lexicals= PadWalker::peek_my($skip);
+    my $aliascode=
+	join ("",
+	      map {
+		  'my '.$_.' = $$Chj::Util::Repl::eval_lexicals{'.singlequote($_).'};'
+	      }
+	      keys %$eval_lexicals);
+    myeval ("package ".&$get_package()."; $aliascode; ".
 	    "no strict 'vars'; $code")
 }
 
