@@ -213,7 +213,7 @@ sub eval_code {
 		  'my '.$_.' = $$Chj::Util::Repl::eval_lexicals{'.singlequote($_).'};'
 	      }
 	      keys %$eval_lexicals);
-    myeval ("package ".&$get_package()."; $aliascode; ".
+    myeval ("package ".&$get_package()."; $aliascode; (); ".
 	    "no strict 'vars'; $code")
 }
 
