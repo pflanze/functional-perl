@@ -177,12 +177,15 @@ sub print_help {
     my $d= &$selection(formatter=> 'd');
     my $V= &$selection(viewer=> 'V');
     my $v= &$selection(viewer=> 'v');
-    my $e= &$selection(viewer=> 'e');
     print $out qq{Repl help:
 currently these commands are implemented:
   :package \$package   use \$package as new compilation package
   :p \$package         currently alias to :package
+  :CMD args...         one-time command
   :MODES code...       change some modes then evaluate code
+
+CMD is one of:
+   e [n]  print lexical environment at level n (default: 0)
 
 MODES are a combination of these characters, which change the
 previously used mode (indicated on the left):
@@ -195,7 +198,6 @@ $d d  show dump (default)
   viewer:
 $V V  no pager
 $v v  pipe to pager ($$self[Pager])
-$e e [n]  print lexical environment at level n (default: 0)
 };
 }
 
