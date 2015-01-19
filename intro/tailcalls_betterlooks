@@ -67,7 +67,7 @@ func functional_fact_iter ($x, $res) {
 
 
 # To really see the difference, here's a function that works for
-# higher number of iterations:
+# higher numbers of iterations:
 
 func odd ($n) {
     if ($n == 0) {
