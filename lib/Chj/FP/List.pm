@@ -25,7 +25,9 @@ dumps. Hopefully nobody else does?
 
 package Chj::FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons pairP null nullP car cdr head tail _car _cdr list);
+@EXPORT=qw(cons pairP null nullP car cdr head tail _car _cdr
+	   car_and_cdr head_and_tail
+	   list);
 @EXPORT_OK=qw(string2list list_length list_reverse
 	      list2string list2array rlist2array list2values write_sexpr
 	      array2list mixed_flatten
@@ -118,6 +120,19 @@ sub Pair::carcdr {
 ## should I go back into OO mode after all....?
 
 *Pair::headtail= *Pair::carcdr;
+
+sub car_and_cdr ($) {
+    my ($v)=@_;
+    if (ref ($v) eq "Pair") {
+	@{$_[0]}
+    } elsif (promiseP $v) {
+	@_=Force $v; goto \&carcdr;
+    } else {
+	not_a_pair $v;
+    }
+}
+
+sub head_and_tail($); *head_and_tail= *car_and_cdr;
 
 
 sub list {
