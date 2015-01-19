@@ -85,7 +85,7 @@ func even ($n) {
     }
 }
 
-# $ ulimit -S -v 200000; ./tailcalls_betterlooks
+# $ ulimit -S -v 20000; ./tailcalls_betterlooks
 # main> even 4
 # $VAR1 = 1;
 # main> even 5
@@ -94,7 +94,7 @@ func even ($n) {
 # Deep recursion on subroutine "main::even" at ./tailcalls_betterlooks line 65.
 # Deep recursion on subroutine "main::odd" at ./tailcalls_betterlooks line 74.
 # $VAR1 = 1;
-# main> even 500000
+# main> even 50000
 # Deep recursion on subroutine "main::even" at ./tailcalls_betterlooks line 65.
 # Deep recursion on subroutine "main::odd" at ./tailcalls_betterlooks line 74.
 # Out of memory!
@@ -118,8 +118,8 @@ func opt_even ($n) {
     }
 }
 
-# $ ulimit -S -v 200000; ./tailcalls_betterlooks
-# main> opt_even 5000000
+# $ ulimit -S -v 20000; ./tailcalls_betterlooks
+# main> opt_even 500000
 # $VAR1 = 1;
 
 # Now it runs with little (and constant) memory usage.
