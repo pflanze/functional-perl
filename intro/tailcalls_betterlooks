@@ -85,18 +85,18 @@ func even ($n) {
     }
 }
 
-# $ ulimit -S -v 200000; ./tailcalls
+# $ ulimit -S -v 200000; ./tailcalls_betterlooks
 # main> even 4
 # $VAR1 = 1;
 # main> even 5
 # $VAR1 = 0;
 # main> even 500
-# Deep recursion on subroutine "main::even" at ./tailcalls line 65.
-# Deep recursion on subroutine "main::odd" at ./tailcalls line 74.
+# Deep recursion on subroutine "main::even" at ./tailcalls_betterlooks line 65.
+# Deep recursion on subroutine "main::odd" at ./tailcalls_betterlooks line 74.
 # $VAR1 = 1;
 # main> even 500000
-# Deep recursion on subroutine "main::even" at ./tailcalls line 65.
-# Deep recursion on subroutine "main::odd" at ./tailcalls line 74.
+# Deep recursion on subroutine "main::even" at ./tailcalls_betterlooks line 65.
+# Deep recursion on subroutine "main::odd" at ./tailcalls_betterlooks line 74.
 # Out of memory!
 
 # You can see that Perl ran out of space for the stack.
@@ -118,7 +118,7 @@ func opt_even ($n) {
     }
 }
 
-# $ ulimit -S -v 200000; ./tailcalls
+# $ ulimit -S -v 200000; ./tailcalls_betterlooks
 # main> opt_even 5000000
 # $VAR1 = 1;
 
