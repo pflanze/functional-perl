@@ -117,6 +117,8 @@ sub Pair::carcdr {
 }
 ## should I go back into OO mode after all....?
 
+*Pair::headtail= *Pair::carcdr;
+
 
 sub list {
     my $res=null;
