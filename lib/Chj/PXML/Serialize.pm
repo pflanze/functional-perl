@@ -247,7 +247,7 @@ use Chj::xopen "xopen_write";
 
 sub pxml_print ($ $ ) {
     my ($v, $fh)= @_;
-    $fh->xprintln(q{<?xml version="1.0"?>});
+    xprintln($fh, q{<?xml version="1.0"?>});
     pxml_print_fragment_fast ($v, $fh);
 }
 
