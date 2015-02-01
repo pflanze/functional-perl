@@ -20,7 +20,8 @@ Chj::xopen modules.
 package Chj::xIO;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(xprint xprintln);
-@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8);
+@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8
+	      capture_stdout);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -84,6 +85,22 @@ sub xputfile_utf8 ($$) {
 sub xcopyfile_utf8 ($$) {
     my ($src,$dest)=@_;
     xputfile_utf8 ($dest, xgetfile_utf8 ($src));
+}
+
+
+sub capture_stdout (&) {
+    my ($thunk)=@_;
+    my $buf="";
+    open my $out, ">", \$buf
+      or die $!;
+    {
+	# XX threadsafe or not?
+	local *STDOUT= $out;
+	&$thunk; # dropping results
+    }
+    close $out
+      or die $!;
+    $buf
 }
 
 
