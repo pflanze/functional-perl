@@ -242,7 +242,7 @@ sub pxml_xhtml_print ($ $ ;$ );
 *pxml_xhtml_print = *pxml_xhtml_print_fast;
 
 
-use Chj::xopen "xopen_write";#hrm.
+use Chj::xopen "xopen_write";
 
 sub putxmlfile ($$) {
     my ($path,$xml)=@_;
