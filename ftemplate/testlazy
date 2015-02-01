@@ -28,7 +28,8 @@ sub countdown {
 	    cons (P($i),
 		  countdown ($i-1));
 	} else {
-	    undef
+	    null
+	      # XX should test undef here, too
 	}
     }
 }
