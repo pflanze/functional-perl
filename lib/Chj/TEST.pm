@@ -32,21 +32,32 @@ Chj::TEST
 
 package Chj::TEST;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(TEST GIVES);
+@EXPORT=qw(TEST TEST_STDOUT GIVES);
 @EXPORT_OK=qw(run_tests);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
 
+use Chj::xIO 'capture_stdout_';
+
 our $tests_by_package={};
 our $num_by_package={};
 
-sub TEST (&$) {
+sub _TEST {
     my ($proc,$res)=@_;
-    my ($package, $filename, $line) = caller;
+    my ($package, $filename, $line) = caller(1);
     $$num_by_package{$package}++;
     push @{$$tests_by_package{$package}},
-      [$proc,$res, $$num_by_package{$package}, ($package, $filename, $line)]
+      [$proc,$res, $$num_by_package{$package}, ($package, $filename, $line)];
+}
+
+sub TEST (&$) {
+    _TEST(@_)
+}
+
+sub TEST_STDOUT (&$) {
+    my ($proc,$res)=@_;
+    _TEST(sub{capture_stdout_($proc)}, $res);
 }
 
 sub GIVES (&) {

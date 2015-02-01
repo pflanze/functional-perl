@@ -39,4 +39,8 @@ sub TEST (&$) {
     ()
 }
 
+sub TEST_STDOUT (&$) {
+    ()
+}
+
 1
