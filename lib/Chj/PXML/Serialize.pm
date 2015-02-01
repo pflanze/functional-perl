@@ -174,6 +174,11 @@ sub _pxml_print_fragment_fast {
 	    }
 	} elsif (nullP $v) {
 	    # end of linked list, nothing
+	} elsif (not defined $v) {
+	    # (previously end of linked list marker) nothing; XX
+	    # should this give exception (to point out any issue with
+	    # deleted streams, the reason why I changed from using
+	    # undef to null)?
 	} else {
 	    #print $fh content_escape($v) or die $!;
 	    $v=~ s/([&<>])/$content_escape{$1}/sg;
