@@ -21,7 +21,7 @@ package Chj::xIO;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(xprint xprintln);
 @EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8
-	      capture_stdout);
+	      capture_stdout capture_stdout_);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -88,7 +88,7 @@ sub xcopyfile_utf8 ($$) {
 }
 
 
-sub capture_stdout (&) {
+sub capture_stdout_ {
     my ($thunk)=@_;
     my $buf="";
     open my $out, ">", \$buf
@@ -101,6 +101,10 @@ sub capture_stdout (&) {
     close $out
       or die $!;
     $buf
+}
+
+sub capture_stdout (&) {
+    capture_stdout_(@_)
 }
 
 
