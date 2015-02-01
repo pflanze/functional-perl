@@ -163,6 +163,8 @@ sub _pxml_print_fragment_fast {
 		elsif ($ref eq "CODE") {
 		    $v= &$v();
 		    redo LP;
+		} elsif (nullP $v) {
+		    # end of linked list, nothing
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
 		    # evil.
@@ -172,8 +174,6 @@ sub _pxml_print_fragment_fast {
 		    die "unexpected type of reference: ".(perhaps_dump $v);
 		}
 	    }
-	} elsif (nullP $v) {
-	    # end of linked list, nothing
 	} elsif (not defined $v) {
 	    # (previously end of linked list marker) nothing; XX
 	    # should this give exception (to point out any issue with
