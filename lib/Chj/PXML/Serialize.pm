@@ -136,7 +136,7 @@ sub _pxml_print_fragment_fast {
 	    } elsif ($ref eq "Pair") {
 	      PAIR:
 		#my $a;
-		($a,$v)= $v->carcdr;
+		($a,$v)= $v->car_and_cdr;
 		_pxml_print_fragment_fast ($a, $fh,
 					   $html5compat, $void_element_h);
 		#_pxml_print_fragment_fast (cdr $v, $fh);

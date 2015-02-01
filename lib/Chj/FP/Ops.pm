@@ -12,7 +12,7 @@ Chj::FP::Ops -- function wrappers around Perl ops
  use Chj::FP::Ops 'add';
 
  our $fibs; $fibs=
-   cons 1, cons 1, Delay { stream_zip_with \&add, Keep($fibs), tail $fibs };
+   cons 1, cons 1, Delay { stream_zip_with \&add, Keep($fibs), rest $fibs };
 
 =head1 DESCRIPTION
 

@@ -110,7 +110,7 @@ sub _text {
 		# great."))->text trigger this case?
 		_text (&$v ());
 	    } elsif (pairP $v) {
-		my ($a,$v2)= $v->carcdr;
+		my ($a,$v2)= $v->car_and_cdr;
 		_text ($a) . _text ($v2);
 	    } elsif (promiseP $v) {
 		_text (Force $v);

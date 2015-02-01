@@ -380,14 +380,16 @@ sub functional_fact_iter {
 # be shortened, e.g. car(car($x)) can be written as caar($x), or
 # car(cdr($x)) to cadr($x).) Also, pairs can be used for other data
 # structures than lists. But there are also aliases for car and cdr
-# named 'head' and 'tail', for more descriptive names in the context
-# of lists (those are also the names used by Haskell and some other
-# languages.)
+# named 'first' and 'rest', for more descriptive names in the context
+# of lists. Those are also the names used by Clojure, Mathematica, and
+# perhaps some other languages, whereas Haskell and Scala use the
+# names 'head' and 'tail'. Since 'tail' is already taken by the
+# `Sub::Call::Tail` module, we're staying with 'first' and 'rest'.
 
 # For best fit with functional programming, the bare chains are passed
 # around, without any object wrapper.
 
-use Chj::FP::List ":all"; # cons, car, cdr, head, tail
+use Chj::FP::List ":all"; # cons, car, cdr, first, rest
 use Chj::FP::ArrayUtil ":all"; # list2array
 
 # main> cons(1,2)

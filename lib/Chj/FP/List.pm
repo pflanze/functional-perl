@@ -25,8 +25,8 @@ dumps. Hopefully nobody else does?
 
 package Chj::FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons pairP null nullP car cdr head tail _car _cdr
-	   car_and_cdr head_and_tail
+@EXPORT=qw(cons pairP null nullP car cdr first rest _car _cdr
+	   car_and_cdr first_and_rest
 	   list);
 @EXPORT_OK=qw(string2list list_length list_reverse
 	      list2string list2array rlist2array list2values write_sexpr
@@ -98,7 +98,7 @@ sub car ($) {
     }
 }
 
-sub head ($); *head=*car;
+sub first ($); *first=*car;
 
 sub cdr ($) {
     my ($v)=@_;
@@ -111,28 +111,29 @@ sub cdr ($) {
     }
 }
 
-sub tail ($); *tail= *cdr;
+sub rest ($); *rest= *cdr;
 
 
-sub Pair::carcdr {
+sub Pair::car_and_cdr {
     @{$_[0]}
 }
 ## should I go back into OO mode after all....?
 
-*Pair::headtail= *Pair::carcdr;
+*Pair::head_and_tail= *Pair::car_and_cdr;
+*Pair::first_and_rest= *Pair::car_and_cdr;
 
 sub car_and_cdr ($) {
     my ($v)=@_;
     if (ref ($v) eq "Pair") {
 	@{$_[0]}
     } elsif (promiseP $v) {
-	@_=Force $v; goto \&carcdr;
+	@_=Force $v; goto \&car_and_cdr;
     } else {
 	not_a_pair $v;
     }
 }
 
-sub head_and_tail($); *head_and_tail= *car_and_cdr;
+sub first_and_rest($); *first_and_rest= *car_and_cdr;
 
 
 sub list {
