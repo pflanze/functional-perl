@@ -18,7 +18,8 @@ Chj::PXML::Serialize
 package Chj::PXML::Serialize;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(pxml_xhtml_print);
-@EXPORT_OK=qw(pxml_print_fragment
+@EXPORT_OK=qw(pxml_print
+	      pxml_print_fragment
 	      pxml_xhtml_print_fast
 	      pxml_print_fragment_fast
 	      putxmlfile
@@ -244,12 +245,17 @@ sub pxml_xhtml_print ($ $ ;$ );
 
 use Chj::xopen "xopen_write";
 
+sub pxml_print ($ $ ) {
+    my ($v, $fh)= @_;
+    $fh->xprintln(q{<?xml version="1.0"?>});
+    pxml_print_fragment_fast ($v, $fh);
+}
+
 sub putxmlfile ($$) {
     my ($path,$xml)=@_;
     my $f= xopen_write $path;
     binmode($f, ":utf8") or die;
-    $f->xprintln(q{<?xml version="1.0"?>});
-    pxml_print_fragment_fast ($xml, $f);
+    pxml_print($xml,$f);
     $f->xclose;
 }
 
