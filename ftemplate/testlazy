@@ -55,7 +55,7 @@ our $numbers= {
 sub examplepage {
     my ($title)= @_;
     page("example page - $title",
-	 time,
+	 $ENV{T} // time,
 	 [
 	  H1($title),
 	  P("Garçon méchanique, \"1 < 2\" is true. ",
@@ -65,7 +65,7 @@ sub examplepage {
 		map {
 		    TR(TD($_), TD($$numbers{$_}))
 		} (1..3)),
-	  countdown (1e9), #countdown (100),
+	  countdown ($ENV{N} || 1e9),
 	 ])
 }
 

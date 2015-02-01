@@ -8,6 +8,7 @@ our @t=
   qw(
 	t1
 	t2-testlazy
+	t2-testlazy10
 	t3-ftemplate-test
    );
 
