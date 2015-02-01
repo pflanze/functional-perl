@@ -178,7 +178,9 @@ sub _pxml_print_fragment_fast {
 	    # (previously end of linked list marker) nothing; XX
 	    # should this give exception (to point out any issue with
 	    # deleted streams, the reason why I changed from using
-	    # undef to null)?
+	    # undef to null)? But exception won't show a good
+	    # backtrace anyway at this point.
+	    warn "warning: ignoring undef in PXML datastructure";
 	} else {
 	    #print $fh content_escape($v) or die $!;
 	    $v=~ s/([&<>])/$content_escape{$1}/sg;

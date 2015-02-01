@@ -28,7 +28,7 @@ sub countdown {
 	    cons (P($i),
 		  countdown ($i-1));
 	} else {
-	    null
+	    undef
 	}
     }
 }
