@@ -1,0 +1,73 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: $myname csvfile
+";
+    exit (@_ ? 1 : 0);
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage unless @ARGV;
+
+use Chj::FP::Text::CSV qw(xopen_csv_stream);
+use Chj::FP::List qw(rest);
+use Chj::FP::Stream qw(stream_map);
+
+use Chj::PXML::Tags
+  qw(myexample
+     protocol-version
+     records
+     record
+     a
+     b
+     c
+     d);
+
+use Chj::PXML::Serialize qw(pxml_print);
+
+sub print_csv_as_xml {
+    my ($path)= @_;
+
+    my $rows= xopen_csv_stream $path, +{eol=> "\n", sep_char=> ";"};
+
+    # skip header row:
+    $rows= rest $rows;
+
+    my $xmlstream=
+      MYEXAMPLE
+	(PROTOCOL_VERSION ("0.123"),
+	 RECORDS
+	 (stream_map
+	  (sub {
+	       my ($row)=@_;
+	       @$row == 4 or die "row doesn't contain 4 columns: @$row";
+	       my ($a,$b,$c,$d)= @$row;
+
+	       RECORD(A ($a),
+		      B ($b),
+		      C ($c),
+		      D ($d));
+	   },
+	   $rows)));
+
+    pxml_print $xmlstream, *STDOUT{IO};
+}
+
+use Chj::Backtrace;
+print_csv_as_xml $_ for @ARGV;
