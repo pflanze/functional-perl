@@ -32,7 +32,7 @@ TEST {  A({href=>"hah"}, "Hello ", I("World", undef, B("!")), cons(" ", string2s
   'Hello World! You\'re great.';
 
 #use Chj::ruse;
-use Chj::Backtrace; use Chj::repl; repl;
+#use Chj::Backtrace; use Chj::repl; repl;
 
 run_tests;
 
