@@ -100,8 +100,9 @@ sub _pxml_print_fragment_fast {
 		  (not @$body
 		   or
 		   (@$body==1 and
-		    (not defined $$body[0]
-		     or
+		    (# XX remove undef check here now, too? OK?
+		     #not defined $$body[0]
+		     #or
 		     (ref($$body[0]) eq "ARRAY" and not @{$$body[0]})
 		     or
 		     $$body[0] eq "")));
