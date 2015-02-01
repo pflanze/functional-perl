@@ -503,8 +503,8 @@ TEST{ list2string list_reverse string2list "Hello" }
 TEST{ list2string list_reverse (fst rtake_while \&char_alphanumericP, string2list "Hello World") }
   'Hello';
 
-# main> $|=1; write_sexpr cons("123",cons("4",null));
-# ("123" "4")1
+TEST{ capture_stdout { write_sexpr cons("123",cons("4",null)) }}
+  '("123" "4")';
 #TEST{ write_sexpr (string2list "Hello \"World\"")
 # ("H" "e" "l" "l" "o" " " "\"" "W" "o" "r" "l" "d" "\"")
 #TEST{ write_sexpr (cons 1, 2)
