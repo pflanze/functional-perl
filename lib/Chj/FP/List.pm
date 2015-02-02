@@ -580,7 +580,7 @@ TEST_STDOUT{
 		  undef,
 		  \&DelayLight)
 }
-  '("2" ("10" "9" "8" "7" "6" "5" "4" "3" "2" "1"))';
+  '("2" "10" "9" "8" "7" "6" "5" "4" "3" "2" "1")';
 
 TEST{ list2array  Chj::FP::List::array_fold_right \&cons, null, [1,2,3] }
   [
