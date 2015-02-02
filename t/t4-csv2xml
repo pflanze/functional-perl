@@ -1,0 +1,12 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+our $len= 210;
+require "./test.pl";
+
+use Test::More tests=> 1;
+
+is readin ("examples/csv2xml examples/csv2xml-example.csv|"),
+   readin ("< t/t4-csv2xml.expected");
+

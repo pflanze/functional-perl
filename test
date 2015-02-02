@@ -10,6 +10,7 @@ our @t=
 	t2-testlazy
 	t2-testlazy10
 	t3-ftemplate-test
+	t4-csv2xml
    );
 
 runtests(map {"t/$_"} @t);

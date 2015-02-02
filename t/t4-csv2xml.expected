@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<myexample><protocol-version>0.123</protocol-version><records><record><a>1</a><b>2</b><c>3</c><d>4</d></record><record><a>4</a><b>3.3</b><c>foo</c><d>bar</d></record></records></myexample>
