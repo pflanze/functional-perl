@@ -448,6 +448,7 @@ sub mixed_flatten ($;$$) {
 		     },
 		     $tail,
 		     $v);
+		require Chj::FP::Stream; # XX ugly? de-circularize?
 		goto ($maybe_delay
 		      ? \&Chj::FP::Stream::stream__array_fold_right
 		      #^ XX just expecting it to be loaded
