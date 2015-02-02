@@ -32,6 +32,7 @@ package Chj::FP::Stream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
 	      Keep
+	      Weakened
 	      stream_iota
 	      stream_length
 	      stream_append
@@ -76,6 +77,15 @@ sub Keep ($) {
     my ($v)=@_;
     $v
 }
+
+# weaken a variable, but also provide a non-weakened reference to its
+# value as result
+sub Weakened ($) {
+    my ($ref)= @_;
+    weaken $_[0];
+    $ref
+}
+
 
 sub stream_iota {
     my ($maybe_start, $maybe_n)= @_;
