@@ -355,7 +355,9 @@ sub stream_take ($ $) {
     Delay {
 	if ($n > 0) {
 	    $s= Force $s;
-	    cons(car $s, stream_take( cdr $s, $n - 1))
+	    nullP $s ?
+	      die "stream too short"
+		: cons(car $s, stream_take( cdr $s, $n - 1));
 	} else {
 	    null
 	}
