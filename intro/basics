@@ -512,6 +512,16 @@ sub square {
 
 
 # ------------------------------------------------------------------
-# enter the repl for your experiments, see (0) above:
+if ($ENV{TEST}) {
+    # run TEST forms (called as part of test suite)
 
-repl;
+    require Test::More;
+    import Test::More;
+    is( eval { Chj::TEST::run_tests("main") } // do { diag $@; undef}, 0, "run_tests");
+    done_testing();
+
+} else {
+    # enter the repl for your experiments, see (0) above:
+
+    repl;
+}

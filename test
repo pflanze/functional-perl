@@ -11,6 +11,7 @@ our @t=
 	testlazy10
 	ftemplate-test
 	csv2xml
+	intro-basics
    );
 
 runtests(map {"t/$_"} @t);
