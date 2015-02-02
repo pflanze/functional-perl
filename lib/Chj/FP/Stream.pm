@@ -427,6 +427,8 @@ sub F ($) {
     } else {
 	if (pairP $v) {
 	    cons (F(car $v), F(cdr $v))
+	} elsif (ref ($v) eq "ARRAY") {
+	    [ map { F $_ } @$v ]
 	} else {
 	    $v
 	}
