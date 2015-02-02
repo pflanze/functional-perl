@@ -44,7 +44,7 @@ func functional_fact ($x) {
 our @functional_inspect;
 
 func functional_fact_iter ($x, $res) {
-    push @functional_inspect, fun {
+    push @functional_inspect, func {
 	($x,$res)
     };
     if ($x < 2) {
