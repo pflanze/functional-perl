@@ -4,6 +4,8 @@ MANIFEST
 README.md
 TODO
 bin/repl
+examples/csv2xml
+examples/csv2xml-example.csv
 examples/fibs
 examples/template
 ftemplate/README
@@ -32,6 +34,7 @@ lib/Chj/FP/Ops.pm
 lib/Chj/FP/OrderedCollection.pm
 lib/Chj/FP/Predicates.pm
 lib/Chj/FP/Stream.pm
+lib/Chj/FP/Text/CSV.pm
 lib/Chj/FP/Values.pm
 lib/Chj/FP/url_.pm
 lib/Chj/IO/Command.pm
@@ -59,6 +62,7 @@ lib/Chj/repl.pm
 lib/Chj/ruse.pm
 lib/Chj/singlequote.pm
 lib/Chj/xIO.pm
+lib/Chj/xIOUtil.pm
 lib/Chj/xopen.pm
 lib/Chj/xopendir.pm
 lib/Chj/xoutpipe.pm
@@ -69,8 +73,12 @@ lib/Class/Array.pm
 meta/dependencycheck
 t/t1
 t/t2-testlazy
+t/t2-testlazy.expected
+t/t2-testlazy10
+t/t2-testlazy10.expected
 t/t3-ftemplate-test
 t/t3-ftemplate-test.expected
-t/testlazy-expected
+t/t4-csv2xml
+t/t4-csv2xml.expected
 test
 test.pl
