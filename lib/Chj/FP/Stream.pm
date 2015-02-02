@@ -356,7 +356,7 @@ sub stream_take ($ $) {
 	if ($n > 0) {
 	    $s= Force $s;
 	    nullP $s ?
-	      die "stream too short"
+	      $s
 		: cons(car $s, stream_take( cdr $s, $n - 1));
 	} else {
 	    null
