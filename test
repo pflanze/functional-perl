@@ -6,7 +6,7 @@ use Test::Harness;
 
 our @t=
   qw(
-	require
+	require_and_run_tests
 	testlazy
 	testlazy10
 	ftemplate-test

@@ -75,7 +75,7 @@ t/csv2xml
 t/csv2xml.expected
 t/ftemplate-test
 t/ftemplate-test.expected
-t/require
+t/require_and_run_tests
 t/testlazy
 t/testlazy.expected
 t/testlazy10
