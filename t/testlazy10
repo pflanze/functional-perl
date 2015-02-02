@@ -2,10 +2,12 @@
 
 use strict; use warnings FATAL => 'uninitialized';
 
-our $len= 1000;
+our $len= 759;
 require "./test.pl";
 
 use Test::More tests=> 1;
 
-is readin ("ftemplate/testlazy|"), readin ("< t/t2-testlazy.expected");
+$ENV{N}= 10;
+$ENV{T}= 0;
+is readin ("ftemplate/testlazy|"), readin ("< t/testlazy10.expected");
 

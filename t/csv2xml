@@ -2,12 +2,11 @@
 
 use strict; use warnings FATAL => 'uninitialized';
 
-our $len= 759;
+our $len= 210;
 require "./test.pl";
 
 use Test::More tests=> 1;
 
-$ENV{N}= 10;
-$ENV{T}= 0;
-is readin ("ftemplate/testlazy|"), readin ("< t/t2-testlazy10.expected");
+is readin ("examples/csv2xml examples/csv2xml-example.csv|"),
+   readin ("< t/csv2xml.expected");
 

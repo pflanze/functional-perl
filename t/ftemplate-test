@@ -10,5 +10,5 @@ use Test::More tests=> 1;
 system ("ftemplate/test 10001000") == 0
   or die;
 
-is readin ("< out.xhtml"), readin ("< t/t3-ftemplate-test.expected");
+is readin ("< out.xhtml"), readin ("< t/ftemplate-test.expected");
 
