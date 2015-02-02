@@ -54,6 +54,7 @@ package Chj::FP::Stream;
 	      stream_drop_while
 	      stream_ref
 	      stream_zip2
+	      stream_zip
 	      stream_zip_with
 	      stream2array
 	      stream_mixed_flatten
@@ -164,6 +165,7 @@ sub stream_map_with_tail ($ $ $) {
     }
 }
 
+# 2-ary (possibly slightly faster) version of stream_zip
 sub stream_zip2 ($$);
 sub stream_zip2 ($$) {
     my ($l,$m)=@_;
@@ -173,6 +175,21 @@ sub stream_zip2 ($$) {
 	$m= Force $m;
 	(nullP $l or nullP $m) ? null
 	  : cons([car $l, car $m], stream_zip2 (cdr $l, cdr $m))
+    }
+}
+
+# n-ary version of stream_zip2
+sub stream_zip {
+    my @ps= @_;
+    do {weaken $_ if promiseP $_ } for @_; #needed?
+    Delay {
+	my @vs= map {
+	    my $v= Force $_;
+	    nullP $v ? return null : $v
+	} @ps;
+	my $a= [map { car $_ } @vs];
+	my $b= stream_zip (map { cdr $_ } @vs);
+	cons($a, $b)
     }
 }
 
@@ -511,6 +528,12 @@ TEST {
 
 # write_sexpr( stream_take( stream_iota (0, 1000000000), 2))
 # ->  ("0" "1")
+
+TEST{ stream2array stream_zip cons (2, null), cons (1, null) }
+  [[2,1]];
+TEST{ stream2array stream_zip cons (2, null), null }
+  [];
+
 
 TEST{ list2array F stream_zip2 stream_map (sub{$_[0]+10}, stream_iota (0, 5)),
 	stream_iota (0, 3) }
