@@ -423,14 +423,13 @@ sub F ($) {
     #weaken $_[0]; since I usually use it interactively, and should
     # only be good for short sequences, better don't
     if (promiseP $v) {
-	$v= Force $v;
+	F Force $v;
+    } else {
 	if (pairP $v) {
 	    cons (F(car $v), F(cdr $v))
 	} else {
 	    $v
 	}
-    } else {
-	$v
     }
 }
 
