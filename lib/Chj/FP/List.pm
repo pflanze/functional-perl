@@ -500,16 +500,17 @@ TEST{ list2string list_reverse string2list "Hello" }
 TEST{ list2string list_reverse (fst rtake_while \&char_alphanumericP, string2list "Hello World") }
   'Hello';
 
-TEST{ capture_stdout { write_sexpr cons("123",cons("4",null)) }}
+TEST_STDOUT{ write_sexpr cons("123",cons("4",null)) }
   '("123" "4")';
-#TEST{ write_sexpr (string2list "Hello \"World\"")
-# ("H" "e" "l" "l" "o" " " "\"" "W" "o" "r" "l" "d" "\"")
-#TEST{ write_sexpr (cons 1, 2)
-# ("1" . "2")
-#TEST{ write_sexpr cons(1, cons(cons(2, undef), undef))
+TEST_STDOUT{ write_sexpr (string2list "Hello \"World\"")}
+  '("H" "e" "l" "l" "o" " " "\"" "W" "o" "r" "l" "d" "\"")';
+TEST_STDOUT{ write_sexpr (cons 1, 2) }
+  '("1" . "2")';
+#TEST_STDOUT{ write_sexpr cons(1, cons(cons(2, undef), undef))}
+#  '';
 # -> XX should print #f or something for undef ! Not give exception.
-#TEST{ write_sexpr cons(1, cons(cons(2, null), null))
-# ("1" ("2"))
+TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null))}
+  '("1" ("2"))';
 
 TEST{ list_every \&char_alphanumericP, string2list "Hello" }
   1;
@@ -553,13 +554,32 @@ TEST{ list2array mixed_flatten [1,cons(2, [ string2list "ab" ,4])] }
 TEST{ list2string mixed_flatten [string2list "abc", string2list "def", "ghi"] }
   'abcdefghi';  # only works thanks to perl chars and strings being the same datatype
 
-#TEST{ $|=1; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { 1+1 }, null)}, undef, \&DelayLight) }
-# ("2")$VAR1 = 1;
-#TEST{ $|=1; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,Delay {2+1}] }, null)}, undef, \&DelayLight)}
-# ("2" "3")$VAR1 = 1;
+TEST_STDOUT{ write_sexpr( mixed_flatten
+			  DelayLight { cons(Delay { 1+1 }, null)},
+			  undef,
+			  \&DelayLight) }
+  '("2")';
+TEST_STDOUT{ write_sexpr( mixed_flatten
+			  DelayLight { cons(Delay { [1+1,Delay {2+1}] }, null) },
+			  undef,
+			  \&DelayLight) }
+  '("2" "3")';
 
-#TEST{ $|=1; sub countdown { my ($i)=@_; if ($i) { DelayLight {cons ($i, countdown($i-1))}} else {undef} }; write_sexpr  ( mixed_flatten DelayLight { cons(Delay { [1+1,countdown 10] }, undef)}, undef, \&DelayLight) }
-# ("2" ("10" "9" "8" "7" "6" "5" "4" "3" "2" "1"))$VAR1 = 1;
+TEST_STDOUT{
+    sub countdown {
+	my ($i)=@_;
+	if ($i) {
+	    DelayLight {cons ($i, countdown($i-1))}
+	} else {
+	    undef
+	}
+    }
+    write_sexpr ( mixed_flatten
+		  DelayLight { cons(Delay { [1+1,countdown 10] }, undef)},
+		  undef,
+		  \&DelayLight)
+}
+  '("2" ("10" "9" "8" "7" "6" "5" "4" "3" "2" "1"))';
 
 TEST{ list2array  Chj::FP::List::array_fold_right \&cons, null, [1,2,3] }
   [
@@ -567,10 +587,19 @@ TEST{ list2array  Chj::FP::List::array_fold_right \&cons, null, [1,2,3] }
    2,
    3
   ];
-#TEST{ $|=1; write_sexpr  (mixed_flatten [DelayLight { [3,[9,10]]}], undef, \&DelayLight ) }
-# ("3" "9" "10")$VAR1 = 1;
-# calc> :l $|=1; write_sexpr   (mixed_flatten [1,2, DelayLight { [3,9]}], undef, \&DelayLight )
-# ("1" "2" "3" "9")1
+
+TEST_STDOUT{ write_sexpr
+	       (mixed_flatten
+		[DelayLight { [3,[9,10]]}],
+		undef,
+		\&DelayLight ) }
+    '("3" "9" "10")';
+TEST_STDOUT { write_sexpr
+		(mixed_flatten
+		 [1,2, DelayLight { [3,9]}],
+		 undef,
+		 \&DelayLight) }
+    '("1" "2" "3" "9")';
 
 TEST{ list2array  list_append (array2list (["a","b"]), array2list([1,2])) }
   [
