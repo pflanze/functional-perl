@@ -71,7 +71,7 @@ lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
 meta/dependencycheck
-t/t1
+t/t1-require
 t/t2-testlazy
 t/t2-testlazy.expected
 t/t2-testlazy10

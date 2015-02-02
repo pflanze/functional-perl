@@ -6,7 +6,7 @@ use Test::Harness;
 
 our @t=
   qw(
-	t1
+	t1-require
 	t2-testlazy
 	t2-testlazy10
 	t3-ftemplate-test
