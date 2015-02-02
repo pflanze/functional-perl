@@ -572,11 +572,11 @@ TEST_STDOUT{
 	if ($i) {
 	    DelayLight {cons ($i, countdown($i-1))}
 	} else {
-	    undef
+	    null
 	}
     }
     write_sexpr ( mixed_flatten
-		  DelayLight { cons(Delay { [1+1,countdown 10] }, undef)},
+		  DelayLight { cons(Delay { [1+1,countdown 10] }, null)},
 		  undef,
 		  \&DelayLight)
 }
