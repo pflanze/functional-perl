@@ -30,6 +30,10 @@ use Chj::FP::List qw(rest);
 use Chj::FP::Stream qw(stream_map);
 
 use Chj::PXML::Tags
+  # create tag functions for the following XML tag names. Casing is
+  # preserved for the output, but the tag functions are all-uppercase
+  # (to try to avoid name conflicts and for better visibility) and
+  # replace the minus with the underscore.
   qw(myexample
      protocol-version
      records
@@ -45,14 +49,16 @@ sub print_csv_as_xml {
     my ($path)= @_;
 
     my $rows= xopen_csv_stream $path, +{eol=> "\n", sep_char=> ";"};
+    # $rows is a lazily-computed linked list of the rows
 
-    # skip header row:
+    # skip the header row from the CSV file:
     $rows= rest $rows;
 
+    # create a partially lazily computed PXML data structure
     my $xmlstream=
       MYEXAMPLE
 	(PROTOCOL_VERSION ("0.123"),
-	 RECORDS
+	 RECORDS # here we embed the lazily computed part:
 	 (stream_map
 	  (sub {
 	       my ($row)=@_;
@@ -62,10 +68,12 @@ sub print_csv_as_xml {
 	       RECORD(A ($a),
 		      B ($b),
 		      C ($c),
-		      D ($d));
+		      D ($d))
 	   },
 	   $rows)));
 
+    # walk and print the PXML data structure, forcing its evaluation
+    # as needed
     pxml_print $xmlstream, *STDOUT{IO};
 }
 
