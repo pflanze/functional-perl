@@ -43,10 +43,7 @@ package Chj::FP::List;
 use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::FP::Lazy;
-use Chj::xIO; # 'xprint'
-# NOTE: since xIO has a circular dependendy on us, (depending on the
-# load order, ugh) xprint may not be defined yet, thus have to use it
-# with parenteses here.
+use Chj::xIO 'xprint';
 use Chj::TEST;
 
 
@@ -243,21 +240,21 @@ sub _write_sexpr ($ $ $) {
   _WRITE_SEXPR: {
 	$l= Force ($l,1);
 	if (pairP $l) {
-	    xprint ($fh, $already_in_a_list ? ' ' : '(');
+	    xprint $fh, $already_in_a_list ? ' ' : '(';
 	    _write_sexpr car $l, $fh, 0;
 	    my $d= Force (cdr $l, 1);
 	    if (nullP $d) {
-		xprint ($fh, ')');
+		xprint $fh, ')';
 	    } elsif (pairP $d) {
 		# tail-calling _write_sexpr $d, $fh, 1
 		$l=$d; $already_in_a_list=1; redo _WRITE_SEXPR;
 	    } else {
-		xprint ($fh, " . ");
+		xprint $fh, " . ";
 		_write_sexpr $d, $fh, 0;
-		xprint ($fh, ')');
+		xprint $fh, ')';
 	    }
 	} elsif (nullP $l) {
-	    xprint ($fh, "()");
+	    xprint $fh, "()";
 	} else {
 	    # normal perl things; should have a show method already
 	    # for this? whatever.
@@ -266,7 +263,7 @@ sub _write_sexpr ($ $ $) {
 	    } else {
 		# assume string; there's nothing else left.
 		$l=~ s/"/\\"/sg;
-		xprint ($fh, '"',$l,'"');
+		xprint $fh, '"',$l,'"';
 	    }
 	}
     }
