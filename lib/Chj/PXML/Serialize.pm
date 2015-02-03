@@ -159,9 +159,10 @@ sub _pxml_print_fragment_fast {
 		if ($ref eq "ARRAY") {
 		    no warnings "recursion"; # hu.
 		    for (@$v) {
-			# XX use Keep to prevent mutation of tree, correct?, and ok?
+			# XX use Keep around $_ to prevent mutation of tree?
+			# nope, can't, will prevent streaming.
 			_pxml_print_fragment_fast
-			  (Keep($_), $fh, $html5compat, $void_element_h);
+			  ($_, $fh, $html5compat, $void_element_h);
 		    }
 		}
 		# 'Force' doesn't evaluate CODE (probably rightly so),
