@@ -7,6 +7,7 @@ bin/repl
 examples/csv2xml
 examples/csv2xml-example.csv
 examples/fibs
+examples/gen-csv
 examples/template
 ftemplate/README
 ftemplate/TODO
@@ -73,6 +74,7 @@ lib/Class/Array.pm
 meta/dependencycheck
 t/csv2xml
 t/csv2xml.expected
+t/csvstreams
 t/ftemplate-test
 t/ftemplate-test.expected
 t/intro-basics

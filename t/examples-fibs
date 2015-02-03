@@ -1,0 +1,5 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+$ENV{RUN_TESTS}=1; exec "examples/fibs" or exit 1;

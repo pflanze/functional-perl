@@ -12,6 +12,7 @@ our @t=
 	ftemplate-test
 	csv2xml
 	intro-basics
+	examples-fibs
 	csvstreams
    );
 
