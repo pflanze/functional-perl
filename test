@@ -12,6 +12,7 @@ our @t=
 	ftemplate-test
 	csv2xml
 	intro-basics
+	csvstreams
    );
 
 runtests(map {"t/$_"} @t);
