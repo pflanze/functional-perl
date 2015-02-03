@@ -10,11 +10,13 @@ Chj::FP::Text::CSV - functional interface to Text::CSV
 =head1 SYNOPSIS
 
  use Chj::FP::Text::CSV qw(csv_line_xparser fh2csvstream xopen_csv_stream);
+ use Method::Signatures; # func
 
  my $csvparams= +{sep_char=> ";", eol=> "\n"};
  # $csvparams and any of its entries are optional,
  #  defaults are taken from $Chj::FP::Text::CSV::defaults
 
+ # -- Input: ---
  my $p= csv_line_xparser $csvparams;
  my @vals= &$p("1;2;3;4\n");
 
@@ -24,14 +26,26 @@ Chj::FP::Text::CSV - functional interface to Text::CSV
 
  # then
  use Chj::FP::Stream ":all";
- my $stream2= stream_map sub {
-     my ($row)=@_;
+ my $stream2= stream_map func ($row) {
      #...
  }, $stream;
  # etc.
 
+ # -- Output: ---
+ my $rows=
+   cons [ "i", "i^2" ],
+     stream_map func ($i) {
+	 [ $i, $i*$i ]
+     }, stream_iota;
+ csvstream2fh ($rows, $somefilehandle);
+ # or
+ csvstream2file ($rows, "path");
+
+
 =head1 DESCRIPTION
 
+Handle CSV input and output in the form of functional streams (lazily
+computed linked lists).
 
 =cut
 
@@ -44,6 +58,8 @@ package Chj::FP::Text::CSV;
 		 csv_line_xparser
 		 fh2csvstream
 		 xopen_csv_stream
+		 csvstream2fh
+		 csvstream2file
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -109,6 +125,34 @@ sub xopen_csv_stream ($;$) {
     my $in= xopen_read $path;
     binmode($in, ":encoding(utf-8)") or die;
     fh2csvstream $in, $maybe_params
+}
+
+
+# -- Output: ---
+
+use Chj::FP::Stream "stream_for_each";
+
+sub csvstream2fh ($$;$) {
+    my ($s, $fh, $maybe_params)=@_;
+    weaken $_[0];
+    my $csv= new_csv_instance ($maybe_params);
+    stream_for_each sub {
+	my ($row)= @_;
+	$csv->print($fh, $row)
+	  or die "could not write CSV row: ".$csv->error_diag;
+	# XX ok?
+    }, $s
+}
+
+use Chj::xtmpfile;
+
+sub csvstream2file ($$;$) {
+    my ($s, $path, $maybe_params)=@_;
+    weaken $_[0];
+    my $out= xtmpfile $path;
+    csvstream2fh ($s, $out, $maybe_params);
+    $out->xclose;
+    $out->xputback (0666 & ~umask);
 }
 
 
