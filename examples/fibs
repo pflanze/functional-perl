@@ -34,6 +34,11 @@ sub fib {
     stream_ref Keep($fibs), $n
 }
 
+# For an alternative definition that doesn't keep around the fibs
+# stream in a global variable (and hence doesn't need to protect that
+# variable with Keep() from deletion) see the [[gen-csv]] script.
+
+
 TEST { stream2array stream_take Keep($fibs), 10 }
         [
           1,
