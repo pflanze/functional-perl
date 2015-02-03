@@ -1,0 +1,79 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+use Method::Signatures;
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: $myname outpath numrows
+
+  Write some useless number series in CSV format.
+
+  Purpose: example and test for lazy list (streaming) code (check for
+  leaks/memory retention).
+
+";
+    exit (@_ ? 1 : 0);
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage unless @ARGV==2;
+
+our ($path,$numrows)=@ARGV;
+
+use Chj::FP::Text::CSV qw(csvstream2file);
+use Chj::FP::List ":all";
+use Chj::FP::Lazy ":all";
+use Chj::FP::Stream ":all";
+use Chj::FP::Ops qw(add);
+
+
+func fibs () {
+    # (Also see the [[fibs]] example script; unlike there, where
+    # global scope is used, here we don't use Keep around $fibs as
+    # it's correct when the local variable, which goes out of scope,
+    # is deleted)
+    my $fibs; $fibs=
+      cons 1, cons 1, Delay { stream_zip_with \&add, $fibs, rest $fibs };
+    $fibs
+}
+
+func exps ($base, $start) {
+    my $rec; $rec= func ($x) {
+	Delay { cons $x, &$rec ($x * $base) }
+    };
+    Weakened ($rec)->($start)
+}
+
+func rows () {
+    my $a= 1.01;
+    my $b= 0.99;
+    my $ns= rest stream_iota;
+    my $as= exps $a, $a;
+    my $bs= exps $b, $b;
+    my $fibs= fibs;
+
+    cons [ "n", "$a^n", "$b^n", "fib" ],
+      stream_zip ($ns, $as, $bs, $fibs)
+}
+
+use Chj::Backtrace;
+#use Chj::repl;repl;
+
+my $rows= stream_take rows, $numrows+1; # +1 for the header row
+
+csvstream2file $rows, $path, +{eol=> "\n", sep_char=> ";"};
+
