@@ -21,6 +21,11 @@ Chj::TEST
  use Chj::TEST ':all';
  run_tests;
 
+ # For conditional running the tests as part of a global test suite:
+ perhaps_run_tests("main") || do_something_else;
+ # This will run run_tests("main") iff the RUN_TESTS environment
+ # variable is true, otherwise run do_something_else.
+
 =head1 DESCRIPTION
 
 =head1 SEE ALSO
@@ -32,7 +37,7 @@ Chj::TEST
 
 package Chj::TEST;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(TEST TEST_STDOUT GIVES);
+@EXPORT=qw(TEST TEST_STDOUT GIVES perhaps_run_tests);
 @EXPORT_OK=qw(run_tests);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -121,6 +126,26 @@ sub run_tests {
     print "=> $$stat{success} success(es), $$stat{fail} failure(s)\n";
     $$stat{fail}
 }
+
+# run tests for test suite:
+
+sub perhaps_run_tests {
+    if ($ENV{RUN_TESTS}) {
+	# run TEST forms (called as part of test suite)
+
+	require Test::More;
+	import Test::More;
+	is( eval { run_tests(@_) } // do { diag $@; undef},
+	    0,
+	    "run_tests" );
+	done_testing();
+
+	1  # so that one can write  `perhaps_run_tests || something_else;`
+    } else {
+	()
+    }
+}
+
 
 
 1

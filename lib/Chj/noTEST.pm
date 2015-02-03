@@ -29,7 +29,7 @@ Chj::noTEST.)
 
 package Chj::noTEST;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(TEST TEST_STDOUT);
+@EXPORT=qw(TEST TEST_STDOUT perhaps_run_tests);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -42,5 +42,10 @@ sub TEST (&$) {
 sub TEST_STDOUT (&$) {
     ()
 }
+
+sub perhaps_run_tests {
+    ()
+}
+
 
 1
