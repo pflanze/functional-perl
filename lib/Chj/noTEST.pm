@@ -29,7 +29,7 @@ Chj::noTEST.)
 
 package Chj::noTEST;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(TEST);
+@EXPORT=qw(TEST TEST_STDOUT);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
