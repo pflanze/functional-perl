@@ -212,7 +212,13 @@ sub eval_code {
     my $aliascode=
 	join ("",
 	      map {
-		  'my '.$_.' = $$Chj::Util::Repl::eval_lexicals{'.singlequote($_).'};'
+		  my $varname= $_;
+		  $varname=~ s/^./\$/; # reference is to be held by a scalar, always
+		  ('my '
+		   .$varname
+		   .' = $$Chj::Util::Repl::eval_lexicals{'
+		   .singlequote($_)
+		   .'};')
 	      }
 	      keys %$eval_lexicals);
     myeval ("package ".&$get_package()."; $aliascode; (); ".
