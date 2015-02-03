@@ -542,7 +542,11 @@ sub run {
 			     if (defined $lexicals) {
 				 local $Data::Dumper::Terse= 1;
 				 for my $key (sort keys %$lexicals) {
-				     print "$key = ".Dumper(${$$lexicals{$key}});
+				     if ($key=~ /^\$/) {
+					 print "$key = ".Dumper(${$$lexicals{$key}});
+				     } else {
+					 print "\\$key = ".Dumper($$lexicals{$key});
+				     }
 				 }
 			     } else {
 				 print "level too deep\n"
