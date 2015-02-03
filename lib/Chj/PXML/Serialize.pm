@@ -202,30 +202,32 @@ sub pxml_print_fragment_fast ($ $ ) {
     my ($v,$fh)=@_;
     weaken $_[0] if ref $_[0]; # ref check perhaps unnecessary here
     my $no_element= sub {
-	_pxml_print_fragment_fast($v,$fh,undef,undef);
+	@_=($v,$fh,undef,undef);
+	goto\&_pxml_print_fragment_fast;
     };
     my $with_first_element= sub {
 	my ($firstel)=@_;
 	weaken $_[0] if ref $_[0];
 	my $html5compat= $firstel->
 	  require_printing_nonvoid_elements_nonselfreferential;
-	_pxml_print_fragment_fast($v,
-				  $fh,
-				  $html5compat,
-				  ($html5compat and $firstel->void_element_h));
+	@_=($v,
+	    $fh,
+	    $html5compat,
+	    ($html5compat and $firstel->void_element_h));
+	goto \&_pxml_print_fragment_fast;
     };
     if (UNIVERSAL::isa($v, "Chj::PXHTML")) {
-	&$with_first_element($v)
+	@_=($v); goto $with_first_element;
     } else {
 	if (ref $v) {
 	    my $s= Force(stream_mixed_flatten ($v));
 	    if ($s) {
-		&$with_first_element(car $s);
+		@_= (car $s); goto $with_first_element;
 	    } else {
-		&$no_element
+		goto $no_element
 	    }
 	} else {
-	    &$no_element
+	    goto $no_element
 	}
     }
 }
@@ -253,7 +255,7 @@ sub pxml_xhtml_print_fast ($ $ ;$ ) {
 		lang=> $lang
 	    }
 	 });
-    pxml_print_fragment_fast ($v2, $fh);
+    @_=($v2, $fh); goto \&pxml_print_fragment_fast;
 }
 
 # for now,
@@ -267,7 +269,7 @@ sub pxml_print ($ $ ) {
     my ($v, $fh)= @_;
     weaken $_[0] if ref $_[0]; # ref check perhaps unnecessary here
     xprintln($fh, q{<?xml version="1.0"?>});
-    pxml_print_fragment_fast ($v, $fh);
+    @_=($v, $fh); goto \&pxml_print_fragment_fast;
 }
 
 sub putxmlfile ($$) {
