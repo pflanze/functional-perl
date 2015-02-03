@@ -2,4 +2,4 @@
 
 use strict; use warnings FATAL => 'uninitialized';
 
-$ENV{TEST}=1; exec "intro/basics" or exit 1;
+$ENV{RUN_TESTS}=1; exec "intro/basics" or exit 1;
