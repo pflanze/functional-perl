@@ -9,3 +9,9 @@
 
 [- additionally add old-style FP modules from chj-perllib?]
 
+- xopen_read etc. are throwing exceptions; there are no non-throwing
+  variants currently. What interface is preferred for handling errors:
+  maybe_ variants that return undef (then assume the error is in $! ?),
+  give exceptions types so as to catch them selectively, something
+  else?
+
