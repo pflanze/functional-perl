@@ -35,6 +35,7 @@ use Chj::FP::Lazy;
 use Chj::FP::List;
 use Chj::FP::Stream;
 use Chj::xIO;
+use Scalar::Util 'weaken';
 
 sub perhaps_dump {
     my ($v)=@_;
@@ -72,6 +73,9 @@ sub content_escape {
 sub _pxml_print_fragment_fast {
     @_==4 or die;
     my ($v,$fh,$html5compat,$void_element_h)=@_;
+    weaken $_[0]
+      # necessary since we're also called with strings:
+      if ref $_[0];
   LP: {
 	## **NOTE**: this has seen some evil optimizations; before
 	## working on the code, please undo them first by using git
@@ -154,8 +158,11 @@ sub _pxml_print_fragment_fast {
 	    } else {
 		if ($ref eq "ARRAY") {
 		    no warnings "recursion"; # hu.
-		    _pxml_print_fragment_fast ($_, $fh, $html5compat, $void_element_h)
-			for (@$v);
+		    for (@$v) {
+			# XX use Keep to prevent mutation of tree, correct?, and ok?
+			_pxml_print_fragment_fast
+			  (Keep($_), $fh, $html5compat, $void_element_h);
+		    }
 		}
 		# 'Force' doesn't evaluate CODE (probably rightly so),
 		# thus need to be explicit if we want 'late binding'
@@ -193,11 +200,13 @@ sub _pxml_print_fragment_fast {
 sub pxml_print_fragment_fast ($ $ );
 sub pxml_print_fragment_fast ($ $ ) {
     my ($v,$fh)=@_;
+    weaken $_[0] if ref $_[0]; # ref check perhaps unnecessary here
     my $no_element= sub {
 	_pxml_print_fragment_fast($v,$fh,undef,undef);
     };
     my $with_first_element= sub {
 	my ($firstel)=@_;
+	weaken $_[0] if ref $_[0];
 	my $html5compat= $firstel->
 	  require_printing_nonvoid_elements_nonselfreferential;
 	_pxml_print_fragment_fast($v,
@@ -223,6 +232,7 @@ sub pxml_print_fragment_fast ($ $ ) {
 
 sub pxml_xhtml_print_fast ($ $ ;$ ) {
     my ($v, $fh, $maybe_lang)= @_;
+    weaken $_[0] if ref $_[0]; # ref check perhaps unnecessary here
     if (not UNIVERSAL::isa($v, "Chj::PXML")) {
 	die "not an element: ".(perhaps_dump $v);
     }
@@ -255,12 +265,14 @@ use Chj::xopen "xopen_write";
 
 sub pxml_print ($ $ ) {
     my ($v, $fh)= @_;
+    weaken $_[0] if ref $_[0]; # ref check perhaps unnecessary here
     xprintln($fh, q{<?xml version="1.0"?>});
     pxml_print_fragment_fast ($v, $fh);
 }
 
 sub putxmlfile ($$) {
     my ($path,$xml)=@_;
+    weaken $_[1] if ref $_[0]; # ref check perhaps unnecessary here
     my $f= xopen_write $path;
     binmode($f, ":utf8") or die;
     pxml_print($xml,$f);
@@ -268,11 +280,12 @@ sub putxmlfile ($$) {
 }
 
 sub puthtmlfile ($$;$) {
-    my ($path,$p,$maybe_lang)=@_;
+    my ($path,$v,$maybe_lang)=@_;
+    weaken $_[1] if ref $_[0]; # ref check perhaps unnecessary here
     #xmkdir_p dirname $path;
     my $out= xopen_write($path);
     binmode $out, ":utf8" or die;
-    pxml_xhtml_print_fast($p, $out, $maybe_lang||"en");
+    pxml_xhtml_print_fast($v, $out, $maybe_lang||"en");
     $out->xclose;
 }
 
