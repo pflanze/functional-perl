@@ -13,15 +13,22 @@ use lib "$mydir/../lib";
 
 
 sub usage {
-    print "usage: $myname csvfile
+    print "usage: $myname [-o xmlfile] csvfile(s)
+
+  Open and read csvfile containing CSV with 4 columns, and write it to
+  xmlfile or stdout as XML. Does streaming, i.e. only loads one row
+  (plus some buffering) into memory at a time.
+
 ";
     exit (@_ ? 1 : 0);
 }
 
 use Getopt::Long;
 our $verbose=0;
+our $outpath;
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
+	   "outpath=s"=> \$outpath,
 	   ) or exit 1;
 usage unless @ARGV;
 
@@ -46,7 +53,7 @@ use Chj::PXML::Tags
 use Chj::PXML::Serialize qw(pxml_print);
 
 sub print_csv_as_xml {
-    my ($path)= @_;
+    my ($fh, $path)= @_;
 
     my $rows= xopen_csv_stream $path, +{eol=> "\n", sep_char=> ";"};
     # $rows is a lazily-computed linked list of the rows
@@ -74,8 +81,18 @@ sub print_csv_as_xml {
 
     # walk and print the PXML data structure, forcing its evaluation
     # as needed
-    pxml_print $xmlstream, *STDOUT{IO};
+    pxml_print $xmlstream, $fh;
 }
 
 use Chj::Backtrace;
-print_csv_as_xml $_ for @ARGV;
+
+use Chj::xtmpfile;
+
+if (defined $outpath) {
+    my $fh= xtmpfile $outpath;
+    print_csv_as_xml $fh, $_ for @ARGV;
+    $fh->xclose;
+    $fh->xputback (0666 & ~umask);
+} else {
+    print_csv_as_xml *STDOUT{IO}, $_ for @ARGV;
+}
