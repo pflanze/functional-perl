@@ -22,7 +22,7 @@ Chj::TEST
  run_tests;
 
  # For conditional running the tests as part of a global test suite:
- perhaps_run_tests("main") || do_something_else;
+ perhaps_run_tests "main" or do_something_else;
  # This will run run_tests("main") iff the RUN_TESTS environment
  # variable is true, otherwise run do_something_else.
 
@@ -140,7 +140,7 @@ sub perhaps_run_tests {
 	    "run_tests" );
 	done_testing();
 
-	1  # so that one can write  `perhaps_run_tests || something_else;`
+	1  # so that one can write  `perhaps_run_tests or something_else;`
     } else {
 	()
     }

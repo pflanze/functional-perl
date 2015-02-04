@@ -516,4 +516,4 @@ sub square {
 # run TEST forms if called as part of test suite, otherwise enter the
 # repl for your experiments, see (0) above:
 
-perhaps_run_tests("main") || repl;
+perhaps_run_tests "main" or repl;

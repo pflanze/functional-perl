@@ -56,4 +56,4 @@ TEST { stream2array stream_take Keep($fibs), 10 }
 TEST { fib 30 }
   1346269;
 
-perhaps_run_tests("main") || repl;
+perhaps_run_tests "main" or repl;
