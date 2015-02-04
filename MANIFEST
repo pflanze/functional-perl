@@ -75,6 +75,7 @@ meta/dependencycheck
 t/csv2xml
 t/csv2xml.expected
 t/csvstreams
+t/examples-fibs
 t/ftemplate-test
 t/ftemplate-test.expected
 t/intro-basics
