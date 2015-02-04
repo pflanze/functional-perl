@@ -28,6 +28,10 @@ Chj::TEST
 
 =head1 DESCRIPTION
 
+If the `TEST` environmental variable is set to false (as opposed to
+not set at all), tests are dropped. This saves the memory otherwise
+required to hold the test code and results.
+
 =head1 SEE ALSO
 
  Chj::noTEST
@@ -48,12 +52,18 @@ use Chj::xIO 'capture_stdout_';
 our $tests_by_package={};
 our $num_by_package={};
 
+our $dropped_tests=0;
+
 sub _TEST {
     my ($proc,$res)=@_;
-    my ($package, $filename, $line) = caller(1);
-    $$num_by_package{$package}++;
-    push @{$$tests_by_package{$package}},
-      [$proc,$res, $$num_by_package{$package}, ($package, $filename, $line)];
+    if (exists $ENV{TEST} and !$ENV{TEST}) {
+	$dropped_tests++;
+    } else {
+	my ($package, $filename, $line) = caller(1);
+	$$num_by_package{$package}++;
+	push @{$$tests_by_package{$package}},
+	  [$proc,$res, $$num_by_package{$package}, ($package, $filename, $line)];
+    }
 }
 
 sub TEST (&$) {
@@ -132,6 +142,10 @@ sub run_tests {
 sub perhaps_run_tests {
     if ($ENV{RUN_TESTS}) {
 	# run TEST forms (called as part of test suite)
+
+	die "Tests were dropped due to the TEST environmental "
+	  ."variable being set to false"
+	    if $dropped_tests;
 
 	require Test::More;
 	import Test::More;
