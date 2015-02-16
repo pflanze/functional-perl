@@ -101,12 +101,14 @@ func merge ($xs, $ys) {
 	my ($x,$xt)= first_and_rest $xs;
 	my ($y,$yt)= first_and_rest $ys;
 
-	+{
-	  -1 => cons($x, merge ($xt, $ys)),
-	  0  => cons($x, merge ($xt, $yt)),
-	  1  => cons($y, merge ($xs, $yt))
-	 }->{$x <=> $y}
-     }
+	if ($x < $y) {
+	    cons($x, merge ($xt, $ys))
+	} elsif ($x == $y) {
+	    cons($x, merge ($xt, $yt))
+	} else {
+	    cons($y, merge ($xs, $yt))
+	}
+    }
 }
 
 func diff ($xs, $ys) {
@@ -114,12 +116,14 @@ func diff ($xs, $ys) {
 	my ($x,$xt)= first_and_rest $xs;
 	my ($y,$yt)= first_and_rest $ys;
 
-	+{
-	  -1 => cons ($x, diff ($xt, $ys)),
-	  0  => diff ($xt, $yt),
-	  1  => diff ($xs, $yt)
-	 }->{$x <=> $y}
-     }
+	if ($x < $y) {
+	    cons ($x, diff ($xt, $ys))
+	} elsif ($x == $y) {
+	    diff ($xt, $yt)
+	} else {
+	    diff ($xs, $yt)
+	}
+    }
 }
 
 func primes () {
@@ -179,8 +183,9 @@ TEST { t_merge [1,3,99], [2,4,99], 4 }
 t_primes \&primes;
 
 # Benchmarking:
-# [[times], stream_ref (primes_naive, 1000), [times]] -> 8.84 sec user time
-# [[times], stream_ref (primes, 1000), [times]] -> 1.12 sec user time
+# [[times], stream_ref (primes_naive, 1000), [times]] -> 8.86 sec user time
+#      also, the above prints many deep recursion warnings (why exactly?)
+# [[times], stream_ref (primes, 1000), [times]] -> 0.78 sec user time
 
 
 # ----
