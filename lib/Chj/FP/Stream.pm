@@ -39,6 +39,7 @@ package Chj::FP::Stream;
 	      stream_map
 	      stream_map_with_tail
 	      stream_filter
+	      stream_foldr1
 	      stream_fold_right
 	      stream__array_fold_right
 	      stream__string_fold_right
@@ -216,6 +217,27 @@ sub stream_filter ($ $) {
 	    my $a= car $l;
 	    my $r= stream_filter ($fn,cdr $l);
 	    &$fn($a) ? cons($a, $r) : $r
+	}
+    }
+}
+
+# http://hackage.haskell.org/package/base-4.7.0.2/docs/Prelude.html#v:foldr1
+
+# foldr1 is a variant of foldr that has no starting value argument,
+# and thus must be applied to non-empty lists.
+
+sub stream_foldr1 ($ $);
+sub stream_foldr1 ($ $) {
+    my ($fn,$l)=@_;
+    weaken $_[1];
+    Delay {
+	$l= Force $l;
+	if (pairP $l) {
+	    &$fn (car $l, stream_foldr1 ($fn,cdr $l))
+	} elsif (nullP $l) {
+	    die "foldr1: reached end of list"
+	} else {
+	    die "improper list"
 	}
     }
 }
