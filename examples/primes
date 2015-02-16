@@ -1,0 +1,187 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+use Chj::Backtrace;
+use Chj::repl;
+
+use Chj::TEST;
+use Chj::FP::List ":all";
+use Chj::FP::Ops ":all";
+use Chj::FP::Lazy ":all";
+use Chj::FP::Stream ":all";
+use Method::Signatures;
+
+
+# Another Haskell example (see also `fibs`),
+# from https://www.haskell.org/?new :
+
+# Note that this is *not* an efficient algorithm to calculate primes;
+# see https://news.ycombinator.com/item?id=9052514 and `primes`
+# further down in this file.
+
+# primes = sieve [2..]
+#   where sieve (p:xs) =
+#           p : sieve [x | x <- xs, x `mod` p /= 0]
+
+func primes_naive1 () {
+    my $sieve; $sieve= func ($p_xs) {
+	my ($p,$xs)= first_and_rest $p_xs;
+	Delay {
+	    cons $p, &$sieve (stream_filter func ($x) {
+				  $x % $p != 0
+			      }, $xs)
+	}
+    };
+    Weakened($sieve)->(stream_iota 2)
+}
+
+# or simpler, by lifting `sieve` to the toplevel:
+
+func primes_naive () {
+    sieve (stream_iota 2)
+}
+
+func sieve ($p_xs) {
+    my ($p,$xs)= first_and_rest $p_xs;
+    Delay {
+	cons $p, sieve (stream_filter func ($x) {
+			    $x % $p != 0
+			}, $xs)
+    }
+}
+
+
+func t_primes ($primes) {
+    TEST { stream2array stream_take &$primes(), 10 }
+      [2,3,5,7,11,13,17,19,23,29];
+}
+
+t_primes \&primes_naive1;
+t_primes \&primes_naive;
+
+
+# Now let's look at a better algorithm:
+
+# http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell)
+
+# merge :: (Ord a) => [a] -> [a] -> [a]
+# merge xs@(x:xt) ys@(y:yt) =
+#   case compare x y of
+#     LT -> x : (merge xt ys)
+#     EQ -> x : (merge xt yt)
+#     GT -> y : (merge xs yt)
+#
+# diff :: (Ord a) => [a] -> [a] -> [a]
+# diff xs@(x:xt) ys@(y:yt) =
+#   case compare x y of
+#     LT -> x : (diff xt ys)
+#     EQ -> diff xt yt
+#     GT -> diff xs yt
+#
+# primes, nonprimes :: [Integer]
+# primes    = [2, 3, 5] ++ (diff [7, 9 ..] nonprimes)
+# nonprimes = foldr1 f $ map g $ tail primes
+#   where
+#     f (x:xt) ys = x : (merge xt ys)
+#     g p         = [ n * p | n <- [p, p + 2 ..]]
+
+func merge ($xs, $ys) {
+    Delay {
+	my ($x,$xt)= first_and_rest $xs;
+	my ($y,$yt)= first_and_rest $ys;
+
+	+{
+	  -1 => cons($x, merge ($xt, $ys)),
+	  0  => cons($x, merge ($xt, $yt)),
+	  1  => cons($y, merge ($xs, $yt))
+	 }->{$x <=> $y}
+     }
+}
+
+func diff ($xs, $ys) {
+    Delay {
+	my ($x,$xt)= first_and_rest $xs;
+	my ($y,$yt)= first_and_rest $ys;
+
+	+{
+	  -1 => cons ($x, diff ($xt, $ys)),
+	  0  => diff ($xt, $yt),
+	  1  => diff ($xs, $yt)
+	 }->{$x <=> $y}
+     }
+}
+
+func primes () {
+    Delay {
+	stream_append (array2list ([2, 3, 5]),
+		       diff (stream_map (func ($x) { $x*2 + 7 }, stream_iota),
+			     nonprimes()))
+    }
+}
+
+func nonprimes () {
+    Delay {
+	my $f= func ($x_xt, $ys) {
+	    my ($x, $xt)= first_and_rest $x_xt;
+	    cons $x, merge ($xt, $ys)
+	};
+	my $g= func ($p) {
+	    stream_map (func ($n) { $n * $p },
+			stream_map (func ($q) { $p + $q * 2 }, stream_iota));
+	};
+	stream_foldr1 $f, stream_map $g, rest primes
+    }
+}
+
+
+# And tests...
+
+TEST { stream2array
+	 stream_take (diff (stream_iota (1),
+			    stream_map func ($x) { $x * 2 }, stream_iota(1)),
+		      10) }
+  [1,3,5,7,9,11,13,15,17,19];
+
+TEST { stream2array
+	 stream_take (diff (stream_iota (10),
+			    stream_map func ($x) { $x * 2 }, stream_iota(1)),
+		      10) }
+  [11,13,15,17,19,21,23,25,27,29];
+
+func t_merge ($a1,$a2,$n) {
+    stream2array
+      stream_take (merge (array2stream ($a1),
+			  array2stream ($a2),),
+		   $n);
+}
+
+TEST { t_merge [1,2,99], [3,4,99], 4 }
+  [1,2,3,4];
+
+TEST { t_merge [1,3,99], [3,4,99], 4 }
+  [1,3,4,99]; # not [1,3,3,4]
+
+TEST { t_merge [1,3,99], [2,4,99], 4 }
+  [1,2,3,4];
+
+
+t_primes \&primes;
+
+# Benchmarking:
+# [[times], stream_ref (primes_naive, 1000), [times]] -> 8.84 sec user time
+# [[times], stream_ref (primes, 1000), [times]] -> 1.12 sec user time
+
+
+# ----
+perhaps_run_tests "main" or repl;
