@@ -17,6 +17,7 @@ our @t=
 	csv2xml
 	intro-basics
 	examples-fibs
+	examples-primes
 	csvstreams
    );
 
