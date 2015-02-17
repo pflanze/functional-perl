@@ -130,11 +130,9 @@ func diff ($xs, $ys) {
 }
 
 func primes () {
-    Delay {
-	stream_append (array2list ([2, 3, 5]),
-		       diff (stream_map (func ($x) { $x*2 + 7 }, stream_iota),
-			     nonprimes()))
-    }
+    stream_append (array2list ([2, 3, 5]),
+		   diff (stream_map (func ($x) { $x*2 + 7 }, stream_iota),
+			 nonprimes()))
 }
 
 func nonprimes () {
