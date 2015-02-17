@@ -111,12 +111,22 @@ install from CPAN (run `cpan`, then `install Term::ReadLine::Gnu`.)
 ## Intro
 
 The [intro](intro/) directory contains scripts introducing the
-concepts (work in progress). The scripts are meant to be viewed in
-this order:
+concepts, including the basics of functional programming (work in
+progress). The scripts are meant to be viewed in this order:
 
     basics
     tailcalls
     tailcalls_betterlooks
+
+
+The [examples](examples/) directory contains scripts showing off the
+possibilities.
+
+* `fibs` and `primes` show translations of Haskell programs.
+
+* `gen-csv` and `csv2xml` show how to stream number series into and
+  from CSV files and into XML.
+
 
 ## See also
 
