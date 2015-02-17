@@ -132,21 +132,19 @@ func diff ($xs, $ys) {
 func primes () {
     stream_append (array2list ([2, 3, 5]),
 		   diff (stream_map (func ($x) { $x*2 + 7 }, stream_iota),
-			 nonprimes()))
+			 Delay{nonprimes()} ))
 }
 
 func nonprimes () {
-    Delay {
-	my $f= func ($x_xt, $ys) {
-	    my ($x, $xt)= first_and_rest $x_xt;
-	    cons $x, merge ($xt, $ys)
-	};
-	my $g= func ($p) {
-	    stream_map (func ($n) { $n * $p },
-			stream_map (func ($q) { $p + $q * 2 }, stream_iota));
-	};
-	stream_foldr1 $f, stream_map $g, rest primes
-    }
+    my $f= func ($x_xt, $ys) {
+	my ($x, $xt)= first_and_rest $x_xt;
+	cons $x, merge ($xt, $ys)
+    };
+    my $g= func ($p) {
+	stream_map (func ($n) { $n * $p },
+		    stream_map (func ($q) { $p + $q * 2 }, stream_iota));
+    };
+    stream_foldr1 $f, stream_map $g, rest primes
 }
 
 
