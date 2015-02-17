@@ -192,6 +192,8 @@ t_primes \&primes;
 #      also, the above prints many deep recursion warnings (why exactly?)
 # [[times], stream_ref (primes, 1000), [times]] -> 0.78 sec user time
 
+# [[times], stream_ref (primes, 10000), [times]] -> 17.46 sec user time
+#      (versus ghc compiled code which takes 0.1 sec for the same)
 
 # ------------------------------------------------------------------
 # for the test suite:
