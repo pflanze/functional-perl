@@ -23,11 +23,13 @@ use Chj::FP::Stream ":all";
 use Method::Signatures;
 
 
-# Another Haskell example (see also `fibs`),
-# from https://www.haskell.org/?new :
+# Another translation of (a) Haskell example(s) (see also `fibs`).
+
+# ------------------------------------------------------------------
+# (A) From https://www.haskell.org/?new :
 
 # Note that this is *not* an efficient algorithm to calculate primes;
-# see https://news.ycombinator.com/item?id=9052514 and `primes`
+# see https://news.ycombinator.com/item?id=9052514 and the solution
 # further down in this file.
 
 # primes = sieve [2..]
@@ -71,7 +73,8 @@ t_primes \&primes_naive1;
 t_primes \&primes_naive;
 
 
-# Now let's look at a better algorithm:
+# ------------------------------------------------------------------
+# (B) Now let's use a better algorithm:
 
 # http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell)
 
@@ -151,6 +154,8 @@ func nonprimes () {
 
 # And tests...
 
+# from http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell) :
+
 TEST { stream2array
 	 stream_take (diff (stream_iota (1),
 			    stream_map func ($x) { $x * 2 }, stream_iota(1)),
@@ -162,6 +167,8 @@ TEST { stream2array
 			    stream_map func ($x) { $x * 2 }, stream_iota(1)),
 		      10) }
   [11,13,15,17,19,21,23,25,27,29];
+
+# merge:
 
 func t_merge ($a1,$a2,$n) {
     stream2array
@@ -179,8 +186,10 @@ TEST { t_merge [1,3,99], [3,4,99], 4 }
 TEST { t_merge [1,3,99], [2,4,99], 4 }
   [1,2,3,4];
 
+# and the whole thing:
 
 t_primes \&primes;
+
 
 # Benchmarking:
 # [[times], stream_ref (primes_naive, 1000), [times]] -> 8.86 sec user time
@@ -188,5 +197,6 @@ t_primes \&primes;
 # [[times], stream_ref (primes, 1000), [times]] -> 0.78 sec user time
 
 
-# ----
+# ------------------------------------------------------------------
+# for the test suite:
 perhaps_run_tests "main" or repl;
