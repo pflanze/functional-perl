@@ -62,6 +62,9 @@ our $html=
     STYLE({type=> "text/css"},
 	  '
 .meta {
+  color: #008;
+}
+.position {
   color: blue;
 }
 .add {
@@ -85,7 +88,7 @@ our $html=
 	    ($line=~ /^(diff|index|\+\+\+|---) / ? "meta" :
 	     do {
 		 my $c= substr $line,0,1;
-	         ($c eq '@' ? "meta" :
+	         ($c eq '@' ? "position" :
 		  $c eq '+' ? "add" :
 		  $c eq '-' ? "del" :
 		  $c eq ' ' ? "context" :
