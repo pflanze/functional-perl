@@ -4,10 +4,13 @@ MANIFEST
 README.md
 TODO
 bin/repl
+examples/README.md
 examples/csv2xml
 examples/csv2xml-example.csv
+examples/diff2html
 examples/fibs
 examples/gen-csv
+examples/primes
 examples/template
 ftemplate/README
 ftemplate/TODO
@@ -76,6 +79,7 @@ t/csv2xml
 t/csv2xml.expected
 t/csvstreams
 t/examples-fibs
+t/examples-primes
 t/ftemplate-test
 t/ftemplate-test.expected
 t/intro-basics
