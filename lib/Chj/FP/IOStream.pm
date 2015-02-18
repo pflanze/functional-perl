@@ -32,7 +32,8 @@ careful.)
 package Chj::FP::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(xopendir_stream
+@EXPORT_OK=qw(fh2stream
+	      xopendir_stream
 	      xopendir_pathstream
 	      xfile_lines);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
