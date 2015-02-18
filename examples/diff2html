@@ -1,0 +1,112 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: $myname < file.diff > file-diff.html
+
+  Turn a textual diff as output by `git diff` into HTML format with
+  some coloring.
+
+  Uses streaming and hence works with arbitrarily long inputs.
+";
+    exit (@_ ? 1 : 0);
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage if @ARGV;
+
+
+use Method::Signatures;
+use Chj::FP::Stream ":all";
+use Chj::FP::Lazy ":all";# debug only?
+use Chj::FP::IOStream ":all";
+use Chj::PXML::Serialize qw(puthtmlfile);
+use Chj::PXHTML ":all";
+use Chj::FP::Ops ":all";
+
+
+func glob2fh ($glob) {
+    my $fh= bless (*{$glob}{IO}, "Chj::IO::File");
+    binmode($fh, ":encoding(utf-8)") or die;
+    # ^ TODO: add as a method to Chj::IO::File?`
+    $fh
+}
+
+
+our $lines=
+  fh2stream (glob2fh (*STDIN),
+	     the_method("xreadline_chomp"),
+	     the_method("xclose"));
+
+our $html=
+  HTML
+  (HEAD
+   (TITLE ($myname),
+    META ({'http-equiv'=> "Content-Type",
+	   content=> "text/html;charset=utf-8"}),
+    STYLE({type=> "text/css"},
+	  '
+.meta {
+  color: blue;
+}
+.add {
+  color: green;
+}
+.del {
+  color: red;
+}
+.context {
+  color: black;
+}
+.other {
+  color: orange;
+}
+'),
+    BODY
+    (PRE
+     (stream_map
+      func ($line) {
+	  my $class=
+	    ($line=~ /^(diff|index|\+\+\+|---) / ? "meta" :
+	     do {
+		 my $c= substr $line,0,1;
+	         ($c eq '@' ? "meta" :
+		  $c eq '+' ? "add" :
+		  $c eq '-' ? "del" :
+		  $c eq ' ' ? "context" :
+		  "other")
+	     });
+	  [ SPAN ({class=> $class},
+		  $line),
+	    BR () ]
+      },
+      $lines))));
+
+
+puthtmlfile ("-", $html);
+
+
+# TODO: why have `puthtmlfile` to write to magic "-" file as
+# filehandle, but do glob2fh etc. manipulation?
+
+
+__END__
+use Chj::ruse;
+use Chj::Backtrace;
+use Chj::repl;
+repl;
