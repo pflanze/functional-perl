@@ -15,3 +15,9 @@
   give exceptions types so as to catch them selectively, something
   else?
 
+- decide whether to offer methods to shorten names like stream_*
+  (I'm inclined against it)
+
+- ditch Chj::IO::* for something else? Or invest some more effort into
+  it, e.g. add constructor taking a glob, `set_encoding` method, etc.
+
