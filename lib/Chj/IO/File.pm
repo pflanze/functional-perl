@@ -325,6 +325,11 @@ sub perhaps_set_layer_or_encoding {
     }
 }
 
+sub set_encoding {
+    my $self=shift;
+    my ($encoding)=@_;
+    binmode($self, ":encoding($encoding)") or die;
+}
 
 
 sub read {
