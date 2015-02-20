@@ -39,16 +39,23 @@ use Chj::PXHTML ":all";
 use Chj::FP::Ops ":all";
 
 
-func glob2fh ($glob) {
+sub glob2fh ($;$) {
+    my ($glob, $maybe_layer_or_encoding)=@_;
     my $fh= bless (*{$glob}{IO}, "Chj::IO::File");
-    binmode($fh, ":encoding(utf-8)") or die;
+    if (defined $maybe_layer_or_encoding) {
+	my $layer=
+	  ($maybe_layer_or_encoding=~ /^:/ ?
+	   $maybe_layer_or_encoding :
+	   ":encoding($maybe_layer_or_encoding)");
+	binmode($fh, $layer) or die;
+    }
     # ^ TODO: add as a method to Chj::IO::File?`
     $fh
 }
 
 
 our $lines=
-  fh2stream (glob2fh (*STDIN),
+  fh2stream (glob2fh (*STDIN, "utf-8"),
 	     the_method("xreadline_chomp"),
 	     the_method("xclose"));
 
