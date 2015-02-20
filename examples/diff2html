@@ -61,6 +61,12 @@ our $html=
 	   content=> "text/html;charset=utf-8"}),
     STYLE({type=> "text/css"},
 	  '
+.diff {
+  color: #008;
+  border-top: 1px solid;
+  margin-top: 20px;
+  padding-top: 10px;
+}
 .meta {
   color: #008;
 }
@@ -85,7 +91,8 @@ our $html=
      (stream_map
       func ($line) {
 	  my $class=
-	    ($line=~ /^(diff|index|new|\+\+\+|---) / ? "meta" :
+	    ($line=~ /^diff / ? "diff" :
+	     $line=~ /^(index|new|\+\+\+|---) / ? "meta" :
 	     do {
 		 my $c= substr $line,0,1;
 	         ($c eq '@' ? "position" :
@@ -94,9 +101,8 @@ our $html=
 		  $c eq ' ' ? "context" :
 		  "other")
 	     });
-	  [ SPAN ({class=> $class},
-		  $line),
-	    BR () ]
+	  DIV ({class=> $class},
+	       $line)
       },
       $lines))));
 
