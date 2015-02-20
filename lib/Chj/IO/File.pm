@@ -308,6 +308,25 @@ sub sysopen {
 }
 
 
+sub set_layer_or_encoding {
+    my $self=shift;
+    my ($layer_or_encoding)=@_;
+    my $layer=
+      ($layer_or_encoding=~ /^:/ ? $layer_or_encoding
+       : ":encoding($layer_or_encoding)");
+    binmode($self, $layer) or die;
+}
+
+sub perhaps_set_layer_or_encoding {
+    my $self=shift;
+    my ($maybe_layer_or_encoding)=@_;
+    if (defined $maybe_layer_or_encoding) {
+	$self->set_layer_or_encoding ($maybe_layer_or_encoding);
+    }
+}
+
+
+
 sub read {
     my $self=shift;
     if (@_==2) {	CORE::read $self,$_[0],$_[1] }

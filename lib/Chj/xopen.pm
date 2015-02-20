@@ -87,14 +87,7 @@ use Chj::IO::File;
 sub glob2fh ($;$) {
     my ($glob, $maybe_layer_or_encoding)=@_;
     my $fh= bless (*{$glob}{IO}, "Chj::IO::File");
-    if (defined $maybe_layer_or_encoding) {
-	my $layer=
-	  ($maybe_layer_or_encoding=~ /^:/ ?
-	   $maybe_layer_or_encoding :
-	   ":encoding($maybe_layer_or_encoding)");
-	binmode($fh, $layer) or die;
-    }
-    # ^ TODO: add as a method to Chj::IO::File?`
+    $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);
     $fh
 }
 
