@@ -37,22 +37,7 @@ use Chj::FP::IOStream ":all";
 use Chj::PXML::Serialize qw(puthtmlfile);
 use Chj::PXHTML ":all";
 use Chj::FP::Ops ":all";
-
-
-sub glob2fh ($;$) {
-    my ($glob, $maybe_layer_or_encoding)=@_;
-    my $fh= bless (*{$glob}{IO}, "Chj::IO::File");
-    if (defined $maybe_layer_or_encoding) {
-	my $layer=
-	  ($maybe_layer_or_encoding=~ /^:/ ?
-	   $maybe_layer_or_encoding :
-	   ":encoding($maybe_layer_or_encoding)");
-	binmode($fh, $layer) or die;
-    }
-    # ^ TODO: add as a method to Chj::IO::File?`
-    $fh
-}
-
+use Chj::xopen "glob2fh";
 
 our $lines=
   fh2stream (glob2fh (*STDIN, "utf-8"),

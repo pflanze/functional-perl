@@ -11,11 +11,15 @@ Chj::xopen
 
  use Chj::xopen;
  {
-     my $file= xopen "<foo.txt";
-     while (<$file>) { # default operation. (overload not possible :/)
-	 print;
+     my $in= xopen_read "foo.txt";
+     my $out= glob2fh(*STDOUT,"utf-8");
+     while (<$in>) { # default operation. (overload not possible :/)
+	 $out->xprint($_); # print, throwing an exception on error
      }
- } # $file is closed automatically (issuing a warning on error)
+     $out->xclose; # close explicitely, throwing an exception on error
+ }
+   # $in and $out are closed automatically in any case
+   # (issuing a warning on error)
 
 =head1 DESCRIPTION
 
@@ -71,6 +75,7 @@ require Exporter;
 @EXPORT= qw(xopen);
 @EXPORT_OK= qw(xopen_read xopen_write xopen_append xopen_update
 	       devnull devzero
+	       glob2fh
 	      );
 %EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
 
@@ -78,6 +83,21 @@ use strict;
 use Carp;
 
 use Chj::IO::File;
+
+sub glob2fh ($;$) {
+    my ($glob, $maybe_layer_or_encoding)=@_;
+    my $fh= bless (*{$glob}{IO}, "Chj::IO::File");
+    if (defined $maybe_layer_or_encoding) {
+	my $layer=
+	  ($maybe_layer_or_encoding=~ /^:/ ?
+	   $maybe_layer_or_encoding :
+	   ":encoding($maybe_layer_or_encoding)");
+	binmode($fh, $layer) or die;
+    }
+    # ^ TODO: add as a method to Chj::IO::File?`
+    $fh
+}
+
 
 sub xopen {
     unshift @_,'Chj::IO::File';
