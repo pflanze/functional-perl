@@ -110,9 +110,3 @@ puthtmlfile ("-", $html);
 # TODO: why have `puthtmlfile` to write to magic "-" file as
 # filehandle, but do glob2fh etc. manipulation?
 
-
-__END__
-use Chj::ruse;
-use Chj::Backtrace;
-use Chj::repl;
-repl;
