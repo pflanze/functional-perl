@@ -33,7 +33,6 @@ usage if @ARGV;
 
 use Method::Signatures;
 use Chj::FP::Stream ":all";
-use Chj::FP::Lazy ":all";# debug only?
 use Chj::FP::IOStream ":all";
 use Chj::PXML::Serialize qw(puthtmlfile);
 use Chj::PXHTML ":all";
