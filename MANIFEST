@@ -56,6 +56,7 @@ lib/Chj/PXML/Tags.pm
 lib/Chj/Package/OfPath.pm
 lib/Chj/Struct.pm
 lib/Chj/TEST.pm
+lib/Chj/TerseDumper.pm
 lib/Chj/Unix/Exitcode.pm
 lib/Chj/Unix/Signal.pm
 lib/Chj/Unix/exitcode.pm
