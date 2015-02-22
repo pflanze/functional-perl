@@ -37,6 +37,11 @@ package Chj::noTEST;
 
 use strict; use warnings FATAL => 'uninitialized';
 
+use Chj::TEST ();
+
+*import= *Chj::TEST::import;
+
+
 sub TEST (&$) {
     ()
 }
