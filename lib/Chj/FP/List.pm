@@ -77,11 +77,11 @@ sub _cdr ($) {
     $_[0][1]
 }
 
-use Data::Dumper;
+use Chj::TerseDumper;
 use Carp;
 sub not_a_pair ($) {
     my ($v)= @_;
-    croak "not a pair:".Dumper($v);
+    croak "not a pair: ".TerseDumper($v);
 }
 
 sub car ($) {
