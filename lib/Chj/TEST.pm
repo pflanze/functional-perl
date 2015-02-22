@@ -10,6 +10,12 @@ Chj::TEST
 =head1 SYNOPSIS
 
  use Chj::TEST;
+ # or
+ use Chj::TEST use=> 'Method::Signatures', use=> ['Foo::Bar', qw(bar baz)],
+     require=> 'CGI';
+ # ^ this will use or require the indicated modules, and if RUN_TESTS
+ # is set and they fail, will gracefully fail with a SKIP testing message
+ # (if RUN_TESTS is not set, it will die as normally).
 
  TEST { 1+1 } 2; # success
  TEST { 1+1 } "2"; # fails,
@@ -46,6 +52,62 @@ package Chj::TEST;
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
+
+use Carp;
+use Chj::singlequote;
+
+# remove 'use' and 'require' arguments from import list, run them,
+# then delegate to Exporter
+
+
+sub import {
+    my $class=shift;
+    my ($package, $filename, $line)= caller;
+    my @args;
+    for (my $i=0; $i < @_; $i++) {
+	my $v= $_[$i];
+	if ($v eq "use" or $v eq "require") {
+	    my $val= $_[$i+1];
+	    defined $val
+	      or croak "undef given as 'require' parameter";
+	    my ($module,@args)= do {
+		if (ref($val) eq "ARRAY") {
+		    @$val
+		} elsif (length $val) {
+		    ($val)
+		} else {
+		    croak "value given as 'require' parameter must be a string or array";
+		}
+	    };
+	    my $smallcode=
+	      ("$v $module "
+	       .join(",", map {singlequote $_} @args));
+	    $filename=~ /[\r\n]/
+	      and die "possible security issue"; # XXX: how to do it fully right?
+	    my $code= "#line $line $filename\npackage $package; $smallcode; 1";
+	    if (eval $code) {
+		# ok
+	    } else {
+		if ($ENV{RUN_TESTS}) {
+		    #carp "RUN_TESTS is set and we failed to $smallcode";
+		    require Test::More;
+		    Test::More::plan (skip_all=> "failed to $smallcode");
+		    exit 1; # necessary?
+		} else {
+		    die $@
+		}
+	    }
+	    $i++;
+	} else {
+	    push @args, $v
+	}
+    }
+    my $sub= $class->can("SUPER::import")
+      or die;
+    @_=($class, @args); goto $sub;
+}
+
+
 
 use Chj::xIO 'capture_stdout_';
 

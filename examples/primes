@@ -15,12 +15,11 @@ use lib "$mydir/../lib";
 use Chj::Backtrace;
 use Chj::repl;
 
-use Chj::TEST;
+use Chj::TEST use=> 'Method::Signatures';
 use Chj::FP::List ":all";
 use Chj::FP::Ops ":all";
 use Chj::FP::Lazy ":all";
 use Chj::FP::Stream ":all";
-use Method::Signatures;
 
 
 # Another translation of (a) Haskell example(s) (see also `fibs`).
