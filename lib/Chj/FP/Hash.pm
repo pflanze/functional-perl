@@ -9,7 +9,23 @@ Chj::FP::Hash
 
 =head1 SYNOPSIS
 
+ use Chj::FP::Hash;
+
+ my $a= {a=>1, b=>2};
+ my $b= hash_set($a, "b", 3);
+ my $c= hash_delete($b, "a");
+
+ print Dumper($c); # {b => 3}
+ print Dumper($a); # {a => 1, b => 2}
+
 =head1 DESCRIPTION
+
+Provides pure functions on hash tables. Note though that hash table
+updates simply copy the whole hash table, thus you might be buying
+into bad computational complexity. (If you really care about that, and
+not so much about interoperability with other Perl code, perhaps port
+a functional hash tables implementation (like the one propagated by
+Clojure)?)
 
 
 =cut
