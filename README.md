@@ -112,16 +112,6 @@ systems. There are two different remedies for this:
     "Leak potential" apply.
 
 
-## Installation
-
-For simplicity during development there is no installer support,
-instead the bundled scripts modify the library load path to find the
-files locally.
-
-To use `bin/repl` interactively, `Term::ReadLine::Gnu` is
-necessary. On Debian systems, install `libterm-readline-gnu-perl`, or
-install from CPAN (run `cpan`, then `install Term::ReadLine::Gnu`.)
-
 ## Intro
 
 The [intro](intro/) directory contains scripts introducing the
@@ -134,6 +124,17 @@ progress). The scripts are meant to be viewed in this order:
 
 The [examples](examples/) directory contains scripts showing off the
 possibilities.
+
+
+## Installation
+
+For simplicity during development there is no installer support,
+instead the bundled scripts modify the library load path to find the
+files locally.
+
+To use `bin/repl` interactively, `Term::ReadLine::Gnu` is
+necessary. On Debian systems, install `libterm-readline-gnu-perl`, or
+install from CPAN (run `cpan`, then `install Term::ReadLine::Gnu`.)
 
 
 ## See also
