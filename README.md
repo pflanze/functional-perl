@@ -40,11 +40,6 @@ suggestions!
   of [chj-perllib](https://github.com/pflanze/chj-perllib))
 
 
-## Real-world use
-
-For a real program using these modules, see
-[ml2json](http://ml2json.christianjaeger.ch).
-
 ## Functional programming in Perl 5
 
 We feel that the Scheme language approaches functional programming
@@ -142,6 +137,9 @@ possibilities.
 
 
 ## See also
+
+* For a real program using these modules, see
+  [ml2json](http://ml2json.christianjaeger.ch).
 
 * A [post](https://news.ycombinator.com/item?id=8734719) about streams
   in Scheme mentioning the memory retention issues that even some
