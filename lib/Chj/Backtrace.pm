@@ -10,6 +10,9 @@ Chj::Backtrace
 
 =head1 SYNOPSIS
 
+Add backtrace to all string based exceptions (those thrown by die
+"somestring").
+
 =head1 DESCRIPTION
 
 
