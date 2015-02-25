@@ -1,4 +1,4 @@
-# Libraries for functional programming in Perl 5
+# Library for functional programming in Perl 5
 
 This is a work in progress to prepare (maybe improve/adapt) existing
 modules for release to CPAN, as either one or multiple packages.
@@ -7,18 +7,37 @@ suggestions!
 
 ## Parts
 
-* `lib/Chj/FP/`: modules for functional programming (general)
+* [Chj::Struct](lib/Chj/Struct.pm): a class generator that creates
+  functional setters and takes predicate functions for type checking
 
-* `lib/Chj/PXML*/*`, `lib/Chj/PXHTML.pm`: "templating system" for XML
-  and HTML by way of Perl functions
+* [lib/Chj/FP/](lib/Chj/FP/): library of pure functions and
+  functional data structures
 
-* `ftemplate`: docs and tests for the Chj::PXML and Chj::PXHTML
-  classes
+* [Chj::PXML](lib/Chj/PXML.pm),
+  [Chj::PXHTML](lib/Chj/PXHTML.pm),
+  [Chj::PHTML5](lib/Chj/PHTML5.pm),
+  [Chj::PSVG](lib/Chj/PSVG.pm),
+  [Chj::PXML::Tags](lib/Chj/PXML/Tags.pm),
+  [Chj::PXML::Serialize](lib/Chj/PXML/Serialize.pm):
+  "templating system" for XML based markup languages by way of Perl
+  functions. Docs and tests are in [ftemplate/](ftemplate/).
 
-* some utilities: `Chj::repl`, `Chj::ruse`, `Chj::Backtrace`
+* some developer utilities: [Chj::repl](lib/Chj/repl.pm),
+  [Chj::ruse](lib/Chj/ruse.pm), [Chj::Backtrace](lib/Chj/Backtrace.pm)
 
-* modules that are used by the above; originally part of
-  [chj-perllib](https://github.com/pflanze/chj-perllib).
+* [lib/Chj/IO/](lib/Chj/IO/), and its users/wrappers
+  [Chj::xopen](lib/Chj/xopen.pm),
+  [Chj::xopendir](lib/Chj/xopendir.pm),
+  [Chj::xoutpipe](lib/Chj/xoutpipe.pm),
+  [Chj::xpipe](lib/Chj/xpipe.pm),
+  [Chj::xtmpfile](lib/Chj/xtmpfile.pm):
+  operations on filehandles that throw exceptions on errors, plus
+  many utilities.
+  Should probably be dropped in favor of something else, suggestions
+  welcome.
+
+* a few more modules that are used by the above (some originally part
+  of [chj-perllib](https://github.com/pflanze/chj-perllib))
 
 
 ## Real-world use
