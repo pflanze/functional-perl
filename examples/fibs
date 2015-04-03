@@ -56,4 +56,79 @@ TEST { stream2array stream_take Keep($fibs), 10 }
 TEST { fib 30 }
   1346269;
 
+
+# ------------------------------------------------------------------
+
+# Alright, so there are not only the stupidly slow naive recursive and
+# the above widespread O(n) algorithm, but also better ones:
+
+# http://www.nayuki.io/page/fast-fibonacci-algorithms
+
+# Thus if we wanted something really fast, let's diverge from standard
+# examples and instead implement the following (we're adding this for
+# completeness and some perspective on the topic of performance, not
+# as a demo of functional-perl):
+
+# http://www.nayuki.io/res/fast-fibonacci-algorithms/fastfibonacci.hs
+
+sub _fib {
+    my ($n)=@_;
+    ($n == 0) ? (0, 1)
+      : do {
+	  my ($a,$b)= _fib(int $n / 2);
+	  my $c= $a * ($b * 2 - $a);
+	  my $d= $a * $a + $b * $b;
+	  ($n % 2) == 0 ? ($c, $d)
+	    : ($d, $c + $d)
+	};
+}
+
+sub fibonacci {
+    my ($n)=@_;
+    ($n >= 0) ? (_fib $n + 1)[0] : die "n < 0";
+}
+
+TEST { fibonacci 30 }
+  1346269;
+
+
+# With bigger inputs:
+
+# we're not using a bignum library, thus we're restricted by Perl's
+# floating point range and precision.
+
+sub timeit (&$) {
+    my ($thunk,$msg)=@_;
+    my $a= [times];
+    my $res= &$thunk;
+    my $b= [times];
+    my $m= [qw(user system cuser csystem)];
+    my $d= [map { $$m[$_]."=".($$b[$_] - $$a[$_]) } 0..$#$a ];
+    warn "times for $msg: ".join(", ",@$d)."\n";
+    $res
+}
+
+my $a= Delay{timeit{ fib (1400) } "fib"};
+my $b= Delay{timeit{ fibonacci (1400) } "fibonacci"};
+
+TEST {
+    # Hack: stringify to drop invisible but different digits
+    Force($a).""
+}
+  "2.7682097123729e+292";
+
+TEST {
+    # same hack
+    Force($a)."" == Force($b).""
+}
+  1;
+
+TEST {
+    my ($a,$b)= (Force($a), Force($b));
+    # same as above but more properly:
+    abs(($a - $b) / $b) < 1e-14
+}
+  1;
+
+
 perhaps_run_tests "main" or repl;
