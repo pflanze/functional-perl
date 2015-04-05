@@ -64,12 +64,13 @@ TEST { fib 30 }
 
 # http://www.nayuki.io/page/fast-fibonacci-algorithms
 
-# Thus if we wanted something really fast, let's diverge from standard
-# examples and instead implement the following (we're adding this for
-# completeness and some perspective on the topic of performance, not
-# as a demo of functional-perl):
+# Thus if we wanted something really fast, we'd diverge from standard
+# examples and instead implement the following:
 
 # http://www.nayuki.io/res/fast-fibonacci-algorithms/fastfibonacci.hs
+
+# (we're adding this for completeness and some perspective on the
+# topic of performance, not as a demo of functional-perl)
 
 sub _fib {
     my ($n)=@_;
@@ -83,9 +84,14 @@ sub _fib {
 	};
 }
 
+sub _fibonacci {
+    my ($n)=@_;
+    ($n >= 0) ? (_fib $n)[0] : die "n < 0";
+}
+
 sub fibonacci {
     my ($n)=@_;
-    ($n >= 0) ? (_fib $n + 1)[0] : die "n < 0";
+    _fibonacci $n + 1
 }
 
 TEST { fibonacci 30 }
