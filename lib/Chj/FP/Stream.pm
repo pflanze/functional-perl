@@ -87,7 +87,9 @@ sub Keep ($) {
 # value as result
 sub Weakened ($) {
     my ($ref)= @_;
-    weaken $_[0];
+    weaken $_[0]
+      # except code references, XXX Perl bug?
+      unless ref($ref) eq "CODE" and $^V->{version}[1] > 14;
     $ref
 }
 
@@ -107,8 +109,8 @@ sub stream_iota {
 		}
 	    }
 	};
-	my $_rec= $rec;
-	weaken $rec;
+	# sigh, perl doesn't accept `goto Weakened($rec)`
+	my $_rec= Weakened $rec;
 	@_=($start); goto $_rec;
     } else {
 	my $rec; $rec= sub {
@@ -117,8 +119,7 @@ sub stream_iota {
 		cons ($i, &$rec($i+1))
 	    }
 	};
-	my $_rec= $rec;
-	weaken $rec;
+	my $_rec= Weakened $rec;
 	@_=($start); goto $_rec;
     }
 }
@@ -296,8 +297,7 @@ sub make_stream__fold_right {
 		}
 	    }
 	};
-	my $rec_= $rec;
-	weaken $rec;
+	my $rec_= Weakened $rec;
 	&$rec_($start)
     }
 }
@@ -466,7 +466,6 @@ sub stream_slice ($ $) {
 	    }
 	}
     };
-    # sigh, perl doesn't accept `goto Weakened($rec)`
     my $rec2= Weakened($rec);
     @_=($start); goto $rec2
 }
