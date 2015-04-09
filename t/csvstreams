@@ -4,11 +4,15 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use Test::More tests=> 2;
 
-require "./testmem.pl";
-setlimit_mem_MB (24); # 14 is enough on 32bit Debian, 64bit will need more
+SKIP: {
+    skip "don't have Method::Signatures", 2
+      unless eval { require Method::Signatures };
 
-is system ("examples/gen-csv t/test-a.csv 40000"), 0;
-# 20000 pass on 32bit Debian even with bug
+    require "./testmem.pl";
+    setlimit_mem_MB (24); # 14 is enough on 32bit Debian, 64bit will need more
 
-is system ("examples/csv2xml t/test-a.csv -o t/test-a.xml"), 0;
+    is system ("examples/gen-csv t/test-a.csv 40000"), 0;
+    # 20000 pass on 32bit Debian even with bug
 
+    is system ("examples/csv2xml t/test-a.csv -o t/test-a.xml"), 0;
+}
