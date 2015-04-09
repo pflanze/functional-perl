@@ -44,9 +44,8 @@ use strict; use warnings FATAL => 'uninitialized';
 use Chj::FP::Lazy;
 use Chj::xopendir;
 use Chj::FP::List ':all';
-use Chj::FP::Stream 'stream_map', 'array2stream';
+use Chj::FP::Stream 'stream_map', 'array2stream', 'Weakened';
 use Chj::FP::Array_sort;
-use Scalar::Util 'weaken';
 use Chj::FP::Ops 'the_method';
 
 sub _xopendir_stream ($) {
@@ -62,8 +61,7 @@ sub _xopendir_stream ($) {
 	    }
 	}
     };
-    my $_next=$next; weaken $next;
-    &$_next
+    &{Weakened $next}
 }
 
 sub _xopendir_stream_sorted ($$) {
@@ -105,8 +103,7 @@ sub fh2stream ($$$) {
 	    }
 	}
     };
-    my $_next=$next; weaken $next;
-    &$_next
+    &{Weakened $next}
 }
 
 # And (all?, no, can't proxy 'xopen' for both in and out) some of the

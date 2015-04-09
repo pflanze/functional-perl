@@ -67,7 +67,7 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::FP::List ":all";
 use Chj::FP::Lazy ":all";
-use Scalar::Util 'weaken';
+use Chj::FP::Stream 'Weakened';
 use Text::CSV;
 use Chj::FP::HashSet 'hashset_union';
 use Chj::xopen 'xopen_read';
@@ -116,8 +116,7 @@ sub fh2csvstream ($;$) {
 	    }
 	}
     };
-    my $_next=$next; weaken $next;
-    &$_next
+    &{Weakened $next}
 }
 
 sub xopen_csv_stream ($;$) {
