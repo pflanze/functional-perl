@@ -43,11 +43,13 @@ use Data::Dumper;
 
 sub equal ($$) {
     my ($a,$b)=@_;
+    local $Data::Dumper::Sortkeys=1;
     Dumper($a) eq Dumper($b)
 }
 
 sub equal_utf8 ($$) {
     my ($a,$b)=@_;
+    local $Data::Dumper::Sortkeys=1;
     # compare ignoring utf8 flags on strings
     local $Data::Dumper::Useperl = 1;
     Dumper($a) eq Dumper($b)
