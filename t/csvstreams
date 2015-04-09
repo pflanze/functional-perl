@@ -7,7 +7,7 @@ our $ready; BEGIN { $ready= eval { require Method::Signatures; 1 } };
 use Test::More $ready ? (tests=> 2) : (skip_all=> "don't have Method::Signatures");
 
 require "./testmem.pl";
-setlimit_mem_MB (24); # 14 is enough on 32bit Debian, 64bit will need more
+setlimit_mem_MB (80); # 14 is enough on 32bit Debian, 64bit will need more
 
 is system ("examples/gen-csv t/test-a.csv 40000"), 0;
 # 20000 pass on 32bit Debian even with bug
