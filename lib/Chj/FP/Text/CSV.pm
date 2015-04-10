@@ -67,7 +67,7 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::FP::List ":all";
 use Chj::FP::Lazy ":all";
-use Chj::FP::Stream 'Weakened';
+use Chj::FP::Stream 'Weakened', 'weaken';
 use Text::CSV;
 use Chj::FP::HashSet 'hashset_union';
 use Chj::xopen 'xopen_read';
