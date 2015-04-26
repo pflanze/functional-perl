@@ -133,9 +133,4 @@ sub xfile_lines ($);
 		   the_method ("xreadline"));
 
 
-# XX these can be optimized (shortcutted instead of wrapped):
-
-#sub devnull
-#sub devzero
-
 1
