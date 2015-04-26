@@ -35,7 +35,8 @@ package Chj::FP::IOStream;
 @EXPORT_OK=qw(fh2stream
 	      xopendir_stream
 	      xopendir_pathstream
-	      xfile_lines);
+	      xfile_lines
+	      fh2chunks);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -131,6 +132,24 @@ sub xfile_lines ($);
 *xfile_lines=
   make_open_stream(\&xopen_read,
 		   the_method ("xreadline"));
+
+
+
+# read filehandle in chunks, although the chunk size, even of the
+# chunks before the last one, is only guaranteed to be non-zero, not
+# bufiz (since only xsysreadcompletely would guarantee to fill size,
+# but would die on mid-chunk EOF)
+
+sub fh2chunks ($$) {
+    my ($fh,$bufsiz)= @_;
+    fh2stream ($fh,
+	       sub {
+		   my $buf;
+		   my $n= $fh->xsysread($buf, $bufsiz);
+		   $n == 0 ? undef : $buf
+	       },
+	       the_method("xclose"));
+}
 
 
 1
