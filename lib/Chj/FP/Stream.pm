@@ -39,6 +39,7 @@ package Chj::FP::Stream;
 	      stream_map
 	      stream_map_with_tail
 	      stream_filter
+	      stream_fold
 	      stream_foldr1
 	      stream_fold_right
 	      stream__array_fold_right
@@ -131,6 +132,25 @@ sub stream_length ($) {
     }
     $len
 }
+
+# left fold, sometimes called `foldl` or `reduce`
+sub stream_fold ($$$) {
+    my ($fn,$start,$l)=@_;
+    weaken $_[2];
+    my $v;
+  LP: {
+	$l= Force $l;
+	if (pairP $l) {
+	    ($v,$l)= first_and_rest $l;
+	    $start= &$fn ($start, $v);
+	    redo LP;
+	}
+    }
+    $start
+}
+
+TEST{ stream_fold sub { $_[0] + $_[1] }, 5, stream_iota (10,2) }
+  5+10+11;
 
 sub stream_append ($$) {
     my ($l1,$l2)=@_;
