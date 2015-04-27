@@ -37,7 +37,15 @@ package Chj::FP::List;
 	      list_zip2
 	      list_every list_any
 	      charlistP ldie
-	      array_fold_right);
+	      array_fold_right
+	      cddr
+	      cdddr
+	      cddddr
+	      cadr
+	      caddr
+	      cadddr
+	      caddddr
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -109,6 +117,15 @@ sub cdr ($) {
 }
 
 sub rest ($); *rest= *cdr;
+
+sub cddr ($) { cdr cdr $_[0] }
+sub cdddr ($) { cdr cdr cdr $_[0] }
+sub cddddr ($) { cdr cdr cdr cdr $_[0] }
+
+sub cadr ($) { car cdr $_[0] }
+sub caddr ($) { car cdr cdr $_[0] }
+sub cadddr ($) { car cdr cdr cdr $_[0] }
+sub caddddr ($) { car cdr cdr cdr cdr $_[0] }
 
 
 sub Pair::car_and_cdr {
