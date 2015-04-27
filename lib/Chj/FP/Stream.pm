@@ -53,6 +53,7 @@ package Chj::FP::Stream;
 	      stream_drop
 	      stream_take
 	      stream_take_while
+	      stream_slice
 	      stream_drop_while
 	      stream_ref
 	      stream_zip2
@@ -442,6 +443,33 @@ sub stream_take_while ($ $) {
     }
 }
 
+sub stream_slice ($ $);
+sub stream_slice ($ $) {
+    my ($start,$end)=@_;
+    weaken $_[0];
+    weaken $_[1];
+    $end= Force $end;
+    my $rec; $rec= sub {
+	my ($s)=@_;
+	weaken $_[0];
+	Delay {
+	    $s= Force $s;
+	    if (nullP $s) {
+		$s # null
+	    } else {
+		if ($s eq $end) {
+		    null
+		} else {
+		    cons car($s), &$rec(cdr $s)
+		}
+	    }
+	}
+    };
+    # sigh, perl doesn't accept `goto Weakened($rec)`
+    my $rec2= Weakened($rec);
+    @_=($start); goto $rec2
+}
+
 sub stream_drop_while ($ $) {
     my ($pred,$s)=@_;
     weaken $_[1];
@@ -647,5 +675,14 @@ TEST { stream2string subarray2stream_reverse  [split //, "Hello"], 1 }
 
 TEST { stream2string subarray2stream_reverse  [split //, "Hello"], 1, 0 }
   'e'; # dito. BTW it's consistent at least, $start not being 'after the element'(?) either.
+
+TEST { my $s= stream_iota; stream2array stream_slice $s, $s }
+  # XX: warns about "Reference is already weak"
+  [];
+TEST { my $s= stream_iota; stream2array stream_slice $s, cdr $s }
+  [ 0 ];
+TEST { my $s= stream_iota; stream2array stream_slice cdr $s, cdddr $s }
+  [ 1, 2 ];
+
 
 1
