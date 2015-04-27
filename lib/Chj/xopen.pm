@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2014 by Christian Jaeger ch@christianjaeger.ch
+# Copyright (c) 2003-2015 by Christian Jaeger ch@christianjaeger.ch
 # Published under the same terms as perl itself.
 #
 
@@ -66,8 +66,6 @@ L<Chj::IO::File>, L<Chj::xsysopen>, L<Chj::xopendir>
 
 =cut
 
-
-# '
 
 package Chj::xopen;
 @ISA='Exporter';
