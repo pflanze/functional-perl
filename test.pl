@@ -10,8 +10,11 @@ sub readin {
     if (defined $len) {
 	$rv == $len or die "only got $rv bytes instead of $len";
     }
-    close $in; # or die $!;
-    $buf
+    close $in ? $buf
+      : do {
+	  warn "$what: $! exit value: $?";
+	  undef
+      }
 }
 
 1
