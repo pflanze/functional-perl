@@ -6,6 +6,9 @@ require "./test.pl";
 
 use Test::More; # tests=> 6*3;
 
+# test non-seekable input
+is readin("echo -n hallo| examples/skip 1 1|"), "all";
+
 sub t {
     my ($bufsiz)=@_;
     is readin ("examples/skip --bufsiz $bufsiz  1 0 < t/skip.input|"), "ello World.";

@@ -35,6 +35,7 @@ use Chj::FP::IOStream 'fh2chunks';
 use Chj::FP::Stream ":all";
 use Chj::FP::List ":all";
 use Chj::FP::Lazy ":all";
+use POSIX 'ESPIPE';
 
 # ---- sliding buffer ----------------------------------------
 
@@ -103,15 +104,9 @@ our $in= glob2fh *STDIN;
 our $out= glob2fh *STDOUT;
 
 if ($n) {
-    eval {
-	$in->xseek($n);
-	1
-    } || do {
-	my $e= $@;
-	if ("$e"=~ m/^xseek on /) {
-	    # (^ XX Chj::IO::File should offer seek instead of having
-	    # to use xseek that way.)
-
+    $in->seek($n) || do {
+	if ($! == ESPIPE) {
+	    # non-seekable device
 	    my $nbufs= int ($n / $BUFSIZ);
 	    my $nrest= $n % $BUFSIZ;
 	    my $buf;
@@ -120,7 +115,7 @@ if ($n) {
 	    }
 	    $in->xsysreadcompletely($buf, $nrest);
 	} else {
-	    die $e
+	    die "seek: $!";
 	}
     };
 }
