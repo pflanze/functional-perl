@@ -64,8 +64,6 @@ sub slideprint {
 	$rest= Force $rest;
 	my $first= car $start;
 	my $lenfirst= length $first;
-	warn "windowsize= $windowsize, minsize=$minsize, lenfirst=$lenfirst;\n".
-	  stream_show stream_slice Keep($start), Keep($rest);
 	my $reserve= $windowsize - $minsize;
 	if ($lenfirst <= $reserve) {
 	    $out->xprint($first);
@@ -75,8 +73,6 @@ sub slideprint {
 	    redo STEP;
 	} else {
 	    if (nullP $rest) {
-		warn "EOF, windowsize=$windowsize;\n".
-		  stream_show $start;
 		($start, $windowsize)
 	    } else {
 		$windowsize= $windowsize + length car $rest;
@@ -142,13 +138,6 @@ if ($maybe_m) {
     } else {
 	my ($rest, $remainingsize)=
 	  slideprint ($chunks, $out, $maybe_m);
-	my $BLA= stream_fold (sub {
-				  my ($v,$res)=@_;
-				  $v.$res
-			      },
-			      "",
-			      Keep($rest));
-	warn "got: $remainingsize, '$BLA'";
 	my $last= car $rest;
 	$out->xprint(substr $last, 0, $remainingsize - $maybe_m);
     }
