@@ -115,6 +115,8 @@ if ($n) {
 		$in->xsysreadcompletely($buf, $BUFSIZ);
 	    }
 	    $in->xsysreadcompletely($buf, $nrest);
+	    # XX: seek does not complain when file is too short; this
+	    # does. This is inconsistent.
 	} else {
 	    die "seek: $!";
 	}
