@@ -1,5 +1,5 @@
 #
-# Copyright 2013 by Christian Jaeger, ch at christianjaeger ch
+# Copyright 2013-2015 by Christian Jaeger, ch at christianjaeger ch
 # Published under the same terms as perl itself
 #
 
@@ -9,8 +9,44 @@ Chj::FP::Lazy
 
 =head1 SYNOPSIS
 
+ use Chj::FP::Lazy;
+
+ my $a = Delay { 1 / 0 };
+ print Force $a # -> Illegal division by zero
+
+ my $b = Delay { warn "evaluation happening"; 1 / 2 };
+ print promiseP $b ? "promise" : "non-promise", "\n"; # -> "promise"
+ print Force ($b), "\n"; # shows the warning, and "0.5"
+ # $b is still a promise at this poing (although an evaluated one):
+ print promiseP $b ? "promise" : "non-promise", "\n"; # -> "promise"
+
+ # The following stores result of `Force $b` back into $b
+ FORCE $b; # does not show the warning anymore as evaluation happened already
+ print promiseP $b ? "promise" : "non-promise", "\n"; # -> "non-promise"
+ print $b, "\n"; # -> "0.5"
+
 =head1 DESCRIPTION
 
+This implements promises, a data type that represents an unevaluated
+or evaluated computation. The computation represented by a promise is
+only ever evaluated once, after which point its result is saved in the
+promise, and subsequent requests for evaluation are simply returning
+the saved value.
+
+ $p = Delay { ...... } # returns a promise that represents the computation
+                       # given in the block of code
+
+ Force $p  # runs the block of code and stores and returns its result
+
+ FORCE $p  # in addition to running Force, stores back the resulting
+           # value into $p
+
+ promiseP $x # returns true iff $x holds a promise
+
+
+=head1 SEE ALSO
+
+https://en.wikipedia.org/wiki/Futures_and_promises
 
 =cut
 
