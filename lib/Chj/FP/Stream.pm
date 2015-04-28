@@ -63,7 +63,7 @@ package Chj::FP::Stream;
 	      stream_mixed_flatten
 	      stream_any
 	 );
-@EXPORT_OK=qw(F);
+@EXPORT_OK=qw(F weaken);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
