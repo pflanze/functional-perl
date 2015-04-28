@@ -410,7 +410,7 @@ sub xsysreadcompletely {
 			# nothing was read
 			0
 		    } else {
-			croak "xsysreadcompletely: got EOF mid message";
+			croak "xsysreadcompletely: unexpected EOF";
 		    }
 		} else {
 		    redo LP;
