@@ -108,6 +108,8 @@ if ($n) {
 	    # non-seekable device
 	    my $nbufs= int ($n / $BUFSIZ);
 	    my $nrest= $n % $BUFSIZ;
+	    $nbufs * $BUFSIZ + $nrest == $n
+		or die "hum, Perl can't calculate?";
 	    my $buf;
 	    for (1..$nbufs) {
 		$in->xsysreadcompletely($buf, $BUFSIZ);
