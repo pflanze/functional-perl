@@ -7,5 +7,11 @@ require "./test.pl";
 
 use Test::More tests=> 1;
 
-is readin ("ftemplate/testlazy|"), readin ("< t/testlazy.expected");
+use POSIX 'SIGPIPE';
+our $sigpipe_is_fine= sub {
+    my ($buf, $default_on_error)= @_;
+    $? == SIGPIPE ? $buf : &$default_on_error();
+};
+
+is readin ("ftemplate/testlazy|", $sigpipe_is_fine), readin ("< t/testlazy.expected");
 
