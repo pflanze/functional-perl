@@ -17,7 +17,7 @@ Chj::FP::Lazy
 
 package Chj::FP::Lazy;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(Delay DelayLight Force promiseP);
+@EXPORT=qw(Delay DelayLight Force FORCE promiseP);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -60,6 +60,12 @@ sub Force ($;$) {
 	} else {
 	    $perhaps_promise
 	}
+    }
+}
+
+sub FORCE {
+    for (@_) {
+	$_ = Force $_
     }
 }
 
