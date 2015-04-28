@@ -18,6 +18,7 @@ our @t=
 	intro-basics
 	examples-fibs
 	examples-primes
+	skip
 	csvstreams
    );
 

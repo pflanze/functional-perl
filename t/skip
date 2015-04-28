@@ -1,0 +1,23 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+require "./test.pl";
+
+use Test::More; # tests=> 6*3;
+
+sub t {
+    my ($bufsiz)=@_;
+    is readin ("examples/skip --bufsiz $bufsiz  1 0 < t/skip.input|"), "ello World.";
+    is readin ("examples/skip --bufsiz $bufsiz  0 1 < t/skip.input|"), "Hello World";
+    is readin ("examples/skip --bufsiz $bufsiz  4 5 < t/skip.input|"), "o W";
+    is readin ("examples/skip --bufsiz $bufsiz  10 1 < t/skip.input|"), "d";
+    is readin ("examples/skip --bufsiz $bufsiz  11 1 < t/skip.input|"), "";
+    is readin ("examples/skip --bufsiz $bufsiz  12 1 < t/skip.input|"), "";
+}
+
+t 1024;
+t 1;
+t 3;
+
+done_testing;
