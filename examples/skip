@@ -43,13 +43,6 @@ use Chj::FP::Lazy ":all";
 # still buffered). Use a lazy list of chunks as the window. Upon
 # hitting EOF, return the remaining window and its size.
 
-sub stream_show ($) {
-    my ($s)=@_;
-    join("",
-	 map { "  '$_'\n" }
-	 @{ stream2array $s } )
-}
-
 sub slideprint {
     my ($chunks, $out, $minsize)=@_;
     weaken $_[0];

@@ -62,6 +62,7 @@ package Chj::FP::Stream;
 	      stream2array
 	      stream_mixed_flatten
 	      stream_any
+	      stream_show
 	 );
 @EXPORT_OK=qw(F weaken);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -559,6 +560,17 @@ sub stream_any ($ $) {
 	die "improper list"
     }
 }
+
+# (meant as a debugging tool: turn stream to string)
+sub stream_show ($) {
+    my ($s)=@_;
+    join("",
+	 map { "  '$_'\n" }
+	 @{ stream2array $s } )
+}
+
+
+# ----- Tests ----------------------------------------------------------
 
 TEST{ stream_any sub { $_[0] % 2 }, array2stream [2,4,8] }
   0;
