@@ -1,0 +1,161 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+
+our $BUFSIZ= 1024*16;
+
+sub usage {
+    print STDERR map{"$_\n"} @_ if @_;
+    print "$myname n [m]
+
+  Skip n bytes of input, output the rest. If m is given, don't output
+  the last m bytes.
+
+   --bufsize n   use n instead of default $BUFSIZ as buffer size
+
+";
+exit @_ ? 1 : 0;
+}
+
+use Getopt::Long;
+use Chj::FP::Predicates 'natural0P';
+use Chj::xopen 'glob2fh';
+use Chj::FP::IOStream 'fh2chunks';
+use Chj::FP::Stream ":all";
+use Chj::FP::List ":all";
+use Chj::FP::Lazy ":all";
+
+# ---- sliding buffer ----------------------------------------
+
+# Handle a sliding buffer window to make sure we don't output the
+# input too soon (so that when we hit EOF, we've got at least m bytes
+# still buffered). Use a lazy list of chunks as the window. Upon
+# hitting EOF, return the remaining window and its size.
+
+sub stream_show ($) {
+    my ($s)=@_;
+    join("",
+	 map { "  '$_'\n" }
+	 @{ stream2array $s } )
+}
+
+sub slideprint {
+    my ($chunks, $out, $minsize)=@_;
+
+    nullP Force $chunks
+      and die "got empty input";
+
+    # start and rest are parts of the same stream of chunks,
+    # windowsize is the number of bytes between them
+    my ($start, $rest, $windowsize)= ($chunks, $chunks, 0);
+  STEP: {
+	$start= Force $start;
+	$rest= Force $rest;
+	my $first= car $start;
+	my $lenfirst= length $first;
+	warn "windowsize= $windowsize, minsize=$minsize, lenfirst=$lenfirst;\n".
+	  stream_show stream_slice Keep($start), Keep($rest);
+	my $reserve= $windowsize - $minsize;
+	if ($lenfirst <= $reserve) {
+	    $out->xprint($first);
+
+	    $start= cdr $start;
+	    $windowsize= $windowsize - $lenfirst;
+	    redo STEP;
+	} else {
+	    if (nullP $rest) {
+		warn "EOF, windowsize=$windowsize;\n".
+		  stream_show $start;
+		($start, $windowsize)
+	    } else {
+		$windowsize= $windowsize + length car $rest;
+		$rest= cdr $rest;
+		redo STEP;
+	    }
+	}
+    }
+}
+
+# ------------------------------------------------------------
+
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   "bufsize=n"=> \$BUFSIZ,
+	   ) or exit 1;
+
+usage unless (@ARGV==1 or @ARGV==2);
+
+our ($n, $maybe_m)= @ARGV;
+
+natural0P $n
+  or usage "n must be a non-negative integer";
+
+if (defined $maybe_m) {
+    natural0P $maybe_m
+      or usage "m must be a non-negative integer";
+}
+
+
+our $in= glob2fh *STDIN;
+our $out= glob2fh *STDOUT;
+
+if ($n) {
+    eval {
+	$in->xseek($n);
+	1
+    } || do {
+	my $e= $@;
+	if ("$e"=~ m/^xseek on /) {
+	    # (^ XX Chj::IO::File should offer seek instead of having
+	    # to use xseek that way.)
+
+	    my $nbufs= int ($n / $BUFSIZ);
+	    my $nrest= $n % $BUFSIZ;
+	    my $buf;
+	    for (1..$nbufs) {
+		$in->xsysreadcompletely($buf, $BUFSIZ);
+	    }
+	    $in->xsysreadcompletely($buf, $nrest);
+	} else {
+	    die $e
+	}
+    };
+}
+
+if ($maybe_m) {
+    my $chunks= Force fh2chunks $in, $BUFSIZ;
+    if (nullP $chunks) {
+	# no remainder to analyze.
+	# XX give error or be silent?
+    } else {
+	my ($rest, $remainingsize)=
+	  slideprint ($chunks, $out, $maybe_m);
+	my $BLA= stream_fold (sub {
+				  my ($v,$res)=@_;
+				  $v.$res
+			      },
+			      "",
+			      Keep($rest));
+	warn "got: $remainingsize, '$BLA'";
+	my $last= car $rest;
+	$out->xprint(substr $last, 0, $remainingsize - $maybe_m);
+    }
+} else {
+    $in->xsendfile_to($out);
+    $in->xclose;
+}
+
+$out->xclose;
+
