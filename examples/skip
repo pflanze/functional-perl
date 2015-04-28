@@ -56,8 +56,7 @@ sub slideprint {
     my ($start, $rest, $windowsize)= ($chunks, $chunks, 0);
     undef $chunks;
   STEP: {
-	$start= Force $start;
-	$rest= Force $rest;
+	FORCE $start, $rest;
 	my $first= car $start;
 	my $lenfirst= length $first;
 	my $reserve= $windowsize - $minsize;
