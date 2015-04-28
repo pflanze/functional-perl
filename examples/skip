@@ -52,6 +52,7 @@ sub stream_show ($) {
 
 sub slideprint {
     my ($chunks, $out, $minsize)=@_;
+    weaken $_[0];
 
     nullP Force $chunks
       and die "got empty input";
@@ -59,6 +60,7 @@ sub slideprint {
     # start and rest are parts of the same stream of chunks,
     # windowsize is the number of bytes between them
     my ($start, $rest, $windowsize)= ($chunks, $chunks, 0);
+    undef $chunks;
   STEP: {
 	$start= Force $start;
 	$rest= Force $rest;
