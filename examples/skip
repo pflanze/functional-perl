@@ -36,6 +36,7 @@ use Chj::FP::Stream ":all";
 use Chj::FP::List ":all";
 use Chj::FP::Lazy ":all";
 use POSIX 'ESPIPE';
+use Chj::TEST;
 
 # ---- sliding buffer ----------------------------------------
 
@@ -81,10 +82,27 @@ sub slideprint {
 # ------------------------------------------------------------
 
 our $verbose=0;
+our $opt_repl;
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
 	   "bufsize=n"=> \$BUFSIZ,
+	   "repl"=> \$opt_repl,
 	   ) or exit 1;
+
+
+# called for testing or debugging:
+
+if ($opt_repl) {
+    require Chj::repl;
+    Chj::repl::repl();
+    exit 0
+}
+
+if (perhaps_run_tests "main") {
+    exit 0;
+}
+
+# called as tool:
 
 usage unless (@ARGV==1 or @ARGV==2);
 
