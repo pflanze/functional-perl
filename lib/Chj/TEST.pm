@@ -142,6 +142,7 @@ sub GIVES (&) {
     bless $thunk, "Chj::TEST::GIVES";
 }
 
+use Chj::FP::Equal;
 use Data::Dumper;
 
 sub eval_test ($$) {
@@ -152,19 +153,13 @@ sub eval_test ($$) {
     if (ref ($res) eq 'Chj::TEST::GIVES') {
 	$res= &$res;
     }
-    my $gotstr= Dumper $got;
-    my $resstr= Dumper $res;
 
-    if ($gotstr eq $resstr) {
-      succ:
+    if (equal($got, $res) or equal_utf8($got, $res)) {
 	print "ok\n";
 	$$stat{success}++
     } else {
-	# second chance: compare ignoring utf8 flags on strings
-	local $Data::Dumper::Useperl = 1;
-	$gotstr= Dumper $got;
-	$resstr= Dumper $res;
-	goto succ if ($gotstr eq $resstr);
+	my $gotstr= Dumper $got;
+	my $resstr= Dumper $res;
 
 	print "FAIL at $filename line $line:\n";
 	print "       got: $gotstr";
