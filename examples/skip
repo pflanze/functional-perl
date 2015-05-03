@@ -192,15 +192,15 @@ if ($maybe_m) {
 	# no remainder to analyze.
 	# XX give error or be silent?
     } else {
-	stream_for_each sub {
-	    $out->xprint($_[0])
-	},
-	chunks_change_tail
+	my $chunks2= chunks_change_tail
 	    ($chunks, $maybe_m, sub {
 		my ($rest, $remainingsize)=@_;
 		my $last= car $rest;
 		cons(substr ($last, 0, $remainingsize - $maybe_m), null)
 	     });
+	stream_for_each sub {
+	    $out->xprint($_[0])
+	}, $chunks2;
     }
 } else {
     $in->xsendfile_to($out);
