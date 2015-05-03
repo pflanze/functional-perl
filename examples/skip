@@ -42,11 +42,18 @@ use Chj::TEST;
 
 # Handle a sliding buffer window to make sure we don't output the
 # input too soon (so that when we hit EOF, we've got at least m bytes
-# still buffered). Use a lazy list of chunks as the window. Upon
-# hitting EOF, return the remaining window and its size.
+# still buffered). Do this by using a lazy list of chunks as the input
+# and keep two pointers into it as the window.
 
-sub slideprint {
-    my ($chunks, $out, $minsize)=@_;
+# `chunks_change_tail` returns a stream of the unmodified chunks until
+# passing through one more would make the sum of the remaining chunks
+# till the end of the stream smaller than $minsize; pass the remainder
+# to &$fn($tail, $remainingsize) and use its result as the tail of the
+# output stream. (See test cases below for illustration.)
+
+sub chunks_change_tail {
+    @_==3 or die;
+    my ($chunks,  $minsize, $fn)=@_;
     weaken $_[0];
 
     nullP Force $chunks
@@ -54,30 +61,68 @@ sub slideprint {
 
     # start and rest are parts of the same stream of chunks,
     # windowsize is the number of bytes between them
-    my ($start, $rest, $windowsize)= ($chunks, $chunks, 0);
-    undef $chunks;
-  STEP: {
-	FORCE $start, $rest;
-	my $first= car $start;
-	my $lenfirst= length $first;
-	my $reserve= $windowsize - $minsize;
-	if ($lenfirst <= $reserve) {
-	    $out->xprint($first);
-
-	    $start= cdr $start;
-	    $windowsize= $windowsize - $lenfirst;
-	    redo STEP;
-	} else {
-	    if (nullP $rest) {
-		($start, $windowsize)
+    my $rec; $rec= sub {
+	@_==3 or die;
+	my ($start, $rest, $windowsize)= @_;
+	Delay {
+	    FORCE $start, $rest;
+	    my $first= car $start;
+	    my $lenfirst= length $first;
+	    my $reserve= $windowsize - $minsize;
+	    if ($lenfirst <= $reserve) {
+		cons ($first, 
+		      &$rec(cdr $start, $rest, $windowsize - $lenfirst))
 	    } else {
-		$windowsize= $windowsize + length car $rest;
-		$rest= cdr $rest;
-		redo STEP;
+		if (nullP $rest) {
+		    &$fn($start, $windowsize)
+		} else {
+		    &$rec($start, cdr $rest, $windowsize + length car $rest)
+		}
 	    }
 	}
-    }
+    };
+    @_=($chunks, $chunks, 0); my $rec_= Weakened $rec; goto $rec_;
 }
+
+sub test_with_size ($) {
+    my ($size)=@_;
+    stream2array
+	chunks_change_tail(array2stream (["foo","bars","baz"]),
+			   $size,
+			   sub { my ($tail, $len)=@_; cons $len, $tail });
+}
+
+use Chj::FP::Equal;
+
+TEST { test_with_size 1 }
+[
+ 'foo',
+ 'bars',
+ 3,
+ 'baz'
+];
+
+TEST { equal test_with_size 2, test_with_size 1
+	   and
+       equal test_with_size 3, test_with_size 1 }
+1;
+
+TEST { test_with_size 4 }
+[
+ 'foo',
+ 7,
+ 'bars',
+ 'baz'
+];
+
+TEST { test_with_size 999 }
+[
+ 10,
+ 'foo',
+ 'bars',
+ 'baz'
+];
+
 
 # ------------------------------------------------------------
 
@@ -147,10 +192,15 @@ if ($maybe_m) {
 	# no remainder to analyze.
 	# XX give error or be silent?
     } else {
-	my ($rest, $remainingsize)=
-	  slideprint ($chunks, $out, $maybe_m);
-	my $last= car $rest;
-	$out->xprint(substr $last, 0, $remainingsize - $maybe_m);
+	stream_for_each sub {
+	    $out->xprint($_[0])
+	},
+	chunks_change_tail
+	    ($chunks, $maybe_m, sub {
+		my ($rest, $remainingsize)=@_;
+		my $last= car $rest;
+		cons(substr ($last, 0, $remainingsize - $maybe_m), null)
+	     });
     }
 } else {
     $in->xsendfile_to($out);
