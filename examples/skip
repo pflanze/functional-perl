@@ -86,7 +86,7 @@ sub chunks_change_tail {
 	    }
 	}
     };
-    @_=($chunks, $chunks, 0); my $rec_= Weakened $rec; goto $rec_;
+    Weakened ($rec)->($chunks, $chunks, 0);
 }
 
 sub test_with_size ($) {
