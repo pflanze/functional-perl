@@ -19,19 +19,19 @@ Useful as predicates for Chj::Struct field definitions.
 package Chj::FP::Predicates;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
-	      stringP
-	      nonnullstringP
-	      natural0P
-	      naturalP
-	      boolean01P
-	      booleanP
-	      hashP
-	      arrayP
-	      procedureP
-	      class_nameP
-	      instance_ofP
+	      is_string
+	      is_nonnullstring
+	      is_natural0
+	      is_natural
+	      is_boolean01
+	      is_boolean
+	      is_hash
+	      is_array
+	      is_procedure
+	      is_class_name
+	      is_instance_of
 
-	      filenameP
+	      is_filename
 
 	      maybe
 	 );
@@ -40,33 +40,33 @@ package Chj::FP::Predicates;
 
 use strict; use warnings FATAL => 'uninitialized';
 
-sub stringP ($) {
+sub is_string ($) {
     not ref ($_[0]) # relax?
 }
 
-sub nonnullstringP ($) {
+sub is_nonnullstring ($) {
     not ref ($_[0]) # relax?
       and length $_[0]
 }
 
-sub natural0P ($) {
+sub is_natural0 ($) {
     not ref ($_[0]) # relax?
       and $_[0]=~ /^\d+\z/
 }
 
-sub naturalP ($) {
+sub is_natural ($) {
     not ref ($_[0]) # relax?
       and $_[0]=~ /^\d+\z/ and $_[0]
 }
 
 # strictly 0 or 1
-sub boolean01P ($) {
+sub is_boolean01 ($) {
     not ref ($_[0]) # relax?
       and $_[0]=~ /^[01]\z/
 }
 
 # undef, 0, "", or 1
-sub booleanP ($) {
+sub is_boolean ($) {
     not ref ($_[0]) # relax?
       and (! $_[0]
 	   or
@@ -74,29 +74,29 @@ sub booleanP ($) {
 }
 
 
-sub hashP ($) {
+sub is_hash ($) {
     defined $_[0] and ref ($_[0]) eq "HASH"
 }
 
-sub arrayP ($) {
+sub is_array ($) {
     defined $_[0] and ref ($_[0]) eq "ARRAY"
 }
 
-sub procedureP ($) {
+sub is_procedure ($) {
     defined $_[0] and ref ($_[0]) eq "CODE"
 }
 
 
 my $classpart_re= qr/\w+/;
 
-sub class_nameP ($) {
+sub is_class_name ($) {
     my ($v)= @_;
     not ref ($v) and $v=~ /^(?:${classpart_re}::)*$classpart_re\z/;
 }
 
-sub instance_ofP ($) {
+sub is_instance_of ($) {
     my ($cl)=@_;
-    class_nameP $cl or die "need class name string, got: $cl";
+    is_class_name $cl or die "need class name string, got: $cl";
     sub ($) {
 	UNIVERSAL::isa ($_[0], $cl);
     }
@@ -104,9 +104,9 @@ sub instance_ofP ($) {
 
 
 # should probably be in a filesystem lib instead?
-sub filenameP ($) {
+sub is_filename ($) {
     my ($v)=@_;
-    (nonnullstringP ($v)
+    (is_nonnullstring ($v)
      and !($v=~ m|/|)
      and !($v eq ".")
      and !($v eq ".."))

@@ -27,8 +27,8 @@ use Chj::FP::Lazy;
 use Chj::FP::List;
 
 use Chj::Struct
-  [[\&arrayP, "array"],
-   [\&hashP, "hash"]];
+  [[\&is_array, "array"],
+   [\&is_hash, "hash"]];
 
 sub new_from_array {
     my $cl=shift;
@@ -74,14 +74,14 @@ sub maybe_next {
     my $s=shift;
     my ($l)= $s->perhaps_following (@_) or return undef;
     $l= Force ($l);
-    nullP $l ? undef : car $l
+    is_null $l ? undef : car $l
 }
 
 sub maybe_prev {
     my $s=shift;
     my ($l)= $s->perhaps_previous (@_) or return undef;
     $l= Force ($l);
-    nullP $l ? undef : car $l
+    is_null $l ? undef : car $l
 }
 
 

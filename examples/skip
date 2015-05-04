@@ -29,7 +29,7 @@ exit @_ ? 1 : 0;
 }
 
 use Getopt::Long;
-use Chj::FP::Predicates 'natural0P';
+use Chj::FP::Predicates 'is_natural0';
 use Chj::xopen 'glob2fh';
 use Chj::FP::IOStream 'fh2chunks';
 use Chj::FP::Stream ":all";
@@ -61,7 +61,7 @@ sub chunks_change_tail {
     my ($chunks,  $minsize, $fn)=@_;
     weaken $_[0];
 
-    nullP Force $chunks
+    is_null Force $chunks
       and die "got empty input";
 
     # start and rest are parts of the same stream of chunks,
@@ -79,7 +79,7 @@ sub chunks_change_tail {
 		    cons ($first, 
 			  &$next(cdr $start, $rest, $windowsize - $lenfirst))
 		} else {
-		    if (nullP $rest) {
+		    if (is_null $rest) {
 			&$fn($start, $windowsize)
 		    } else {
 			#&$next($start, cdr $rest, $windowsize + length car $rest)
@@ -165,11 +165,11 @@ usage unless (@ARGV==1 or @ARGV==2);
 
 our ($n, $maybe_m)= @ARGV;
 
-natural0P $n
+is_natural0 $n
   or usage "n must be a non-negative integer";
 
 if (defined $maybe_m) {
-    natural0P $maybe_m
+    is_natural0 $maybe_m
       or usage "m must be a non-negative integer";
 }
 
@@ -203,7 +203,7 @@ if ($n) {
 
 if ($maybe_m) {
     my $chunks= Force fh2chunks $in, $BUFSIZ;
-    if (nullP $chunks) {
+    if (is_null $chunks) {
 	# no remainder to analyze.
 	# XX give error or be silent?
     } else {

@@ -10,9 +10,9 @@ Chj::Struct
 
 =head1 SYNOPSIS
 
- sub hashP {ref ($_[0]) eq "HASH"}
+ sub is_hash {ref ($_[0]) eq "HASH"}
 
- use Chj::Struct Bar=> ["a", [\&hashP, "b"]]=> ["Foo"];
+ use Chj::Struct Bar=> ["a", [\&is_hash, "b"]]=> ["Foo"];
  # creates a constructor new that takes positional arguments and
  # copies them to a hash with the keys "a" and "b". Also, sets
  # @Bar::ISA to ("Foo"). [ ] around "Foo" are optional.

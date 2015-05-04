@@ -109,10 +109,10 @@ sub _text {
 		# correct? XX why does A(string2stream("You're
 		# great."))->text trigger this case?
 		_text (&$v ());
-	    } elsif (pairP $v) {
+	    } elsif (is_pair $v) {
 		my ($a,$v2)= $v->car_and_cdr;
 		_text ($a) . _text ($v2);
-	    } elsif (promiseP $v) {
+	    } elsif (is_promise $v) {
 		_text (Force $v);
 	    } else {
 		die "don't know how to get text of: $v";

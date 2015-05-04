@@ -15,14 +15,14 @@ Chj::FP::Lazy
  print Force $a # -> Illegal division by zero
 
  my $b = Delay { warn "evaluation happening"; 1 / 2 };
- print promiseP $b ? "promise" : "non-promise", "\n"; # -> "promise"
+ print is_promise $b ? "promise" : "non-promise", "\n"; # -> "promise"
  print Force ($b), "\n"; # shows the warning, and "0.5"
  # $b is still a promise at this poing (although an evaluated one):
- print promiseP $b ? "promise" : "non-promise", "\n"; # -> "promise"
+ print is_promise $b ? "promise" : "non-promise", "\n"; # -> "promise"
 
  # The following stores result of `Force $b` back into $b
  FORCE $b; # does not show the warning anymore as evaluation happened already
- print promiseP $b ? "promise" : "non-promise", "\n"; # -> "non-promise"
+ print is_promise $b ? "promise" : "non-promise", "\n"; # -> "non-promise"
  print $b, "\n"; # -> "0.5"
 
 =head1 DESCRIPTION
@@ -41,7 +41,7 @@ the saved value.
  FORCE $p  # in addition to running Force, stores back the resulting
            # value into $p
 
- promiseP $x # returns true iff $x holds a promise
+ is_promise $x # returns true iff $x holds a promise
 
 
 =head1 SEE ALSO
@@ -53,7 +53,7 @@ https://en.wikipedia.org/wiki/Futures_and_promises
 
 package Chj::FP::Lazy;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(Delay DelayLight Force FORCE promiseP);
+@EXPORT=qw(Delay DelayLight Force FORCE is_promise);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -70,7 +70,7 @@ sub DelayLight (&) {
 }
 @Chj::FP::Lazy::PromiseLight::ISA= qw(Chj::FP::Lazy::Promise);
 
-sub promiseP ($) {
+sub is_promise ($) {
     (UNIVERSAL::isa ($_[0], "Chj::FP::Lazy::Promise"))
 }
 

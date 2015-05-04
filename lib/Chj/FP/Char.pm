@@ -23,19 +23,19 @@ type safety seemed excessive.)
 package Chj::FP::Char;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(charP char_whitespaceP char_alphanumericP);
+@EXPORT_OK=qw(is_char char_is_whitespace char_is_alphanumeric);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-sub charP ($) {
+sub is_char ($) {
     my ($v)=@_;
     defined $v and not (ref $v) and length($v)==1
 }
 
-sub char_whitespaceP {
+sub char_is_whitespace {
     $_[0]=~ /^[ \r\n\t]$/s
 }
 
-sub char_alphanumericP {
+sub char_is_alphanumeric {
     $_[0]=~ /^[a-zA-Z0-9_]$/s
 }
 

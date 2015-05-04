@@ -118,7 +118,7 @@ sub _pxml_print_fragment_fast {
 			    $selfreferential=1;
 			} else {
 			    my $isempty=  # slow path
-			      nullP(Force(stream_mixed_flatten ($body)));
+			      is_null(Force(stream_mixed_flatten ($body)));
 			    $selfreferential = $isempty;
 			    warn "html5 compatible serialization requested "
 			      ."but got void element '$v' that is not empty"
@@ -172,14 +172,14 @@ sub _pxml_print_fragment_fast {
 		elsif ($ref eq "CODE") {
 		    $v= &$v();
 		    redo LP;
-		} elsif (nullP $v) {
+		} elsif (is_null $v) {
 		    # end of linked list, nothing
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
 		    # evil.
 		    goto PXML if (UNIVERSAL::isa($v, "Chj::PXML"));
-		    goto PAIR if pairP $v;
-		    goto PROMISE if promiseP $v;
+		    goto PAIR if is_pair $v;
+		    goto PROMISE if is_promise $v;
 		    die "unexpected type of reference: ".(perhaps_dump $v);
 		}
 	    }

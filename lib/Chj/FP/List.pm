@@ -25,7 +25,7 @@ dumps. Hopefully nobody else does?
 
 package Chj::FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons pairP null nullP car cdr first rest _car _cdr
+@EXPORT=qw(cons is_pair null is_null car cdr first rest _car _cdr
 	   car_and_cdr first_and_rest
 	   list);
 @EXPORT_OK=qw(string2list list_length list_reverse
@@ -36,7 +36,7 @@ package Chj::FP::List;
 	      list_append
 	      list_zip2
 	      list_every list_any
-	      charlistP ldie
+	      is_charlist ldie
 	      array_fold_right
 	      cddr
 	      cdddr
@@ -59,7 +59,7 @@ sub cons ($ $) {
     bless [@_], "Pair";
 }
 
-sub pairP ($) {
+sub is_pair ($) {
     my ($v)=@_;
     #ref($v) eq "ARRAY" and @$v == 2
     ref($v) eq "Pair"
@@ -72,7 +72,7 @@ sub null () {
     $null
 }
 
-sub nullP ($) {
+sub is_null ($) {
     defined $_[0] and $_[0] eq $null
 }
 
@@ -96,7 +96,7 @@ sub car ($) {
     my ($v)=@_;
     if (ref ($v) eq "Pair") {
 	$$v[0]
-    } elsif (promiseP $v) {
+    } elsif (is_promise $v) {
 	@_=Force $v; goto \&car;
     } else {
 	not_a_pair $v;
@@ -109,7 +109,7 @@ sub cdr ($) {
     my ($v)=@_;
     if (ref ($v) eq "Pair") {
 	$$v[1]
-    } elsif (promiseP $v) {
+    } elsif (is_promise $v) {
 	@_=Force $v; goto \&cdr;
     } else {
 	not_a_pair $v;
@@ -140,7 +140,7 @@ sub car_and_cdr ($) {
     my ($v)=@_;
     if (ref ($v) eq "Pair") {
 	@{$_[0]}
-    } elsif (promiseP $v) {
+    } elsif (is_promise $v) {
 	@_=Force $v; goto \&car_and_cdr;
     } else {
 	not_a_pair $v;
@@ -189,7 +189,7 @@ sub array2list ($;$) {
 sub list_length ($) {
     my ($l)=@_;
     my $len=0;
-    while (!nullP $l) {
+    while (!is_null $l) {
 	$len++;
 	$l= cdr $l;
     }
@@ -199,7 +199,7 @@ sub list_length ($) {
 sub list_reverse ($) {
     my ($l)=@_;
     my $res=null;
-    while (!nullP $l) {
+    while (!is_null $l) {
 	$res= cons car $l, $res;
 	$l= cdr $l;
     }
@@ -211,7 +211,7 @@ sub list2string ($) {
     my $len= list_length $l;
     my $res= " "x$len;
     my $i=0;
-    while (!nullP $l) {
+    while (!is_null $l) {
 	my $c= car $l;
 	substr($res,$i,1)= $c;
 	$l= cdr $l;
@@ -224,7 +224,7 @@ sub list2array ($) {
     my ($l)=@_;
     my $res= [];
     my $i=0;
-    while (!nullP $l) {
+    while (!is_null $l) {
 	$$res[$i]= car $l;
 	$l= cdr $l;
 	$i++;
@@ -237,7 +237,7 @@ sub rlist2array ($) {
     my $res= [];
     my $len= list_length $l;
     my $i=$len;
-    while (!nullP $l) {
+    while (!is_null $l) {
 	$i--;
 	$$res[$i]= car $l;
 	$l= cdr $l;
@@ -256,13 +256,13 @@ sub _write_sexpr ($ $ $) {
     my ($l,$fh, $already_in_a_list)=@_;
   _WRITE_SEXPR: {
 	$l= Force ($l,1);
-	if (pairP $l) {
+	if (is_pair $l) {
 	    xprint $fh, $already_in_a_list ? ' ' : '(';
 	    _write_sexpr car $l, $fh, 0;
 	    my $d= Force (cdr $l, 1);
-	    if (nullP $d) {
+	    if (is_null $d) {
 		xprint $fh, ')';
-	    } elsif (pairP $d) {
+	    } elsif (is_pair $d) {
 		# tail-calling _write_sexpr $d, $fh, 1
 		$l=$d; $already_in_a_list=1; redo _WRITE_SEXPR;
 	    } else {
@@ -270,7 +270,7 @@ sub _write_sexpr ($ $ $) {
 		_write_sexpr $d, $fh, 0;
 		xprint $fh, ')';
 	    }
-	} elsif (nullP $l) {
+	} elsif (is_null $l) {
 	    xprint $fh, "()";
 	} else {
 	    # normal perl things; should have a show method already
@@ -310,7 +310,7 @@ sub list_map ($ $) {
 sub list_mapn {
     my $fn=shift;
     for (@_) {
-	return null if nullP $_
+	return null if is_null $_
     }
     cons(&$fn(map {car $_} @_), list_mapn ($fn, map {cdr $_} @_))
 }
@@ -325,11 +325,11 @@ TEST{ list2array list_mapn sub { [@_] }, array2list( [1,2,3]), string2list ("ab"
 sub list_fold_right ($ $ $);
 sub list_fold_right ($ $ $) {
     my ($fn,$start,$l)=@_;
-    if (pairP $l) {
+    if (is_pair $l) {
 	no warnings 'recursion';
 	my $rest= list_fold_right ($fn,$start,cdr $l);
 	&$fn (car $l, $rest)
-    } elsif (nullP $l) {
+    } elsif (is_null $l) {
 	$start
     } else {
 	die "improper list"
@@ -387,12 +387,12 @@ sub take_while ($ $) {
 sub list_every ($ $) {
     my ($pred,$l)=@_;
   LP: {
-	if (pairP $l) {
+	if (is_pair $l) {
 	    (&$pred (car $l)) and do {
 		$l= cdr $l;
 		redo LP;
 	    }
-	} elsif (nullP $l) {
+	} elsif (is_null $l) {
 	    1
 	} else {
 	    # improper list
@@ -406,12 +406,12 @@ sub list_every ($ $) {
 sub list_any ($ $) {
     my ($pred,$l)=@_;
   LP: {
-	if (pairP $l) {
+	if (is_pair $l) {
 	    (&$pred (car $l)) or do {
 		$l= cdr $l;
 		redo LP;
 	    }
-	} elsif (nullP $l) {
+	} elsif (is_null $l) {
 	    0
 	} else {
 	    die "improper list"
@@ -441,16 +441,16 @@ sub mixed_flatten ($;$$) {
     my ($v,$maybe_tail,$maybe_delay)=@_;
     my $tail= $maybe_tail//null;
   LP: {
-	if ($maybe_delay and promiseP $v) {
+	if ($maybe_delay and is_promise $v) {
 	    my $delay= $maybe_delay;
 	    &$delay
 	      (sub {
 		   @_=(Force($v), $tail, $delay); goto \&mixed_flatten;
 	       });
 	} else {
-	    if (nullP $v) {
+	    if (is_null $v) {
 		$tail
-	    } elsif (pairP $v) {
+	    } elsif (is_pair $v) {
 		no warnings 'recursion';
 		$tail= mixed_flatten (cdr $v, $tail, $maybe_delay);
 		$v= car $v;
@@ -479,11 +479,11 @@ sub mixed_flatten ($;$$) {
 }
 
 
-use Chj::FP::Char 'charP';
+use Chj::FP::Char 'is_char';
 
-sub charlistP ($) {
+sub is_charlist ($) {
     my ($l)=@_;
-    list_every \&charP, $l
+    list_every \&is_char, $l
 }
 
 use Carp;
@@ -492,9 +492,9 @@ sub ldie {
     # perl string arguments are messages, char lists are turned to
     # perl-quoted strings, then everyting is appended
     my @strs= map {
-	if (charlistP $_) {
+	if (is_charlist $_) {
 	    list2perlstring $_
-	} elsif (nullP $_) {
+	} elsif (is_null $_) {
 	    "()"
 	} else {
 	    # XX have a better write_sexpr that can fall back to something
@@ -507,7 +507,7 @@ sub ldie {
 
 
 use Chj::FP::Values 'fst';
-use Chj::FP::Char 'char_alphanumericP';
+use Chj::FP::Char 'char_is_alphanumeric';
 
 TEST{ list_length string2list "ao" }
   2;
@@ -515,7 +515,7 @@ TEST{ list2string string2list "Hello" }
   'Hello';
 TEST{ list2string list_reverse string2list "Hello" }
   'olleH';
-TEST{ list2string list_reverse (fst rtake_while \&char_alphanumericP, string2list "Hello World") }
+TEST{ list2string list_reverse (fst rtake_while \&char_is_alphanumeric, string2list "Hello World") }
   'Hello';
 
 TEST_STDOUT{ write_sexpr cons("123",cons("4",null)) }
@@ -530,9 +530,9 @@ TEST_STDOUT{ write_sexpr (cons 1, 2) }
 TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null))}
   '("1" ("2"))';
 
-TEST{ list_every \&char_alphanumericP, string2list "Hello" }
+TEST{ list_every \&char_is_alphanumeric, string2list "Hello" }
   1;
-TEST{ list_every \&char_alphanumericP, string2list "Hello " }
+TEST{ list_every \&char_is_alphanumeric, string2list "Hello " }
   '';
 TEST{ list2perlstring string2list  "Hello" }
   "'Hello'";
