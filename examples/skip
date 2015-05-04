@@ -20,7 +20,7 @@ sub usage {
     print "$myname n [m]
 
   Skip n bytes of input, output the rest. If m is given, don't output
-  the last m bytes.
+  the last m bytes. Example: `echo -n 'Hi World' | skip 3 2` -> 'Wor'
 
    --bufsize n   use n instead of default $BUFSIZ as buffer size
 
