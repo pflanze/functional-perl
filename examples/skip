@@ -38,6 +38,11 @@ use Chj::FP::Lazy ":all";
 use POSIX 'ESPIPE';
 use Chj::TEST;
 
+sub resource_rss () {
+    require BSD::Resource;
+    (BSD::Resource::getrusage(BSD::Resource::RUSAGE_SELF()))[2]
+}
+
 # ---- sliding buffer ----------------------------------------
 
 # Handle a sliding buffer window to make sure we don't output the
@@ -133,10 +138,12 @@ TEST { test_with_size 999 }
 
 our $verbose=0;
 our $opt_repl;
+our $opt_leaktest;
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
 	   "bufsize=n"=> \$BUFSIZ,
 	   "repl"=> \$opt_repl,
+	   "leaktest"=> \$opt_leaktest,
 	   ) or exit 1;
 
 
@@ -166,6 +173,9 @@ if (defined $maybe_m) {
       or usage "m must be a non-negative integer";
 }
 
+
+our $mem_start= resource_rss if $opt_leaktest;
+our $mem_end;
 
 our $in= glob2fh *STDIN;
 our $out= glob2fh *STDOUT;
@@ -200,6 +210,8 @@ if ($maybe_m) {
 	my $chunks2= chunks_change_tail
 	    ($chunks, $maybe_m, sub {
 		my ($rest, $remainingsize)=@_;
+		$mem_end= resource_rss if $opt_leaktest;
+
 		my $last= car $rest;
 		cons(substr ($last, 0, $remainingsize - $maybe_m), null)
 	     });
@@ -213,4 +225,10 @@ if ($maybe_m) {
 }
 
 $out->xclose;
+
+if ($opt_leaktest
+    and
+    (($mem_end - $mem_start) / $mem_start > 1.5)) {
+    die "there was a leak";
+}
 
