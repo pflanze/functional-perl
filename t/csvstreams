@@ -4,16 +4,8 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use Test::More tests=> 2;
 
-use BSD::Resource;
-
-sub MB ($) {
-    $_[0]* 1048576
-}
-
-my $limit= MB 24; # 14 is enough on 32bit Debian, 64bit will need more
-
-setrlimit RLIMIT_VMEM, $limit, $limit
-  or die "setrlimit: $!";
+require "./testmem.pl";
+setlimit_mem_MB (24); # 14 is enough on 32bit Debian, 64bit will need more
 
 is system ("examples/gen-csv t/test-a.csv 40000"), 0;
 # 20000 pass on 32bit Debian even with bug
