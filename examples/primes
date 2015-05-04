@@ -15,6 +15,8 @@ use lib "$mydir/../lib";
 use Chj::Backtrace;
 use Chj::repl;
 
+# gracefully fail when run as a test and Method::Signatures is not
+# available
 use Chj::TEST use=> 'Method::Signatures';
 use Chj::FP::List ":all";
 use Chj::FP::Ops ":all";
