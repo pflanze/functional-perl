@@ -5,7 +5,10 @@ use strict; use warnings FATAL => 'uninitialized';
 our $len= 210;
 require "./test.pl";
 
-use Test::More tests=> 1;
+our $deps_ok; BEGIN { $deps_ok= eval { require Text::CSV; 1 } };
+
+use Test::More $deps_ok ? (tests=> 1) : (skip_all=> "don't have Text::CSV");
+
 
 is readin ("examples/csv2xml examples/csv2xml-example.csv|"),
    readin ("< t/csv2xml.expected");

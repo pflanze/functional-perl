@@ -2,9 +2,9 @@
 
 use strict; use warnings FATAL => 'uninitialized';
 
-our $ready; BEGIN { $ready= eval { require Method::Signatures; 1 } };
+our $deps_ok; BEGIN { $deps_ok= eval { require Method::Signatures; 1 } };
 
-use Test::More $ready ? (tests=> 2) : (skip_all=> "don't have Method::Signatures");
+use Test::More $deps_ok ? (tests=> 2) : (skip_all=> "don't have Method::Signatures");
 
 require "./testmem.pl";
 setlimit_mem_MB (80); # 14 is enough on 32bit Debian, 64bit will need more
