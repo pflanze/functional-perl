@@ -2,9 +2,17 @@
 
 use strict; use warnings FATAL => 'uninitialized';
 
-our $deps_ok; BEGIN { $deps_ok= eval { require Method::Signatures; 1 } };
+our %deps;
+BEGIN {
+    %deps= map {$_=>1} qw(Method::Signatures Text::CSV);
+    for (keys %deps) {
+	eval "require $_; 1" and delete $deps{$_}
+    }
+}
 
-use Test::More $deps_ok ? (tests=> 2) : (skip_all=> "failed to use Method::Signatures");
+use Test::More %deps ?
+  (skip_all=> "failed to use ".join ", ", keys %deps):
+  (tests=> 2);
 
 require "./testmem.pl";
 setlimit_mem_MB (80); # 14 is enough on 32bit Debian, 64bit will need more
