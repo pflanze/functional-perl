@@ -11,7 +11,7 @@ BEGIN {
 }
 
 use Test::More %deps ?
-  (skip_all=> "failed to use ".join ", ", keys %deps):
+  (skip_all=> "failed to use ".join ", ", sort keys %deps):
   (tests=> 2);
 
 require "./testmem.pl";
