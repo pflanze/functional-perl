@@ -16,7 +16,10 @@ sub t {
     is readin ("examples/skip --bufsiz $bufsiz  4 5 < t/skip.input|"), "o W";
     is readin ("examples/skip --bufsiz $bufsiz  10 1 < t/skip.input|"), "d";
     is readin ("examples/skip --bufsiz $bufsiz  11 1 < t/skip.input|"), "";
-    is readin ("examples/skip --bufsiz $bufsiz  12 1 < t/skip.input|"), "";
+    is readin ("examples/skip --bufsiz $bufsiz  11 2 < t/skip.input 2>&1 |", sub{$_[0]}),
+      "skip: only 1 byte(s) left after skipping 11 byte(s)\n";
+    is readin ("examples/skip --bufsiz $bufsiz  12 1 < t/skip.input 2>&1 |", sub{$_[0]}),
+      "skip: no remainder left after skipping 12 byte(s)\n";
 }
 
 t 1024;

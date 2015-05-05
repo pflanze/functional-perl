@@ -23,7 +23,7 @@ sub usage {
   the last m bytes. Example: `echo -n 'Hi World' | skip 3 2` -> 'Wor'
 
    --bufsize n   use n instead of default $BUFSIZ as buffer size
-
+   --silent      don't give error if the input is too short
 ";
 exit @_ ? 1 : 0;
 }
@@ -139,11 +139,13 @@ TEST { test_with_size 999 }
 our $verbose=0;
 our $opt_repl;
 our $opt_leaktest;
+our $opt_silent;
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
 	   "bufsize=n"=> \$BUFSIZ,
 	   "repl"=> \$opt_repl,
 	   "leaktest"=> \$opt_leaktest,
+	   "silent"=> \$opt_silent,
 	   ) or exit 1;
 
 
@@ -187,14 +189,14 @@ if ($n) {
 	    my $nbufs= int ($n / $BUFSIZ);
 	    my $nrest= $n % $BUFSIZ;
 	    $nbufs * $BUFSIZ + $nrest == $n
-		or die "hum, Perl can't calculate?";
+		or die "Perl can't calculate?";
 	    my $buf;
 	    for (1..$nbufs) {
 		$in->xsysreadcompletely($buf, $BUFSIZ);
 	    }
 	    $in->xsysreadcompletely($buf, $nrest);
 	    # XX: seek does not complain when file is too short; this
-	    # does. This is inconsistent.
+	    # does. This is inconsistent. Also, check $opt_silent ?
 	} else {
 	    die "seek: $!";
 	}
@@ -204,16 +206,25 @@ if ($n) {
 if ($maybe_m) {
     my $chunks= Force fh2chunks $in, $BUFSIZ;
     if (is_null $chunks) {
-	# no remainder to analyze.
-	# XX give error or be silent?
+	die "$myname: no remainder left after skipping $n byte(s)\n"
+	    unless $opt_silent;
     } else {
 	my $chunks2= chunks_change_tail
 	    ($chunks, $maybe_m, sub {
 		my ($rest, $remainingsize)=@_;
 		$mem_end= resource_rss if $opt_leaktest;
 
-		my $last= car $rest;
-		cons(substr ($last, 0, $remainingsize - $maybe_m), null)
+		if ($remainingsize < $maybe_m) {
+		    if ($opt_silent) {
+			null
+		    } else {
+			die "$myname: only $remainingsize byte(s) left ".
+			  "after skipping $n byte(s)\n"
+		    }
+		} else {
+		    my $last= car $rest;
+		    cons(substr ($last, 0, $remainingsize - $maybe_m), null)
+		}
 	     });
 	stream_for_each sub {
 	    $out->xprint($_[0])
