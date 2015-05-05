@@ -22,6 +22,7 @@ our @t=
 	skip
 	skip-leak
 	csvstreams
+	bugs-perl-weaken-coderef
    );
 
 runtests(map {"t/$_"} @t);

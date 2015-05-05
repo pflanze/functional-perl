@@ -78,6 +78,7 @@ lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
 meta/dependencycheck
+t/bugs-perl-weaken-coderef
 t/csv2xml
 t/csv2xml.expected
 t/csvstreams

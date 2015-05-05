@@ -1,0 +1,14 @@
+#!/usr/bin/perl -w
+
+use strict; use warnings FATAL => 'uninitialized';
+
+require "./test.pl";
+
+use Test::More tests=> 1;
+
+require "./testmem.pl";
+setlimit_mem_MB (40);
+
+is readin("bugs/perl/weaken-coderef 2 50000 |"),
+  "3\n";
+

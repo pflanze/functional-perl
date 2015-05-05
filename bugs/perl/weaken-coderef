@@ -1,0 +1,43 @@
+#!/usr/bin/perl -w
+
+# this doesn't work on v5.20.2, but does on v5.14.2
+
+use strict; use warnings FATAL => 'uninitialized';
+
+use Scalar::Util "weaken";
+use BSD::Resource;
+
+sub rss () {
+    (BSD::Resource::getrusage(BSD::Resource::RUSAGE_SELF()))[2]
+}
+
+sub once {
+    my $f; $f= sub {
+	my ($n)= @_;
+	sub {
+	    if ($n > 0) {
+		$n + &{&$f($n - 1)}
+	    } else {
+		0
+	    }
+	}
+    };
+    my $f_= $f; weaken $f;
+    goto $f_;
+}
+
+my ($n,$N)=(2, 20000);
+
+my $start= rss;
+
+my $res;
+$res= &{once $n,0} for (1..$N);
+
+print $res,"\n";
+
+my $end= rss;
+
+if (($end - $start) / $start > 1.5) {
+    die "leaked: $start .. $end";
+}
+
