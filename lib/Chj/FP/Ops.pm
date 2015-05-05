@@ -42,7 +42,7 @@ package Chj::FP::Ops;
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
 sub add {

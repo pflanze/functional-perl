@@ -51,7 +51,7 @@ package Chj::TEST;
 @EXPORT_OK=qw(run_tests);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Carp;
 use Chj::singlequote;

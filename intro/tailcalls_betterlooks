@@ -1,11 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 
 # This file shows how to use syntactical sugar additions to Perl to
 # make the code from the file `tailcalls` look better.
 
 # ------------------------------------------------------------------
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {

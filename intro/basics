@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 
 # This file contains an intro to functions and the very basic parts of
@@ -22,7 +22,7 @@
 # This (together with the -w flag in the #! line at the top) is how to
 # set up Perl to treat undefined or ambiguous language into errors,
 # which is a good idea to always do.
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # Find modules from the functional-perl working directory (not
 # installed)

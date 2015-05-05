@@ -18,7 +18,7 @@ Chj::PXHTML
 package Chj::PXHTML;
 @ISA="Exporter"; require Exporter;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::PXML;
 

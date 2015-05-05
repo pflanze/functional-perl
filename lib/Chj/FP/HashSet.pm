@@ -55,7 +55,7 @@ package Chj::FP::HashSet;
 @EXPORT_OK=qw(hashset_add_hashset_d);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 
 sub array2hashset ($) {

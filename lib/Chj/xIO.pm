@@ -23,7 +23,7 @@ package Chj::xIO;
 @EXPORT_OK=qw(capture_stdout capture_stdout_);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub xprint {
     my $fh= (ref($_[0]) eq "GLOB" or UNIVERSAL::isa($_[0],"IO")) ? shift : *STDOUT{IO};

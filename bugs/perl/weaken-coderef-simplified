@@ -1,8 +1,8 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # this doesn't work on v5.20.2, but does on v5.14.2
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Scalar::Util "weaken";
 

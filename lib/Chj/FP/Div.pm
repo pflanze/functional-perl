@@ -22,7 +22,7 @@ package Chj::FP::Div;
 @EXPORT_OK=qw(identity inc dec compose);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub identity ($) {
     $_[0]

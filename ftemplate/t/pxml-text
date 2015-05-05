@@ -1,9 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Wed Jun 18 03:48:27 BST 2014
 (my $email='ch%christianjaeger,ch')=~ tr/%,/@./;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 our ($mydir, $myname);
 BEGIN {

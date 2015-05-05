@@ -21,7 +21,7 @@ package Chj::xIOUtil;
 @EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::xopen ":all";
 # ^ well, this voids the point of Chj::xIO (to avoid Chj::IO::*)

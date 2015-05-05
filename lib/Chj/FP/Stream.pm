@@ -67,7 +67,7 @@ package Chj::FP::Stream;
 @EXPORT_OK=qw(F weaken);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::FP::Lazy;
 #use Chj::FP::Pair; ?

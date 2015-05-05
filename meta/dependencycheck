@@ -1,9 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # dependencies of *this* script?: some modules => chj-perllib,
 # straceopens => chj-bin
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 BEGIN {
     $0 =~ m{^(?:\./+)?meta/+dependencycheck}

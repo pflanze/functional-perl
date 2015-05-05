@@ -18,7 +18,7 @@ Chj::FP::OrderedCollection
 
 package Chj::FP::OrderedCollection;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use Chj::FP::Predicates;
