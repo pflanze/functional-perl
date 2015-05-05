@@ -1,4 +1,4 @@
-## Some examples to show off the possibilities using `functional-perl`
+## Some examples showing the possibilities using `functional-perl`
 
 * `fibs` and `primes` show translations of Haskell programs.
 
