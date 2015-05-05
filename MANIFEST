@@ -11,6 +11,7 @@ examples/diff2html
 examples/fibs
 examples/gen-csv
 examples/primes
+examples/skip
 examples/template
 ftemplate/README
 ftemplate/TODO
@@ -29,6 +30,7 @@ lib/Chj/FP/ArrayUtil.pm
 lib/Chj/FP/Array_sort.pm
 lib/Chj/FP/Char.pm
 lib/Chj/FP/Div.pm
+lib/Chj/FP/Equal.pm
 lib/Chj/FP/Hash.pm
 lib/Chj/FP/HashSet.pm
 lib/Chj/FP/IOStream.pm
@@ -85,9 +87,14 @@ t/ftemplate-test
 t/ftemplate-test.expected
 t/intro-basics
 t/require_and_run_tests
+t/skip
+t/skip-internal
+t/skip-leak
+t/skip.input
 t/testlazy
 t/testlazy.expected
 t/testlazy10
 t/testlazy10.expected
 test
 test.pl
+testmem.pl
