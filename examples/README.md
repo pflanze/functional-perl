@@ -7,3 +7,6 @@
 
 * `diff2html` hows how to generate (X)HTML.
 
+* `skip` shows how to implement a sliding window (look-ahead) as a
+  pure function (that can be easily tested) and then uses it for IO
+
