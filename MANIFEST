@@ -13,7 +13,7 @@ examples/gen-csv
 examples/primes
 examples/skip
 examples/template
-ftemplate/README
+ftemplate/README.md
 ftemplate/TODO
 ftemplate/t/pxml-text
 ftemplate/t/stream

@@ -2,27 +2,27 @@ PXML intends to be a simple, Perl based representation for XML, or at
 least the subset that's necessary for doing most tasks. Currently it
 doesn't support XML namespaces properly (manually prefixing element
 names may be a workable solution, though?). It is meant to *produce*
-XML output; handling parsed XML is out of the scope. 
+XML output; handling parsed XML is out of the current scope. 
 
-Its in-memory representation are Chj::PXML objects. Serialization to
+Its in-memory representation are `Chj::PXML` objects. Serialization to
 file handles is done using procedures from
-Chj::PXML::Serialize. 
+`Chj::PXML::Serialize`. 
 
 The body of elements can be a mix of standard Perl arrays, linked
-lists based on Chj::FP::List, and promises (Chj::FP::Lazy) which
+lists based on `Chj::FP::List`, and promises (`Chj::FP::Lazy`) which
 allows for the generation of streaming output.
 
 Direct creation of XML elements:
 
- use Chj::PXML;
- my $element= Chj::PXML->new("a", {href=> "http://myserver.com"}, ["my server"]);
+    use Chj::PXML;
+    my $element= Chj::PXML->new("a", {href=> "http://myserver.com"}, ["my server"]);
 
 Using 'tag functions' for shorter code:
 
- use Chj::PXHTML;
- my $element= A({href=> "http://myserver.com"}, "my server");
+    use Chj::PXHTML;
+    my $element= A({href=> "http://myserver.com"}, "my server");
 
-See 'test' and 'testlazy' for complete examples.
+See '[test](test)' and '[testlazy](testlazy)' for complete examples.
 
 
 When generating HTML, CGI.pm's tag functions seem similar, what are
@@ -43,7 +43,7 @@ the differences?
    is safe against XSS, while CGI.pm does/is not.
 
  - Chj::PXHTML / Chj::PXML chose not to support dashes on attributes,
-   like {-href=> "foo"}, as the author feels that this is unnecessary
+   like `{-href=> "foo"}`, as the author feels that this is unnecessary
    clutter both for the eyes and for the programmer wanting to access
    attributes from such hashes, and added complexity/runtime cost for
    the serializer.
