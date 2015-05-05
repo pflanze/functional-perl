@@ -1,0 +1,27 @@
+#!/usr/bin/perl -w
+
+# this doesn't work on v5.20.2, but does on v5.14.2
+
+use strict; use warnings FATAL => 'uninitialized';
+
+use Scalar::Util "weaken";
+
+sub foo {
+    my $f; $f= sub {
+	my ($n)= @_;
+	sub {
+	    if ($n > 0) {
+		$n + &{&$f($n - 1)}
+	    } else {
+		0
+	    }
+	}
+    };
+    my $f_= $f; weaken $f;
+    &$f_;
+}
+
+my $res= &{foo 2};
+
+print $res,"\n";
+
