@@ -132,9 +132,16 @@ For simplicity during development there is no installer support,
 instead the bundled scripts modify the library load path to find the
 files locally.
 
-To use `bin/repl` interactively, `Term::ReadLine::Gnu` is
-necessary. On Debian systems, install `libterm-readline-gnu-perl`, or
-install from CPAN (run `cpan`, then `install Term::ReadLine::Gnu`.)
+## Dependencies
+
+* to run the test suite: `BSD::Resource`
+
+* to run all the tests (otherwise some are skipped):
+  `Method::Signatures`, `Text::CSV`, `URI`
+
+* to use `bin/repl` interactively, `Term::ReadLine::Gnu`
+
+* to use nicer syntax for tail call optimization: `Sub::Call::Tail`
 
 
 ## See also
