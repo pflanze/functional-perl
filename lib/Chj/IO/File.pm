@@ -1070,7 +1070,12 @@ sub xstat {
 sub fileno {
     my $s=shift;
     CORE::fileno($s)
-  }
+}
+
+sub eof {
+    my $s=shift;
+    CORE::eof($s)
+}
 
 
 if ($has_posix) {
