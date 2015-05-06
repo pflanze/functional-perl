@@ -7,7 +7,8 @@ use Scalar::Util "weaken";
 sub foo {
     my $f; $f= sub {
 	my ($n)= @_;
-	my $f=$f;
+	my $f=$f; # create a new, strong binding for f to prevent it
+		  # from being freed (upon return from f)
 	sub {
 	    if ($n > 0) {
 		$n + &{&$f($n - 1)}
