@@ -134,7 +134,7 @@ files locally.
 
 ## Dependencies
 
-* to run the test suite: `BSD::Resource`
+* to run the test suite: `Test::Requires`, `BSD::Resource`
 
 * to run all the tests (otherwise some are skipped):
   `Method::Signatures`, `Text::CSV`, `URI`

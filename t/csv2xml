@@ -5,10 +5,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 our $len= 210;
 require "./test.pl";
 
-our $deps_ok; BEGIN { $deps_ok= eval { require Text::CSV; 1 } };
-
-use Test::More $deps_ok ? () : (skip_all=> "failed to use Text::CSV");
-
+use Test::Requires qw(Text::CSV);
+use Test::More;
 
 is readin ("examples/csv2xml examples/csv2xml-example.csv|"),
    readin ("< t/csv2xml.expected");

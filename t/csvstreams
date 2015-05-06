@@ -2,17 +2,8 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our %deps;
-BEGIN {
-    %deps= map {$_=>1} qw(Method::Signatures Text::CSV);
-    for (keys %deps) {
-	eval "require $_; 1" and delete $deps{$_}
-    }
-}
-
-use Test::More %deps ?
-  (skip_all=> "failed to use ".join ", ", sort keys %deps):
-  ();
+use Test::Requires qw(Method::Signatures Text::CSV);
+use Test::More;
 
 require "./testmem.pl";
 setlimit_mem_MB (80); # 14 is enough on 32bit Debian, 64bit will need more
