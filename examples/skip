@@ -69,6 +69,7 @@ sub chunks_change_tail {
     my $next; $next= sub {
 	@_==3 or die;
 	my ($start, $rest, $windowsize)= @_;
+	my $next=$next;
 	Delay {
 	  NEXT: {
 		FORCE $start, $rest;

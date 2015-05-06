@@ -106,6 +106,7 @@ sub fh2csvstream ($;$) {
     my ($in, $maybe_params)=@_;
     my $csv= new_csv_instance ($maybe_params);
     my $next; $next= sub {
+	my $next=$next;
 	Delay {
 	    if (my $row= $csv->getline ($in)) {
 		# XX error checks?

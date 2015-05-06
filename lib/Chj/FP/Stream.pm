@@ -99,6 +99,7 @@ sub stream_iota {
 	my $end = $start + $maybe_n;
 	my $rec; $rec= sub {
 	    my ($i)=@_;
+	    my $rec=$rec;
 	    Delay {
 		if ($i<$end) {
 		    cons ($i, &$rec($i+1))
@@ -113,6 +114,7 @@ sub stream_iota {
     } else {
 	my $rec; $rec= sub {
 	    my ($i)=@_;
+	    my $rec=$rec;
 	    Delay {
 		cons ($i, &$rec($i+1))
 	    }
@@ -287,6 +289,7 @@ sub make_stream__fold_right {
 	my $len= &$length ($a);
 	my $rec; $rec= sub {
 	    my ($i)=@_;
+	    my $rec=$rec;
 	    Delay {
 		if (&$whileP($i,$len)) {
 		    &$fn(&$ref($a, $i), &$rec($i + $d))
@@ -451,6 +454,7 @@ sub stream_slice ($ $) {
     my $rec; $rec= sub {
 	my ($s)=@_;
 	weaken $_[0];
+	my $rec=$rec;
 	Delay {
 	    $s= Force $s;
 	    if (is_null $s) {

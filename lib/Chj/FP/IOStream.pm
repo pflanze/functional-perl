@@ -52,6 +52,7 @@ sub _xopendir_stream ($) {
     my ($path)=@_;
     my $d= xopendir $path;
     my $next; $next= sub {
+	my $next=$next;
 	Delay {
 	    if (defined (my $item= $d->xnread)) {
 		cons $item, &$next
@@ -94,6 +95,7 @@ sub xopendir_pathstream ($;$) {
 sub fh2stream ($$$) {
     my ($fh, $read, $close)=@_;
     my $next; $next= sub {
+	my $next=$next;
 	Delay {
 	    if (defined (my $item= &$read($fh))) {
 		cons $item, &$next

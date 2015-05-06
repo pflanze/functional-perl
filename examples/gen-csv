@@ -53,6 +53,7 @@ func fibs () {
 
 func exps ($base, $start) {
     my $rec; $rec= func ($x) {
+	my $rec=$rec;
 	Delay { cons $x, &$rec ($x * $base) }
     };
     Weakened ($rec)->($start)
