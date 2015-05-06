@@ -96,6 +96,10 @@ deleting it from the outer call frame through `@_` (like `undef
 $_[1];`) Note that on older versions of Perl deleting references
 through `@_` doesn't always work (v5.14.2 is fine, v5.10.1 is not).
 
+    Note: weaken'ed references to closures that return closures
+    (e.g. through `Delay`) won't be retained; `my $f=$f;` needs to be
+    used before the `Delay` form.
+
 - C stack when freeing: When Perl deallocates nested data structures,
 it uses space on the C (not Perl language) stack for the
 recursion. When a structure to be freed is nested deeply enough (like
