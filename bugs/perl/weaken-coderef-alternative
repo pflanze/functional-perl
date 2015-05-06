@@ -1,0 +1,24 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+use Scalar::Util "weaken";
+
+sub foo {
+    my $f= sub {
+	my ($f, $n)= @_;
+	sub {
+	    if ($n > 0) {
+		$n + &{&$f($f, $n - 1)}
+	    } else {
+		0
+	    }
+	}
+    };
+    &$f($f,@_);
+}
+
+my $res= &{foo 2};
+
+print $res,"\n";
+
