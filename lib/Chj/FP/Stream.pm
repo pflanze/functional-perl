@@ -87,9 +87,7 @@ sub Keep ($) {
 # value as result
 sub Weakened ($) {
     my ($ref)= @_;
-    weaken $_[0]
-      # except code references, XXX Perl bug?
-      unless ref($ref) eq "CODE" and $^V->{version}[1] > 14;
+    weaken $_[0];
     $ref
 }
 
