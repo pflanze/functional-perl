@@ -12,7 +12,7 @@ BEGIN {
 
 use Test::More %deps ?
   (skip_all=> "failed to use ".join ", ", sort keys %deps):
-  (tests=> 2);
+  ();
 
 require "./testmem.pl";
 setlimit_mem_MB (80); # 14 is enough on 32bit Debian, 64bit will need more
@@ -22,3 +22,4 @@ is system ("examples/gen-csv t/test-a.csv 40000"), 0;
 
 is system ("examples/csv2xml t/test-a.csv -o t/test-a.xml"), 0;
 
+done_testing;

@@ -7,9 +7,10 @@ require "./test.pl";
 
 our $deps_ok; BEGIN { $deps_ok= eval { require Text::CSV; 1 } };
 
-use Test::More $deps_ok ? (tests=> 1) : (skip_all=> "failed to use Text::CSV");
+use Test::More $deps_ok ? () : (skip_all=> "failed to use Text::CSV");
 
 
 is readin ("examples/csv2xml examples/csv2xml-example.csv|"),
    readin ("< t/csv2xml.expected");
 
+done_testing;

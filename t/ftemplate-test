@@ -5,10 +5,11 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 our $len= 672;
 require "./test.pl";
 
-use Test::More tests=> 1;
+use Test::More;
 
 system ("ftemplate/test 10001000") == 0
   or die;
 
 is readin ("< out.xhtml"), readin ("< t/ftemplate-test.expected");
 
+done_testing;

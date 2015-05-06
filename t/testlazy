@@ -5,7 +5,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 our $len= 1000;
 require "./test.pl";
 
-use Test::More tests=> 1;
+use Test::More;
 
 use POSIX 'SIGPIPE';
 our $sigpipe_is_fine= sub {
@@ -15,3 +15,4 @@ our $sigpipe_is_fine= sub {
 
 is readin ("ftemplate/testlazy|", $sigpipe_is_fine), readin ("< t/testlazy.expected");
 
+done_testing;

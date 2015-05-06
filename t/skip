@@ -4,7 +4,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 require "./test.pl";
 
-use Test::More; # tests=> 6*3;
+use Test::More;
 
 # test non-seekable input
 is readin("echo -n hallo| examples/skip 1 1|"), "all";

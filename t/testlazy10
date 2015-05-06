@@ -5,9 +5,10 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 our $len= 759;
 require "./test.pl";
 
-use Test::More tests=> 1;
+use Test::More;
 
 $ENV{N}= 10;
 $ENV{T}= 0;
 is readin ("ftemplate/testlazy|"), readin ("< t/testlazy10.expected");
 
+done_testing;

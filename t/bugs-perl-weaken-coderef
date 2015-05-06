@@ -4,7 +4,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 require "./test.pl";
 
-use Test::More tests=> 1;
+use Test::More;
 
 require "./testmem.pl";
 setlimit_mem_MB (40);
@@ -12,3 +12,4 @@ setlimit_mem_MB (40);
 is readin("bugs/perl/weaken-coderef 2 50000 |"),
   "3\n";
 
+done_testing;
