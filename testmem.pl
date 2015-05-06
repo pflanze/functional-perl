@@ -1,3 +1,4 @@
+use Test::Requires qw(BSD::Resource);
 use BSD::Resource;
 
 sub MB ($) {

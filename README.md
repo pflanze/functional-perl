@@ -134,10 +134,10 @@ files locally.
 
 ## Dependencies
 
-* to run the test suite: `Test::Requires`, `BSD::Resource`
+* to run the test suite: `Test::Requires`
 
 * to run all the tests (otherwise some are skipped):
-  `Method::Signatures`, `Text::CSV`, `URI`
+  `BSD::Resource`, `Method::Signatures`, `Text::CSV`, `URI`
 
 * to use `bin/repl` interactively, `Term::ReadLine::Gnu`
 
