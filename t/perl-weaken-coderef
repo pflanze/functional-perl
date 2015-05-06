@@ -9,7 +9,7 @@ use Test::More;
 require "./testmem.pl";
 setlimit_mem_MB (40);
 
-is readin("bugs/perl/weaken-coderef 2 50000 |"),
+is readin("t/perl/weaken-coderef 2 50000 |"),
   "3\n";
 
 done_testing;
