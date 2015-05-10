@@ -66,17 +66,16 @@ sub stream_sum {
     weaken $_[0];
     # ^ not necessary here, since, unlike with FP::Lazy::Promise,
     # resulting value is not saved in its 'generating container'
-    my $lp= fix sub {
-	my ($lp, $tot,$s)=@_;
-	weaken $_[0];
-	weaken $_[2];
+    my $lp; $lp= sub {
+	my ($tot,$s)=@_;
+	weaken $_[1];
 	if (my $fs= &$s) {
 	    @_=($$fs[0] + $tot, $$fs[1]); goto $lp;
 	} else {
 	    $tot
 	}
     };
-    @_=(0, $s); goto $lp;
+    @_=(0, $s); my $lp_=$lp; weaken $lp; goto $lp;
 }
 
 
