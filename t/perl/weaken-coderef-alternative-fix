@@ -47,24 +47,42 @@ sub fix ($);
     ]->[$impl];
 
 
-sub foo {
+sub naturals {
     my $f= fix sub {
 	my ($f, $n)= @_;
 	sub {
 	    if ($n > 0) {
-		$n + &{&$f($n - 1)}
+		[ $n, &$f($n - 1) ]
 	    } else {
-		0
+		undef
 	    }
 	}
     };
-    &$f;
+    goto $f;
+}
+
+sub stream_sum {
+    my ($s)=@_;
+    #weaken $_[0];
+    # ^ not necessary here, since, unlike with FP::Lazy::Promise,
+    # resulting value is not saved in its 'generating container'
+    my $tot=0;
+  LP: {
+      if (my $fs= &$s) {
+	  ($tot, $s)= ($$fs[0] + $tot, $$fs[1]);
+	  goto LP;
+      } else {
+	  $tot
+      }
+    }
 }
 
 
 my $res;
-$res= &{foo $n}
-  for 1..$m;
+for (1..$m) {
+    my $ns= naturals $n;
+    $res= stream_sum $ns;
+}
 
 print $res,"\n";
 

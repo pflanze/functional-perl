@@ -9,20 +9,36 @@ sub rss () {
     (BSD::Resource::getrusage(BSD::Resource::RUSAGE_SELF()))[2]
 }
 
-sub once {
+sub naturals {
     my $f; $f= sub {
 	my ($n)= @_;
 	my $f=$f;
 	sub {
 	    if ($n > 0) {
-		$n + &{&$f($n - 1)}
+		[ $n, &$f($n - 1) ]
 	    } else {
-		0
+		undef
 	    }
 	}
     };
     my $f_= $f; weaken $f;
     goto $f_;
+}
+
+sub stream_sum {
+    my ($s)=@_;
+    #weaken $_[0];
+    # ^ not necessary here, since, unlike with FP::Lazy::Promise,
+    # resulting value is not saved in its 'generating container'
+    my $tot=0;
+  LP: {
+      if (my $fs= &$s) {
+	  ($tot, $s)= ($$fs[0] + $tot, $$fs[1]);
+	  goto LP;
+      } else {
+	  $tot
+      }
+    }
 }
 
 @ARGV==2 or die "usage: $0 n N";
@@ -31,7 +47,10 @@ my ($n,$N)= @ARGV;
 my $start= rss;
 
 my $res;
-$res= &{once $n,0} for (1..$N);
+for (1..$N) {
+    my $ns= naturals $n;
+    $res= stream_sum $ns;
+}
 
 print $res,"\n";
 
