@@ -1,0 +1,64 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../../lib";
+
+use Scalar::Util 'weaken';
+
+@ARGV==3 or die "usage: $0 impl n m";
+our ($impl, $n, $m) = @ARGV;
+
+use FP::List ":all";
+use FP::Lazy ":all";
+
+sub naturals {
+    my $f; $f= sub {
+	my ($n)= @_;
+	my $f=$f;
+	lazy {
+	    if ($n > 0) {
+		cons $n, &$f($n - 1)
+	    } else {
+		null
+	    }
+	}
+    };
+    my $f_= $f; weaken $f;
+    goto $f_;
+}
+
+sub stream_sum {
+    my ($s)=@_;
+    weaken $_[0];
+    # ^ not necessary here, since, unlike with FP::Lazy::Promise,
+    # resulting value is not saved in its 'generating container'
+    my $lp; $lp= sub {
+	my ($tot,$s)=@_;
+	weaken $_[1];
+	FORCE $s;
+	if (is_null $s) {
+	    $tot
+	} else {
+	    @_=(car ($s) + $tot, cdr $s); goto $lp;
+	}
+    };
+    @_=(0, $s); my $lp_=$lp; weaken $lp; goto $lp_;
+}
+
+
+my $res;
+for (1..$m) {
+    my $ns= naturals $n;
+    $res= stream_sum $ns;
+}
+
+print $res,"\n";
+
