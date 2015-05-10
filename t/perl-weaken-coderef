@@ -7,9 +7,24 @@ require "./test.pl";
 use Test::More;
 
 require "./testmem.pl";
-setlimit_mem_MB (40);
+setlimit_mem_MB (30);
 
 is readin("t/perl/weaken-coderef 2 50000 |"),
   "3\n";
+
+my $n= 30000;
+my $res= "450015000\n";
+
+is readin("t/perl/weaken-coderef $n 1 |"),
+  $res;
+
+is readin("t/perl/weaken-coderef-alternative-fix 0 $n 1 |"),
+  $res;
+
+is readin("t/perl/weaken-coderef-alternative-fix 1 $n 1 |"),
+  $res;
+
+is readin("t/perl/weaken-coderef-alternative-fix 2 $n 1 |"),
+  $res;
 
 done_testing;
