@@ -25,7 +25,8 @@ sub once {
     goto $f_;
 }
 
-my ($n,$N)=(2, 20000);
+@ARGV==2 or die "usage: $0 n N";
+my ($n,$N)= @ARGV;
 
 my $start= rss;
 
