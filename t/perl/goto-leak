@@ -1,0 +1,52 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+use Scalar::Util 'weaken';
+
+@ARGV==2 or die "usage: $0 n m";
+our ($n, $m) = @ARGV;
+
+sub naturals {
+    my ($n)= @_;
+    sub {
+	if ($n > 0) {
+	    [ $n, naturals($n - 1) ]
+	} else {
+	    undef
+	}
+    }
+}
+
+sub stream_sum_OK {
+  stream_sum_OK: {
+    my ($s, $tot)=@_;
+    weaken $_[0];
+    if (my $fs= &$s) {
+	@_=($$fs[1], $$fs[0] + $tot); goto stream_sum_OK;
+    } else {
+	$tot
+    }
+}}
+
+sub stream_sum_LEAK {
+    my ($s, $tot)=@_;
+    weaken $_[0];
+    if (my $fs= &$s) {
+	@_=($$fs[1], $$fs[0] + $tot); goto \&stream_sum_LEAK;
+    } else {
+	$tot
+    }
+}
+
+*stream_sum= *stream_sum_LEAK;
+
+
+my $res;
+for (1..$m) {
+    my $ns= naturals $n;
+    $res= stream_sum ($ns, 0);
+}
+
+print $res,"\n";
+

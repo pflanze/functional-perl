@@ -1,0 +1,15 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+require "./test.pl";
+
+use Test::More;
+
+require "./testmem.pl";
+setlimit_mem_MB (30);
+
+is readin("t/perl/goto-leak 100000 1 |"),
+  "5000050000\n";
+
+done_testing;
