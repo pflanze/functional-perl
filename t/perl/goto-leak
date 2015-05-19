@@ -2,8 +2,6 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Scalar::Util 'weaken';
-
 @ARGV==2 or die "usage: $0 n m";
 our ($n, $m) = @ARGV;
 
@@ -21,7 +19,6 @@ sub naturals {
 sub stream_sum_OK {
   stream_sum_OK: {
     my ($s, $tot)=@_;
-    weaken $_[0];
     if (my $fs= &$s) {
 	@_=($$fs[1], $$fs[0] + $tot); goto stream_sum_OK;
     } else {
@@ -31,7 +28,6 @@ sub stream_sum_OK {
 
 sub stream_sum_LEAK {
     my ($s, $tot)=@_;
-    weaken $_[0];
     if (my $fs= &$s) {
 	@_=($$fs[1], $$fs[0] + $tot); goto \&stream_sum_LEAK;
     } else {
