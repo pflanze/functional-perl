@@ -36,4 +36,9 @@ use Chj::ruse;
 use Chj::Backtrace;
 use Chj::repl;
 
+# add your own code.... (possibly adding `repl` calls within, too;
+# also, it's better to put most code in modules, and use `ruse` to
+# reload them (main is [currently?] not reloaded by `ruse`))
+
+# during development:
 repl;

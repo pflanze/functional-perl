@@ -10,3 +10,4 @@
 * `skip` shows how to implement a sliding window (look-ahead) as a
   pure function (that can be easily tested) and then uses it for IO
 
+Copy `template` to create your own script.
