@@ -55,8 +55,8 @@ sub functional_fact_iter {
 }
 
 
-# To really see the difference, here's a function that works for
-# higher number of iterations:
+# To really see the difference, here's a function that we can usefully
+# test for higher numbers of iterations:
 
 sub odd {
     my ($n)=@_;
