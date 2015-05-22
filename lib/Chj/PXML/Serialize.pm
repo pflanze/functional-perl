@@ -118,7 +118,7 @@ sub _pxml_print_fragment_fast {
 			    $selfreferential=1;
 			} else {
 			    my $isempty=  # slow path
-			      is_null(Force(stream_mixed_flatten ($body)));
+			      is_null(force(stream_mixed_flatten ($body)));
 			    $selfreferential = $isempty;
 			    warn "html5 compatible serialization requested "
 			      ."but got void element '$v' that is not empty"
@@ -151,9 +151,9 @@ sub _pxml_print_fragment_fast {
 		     or
 		     $ref eq "Chj::FP::Lazy::PromiseLight") {
 	      PROMISE:
-		#_pxml_print_fragment_fast (Force($v), $fh,
+		#_pxml_print_fragment_fast (force($v), $fh,
 		#                           $html5compat, $void_element_h);
-		$v= Force($v,1);
+		$v= force($v,1);
 		redo LP;
 	    } else {
 		if ($ref eq "ARRAY") {
@@ -165,7 +165,7 @@ sub _pxml_print_fragment_fast {
 			  ($_, $fh, $html5compat, $void_element_h);
 		    }
 		}
-		# 'Force' doesn't evaluate CODE (probably rightly so),
+		# 'force' doesn't evaluate CODE (probably rightly so),
 		# thus need to be explicit if we want 'late binding'
 		# (e.g. reference to dynamic variables) during
 		# serialization
@@ -221,7 +221,7 @@ sub pxml_print_fragment_fast ($ $ ) {
 	@_=($v); goto $with_first_element;
     } else {
 	if (ref $v) {
-	    my $s= Force(stream_mixed_flatten ($v));
+	    my $s= force(stream_mixed_flatten ($v));
 	    if ($s) {
 		@_= (car $s); goto $with_first_element;
 	    } else {

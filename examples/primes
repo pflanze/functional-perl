@@ -40,7 +40,7 @@ use Chj::FP::Stream ":all";
 func primes_naive1 () {
     my $sieve; $sieve= func ($p_xs) {
 	my ($p,$xs)= first_and_rest $p_xs;
-	Delay {
+	lazy {
 	    cons $p, &$sieve (stream_filter func ($x) {
 				  $x % $p != 0
 			      }, $xs)
@@ -57,7 +57,7 @@ func primes_naive () {
 
 func sieve ($p_xs) {
     my ($p,$xs)= first_and_rest $p_xs;
-    Delay {
+    lazy {
 	cons $p, sieve (stream_filter func ($x) {
 			    $x % $p != 0
 			}, $xs)
@@ -101,7 +101,7 @@ t_primes \&primes_naive;
 #     g p         = [ n * p | n <- [p, p + 2 ..]]
 
 func merge ($xs, $ys) {
-    Delay {
+    lazy {
 	my ($x,$xt)= first_and_rest $xs;
 	my ($y,$yt)= first_and_rest $ys;
 
@@ -116,7 +116,7 @@ func merge ($xs, $ys) {
 }
 
 func diff ($xs, $ys) {
-    Delay {
+    lazy {
 	my ($x,$xt)= first_and_rest $xs;
 	my ($y,$yt)= first_and_rest $ys;
 
@@ -133,7 +133,7 @@ func diff ($xs, $ys) {
 func primes () {
     stream_append (array2list ([2, 3, 5]),
 		   diff (stream_map (func ($x) { $x*2 + 7 }, stream_iota),
-			 Delay{nonprimes()} ))
+			 lazy{nonprimes()} ))
 }
 
 func nonprimes () {

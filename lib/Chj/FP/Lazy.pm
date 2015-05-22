@@ -11,16 +11,16 @@ Chj::FP::Lazy
 
  use Chj::FP::Lazy;
 
- my $a = Delay { 1 / 0 };
- print Force $a # -> Illegal division by zero
+ my $a = lazy { 1 / 0 };
+ print force $a # -> Illegal division by zero
 
- my $b = Delay { warn "evaluation happening"; 1 / 2 };
+ my $b = lazy { warn "evaluation happening"; 1 / 2 };
  print is_promise $b ? "promise" : "non-promise", "\n"; # -> "promise"
- print Force ($b), "\n"; # shows the warning, and "0.5"
+ print force ($b), "\n"; # shows the warning, and "0.5"
  # $b is still a promise at this poing (although an evaluated one):
  print is_promise $b ? "promise" : "non-promise", "\n"; # -> "promise"
 
- # The following stores result of `Force $b` back into $b
+ # The following stores result of `force $b` back into $b
  FORCE $b; # does not show the warning anymore as evaluation happened already
  print is_promise $b ? "promise" : "non-promise", "\n"; # -> "non-promise"
  print $b, "\n"; # -> "0.5"
@@ -33,12 +33,12 @@ only ever evaluated once, after which point its result is saved in the
 promise, and subsequent requests for evaluation are simply returning
 the saved value.
 
- $p = Delay { ...... } # returns a promise that represents the computation
+ $p = lazy { ...... } # returns a promise that represents the computation
                        # given in the block of code
 
- Force $p  # runs the block of code and stores and returns its result
+ force $p  # runs the block of code and stores and returns its result
 
- FORCE $p  # in addition to running Force, stores back the resulting
+ FORCE $p  # in addition to running force, stores back the resulting
            # value into $p
 
  is_promise $x # returns true iff $x holds a promise
@@ -57,19 +57,19 @@ Alternative Scalar::Defer?
 
 package Chj::FP::Lazy;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(Delay DelayLight Force FORCE is_promise);
+@EXPORT=qw(lazy lazyLight force FORCE is_promise);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
-sub Delay (&) {
+sub lazy (&) {
     bless [$_[0],undef], "Chj::FP::Lazy::Promise"
 }
 
 # not providing for caching (1-time-only evaluation)
-sub DelayLight (&) {
+sub lazyLight (&) {
     bless $_[0], "Chj::FP::Lazy::PromiseLight"
 }
 @Chj::FP::Lazy::PromiseLight::ISA= qw(Chj::FP::Lazy::Promise);
@@ -78,7 +78,7 @@ sub is_promise ($) {
     (UNIVERSAL::isa ($_[0], "Chj::FP::Lazy::Promise"))
 }
 
-sub Force ($;$) {
+sub force ($;$) {
     my ($perhaps_promise,$nocache)=@_;
   LP: {
 	if (UNIVERSAL::isa ($perhaps_promise, "Chj::FP::Lazy::PromiseLight")) {
@@ -105,7 +105,7 @@ sub Force ($;$) {
 
 sub FORCE {
     for (@_) {
-	$_ = Force $_
+	$_ = force $_
     }
 }
 

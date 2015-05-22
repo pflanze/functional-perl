@@ -73,14 +73,14 @@ sub perhaps_previous {
 sub maybe_next {
     my $s=shift;
     my ($l)= $s->perhaps_following (@_) or return undef;
-    $l= Force ($l);
+    $l= force ($l);
     is_null $l ? undef : car $l
 }
 
 sub maybe_prev {
     my $s=shift;
     my ($l)= $s->perhaps_previous (@_) or return undef;
-    $l= Force ($l);
+    $l= force ($l);
     is_null $l ? undef : car $l
 }
 

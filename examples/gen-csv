@@ -47,14 +47,14 @@ func fibs () {
     # it's correct when the local variable, which goes out of scope,
     # is deleted)
     my $fibs; $fibs=
-      cons 1, cons 1, Delay { stream_zip_with \&add, $fibs, rest $fibs };
+      cons 1, cons 1, lazy { stream_zip_with \&add, $fibs, rest $fibs };
     $fibs
 }
 
 func exps ($base, $start) {
     my $rec; $rec= func ($x) {
 	my $rec=$rec;
-	Delay { cons $x, &$rec ($x * $base) }
+	lazy { cons $x, &$rec ($x * $base) }
     };
     Weakened ($rec)->($start)
 }

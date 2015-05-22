@@ -97,7 +97,7 @@ sub car ($) {
     if (ref ($v) eq "Pair") {
 	$$v[0]
     } elsif (is_promise $v) {
-	@_=Force $v; goto \&car;
+	@_=force $v; goto \&car;
     } else {
 	not_a_pair $v;
     }
@@ -110,7 +110,7 @@ sub cdr ($) {
     if (ref ($v) eq "Pair") {
 	$$v[1]
     } elsif (is_promise $v) {
-	@_=Force $v; goto \&cdr;
+	@_=force $v; goto \&cdr;
     } else {
 	not_a_pair $v;
     }
@@ -141,7 +141,7 @@ sub car_and_cdr ($) {
     if (ref ($v) eq "Pair") {
 	@{$_[0]}
     } elsif (is_promise $v) {
-	@_=Force $v; goto \&car_and_cdr;
+	@_=force $v; goto \&car_and_cdr;
     } else {
 	not_a_pair $v;
     }
@@ -255,11 +255,11 @@ sub _write_sexpr ($ $ $);
 sub _write_sexpr ($ $ $) {
     my ($l,$fh, $already_in_a_list)=@_;
   _WRITE_SEXPR: {
-	$l= Force ($l,1);
+	$l= force ($l,1);
 	if (is_pair $l) {
 	    xprint $fh, $already_in_a_list ? ' ' : '(';
 	    _write_sexpr car $l, $fh, 0;
-	    my $d= Force (cdr $l, 1);
+	    my $d= force (cdr $l, 1);
 	    if (is_null $d) {
 		xprint $fh, ')';
 	    } elsif (is_pair $d) {
@@ -433,7 +433,7 @@ TEST{ list_any sub { $_[0] % 2 }, array2list [7] }
 # Turn a mix of (nested) arrays and lists into a flat list.
 
 # If the third argument is given, it needs to be a reference to either
-# Delay or DelayLight. In that case it will force promises, but only
+# lazy or lazyLight. In that case it will force promises, but only
 # lazily (i.e. provide a promise that will do the forcing and consing).
 
 sub mixed_flatten ($;$$);
@@ -445,7 +445,7 @@ sub mixed_flatten ($;$$) {
 	    my $delay= $maybe_delay;
 	    &$delay
 	      (sub {
-		   @_=(Force($v), $tail, $delay); goto \&mixed_flatten;
+		   @_=(force($v), $tail, $delay); goto \&mixed_flatten;
 	       });
 	} else {
 	    if (is_null $v) {
@@ -573,29 +573,29 @@ TEST{ list2string mixed_flatten [string2list "abc", string2list "def", "ghi"] }
   'abcdefghi';  # only works thanks to perl chars and strings being the same datatype
 
 TEST_STDOUT{ write_sexpr( mixed_flatten
-			  DelayLight { cons(Delay { 1+1 }, null)},
+			  lazyLight { cons(lazy { 1+1 }, null)},
 			  undef,
-			  \&DelayLight) }
+			  \&lazyLight) }
   '("2")';
 TEST_STDOUT{ write_sexpr( mixed_flatten
-			  DelayLight { cons(Delay { [1+1,Delay {2+1}] }, null) },
+			  lazyLight { cons(lazy { [1+1,lazy {2+1}] }, null) },
 			  undef,
-			  \&DelayLight) }
+			  \&lazyLight) }
   '("2" "3")';
 
 TEST_STDOUT{
     sub countdown {
 	my ($i)=@_;
 	if ($i) {
-	    DelayLight {cons ($i, countdown($i-1))}
+	    lazyLight {cons ($i, countdown($i-1))}
 	} else {
 	    null
 	}
     }
     write_sexpr ( mixed_flatten
-		  DelayLight { cons(Delay { [1+1,countdown 10] }, null)},
+		  lazyLight { cons(lazy { [1+1,countdown 10] }, null)},
 		  undef,
-		  \&DelayLight)
+		  \&lazyLight)
 }
   '("2" "10" "9" "8" "7" "6" "5" "4" "3" "2" "1")';
 
@@ -608,15 +608,15 @@ TEST{ list2array  Chj::FP::List::array_fold_right \&cons, null, [1,2,3] }
 
 TEST_STDOUT{ write_sexpr
 	       (mixed_flatten
-		[DelayLight { [3,[9,10]]}],
+		[lazyLight { [3,[9,10]]}],
 		undef,
-		\&DelayLight ) }
+		\&lazyLight ) }
     '("3" "9" "10")';
 TEST_STDOUT { write_sexpr
 		(mixed_flatten
-		 [1,2, DelayLight { [3,9]}],
+		 [1,2, lazyLight { [3,9]}],
 		 undef,
-		 \&DelayLight) }
+		 \&lazyLight) }
     '("1" "2" "3" "9")';
 
 TEST{ list2array  list_append (array2list (["a","b"]), array2list([1,2])) }

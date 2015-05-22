@@ -61,7 +61,7 @@ sub chunks_change_tail {
     my ($chunks,  $minsize, $fn)=@_;
     weaken $_[0];
 
-    is_null Force $chunks
+    is_null force $chunks
       and die "got empty input";
 
     # start and rest are parts of the same stream of chunks,
@@ -70,7 +70,7 @@ sub chunks_change_tail {
 	@_==3 or die;
 	my ($start, $rest, $windowsize)= @_;
 	my $next=$next;
-	Delay {
+	lazy {
 	  NEXT: {
 		FORCE $start, $rest;
 		my $first= car $start;
@@ -205,7 +205,7 @@ if ($n) {
 }
 
 if ($maybe_m) {
-    my $chunks= Force fh2chunks $in, $BUFSIZ;
+    my $chunks= force fh2chunks $in, $BUFSIZ;
     if (is_null $chunks) {
 	die "$myname: no remainder left after skipping $n byte(s)\n"
 	    unless $opt_silent;

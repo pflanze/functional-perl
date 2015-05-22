@@ -22,7 +22,7 @@ $|=1;
 
 sub countdown {
     my ($i)=@_;
-    DelayLight {
+    lazyLight {
 	#sleep 1;
 	if ($i >= 0) {
 	    cons (P($i),

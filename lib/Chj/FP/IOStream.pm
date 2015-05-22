@@ -11,11 +11,11 @@ Chj::FP::IOStream
 
  use Chj::FP::IOStream ':all'; # xopendir_stream, xopendir_pathstream
  use Chj::FP::Stream; # stream_map
- use Chj::FP::Lazy; # Force
+ use Chj::FP::Lazy; # force
  use Chj::FP::List ':all'; # car
  my $paths= stream_map sub { my ($item)= @_; "$base/$item" }, xopendir_stream $base;
  # which is the same as: my $paths= xopendir_pathstream $base;
- my $firstpath= car Force $paths;
+ my $firstpath= car force $paths;
  # etc.
 
 =head1 DESCRIPTION
@@ -53,7 +53,7 @@ sub _xopendir_stream ($) {
     my $d= xopendir $path;
     my $next; $next= sub {
 	my $next=$next;
-	Delay {
+	lazy {
 	    if (defined (my $item= $d->xnread)) {
 		cons $item, &$next
 	    } else {
@@ -96,7 +96,7 @@ sub fh2stream ($$$) {
     my ($fh, $read, $close)=@_;
     my $next; $next= sub {
 	my $next=$next;
-	Delay {
+	lazy {
 	    if (defined (my $item= &$read($fh))) {
 		cons $item, &$next
 	    } else {

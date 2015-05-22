@@ -47,7 +47,7 @@ sub xprint_object ($$) {
 	    xprint_object ($fh, car $v);
 	    xprint_object ($fh, cdr $v);
 	} elsif (is_promise $v) {
-	    xprint_object ($fh, Force $v)
+	    xprint_object ($fh, force $v)
 	} else {
 	    die "don't know how to print a ".ref($v)." ('$v')";
 	}

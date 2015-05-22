@@ -17,7 +17,7 @@ Chj::FP::Stream - functions for lazily generated, singly linked (purely function
  # => 5000000;
 
  use Chj::FP::Lazy;
- Force stream_fold_right sub { my ($n,$rest)=@_; $n + Force $rest }, 0, stream_iota undef, 5
+ force stream_fold_right sub { my ($n,$rest)=@_; $n + force $rest }, 0, stream_iota undef, 5
  # => 10;
 
 
@@ -100,7 +100,7 @@ sub stream_iota {
 	my $rec; $rec= sub {
 	    my ($i)=@_;
 	    my $rec=$rec;
-	    Delay {
+	    lazy {
 		if ($i<$end) {
 		    cons ($i, &$rec($i+1))
 		} else {
@@ -115,7 +115,7 @@ sub stream_iota {
 	my $rec; $rec= sub {
 	    my ($i)=@_;
 	    my $rec=$rec;
-	    Delay {
+	    lazy {
 		cons ($i, &$rec($i+1))
 	    }
 	};
@@ -128,10 +128,10 @@ sub stream_length ($) {
     my ($l)=@_;
     weaken $_[0];
     my $len=0;
-    $l= Force $l;
+    $l= force $l;
     while (!is_null $l) {
 	$len++;
-	$l= Force cdr $l;
+	$l= force cdr $l;
     }
     $len
 }
@@ -142,7 +142,7 @@ sub stream_fold ($$$) {
     weaken $_[2];
     my $v;
   LP: {
-	$l= Force $l;
+	$l= force $l;
 	if (is_pair $l) {
 	    ($v,$l)= first_and_rest $l;
 	    $start= &$fn ($start, $v);
@@ -159,8 +159,8 @@ sub stream_append ($$) {
     my ($l1,$l2)=@_;
     weaken $_[0];
     weaken $_[1];
-    Delay {
-	$l1= Force $l1;
+    lazy {
+	$l1= force $l1;
 	is_null($l1) ? $l2 : cons (car $l1, stream_append (cdr $l1, $l2))
     }
 }
@@ -172,8 +172,8 @@ sub stream_map ($ $);
 sub stream_map ($ $) {
     my ($fn,$l)=@_;
     weaken $_[1];
-    Delay {
-	$l= Force $l;
+    lazy {
+	$l= force $l;
 	is_null $l ? null : cons(&$fn(car $l), stream_map ($fn,cdr $l))
     }
 }
@@ -182,8 +182,8 @@ sub stream_map_with_tail ($ $ $);
 sub stream_map_with_tail ($ $ $) {
     my ($fn,$l,$tail)=@_;
     weaken $_[1];
-    Delay {
-	$l= Force $l;
+    lazy {
+	$l= force $l;
 	is_null $l ? $tail : cons(&$fn(car $l),
 				stream_map_with_tail ($fn, cdr $l, $tail))
     }
@@ -194,9 +194,9 @@ sub stream_zip2 ($$);
 sub stream_zip2 ($$) {
     my ($l,$m)=@_;
     do {weaken $_ if is_promise $_ } for @_; #needed?
-    Delay {
-	$l= Force $l;
-	$m= Force $m;
+    lazy {
+	$l= force $l;
+	$m= force $m;
 	(is_null $l or is_null $m) ? null
 	  : cons([car $l, car $m], stream_zip2 (cdr $l, cdr $m))
     }
@@ -206,9 +206,9 @@ sub stream_zip2 ($$) {
 sub stream_zip {
     my @ps= @_;
     do {weaken $_ if is_promise $_ } for @_; #needed?
-    Delay {
+    lazy {
 	my @vs= map {
-	    my $v= Force $_;
+	    my $v= force $_;
 	    is_null $v ? return null : $v
 	} @ps;
 	my $a= [map { car $_ } @vs];
@@ -220,10 +220,10 @@ sub stream_zip {
 sub stream_zip_with {
     my ($f, $l1, $l2)= @_;
     undef $_[1]; undef $_[2];
-    Delay
+    lazy
     {
-	my $l1= Force $l1;
-	my $l2= Force $l2;
+	my $l1= force $l1;
+	my $l2= force $l2;
 	(is_null $l1 or is_null $l2) ? null
 	  : cons &$f(car $l1, car $l2), stream_zip_with ($f, cdr $l1, cdr $l2)
     }
@@ -234,8 +234,8 @@ sub stream_filter ($ $);
 sub stream_filter ($ $) {
     my ($fn,$l)=@_;
     weaken $_[1];
-    Delay {
-	$l= Force $l;
+    lazy {
+	$l= force $l;
 	is_null $l ? null : do {
 	    my $a= car $l;
 	    my $r= stream_filter ($fn,cdr $l);
@@ -253,8 +253,8 @@ sub stream_foldr1 ($ $);
 sub stream_foldr1 ($ $) {
     my ($fn,$l)=@_;
     weaken $_[1];
-    Delay {
-	$l= Force $l;
+    lazy {
+	$l= force $l;
 	if (is_pair $l) {
 	    &$fn (car $l, stream_foldr1 ($fn,cdr $l))
 	} elsif (is_null $l) {
@@ -269,8 +269,8 @@ sub stream_fold_right ($ $ $);
 sub stream_fold_right ($ $ $) {
     my ($fn,$start,$l)=@_;
     weaken $_[2];
-    Delay {
-	$l= Force $l;
+    lazy {
+	$l= force $l;
 	if (is_pair $l) {
 	    &$fn (car $l, stream_fold_right ($fn,$start,cdr $l))
 	} elsif (is_null $l) {
@@ -290,7 +290,7 @@ sub make_stream__fold_right {
 	my $rec; $rec= sub {
 	    my ($i)=@_;
 	    my $rec=$rec;
-	    Delay {
+	    lazy {
 		if (&$whileP($i,$len)) {
 		    &$fn(&$ref($a, $i), &$rec($i + $d))
 		} else {
@@ -377,7 +377,7 @@ sub string2stream ($;$) {
 sub stream2string ($) {
     my ($l)=@_;
     my $str="";
-    while (($l= Force $l), !is_null $l) {
+    while (($l= force $l), !is_null $l) {
 	$str.= car $l;
 	$l= cdr $l;
     }
@@ -388,7 +388,7 @@ sub stream_for_each ($ $ ) {
     my ($proc, $s)=@_;
     weaken $_[1];
   LP: {
-	$s= Force $s;
+	$s= force $s;
 	if (!is_null $s) {
 	    &$proc(car $s);
 	    $s= cdr $s;
@@ -402,7 +402,7 @@ sub stream_drop ($ $) {
     my ($s, $n)=@_;
     weaken $_[0];
     while ($n > 0) {
-	$s= Force $s;
+	$s= force $s;
 	die "stream too short" if is_null $s;
 	$s= cdr $s;
 	$n--
@@ -414,9 +414,9 @@ sub stream_take ($ $);
 sub stream_take ($ $) {
     my ($s, $n)=@_;
     weaken $_[0];
-    Delay {
+    lazy {
 	if ($n > 0) {
-	    $s= Force $s;
+	    $s= force $s;
 	    is_null $s ?
 	      $s
 		: cons(car $s, stream_take( cdr $s, $n - 1));
@@ -430,8 +430,8 @@ sub stream_take_while ($ $);
 sub stream_take_while ($ $) {
     my ($fn,$s)=@_;
     weaken $_[1];
-    Delay {
-	$s= Force $s;
+    lazy {
+	$s= force $s;
 	if (is_null $s) {
 	    null
 	} else {
@@ -450,13 +450,13 @@ sub stream_slice ($ $) {
     my ($start,$end)=@_;
     weaken $_[0];
     weaken $_[1];
-    $end= Force $end;
+    $end= force $end;
     my $rec; $rec= sub {
 	my ($s)=@_;
 	weaken $_[0];
 	my $rec=$rec;
-	Delay {
-	    $s= Force $s;
+	lazy {
+	    $s= force $s;
 	    if (is_null $s) {
 		$s # null
 	    } else {
@@ -475,9 +475,9 @@ sub stream_slice ($ $) {
 sub stream_drop_while ($ $) {
     my ($pred,$s)=@_;
     weaken $_[1];
-    Delay {
+    lazy {
       LP: {
-	    $s= Force $s;
+	    $s= force $s;
 	    if (!is_null $s and &$pred(car $s)) {
 		$s= cdr $s;
 		redo LP;
@@ -492,7 +492,7 @@ sub stream_ref ($ $) {
     my ($s, $i)=@_;
     weaken $_[0];
   LP: {
-	$s= Force $s;
+	$s= force $s;
 	if ($i <= 0) {
 	    car $s
 	} else {
@@ -512,7 +512,7 @@ sub F ($) {
     #weaken $_[0]; since I usually use it interactively, and should
     # only be good for short sequences, better don't
     if (is_promise $v) {
-	F Force $v;
+	F force $v;
     } else {
 	if (is_pair $v) {
 	    cons (F(car $v), F(cdr $v))
@@ -529,11 +529,11 @@ sub stream2array ($) {
     weaken $_[0];
     my $res= [];
     my $i=0;
-    $l= Force $l;
+    $l= force $l;
     while (!is_null $l) {
 	my $v= car $l;
 	$$res[$i]= $v;
-	$l= Force cdr $l;
+	$l= force cdr $l;
 	$i++;
     }
     $res
@@ -542,14 +542,14 @@ sub stream2array ($) {
 
 sub stream_mixed_flatten ($;$$) {
     my ($v,$maybe_tail,$maybe_delay)=@_;
-    mixed_flatten ($v,$maybe_tail//null, $maybe_delay||\&DelayLight)
+    mixed_flatten ($v,$maybe_tail//null, $maybe_delay||\&lazyLight)
 }
 
 sub stream_any ($ $);
 sub stream_any ($ $) {
     my ($pred,$l)=@_;
     weaken $_[1];
-    $l= Force $l;
+    $l= force $l;
     if (is_pair $l) {
 	(&$pred (car $l)) or do{
 	    my $r= cdr $l;

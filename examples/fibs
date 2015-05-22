@@ -27,7 +27,7 @@ use Chj::FP::Stream ":all";
 # fib n = fibs!!n
 
 our $fibs; $fibs=
-  cons 1, cons 1, Delay { stream_zip_with \&add, Keep($fibs), rest $fibs };
+  cons 1, cons 1, lazy { stream_zip_with \&add, Keep($fibs), rest $fibs };
 
 sub fib {
     my ($n)=@_;
@@ -114,23 +114,23 @@ sub timeit (&$) {
     $res
 }
 
-my $a= Delay{timeit{ fib (1400) } "fib"};
-my $b= Delay{timeit{ fibonacci (1400) } "fibonacci"};
+my $a= lazy{timeit{ fib (1400) } "fib"};
+my $b= lazy{timeit{ fibonacci (1400) } "fibonacci"};
 
 TEST {
     # Hack: stringify to drop invisible but different digits
-    Force($a).""
+    force($a).""
 }
   "2.7682097123729e+292";
 
 TEST {
     # same hack
-    Force($a)."" == Force($b).""
+    force($a)."" == force($b).""
 }
   1;
 
 TEST {
-    my ($a,$b)= (Force($a), Force($b));
+    my ($a,$b)= (force($a), force($b));
     # same as above but more properly:
     abs(($a - $b) / $b) < 1e-14
 }

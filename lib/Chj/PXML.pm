@@ -113,7 +113,7 @@ sub _text {
 		my ($a,$v2)= $v->car_and_cdr;
 		_text ($a) . _text ($v2);
 	    } elsif (is_promise $v) {
-		_text (Force $v);
+		_text (force $v);
 	    } else {
 		die "don't know how to get text of: $v";
 	    }
