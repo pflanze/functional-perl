@@ -5,6 +5,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 @ARGV==2 or die "usage: $0 n m";
 our ($n, $m) = @ARGV;
 
+
+# a lazily nested data structure to work on:
+
 sub naturals {
     my ($n)= @_;
     sub {
@@ -16,15 +19,8 @@ sub naturals {
     }
 }
 
-sub stream_sum_OK {
-  stream_sum_OK: {
-    my ($s, $tot)=@_;
-    if (my $fs= &$s) {
-	@_=($$fs[1], $$fs[0] + $tot); goto stream_sum_OK;
-    } else {
-	$tot
-    }
-}}
+# -----------------------------------------------------------
+# variant tail-calling itself, showing the problem
 
 sub stream_sum_LEAK {
     my ($s, $tot)=@_;
@@ -35,8 +31,56 @@ sub stream_sum_LEAK {
     }
 }
 
-*stream_sum= *stream_sum_LEAK;
+# -----------------------------------------------------------
+# variant using a label instead of coderef, showing that the algorithm
+# is sane and it's in fact a problem with perl's handling of `goto
+# $coderef`.
 
+sub stream_sum_OK {
+  stream_sum_OK: {
+    my ($s, $tot)=@_;
+    if (my $fs= &$s) {
+	@_=($$fs[1], $$fs[0] + $tot); goto stream_sum_OK;
+    } else {
+	$tot
+    }
+}}
+
+# -----------------------------------------------------------
+# variant using trampolines to implement tail call optimization, also
+# confirming that the algorithm is sane and that it's got something to
+# do with how perl handles goto $coderef / stack memory or so.
+
+sub T (&) {
+    bless $_[0], "TrampolineContinuation"
+}
+
+sub trampoline ($) {
+    my ($v)=@_;
+    while (ref ($v) eq "TrampolineContinuation") {
+	$v=&$v()
+    }
+    $v
+}
+
+sub _stream_sum_TRAMPOLINE {
+    my ($s, $tot)=@_;
+    if (my $fs= &$s) {
+	T { _stream_sum_TRAMPOLINE($$fs[1], $$fs[0] + $tot) }
+    } else {
+	$tot
+    }
+}
+
+sub stream_sum_TRAMPOLINE {
+    trampoline _stream_sum_TRAMPOLINE (@_)
+}
+
+# -----------------------------------------------------------
+
+# choose variant:
+
+*stream_sum= *stream_sum_LEAK;
 
 my $res;
 for (1..$m) {
