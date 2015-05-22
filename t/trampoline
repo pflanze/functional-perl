@@ -1,0 +1,12 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+use Test::Requires qw(Method::Signatures Sub::Call::Tail);
+# Sub::Call::Tail only because it's used for other parts in the same
+# file
+
+require "./testmem.pl";
+setlimit_mem_MB (30);
+
+$ENV{RUN_TESTS}=1; exec "intro/tailcalls_betterlooks" or exit 1;

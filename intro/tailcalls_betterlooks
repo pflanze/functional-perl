@@ -15,6 +15,7 @@ our ($mydir, $myname); BEGIN {
 }
 use lib "$mydir/../lib";
 
+use Chj::TEST;
 use Chj::Backtrace;
 use Chj::repl;
 
@@ -126,6 +127,30 @@ func opt_even ($n) {
 
 
 # ------------------------------------------------------------------
+# Note: there's also trampolining as a potential solution:
+use Chj::FP::trampoline;
+
+func tramp_odd ($n) {
+    if ($n == 0) {
+	0
+    } else {
+	T{ tramp_even ($n - 1) }
+    }
+}
+
+func tramp_even ($n) {
+    if ($n == 0) {
+	1
+    } else {
+	T{ tramp_odd ($n - 1) }
+    }
+}
+
+TEST { trampoline tramp_even 60000 }
+  1;
+
+# ------------------------------------------------------------------
+# run tests if called as part of the test suite, or
 # enter the repl for your experiments, see (0) in `basics`
 
-repl;
+perhaps_run_tests "main" or repl;
