@@ -48,6 +48,10 @@ the saved value.
 
 https://en.wikipedia.org/wiki/Futures_and_promises
 
+Alternative Data::Thunk, but see note in TODO file about problems.
+
+Alternative Scalar::Defer?
+
 =cut
 
 

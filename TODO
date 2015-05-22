@@ -18,5 +18,15 @@
 - decide whether to offer methods to shorten names like stream_*
   (I'm inclined against it)
 
+- replace Chj::FP::Lazy with Data::Thunk? This would be cool from a
+  transparency stand point, except that separate code by way of
+  dynamic dispatch (method calls) *can't* be used anymore then, and
+  thus the only code always needs to do the environment cleaning,
+  which is bad from a usability perspective since users not working
+  with lazy data will still have their variables (unexpectedly)
+  deleted. Also, when a Data::Thunk thunk (promise) fails, it won't be
+  run again and is instead silently casted to e.g. an integer in
+  number context, which will be a usability neightmare.
+
 - replace Chj::IO::* with something else?
 
