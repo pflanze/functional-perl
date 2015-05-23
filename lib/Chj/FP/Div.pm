@@ -19,7 +19,7 @@ Chj::FP::Div
 package Chj::FP::Div;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(identity inc dec compose compose_scalar);
+@EXPORT_OK=qw(identity inc dec compose compose_scalar maybe_compose);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -48,7 +48,8 @@ sub compose {
     }
 }
 
-# same as compose, but request scalar context between the calls
+# same as compose, but request scalar context between the calls:
+
 sub compose_scalar {
     my (@fn)= reverse @_;
     my $f0= pop @fn;
@@ -77,5 +78,30 @@ TEST { compose_scalar (sub { $_[0] / ($_[1]//5) },
 		       sub { $_[1], $_[0] })
 	 ->(2,3) }
   1/5;
+
+
+# a compose that short-cuts when there is no defined intermediate
+# result:
+
+sub maybe_compose {
+    my (@fn)= reverse @_;
+    sub {
+	my (@v)= @_;
+	for (@fn) {
+	    # return undef, not (), for 'maybe_'; the latter would ask
+	    # for convention 'perhaps_', ok?
+	    return undef unless @v>1 or defined $v[0];
+	    @v= &$_(@v);
+	}
+	wantarray ? @v : $v[-1]
+    }
+}
+
+TEST { maybe_compose (sub { die "foo @_" }, sub { undef }, sub { @_ })->(2,3) }
+  undef;
+TEST { maybe_compose (sub { die "foo @_" }, sub { undef })->(2,3) }
+  undef;
+TEST { maybe_compose (sub { [@_] }, sub { @_ })->(2,3) }
+  [2,3];
 
 1
