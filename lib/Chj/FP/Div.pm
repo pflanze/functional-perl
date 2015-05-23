@@ -25,6 +25,9 @@ package Chj::FP::Div;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 
+# XX should `indentity` pass multiple values, and this be called
+# `identity_scalar`? :
+
 sub identity ($) {
     $_[0]
 }
