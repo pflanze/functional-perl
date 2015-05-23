@@ -42,6 +42,7 @@ lib/Chj/FP/Predicates.pm
 lib/Chj/FP/Stream.pm
 lib/Chj/FP/Text/CSV.pm
 lib/Chj/FP/Values.pm
+lib/Chj/FP/trampoline.pm
 lib/Chj/FP/url_.pm
 lib/Chj/IO/Command.pm
 lib/Chj/IO/CommandCommon.pm
@@ -65,6 +66,7 @@ lib/Chj/Unix/exitcode.pm
 lib/Chj/Util/Repl.pm
 lib/Chj/Util/Repl/corefuncs.pm
 lib/Chj/noTEST.pm
+lib/Chj/pp.pm
 lib/Chj/repl.pm
 lib/Chj/ruse.pm
 lib/Chj/singlequote.pm
@@ -78,7 +80,6 @@ lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
 meta/dependencycheck
-t/bugs-perl-weaken-coderef
 t/csv2xml
 t/csv2xml.expected
 t/csvstreams
@@ -87,6 +88,14 @@ t/examples-primes
 t/ftemplate-test
 t/ftemplate-test.expected
 t/intro-basics
+t/perl-goto-leak
+t/perl-weaken-coderef
+t/perl/goto-leak
+t/perl/weaken-coderef
+t/perl/weaken-coderef-alternative
+t/perl/weaken-coderef-alternative-__SUB__
+t/perl/weaken-coderef-alternative-local
+t/perl/weaken-coderef-simplified
 t/require_and_run_tests
 t/skip
 t/skip-internal
@@ -96,6 +105,7 @@ t/testlazy
 t/testlazy.expected
 t/testlazy10
 t/testlazy10.expected
+t/trampoline
 test
 test.pl
 testmem.pl
