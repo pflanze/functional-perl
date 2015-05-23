@@ -1,5 +1,5 @@
 #
-# Copyright 2014 by Christian Jaeger, ch at christianjaeger ch
+# Copyright 2014-2015 by Christian Jaeger, ch at christianjaeger ch
 # Published under the same terms as perl itself
 #
 
@@ -34,11 +34,17 @@ package Chj::FP::Predicates;
 	      is_filename
 
 	      maybe
+	      true
+	      false
+	      complement
+	      either
+	      all_of both
 	 );
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+use Chj::TEST;
 
 sub is_string ($) {
     not ref ($_[0]) # relax?
@@ -119,5 +125,60 @@ sub maybe ($) {
 	defined $v ? &$pred ($v) : 1
     }
 }
+
+
+sub true {
+    1
+}
+
+sub false {
+    0
+}
+
+sub complement ($) {
+    my ($f)=@_;
+    sub {
+	! &$f(@_)
+    }
+}
+
+TEST {
+    my $t= complement (\&is_natural);
+    [map { &$t($_) } (-1,0,1,2,"foo")]
+} [1,1,'','',1];
+
+
+sub either {
+    my (@fn)=@_;
+    sub {
+	for my $fn (@fn) {
+	    my $v= &$fn;
+	    return $v if $v;
+	}
+	0
+    }
+}
+
+TEST {
+    my $t= either \&is_natural, \&is_boolean;
+    [map { &$t($_) } (-1,0,1,2,"foo")]
+} [0,1,1,2,0];
+
+
+sub all_of {
+    my (@fn)=@_;
+    sub {
+	for my $fn (@fn) {
+	    return undef unless &$fn;
+	}
+	1
+    }
+}
+
+sub both ($$) {
+    @_==2 or die "expecting 2 arguments";
+    all_of (@_)
+}
+
 
 1

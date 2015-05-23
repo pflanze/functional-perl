@@ -1,5 +1,5 @@
 #
-# Copyright 2014 by Christian Jaeger, ch at christianjaeger ch
+# Copyright 2014-2015 by Christian Jaeger, ch at christianjaeger ch
 # This is free software, offered under the terms of the MIT License.
 # See the file COPYING that came bundled with this file.
 #
@@ -19,7 +19,8 @@ Chj::FP::Div
 package Chj::FP::Div;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(identity inc dec compose compose_scalar maybe_compose);
+@EXPORT_OK=qw(identity inc dec compose compose_scalar maybe_compose
+	      flip);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -106,5 +107,22 @@ TEST { maybe_compose (sub { die "foo @_" }, sub { undef })->(2,3) }
   undef;
 TEST { maybe_compose (sub { [@_] }, sub { @_ })->(2,3) }
   [2,3];
+
+
+
+use Carp;
+
+sub flip ($) {
+    my ($f)=@_;
+    sub {
+	@_==2 or croak "expecting 2 arguments";
+	@_=($_[1], $_[0]); goto $f
+    }
+}
+
+TEST { flip (sub { $_[0] / $_[1] })->(2,3) }
+  3/2;
+
+
 
 1
