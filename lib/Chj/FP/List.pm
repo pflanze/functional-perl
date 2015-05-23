@@ -25,7 +25,8 @@ dumps. Hopefully nobody else does?
 
 package Chj::FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons is_pair null is_null car cdr first rest _car _cdr
+@EXPORT=qw(cons is_pair null is_null is_pair_of is_list_of
+	   car cdr first rest _car _cdr
 	   car_and_cdr first_and_rest
 	   list);
 @EXPORT_OK=qw(string2list list_length list_reverse
@@ -65,6 +66,17 @@ sub is_pair ($) {
     ref($v) eq "Pair"
 }
 
+sub is_pair_of ($$) {
+    my ($p0,$p1)=@_;
+    sub {
+	@_==1 or die "expecting 1 argument";
+	my ($v)=@_;
+	(is_pair($v)
+	 and &$p0($$v[0])
+	 and &$p1($$v[1]))
+    }
+}
+
 # nil
 my $null= bless [],"Null";
 
@@ -75,6 +87,7 @@ sub null () {
 sub is_null ($) {
     defined $_[0] and $_[0] eq $null
 }
+
 
 # leading underscore means: unsafe (but perhaps a tad faster)
 sub _car ($) {
@@ -157,6 +170,30 @@ sub list {
     }
     $res
 }
+
+use Chj::FP::Predicates qw(either is_natural);
+
+sub delayed (&) {
+    my ($thunk)=@_;
+    sub {
+	# evaluate thunk, expecting a function and pass our arguments
+	# to that function
+	my $cont= &$thunk();
+	goto $cont
+    }
+}
+
+sub is_list_of ($);
+sub is_list_of ($) {
+    my ($p)= @_;
+    either \&is_null, is_pair_of ($p, delayed { is_list_of $p })
+}
+
+TEST { is_list_of (\&is_natural) -> (list 1,2,3) } 1;
+TEST { is_list_of (\&is_natural) -> (list -1,2,3) } 0;
+TEST { is_list_of (\&is_natural) -> (list 1,2," 3") } 0;
+TEST { is_list_of (\&is_natural) -> (1) } 0;
+
 
 sub string2list ($;$) {
     my ($str,$maybe_tail)=@_;
