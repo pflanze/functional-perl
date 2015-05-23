@@ -30,3 +30,4 @@
 
 - replace Chj::IO::* with something else?
 
+- work on getting perl issues fixed, see failing tests `t/perl-*`
