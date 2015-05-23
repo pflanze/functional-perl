@@ -77,7 +77,7 @@ sub chunks_change_tail {
 		my $lenfirst= length $first;
 		my $reserve= $windowsize - $minsize;
 		if ($lenfirst <= $reserve) {
-		    cons ($first, 
+		    cons ($first,
 			  &$next(cdr $start, $rest, $windowsize - $lenfirst))
 		} else {
 		    if (is_null $rest) {
