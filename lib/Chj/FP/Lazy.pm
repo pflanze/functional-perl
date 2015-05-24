@@ -115,6 +115,22 @@ sub FORCE {
 {
     package Chj::FP::Lazy::Promise;
     *force= *Chj::FP::Lazy::force;
+    sub DESTROY {
+	# nothing, catch this to prevent it from entering AUTOLOAD
+    }
+    our $AUTOLOAD; # needs to be declared even though magical
+    sub AUTOLOAD {
+	my $s= shift;
+	my $v= force ($s);
+	my $methodname= $AUTOLOAD;
+	$methodname =~ s/.*:://;
+	if (my $method= UNIVERSAL::can($v, $methodname)) {
+	    @_=($v,@_); goto $method;
+	} else {
+	    # XX imitate perl's ~exact error message?
+	    die "no method '$methodname' found for object: $v";
+	}
+    }
 }
 
 {
