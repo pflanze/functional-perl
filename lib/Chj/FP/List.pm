@@ -469,9 +469,13 @@ sub list_mapn {
     cons(&$fn(map {car $_} @_), list_mapn ($fn, map {cdr $_} @_))
 }
 
-TEST{ list2array list_mapn sub { [@_] }, array2list( [1,2,3]), string2list ("") }
+TEST{ list2array list_mapn (sub { [@_] },
+			    array2list( [1,2,3]),
+			    string2list ("")) }
   [];
-TEST{ list2array list_mapn sub { [@_] }, array2list( [1,2,3]), string2list ("ab")}
+TEST{ list2array list_mapn (sub { [@_] },
+			    array2list( [1,2,3]),
+			    string2list ("ab")) }
   [[1,'a'],
    [2,'b']];
 
@@ -520,7 +524,8 @@ sub list_append ($ $) {
     list_fold_right (\&cons, $l2, $l1)
 }
 
-TEST{ list2array  list_append (array2list (["a","b"]), array2list([1,2])) }
+TEST{ list2array  list_append (array2list (["a","b"]),
+			       array2list([1,2])) }
   ['a','b',1,2];
 
 *Chj::FP::List::List::append= *list_append;
@@ -560,14 +565,18 @@ sub drop_while ($ $) {
     $l
 }
 
-TEST { list2string drop_while (sub{$_[0] ne 'X'}, string2list "Hello World") }
+TEST { list2string drop_while (sub{$_[0] ne 'X'},
+			       string2list "Hello World") }
   "";
-TEST { list2string drop_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
+TEST { list2string drop_while (sub{$_[0] ne 'o'},
+			       string2list "Hello World") }
   "o World";
 
 *Chj::FP::List::List::drop_while= flip \&drop_while;
 
-TEST { string2list("Hello World") ->drop_while(sub{$_[0] ne 'o'}) ->to_string }
+TEST { string2list("Hello World")
+	 ->drop_while(sub{$_[0] ne 'o'})
+	   ->to_string }
   "o World";
 
 
@@ -613,9 +622,11 @@ sub take_while ($ $) {
 
 *Chj::FP::List::List::take_while= flip \&take_while;
 
-TEST { list2string take_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
+TEST { list2string take_while (sub{$_[0] ne 'o'},
+			       string2list "Hello World") }
   "Hell";
-TEST { list2string take_while (sub{$_[0] eq 'H'}, string2list "Hello World") }
+TEST { list2string take_while (sub{$_[0] eq 'H'},
+			       string2list "Hello World") }
   "H";
 TEST { list2string take_while (sub{1}, string2list "Hello World") }
   "Hello World";
@@ -744,8 +755,11 @@ TEST{ list2array mixed_flatten [1,2,[3,4]] }
   [1,2,3,4];
 TEST{ list2array mixed_flatten [1,cons(2, [ string2list "ab" ,4])] }
   [1,2,'a','b',4];
-TEST{ list2string mixed_flatten [string2list "abc", string2list "def", "ghi"] }
-  'abcdefghi';  # only works thanks to perl chars and strings being the same datatype
+TEST{ list2string mixed_flatten [string2list "abc",
+				 string2list "def",
+				 "ghi"] }
+  'abcdefghi';  # only works thanks to perl chars and strings being
+                # the same datatype
 
 TEST_STDOUT{ write_sexpr( mixed_flatten
 			  lazyLight { cons(lazy { 1+1 }, null)},
@@ -753,7 +767,8 @@ TEST_STDOUT{ write_sexpr( mixed_flatten
 			  \&lazyLight) }
   '("2")';
 TEST_STDOUT{ write_sexpr( mixed_flatten
-			  lazyLight { cons(lazy { [1+1,lazy {2+1}] }, null) },
+			  lazyLight { cons(lazy { [1+1,lazy {2+1}] },
+					   null) },
 			  undef,
 			  \&lazyLight) }
   '("2" "3")';
