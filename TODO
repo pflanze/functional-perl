@@ -31,3 +31,9 @@
 - replace Chj::IO::* with something else?
 
 - work on getting perl issues fixed, see failing tests `t/perl-*`
+
+- messages "expecting 2 arguments" are unclear and inconsistently
+  used for functions reused as methods. How should it be? `flip`
+  should work, for example, so do we have to live with methods
+  including $self in their argument count?
+
