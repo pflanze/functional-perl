@@ -523,8 +523,10 @@ sub list_every ($ $) {
 
 TEST { [ map { list_every sub{$_[0]>0}, $_ }
 	 list (1,2,3),
-	 list (1,0,3) ] }
-  [1, ''];
+	 list (1,0,3),
+	 list (),
+       ] }
+  [1, '', 1];
 
 use Chj::FP::Char 'char_is_alphanumeric';
 
