@@ -1,5 +1,7 @@
 # Library for functional programming in Perl 5
 
+## Status: experimental
+
 This is a work in progress to prepare (maybe improve/adapt) existing
 modules for release to CPAN, as either one or multiple packages.
 Please send [me](http://christianjaeger.ch/contact.html) your
