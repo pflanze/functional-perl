@@ -336,12 +336,19 @@ sub list_zip2 ($$) {
       cons([car $l, car $m], list_zip2 (cdr $l, cdr $m))
 }
 
+TEST { list2array list_zip2 list(qw(a b c)), list(2,3) }
+  [[a=>2], [b=>3]];
+
 
 sub list_map ($ $);
 sub list_map ($ $) {
     my ($fn,$l)=@_;
     $l and cons(&$fn(car $l), list_map ($fn,cdr $l))
 }
+
+TEST { list2array list_map sub{$_[0]*$_[0]}, list 1,2,-3 }
+  [1,4,9];
+
 
 # n-ary map
 sub list_mapn {
@@ -373,6 +380,13 @@ sub list_fold_right ($ $ $) {
     }
 }
 
+TEST{ list_fold_right sub {
+	  my ($v, $res)=@_;
+	  [$v, @$res]
+      }, [], list(4,5,9) }
+  [4,5,9];
+
+
 sub list_append ($ $) {
     my ($l1,$l2)=@_;
     list_fold_right (\&cons, $l2, $l1)
@@ -403,6 +417,10 @@ sub drop_while ($ $) {
     $l
 }
 
+TEST { list2string drop_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
+  "o World";
+
+
 sub rtake_while ($ $) {
     my ($pred,$l)=@_;
     my $res=null;
@@ -420,6 +438,13 @@ sub take_while ($ $) {
     (list_reverse $rres,
      $rest)
 }
+
+TEST { list2string take_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
+  "Hell";
+
+TEST { list2string take_while (sub{$_[0] eq 'o'}, string2list "Hello World") }
+  "";
+
 
 sub list_every ($ $) {
     my ($pred,$l)=@_;
@@ -439,6 +464,12 @@ sub list_every ($ $) {
 	}
     }
 }
+
+TEST { [ map { list_every sub{$_[0]>0}, $_ }
+	 list (1,2,3),
+	 list (1,0,3) ] }
+  [1, ''];
+
 
 sub list_any ($ $) {
     my ($pred,$l)=@_;
