@@ -195,34 +195,6 @@ TEST { is_list_of (\&is_natural) -> (list 1,2," 3") } 0;
 TEST { is_list_of (\&is_natural) -> (1) } 0;
 
 
-sub string2list ($;$) {
-    my ($str,$maybe_tail)=@_;
-    my $tail= $maybe_tail // null;
-    my $i= length($str)-1;
-    while ($i >= 0) {
-	$tail= cons(substr ($str,$i,1), $tail);
-	$i--;
-    }
-    $tail
-}
-
-sub array_fold_right ($$$) {
-    @_==3 or die;
-    my ($fn,$tail,$a)=@_;
-    my $i= @$a - 1;
-    while ($i >= 0) {
-	$tail= &$fn($$a[$i], $tail);
-	$i--;
-    }
-    $tail
-}
-
-sub array2list ($;$) {
-    my ($a,$maybe_tail)=@_;
-    array_fold_right (\&cons, $maybe_tail||null, $a)
-}
-
-
 sub list_length ($) {
     my ($l)=@_;
     my $len=0;
@@ -231,16 +203,6 @@ sub list_length ($) {
 	$l= cdr $l;
     }
     $len
-}
-
-sub list_reverse ($) {
-    my ($l)=@_;
-    my $res=null;
-    while (!is_null $l) {
-	$res= cons car $l, $res;
-	$l= cdr $l;
-    }
-    $res
 }
 
 sub list2string ($) {
@@ -287,6 +249,60 @@ sub list2values ($) {
     @{list2array ($l)}
 }
 
+
+sub string2list ($;$) {
+    my ($str,$maybe_tail)=@_;
+    my $tail= $maybe_tail // null;
+    my $i= length($str)-1;
+    while ($i >= 0) {
+	$tail= cons(substr ($str,$i,1), $tail);
+	$i--;
+    }
+    $tail
+}
+
+TEST{ [list2values string2list "abc"] }
+  ['a','b','c'];
+TEST{ list_length string2list "ao" }
+  2;
+TEST{ list2string string2list "Hello" }
+  'Hello';
+
+
+sub array_fold_right ($$$) {
+    @_==3 or die;
+    my ($fn,$tail,$a)=@_;
+    my $i= @$a - 1;
+    while ($i >= 0) {
+	$tail= &$fn($$a[$i], $tail);
+	$i--;
+    }
+    $tail
+}
+
+TEST{ list2array array_fold_right \&cons, null, [1,2,3] }
+  [1,2,3];
+
+
+sub array2list ($;$) {
+    my ($a,$maybe_tail)=@_;
+    array_fold_right (\&cons, $maybe_tail||null, $a)
+}
+
+TEST{ list2string array2list [1,2,3] }
+  '123';
+
+
+sub list_reverse ($) {
+    my ($l)=@_;
+    my $res=null;
+    while (!is_null $l) {
+	$res= cons car $l, $res;
+	$l= cdr $l;
+    }
+    $res
+}
+
 # write as a S-expr (trying to follow R5RS Scheme)
 sub _write_sexpr ($ $ $);
 sub _write_sexpr ($ $ $) {
@@ -327,6 +343,21 @@ sub write_sexpr ($ ; ) {
     my ($l,$fh)=@_;
     _write_sexpr ($l, $fh || *STDOUT{IO}, 0)
 }
+
+TEST_STDOUT{ write_sexpr cons("123",cons("4",null)) }
+  '("123" "4")';
+TEST_STDOUT{ write_sexpr (string2list "Hello \"World\"")}
+  '("H" "e" "l" "l" "o" " " "\"" "W" "o" "r" "l" "d" "\"")';
+TEST_STDOUT{ write_sexpr (cons 1, 2) }
+  '("1" . "2")';
+#TEST_STDOUT{ write_sexpr cons(1, cons(cons(2, undef), undef))}
+#  '';
+# -> XX should print #f or something for undef ! Not give exception.
+TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null))}
+  '("1" ("2"))';
+
+TEST{ list2string list_reverse string2list "Hello" }
+  'olleH';
 
 
 sub list_zip2 ($$);
@@ -392,6 +423,9 @@ sub list_append ($ $) {
     list_fold_right (\&cons, $l2, $l1)
 }
 
+TEST{ list2array  list_append (array2list (["a","b"]), array2list([1,2])) }
+  ['a','b',1,2];
+
 
 sub list2perlstring ($) {
     my ($l)=@_;
@@ -408,6 +442,11 @@ sub list2perlstring ($) {
 	    }, cons("'",null), $l)
 }
 
+TEST{ list2perlstring string2list  "Hello" }
+  "'Hello'";
+TEST{ list2perlstring string2list  "Hello's" }
+  q{'Hello\'s'};
+
 
 sub drop_while ($ $) {
     my ($pred,$l)=@_;
@@ -419,7 +458,6 @@ sub drop_while ($ $) {
 
 TEST { list2string drop_while (sub{$_[0] ne 'X'}, string2list "Hello World") }
   "";
-
 TEST { list2string drop_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
   "o World";
 
@@ -456,13 +494,10 @@ sub take_while ($ $) {
 
 TEST { list2string take_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
   "Hell";
-
 TEST { list2string take_while (sub{$_[0] eq 'H'}, string2list "Hello World") }
   "H";
-
 TEST { list2string take_while (sub{1}, string2list "Hello World") }
   "Hello World";
-
 TEST { list2string take_while (sub{0}, string2list "Hello World") }
   "";
 
@@ -491,6 +526,13 @@ TEST { [ map { list_every sub{$_[0]>0}, $_ }
 	 list (1,0,3) ] }
   [1, ''];
 
+use Chj::FP::Char 'char_is_alphanumeric';
+
+TEST{ list_every \&char_is_alphanumeric, string2list "Hello" }
+  1;
+TEST{ list_every \&char_is_alphanumeric, string2list "Hello " }
+  '';
+
 
 sub list_any ($ $) {
     my ($pred,$l)=@_;
@@ -518,6 +560,9 @@ TEST{ list_any sub { $_[0] % 2 }, array2list [7] }
   1;
 
 
+TEST{ list2string list_reverse (rtake_while \&char_is_alphanumeric,
+				string2list "Hello World") }
+  'Hello';
 
 # Turn a mix of (nested) arrays and lists into a flat list.
 
@@ -567,96 +612,12 @@ sub mixed_flatten ($;$$) {
     }
 }
 
-
-use Chj::FP::Char 'is_char';
-
-sub is_charlist ($) {
-    my ($l)=@_;
-    list_every \&is_char, $l
-}
-
-use Carp;
-
-sub ldie {
-    # perl string arguments are messages, char lists are turned to
-    # perl-quoted strings, then everyting is appended
-    my @strs= map {
-	if (is_charlist $_) {
-	    list2perlstring $_
-	} elsif (is_null $_) {
-	    "()"
-	} else {
-	    # XX have a better write_sexpr that can fall back to something
-	    # better?, and anyway, need string
-	    $_
-	}
-    } @_;
-    croak join("",@strs)
-}
-
-
-use Chj::FP::Char 'char_is_alphanumeric';
-
-TEST{ list_length string2list "ao" }
-  2;
-TEST{ list2string string2list "Hello" }
-  'Hello';
-TEST{ list2string list_reverse string2list "Hello" }
-  'olleH';
-TEST{ list2string list_reverse (rtake_while \&char_is_alphanumeric, string2list "Hello World") }
-  'Hello';
-
-TEST_STDOUT{ write_sexpr cons("123",cons("4",null)) }
-  '("123" "4")';
-TEST_STDOUT{ write_sexpr (string2list "Hello \"World\"")}
-  '("H" "e" "l" "l" "o" " " "\"" "W" "o" "r" "l" "d" "\"")';
-TEST_STDOUT{ write_sexpr (cons 1, 2) }
-  '("1" . "2")';
-#TEST_STDOUT{ write_sexpr cons(1, cons(cons(2, undef), undef))}
-#  '';
-# -> XX should print #f or something for undef ! Not give exception.
-TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null))}
-  '("1" ("2"))';
-
-TEST{ list_every \&char_is_alphanumeric, string2list "Hello" }
-  1;
-TEST{ list_every \&char_is_alphanumeric, string2list "Hello " }
-  '';
-TEST{ list2perlstring string2list  "Hello" }
-  "'Hello'";
-TEST{ list2perlstring string2list  "Hello's" }
-  q{'Hello\'s'};
-
-TEST{ [list2values string2list "abc"] }
-  [
-   'a',
-   'b',
-   'c'
-  ];
-
-TEST{ list2string array2list [1,2,3] }
-  '123';
 TEST{ list2array mixed_flatten [1,2,3] }
-  [
-   1,
-   2,
-   3
-  ];
+  [1,2,3];
 TEST{ list2array mixed_flatten [1,2,[3,4]] }
-  [
-   1,
-   2,
-   3,
-   4
-  ];
+  [1,2,3,4];
 TEST{ list2array mixed_flatten [1,cons(2, [ string2list "ab" ,4])] }
-  [
-   1,
-   2,
-   'a',
-   'b',
-   4
-  ];
+  [1,2,'a','b',4];
 TEST{ list2string mixed_flatten [string2list "abc", string2list "def", "ghi"] }
   'abcdefghi';  # only works thanks to perl chars and strings being the same datatype
 
@@ -687,13 +648,6 @@ TEST_STDOUT{
 }
   '("2" "10" "9" "8" "7" "6" "5" "4" "3" "2" "1")';
 
-TEST{ list2array  Chj::FP::List::array_fold_right \&cons, null, [1,2,3] }
-  [
-   1,
-   2,
-   3
-  ];
-
 TEST_STDOUT{ write_sexpr
 	       (mixed_flatten
 		[lazyLight { [3,[9,10]]}],
@@ -707,13 +661,33 @@ TEST_STDOUT { write_sexpr
 		 \&lazyLight) }
     '("1" "2" "3" "9")';
 
-TEST{ list2array  list_append (array2list (["a","b"]), array2list([1,2])) }
-  [
-   'a',
-   'b',
-   1,
-   2
-  ];
+
+
+use Chj::FP::Char 'is_char';
+
+sub is_charlist ($) {
+    my ($l)=@_;
+    list_every \&is_char, $l
+}
+
+use Carp;
+
+sub ldie {
+    # perl string arguments are messages, char lists are turned to
+    # perl-quoted strings, then everyting is appended
+    my @strs= map {
+	if (is_charlist $_) {
+	    list2perlstring $_
+	} elsif (is_null $_) {
+	    "()"
+	} else {
+	    # XX have a better write_sexpr that can fall back to something
+	    # better?, and anyway, need string
+	    $_
+	}
+    } @_;
+    croak join("",@strs)
+}
 
 
 1
