@@ -396,7 +396,7 @@ use Chj::FP::ArrayUtil ":all"; # list2array
 # $VAR1 = bless( [
 #                  1,
 #                  2
-#                ], 'Pair' );
+#                ], 'Chj::FP::List::Pair' );
 
 # As you can see, cons returns a Pair object simply containing the two arguments.
 
@@ -411,7 +411,7 @@ TEST { cons(1,2) }
   bless( [
 	  1,
 	  2
-	 ], 'Pair' );
+	 ], 'Chj::FP::List::Pair' );
 
 
 # Let's build a list containing 3 elements; null is returning the list
@@ -424,10 +424,10 @@ TEST { cons(1, cons(2, cons(5, null))) }
 		  2,
 		  bless( [
 			  5,
-			  bless( [], 'Null' )
-			 ], 'Pair' )
-		 ], 'Pair' )
-         ], 'Pair' );
+			  bless( [], 'Chj::FP::List::Null' )
+			 ], 'Chj::FP::List::Pair' )
+		 ], 'Chj::FP::List::Pair' )
+         ], 'Chj::FP::List::Pair' );
 
 # This becomes ugly fast, so, turn it back into an array that Perl
 # will show nicely:

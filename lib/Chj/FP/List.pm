@@ -15,10 +15,7 @@ Chj::FP::List - singly linked (purely functional) lists
 
 =head1 DESCRIPTION
 
-Create and dissect sequences using pure functions.
-
-Note: uses "Pair" and "Null" as namespaces for shorter
-dumps. Hopefully nobody else does?
+Create and dissect sequences using pure functions (or methods).
 
 =cut
 
@@ -53,17 +50,75 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::FP::Lazy;
 use Chj::xIO 'xprint';
+use Chj::FP::Div 'flip';
 use Chj::TEST;
+
+{
+    package Chj::FP::List::List;
+}
+
+{
+    package Chj::FP::List::Null;
+    our @ISA= qw(Chj::FP::List::List);
+
+    sub cons {
+	my $s=shift;
+	@_==1 or die "expecting 1 method argument";
+	bless [@_,$s], "Chj::FP::List::List"
+    }
+
+    sub length {
+	0
+    }
+}
+
+{
+    package Chj::FP::List::Pair;
+    our @ISA= qw(Chj::FP::List::List);
+
+    sub cons {
+	my $s=shift;
+	@_==1 or die "expecting 1 method argument";
+	bless [@_,$s], ref($s)
+    }
+
+    sub car {
+	$_[0][0]
+    }
+    *first=*car;
+
+    sub cdr {
+	$_[0][1]
+    }
+    *rest= *cdr;
+
+    sub car_and_cdr {
+	@{$_[0]}
+    }
+    *head_and_tail= *car_and_cdr;
+    *first_and_rest= *car_and_cdr;
+
+    sub cddr { $_[0]->cdr->cdr }
+    sub cdddr { $_[0]->cdr->cdr->cdr }
+    sub cddddr { $_[0]->cdr->cdr->cdr->cdr }
+
+    sub cadr { $_[0]->cdr->car }
+    sub caddr { $_[0]->cdr->cdr->car }
+    sub cadddr { $_[0]->cdr->cdr->cdr->car }
+    sub caddddr { $_[0]->cdr->cdr->cdr->cdr->car }
+
+}
+
 
 
 sub cons ($ $) {
-    bless [@_], "Pair";
+    bless [@_], "Chj::FP::List::Pair";
 }
 
 sub is_pair ($) {
     my ($v)=@_;
     #ref($v) eq "ARRAY" and @$v == 2
-    ref($v) eq "Pair"
+    UNIVERSAL::isa($v, "Chj::FP::List::Pair")
 }
 
 sub is_pair_of ($$) {
@@ -78,14 +133,14 @@ sub is_pair_of ($$) {
 }
 
 # nil
-my $null= bless [],"Null";
+my $null= bless [], "Chj::FP::List::Null";
 
 sub null () {
     $null
 }
 
 sub is_null ($) {
-    defined $_[0] and $_[0] eq $null
+    defined $_[0] and ref($_[0]) eq "Chj::FP::List::Null"
 }
 
 
@@ -107,7 +162,7 @@ sub not_a_pair ($) {
 
 sub car ($) {
     my ($v)=@_;
-    if (ref ($v) eq "Pair") {
+    if (UNIVERSAL::isa($v, "Chj::FP::List::Pair")) {
 	$$v[0]
     } elsif (is_promise $v) {
 	@_=force $v; goto \&car;
@@ -120,7 +175,7 @@ sub first ($); *first=*car;
 
 sub cdr ($) {
     my ($v)=@_;
-    if (ref ($v) eq "Pair") {
+    if (UNIVERSAL::isa($v, "Chj::FP::List::Pair")) {
 	$$v[1]
     } elsif (is_promise $v) {
 	@_=force $v; goto \&cdr;
@@ -141,17 +196,10 @@ sub cadddr ($) { car cdr cdr cdr $_[0] }
 sub caddddr ($) { car cdr cdr cdr cdr $_[0] }
 
 
-sub Pair::car_and_cdr {
-    @{$_[0]}
-}
-## should I go back into OO mode after all....?
-
-*Pair::head_and_tail= *Pair::car_and_cdr;
-*Pair::first_and_rest= *Pair::car_and_cdr;
 
 sub car_and_cdr ($) {
     my ($v)=@_;
-    if (ref ($v) eq "Pair") {
+    if (UNIVERSAL::isa($v, "Chj::FP::List::Pair")) {
 	@{$_[0]}
     } elsif (is_promise $v) {
 	@_=force $v; goto \&car_and_cdr;
@@ -205,6 +253,15 @@ sub list_length ($) {
     $len
 }
 
+*Chj::FP::List::Pair::length= *list_length;
+# method on Pair not List, since we defined a length method for Null
+# explicitely
+
+TEST { list (4,5,6)->caddr } 6;
+TEST { list ()->length } 0;
+TEST { list (4,5)->length } 2;
+
+
 sub list2string ($) {
     my ($l)=@_;
     my $len= list_length $l;
@@ -219,6 +276,12 @@ sub list2string ($) {
     $res
 }
 
+*Chj::FP::List::List::to_string= *list2string;
+
+TEST { null->to_string } "";
+TEST { cons("a",null)->to_string } "a";
+
+
 sub list2array ($) {
     my ($l)=@_;
     my $res= [];
@@ -230,6 +293,9 @@ sub list2array ($) {
     }
     $res
 }
+
+*Chj::FP::List::List::to_array= *list2array;
+
 
 sub rlist2array ($) {
     my ($l)=@_;
@@ -244,10 +310,15 @@ sub rlist2array ($) {
     $res
 }
 
+*Chj::FP::List::List::reverse_to_array= *rlist2array;
+
+
 sub list2values ($) {
     my ($l)=@_;
     @{list2array ($l)}
 }
+
+*Chj::FP::List::List::to_values= *list2values;
 
 
 sub string2list ($;$) {
@@ -303,6 +374,12 @@ sub list_reverse ($) {
     $res
 }
 
+*Chj::FP::List::List::reverse= *list_reverse;
+
+TEST{ list2string list_reverse string2list "Hello" }
+  'olleH';
+
+
 # write as a S-expr (trying to follow R5RS Scheme)
 sub _write_sexpr ($ $ $);
 sub _write_sexpr ($ $ $) {
@@ -356,12 +433,12 @@ TEST_STDOUT{ write_sexpr (cons 1, 2) }
 TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null))}
   '("1" ("2"))';
 
-TEST{ list2string list_reverse string2list "Hello" }
-  'olleH';
+*Chj::FP::List::List::write_sexpr= *write_sexpr;
 
 
 sub list_zip2 ($$);
 sub list_zip2 ($$) {
+    @_==2 or die "expecting 2 arguments";
     my ($l,$m)=@_;
     (is_null $l or is_null $m) ? null
       : cons([car $l, car $m], list_zip2 (cdr $l, cdr $m))
@@ -369,6 +446,8 @@ sub list_zip2 ($$) {
 
 TEST { list2array list_zip2 list(qw(a b c)), list(2,3) }
   [[a=>2], [b=>3]];
+
+*Chj::FP::List::List::zip= *list_zip2; # XX make n-ary
 
 
 sub list_map ($ $);
@@ -397,6 +476,14 @@ TEST{ list2array list_mapn sub { [@_] }, array2list( [1,2,3]), string2list ("ab"
    [2,'b']];
 
 
+sub Chj::FP::List::List::map {
+    @_>=2 or die "not enough arguments";
+    my $l=shift;
+    my $fn=shift;
+    @_ ? list_mapn ($fn, $l, @_) : list_map ($fn, $l)
+}
+
+
 sub list_fold_right ($ $ $);
 sub list_fold_right ($ $ $) {
     my ($fn,$start,$l)=@_;
@@ -417,14 +504,24 @@ TEST{ list_fold_right sub {
       }, [], list(4,5,9) }
   [4,5,9];
 
+sub Chj::FP::List::List::fold_right {
+    my $l=shift;
+    @_==2 or die "expecting 2 arguments";
+    my ($fn,$start)=@_;
+    list_fold_right($fn,$start,$l)
+}
+
 
 sub list_append ($ $) {
+    @_==2 or die "wrong number of arguments";
     my ($l1,$l2)=@_;
     list_fold_right (\&cons, $l2, $l1)
 }
 
 TEST{ list2array  list_append (array2list (["a","b"]), array2list([1,2])) }
   ['a','b',1,2];
+
+*Chj::FP::List::List::append= *list_append;
 
 
 sub list2perlstring ($) {
@@ -447,6 +544,8 @@ TEST{ list2perlstring string2list  "Hello" }
 TEST{ list2perlstring string2list  "Hello's" }
   q{'Hello\'s'};
 
+*Chj::FP::List::List::to_perlstring= *list2perlstring;
+
 
 sub drop_while ($ $) {
     my ($pred,$l)=@_;
@@ -461,6 +560,8 @@ TEST { list2string drop_while (sub{$_[0] ne 'X'}, string2list "Hello World") }
 TEST { list2string drop_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
   "o World";
 
+*Chj::FP::List::List::drop_while= flip \&drop_while;
+
 
 sub rtake_while_ ($ $) {
     my ($pred,$l)=@_;
@@ -473,11 +574,19 @@ sub rtake_while_ ($ $) {
     ($res,$l)
 }
 
+*Chj::FP::List::List::rtake_while_= flip \&rtake_while_;
+
 sub rtake_while ($ $) {
     my ($pred,$l)=@_;
     my ($res,$rest)= rtake_while_ ($pred,$l);
     wantarray ? ($res,$rest) : $res
 }
+
+*Chj::FP::List::List::rtake_while= flip \&rtake_while;
+
+TEST{ list2string list_reverse (rtake_while \&char_is_alphanumeric,
+				string2list "Hello World") }
+  'Hello';
 
 sub take_while_ ($ $) {
     my ($pred,$l)=@_;
@@ -486,11 +595,15 @@ sub take_while_ ($ $) {
      $rest)
 }
 
+*Chj::FP::List::List::take_while_= flip \&take_while_;
+
 sub take_while ($ $) {
     my ($pred,$l)=@_;
     my ($res,$rest)= take_while_ ($pred,$l);
     wantarray ? ($res,$rest) : $res
 }
+
+*Chj::FP::List::List::take_while= flip \&take_while;
 
 TEST { list2string take_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
   "Hell";
@@ -520,6 +633,8 @@ sub list_every ($ $) {
 	}
     }
 }
+
+*Chj::FP::List::List::every= flip \&list_every;
 
 TEST { [ map { list_every sub{$_[0]>0}, $_ }
 	 list (1,2,3),
@@ -552,6 +667,8 @@ sub list_any ($ $) {
     }
 }
 
+*Chj::FP::List::List::any= flip \&list_any;
+
 TEST{ list_any sub { $_[0] % 2 }, array2list [2,4,8] }
   0;
 TEST{ list_any sub { $_[0] % 2 }, array2list [] }
@@ -562,9 +679,6 @@ TEST{ list_any sub { $_[0] % 2 }, array2list [7] }
   1;
 
 
-TEST{ list2string list_reverse (rtake_while \&char_is_alphanumeric,
-				string2list "Hello World") }
-  'Hello';
 
 # Turn a mix of (nested) arrays and lists into a flat list.
 
@@ -613,6 +727,8 @@ sub mixed_flatten ($;$$) {
 	}
     }
 }
+
+*Chj::FP::List::List::mixed_flatten= flip \&mixed_flatten;
 
 TEST{ list2array mixed_flatten [1,2,3] }
   [1,2,3];
@@ -671,6 +787,8 @@ sub is_charlist ($) {
     my ($l)=@_;
     list_every \&is_char, $l
 }
+
+*Chj::FP::List::List::is_charlist= *is_charlist;
 
 use Carp;
 
