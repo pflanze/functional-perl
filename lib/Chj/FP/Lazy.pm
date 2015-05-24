@@ -36,10 +36,14 @@ the saved value.
  $p = lazy { ...... } # returns a promise that represents the computation
                        # given in the block of code
 
- force $p  # runs the block of code and stores and returns its result
+ force $p  # runs the block of code and stores the result within the
+           # promise and also returns it
 
- FORCE $p  # in addition to running force, stores back the resulting
-           # value into $p
+ FORCE $p,$q,$r;
+           # in addition to running force, stores back the resulting
+           # value into the variable given as argument ($p, $q, and $r
+           # respectively (this example forces 3 (possibly) separate
+           # values))
 
  is_promise $x # returns true iff $x holds a promise
 
