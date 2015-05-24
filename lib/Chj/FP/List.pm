@@ -424,7 +424,7 @@ TEST { list2string drop_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
   "o World";
 
 
-sub rtake_while ($ $) {
+sub rtake_while_ ($ $) {
     my ($pred,$l)=@_;
     my $res=null;
     my $c;
@@ -435,11 +435,23 @@ sub rtake_while ($ $) {
     ($res,$l)
 }
 
-sub take_while ($ $) {
+sub rtake_while ($ $) {
+    my ($pred,$l)=@_;
+    my ($res,$rest)= rtake_while_ ($pred,$l);
+    wantarray ? ($res,$rest) : $res
+}
+
+sub take_while_ ($ $) {
     my ($pred,$l)=@_;
     my ($rres,$rest)= rtake_while ($pred,$l);
     (list_reverse $rres,
      $rest)
+}
+
+sub take_while ($ $) {
+    my ($pred,$l)=@_;
+    my ($res,$rest)= take_while_ ($pred,$l);
+    wantarray ? ($res,$rest) : $res
 }
 
 TEST { list2string take_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
@@ -583,7 +595,6 @@ sub ldie {
 }
 
 
-use Chj::FP::Values 'fst';
 use Chj::FP::Char 'char_is_alphanumeric';
 
 TEST{ list_length string2list "ao" }
@@ -592,7 +603,7 @@ TEST{ list2string string2list "Hello" }
   'Hello';
 TEST{ list2string list_reverse string2list "Hello" }
   'olleH';
-TEST{ list2string list_reverse (fst rtake_while \&char_is_alphanumeric, string2list "Hello World") }
+TEST{ list2string list_reverse (rtake_while \&char_is_alphanumeric, string2list "Hello World") }
   'Hello';
 
 TEST_STDOUT{ write_sexpr cons("123",cons("4",null)) }
