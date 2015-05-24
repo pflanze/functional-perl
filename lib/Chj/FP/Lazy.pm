@@ -76,7 +76,6 @@ sub lazy (&) {
 sub lazyLight (&) {
     bless $_[0], "Chj::FP::Lazy::PromiseLight"
 }
-@Chj::FP::Lazy::PromiseLight::ISA= qw(Chj::FP::Lazy::Promise);
 
 sub is_promise ($) {
     (UNIVERSAL::isa ($_[0], "Chj::FP::Lazy::Promise"))
@@ -115,6 +114,12 @@ sub FORCE {
 
 {
     package Chj::FP::Lazy::Promise;
+    *force= *Chj::FP::Lazy::force;
+}
+
+{
+    package Chj::FP::Lazy::PromiseLight;
+    our @ISA= qw(Chj::FP::Lazy::Promise);
 }
 
 1
