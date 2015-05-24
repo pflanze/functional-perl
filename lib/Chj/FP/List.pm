@@ -511,6 +511,8 @@ sub Chj::FP::List::List::fold_right {
     list_fold_right($fn,$start,$l)
 }
 
+TEST { list(1,2,3)->map(sub{$_[0]+1})->fold_right(sub{$_[0]+$_[1]},0) }
+  9;
 
 sub list_append ($ $) {
     @_==2 or die "wrong number of arguments";
@@ -522,6 +524,9 @@ TEST{ list2array  list_append (array2list (["a","b"]), array2list([1,2])) }
   ['a','b',1,2];
 
 *Chj::FP::List::List::append= *list_append;
+
+TEST{ array2list (["a","b"]) ->append(array2list([1,2])) ->to_array }
+  ['a','b',1,2];
 
 
 sub list2perlstring ($) {
@@ -561,6 +566,9 @@ TEST { list2string drop_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
   "o World";
 
 *Chj::FP::List::List::drop_while= flip \&drop_while;
+
+TEST { string2list("Hello World") ->drop_while(sub{$_[0] ne 'o'}) ->to_string }
+  "o World";
 
 
 sub rtake_while_ ($ $) {
@@ -645,9 +653,9 @@ TEST { [ map { list_every sub{$_[0]>0}, $_ }
 
 use Chj::FP::Char 'char_is_alphanumeric';
 
-TEST{ list_every \&char_is_alphanumeric, string2list "Hello" }
+TEST { string2list("Hello") ->every(\&char_is_alphanumeric) }
   1;
-TEST{ list_every \&char_is_alphanumeric, string2list "Hello " }
+TEST { string2list("Hello ") ->every(\&char_is_alphanumeric) }
   '';
 
 
