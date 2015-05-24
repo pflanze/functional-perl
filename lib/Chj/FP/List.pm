@@ -445,7 +445,13 @@ sub take_while ($ $) {
 TEST { list2string take_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
   "Hell";
 
-TEST { list2string take_while (sub{$_[0] eq 'o'}, string2list "Hello World") }
+TEST { list2string take_while (sub{$_[0] eq 'H'}, string2list "Hello World") }
+  "H";
+
+TEST { list2string take_while (sub{1}, string2list "Hello World") }
+  "Hello World";
+
+TEST { list2string take_while (sub{0}, string2list "Hello World") }
   "";
 
 
