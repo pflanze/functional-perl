@@ -417,6 +417,9 @@ sub drop_while ($ $) {
     $l
 }
 
+TEST { list2string drop_while (sub{$_[0] ne 'X'}, string2list "Hello World") }
+  "";
+
 TEST { list2string drop_while (sub{$_[0] ne 'o'}, string2list "Hello World") }
   "o World";
 
