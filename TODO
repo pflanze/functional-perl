@@ -37,3 +37,5 @@
   should work, for example, so do we have to live with methods
   including $self in their argument count?
 
+- should to_string etc. methods be renamed without the to_ prefix?
+
