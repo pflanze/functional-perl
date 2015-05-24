@@ -332,8 +332,8 @@ sub write_sexpr ($ ; ) {
 sub list_zip2 ($$);
 sub list_zip2 ($$) {
     my ($l,$m)=@_;
-    ($l and $m) and
-      cons([car $l, car $m], list_zip2 (cdr $l, cdr $m))
+    (is_null $l or is_null $m) ? null
+      : cons([car $l, car $m], list_zip2 (cdr $l, cdr $m))
 }
 
 TEST { list2array list_zip2 list(qw(a b c)), list(2,3) }
@@ -343,7 +343,7 @@ TEST { list2array list_zip2 list(qw(a b c)), list(2,3) }
 sub list_map ($ $);
 sub list_map ($ $) {
     my ($fn,$l)=@_;
-    $l and cons(&$fn(car $l), list_map ($fn,cdr $l))
+    is_null $l ? null : cons(&$fn(car $l), list_map ($fn,cdr $l))
 }
 
 TEST { list2array list_map sub{$_[0]*$_[0]}, list 1,2,-3 }
@@ -411,7 +411,7 @@ sub list2perlstring ($) {
 
 sub drop_while ($ $) {
     my ($pred,$l)=@_;
-    while ($l and &$pred(car $l)) {
+    while (!is_null $l and &$pred(car $l)) {
 	$l=cdr $l;
     }
     $l
@@ -428,7 +428,7 @@ sub rtake_while ($ $) {
     my ($pred,$l)=@_;
     my $res=null;
     my $c;
-    while ($l and &$pred($c= car $l)) {
+    while (!is_null $l and &$pred($c= car $l)) {
 	$res= cons $c,$res;
 	$l=cdr $l;
     }
