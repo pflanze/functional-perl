@@ -32,9 +32,9 @@ GetOptions("verbose"=> \$verbose,
 	   ) or exit 1;
 usage unless @ARGV;
 
-use Chj::FP::Text::CSV qw(xopen_csv_stream);
-use Chj::FP::List qw(rest);
-use Chj::FP::Stream qw(stream_map);
+use FP::Text::CSV qw(xopen_csv_stream);
+use FP::List qw(rest);
+use FP::Stream qw(stream_map);
 
 use Chj::PXML::Tags
   # create tag functions for the following XML tag names. Casing is

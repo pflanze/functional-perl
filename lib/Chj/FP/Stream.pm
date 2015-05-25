@@ -5,18 +5,18 @@
 
 =head1 NAME
 
-Chj::FP::Stream - functions for lazily generated, singly linked (purely functional) lists
+FP::Stream - functions for lazily generated, singly linked (purely functional) lists
 
 =head1 SYNOPSIS
 
- use Chj::FP::Stream ':all';
+ use FP::Stream ':all';
 
  stream_length stream_iota (101, 5)
  # => 5;
  stream_length stream_iota (undef, 5000000)
  # => 5000000;
 
- use Chj::FP::Lazy;
+ use FP::Lazy;
  force stream_fold_right sub { my ($n,$rest)=@_; $n + force $rest }, 0, stream_iota undef, 5
  # => 10;
 
@@ -43,7 +43,7 @@ Create and dissect sequences using pure functions. Lazily.
 =cut
 
 
-package Chj::FP::Stream;
+package FP::Stream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
 	      Keep
@@ -84,10 +84,10 @@ package Chj::FP::Stream;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::FP::Lazy;
-use Chj::FP::List ":all";
+use FP::Lazy;
+use FP::List ":all";
 use Scalar::Util 'weaken';
-use Chj::FP::Div qw(flip flip2_3 rot3right rot3left);
+use FP::Div qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
 
 
@@ -139,7 +139,7 @@ sub stream_iota {
     }
 }
 
-*Chj::FP::List::List::stream_iota= *stream_iota;
+*FP::List::List::stream_iota= *stream_iota;
 
 
 sub stream_length ($) {
@@ -154,7 +154,7 @@ sub stream_length ($) {
     $len
 }
 
-*Chj::FP::List::List::stream_length= *stream_length;
+*FP::List::List::stream_length= *stream_length;
 
 
 # left fold, sometimes called `foldl` or `reduce`
@@ -173,7 +173,7 @@ sub stream_fold ($$$) {
     $start
 }
 
-*Chj::FP::List::List::stream_fold= rot3left \&stream_fold;
+*FP::List::List::stream_fold= rot3left \&stream_fold;
 
 TEST{ stream_fold sub { $_[0] + $_[1] }, 5, stream_iota (10,2) }
   5+10+11;
@@ -189,7 +189,7 @@ sub stream_append ($$) {
     }
 }
 
-*Chj::FP::List::List::stream_append= *stream_append;
+*FP::List::List::stream_append= *stream_append;
 
 TEST{ stream2string (stream_append string2stream("Hello"), string2stream(" World")) }
   'Hello World';
@@ -204,7 +204,7 @@ sub stream_map ($ $) {
     }
 }
 
-*Chj::FP::List::List::stream_map= flip \&stream_map;
+*FP::List::List::stream_map= flip \&stream_map;
 
 sub stream_map_with_tail ($ $ $);
 sub stream_map_with_tail ($ $ $) {
@@ -217,7 +217,7 @@ sub stream_map_with_tail ($ $ $) {
     }
 }
 
-*Chj::FP::List::List::stream_map_with_tail= flip2_3 \&stream_map_with_tail;
+*FP::List::List::stream_map_with_tail= flip2_3 \&stream_map_with_tail;
 
 
 # 2-ary (possibly slightly faster) version of stream_zip
@@ -233,7 +233,7 @@ sub stream_zip2 ($$) {
     }
 }
 
-*Chj::FP::List::List::stream_zip2= *stream_zip2;
+*FP::List::List::stream_zip2= *stream_zip2;
 
 # n-ary version of stream_zip2
 sub stream_zip {
@@ -250,7 +250,7 @@ sub stream_zip {
     }
 }
 
-*Chj::FP::List::List::stream_zip= *stream_zip; # XX fall back on zip2
+*FP::List::List::stream_zip= *stream_zip; # XX fall back on zip2
                                                # for 2 arguments?
 
 
@@ -266,7 +266,7 @@ sub stream_zip_with {
     }
 }
 
-*Chj::FP::List::List::stream_zip_with= flip2_3 \&stream_zip_with;
+*FP::List::List::stream_zip_with= flip2_3 \&stream_zip_with;
 
 
 sub stream_filter ($ $);
@@ -283,7 +283,7 @@ sub stream_filter ($ $) {
     }
 }
 
-*Chj::FP::List::List::stream_filter= flip \&stream_filter;
+*FP::List::List::stream_filter= flip \&stream_filter;
 
 
 # http://hackage.haskell.org/package/base-4.7.0.2/docs/Prelude.html#v:foldr1
@@ -307,7 +307,7 @@ sub stream_foldr1 ($ $) {
     }
 }
 
-*Chj::FP::List::List::stream_foldr1= flip \&stream_foldr1;
+*FP::List::List::stream_foldr1= flip \&stream_foldr1;
 
 
 sub stream_fold_right ($ $ $);
@@ -326,7 +326,7 @@ sub stream_fold_right ($ $ $) {
     }
 }
 
-*Chj::FP::List::List::stream_fold_right= rot3left \&stream_fold_right;
+*FP::List::List::stream_fold_right= rot3left \&stream_fold_right;
 
 
 sub make_stream__fold_right {
@@ -439,7 +439,7 @@ sub stream2string ($) {
     $str
 }
 
-*Chj::FP::List::List::stream_string= *stream2string;
+*FP::List::List::stream_string= *stream2string;
 
 
 sub stream_for_each ($ $ ) {
@@ -455,7 +455,7 @@ sub stream_for_each ($ $ ) {
     }
 }
 
-*Chj::FP::List::List::stream_for_each= flip \&stream_for_each;
+*FP::List::List::stream_for_each= flip \&stream_for_each;
 
 
 sub stream_drop ($ $);
@@ -471,7 +471,7 @@ sub stream_drop ($ $) {
     $s
 }
 
-*Chj::FP::List::List::stream_drop= *stream_drop;
+*FP::List::List::stream_drop= *stream_drop;
 
 
 sub stream_take ($ $);
@@ -490,7 +490,7 @@ sub stream_take ($ $) {
     }
 }
 
-*Chj::FP::List::List::stream_take= *stream_take;
+*FP::List::List::stream_take= *stream_take;
 
 
 sub stream_take_while ($ $);
@@ -512,7 +512,7 @@ sub stream_take_while ($ $) {
     }
 }
 
-*Chj::FP::List::List::stream_take_while= flip \&stream_take_while;
+*FP::List::List::stream_take_while= flip \&stream_take_while;
 
 
 sub stream_slice ($ $);
@@ -542,7 +542,7 @@ sub stream_slice ($ $) {
     @_=($start); goto $rec2
 }
 
-*Chj::FP::List::List::stream_slice= *stream_slice;
+*FP::List::List::stream_slice= *stream_slice;
 # maybe call it `cut_at` instead?
 
 
@@ -562,7 +562,7 @@ sub stream_drop_while ($ $) {
     }
 }
 
-*Chj::FP::List::List::stream_drop_while= flip \&stream_drop_while;
+*FP::List::List::stream_drop_while= flip \&stream_drop_while;
 
 
 sub stream_ref ($ $) {
@@ -580,7 +580,7 @@ sub stream_ref ($ $) {
     }
 }
 
-*Chj::FP::List::List::stream_ref= *stream_ref;
+*FP::List::List::stream_ref= *stream_ref;
 
 
 # force everything deeply
@@ -617,7 +617,7 @@ sub stream2array ($) {
     $res
 }
 
-*Chj::FP::List::List::stream_array= *stream2array;
+*FP::List::List::stream_array= *stream2array;
 
 
 sub stream_mixed_flatten ($;$$) {
@@ -625,7 +625,7 @@ sub stream_mixed_flatten ($;$$) {
     mixed_flatten ($v,$maybe_tail//null, $maybe_delay||\&lazyLight)
 }
 
-*Chj::FP::List::List::stream_mixed_flatten= *stream_mixed_flatten;
+*FP::List::List::stream_mixed_flatten= *stream_mixed_flatten;
 
 
 sub stream_any ($ $);
@@ -645,7 +645,7 @@ sub stream_any ($ $) {
     }
 }
 
-*Chj::FP::List::List::stream_any= flip \&stream_any;
+*FP::List::List::stream_any= flip \&stream_any;
 
 
 # (meant as a debugging tool: turn stream to string)
@@ -656,7 +656,7 @@ sub stream_show ($) {
 	 @{ stream2array $s } )
 }
 
-*Chj::FP::List::List::stream_show= *stream_show;
+*FP::List::List::stream_show= *stream_show;
 
 
 # ----- Tests ----------------------------------------------------------

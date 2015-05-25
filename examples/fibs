@@ -16,10 +16,10 @@ use Chj::Backtrace;
 use Chj::repl;
 
 use Chj::TEST;
-use Chj::FP::List ":all";
-use Chj::FP::Ops ":all";
-use Chj::FP::Lazy ":all";
-use Chj::FP::Stream ":all";
+use FP::List ":all";
+use FP::Ops ":all";
+use FP::Lazy ":all";
+use FP::Stream ":all";
 
 
 # fibs :: [Integer]

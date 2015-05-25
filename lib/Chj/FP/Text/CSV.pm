@@ -5,16 +5,16 @@
 
 =head1 NAME
 
-Chj::FP::Text::CSV - functional interface to Text::CSV
+FP::Text::CSV - functional interface to Text::CSV
 
 =head1 SYNOPSIS
 
- use Chj::FP::Text::CSV qw(csv_line_xparser fh2csvstream xopen_csv_stream);
+ use FP::Text::CSV qw(csv_line_xparser fh2csvstream xopen_csv_stream);
  use Method::Signatures; # func
 
  my $csvparams= +{sep_char=> ";", eol=> "\n"};
  # $csvparams and any of its entries are optional,
- #  defaults are taken from $Chj::FP::Text::CSV::defaults
+ #  defaults are taken from $FP::Text::CSV::defaults
 
  # -- Input: ---
  my $p= csv_line_xparser $csvparams;
@@ -25,7 +25,7 @@ Chj::FP::Text::CSV - functional interface to Text::CSV
  my $stream= xopen_csv_stream($somepath, $csvparams);
 
  # then
- use Chj::FP::Stream ":all";
+ use FP::Stream ":all";
  my $stream2= stream_map func ($row) {
      #...
  }, $stream;
@@ -50,7 +50,7 @@ computed linked lists).
 =cut
 
 
-package Chj::FP::Text::CSV;
+package FP::Text::CSV;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(
@@ -65,11 +65,11 @@ package Chj::FP::Text::CSV;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::FP::List ":all";
-use Chj::FP::Lazy ":all";
-use Chj::FP::Stream 'Weakened', 'weaken';
+use FP::List ":all";
+use FP::Lazy ":all";
+use FP::Stream 'Weakened', 'weaken';
 use Text::CSV;
-use Chj::FP::HashSet 'hashset_union';
+use FP::HashSet 'hashset_union';
 use Chj::xopen 'xopen_read';
 
 our $defaults=
@@ -130,7 +130,7 @@ sub xopen_csv_stream ($;$) {
 
 # -- Output: ---
 
-use Chj::FP::Stream "stream_for_each";
+use FP::Stream "stream_for_each";
 
 sub csvstream2fh ($$;$) {
     my ($s, $fh, $maybe_params)=@_;

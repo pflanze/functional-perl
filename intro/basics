@@ -389,14 +389,14 @@ sub functional_fact_iter {
 # For best fit with functional programming, the bare chains are passed
 # around, without any object wrapper.
 
-use Chj::FP::List ":all"; # cons, car, cdr, first, rest
-use Chj::FP::ArrayUtil ":all"; # list2array
+use FP::List ":all"; # cons, car, cdr, first, rest
+use FP::ArrayUtil ":all"; # list2array
 
 # main> cons(1,2)
 # $VAR1 = bless( [
 #                  1,
 #                  2
-#                ], 'Chj::FP::List::Pair' );
+#                ], 'FP::List::Pair' );
 
 # As you can see, cons returns a Pair object simply containing the two arguments.
 
@@ -411,7 +411,7 @@ TEST { cons(1,2) }
   bless( [
 	  1,
 	  2
-	 ], 'Chj::FP::List::Pair' );
+	 ], 'FP::List::Pair' );
 
 
 # Let's build a list containing 3 elements; null is returning the list
@@ -424,10 +424,10 @@ TEST { cons(1, cons(2, cons(5, null))) }
 		  2,
 		  bless( [
 			  5,
-			  bless( [], 'Chj::FP::List::Null' )
-			 ], 'Chj::FP::List::Pair' )
-		 ], 'Chj::FP::List::Pair' )
-         ], 'Chj::FP::List::Pair' );
+			  bless( [], 'FP::List::Null' )
+			 ], 'FP::List::Pair' )
+		 ], 'FP::List::Pair' )
+         ], 'FP::List::Pair' );
 
 # This becomes ugly fast, so, turn it back into an array that Perl
 # will show nicely:
@@ -473,14 +473,14 @@ sub iota {
 # A preview on lazy lists, AKA functional streams:
 # those are linked lists, but computed on demand.
 
-use Chj::FP::Stream ":all";
-use Chj::FP::Lazy ":all";
+use FP::Stream ":all";
+use FP::Lazy ":all";
 
 # main> stream_iota (4, 3)
 # $VAR1 = bless( [
 #                  sub { "DUMMY" },
 #                  undef
-#                ], 'Chj::FP::Lazy::Promise' );
+#                ], 'FP::Lazy::Promise' );
 
 # Instead of calculating the nested list data structure right away,
 # this just returns a "promise". (Details to be shown in another

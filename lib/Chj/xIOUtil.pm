@@ -25,8 +25,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::xopen ":all";
 # ^ well, this voids the point of Chj::xIO (to avoid Chj::IO::*)
-use Chj::FP::Lazy;
-use Chj::FP::List;
+use FP::Lazy;
+use FP::List;
 
 sub xgetfile_utf8 ($) {
     my ($path)=@_;

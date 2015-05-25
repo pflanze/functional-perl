@@ -18,10 +18,10 @@ use Chj::repl;
 # gracefully fail when run as a test and Method::Signatures is not
 # available
 use Chj::TEST use=> 'Method::Signatures';
-use Chj::FP::List ":all";
-use Chj::FP::Ops ":all";
-use Chj::FP::Lazy ":all";
-use Chj::FP::Stream ":all";
+use FP::List ":all";
+use FP::Ops ":all";
+use FP::Lazy ":all";
+use FP::Stream ":all";
 
 
 # Another translation of (a) Haskell example(s) (see also `fibs`).

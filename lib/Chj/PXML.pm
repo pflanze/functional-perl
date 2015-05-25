@@ -35,7 +35,7 @@ sub maybe_attributes {
 }
 sub body {
     # could be undef, too, but then undef is the empty list when
-    # interpreted as a Chj::FP::List, thus no need for the maybe_
+    # interpreted as a FP::List, thus no need for the maybe_
     # prefix.
     $_[0][2]
 }
@@ -91,8 +91,8 @@ sub body_update {
 
 # XX Depend on these? Chj::PXML::Serialize uses these, so any app that
 # serializes PXML would require them anyway.
-use Chj::FP::Lazy;
-use Chj::FP::List;
+use FP::Lazy;
+use FP::List;
 
 sub _text {
     my ($v)=@_;

@@ -6,7 +6,7 @@
 
 =head1 NAME
 
-Chj::FP::OrderedCollection
+FP::OrderedCollection
 
 =head1 SYNOPSIS
 
@@ -16,15 +16,15 @@ Chj::FP::OrderedCollection
 =cut
 
 
-package Chj::FP::OrderedCollection;
+package FP::OrderedCollection;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
-use Chj::FP::Predicates;
-use Chj::FP::Stream qw(subarray2stream subarray2stream_reverse  stream2array);
-use Chj::FP::Lazy;
-use Chj::FP::List;
+use FP::Predicates;
+use FP::Stream qw(subarray2stream subarray2stream_reverse  stream2array);
+use FP::Lazy;
+use FP::List;
 
 use Chj::Struct
   [[\&is_array, "array"],
@@ -86,7 +86,7 @@ sub maybe_prev {
 
 
 TEST {
-    our $c= Chj::FP::OrderedCollection->new_from_values(qw(a b c f));
+    our $c= FP::OrderedCollection->new_from_values(qw(a b c f));
     $c->contains ("a")
 } 1;
 

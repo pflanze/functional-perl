@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-Chj::FP::Values - utilities to work with Perl's multiple values ("lists")
+FP::Values - utilities to work with Perl's multiple values ("lists")
 
 =head1 SYNOPSIS
 
@@ -15,7 +15,7 @@ Chj::FP::Values - utilities to work with Perl's multiple values ("lists")
 =cut
 
 
-package Chj::FP::Values;
+package FP::Values;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(fst snd);

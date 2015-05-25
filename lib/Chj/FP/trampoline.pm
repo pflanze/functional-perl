@@ -6,11 +6,11 @@
 
 =head1 NAME
 
-Chj::FP::trampoline -- tail call optimization without reliance on goto
+FP::trampoline -- tail call optimization without reliance on goto
 
 =head1 SYNOPSIS
 
- use Chj::FP::trampoline; # exports `T` and `trampoline`
+ use FP::trampoline; # exports `T` and `trampoline`
 
  sub iterative_fact {
      my ($n,$tot)= @_;
@@ -35,19 +35,19 @@ language. Its drawbacks are more overhead and the requirement to put a
 
 =item T { ... }
 
-Returns a closure blessed into the `Chj::FP::trampoline` namespace,
+Returns a closure blessed into the `FP::trampoline` namespace,
 which represents a trampolining continuation.
 
 =item trampoline ($value)
 
 The trampoline that bounces back as long as need be: if $value is
-blessed into the `Chj::FP::trampoline` namespace, it is called and the
+blessed into the `FP::trampoline` namespace, it is called and the
 result fed back into `trampoline`, otherwise it is returned directly.
 
 =cut
 
 
-package Chj::FP::trampoline;
+package FP::trampoline;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(T trampoline);
 @EXPORT_OK=qw();

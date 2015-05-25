@@ -34,11 +34,11 @@ usage unless @ARGV==2;
 
 our ($path,$numrows)=@ARGV;
 
-use Chj::FP::Text::CSV qw(csvstream2file);
-use Chj::FP::List ":all";
-use Chj::FP::Lazy ":all";
-use Chj::FP::Stream ":all";
-use Chj::FP::Ops qw(add);
+use FP::Text::CSV qw(csvstream2file);
+use FP::List ":all";
+use FP::Lazy ":all";
+use FP::Stream ":all";
+use FP::Ops qw(add);
 
 
 func fibs () {

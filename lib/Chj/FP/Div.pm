@@ -6,7 +6,7 @@
 
 =head1 NAME
 
-Chj::FP::Div
+FP::Div
 
 =head1 SYNOPSIS
 
@@ -16,7 +16,7 @@ Chj::FP::Div
 =cut
 
 
-package Chj::FP::Div;
+package FP::Div;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(inc dec square

@@ -18,7 +18,7 @@
 - decide whether to offer methods to shorten names like stream_*
   (I'm inclined against it)
 
-- replace Chj::FP::Lazy with Data::Thunk? This would be cool from a
+- replace FP::Lazy with Data::Thunk? This would be cool from a
   transparency stand point, except that separate code by way of
   dynamic dispatch (method calls) *can't* be used anymore then, and
   thus the only code always needs to do the environment cleaning,

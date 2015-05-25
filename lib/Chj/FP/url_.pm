@@ -6,11 +6,11 @@
 
 =head1 NAME
 
-Chj::FP::url_
+FP::url_
 
 =head1 SYNOPSIS
 
- use Chj::FP::url_;
+ use FP::url_;
  my $u= url_ path=> "index.html", fragment=> "foo#bar";
  # $u is an URI object
  "$u" # 'index.html#foo%23bar'
@@ -21,7 +21,7 @@ Chj::FP::url_
 =cut
 
 
-package Chj::FP::url_;
+package FP::url_;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(url_);
 @EXPORT_OK=qw();

@@ -49,7 +49,7 @@ i.e. they will not shadow super class methods. (Thanks to Matt S Trout
 for pointing out the idea.) To avoid the namespace cleaning, write
 _END__ instead of _END_.
 
-See Chj::FP::Predicates for some useful predicates.
+See FP::Predicates for some useful predicates.
 
 =cut
 

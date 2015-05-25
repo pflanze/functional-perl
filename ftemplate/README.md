@@ -9,7 +9,7 @@ file handles is done using procedures from
 `Chj::PXML::Serialize`. 
 
 The body of elements can be a mix of standard Perl arrays, linked
-lists based on `Chj::FP::List`, and promises (`Chj::FP::Lazy`) which
+lists based on `FP::List`, and promises (`FP::Lazy`) which
 allows for the generation of streaming output.
 
 Direct creation of XML elements:

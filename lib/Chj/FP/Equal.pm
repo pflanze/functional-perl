@@ -6,11 +6,11 @@
 
 =head1 NAME
 
-Chj::FP::Equal - equality
+FP::Equal - equality
 
 =head1 SYNOPSIS
 
- use Chj::FP::Equal;
+ use FP::Equal;
  equal [1, [2, 3]], [1, [1+1, 3]]; # -> true
  equal [1, [2, 3]], [1, [1+2, 3]]; # -> false
 
@@ -29,7 +29,7 @@ NOTE: currently using Data::Dumper and thus slow.
 =cut
 
 
-package Chj::FP::Equal;
+package FP::Equal;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(equal equal_utf8);
 @EXPORT_OK=qw();

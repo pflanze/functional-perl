@@ -30,8 +30,8 @@ $f->xclose;
 
 our %dependencies=
   (
-   'Chj::FP::Text::CSV'=> [qw(Text::CSV)],
-   'Chj::FP::url_'=> [qw(URI)],
+   'FP::Text::CSV'=> [qw(Text::CSV)],
+   'FP::url_'=> [qw(URI)],
   );
 
 

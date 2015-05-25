@@ -32,11 +32,11 @@ usage if @ARGV;
 
 
 use Method::Signatures;
-use Chj::FP::Stream ":all";
-use Chj::FP::IOStream ":all";
+use FP::Stream ":all";
+use FP::IOStream ":all";
 use Chj::PXML::Serialize qw(puthtmlfile);
 use Chj::PXHTML ":all";
-use Chj::FP::Ops ":all";
+use FP::Ops ":all";
 use Chj::xopen "glob2fh";
 
 our $lines=

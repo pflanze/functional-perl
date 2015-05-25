@@ -5,14 +5,14 @@
 
 =head1 NAME
 
-Chj::FP::IOStream
+FP::IOStream
 
 =head1 SYNOPSIS
 
- use Chj::FP::IOStream ':all'; # xopendir_stream, xopendir_pathstream
- use Chj::FP::Stream; # stream_map
- use Chj::FP::Lazy; # force
- use Chj::FP::List ':all'; # car
+ use FP::IOStream ':all'; # xopendir_stream, xopendir_pathstream
+ use FP::Stream; # stream_map
+ use FP::Lazy; # force
+ use FP::List ':all'; # car
  my $paths= stream_map sub { my ($item)= @_; "$base/$item" }, xopendir_stream $base;
  # which is the same as: my $paths= xopendir_pathstream $base;
  my $firstpath= car force $paths;
@@ -29,7 +29,7 @@ careful.)
 =cut
 
 
-package Chj::FP::IOStream;
+package FP::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(fh2stream
@@ -41,12 +41,12 @@ package Chj::FP::IOStream;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::FP::Lazy;
+use FP::Lazy;
 use Chj::xopendir;
-use Chj::FP::List ':all';
-use Chj::FP::Stream 'stream_map', 'array2stream', 'Weakened';
-use Chj::FP::Array_sort;
-use Chj::FP::Ops 'the_method';
+use FP::List ':all';
+use FP::Stream 'stream_map', 'array2stream', 'Weakened';
+use FP::Array_sort;
+use FP::Ops 'the_method';
 
 sub _xopendir_stream ($) {
     my ($path)=@_;

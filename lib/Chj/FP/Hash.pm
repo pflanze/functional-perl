@@ -5,11 +5,11 @@
 
 =head1 NAME
 
-Chj::FP::Hash
+FP::Hash
 
 =head1 SYNOPSIS
 
- use Chj::FP::Hash;
+ use FP::Hash;
 
  my $a= {a=>1, b=>2};
  my $b= hash_set($a, "b", 3);
@@ -31,7 +31,7 @@ Clojure)?)
 =cut
 
 
-package Chj::FP::Hash;
+package FP::Hash;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(hash_set hash_delete hash_diff hashes_keys);
 @EXPORT_OK=qw();
@@ -114,7 +114,7 @@ TEST {hash_diff {a=>1,b=>2,x=>9}, {a=>undef,b=>3,c=>5,x=>9}}
     'x' => 'unchanged'
 };
 
-use Chj::FP::HashSet;
+use FP::HashSet;
 
 sub hashes_keys {
     keys %{array2hashset( [map { keys %$_ } @_] )}

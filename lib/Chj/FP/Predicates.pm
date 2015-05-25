@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-Chj::FP::Predicates
+FP::Predicates
 
 =head1 SYNOPSIS
 
@@ -16,7 +16,7 @@ Useful as predicates for Chj::Struct field definitions.
 =cut
 
 
-package Chj::FP::Predicates;
+package FP::Predicates;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
 	      is_string

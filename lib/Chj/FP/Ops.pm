@@ -5,11 +5,11 @@
 
 =head1 NAME
 
-Chj::FP::Ops -- function wrappers around Perl ops
+FP::Ops -- function wrappers around Perl ops
 
 =head1 SYNOPSIS
 
- use Chj::FP::Ops 'add';
+ use FP::Ops 'add';
 
  our $fibs; $fibs=
    cons 1, cons 1, lazy { stream_zip_with \&add, Keep($fibs), rest $fibs };
@@ -26,7 +26,7 @@ Also similarly, `the_method("foo")` returns a function that does a
 =cut
 
 
-package Chj::FP::Ops;
+package FP::Ops;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(

@@ -29,12 +29,12 @@ exit @_ ? 1 : 0;
 }
 
 use Getopt::Long;
-use Chj::FP::Predicates 'is_natural0';
+use FP::Predicates 'is_natural0';
 use Chj::xopen 'glob2fh';
-use Chj::FP::IOStream 'fh2chunks';
-use Chj::FP::Stream ":all";
-use Chj::FP::List ":all";
-use Chj::FP::Lazy ":all";
+use FP::IOStream 'fh2chunks';
+use FP::Stream ":all";
+use FP::List ":all";
+use FP::Lazy ":all";
 use POSIX 'ESPIPE';
 use Chj::TEST;
 
@@ -103,7 +103,7 @@ sub test_with_size ($) {
 			   sub { my ($tail, $len)=@_; cons $len, $tail });
 }
 
-use Chj::FP::Equal;
+use FP::Equal;
 
 TEST { test_with_size 1 }
 [

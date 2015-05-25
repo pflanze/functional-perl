@@ -6,11 +6,11 @@
 
 =head1 NAME
 
-Chj::FP::HashSet - set operations for hash tables
+FP::HashSet - set operations for hash tables
 
 =head1 SYNOPSIS
 
- use Chj::FP::HashSet; # ":all";
+ use FP::HashSet; # ":all";
 
  my $A= array2hashset ["a","b","c"];
  my $B= array2hashset ["a","c","d"];
@@ -29,7 +29,7 @@ Chj::FP::HashSet - set operations for hash tables
 =head1 DESCRIPTION
 
 Hashsets are hash tables that are expected to have keys representing
-the values unambiguously (Chj::FP::ArrayUtil::array2hashset will just
+the values unambiguously (FP::ArrayUtil::array2hashset will just
 use the stringification).
 
 Note that hashset2array will use the *values* of the hashes, not the
@@ -38,7 +38,7 @@ keys.
 =cut
 
 
-package Chj::FP::HashSet;
+package FP::HashSet;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(array2hashset
 	   array2lchashset

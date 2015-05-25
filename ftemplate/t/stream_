@@ -10,7 +10,7 @@ BEGIN {
 
 use lib "$mydir/../../lib";
 
-use Chj::FP::Stream ":all";
+use FP::Stream ":all";
 use Chj::TEST ':all';
 
 TEST{stream_length stream_iota 0, 1000000}

@@ -6,12 +6,12 @@
 
 =head1 NAME
 
-Chj::FP::Array_sort - 'sensible' sorting setup
+FP::Array_sort - 'sensible' sorting setup
 
 =head1 SYNOPSIS
 
- use Chj::FP::Array_sort; # for array_sort, on, string_cmp, number_cmp, complement
- use Chj::FP::List;# for car in this example
+ use FP::Array_sort; # for array_sort, on, string_cmp, number_cmp, complement
+ use FP::List;# for car in this example
  array_sort $ary, on \&car, \&number_cmp
 
 =head1 DESCRIPTION
@@ -20,7 +20,7 @@ Chj::FP::Array_sort - 'sensible' sorting setup
 =cut
 
 
-package Chj::FP::Array_sort;
+package FP::Array_sort;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(array_sort on complement);
 @EXPORT_OK=qw();
@@ -28,7 +28,7 @@ package Chj::FP::Array_sort;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::FP::Ops qw(string_cmp number_cmp);
+use FP::Ops qw(string_cmp number_cmp);
 
 sub array_sort ($ $) {
     my ($in,$cmp)=@_;

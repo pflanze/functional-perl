@@ -5,11 +5,11 @@
 
 =head1 NAME
 
-Chj::FP::Lazy
+FP::Lazy
 
 =head1 SYNOPSIS
 
- use Chj::FP::Lazy;
+ use FP::Lazy;
 
  my $a = lazy { 1 / 0 };
  print force $a # -> Illegal division by zero
@@ -59,7 +59,7 @@ Alternative Scalar::Defer?
 =cut
 
 
-package Chj::FP::Lazy;
+package FP::Lazy;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(lazy lazyLight force FORCE is_promise);
 @EXPORT_OK=qw();
@@ -69,25 +69,25 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
 sub lazy (&) {
-    bless [$_[0],undef], "Chj::FP::Lazy::Promise"
+    bless [$_[0],undef], "FP::Lazy::Promise"
 }
 
 # not providing for caching (1-time-only evaluation)
 sub lazyLight (&) {
-    bless $_[0], "Chj::FP::Lazy::PromiseLight"
+    bless $_[0], "FP::Lazy::PromiseLight"
 }
 
 sub is_promise ($) {
-    (UNIVERSAL::isa ($_[0], "Chj::FP::Lazy::Promise"))
+    (UNIVERSAL::isa ($_[0], "FP::Lazy::Promise"))
 }
 
 sub force ($;$) {
     my ($perhaps_promise,$nocache)=@_;
   LP: {
-	if (UNIVERSAL::isa ($perhaps_promise, "Chj::FP::Lazy::PromiseLight")) {
+	if (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::PromiseLight")) {
 	    $perhaps_promise= &$perhaps_promise;
 	    redo LP;
-	} elsif (UNIVERSAL::isa ($perhaps_promise, "Chj::FP::Lazy::Promise")) {
+	} elsif (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::Promise")) {
 	    if (my $thunk= $$perhaps_promise[0]) {
 		my $v= &$thunk;
 		unless ($nocache) {
@@ -113,8 +113,8 @@ sub FORCE {
 }
 
 {
-    package Chj::FP::Lazy::Promise;
-    *force= *Chj::FP::Lazy::force;
+    package FP::Lazy::Promise;
+    *force= *FP::Lazy::force;
     sub DESTROY {
 	# nothing, catch this to prevent it from entering AUTOLOAD
     }
@@ -142,8 +142,8 @@ sub FORCE {
 }
 
 {
-    package Chj::FP::Lazy::PromiseLight;
-    our @ISA= qw(Chj::FP::Lazy::Promise);
+    package FP::Lazy::PromiseLight;
+    our @ISA= qw(FP::Lazy::Promise);
 }
 
 1

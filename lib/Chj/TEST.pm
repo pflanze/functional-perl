@@ -142,7 +142,7 @@ sub GIVES (&) {
     bless $thunk, "Chj::TEST::GIVES";
 }
 
-use Chj::FP::Equal;
+use FP::Equal;
 use Data::Dumper;
 
 sub eval_test ($$) {

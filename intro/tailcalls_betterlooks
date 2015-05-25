@@ -128,7 +128,7 @@ func opt_even ($n) {
 
 # ------------------------------------------------------------------
 # Note: there's also trampolining as a potential solution:
-use Chj::FP::trampoline;
+use FP::trampoline;
 
 func tramp_odd ($n) {
     if ($n == 0) {

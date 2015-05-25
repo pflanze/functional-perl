@@ -6,7 +6,7 @@
 
 =head1 NAME
 
-Chj::FP::ArrayUtil
+FP::ArrayUtil
 
 =head1 SYNOPSIS
 
@@ -16,7 +16,7 @@ Chj::FP::ArrayUtil
 =cut
 
 
-package Chj::FP::ArrayUtil;
+package FP::ArrayUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(array
@@ -47,7 +47,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::TEST;
 use Chj::xperlfunc qw(min max);
-use Chj::FP::Ops 'add';
+use FP::Ops 'add';
 
 sub array {
     [@_]
