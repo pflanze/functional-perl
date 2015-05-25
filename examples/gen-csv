@@ -47,7 +47,7 @@ func fibs () {
     # it's correct when the local variable, which goes out of scope,
     # is deleted)
     my $fibs; $fibs=
-      cons 1, cons 1, lazy { stream_zip_with \&add, $fibs, rest $fibs };
+      cons 1, cons 1, lazy { $fibs->zip_with (\&add, rest $fibs) };
     $fibs
 }
 
@@ -74,7 +74,7 @@ func rows () {
 use Chj::Backtrace;
 #use Chj::repl;repl;
 
-my $rows= stream_take rows, $numrows+1; # +1 for the header row
+my $rows= rows-> take($numrows+1); # +1 for the header row
 
 csvstream2file $rows, $path, +{eol=> "\n", sep_char=> ";"};
 
