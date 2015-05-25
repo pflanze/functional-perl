@@ -139,8 +139,13 @@ sub null () {
     $null
 }
 
+sub is_null ($);
 sub is_null ($) {
-    defined $_[0] and ref($_[0]) eq "Chj::FP::List::Null"
+    my $r= ref($_[0]);
+    ($r eq "Chj::FP::List::Null" ? 1
+     # XX evil: inlined `is_promise` (wrong, too). For the sake of unmeasured speed!
+     : $r eq "Chj::FP::Lazy::Promise" ? is_null (force $_[0])
+     : '')
 }
 
 
