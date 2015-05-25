@@ -201,6 +201,9 @@ $v v  pipe to pager ($$self[Pager])
 };
 }
 
+
+our $use_warnings= q{use warnings; use warnings FATAL => 'uninitialized';};
+
 our $eval_lexicals;
 use Chj::singlequote 'singlequote';
 sub eval_code {
@@ -222,7 +225,7 @@ sub eval_code {
 	      }
 	      keys %$eval_lexicals);
     myeval ("package ".&$get_package()."; $aliascode; (); ".
-	    "no strict 'vars'; $code")
+	    "no strict 'vars'; $use_warnings;  $code")
 }
 
 
