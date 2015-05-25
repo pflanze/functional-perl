@@ -38,6 +38,18 @@ are not overwritten by subsequent runs! Set ->doKeepResultsInVARX(0)
 to turn this off.)
 
 
+=item CAVEAT
+
+Lexical variables are currently made accessible in the scope of the
+repl by way of a hack: what the code entered in the repl sees, are not
+directly its surrounded lexicals, but local'ized package variables of
+the same name aliased to them. This means that mutations to the
+variables are updated in the original scope, but closures entered in
+the repl will actually see the package variables, and once the code
+entered into the repl returns, those will go away, hence in case the
+closure was stored elsewhere, it will now refer to variables with
+different values (perhaps empty).
+
 =item TODO
 
  - 'A::Class-> ' method completion
@@ -216,9 +228,10 @@ sub eval_code {
 	join ("",
 	      map {
 		  my $varname= $_;
-		  $varname=~ s/^./\$/; # reference is to be held by a scalar, always
-		  ('my '
-		   .$varname
+		  my $sigil= substr $varname, 0, 1;
+		  my $barename= substr $varname, 1;
+		  ('local our '.$varname.';'
+		   .'*'.$barename
 		   .' = $$Chj::Util::Repl::eval_lexicals{'
 		   .singlequote($_)
 		   .'};')
