@@ -120,12 +120,20 @@ sub FORCE {
     }
     our $AUTOLOAD; # needs to be declared even though magical
     sub AUTOLOAD {
-	my $s= shift;
-	my $v= force ($s);
+	my $v= force ($_[0]);
 	my $methodname= $AUTOLOAD;
 	$methodname =~ s/.*:://;
-	if (my $method= UNIVERSAL::can($v, $methodname)) {
-	    @_=($v,@_); goto $method;
+	# To be able to select special implementations for lazy
+	# inputs, select a method with `stream_` prefix if present.
+	my $method=
+	  ($methodname=~ /^stream_/ ? UNIVERSAL::can($v, $methodname)
+	   : UNIVERSAL::can($v, "stream_$methodname")
+	     // UNIVERSAL::can($v, $methodname));
+	if ($method) {
+	    # can't change @_ or it would break 'env clearing' ability
+	    # of the method. Thus assign to $_[0], which will effect
+	    # our env, too, but so what? XX still somewhat bad.
+	    $_[0]= $v; goto $method;
 	} else {
 	    # XX imitate perl's ~exact error message?
 	    die "no method '$methodname' found for object: $v";
