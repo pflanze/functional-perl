@@ -777,6 +777,9 @@ TEST { my $s= string2stream "Hello";
        $ss->to_string }
   "Hello";
 
+TEST { array2stream([1,2,3])->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
+  9;
+
 
 # variable life times:
 
