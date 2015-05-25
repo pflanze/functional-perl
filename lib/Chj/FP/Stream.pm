@@ -376,6 +376,7 @@ sub string2stream ($;$) {
 
 sub stream2string ($) {
     my ($l)=@_;
+    weaken $_[0];
     my $str="";
     while (($l= force $l), !is_null $l) {
 	$str.= car $l;
