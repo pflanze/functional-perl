@@ -420,7 +420,7 @@ sub stream2string ($) {
     $str
 }
 
-*Chj::FP::List::List::stream_to_string= *stream2string;
+*Chj::FP::List::List::stream_string= *stream2string;
 
 
 sub stream_for_each ($ $ ) {
@@ -598,7 +598,7 @@ sub stream2array ($) {
     $res
 }
 
-*Chj::FP::List::List::stream_to_array= *stream2array;
+*Chj::FP::List::List::stream_array= *stream2array;
 
 
 sub stream_mixed_flatten ($;$$) {
@@ -769,12 +769,12 @@ TEST { my $s= stream_iota; stream2array stream_slice cdr $s, cdddr $s }
 
 # OO interface:
 
-TEST { string2stream ("Hello")->to_string }
+TEST { string2stream ("Hello")->string }
   "Hello";
 
 TEST { my $s= string2stream "Hello";
        my $ss= $s->force;
-       $ss->to_string }
+       $ss->string }
   "Hello";
 
 TEST { array2stream([1,2,3])->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
@@ -786,7 +786,7 @@ TEST { array2stream([1,2,3])->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
 TEST { my $s= string2stream "Hello";
        my $ss= $s->force;
        # dispatching to list2string
-       $ss->to_string;
+       $ss->string;
        is_pair $ss }
   1;
 
@@ -796,14 +796,14 @@ TEST { my $s= string2stream "Hello";
   '';
 
 TEST { my $s= string2stream "Hello";
-       $s->stream_to_string;
+       $s->stream_string;
        defined $s }
   '';
 
 TEST { my $s= string2stream "Hello";
-       # still dispatching to stream_to_string thanks to hack in
+       # still dispatching to stream_string thanks to hack in
        # Lazy.pm
-       $s->to_string;
+       $s->string;
        defined $s }
   '';
 

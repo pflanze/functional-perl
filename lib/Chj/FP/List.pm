@@ -282,10 +282,10 @@ sub list2string ($) {
     $res
 }
 
-*Chj::FP::List::List::to_string= *list2string;
+*Chj::FP::List::List::string= *list2string;
 
-TEST { null->to_string } "";
-TEST { cons("a",null)->to_string } "a";
+TEST { null->string } "";
+TEST { cons("a",null)->string } "a";
 
 
 sub list2array ($) {
@@ -300,7 +300,7 @@ sub list2array ($) {
     $res
 }
 
-*Chj::FP::List::List::to_array= *list2array;
+*Chj::FP::List::List::array= *list2array;
 
 
 sub rlist2array ($) {
@@ -316,7 +316,7 @@ sub rlist2array ($) {
     $res
 }
 
-*Chj::FP::List::List::reverse_to_array= *rlist2array;
+*Chj::FP::List::List::reverse_array= *rlist2array;
 
 
 sub list2values ($) {
@@ -324,7 +324,7 @@ sub list2values ($) {
     @{list2array ($l)}
 }
 
-*Chj::FP::List::List::to_values= *list2values;
+*Chj::FP::List::List::values= *list2values;
 
 
 sub string2list ($;$) {
@@ -557,7 +557,7 @@ TEST{ list2array  list_append (array2list (["a","b"]),
 
 *Chj::FP::List::List::append= *list_append;
 
-TEST{ array2list (["a","b"]) ->append(array2list([1,2])) ->to_array }
+TEST{ array2list (["a","b"]) ->append(array2list([1,2])) ->array }
   ['a','b',1,2];
 
 
@@ -581,7 +581,7 @@ TEST{ list2perlstring string2list  "Hello" }
 TEST{ list2perlstring string2list  "Hello's" }
   q{'Hello\'s'};
 
-*Chj::FP::List::List::to_perlstring= *list2perlstring;
+*Chj::FP::List::List::perlstring= *list2perlstring;
 
 
 sub drop_while ($ $) {
@@ -603,7 +603,7 @@ TEST { list2string drop_while (sub{$_[0] ne 'o'},
 
 TEST { string2list("Hello World")
 	 ->drop_while(sub{$_[0] ne 'o'})
-	   ->to_string }
+	   ->string }
   "o World";
 
 
