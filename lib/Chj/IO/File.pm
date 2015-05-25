@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2014 by Christian Jaeger ch@christianjaeger.ch
+# Copyright (c) 2003-2015 by Christian Jaeger ch@christianjaeger.ch
 # Published under the same terms as perl itself.
 #
 
