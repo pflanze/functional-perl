@@ -1,5 +1,5 @@
 #
-# Copyright 2013 by Christian Jaeger, ch at christianjaeger ch
+# Copyright 2013-2015 by Christian Jaeger, ch at christianjaeger ch
 # Published under the same terms as perl itself
 #
 
@@ -19,6 +19,21 @@ Chj::FP::Stream - functions for lazily generated, singly linked (purely function
  use Chj::FP::Lazy;
  force stream_fold_right sub { my ($n,$rest)=@_; $n + force $rest }, 0, stream_iota undef, 5
  # => 10;
+
+
+ # Alternatively, use methods:
+
+ stream_iota(101, 5)->length  # => 5
+ # note that length needs to walk the whole stream
+
+ # also, there's a {stream_,}fold (without the _right) function/method:
+ stream_iota(undef, 5)->fold(sub { my ($n,$rest)=@_; $n + $rest }, 0)
+
+ # NOTE that the method calls are forcing evaluation of the object
+ # (the first cell of the input stream), since that's the only way to
+ # know the type to be dispatched on. This is unlike the non-generic
+ # functions, some of which (like cons) don't force evaluation of
+ # their arguments.
 
 
 =head1 DESCRIPTION
