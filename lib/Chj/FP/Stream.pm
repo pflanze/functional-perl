@@ -287,7 +287,7 @@ sub stream_foldr1 ($ $) {
 	} elsif (is_null $l) {
 	    die "foldr1: reached end of list"
 	} else {
-	    die "improper list"
+	    die "improper list: $l"
 	}
     }
 }
@@ -306,7 +306,7 @@ sub stream_fold_right ($ $ $) {
 	} elsif (is_null $l) {
 	    $start
 	} else {
-	    die "improper list"
+	    die "improper list: $l"
 	}
     }
 }
@@ -622,7 +622,7 @@ sub stream_any ($ $) {
     } elsif (is_null $l) {
 	0
     } else {
-	die "improper list"
+	die "improper list: $l"
     }
 }
 
