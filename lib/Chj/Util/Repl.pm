@@ -523,6 +523,7 @@ sub run {
 		    my $set_package= sub {
 			# (no package parsing, trust user)
 			$$self[Package]= xone_nonwhitespace($args);
+			$args=""; # XX HACK
 		    };
 
 		    my %commands=
