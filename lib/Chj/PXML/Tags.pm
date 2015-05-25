@@ -5,28 +5,28 @@
 
 =head1 NAME
 
-Chj::PXML::Tags
+PXML::Tags
 
 =head1 SYNOPSIS
 
- use Chj::PXML::Tags qw(records
+ use PXML::Tags qw(records
      protocol-version
      record);
  my $xml= RECORDS(PROTOCOL_VERSION("1.0"), RECORD(...));
 
 =head1 DESCRIPTION
 
-Creates tag wrappers that return Chj::PXML elements. The names of the
+Creates tag wrappers that return PXML elements. The names of the
 wrappers are all uppercase, and "-" is replaced with "_".
 
 =cut
 
 
-package Chj::PXML::Tags;
+package PXML::Tags;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::PXML ();
+use PXML ();
 
 sub import {
     my $caller=caller;
@@ -37,7 +37,7 @@ sub import {
 	no strict 'refs';
 	*$fqname= sub {
 	    my $atts= ref($_[0]) eq "HASH" ? shift : undef;
-	    Chj::PXML->new($name, $atts, [@_]);
+	    PXML->new($name, $atts, [@_]);
 	};
     }
     1

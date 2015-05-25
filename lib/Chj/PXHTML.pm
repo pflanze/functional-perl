@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-Chj::PXHTML
+PXML::XHTML
 
 =head1 SYNOPSIS
 
@@ -15,12 +15,12 @@ Chj::PXHTML
 =cut
 
 
-package Chj::PXHTML;
+package PXML::XHTML;
 @ISA="Exporter"; require Exporter;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::PXML;
+use PXML;
 
 our $nbsp= "\xa0";
 
@@ -125,7 +125,7 @@ our $funcs=
 	uc $tag,
 	sub {
 	    my $atts= ref($_[0]) eq "HASH" ? shift : undef;
-	    Chj::PXML::PXHTML->new($tag, $atts, [@_]);
+	    PXML::PXHTML->new($tag, $atts, [@_]);
 	}
        ]
    } @$tags
@@ -134,20 +134,20 @@ our $funcs=
 for (@$funcs) {
     my ($name, $fn)=@$_;
     no strict 'refs';
-    *{"Chj::PXHTML::$name"}= $fn
+    *{"PXML::XHTML::$name"}= $fn
 }
 
 our @EXPORT_OK= ('$nbsp', map { $$_[0] } @$funcs);
 our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
 {
-    package Chj::PXML::PXHTML;
-    our @ISA= "Chj::PXML";
+    package PXML::PXHTML;
+    our @ISA= "PXML";
     # serialize to HTML5 compatible representation:
     sub require_printing_nonvoid_elements_nonselfreferential  {
 	1
     }
-    use Chj::PHTML5 '$html5_void_element_h';
+    use PXML::HTML5 '$html5_void_element_h';
     sub void_element_h {
 	$html5_void_element_h
     }

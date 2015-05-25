@@ -34,8 +34,8 @@ usage if @ARGV;
 use Method::Signatures;
 use FP::Stream ":all";
 use FP::IOStream ":all";
-use Chj::PXML::Serialize qw(puthtmlfile);
-use Chj::PXHTML ":all";
+use PXML::Serialize qw(puthtmlfile);
+use PXML::XHTML ":all";
 use FP::Ops ":all";
 use Chj::xopen "glob2fh";
 

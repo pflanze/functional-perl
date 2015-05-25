@@ -11,10 +11,10 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 
-use Chj::PXHTML ':all';
+use PXML::XHTML ':all';
 use FP::Lazy;
 use FP::List;
-use Chj::PXML::Serialize;
+use PXML::Serialize;
 
 use utf8;
 

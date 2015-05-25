@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-Chj::PSVG
+PXML::SVG
 
 =head1 SYNOPSIS
 
@@ -15,12 +15,12 @@ Chj::PSVG
 =cut
 
 
-package Chj::PSVG;
+package PXML::SVG;
 @ISA="Exporter"; require Exporter;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::PXML;
+use PXML;
 
 our $tags=
   [
@@ -36,7 +36,7 @@ sub svg {
     my $attrs2= +{%$attrs};
     $$attrs2{xmlns}= "http://www.w3.org/2000/svg";
     $$attrs2{"xmlns:xlink"}= "http://www.w3.org/1999/xlink";
-    Chj::PSVG::SVG($attrs2, @_)
+    PXML::SVG::SVG($attrs2, @_)
 }
 
 
@@ -52,7 +52,7 @@ our $funcs=
 	uc $tag,
 	sub {
 	    my $atts= ref($_[0]) eq "HASH" ? shift : undef;
-	    Chj::PXML::PSVG->new($tag, $atts, [@_]);
+	    PXML::PSVG->new($tag, $atts, [@_]);
 	}
        ]
    } @$tags
@@ -61,15 +61,15 @@ our $funcs=
 for (@$funcs) {
     my ($name, $fn)=@$_;
     no strict 'refs';
-    *{"Chj::PSVG::$name"}= $fn
+    *{"PXML::SVG::$name"}= $fn
 }
 
 our @EXPORT_OK= ('svg', '$nbsp', map { $$_[0] } @$funcs);
 our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
 {
-    package Chj::PXML::PSVG;
-    our @ISA= "Chj::PXML";
+    package PXML::PSVG;
+    our @ISA= "PXML";
     # serialize to HTML5 compatible representation: -- nope, not
     # necessary for SVG, ok? Assuming XHTML always? And different tags
     # anyway, ok?

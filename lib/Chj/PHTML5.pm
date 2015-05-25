@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-Chj::PHTML5
+PXML::HTML5
 
 =head1 SYNOPSIS
 
@@ -16,7 +16,7 @@ currently just provides $html5_void_elements and $html5_void_element_h
 =cut
 
 
-package Chj::PHTML5;
+package PXML::HTML5;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw( $html5_void_elements $html5_void_element_h);

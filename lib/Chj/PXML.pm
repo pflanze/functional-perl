@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-Chj::PXML
+PXML
 
 =head1 SYNOPSIS
 
@@ -15,7 +15,7 @@ Chj::PXML
 =cut
 
 
-package Chj::PXML;
+package PXML;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -89,7 +89,7 @@ sub body_update {
 # to touch the code there... so, here goes. Really, better languages
 # have been created to write code in.
 
-# XX Depend on these? Chj::PXML::Serialize uses these, so any app that
+# XX Depend on these? PXML::Serialize uses these, so any app that
 # serializes PXML would require them anyway.
 use FP::Lazy;
 use FP::List;
@@ -98,7 +98,7 @@ sub _text {
     my ($v)=@_;
     if (defined $v) {
 	if (ref $v)  {
-	    if (UNIVERSAL::isa ($v, "Chj::PXML")) {
+	    if (UNIVERSAL::isa ($v, "PXML")) {
 		$v->text
 	    } elsif (UNIVERSAL::isa ($v, "ARRAY")) {
 		join("",

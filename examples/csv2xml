@@ -36,7 +36,7 @@ use FP::Text::CSV qw(xopen_csv_stream);
 use FP::List qw(rest);
 use FP::Stream qw(stream_map);
 
-use Chj::PXML::Tags
+use PXML::Tags
   # create tag functions for the following XML tag names. Casing is
   # preserved for the output, but the tag functions are all-uppercase
   # (to try to avoid name conflicts and for better visibility) and
@@ -50,7 +50,7 @@ use Chj::PXML::Tags
      c
      d);
 
-use Chj::PXML::Serialize qw(pxml_print);
+use PXML::Serialize qw(pxml_print);
 
 sub print_csv_as_xml {
     my ($fh, $path)= @_;

@@ -11,8 +11,8 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 
-use Chj::PXHTML ':all';
-use Chj::PXML::Serialize;
+use PXML::XHTML ':all';
+use PXML::Serialize;
 
 use utf8;
 

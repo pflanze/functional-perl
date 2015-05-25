@@ -15,12 +15,12 @@ suggestions!
 * [lib/FP/](lib/FP/): library of pure functions and
   functional data structures
 
-* [Chj::PXML](lib/Chj/PXML.pm),
-  [Chj::PXHTML](lib/Chj/PXHTML.pm),
-  [Chj::PHTML5](lib/Chj/PHTML5.pm),
-  [Chj::PSVG](lib/Chj/PSVG.pm),
-  [Chj::PXML::Tags](lib/Chj/PXML/Tags.pm),
-  [Chj::PXML::Serialize](lib/Chj/PXML/Serialize.pm):
+* [PXML](lib/Chj/PXML.pm),
+  [PXML::XHTML](lib/Chj/PXHTML.pm),
+  [PXML::HTML5](lib/Chj/PHTML5.pm),
+  [PXML::SVG](lib/Chj/PSVG.pm),
+  [PXML::Tags](lib/Chj/PXML/Tags.pm),
+  [PXML::Serialize](lib/Chj/PXML/Serialize.pm):
   "templating system" for XML based markup languages by way of Perl
   functions. Docs and tests are in [ftemplate/](ftemplate/).
 

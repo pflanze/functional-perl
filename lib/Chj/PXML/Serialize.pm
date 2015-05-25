@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-Chj::PXML::Serialize
+PXML::Serialize
 
 =head1 SYNOPSIS
 
@@ -15,7 +15,7 @@ Chj::PXML::Serialize
 =cut
 
 
-package Chj::PXML::Serialize;
+package PXML::Serialize;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(pxml_xhtml_print);
 @EXPORT_OK=qw(pxml_print
@@ -30,7 +30,7 @@ package Chj::PXML::Serialize;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Data::Dumper;
-use Chj::PXML;
+use PXML;
 use FP::Lazy;
 use FP::List;
 use FP::Stream;
@@ -81,7 +81,7 @@ sub _pxml_print_fragment_fast {
 	## working on the code, please undo them first by using git
 	## revert.
 	if (my $ref= ref $v) {
-	    if ($ref eq "Chj::PXML" or $ref eq "Chj::PXML::PXHTML_") {
+	    if ($ref eq "PXML" or $ref eq "PXML::PXHTML_") {
 	      PXML:
 		my $n= $v->name;
 		print $fh "<$n" or die $!;
@@ -177,7 +177,7 @@ sub _pxml_print_fragment_fast {
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
 		    # evil.
-		    goto PXML if (UNIVERSAL::isa($v, "Chj::PXML"));
+		    goto PXML if (UNIVERSAL::isa($v, "PXML"));
 		    goto PAIR if is_pair $v;
 		    goto PROMISE if is_promise $v;
 		    die "unexpected type of reference: ".(perhaps_dump $v);
@@ -217,7 +217,7 @@ sub pxml_print_fragment_fast ($ $ ) {
 	    ($html5compat and $firstel->void_element_h));
 	goto \&_pxml_print_fragment_fast;
     };
-    if (UNIVERSAL::isa($v, "Chj::PXHTML")) {
+    if (UNIVERSAL::isa($v, "PXML::XHTML")) {
 	@_=($v); goto $with_first_element;
     } else {
 	if (ref $v) {
@@ -236,7 +236,7 @@ sub pxml_print_fragment_fast ($ $ ) {
 sub pxml_xhtml_print_fast ($ $ ;$ ) {
     my ($v, $fh, $maybe_lang)= @_;
     weaken $_[0] if ref $_[0]; # ref check perhaps unnecessary here
-    if (not UNIVERSAL::isa($v, "Chj::PXML")) {
+    if (not UNIVERSAL::isa($v, "PXML")) {
 	die "not an element: ".(perhaps_dump $v);
     }
     if (not "html" eq $v->name) {
