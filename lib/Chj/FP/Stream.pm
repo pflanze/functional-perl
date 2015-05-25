@@ -60,7 +60,7 @@ package Chj::FP::Stream;
 	      stream__array_fold_right
 	      stream__string_fold_right
 	      stream__subarray_fold_right stream__subarray_fold_right_reverse
-	      array2stream
+	      array2stream stream
 	      subarray2stream subarray2stream_reverse
 	      string2stream
 	      stream2string
@@ -404,6 +404,10 @@ sub stream__subarray_fold_right_reverse ($$$$$) {
 sub array2stream ($;$) {
     my ($a,$maybe_tail)=@_;
     stream__array_fold_right (\&cons, $maybe_tail//null, $a)
+}
+
+sub stream {
+    array2stream [@_]
 }
 
 sub subarray2stream ($$;$$) {
