@@ -29,7 +29,8 @@ package Chj::FP::List;
 @EXPORT_OK=qw(string2list list_length list_reverse
 	      list2string list2array rlist2array list2values write_sexpr
 	      array2list mixed_flatten
-	      list_map list_mapn list_fold_right list2perlstring
+	      list_map list_mapn
+	      list_fold list_fold_right list2perlstring
 	      drop_while rtake_while take_while
 	      list_append
 	      list_zip2
@@ -50,7 +51,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::FP::Lazy;
 use Chj::xIO 'xprint';
-use Chj::FP::Div 'flip';
+use Chj::FP::Div qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
 
 {
@@ -491,6 +492,27 @@ sub Chj::FP::List::List::map {
     my $fn=shift;
     @_ ? list_mapn ($fn, $l, @_) : list_map ($fn, $l)
 }
+
+
+# left fold, sometimes called `foldl` or `reduce`
+# (XX adapted copy from Stream.pm)
+sub list_fold ($$$) {
+    my ($fn,$start,$l)=@_;
+    my $v;
+  LP: {
+	if (is_pair $l) {
+	    ($v,$l)= first_and_rest $l;
+	    $start= &$fn ($start, $v);
+	    redo LP;
+	}
+    }
+    $start
+}
+
+*Chj::FP::List::List::fold= rot3left \&list_fold;
+
+TEST { list(1,2,3)->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
+  9;
 
 
 sub list_fold_right ($ $ $);
