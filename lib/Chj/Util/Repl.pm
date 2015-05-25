@@ -224,8 +224,10 @@ sub eval_code {
 		   .'};')
 	      }
 	      keys %$eval_lexicals);
+    my $use_method_signatures=
+      $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     myeval ("package ".&$get_package()."; $aliascode; (); ".
-	    "no strict 'vars'; $use_warnings;  $code")
+	    "no strict 'vars'; $use_warnings; $use_method_signatures; $code")
 }
 
 
