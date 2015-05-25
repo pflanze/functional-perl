@@ -23,6 +23,7 @@ package Chj::FP::Predicates;
 	      is_nonnullstring
 	      is_natural0
 	      is_natural
+	      is_even is_odd
 	      is_boolean01
 	      is_boolean
 	      is_hash
@@ -64,6 +65,23 @@ sub is_natural ($) {
     not ref ($_[0]) # relax?
       and $_[0]=~ /^\d+\z/ and $_[0]
 }
+
+sub is_even ($) {
+    ($_[0] & 1) == 0
+}
+
+sub is_odd ($) {
+    ($_[0] & 1)
+}
+
+TEST { [map { is_even $_ } -3..3] }
+  ['',1,'',1,'',1,''];
+TEST { [map { is_odd $_ } -3..3] }
+  [1,0,1,0,1,0,1];
+TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
+  # XXX what should it give?
+  ['','',1,1,1];
+
 
 # strictly 0 or 1
 sub is_boolean01 ($) {
