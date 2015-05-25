@@ -19,7 +19,7 @@ Chj::FP::Div
 package Chj::FP::Div;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(inc dec
+@EXPORT_OK=qw(inc dec square
 	      identity
 	      compose compose_scalar maybe_compose
 	      flip flip2_3 rot3right rot3left);
@@ -41,6 +41,10 @@ sub inc ($) {
 
 sub dec ($) {
     $_[0] - 1
+}
+
+sub square ($) {
+    $_[0] * $_[0]
 }
 
 sub compose {
