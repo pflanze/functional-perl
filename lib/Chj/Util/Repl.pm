@@ -198,6 +198,7 @@ currently these commands are implemented:
 
 CMD is one of:
    e [n]  print lexical environment at level n (default: 0)
+   b|bt   print back trace
 
 MODES are a combination of these characters, which change the
 previously used mode (indicated on the left):
@@ -539,6 +540,19 @@ sub run {
 			$args=""; # XX HACK
 		    };
 
+		    my $bt= sub {
+			require Carp;
+			require Chj::Backtrace;
+			#local $Carp::CarpLevel=2;
+			my $msg= Chj::Backtrace::Clean (Carp::longmess());
+			# Since $Carp::CarpLevel doesn't really
+			# seem to do what I want, hack up the
+			# string:
+			$msg=~ s|^\s*at [^\n]+/Repl.pm line \d+\n||s;
+			print $msg;
+			$args=""; # XX HACK; also, really silently drop stuff?
+		    };
+
 		    my %commands=
 			(
 			 h=> sub { $self->print_help ($STDOUT) },
@@ -577,7 +591,9 @@ sub run {
 				 print "level too deep\n"
 			     }
 			     $args=""; # XX HACK
-			 }
+			 },
+			 bt=> $bt,
+			 b=> $bt,
 			);
 
 		    while (length $cmd) {
