@@ -70,9 +70,9 @@ package Chj::FP::Stream;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::FP::Lazy;
-#use Chj::FP::Pair; ?
 use Chj::FP::List ":all";
 use Scalar::Util 'weaken';
+use Chj::FP::Div qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
 
 
@@ -124,6 +124,9 @@ sub stream_iota {
     }
 }
 
+*Chj::FP::List::List::stream_iota= *stream_iota;
+
+
 sub stream_length ($) {
     my ($l)=@_;
     weaken $_[0];
@@ -135,6 +138,9 @@ sub stream_length ($) {
     }
     $len
 }
+
+*Chj::FP::List::List::stream_length= *stream_length;
+
 
 # left fold, sometimes called `foldl` or `reduce`
 sub stream_fold ($$$) {
@@ -152,10 +158,13 @@ sub stream_fold ($$$) {
     $start
 }
 
+*Chj::FP::List::List::stream_fold= rot3left \&stream_fold;
+
 TEST{ stream_fold sub { $_[0] + $_[1] }, 5, stream_iota (10,2) }
   5+10+11;
 
 sub stream_append ($$) {
+    @_==2 or die "wrong number of arguments";
     my ($l1,$l2)=@_;
     weaken $_[0];
     weaken $_[1];
@@ -164,6 +173,8 @@ sub stream_append ($$) {
 	is_null($l1) ? $l2 : cons (car $l1, stream_append (cdr $l1, $l2))
     }
 }
+
+*Chj::FP::List::List::stream_append= *stream_append;
 
 TEST{ stream2string (stream_append string2stream("Hello"), string2stream(" World")) }
   'Hello World';
@@ -178,6 +189,8 @@ sub stream_map ($ $) {
     }
 }
 
+*Chj::FP::List::List::stream_map= flip \&stream_map;
+
 sub stream_map_with_tail ($ $ $);
 sub stream_map_with_tail ($ $ $) {
     my ($fn,$l,$tail)=@_;
@@ -188,6 +201,9 @@ sub stream_map_with_tail ($ $ $) {
 				stream_map_with_tail ($fn, cdr $l, $tail))
     }
 }
+
+*Chj::FP::List::List::stream_map_with_tail= flip2_3 \&stream_map_with_tail;
+
 
 # 2-ary (possibly slightly faster) version of stream_zip
 sub stream_zip2 ($$);
@@ -201,6 +217,8 @@ sub stream_zip2 ($$) {
 	  : cons([car $l, car $m], stream_zip2 (cdr $l, cdr $m))
     }
 }
+
+*Chj::FP::List::List::stream_zip2= *stream_zip2;
 
 # n-ary version of stream_zip2
 sub stream_zip {
@@ -217,6 +235,10 @@ sub stream_zip {
     }
 }
 
+*Chj::FP::List::List::stream_zip= *stream_zip; # XX fall back on zip2
+                                               # for 2 arguments?
+
+
 sub stream_zip_with {
     my ($f, $l1, $l2)= @_;
     undef $_[1]; undef $_[2];
@@ -228,6 +250,8 @@ sub stream_zip_with {
 	  : cons &$f(car $l1, car $l2), stream_zip_with ($f, cdr $l1, cdr $l2)
     }
 }
+
+*Chj::FP::List::List::stream_zip_with= flip2_3 \&stream_zip_with;
 
 
 sub stream_filter ($ $);
@@ -243,6 +267,9 @@ sub stream_filter ($ $) {
 	}
     }
 }
+
+*Chj::FP::List::List::stream_filter= flip \&stream_filter;
+
 
 # http://hackage.haskell.org/package/base-4.7.0.2/docs/Prelude.html#v:foldr1
 
@@ -265,6 +292,9 @@ sub stream_foldr1 ($ $) {
     }
 }
 
+*Chj::FP::List::List::stream_foldr1= flip \&stream_foldr1;
+
+
 sub stream_fold_right ($ $ $);
 sub stream_fold_right ($ $ $) {
     my ($fn,$start,$l)=@_;
@@ -280,6 +310,9 @@ sub stream_fold_right ($ $ $) {
 	}
     }
 }
+
+*Chj::FP::List::List::stream_fold_right= rot3left \&stream_fold_right;
+
 
 sub make_stream__fold_right {
     my ($length, $ref, $start, $d, $whileP)=@_;
@@ -317,6 +350,8 @@ sub stream__array_fold_right ($$$);
    0,
    1,
    $lt);
+
+# XX export these array functions as methods to ARRAY library
 
 sub stream__string_fold_right ($$$);
 *stream__string_fold_right= make_stream__fold_right
@@ -385,6 +420,9 @@ sub stream2string ($) {
     $str
 }
 
+*Chj::FP::List::List::stream_to_string= *stream2string;
+
+
 sub stream_for_each ($ $ ) {
     my ($proc, $s)=@_;
     weaken $_[1];
@@ -398,6 +436,9 @@ sub stream_for_each ($ $ ) {
     }
 }
 
+*Chj::FP::List::List::stream_for_each= flip \&stream_for_each;
+
+
 sub stream_drop ($ $);
 sub stream_drop ($ $) {
     my ($s, $n)=@_;
@@ -410,6 +451,9 @@ sub stream_drop ($ $) {
     }
     $s
 }
+
+*Chj::FP::List::List::stream_drop= *stream_drop;
+
 
 sub stream_take ($ $);
 sub stream_take ($ $) {
@@ -426,6 +470,9 @@ sub stream_take ($ $) {
 	}
     }
 }
+
+*Chj::FP::List::List::stream_take= *stream_take;
+
 
 sub stream_take_while ($ $);
 sub stream_take_while ($ $) {
@@ -445,6 +492,9 @@ sub stream_take_while ($ $) {
 	}
     }
 }
+
+*Chj::FP::List::List::stream_take_while= flip \&stream_take_while;
+
 
 sub stream_slice ($ $);
 sub stream_slice ($ $) {
@@ -473,6 +523,10 @@ sub stream_slice ($ $) {
     @_=($start); goto $rec2
 }
 
+*Chj::FP::List::List::stream_slice= *stream_slice;
+# maybe call it `cut_at` instead?
+
+
 sub stream_drop_while ($ $) {
     my ($pred,$s)=@_;
     weaken $_[1];
@@ -489,6 +543,9 @@ sub stream_drop_while ($ $) {
     }
 }
 
+*Chj::FP::List::List::stream_drop_while= flip \&stream_drop_while;
+
+
 sub stream_ref ($ $) {
     my ($s, $i)=@_;
     weaken $_[0];
@@ -504,6 +561,7 @@ sub stream_ref ($ $) {
     }
 }
 
+*Chj::FP::List::List::stream_ref= *stream_ref;
 
 
 # force everything deeply
@@ -540,11 +598,16 @@ sub stream2array ($) {
     $res
 }
 
+*Chj::FP::List::List::stream_to_array= *stream2array;
+
 
 sub stream_mixed_flatten ($;$$) {
     my ($v,$maybe_tail,$maybe_delay)=@_;
     mixed_flatten ($v,$maybe_tail//null, $maybe_delay||\&lazyLight)
 }
+
+*Chj::FP::List::List::stream_mixed_flatten= *stream_mixed_flatten;
+
 
 sub stream_any ($ $);
 sub stream_any ($ $) {
@@ -563,6 +626,9 @@ sub stream_any ($ $) {
     }
 }
 
+*Chj::FP::List::List::stream_any= flip \&stream_any;
+
+
 # (meant as a debugging tool: turn stream to string)
 sub stream_show ($) {
     my ($s)=@_;
@@ -570,6 +636,8 @@ sub stream_show ($) {
 	 map { "  '$_'\n" }
 	 @{ stream2array $s } )
 }
+
+*Chj::FP::List::List::stream_show= *stream_show;
 
 
 # ----- Tests ----------------------------------------------------------
@@ -697,6 +765,44 @@ TEST { my $s= stream_iota; stream2array stream_slice $s, cdr $s }
   [ 0 ];
 TEST { my $s= stream_iota; stream2array stream_slice cdr $s, cdddr $s }
   [ 1, 2 ];
+
+
+# OO interface:
+
+TEST { string2stream ("Hello")->to_string }
+  "Hello";
+
+TEST { my $s= string2stream "Hello";
+       my $ss= $s->force;
+       $ss->to_string }
+  "Hello";
+
+
+# variable life times:
+
+TEST { my $s= string2stream "Hello";
+       my $ss= $s->force;
+       # dispatching to list2string
+       $ss->to_string;
+       is_pair $ss }
+  1;
+
+TEST { my $s= string2stream "Hello";
+       stream2string $s;
+       defined $s }
+  '';
+
+TEST { my $s= string2stream "Hello";
+       $s->stream_to_string;
+       defined $s }
+  '';
+
+TEST { my $s= string2stream "Hello";
+       # still dispatching to stream_to_string thanks to hack in
+       # Lazy.pm
+       $s->to_string;
+       defined $s }
+  '';
 
 
 1
