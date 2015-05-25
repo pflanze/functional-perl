@@ -19,8 +19,10 @@ Chj::FP::Div
 package Chj::FP::Div;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(identity inc dec compose compose_scalar maybe_compose
-	      flip);
+@EXPORT_OK=qw(inc dec
+	      identity
+	      compose compose_scalar maybe_compose
+	      flip flip2_3 rot3right rot3left);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -123,6 +125,30 @@ sub flip ($) {
 TEST { flip (sub { $_[0] / $_[1] })->(2,3) }
   3/2;
 
+# same as flip but pass a 3rd argument unchanged (flip 2 in 3)
+sub flip2_3 ($) {
+    my ($f)=@_;
+    sub {
+	@_==3 or croak "expecting 3 arguments";
+	@_=($_[1], $_[0], $_[2]); goto $f
+    }
+}
+
+sub rot3right ($) {
+    my ($f)=@_;
+    sub {
+	@_==3 or croak "expecting 3 arguments";
+	@_=($_[2], $_[0], $_[1]); goto $f
+    }
+}
+
+sub rot3left ($) {
+    my ($f)=@_;
+    sub {
+	@_==3 or croak "expecting 3 arguments";
+	@_=($_[1], $_[2], $_[0]); goto $f
+    }
+}
 
 
 1
