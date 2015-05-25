@@ -39,3 +39,6 @@
 
 - should to_string etc. methods be renamed without the to_ prefix?
 
+- which of the car, cdr etc. accessors should weaken their argument in
+  the case of streams?
+
