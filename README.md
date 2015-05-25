@@ -12,7 +12,7 @@ suggestions!
 * [Chj::Struct](lib/Chj/Struct.pm): a class generator that creates
   functional setters and takes predicate functions for type checking
 
-* [lib/Chj/FP/](lib/Chj/FP/): library of pure functions and
+* [lib/FP/](lib/FP/): library of pure functions and
   functional data structures
 
 * [Chj::PXML](lib/Chj/PXML.pm),
