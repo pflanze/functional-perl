@@ -44,6 +44,7 @@ package Chj::FP::List;
 	      caddr
 	      cadddr
 	      caddddr
+	      list_ref
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -215,6 +216,24 @@ sub car_and_cdr ($) {
 }
 
 sub first_and_rest($); *first_and_rest= *car_and_cdr;
+
+
+# XX adapted copy from Stream.pm
+sub list_ref ($ $) {
+    my ($s, $i)=@_;
+  LP: {
+	$s= $s;
+	if ($i <= 0) {
+	    car $s
+	} else {
+	    $s= cdr $s;
+	    $i--;
+	    redo LP;
+	}
+    }
+}
+
+*Chj::FP::List::List::ref= *list_ref;
 
 
 sub list {
