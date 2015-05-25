@@ -117,10 +117,14 @@ sub cons ($ $) {
     bless [@_], "Chj::FP::List::Pair";
 }
 
+sub is_pair ($);
 sub is_pair ($) {
     my ($v)=@_;
-    #ref($v) eq "ARRAY" and @$v == 2
-    UNIVERSAL::isa($v, "Chj::FP::List::Pair")
+    (UNIVERSAL::isa($v, "Chj::FP::List::Pair")
+     or
+     # XX evil: inlined `is_promise`
+     UNIVERSAL::isa($v, "Chj::FP::Lazy::Promise")
+     && is_pair (force $v))
 }
 
 sub is_pair_of ($$) {
@@ -143,11 +147,12 @@ sub null () {
 
 sub is_null ($);
 sub is_null ($) {
-    my $r= ref($_[0]);
-    ($r eq "Chj::FP::List::Null" ? 1
-     # XX evil: inlined `is_promise` (wrong, too). For the sake of unmeasured speed!
-     : $r eq "Chj::FP::Lazy::Promise" ? is_null (force $_[0])
-     : '')
+    my ($v)=@_;
+    (UNIVERSAL::isa($v, "Chj::FP::List::Null")
+     or
+     # XX evil: inlined `is_promise`
+     UNIVERSAL::isa($v, "Chj::FP::Lazy::Promise")
+     && is_null (force $v))
 }
 
 TEST { null ->cons(1)->cons(2)->array }
