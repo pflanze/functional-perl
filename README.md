@@ -9,7 +9,7 @@ suggestions!
 
 ## Parts
 
-* [Chj::Struct](lib/Chj/Struct.pm): a class generator that creates
+* [FP::Struct](lib/FP/Struct.pm): a class generator that creates
   functional setters and takes predicate functions for type checking
 
 * [lib/FP/](lib/FP/): library of pure functions and

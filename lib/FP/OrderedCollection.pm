@@ -26,7 +26,7 @@ use FP::Stream qw(subarray2stream subarray2stream_reverse  stream2array);
 use FP::Lazy;
 use FP::List;
 
-use Chj::Struct
+use FP::Struct
   [[\&is_array, "array"],
    [\&is_hash, "hash"]];
 

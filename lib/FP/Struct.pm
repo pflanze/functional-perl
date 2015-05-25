@@ -6,13 +6,13 @@
 
 =head1 NAME
 
-Chj::Struct
+FP::Struct
 
 =head1 SYNOPSIS
 
  sub is_hash {ref ($_[0]) eq "HASH"}
 
- use Chj::Struct Bar=> ["a", [\&is_hash, "b"]]=> ["Foo"];
+ use FP::Struct Bar=> ["a", [\&is_hash, "b"]]=> ["Foo"];
  # creates a constructor new that takes positional arguments and
  # copies them to a hash with the keys "a" and "b". Also, sets
  # @Bar::ISA to ("Foo"). [ ] around "Foo" are optional.
@@ -21,8 +21,8 @@ Chj::Struct
  # true then an exception is thrown.
  {
    package Bar;
-   # instead of use Chj::Struct Bar.. above, could use this:
-   # use Chj::Struct ["a","b"]=> ["Foo"];
+   # instead of use FP::Struct Bar.. above, could use this:
+   # use FP::Struct ["a","b"]=> ["Foo"];
    sub sum {
       my $s=shift;
       $$s{a} + $$s{b}
@@ -39,9 +39,9 @@ Chj::Struct
 Simpler than Class::Struct. Ok?
 
 _END_ does namespace cleaning: any sub that was defined before the use
-Chj::Struct call is removed by the _END_ call (those that are not the
+FP::Struct call is removed by the _END_ call (those that are not the
 same sub ref anymore, i.e. have been redefined, are left
-unchanged). This means that if the 'use Chj::Struct' statement is put
+unchanged). This means that if the 'use FP::Struct' statement is put
 after any other (procedure-importing) 'use' statement, but before the
 definition of the methods, that the imported procedures can be used
 from within the defined methods, but are not around afterwards,
@@ -54,7 +54,7 @@ See FP::Predicates for some useful predicates.
 =cut
 
 
-package Chj::Struct;
+package FP::Struct;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;

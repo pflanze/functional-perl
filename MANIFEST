@@ -33,7 +33,6 @@ lib/Chj/IO/File.pm
 lib/Chj/IO/Pipe.pm
 lib/Chj/IO/Tempfile.pm
 lib/Chj/Package/OfPath.pm
-lib/Chj/Struct.pm
 lib/Chj/TEST.pm
 lib/Chj/TerseDumper.pm
 lib/Chj/Unix/Exitcode.pm
@@ -69,6 +68,7 @@ lib/FP/Ops.pm
 lib/FP/OrderedCollection.pm
 lib/FP/Predicates.pm
 lib/FP/Stream.pm
+lib/FP/Struct.pm
 lib/FP/Text/CSV.pm
 lib/FP/Values.pm
 lib/FP/trampoline.pm

@@ -11,7 +11,7 @@ FP::Predicates
 
 =head1 DESCRIPTION
 
-Useful as predicates for Chj::Struct field definitions.
+Useful as predicates for FP::Struct field definitions.
 
 =cut
 
