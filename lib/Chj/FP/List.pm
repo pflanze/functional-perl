@@ -66,7 +66,7 @@ use Chj::TEST;
     sub cons {
 	my $s=shift;
 	@_==1 or die "expecting 1 method argument";
-	bless [@_,$s], "Chj::FP::List::List"
+	bless [@_,$s], "Chj::FP::List::Pair"
     }
 
     sub length {
@@ -149,6 +149,9 @@ sub is_null ($) {
      : $r eq "Chj::FP::Lazy::Promise" ? is_null (force $_[0])
      : '')
 }
+
+TEST { null ->cons(1)->cons(2)->array }
+  [2,1];
 
 
 # leading underscore means: unsafe (but perhaps a tad faster)
