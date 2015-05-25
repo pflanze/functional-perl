@@ -40,3 +40,6 @@
 - which of the car, cdr etc. accessors should weaken their argument in
   the case of streams?
 
+- disable stringification and numerification lexically using "no
+  stringification"? But it currently doesn't work with bleadperl
+  anymore. -> Just suggest in docs?
