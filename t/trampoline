@@ -2,11 +2,22 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Test::Requires qw(Method::Signatures Sub::Call::Tail);
-# Sub::Call::Tail only because it's used for other parts in the same
-# file
-
 require "./testmem.pl";
 setlimit_mem_MB (30);
 
-$ENV{RUN_TESTS}=1; exec "intro/more_tailcalls" or exit 1;
+use Test::Requires qw(Method::Signatures);
+
+# Also need Sub::Call::Tail:
+
+if (eval {require Sub::Call::Tail; 1}) {
+
+    $ENV{RUN_TESTS}=1; exec "intro/more_tailcalls" or exit 1;
+
+} else {
+    # hack to run it without Sub::Call::Tail, e.g. on bleadperl where
+    # this can't be installed currently.
+    system ("bin/expand-tail intro/more_tailcalls intro/.expansion-more_tailcalls")
+      == 0 or exit 1;
+
+    $ENV{RUN_TESTS}=1; exec "intro/.expansion-more_tailcalls" or exit 1;
+}
