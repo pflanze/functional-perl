@@ -3,3 +3,4 @@ t/testlazy-out
 out.xhtml
 t/test-a.csv
 t/test-a.xml
+.expansion-*
