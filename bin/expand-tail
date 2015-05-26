@@ -1,0 +1,97 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: $myname in out
+  expand `tail ` syntax in Perl code using `Sub::Call::Tail`, so that it
+  doesn't depend on that module anymore.
+
+  This is currently just a crude hack (totally imprecise).
+";
+    exit 1;
+}
+
+use Getopt::Long;
+our $verbose=0;
+our $opt_repl;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   "repl"=> \$opt_repl,
+	   #"dry-run"=> \$opt_dry,
+	   ) or exit 1;
+usage unless @ARGV==2;
+
+our ($inpath,$outpath)=@ARGV;
+
+use Chj::xopen qw(xopen_read xopen_write);
+use Chj::TEST;
+
+our $code= xopen_read($inpath)->xcontent; # evil, doesn't check close return value
+
+our $IDENT= qr/\w+(?:::\w+)*/;
+
+sub translate {
+    my ($c)=@_;
+    $c=~ s/\s+\z//s; # XX killing line numbering
+    $c=~ s/^\s+//s; # dito?
+    my @p;
+    if ($c=~ /\#/ or $c=~ /\n/) {
+	undef
+    } elsif (@p= split /->/, $c and @p==2) {
+	my ($before,$after)= @p;
+	'@_='.$after.'; my $c='.$before.'; goto $c'
+    } elsif ($c=~ s/^\&//) {
+	if (my ($ident, $args)= $c=~ m/^(\$${IDENT})\s*(\(.*)/s) {
+	    '@_='.$args.'; goto '.$ident
+	} else {
+	    die "dunno about '$c'";
+	}
+    } elsif (my ($ident,$args)= $c=~ m/^($IDENT)\s*(\(.*)/s) {
+	'@_='.$args.'; goto \&'.$ident
+    } else {
+	undef
+    }
+}
+
+TEST { translate '&$odd ($n - 1)'."\n\t " }
+  '@_=($n - 1); goto $odd';
+TEST { translate 'Weakened($even)->($n)' }
+  '@_=($n); my $c=Weakened($even); goto $c';
+
+
+if ($opt_repl) {
+    require Chj::Backtrace;
+    require Chj::repl;
+    Chj::repl::repl ();
+    exit;
+
+} else {
+
+    # be insensitive to 'tail ' mentioned in comments; so bad. but
+    # lookbehind are not variable width, and setting pos($code) from
+    # within a substitution does not work.
+    $code=~ s=\n[\t ]*#[^\n]*\btail [^\n]*[^\n]=\n\n=sg;
+
+    $code=~ s=\btail ([^};]*)= translate ($1) // "tail $1" =sge;
+
+    $code=~ s/\buse\s*Sub::Call::Tail\b.*?;//s; # XX kills line numbering
+
+    my $o= xopen_write $outpath;
+    $o->xprint ($code);
+    $o->xclose;
+
+    chmod 0755, $outpath
+	if -x $inpath;
+
+}
