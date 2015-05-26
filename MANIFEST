@@ -3,6 +3,7 @@ COPYING
 MANIFEST
 README.md
 TODO
+bin/expand-tail
 bin/repl
 examples/README.md
 examples/csv2xml
@@ -21,8 +22,8 @@ ftemplate/t/stream_
 ftemplate/test
 ftemplate/testlazy
 intro/basics
-intro/tailcalls
 intro/more_tailcalls
+intro/tailcalls
 lib/Chj/Backtrace.pm
 lib/Chj/BinHexOctDec.pm
 lib/Chj/Class/methodnames.pm
@@ -71,6 +72,7 @@ lib/FP/Stream.pm
 lib/FP/Struct.pm
 lib/FP/Text/CSV.pm
 lib/FP/Values.pm
+lib/FP/fix.pm
 lib/FP/trampoline.pm
 lib/FP/url_.pm
 lib/PXML.pm
@@ -93,7 +95,9 @@ t/perl-weaken-coderef
 t/perl/goto-leak
 t/perl/weaken-coderef
 t/perl/weaken-coderef-alternative
+t/perl/weaken-coderef-alternative-FP
 t/perl/weaken-coderef-alternative-__SUB__
+t/perl/weaken-coderef-alternative-fix
 t/perl/weaken-coderef-alternative-local
 t/perl/weaken-coderef-simplified
 t/require_and_run_tests
@@ -105,7 +109,7 @@ t/testlazy
 t/testlazy.expected
 t/testlazy10
 t/testlazy10.expected
-t/trampoline
+t/trampoline-fix
 test
 test.pl
 testmem.pl
