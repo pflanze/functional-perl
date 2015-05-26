@@ -52,7 +52,7 @@ The example from the synopsis is equivalent to:
 
 package FP::fix;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(fix);
+@EXPORT=qw(fix fixn);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -102,6 +102,28 @@ use Scalar::Util 'weaken';
 sub fix ($);
 
 *fix= *weakcycle;
+
+
+# n-ary version:
+
+sub fixn {
+    my (@f)=@_;
+    my @ff;
+    for (my $i=0; $i<@f; $i++) {
+	my $f= $f[$i];
+	$ff[$i]= sub {
+	    unshift @_, @ff; goto $f;
+	}
+    }
+    my @ff_= @ff;
+    # weaken $_ for @ff;
+    # ^ XXX: releases too early, same issue as
+    #   mentioned in `intro/more_tailcalls`
+    wantarray ? @ff_ : do {
+	@ff==1 or die "fixn: got multiple arguments, but scalar context";
+	$ff_[0]
+    }
+}
 
 
 1
