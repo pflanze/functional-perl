@@ -3,7 +3,10 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 require "./testmem.pl";
-setlimit_mem_MB (30);
+# bleadperl on 64bit system needs enormeously more memory than v5.14.2
+# on 32bit. FIXME for the right combinations (or/and increase
+# iteration count to trigger it even with too high limits)
+setlimit_mem_MB ($^V->{version}[1] < 15 ? 30 : 80);
 
 use Test::Requires qw(Method::Signatures);
 
