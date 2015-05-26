@@ -77,7 +77,7 @@ but instead of the system doing it automatically, it has to be
 specified explicitely. Admittedly the syntax for this is ugly; but
 thankfully there's already a module that improves on this:
 `Sub::Call::Tail`; see
-[intro/tailcalls_betterlooks](intro/tailcalls_betterlooks) for
+[intro/more_tailcalls](intro/more_tailcalls) for
 examples.
 
 - Leak potential: Scheme implementations are usually written with
@@ -126,7 +126,7 @@ progress). The scripts are meant to be viewed in this order:
 
     basics
     tailcalls
-    tailcalls_betterlooks
+    more_tailcalls
 
 The [examples](examples/) directory contains scripts showing off the
 possibilities.

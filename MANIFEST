@@ -22,7 +22,7 @@ ftemplate/test
 ftemplate/testlazy
 intro/basics
 intro/tailcalls
-intro/tailcalls_betterlooks
+intro/more_tailcalls
 lib/Chj/Backtrace.pm
 lib/Chj/BinHexOctDec.pm
 lib/Chj/Class/methodnames.pm

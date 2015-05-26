@@ -99,7 +99,7 @@ use Chj::repl; # get the 'repl' procedure.
 sub f {
     # this is just how functions receive their arguments in Perl
     # (ugly, yes; we'll see a nicer way in the file
-    # `tailcalls_betterlooks`):
+    # `more_tailcalls`):
     my ($x,$y) = @_;
     # $x and $y are fresh variables here ('my' means fresh and local
     # to the scope), set to the arguments that were passed to 'f'

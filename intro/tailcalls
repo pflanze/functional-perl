@@ -49,7 +49,7 @@ sub functional_fact_iter {
 	@_=($x - 1,  $x * $res);
 	goto \&functional_fact_iter
 
-	# Yes that's rather ugly; see the file `tailcalls_betterlooks`
+	# Yes that's rather ugly; see the file `more_tailcalls`
 	# for a better-looking way.
     }
 }

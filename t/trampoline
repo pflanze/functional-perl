@@ -9,4 +9,4 @@ use Test::Requires qw(Method::Signatures Sub::Call::Tail);
 require "./testmem.pl";
 setlimit_mem_MB (30);
 
-$ENV{RUN_TESTS}=1; exec "intro/tailcalls_betterlooks" or exit 1;
+$ENV{RUN_TESTS}=1; exec "intro/more_tailcalls" or exit 1;
