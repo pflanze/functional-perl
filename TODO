@@ -43,3 +43,7 @@
 - disable stringification and numerification lexically using "no
   stringification"? But it currently doesn't work with bleadperl
   anymore. -> Just suggest in docs?
+
+- `Sub::Call::Tail` depends on `B::Hooks::OP::Check::EntersubForCV`
+  which doesn't work on current bleadperl. Get this fixed.
+
