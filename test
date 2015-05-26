@@ -16,7 +16,7 @@ our @t=
 	ftemplate-test
 	csv2xml
 	intro-basics
-	trampoline
+	trampoline-fix
 	examples-fibs
 	examples-primes
 	skip-internal
