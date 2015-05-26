@@ -15,7 +15,7 @@ use lib "$mydir/../lib";
 sub usage {
     print "usage: $myname ...
 ";
-    exit (@_ ? 1 : 0);
+    exit 1;
 }
 
 use Getopt::Long;
