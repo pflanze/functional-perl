@@ -23,6 +23,10 @@ provides them.
 Also similarly, `the_method("foo")` returns a function that does a
 "foo" method call on its argument.
 
+Also, `operator_2("foo")` returns a function that uses "foo" as
+operator between 2 arguments. `operator_1("foo")` returns a function
+that uses "foo" as operator before its single argument.
+
 =cut
 
 
@@ -39,11 +43,13 @@ package FP::Ops;
 		 string_cmp
 		 number_cmp
 		 the_method
+		 operator_2
+		 operator_1
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
-
+use Chj::TEST;
 
 sub add {
     my $t=shift;
@@ -101,6 +107,30 @@ sub the_method {
 	  # have args, no _.
     }
 }
+
+sub operator_2 ($) {
+    @_==1 or die "need 1 argument";
+    my ($code)=@_;
+    eval 'sub ($$) { @_==2 or die "need 2 arguments"; $_[0] '.$code.' $_[1] }'
+      || die "operator_2: '$code': $@";
+}
+
+sub operator_1 ($) {
+    @_==1 or die "need 1 argument";
+    my ($code)=@_;
+    eval 'sub ($) { @_==1 or die "need 1 argument"; '.$code.' $_[0] }'
+      || die "operator_1: '$code': $@";
+}
+
+TEST { my $lt= operator_2 "lt";
+       [map { &$lt (@$_) }
+	([2,4], [4,2], [3,3], ["abc","bbc"], ["ab","ab"], ["bbc", "abc"])] }
+  [1,'','', 1, '', ''];
+
+TEST { my $neg= operator_1 "-";
+       [map { &$neg ($_) }
+	(3, -2.5, 0)] }
+  [-3, 2.5, 0];
 
 
 1
