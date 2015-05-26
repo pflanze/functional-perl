@@ -28,6 +28,8 @@
   run again and is instead silently casted to e.g. an integer in
   number context, which will be a usability neightmare.
 
+  Also, what about Params::Lazy?
+
 - replace Chj::IO::* with something else?
 
 - work on getting perl issues fixed, see failing tests `t/perl-*`
@@ -47,3 +49,5 @@
 - `Sub::Call::Tail` depends on `B::Hooks::OP::Check::EntersubForCV`
   which doesn't work on current bleadperl. Get this fixed.
 
+  Reimplement it on top of `Devel::CallChecker` or
+  `Devel::CallParser`?
