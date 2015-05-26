@@ -11,12 +11,12 @@ FP::IOStream
 
  use FP::IOStream ':all'; # xopendir_stream, xopendir_pathstream
  use FP::Stream; # stream_map
- use FP::Lazy; # force
- use FP::List ':all'; # car
- my $paths= stream_map sub { my ($item)= @_; "$base/$item" }, xopendir_stream $base;
+ use FP::List ':all'; # first
+ my $paths= stream_map sub { my ($item)= @_; "$base/$item" },
+                       xopendir_stream $base;
  # which is the same as: my $paths= xopendir_pathstream $base;
- my $firstpath= car force $paths;
- # etc.
+ my $firstpath= first $paths;
+ # ...
 
 =head1 DESCRIPTION
 
