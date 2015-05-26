@@ -4,6 +4,8 @@
 # This file shows how to use syntactical sugar additions to Perl to
 # make the code from the file `tailcalls` look better.
 
+# Also, there's some added material towards the end.
+
 # ------------------------------------------------------------------
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -128,6 +130,7 @@ func opt_even ($n) {
 
 # ------------------------------------------------------------------
 # Note: there's also trampolining as a potential solution:
+
 use FP::trampoline;
 
 func tramp_odd ($n) {
@@ -148,6 +151,81 @@ func tramp_even ($n) {
 
 TEST { trampoline tramp_even 60000 }
   1;
+
+
+# ------------------------------------------------------------------
+# Also note: all of the above example are defining functions as
+# package globals, which makes it trivial to call themselves
+# recursively. If you need to define them as lexicals, then you need
+# to heed the advice given in [[README]] with regards to self
+# calls (recursive function definitions), either by way of weaken:
+
+use Scalar::Util 'weaken';
+use FP::Stream 'Weakened'; # XX should probably move to non-lazyness
+                           # related place
+
+func weakened_even ($n) {
+    my ($odd,$even);
+    $odd= func ($n) {
+	if ($n == 0) {
+	    0
+	} else {
+	    tail &$even ($n - 1)
+	}
+    };
+    $even= func ($n) {
+	if ($n == 0) {
+	    1
+	} else {
+	    tail &$odd ($n - 1)
+	}
+    };
+    #weaken $odd;
+    my $even_= $even;
+    #weaken $even;
+    tail Weakened($even)->($n)
+    #tail &$even($n)
+}
+
+TEST { ($^V->{version}[1] > 20) ?
+	 weakened_even 60000
+	   :  warn "skipping test on older perl" }
+  1;
+# XXX this actually fails both on v5.14.2 and bleadperl for undefined
+# subroutine call. Submit bug report?
+
+
+# or by using the n-ary fixpoint combinator:
+
+use FP::fix;
+
+func fix_even ($n) {
+    my ($odd,
+	$even)= fixn
+	  (
+	   func ($odd, $even,
+		 $n) {
+	       if ($n == 0) {
+		   0
+	       } else {
+		   tail &$even ($n - 1)
+	       }
+	   },
+	   func ($odd, $even,
+		 $n) {
+	       if ($n == 0) {
+		   1
+	       } else {
+		   tail &$odd ($n - 1)
+	       }
+	   }
+	  );
+    tail &$even($n)
+}
+
+TEST { fix_even 60000 }
+  1;
+
 
 # ------------------------------------------------------------------
 # run tests if called as part of the test suite, or
