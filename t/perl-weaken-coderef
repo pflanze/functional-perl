@@ -18,13 +18,13 @@ my $res= "450015000\n";
 is readin("t/perl/weaken-coderef $n 1 |"),
   $res;
 
-is readin("t/perl/weaken-coderef-alternative-fix 0 $n 1 |"),
+is readin("t/perl/weaken-coderef-alternative-fix Y $n 1 |"),
   $res;
 
-is readin("t/perl/weaken-coderef-alternative-fix 1 $n 1 |"),
+is readin("t/perl/weaken-coderef-alternative-fix rec $n 1 |"),
   $res;
 
-is readin("t/perl/weaken-coderef-alternative-fix 2 $n 1 |"),
+is readin("t/perl/weaken-coderef-alternative-fix '' $n 1 |"),
   $res;
 
 done_testing;
