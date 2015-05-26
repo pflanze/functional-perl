@@ -22,15 +22,17 @@ FP::Array_sort - 'sensible' sorting setup
 
 package FP::Array_sort;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(array_sort on complement);
+@EXPORT=qw(array_sort on cmp_complement);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use FP::Ops qw(string_cmp number_cmp);
+use FP::Ops qw(string_cmp number_cmp operator_2);
+use Chj::TEST;
 
 sub array_sort ($ $) {
+    @_==2 or die "expecting 2 arguments";
     my ($in,$cmp)=@_;
     [
      sort {
@@ -40,18 +42,27 @@ sub array_sort ($ $) {
 }
 
 sub on ($ $) {
+    @_==2 or die "expecting 2 arguments";
     my ($select, $cmp)=@_;
     sub {
+	@_==2 or die "expecting 2 arguments";
 	my ($a,$b)=@_;
 	&$cmp(&$select($a), &$select($b))
     }
 }
 
-sub complement ($) {
+# see also `complement` from FP::Predicates
+sub cmp_complement ($) {
+    @_==1 or die "expecting 1 argument";
     my ($cmp)=@_;
     sub {
 	-&$cmp(@_)
     }
 }
+
+TEST { my $f= cmp_complement operator_2 "cmp";
+       [map { &$f(@$_) }
+	([2,4], [4,2], [3,3], ["abc","bbc"], ["ab","ab"], ["bbc", "abc"])] }
+  [1, -1, 0, 1, 0, -1];
 
 1
