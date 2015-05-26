@@ -7,7 +7,7 @@ require "./test.pl";
 use Test::More;
 
 require "./testmem.pl";
-setlimit_mem_MB (40);
+setlimit_mem_MB (50);
 
 is readin("head -c 200000000 /dev/zero | examples/skip --leaktest 10000000 1 | wc -c |"),
   "189999999\n";
