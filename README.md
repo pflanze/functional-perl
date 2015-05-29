@@ -4,7 +4,7 @@
 
 This is a work in progress to prepare (maybe improve/adapt) existing
 modules for release to CPAN, as either one or multiple packages.
-Please send [me](http://christianjaeger.ch/contact.html) your
+Please send [me](http://leafpair.com/contact) your
 suggestions!
 
 ## Parts
