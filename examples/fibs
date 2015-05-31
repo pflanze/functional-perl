@@ -34,9 +34,38 @@ sub fib {
     stream_ref Keep($fibs), $n
 }
 
-# For an alternative definition that doesn't keep around the fibs
-# stream in a global variable (and hence doesn't need to protect that
-# variable with Keep() from deletion) see the [[gen-csv]] script.
+
+# The above code creates the sequence only once per program run and
+# then keeps it around in the $fibs global; there's no provision to
+# set $fibs again thus it has to be protected with Keep() from being
+# deleted. While this works, and is arguably efficient since multiple
+# calls to fib() do not need to recalculate the stream, it also means
+# that the whole stream up to the highest $n ever calculated are kept
+# in memory until program exit.
+
+# Here is an alternative definition that doesn't keep the stream tied
+# to a global, but instead returns a fresh copy each time fibs() is
+# called:
+
+sub fibs {
+    my $fibs; $fibs=
+      cons 1, cons 1, lazy { stream_zip_with *add, $fibs, rest $fibs };
+    $fibs
+}
+
+# Note that while it creates a reference cycle, it won't leak, as the
+# cycle is broken by stream_zip_with weakening its arguments, which we
+# don't protect here (we do not use a Keep() wrapper).
+
+# Here's a variant that relies on self-referencing the subroutine (a
+# package variable) instead of mutating a lexical variable (otherwise
+# it works identically):
+
+sub fibs2 {
+    cons 1, cons 1, lazy { my $fibs= fibs2 ();
+			   stream_zip_with *add, $fibs, rest $fibs };
+}
+
 
 
 TEST { stream2array stream_take Keep($fibs), 10 }
@@ -56,6 +85,11 @@ TEST { stream2array stream_take Keep($fibs), 10 }
 TEST { fib 30 }
   1346269;
 
+TEST { fibs->ref(30) }
+  1346269;
+
+TEST { fibs2->ref(30) }
+  1346269;
 
 # ------------------------------------------------------------------
 
