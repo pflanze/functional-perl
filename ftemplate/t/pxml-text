@@ -13,26 +13,21 @@ BEGIN {
 use lib "$mydir/../../lib";
 
 use PXML::XHTML ":all";
-#use PXML::Serialize "pxml_print_fragment";
-# wow Perl doesn't complain about non-existing exported sub
 use PXML::Serialize "pxml_print_fragment_fast";
-
-
-#main> :d pxml_print_fragment_fast ( A({href=>"hah"}, "Hello ", I("World", B("!"))), *STDOUT{IO} )
-#$VAR1 = 1;
-#main> 
-#<a href="hah">Hello <i>World<b>!</b></i></a>chrisperl@novo:~/ml2json$ 
-
 use FP::Lazy;
 use FP::List;
 use FP::Stream;
 use Chj::TEST ":all";
+use Chj::Backtrace;
+use Chj::repl;
+
+
+TEST_STDOUT { pxml_print_fragment_fast ( A({href=>"hah"}, "Hello ", I("World", B("!"))), *STDOUT{IO} ) }
+  '<a href="hah">Hello <i>World<b>!</b></i></a>';
 
 TEST {  A({href=>"hah"}, "Hello ", I("World", undef, B("!")), cons(" ", string2stream("You're great.")))->text }
   'Hello World! You\'re great.';
 
-#use Chj::ruse;
-#use Chj::Backtrace; use Chj::repl; repl;
 
-run_tests;
+perhaps_run_tests(__PACKAGE__) or repl;
 

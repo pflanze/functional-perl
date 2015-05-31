@@ -14,6 +14,7 @@ our @t=
 	testlazy
 	testlazy10
 	ftemplate-test
+	ftemplate-test-pxml-text
 	csv2xml
 	intro-basics
 	trampoline-fix

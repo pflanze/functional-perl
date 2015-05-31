@@ -1,0 +1,7 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+$ENV{RUN_TESTS}=1; exec "ftemplate/t/pxml-text" or exit 1;
+
+# XX run ftemplate/t/stream as well? That one is slow, though.
