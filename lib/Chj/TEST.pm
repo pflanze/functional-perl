@@ -25,6 +25,8 @@ Chj::TEST
  TEST { 1+1 } GIVES {3-1}; # success
 
  TEST_STDOUT { print "Hello" } "Hello";
+ TEST_EXCEPTION { die "Hello" } "Hello"; # " at .. line .." and
+                                         # backtrace are cut off
 
 
  use Chj::TEST ':all';
@@ -50,7 +52,7 @@ required to hold the test code and results.
 
 package Chj::TEST;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(TEST TEST_STDOUT GIVES perhaps_run_tests);
+@EXPORT=qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
 @EXPORT_OK=qw(run_tests);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -138,6 +140,23 @@ sub TEST (&$) {
 sub TEST_STDOUT (&$) {
     my ($proc,$res)=@_;
     _TEST(sub{capture_stdout_($proc)}, $res);
+}
+
+sub TEST_EXCEPTION (&$) {
+    my ($proc,$res)=@_;
+    _TEST(sub{
+	      if (eval {
+		  &$proc();
+		  1
+	      }) {
+		  undef
+	      } else {
+		  my $msg= "$@";
+		  $msg=~ s| at .*? line \d*.*||s;
+		  $msg
+	      }
+	  },
+	  $res);
 }
 
 sub GIVES (&) {
