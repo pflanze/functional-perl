@@ -11,9 +11,9 @@ BEGIN {
 }
 
 use v5.10;
+use lib "./lib";
 use Chj::IO::Command;
 use Chj::xtmpfile;
-use lib "./lib";
 use FP::ArrayUtil ":all";
 use FP::Div ":all";
 use Chj::xperlfunc;
@@ -61,8 +61,9 @@ our $out= xtmpfile;
 
 sub collect_cmd {
     warn "running @_..";
-    my $tr= Chj::IO::Command->new_combinedsender
-      ("straceopens", @_);
+    my $null= xopen_read("/dev/null");
+    my $tr= Chj::IO::Command->new_combinedsender_with_stdin
+      ($null, "straceopens", @_);
     $tr->xsendfile_to($out);
     my $code= $tr->xfinish;
     if ($code != 0) {
