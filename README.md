@@ -148,9 +148,9 @@ The [intro](intro/) directory contains scripts introducing the
 concepts, including the basics of functional programming (work in
 progress). The scripts are meant to be viewed in this order:
 
-    basics
-    tailcalls
-    more_tailcalls
+1. [basics](intro/basics)
+1. [tailcalls](intro/tailcalls)
+1. [more_tailcalls](intro/more_tailcalls)
 
 The [examples](examples/) directory contains scripts showing off the
 possibilities.
