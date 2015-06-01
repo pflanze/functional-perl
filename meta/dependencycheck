@@ -30,6 +30,7 @@ our $files= do {
 };
 
 our $namespaces=
+  array_filter sub { $_[0] ne "Class::Array" },
   array_filter \&identity,
   array_map sub {
     my ($file)=@_;
@@ -57,7 +58,7 @@ our $in= xopen_read $out->path; # bleh?
 our %o;
 while (<$in>) {
     chomp;
-    $o{$_}++ if (m{^/} and m{/(?:Chj|FP|PXML|Class)/});
+    $o{$_}++ if (m{^/} and m{/(?:Chj|FP|PXML)/}); # not |Class
 }
 
 $in->xclose;
