@@ -1,5 +1,5 @@
 use strict; use warnings FATAL => 'uninitialized';
-use Chj::PXHTML ":all";
+use PXML::XHTML ":all";
 
 my $homeurl= "http://ml2json.christianjaeger.ch";
 

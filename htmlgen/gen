@@ -1,24 +1,27 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
-(my $email='ch%christianjaeger,ch')=~ tr/%,/@./;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use strict; use warnings FATAL => 'uninitialized';
+# Method::Signatures versions 20120523 and 20141021 are working badly
+# for this file, (1) each package needs its own import, (2) error
+# locations are completely off. Thus, still use trusty
+# Function::Parameters.
+
 use Function::Parameters qw(:strict);
 
-our ($mydir, $myname);
-BEGIN {
-    $0=~ /(.*?)([^\/]+)\z/s or die "?";
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
     ($mydir, $myname)=($1,$2);
 }
-use lib "/opt/chj/perllib"; # Chj/IO/Command.pm, Chj/IO/CommandCommon.pm, Chj/Path/Calc.pm
-use lib "$mydir/../perllib";
-use lib "$mydir/../ftemplate/lib";
 use lib "$mydir/../lib";
+
 
 our $css_path= "my.css";
 
 sub usage {
-    print STDERR map{"$_\n"} @_ if @_;
     print "$myname config inbase outbase
 
   config is the path to a Perl file ending in a hash with config
@@ -29,9 +32,8 @@ sub usage {
   Assumes that there is a file '$css_path', which is included in the
   <head/> and copied to outbase.
 
-  (Christian Jaeger <$email>)
 ";
-exit (@_ ? 1 : 0);
+    exit 1;
 }
 
 use Getopt::Long;
@@ -53,7 +55,7 @@ use Chj::IO::Command;
 use Chj::xperlfunc ':all';
 use Chj::xopen ":all";
 use Chj::chompspace;
-use Chj::xIO qw(xputfile_utf8 xgetfile_utf8 xcopyfile_utf8);
+use Chj::xIOUtil qw(xputfile_utf8 xgetfile_utf8 xcopyfile_utf8);
 
 lock_hash %$cfg;
 
@@ -174,7 +176,7 @@ fun url_is_internal ($str) {
 }
 
 
-use Chj::PXML;
+use PXML;
 
 # fix internal links, add anchors, .. in generated HTML, as well as
 # convert it to PXML.
@@ -222,7 +224,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	$uri->path($path);
 	$$atts{href}= "$uri";# mutation.
     }
-    my $res= Chj::PXML->new
+    my $res= PXML->new
 	($name,
 	 $atts,
 	 [
@@ -256,9 +258,9 @@ fun htmlparse ($str,$whichtag,$selfpath0,$filesinfo) {
     htmlmap htmlparse_raw ($str,$whichtag), $selfpath0, $filesinfo
 }
 
-use Chj::PXML::Serialize 'pxml_xhtml_print_fast';
+use PXML::Serialize 'pxml_xhtml_print_fast';
 
-# v- is now in Chj::PXML::Serialize, too, except for the xmkdir_p
+# v- is now in PXML::Serialize, too, except for the xmkdir_p
 fun puthtmlfile ($path,$p) {
     xmkdir_p dirname $path;
     my $out= xopen_write($path);
@@ -271,7 +273,7 @@ fun puthtmlfile ($path,$p) {
 
 {
     package CHJ::Filesinfo;
-    use Chj::Struct [qw(files
+    use FP::Struct [qw(files
 			filename2path0
 			all_path0_exists
 			path0_exists
@@ -330,10 +332,10 @@ fun get_filesinfo () {
 }
 
 
-use Chj::PXHTML ":all";
-use Chj::FP::ArrayUtil ":all";
+use PXML::XHTML ":all";
+use FP::ArrayUtil ":all";
 use File::Spec;
-use Chj::FP::Array_sort;
+use FP::Array_sort;
 
 
 our $path02sortkey= do {
@@ -394,14 +396,14 @@ TEST{url_diff "foo", "bar.css"} 'bar.css';
 
 #/lib
 
-use Chj::FP2::Lazy ":all";
-use Chj::FP2::List ":all";
-use Chj::FP2::Stream ":all";
+use FP::Lazy ":all";
+use FP::List ":all";
+use FP::Stream ":all";
 
 {
     package CHJ::Cost;
-    use Chj::FP::ArrayUtil ":all";
-    use Chj::Struct [qw(name is_purchaseable basecosts val)];
+    use FP::ArrayUtil ":all";
+    use FP::Struct [qw(name is_purchaseable basecosts val)];
     method cost ($index) {
 	$$self{_cost} ||= do {
 	    add($self->val,
@@ -415,8 +417,8 @@ use Chj::FP2::Stream ":all";
 }
 {
     package CHJ::Totalcost;
-    use Chj::FP::Array_sort ":all";
-    use Chj::Struct [qw(costs)];
+    use FP::Array_sort ":all";
+    use FP::Struct [qw(costs)];
     method range () {
 	@{$$self{costs}} or die "no costs given";#
 	my $index;
@@ -455,7 +457,7 @@ fun groupkey ($path) {
 
 {
     package CHJ::Genfilestate;
-    use Chj::Struct [qw(filesinfo
+    use FP::Struct [qw(filesinfo
 			groupedfiles
 			nonbugfiles
 			costranges)];
@@ -553,7 +555,7 @@ fun genfile ($path,$groupname,$genfilestate) {
     my ($h1,$body1)= do {
 	my $body= $body->body;
 	my $b= stream_mixed_flatten(do{my $body=$body;$body});
-	my $bwithoutanchor= Force stream_drop_while
+	my $bwithoutanchor= force stream_drop_while
 	  (
 	   fun ($v) {
 	       (ref $v

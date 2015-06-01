@@ -26,7 +26,7 @@ sub helptext {
     }
 }
 
-use Chj::PXHTML ":all";
+use PXML::XHTML ":all";
 
 my $logocfg= require "$mydir/logo.pl";
 
