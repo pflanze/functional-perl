@@ -1,11 +1,35 @@
-# Library for functional programming in Perl 5
+# Functional programming on Perl 5
+
+This project aims to provide modules as well as tutorials and
+introductionary materials and other knowledge to work in a functional
+style on Perl.
 
 ## Status: experimental
 
-This is a work in progress to prepare (maybe improve/adapt) existing
-modules for release to CPAN, as either one or multiple packages.
-Please send [me](http://leafpair.com/contact) your
-suggestions!
+The project should not be used for production code yet for the
+following reasons:
+
+* the chosen namespaces and interfaces are still in flux; it hasn't
+  been released to CPAN yet for this reason
+
+* some modules may be replaced with other more widely used ones in the
+  interest of keeping with the common base
+
+* tutorials are not complete yet, and less experienced Perl
+  programmers will have difficulties writing or debugging code in this
+  style on Perl without proper introduction
+
+* some problems in the perl interpreter leading to memory leaks or
+  retention issues when using this style have only been fixed
+  recently, and some more exotic ones are still waiting to be fixed
+
+We are welcoming anyone interested to play with the code, ask
+questions, provide feedback, and perhaps contribute examples, ideas or
+teaching materials.  We are also hoping to work with interested core
+perl developers on fixing the remaining issues in the interpreter.
+
+Please send [me](http://leafpair.com/contact) your suggestions!
+
 
 ## Parts
 
