@@ -155,6 +155,11 @@ progress). The scripts are meant to be viewed in this order:
 The [examples](examples/) directory contains scripts showing off the
 possibilities.
 
+### Presentation
+
+You can find slides of a presentation on the project
+[here](http://functional-perl.org/london.pm-talk/).
+
 
 ## Installation
 
