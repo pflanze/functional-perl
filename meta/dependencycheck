@@ -41,15 +41,42 @@ our $namespaces=
     } : undef;
 }, $files;
 
+our $executables=
+  array_filter sub {
+      my ($v)=@_;
+      xopen_read($v)->xreadline =~ /perl/
+  },
+  array_filter sub {
+      my ($v)=@_;
+      not ($v=~ m{^t(?:/|est)}
+	   or $v=~ m{^meta/}
+	   or $v=~ m{/t/}
+	   or $v=~ m{ftemplate/testlazy} #runs endlessly ah yes of course.
+	  )
+  },
+  array_filter sub { -x $_[0] },
+  $files;
+
 our $out= xtmpfile;
 
-for my $ns (@$namespaces) {
+sub collect_cmd {
+    warn "running @_..";
     my $tr= Chj::IO::Command->new_combinedsender
-      ("straceopens",
-       qw(perl -w -Mlib=./lib),
-       "-M$ns", "-e", "");
+      ("straceopens", @_);
     $tr->xsendfile_to($out);
-    $tr->xxfinish;
+    my $code= $tr->xfinish;
+    if ($code != 0) {
+	warn "straceopens @_: exited with code $code"
+    }
+}
+
+for my $ns (@$namespaces) {
+    collect_cmd ( qw(perl -w -Mlib=./lib),
+		  "-M$ns", "-e", "" );
+}
+
+for my $exe (@$executables) {
+    collect_cmd ( $exe )
 }
 
 $out->xclose;
@@ -66,3 +93,5 @@ $in->xclose;
 say $_ for sort keys %o;
 
 #use Chj::repl;repl;
+say "Ok.";
+
