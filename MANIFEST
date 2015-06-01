@@ -1,5 +1,6 @@
 .gitignore
 COPYING
+IDEAS.md
 MANIFEST
 README.md
 TODO
@@ -88,6 +89,7 @@ t/csvstreams
 t/examples-fibs
 t/examples-primes
 t/ftemplate-test
+t/ftemplate-test-pxml-text
 t/ftemplate-test.expected
 t/intro-basics
 t/perl-goto-leak
