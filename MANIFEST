@@ -1,11 +1,12 @@
 .gitignore
 COPYING
-IDEAS.md
 MANIFEST
 README.md
-TODO
 bin/expand-tail
 bin/repl
+docs/TODO
+docs/howto_and_comparison_to_Scheme.md
+docs/ideas.md
 examples/README.md
 examples/csv2xml
 examples/csv2xml-example.csv
@@ -22,6 +23,11 @@ ftemplate/t/stream
 ftemplate/t/stream_
 ftemplate/test
 ftemplate/testlazy
+htmlgen/doc-formatting.txt
+htmlgen/gen
+htmlgen/gen-ml2json.pl
+htmlgen/logo.pl
+htmlgen/my.css
 intro/basics
 intro/more_tailcalls
 intro/tailcalls
