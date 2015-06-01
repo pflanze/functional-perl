@@ -38,10 +38,12 @@ sub usage {
 
 use Getopt::Long;
 our $verbose=0;
+our $opt_repl;
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
+	   "repl"=> \$opt_repl,
 	   ) or exit 1;
-usage unless @ARGV==3;
+usage unless @ARGV==3 or ($opt_repl and @ARGV>=1);
 
 our ($cfgpath, $inbase, $outbase)= @ARGV;
 
@@ -677,9 +679,10 @@ fun main () {
     copyfiles ($filesinfo);
 }
 
-#use Chj::ruse;
-#use Chj::Backtrace;
-#use Chj::repl; repl;
 
-main;
+$opt_repl ? do {
+    require Chj::Backtrace;
+    require Chj::repl;
+    Chj::repl::repl();
+} : main;
 
