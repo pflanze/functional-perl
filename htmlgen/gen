@@ -1,0 +1,683 @@
+#!/usr/bin/perl -w
+
+(my $email='ch%christianjaeger,ch')=~ tr/%,/@./;
+
+use strict; use warnings FATAL => 'uninitialized';
+use Function::Parameters qw(:strict);
+
+our ($mydir, $myname);
+BEGIN {
+    $0=~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "/opt/chj/perllib"; # Chj/IO/Command.pm, Chj/IO/CommandCommon.pm, Chj/Path/Calc.pm
+use lib "$mydir/../perllib";
+use lib "$mydir/../ftemplate/lib";
+use lib "$mydir/../lib";
+
+our $css_path= "my.css";
+
+sub usage {
+    print STDERR map{"$_\n"} @_ if @_;
+    print "$myname config inbase outbase
+
+  config is the path to a Perl file ending in a hash with config
+  values, see gen-ml2json.pl for an example.
+
+  inbase needs to be a git working directory.
+
+  Assumes that there is a file '$css_path', which is included in the
+  <head/> and copied to outbase.
+
+  (Christian Jaeger <$email>)
+";
+exit (@_ ? 1 : 0);
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage unless @ARGV==3;
+
+our ($cfgpath, $inbase, $outbase)= @ARGV;
+
+our $cfg= require $cfgpath;
+
+mkdir $outbase;
+
+use Hash::Util 'lock_hash';
+use Text::Markdown 'markdown';
+use Chj::IO::Command;
+use Chj::xperlfunc ':all';
+use Chj::xopen ":all";
+use Chj::chompspace;
+use Chj::xIO qw(xputfile_utf8 xgetfile_utf8 xcopyfile_utf8);
+
+lock_hash %$cfg;
+
+# operating on markdown source string
+# XX should this replace the document name with the document title?
+fun mediawiki_expand ($str) {
+    $str=~ s%(?<=[^\\])\[\[(.*?[^\\])\]\]%
+	my $cont= $1;
+	my @parts= map { chompspace $_ } split /(?<=[^\\])\|/, $cont;
+	if (@parts==1) {
+	    my ($docname)= @parts;
+	    # XX get title?
+	    my $text= $docname;
+	    $text=~ tr/_/ /;
+	    "[$text](//${docname}.md)" # XX escape?
+	} elsif (@parts==2) {
+	    my ($loc,$text)= @parts;
+	    "[$text]($loc)" # XX escape url?
+	} else {
+	    # XX location?...
+	    die "more than 2 parts in a wiki style link: '$cont'";
+	}
+    %sge;
+    $str
+}
+
+fun author_date ($path) {
+    my $c= Chj::IO::Command->new_sender
+      (sub {
+	   xchdir $inbase;
+	   xexec "git", "log", '--pretty=format:%aD', "--", $path
+       });
+    my $res= $c->xreadline;
+    $c->xfinish;
+    chomp $res; $res;
+}
+
+fun path0 ($path) {
+    ## ugly way to strip path prefix
+    my $path0= $path;
+    while ($path0=~ s|^\.\./||){}; die if $path0=~ /\.\./;
+    $path0
+}
+
+fun is_allcaps ($str) {
+    not $str=~ /[a-z]/
+}
+
+# a path-append that doesn't output leading './'
+fun path_path0_append ($dir,$relpath0) {
+    my $p= "$dir/$relpath0";
+    $p=~ s|^\./||;
+    $p
+}
+
+fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
+    if (!$for_title and $$cfg{indexpath0P}->($path0)) {
+	@_=(path_path0_append (dirname($path0), "index.xhtml")); goto $then;
+    } else {
+	if ($path0=~ s/(.*?)([^\/]*)\.md$/$1$2.xhtml/) {
+	    @_=($$cfg{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml" : $path0);
+	    goto $then;
+	} else {
+	    @_=($path0); goto $otherwise
+	}
+    }
+}
+
+use Chj::TEST ":all";
+fun TEST_if_suffix_md2html ($in,$thenotherwise,$out,$for_title=0) {
+    TEST{if_suffix_md2html $in, $for_title, sub {["then",@_]}, sub{["otherwise",@_]}}
+      [$thenotherwise,$out];
+}
+TEST_if_suffix_md2html "README.md",'then','index.xhtml';
+TEST_if_suffix_md2html "README.md",'then','readme.xhtml',1; # kinda stupid hack.
+TEST_if_suffix_md2html "Foo/index.md",'then','Foo/index.xhtml';
+TEST_if_suffix_md2html "Foo/README.md",'then','Foo/readme.xhtml';
+TEST_if_suffix_md2html "Foo/READMe.md",'then','Foo/READMe.xhtml';
+TEST_if_suffix_md2html "Foo/MY.css",'otherwise','Foo/MY.css';
+
+
+fun perhaps_suffix_md2html ($path,$for_title=0) {
+    if_suffix_md2html
+      ($path,
+       $for_title,
+       fun ($path) { $path },
+       fun ($path) { $path }
+      )
+}
+
+fun xsuffix_md2html ($path0,$for_title) {
+    if_suffix_md2html($path0, $for_title, sub{$_[0]}, sub{die})
+}
+
+fun path02inpath ($path0) {
+    "$inbase/".$path0
+}
+
+fun path02outpath ($path0) {
+    #"$outbase/".xsuffix_md2html($path0,0)
+    # nope, also used for .pl file copying,
+    "$outbase/".perhaps_suffix_md2html($path0,0)
+}
+
+use HTML::TreeBuilder;
+fun htmlparse_raw ($htmlstr,$whichtag) {
+    my $t= HTML::TreeBuilder->new;
+    $t->parse_content ($htmlstr);
+    my $e= $t->elementify;
+    # (^ actually mutates $t into the HTML::Element object already, ugh)
+    $e->find_by_tag_name($whichtag)
+}
+
+use URI;
+fun url_is_internal ($str) {
+    my $u= URI->new($str);
+    not defined $u->scheme
+}
+
+
+use Chj::PXML;
+
+# fix internal links, add anchors, .. in generated HTML, as well as
+# convert it to PXML.
+fun htmlmap ($e,$selfpath0,$filesinfo) {
+    my $name= lc($e->tag);
+    my $atts=();
+    for ($e->all_external_attr_names) {
+	next if $_ eq "/";
+	die "att name '$_'" unless /^\w+\z/s;
+	$$atts{lc $_}= $e->attr($_);
+    }
+    # fix internal .md links
+    if ($name eq "a"
+	and url_is_internal($$atts{href})) {
+
+	# check or find target, then convert to xhtml suffix
+	my $uri= URI->new($$atts{href}); #(h again,see url_is_internal..)
+	my $path= $uri->path;
+
+	# '//' feature (see doc-formatting.txt)
+	if ($$atts{href} =~ m|^//|s) {
+	    my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
+	      or die "bug";
+	    if (defined (my $p0= $filesinfo->filename2path0($op))) {
+		$path= url_diff ($selfpath0,$p0); # mutation
+	    } else {
+		die "unknown link target '$op' (from '$$atts{href}')";
+	    }
+	    $uri->opaque(""); # mutation
+	} else {
+	    if (length $path) {
+		#my $p0= File::Spec->rel2abs ($path,dirname $selfpath0);
+		use Chj::Path::Calc qw'AddURL URLDiff Filename FolderOfThisFile';
+		my $p0= AddURL(dirname ($selfpath0), $path);
+		$p0=~ s|^\./||;#hack. grr y
+		$filesinfo->all_path0_exists($p0)
+		  or do {
+		      warn "link target does not exist: '$p0' ('$path' from '$selfpath0', link '$$atts{href}')";
+		      #use Chj::repl;repl;
+		  };
+		$filesinfo->all_path0_used_inc($p0);
+	    }
+	}
+	$path= perhaps_suffix_md2html ($path);
+	$uri->path($path);
+	$$atts{href}= "$uri";# mutation.
+    }
+    my $res= Chj::PXML->new
+	($name,
+	 $atts,
+	 [
+	  map {
+	      if (ref $_) {
+		  # another HTML::Element
+		  no warnings "recursion";# XX should rather sanitize input?
+		  htmlmap ($_,$selfpath0,$filesinfo)
+	      } else {
+		  # a string
+		  $_
+	      }
+	  } @{$e->content||[]}
+	 ]);
+    # add anchors
+    if ($name =~ /^h(\d)$/) {
+	my $text= $res->text;
+	$text=~ s/ /_/sg;
+	[
+	 A({name=> $text}),
+	 $res
+	]
+    } else {
+	$res
+    }
+}
+
+# parse HTML string to PXML, fixing up stuff at the same time (through
+# htmlmap)
+fun htmlparse ($str,$whichtag,$selfpath0,$filesinfo) {
+    htmlmap htmlparse_raw ($str,$whichtag), $selfpath0, $filesinfo
+}
+
+use Chj::PXML::Serialize 'pxml_xhtml_print_fast';
+
+# v- is now in Chj::PXML::Serialize, too, except for the xmkdir_p
+fun puthtmlfile ($path,$p) {
+    xmkdir_p dirname $path;
+    my $out= xopen_write($path);
+    binmode $out, ":utf8" or die;
+    pxml_xhtml_print_fast($p, $out, "en");# hard coded lang
+    $out->xclose;
+}
+
+
+
+{
+    package CHJ::Filesinfo;
+    use Chj::Struct [qw(files
+			filename2path0
+			all_path0_exists
+			path0_exists
+			all_path0_used
+		      )];
+    method filename2path0 ($filename) {
+	$$self{filename2path0}{$filename}
+    }
+    method all_path0_exists ($path0) {
+	defined $$self{all_path0_exists}{$path0}
+    }
+    method path0_exists ($path0) {
+	defined $$self{path0_exists}{$path0}
+    }
+    method all_path0_used_inc ($path0) {
+	$$self{all_path0_used}{$path0}++
+    }
+    _END_
+}
+
+fun get_filesinfo () {
+    my $c= Chj::IO::Command->new_sender
+      (sub {
+	   xchdir $inbase;
+	   xexec "git","ls-files","-z"
+       });
+    my $all_files= [$c->xreadline0chop];
+    $c->xxfinish;
+
+    my $files= [grep {
+	/\.md$/
+    } @$all_files];
+
+    my $filename2path0=
+      +{map {
+	  basename ($_)=> path0($_)
+      } @$files};
+
+    my $all_path0_exists=
+      +{map {
+	  path0($_)=>1
+      } @$all_files};
+
+    my $path0_exists=
+      +{map {
+	  path0($_)=>1
+      } @$files};
+
+    my $all_path0_used= {};
+
+    CHJ::Filesinfo->new($files,
+			$filename2path0,
+			$all_path0_exists,
+			$path0_exists,
+			$all_path0_used)
+}
+
+
+use Chj::PXHTML ":all";
+use Chj::FP::ArrayUtil ":all";
+use File::Spec;
+use Chj::FP::Array_sort;
+
+
+our $path02sortkey= do {
+    my $sortprio= do {
+	my $i=1;
+	+{
+	  map {
+	      my $file= $_;
+	      $file.= ".md" unless /\.\w{1,7}\z/;
+	      $file=> sprintf('-%04d', $i++)
+	  } @{$cfg->{sortorder} || []}
+	 }
+    };
+    fun ($path0) {
+	$$sortprio{$path0} || $path0
+    }
+};
+
+fun _path02title_mod ($str) {
+    $str=~ s/_/ /sg;
+    ucfirst $str
+}
+
+fun path02title ($path0) {
+    if (basename ($path0) eq "index.md") {
+	_path02title_mod
+	  basename ( xsuffix_md2html(dirname($path0).".md",1), ".xhtml");
+    } else {
+	_path02title_mod
+	  basename( xsuffix_md2html ($path0,1),".xhtml");
+    }
+}
+
+TEST{path02title "README.md"} 'Readme';
+TEST{path02title "bugs/wishlist/listserv/index.md"} 'Listserv';
+TEST{path02title "bugs/wishlist/line_wrapping_in_pre-MIME_mails.md"} # even with lcfirst
+  'Line wrapping in pre-MIME mails';
+
+
+fun path02bugtype ($path0) {
+    $path0=~ m|\bbugs/([^/]+)/| or die "no match, '$path0'";
+    ucfirst $1
+}
+
+# move to lib
+use File::Spec;
+use Chj::TEST ":all";
+
+fun url_diff ($path0from,$path0to) {
+    my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
+    File::Spec->abs2rel($path0to, $from);
+}
+
+TEST{url_diff "foo/", "bar.css"} '../bar.css';
+TEST{url_diff "foo/bar.html", "bar.css"} '../bar.css';
+TEST{url_diff "foo", "bar.css"} 'bar.css';
+#TEST{url_diff ".", "bar.css"} 'bar.css';
+
+#/lib
+
+use Chj::FP2::Lazy ":all";
+use Chj::FP2::List ":all";
+use Chj::FP2::Stream ":all";
+
+{
+    package CHJ::Cost;
+    use Chj::FP::ArrayUtil ":all";
+    use Chj::Struct [qw(name is_purchaseable basecosts val)];
+    method cost ($index) {
+	$$self{_cost} ||= do {
+	    add($self->val,
+		map {
+		    $$index{$_}->cost ($index)
+		} @{$self->basecosts}
+	       );
+	}
+    }
+    _END_
+}
+{
+    package CHJ::Totalcost;
+    use Chj::FP::Array_sort ":all";
+    use Chj::Struct [qw(costs)];
+    method range () {
+	@{$$self{costs}} or die "no costs given";#
+	my $index;
+	for (@{$$self{costs}}) {
+	    if (defined (my $name= $_->name)) {
+		$$index{$name}= $_
+	    }
+	}
+	my $purchaseable= [grep { $_->is_purchaseable } @{$$self{costs}}];
+	@$purchaseable or die "no purchaseable costs";#
+	local our $all= array_sort
+	  ( $purchaseable,
+	    on the_method ("cost",$index), \&number_cmp );
+	(@$all == 1
+	 ? $$all[0]->cost ($index)
+	 : $$all[0]->cost ($index)."..".$$all[-1]->cost($index)),
+    }
+    _END_
+}
+
+
+# group $files, to process them in an order that satisfies dependency
+# on $costranges
+
+fun groupkey ($path) {
+    my $p0= path0 $path;
+    if ($p0=~ m|^bugs/|) {
+	"bugs"
+    } elsif ($p0 =~ m|^docs/bugs.*\.md$|) {
+	"buglist"
+    } else {
+	"normal"
+    }
+}
+
+
+{
+    package CHJ::Genfilestate;
+    use Chj::Struct [qw(filesinfo
+			groupedfiles
+			nonbugfiles
+			costranges)];
+    # ugly to keep that costranges state here ? well call it Genfilestate then?
+    method set_costrange ($path0,$maybe_costrange) {
+	$$self{costranges}{$path0}= $maybe_costrange;
+    }
+    method costrange ($path0) {
+	$$self{costranges}{$path0}
+    }
+    _END_
+}
+
+fun get_genfilestate ($filesinfo) {
+    my $groupedfiles= array2hash_group_by $filesinfo->files, \&groupkey;
+
+    my $nonbugfiles= [@{$$groupedfiles{normal}},
+		      @{$$groupedfiles{buglist}||[]}];
+
+    my $costranges={};
+    # path0 -> costrange-string; filled when processing non-buglist groups
+
+    CHJ::Genfilestate->new ($filesinfo, # just so as to bundle it up, too, ugly?
+			    $groupedfiles,
+			    $nonbugfiles,
+			    $costranges)
+}
+
+fun genfile ($path,$groupname,$genfilestate) {
+    my $path0= path0 $path;
+    my $outpath= path02outpath($path0);
+    mkdir dirname( $outpath);
+
+    my $filetitle= path02title $path0;
+
+    my $str= xgetfile_utf8 "$inbase/$path";
+
+    if ($$cfg{warn_hint}) {
+	$str=~ s/^\(Check the.*?website.*?---\s+//s
+	  or $path=~/COPYING|bugs\// or warn "'$path' is missing hint";
+    }
+
+    if (my $hdl= $cfg->{path0_handlers}->{$path0}) {
+	$str= $hdl->($path,$path0,$str);
+    }
+
+    my $maybe_costrange= do {
+	# extract Cost indicators:
+	my $namere= qr/\w+/;
+	my $nameplusre= qr/\(?$namere\)?/;
+	my $perhaps_nameplus2name= fun ($maybe_nameplus) {
+	    if (defined $maybe_nameplus) {
+		my ($name)= $maybe_nameplus=~ qr/($namere)/
+		  or die "bug";
+		$name
+	    } else {
+		undef
+	    }
+	};
+	local our $costs=[];
+	while (#my ($name,$basecosts,$val)=
+	       $str=~ m{\b[Cc]ost
+			# name: parentheses for "library cost"
+			(?:\s+($nameplusre))?
+			:
+			\s*
+			# base costs
+			((?:$nameplusre\s*\+\s*)*)
+			\s*
+			# amount
+			\$\s*(\d+)
+		   }gx) {
+	    my ($nameplus,$basecosts,$val)=($1,$2,$3);# perl.
+	    my $name= &$perhaps_nameplus2name($nameplus);
+	    my @basecosts= map { &$perhaps_nameplus2name($_) }
+	      split /\s*\+\s*/, $basecosts;
+	    push @$costs, new CHJ::Cost ($name,
+					 (not $nameplus
+					  or not($nameplus=~ /^\(/)),
+					 \@basecosts,
+					 $val);
+	}
+	#local our $totalcost=
+	#  CHJ::Totalcost->new($costs);
+	#use Chj::Backtrace; use Chj::repl;repl if @$costs;#exit;
+	@$costs ? CHJ::Totalcost->new($costs)->range : undef
+    };
+    if (defined $maybe_costrange) {
+	$genfilestate->set_costrange($path0, $maybe_costrange);
+    }
+
+    my $body= htmlparse(markdown (mediawiki_expand $str), "body", $path0,
+			$genfilestate->filesinfo);
+
+    my ($h1,$body1)= do {
+	my $body= $body->body;
+	my $b= stream_mixed_flatten(do{my $body=$body;$body});
+	my $bwithoutanchor= Force stream_drop_while
+	  (
+	   fun ($v) {
+	       (ref $v
+		and $v->name eq "a"
+		and $v->maybe_attribute("name"))
+	   },
+	   $b);
+	my $b0= car $bwithoutanchor;
+	if (ref $b0 and $b0->name eq "h1") {
+	    ($b0, stream2array(cdr $bwithoutanchor))
+	} else {
+	    (H1(path02title ($path0)), $body)
+	}
+    };
+
+    my $maybe_buglist= $groupname eq "buglist" && do {
+	my $bugs=
+	  array_sort
+	    (array_map
+	     (
+	      fun ($path) {
+		  my $path0= path0 $path;
+		  my $title= path02title $path0;
+		  [$title,$path0,$genfilestate->costrange($path0)]
+	      },
+	      $genfilestate->groupedfiles->{bugs}),
+	     on sub{$_[0][0]}, \&string_cmp # XX not a good cmp.
+	    );
+
+	TABLE
+	  ({class=> "costlist"},
+	   THEAD (TH ("Type"), TH ("Title"),TH ("Cost range (USD)")),
+	   map {
+	       my ($title,$p0,$costrange)= @$_;
+	       my $relurl= File::Spec->abs2rel(xsuffix_md2html($p0,0),
+					       basename ($path0));
+	       TR (TD (path02bugtype $p0),
+		   TD (A({href=>$relurl},$title)),
+		   TD ({align=>"center"},$costrange))
+	   } @$bugs
+	  )
+    };
+
+    puthtmlfile($outpath,
+		HTML (
+		      HEAD (
+			    TITLE ($cfg->{title}->($filetitle)),
+			    LINK ({rel=> "stylesheet",
+				   href=> url_diff ($path0, $css_path),
+				   type=> "text/css"}),
+			   ),
+		      BODY(
+			   $cfg->{head}->($path0),
+			   UL({class=> "menu"},
+			      array_map_with_islast
+			      (
+			       fun ($is_last,$file0) {
+				   my $filetitle= path02title $file0;
+				   LI({class=> ($is_last ? "menu_last" : "menu")},
+				      ($file0 eq $path0 ?
+				       SPAN({class=> "menu_selected"},
+					    $filetitle)
+				       : A ({class=> "menu",
+					     href=>
+					     File::Spec->abs2rel
+					     (xsuffix_md2html($file0,0),
+					      dirname($path0))},
+					    $filetitle)),
+				      " ")
+			       },
+			       array_sort
+			       (array_map( \&path0, $genfilestate->nonbugfiles),
+				on $path02sortkey, \&string_cmp))),
+			   $cfg->{belownav}->($path0),
+			   $h1,
+			   $body1,
+			   $maybe_buglist,
+			   BR,
+			   HR,
+			   ($maybe_costrange ? P("\x{21d2} Cost range: \$",
+						 $maybe_costrange) : ()),
+			   DIV({class=>"footer_date"}, author_date($path)))));
+}
+
+
+fun genfiles ($filesinfo) {
+    my $genfilestate= get_genfilestate ($filesinfo);
+    for my $groupname (qw(bugs normal buglist)) {
+	for (@{$genfilestate->groupedfiles->{$groupname}}) {
+	    genfile $_,$groupname,$genfilestate
+	}
+    }
+}
+
+# lib?
+fun existingpath_or (@paths) {
+    for (@paths) {
+	return $_ if -e $_
+    }
+    die "none of the paths exist: @paths";
+}
+
+
+# copy referenced non-.md files:
+fun copyfiles ($filesinfo) {
+    for my $path0 (keys %{$filesinfo->all_path0_used}) {
+	next if $filesinfo->path0_exists($path0); # md path
+	xcopyfile_utf8 (path02inpath($path0), path02outpath($path0));
+    }
+    # copy CSS file
+    xcopyfile_utf8 (existingpath_or (path02inpath($css_path),
+				     path02inpath("html/$css_path")),
+		    path02outpath($css_path));
+}
+
+fun main () {
+    my $filesinfo= get_filesinfo;
+    genfiles ($filesinfo);
+    copyfiles ($filesinfo);
+}
+
+#use Chj::ruse;
+#use Chj::Backtrace;
+#use Chj::repl; repl;
+
+main;
+

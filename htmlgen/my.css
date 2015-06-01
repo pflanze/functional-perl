@@ -1,0 +1,109 @@
+
+ul.menu {
+  border: 1px solid #000;
+  background-color: #eee;
+  padding: 5px;
+  list-style: none;
+  padding-left: 0.5em;
+}
+li.menu {
+  border-right: 1px solid #000;
+  list-style: none;
+  padding-left: 0.5em;
+  padding-right: 0.3em;
+  display: inline;
+}
+li.menu_last {
+  list-style: none;
+  padding-left: 0.5em;
+  padding-right: 0.3em;
+  display: inline;
+}
+.menu_selected {
+  font-weight: bold;
+}
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+pre {
+  padding: 4px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+}
+
+* > code {
+  padding: 1px;
+  background-color: #eee;
+  border: 1px solid #ddd;
+}
+
+pre > code {
+  padding: 0px;
+  background-color: transparent;
+  border: none;
+}
+
+
+.header {
+  text-align: center;
+}
+.logo1 {
+  font-weight: bold;
+  font-size:36px;
+}
+
+a.header, a.header:visited, a.header:active, a.header:hover { color: #000 }
+
+body {
+  padding-left: 1.8em;
+  padding-right: 1.8em;
+  background-color: #FFF;
+}
+
+hr {
+  height: 1px;
+  background-color: #ccc;
+  border: none;
+}
+
+.footer_date {
+  text-align: center;
+  font-style: italic;
+  font-size: small;
+}
+
+.costlist {
+  border-spacing: 4px;
+}
+.costlist > thead > th {
+  border-bottom: 1px solid #666;
+}
+.costlist > tr > td {
+  padding-right: 0.5em;
+}
+
+/*
+.ref_top {
+  border-top: 1px solid #666;
+}
+.ref_precise .ref_subject {
+  padding: 0px;
+  margin: 0px;
+}
+*/
+
+
+dir.top {
+  margin: 0.8em;
+  padding: 0px;
+}
+
+dir.reply {
+  margin-top: 0.1em;
+  margin-bottom: 0px;
+}
