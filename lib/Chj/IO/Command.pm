@@ -93,6 +93,15 @@ sub new_combinedsender {
     $self->xlaunch3(undef,$w,$w,@_);
 }
 
+sub new_combinedsender_with_stdin {
+    my $class=shift;
+    local $^F=0;
+    my $stdin= shift;
+    my ($self,$w)=xpipe;
+    bless $self,$class;
+    $self->xlaunch3($stdin,$w,$w,@_);
+}
+
 sub assume_with_maybe_stdin_stdout_stderr {
     my $class=shift;
     @_>4 or die "not enough arguments";
