@@ -123,7 +123,3 @@ that's needed. (Just tell if you would like installer support.)
 * A [post](https://news.ycombinator.com/item?id=8734719) about streams
   in Scheme mentioning the memory retention issues that even some
   Scheme implementations can have.
-
-* [functional-shell](https://github.com/pflanze/functional-shell) is a
-  work in progress to allow writing functional programs in Bash,
-  although rather for illustration than for practical use.
