@@ -19,6 +19,8 @@ use FP::Div ":all";
 use Chj::xperlfunc;
 use Chj::xopen 'xopen_read';
 
+our $verbose= $ENV{VERBOSE};
+
 our $files= do {
     my $files= Chj::IO::Command->new_sender(qw(git ls-files -z));
     local $/="\0";
@@ -31,7 +33,7 @@ our $namespaces=
   array_filter \&identity,
   array_map sub {
     my ($file)=@_;
-    $file=~ m{(Chj/.*)\.pm} ? do {
+    $file=~ m{lib/(.*)\.pm} ? do {
 	my $str= $1;
 	$str=~ s{/}{::}sg;
 	$str
@@ -43,7 +45,7 @@ our $out= xtmpfile;
 for my $ns (@$namespaces) {
     my $tr= Chj::IO::Command->new_combinedsender
       ("straceopens",
-       qw(perl -w -Mlib=./perllib -Mlib=./lib -Mlib=ftemplate/lib/),
+       qw(perl -w -Mlib=./lib),
        "-M$ns", "-e", "");
     $tr->xsendfile_to($out);
     $tr->xxfinish;
@@ -55,10 +57,11 @@ our $in= xopen_read $out->path; # bleh?
 our %o;
 while (<$in>) {
     chomp;
-    $o{$_}++ if (m{^/} and m{/Chj/});
+    $o{$_}++ if (m{^/} and m{/(?:Chj|FP|PXML|Class)/});
 }
 
 $in->xclose;
 
 say $_ for sort keys %o;
 
+#use Chj::repl;repl;
