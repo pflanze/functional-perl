@@ -24,6 +24,9 @@ Chj::TEST
  # compute also result lazily:
  TEST { 1+1 } GIVES {3-1}; # success
 
+ TEST_STDOUT { print "Hello" } "Hello";
+
+
  use Chj::TEST ':all';
  run_tests;
 
