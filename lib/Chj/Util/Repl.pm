@@ -608,7 +608,9 @@ sub run {
 			    my $subcmd= chop $cmd;
 			    if (my $sub= $commands{$subcmd}) {
 				&$sub;
-				last;
+				last; # XX why last? shouldn't we
+                                      # continue with what's left of
+                                      # $cmd ?
 			    } else {
 				print $STDERR "unknown command or mode :$cmd\n";
 				last;
