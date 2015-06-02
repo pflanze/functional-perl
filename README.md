@@ -75,6 +75,15 @@ Please send [me](http://leafpair.com/contact) your suggestions!
 This needs a separate "how to" page; for now, see [howto and
 comparison to Scheme](docs/howto_and_comparison_to_Scheme.md).
 
+Also, to get a general gist of how to do functional programming on
+Perl, check out [Higher-Order Perl](http://hop.perl.plover.com/) by
+Mark Jason Dominus. He glosses over some issues with regards to memory
+retention problems, but to be fair, at the time that he wrote the book
+the perl interpreter wouldn't have allowed to avoid them
+anyway. Unlike him, the functional-perl project properly separates
+lazy evaluation from pairs (when building streams), which should be
+preferable for separation of concerns.
+
 ### Presentation
 
 [These](http://functional-perl.org/london.pm-talk/) are the slides of
