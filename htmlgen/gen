@@ -336,7 +336,7 @@ use PXML::XHTML ":all";
 use FP::ArrayUtil ":all";
 use File::Spec;
 use FP::Array_sort;
-
+use FP::Ops qw(string_cmp number_cmp);
 
 our $path02sortkey= do {
     my $sortprio= do {
