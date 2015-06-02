@@ -98,7 +98,7 @@ possibilities.
 
 ## Installation
 
-For simplicity during development there are no installer instructions,
+For simplicity during development there are no installer files,
 instead the bundled scripts modify the library load path to find the
 files locally. All modules are in `lib/`, `use lib` that path is all
 that's needed. (Just tell if you would like installer support.)
@@ -110,7 +110,8 @@ that's needed. (Just tell if you would like installer support.)
 * to run all the tests (otherwise some are skipped):
   `BSD::Resource`, `Method::Signatures`, `Text::CSV`, `URI`
 
-* to use `bin/repl` interactively, `Term::ReadLine::Gnu`
+* to use `bin/repl` or the repl in the intro and examples scripts
+  interactively, `Term::ReadLine::Gnu`
 
 * to use nicer syntax for tail call optimization: `Sub::Call::Tail`
 
