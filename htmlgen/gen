@@ -210,9 +210,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	    $uri->opaque(""); # mutation
 	} else {
 	    if (length $path) {
-		#my $p0= File::Spec->rel2abs ($path,dirname $selfpath0);
-		use Chj::Path::Calc qw'AddURL URLDiff Filename FolderOfThisFile';
-		my $p0= AddURL(dirname ($selfpath0), $path);
+		my $p0= url_add(dirname ($selfpath0), $path);
 		$p0=~ s|^\./||;#hack. grr y
 		$filesinfo->all_path0_exists($p0)
 		  or do {
@@ -385,6 +383,17 @@ fun path02bugtype ($path0) {
 # move to lib
 use File::Spec;
 use Chj::TEST ":all";
+
+fun url_add ($base,$rel) {
+    File::Spec->rel2abs ($rel, $base)
+}
+
+TEST{url_add "/foo", "/zoo" } "/zoo";
+TEST{url_add "/foo", "../zoo" } "/foo/../zoo"; # well. so be it; good
+                                               # for filesystems, not
+                                               # websites
+TEST{url_add "/foo", "zoo/loo" } "/foo/zoo/loo";
+TEST{url_add "/foo", "zoo//loo/." } "/foo/zoo/loo"; # interesting
 
 fun url_diff ($path0from,$path0to) {
     my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
