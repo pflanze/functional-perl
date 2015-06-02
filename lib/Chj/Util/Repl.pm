@@ -525,212 +525,221 @@ sub run {
 
 	# for repetitions:
 	my $evaluator= sub { }; # noop
-	while ( defined (my $input = &$myreadline) ) {
-	    if (length $input) {
-		my ($cmd,$args)=
-		  $input=~ /^ *\:(\?|\w+\b)(.*)/s ?
-		    ($1,$2)
-		      :(undef,$input);
+      READ: {
+	    while ( defined (my $input = &$myreadline) ) {
+		if (length $input) {
+		    my ($cmd,$args)=
+		      $input=~ /^ *\:(\?|\w+\b)(.*)/s ?
+			($1,$2)
+			  :(undef,$input);
 
-		if (defined $cmd) {
-		    # handle commands
+		    if (defined $cmd) {
+			# handle commands
+			eval {
 
-		    my $set_package= sub {
-			# (no package parsing, trust user)
-			$$self[Package]= xone_nonwhitespace($args);
-			$args=""; # XX HACK
-		    };
+			    my $set_package= sub {
+				# (no package parsing, trust user)
+				$$self[Package]= xone_nonwhitespace($args);
+				$args=""; # XX HACK
+			    };
 
-		    my $help= sub { $self->print_help ($STDOUT) };
+			    my $help= sub { $self->print_help ($STDOUT) };
 
-		    my $bt= sub {
-			require Carp;
-			require Chj::Backtrace;
-			#local $Carp::CarpLevel=2;
-			my $msg= Chj::Backtrace::Clean (Carp::longmess());
-			# Since $Carp::CarpLevel doesn't really
-			# seem to do what I want, hack up the
-			# string:
-			$msg=~ s|^\s*at [^\n]+/Repl.pm line \d+\n||s;
-			print $msg;
-			$args=""; # XX HACK; also, really silently drop stuff?
-		    };
+			    my $bt= sub {
+				require Carp;
+				require Chj::Backtrace;
+				#local $Carp::CarpLevel=2;
+				my $msg= Chj::Backtrace::Clean (Carp::longmess());
+				# Since $Carp::CarpLevel doesn't really
+				# seem to do what I want, hack up the
+				# string:
+				$msg=~ s|^\s*at [^\n]+/Repl.pm line \d+\n||s;
+				print $msg;
+				$args=""; # XX HACK; also, really silently drop stuff?
+			    };
 
-		    my %commands=
-			(
-			 h=> $help,
-			 help=> $help,
-			 '?'=> $help,
-			 package=> $set_package,
-			 p=> $set_package,
-			 1=> sub { $$self[Mode_context]="1" },
-			 l=> sub { $$self[Mode_context]="l" },
-			 s=> sub { $$self[Mode_formatter]="s" },
-			 d=> sub { $$self[Mode_formatter]="d" },
-			 V=> sub { $$self[Mode_viewer]="V" },
-			 v=> sub { $$self[Mode_viewer]="v" },
-			 e=> sub {
-			     my $skip= levels_to_user;
-			     require PadWalker;
-			     use Data::Dumper;
-			     # XX clean up: don't want i in the regex
-			     my ($maybe_level)=
-				 $args=~ /^i?\s*(\d+)?\s*\z/
-				 or die "expecting digits or no argument, got '$cmd'";
-			     $args=""; # can't s/// above when expecting value
-			     my $lexicals= eval {
-				 PadWalker::peek_my($skip + ($maybe_level // 0));
-			     }; # XXX check exceptions
+			    my %commands=
+				(
+				 h=> $help,
+				 help=> $help,
+				 '?'=> $help,
+				 package=> $set_package,
+				 p=> $set_package,
+				 1=> sub { $$self[Mode_context]="1" },
+				 l=> sub { $$self[Mode_context]="l" },
+				 s=> sub { $$self[Mode_formatter]="s" },
+				 d=> sub { $$self[Mode_formatter]="d" },
+				 V=> sub { $$self[Mode_viewer]="V" },
+				 v=> sub { $$self[Mode_viewer]="v" },
+				 e=> sub {
+				     my $skip= levels_to_user;
+				     require PadWalker;
+				     use Data::Dumper;
+				     # XX clean up: don't want i in the regex
+				     my ($maybe_level)=
+					 $args=~ /^i?\s*(\d+)?\s*\z/
+					 or die "expecting digits or no argument, got '$cmd'";
+				     $args=""; # can't s/// above when expecting value
+				     my $lexicals= eval {
+					 PadWalker::peek_my($skip + ($maybe_level // 0));
+				     }; # XXX check exceptions
 
-			     if (defined $lexicals) {
-				 local $Data::Dumper::Terse= 1;
-				 for my $key (sort keys %$lexicals) {
-				     if ($key=~ /^\$/) {
-					 print "$key = ".Dumper(${$$lexicals{$key}});
+				     if (defined $lexicals) {
+					 local $Data::Dumper::Terse= 1;
+					 for my $key (sort keys %$lexicals) {
+					     if ($key=~ /^\$/) {
+						 print "$key = ".Dumper(${$$lexicals{$key}});
+					     } else {
+						 print "\\$key = ".Dumper($$lexicals{$key});
+					     }
+					 }
 				     } else {
-					 print "\\$key = ".Dumper($$lexicals{$key});
+					 print "level too deep\n"
 				     }
-				 }
-			     } else {
-				 print "level too deep\n"
-			     }
-			 },
-			 bt=> $bt,
-			 b=> $bt,
-			);
+				 },
+				 bt=> $bt,
+				 b=> $bt,
+				);
 
-		    while (length $cmd) {
-			# XX why am I checking with and without chopping here?
-			if (my $sub= $commands{$cmd}) {
-			    &$sub;
-			    last;
-			} else {
-			    my $subcmd= chop $cmd;
-			    if (my $sub= $commands{$subcmd}) {
-				&$sub;
-				last; # XX why last? shouldn't we
-                                      # continue with what's left of
-                                      # $cmd ?
-			    } else {
-				print $STDERR "unknown command or mode :$cmd\n";
-				last;
+			    while (length $cmd) {
+				# XX why am I checking with and without chopping here?
+				if (my $sub= $commands{$cmd}) {
+				    &$sub;
+				    last;
+				} else {
+				    my $subcmd= chop $cmd;
+				    if (my $sub= $commands{$subcmd}) {
+					&$sub;
+					last; # XX why last? shouldn't we
+					      # continue with what's left of
+					      # $cmd ?
+				    } else {
+					print $STDERR "unknown command or mode :$cmd\n";
+					last;
+				    }
+				}
 			    }
+
+			    1
+			} || do {
+			    print $STDERR "$@";
+			    redo READ;
 			}
 		    }
+
+		    # build up evaluator
+
+		    my $eval=
+			xchoose_from
+			(+{
+			   1=> sub {
+			       my $vals= [ scalar $self->eval_code ($args, $get_package) ];
+			       ($vals, $@)
+			   },
+			   l=> sub {
+			       my $vals= [ $self->eval_code ($args, $get_package) ];
+			       ($vals, $@)
+			   },
+			  },
+			 $self->mode_context);
+
+		    my $format_vals=
+		      xchoose_from
+			(+{
+			   s=> sub {
+			       (
+				join "",
+				map {
+				    (defined $_ ? $_ : 'undef'). "\n"
+				} @_
+			       )
+			   },
+			   d=> sub {
+			       # save values by side effect; UGLY? Fits
+			       # here just because we only want to set in
+			       # :d mode
+			       if ($$self[DoKeepResultsInVARX]) {
+				   no strict 'refs';
+				   for my $i (0..@_-1) {
+				       my $varname= &$get_package()."::VAR".($i+1);
+				       no strict 'refs';
+				       $$varname= $_[$i];
+				   }
+			       }
+
+			       # actually do the formatting job:
+			       require Data::Dumper;
+			       scalar Data::Dumper::Dumper(@_);
+			       # don't forget the scalar here. *Sigh*.
+			   }
+			  },
+			 $self->mode_formatter);
+
+		    my $view_string=
+			xchoose_from
+			(+{
+			   V=> sub {
+			       print $STDOUT $_[0]
+				 or die "print: $!";
+			   },
+			   v=> sub {
+			       eval {
+				   my $o= Chj::xoutpipe ($$self[Pager]);
+				   $o->xprint($_[0]);
+				   $o->xfinish;
+				   1
+			       } || do {
+				   print $STDERR "error piping to pager ".
+				     "$$self[Pager]: $@\n"
+				       or die $!;
+			       };
+			   },
+			  },
+			 $self->mode_viewer);
+
+		    $evaluator= sub {
+			my ($results,$error)= &$eval;
+
+			&$view_string(do {
+			    if (ref $error or $error) {
+				my $err= (UNIVERSAL::can($error,"plain") ?
+					  # e.g. EiD style wrapped "normal" exceptions
+					  # have this method for formatting as
+					  # 'plaintext' (in a programmer's sense)
+					  $error->plain
+					  : "$error");
+				chomp $err;
+				$err."\n"; # no prefix? no safe way to differentiate.
+			    } else {
+				if (my $varname= $$self[KeepResultIn]) {
+				    $varname= &$get_package()."::$varname"
+				      unless $varname=~ /::/;
+				    no strict 'refs';
+				    $$varname= $self->mode_context eq "1" ?
+				      $$results[0] : $results;
+				}
+				&$format_vals(@$results)
+			    }
+			});
+		    };
+
+		    &$evaluator;
+
+		} elsif ($$self[DoRepeatWhenEmpty]) {
+		    &$evaluator;
+		} else {
+		    next;
 		}
 
-		# build up evaluator
-
-		my $eval=
-		    xchoose_from
-		    (+{
-		       1=> sub {
-			   my $vals= [ scalar $self->eval_code ($args, $get_package) ];
-			   ($vals, $@)
-		       },
-		       l=> sub {
-			   my $vals= [ $self->eval_code ($args, $get_package) ];
-			   ($vals, $@)
-		       },
-		      },
-		     $self->mode_context);
-		
-		my $format_vals=
-		  xchoose_from
-		    (+{
-		       s=> sub {
-			   (
-			    join "",
-			    map {
-				(defined $_ ? $_ : 'undef'). "\n"
-			    } @_
-			   )
-		       },
-		       d=> sub {
-			   # save values by side effect; UGLY? Fits
-			   # here just because we only want to set in
-			   # :d mode
-			   if ($$self[DoKeepResultsInVARX]) {
-			       no strict 'refs';
-			       for my $i (0..@_-1) {
-				   my $varname= &$get_package()."::VAR".($i+1);
-				   no strict 'refs';
-				   $$varname= $_[$i];
-			       }
-			   }
-
-			   # actually do the formatting job:
-			   require Data::Dumper;
-			   scalar Data::Dumper::Dumper(@_);
-			   # don't forget the scalar here. *Sigh*.
-		       }
-		      },
-		     $self->mode_formatter);
-
-		my $view_string=
-		    xchoose_from
-		    (+{
-		       V=> sub {
-			   print $STDOUT $_[0]
-			     or die "print: $!";
-		       },
-		       v=> sub {
-			   eval {
-			       my $o= Chj::xoutpipe ($$self[Pager]);
-			       $o->xprint($_[0]);
-			       $o->xfinish;
-			       1
-			   } || do {
-			       print $STDERR "error piping to pager ".
-				 "$$self[Pager]: $@\n"
-				   or die $!;
-			   };
-		       },
-		      },
-		     $self->mode_viewer);
-
-		$evaluator= sub {
-		    my ($results,$error)= &$eval;
-
-		    &$view_string(do {
-			if (ref $error or $error) {
-			    my $err= (UNIVERSAL::can($error,"plain") ?
-				      # e.g. EiD style wrapped "normal" exceptions
-				      # have this method for formatting as
-				      # 'plaintext' (in a programmer's sense)
-				      $error->plain
-				      : "$error");
-			    chomp $err;
-			    $err."\n"; # no prefix? no safe way to differentiate.
-			} else {
-			    if (my $varname= $$self[KeepResultIn]) {
-				$varname= &$get_package()."::$varname"
-				  unless $varname=~ /::/;
-				no strict 'refs';
-				$$varname= $self->mode_context eq "1" ?
-				  $$results[0] : $results;
-			    }
-			    &$format_vals(@$results)
-			}
-		    });
-		};
-
-		&$evaluator;
-		
-	    } elsif ($$self[DoRepeatWhenEmpty]) {
-		&$evaluator;
-	    } else {
-		next;
-	    }
-
-	    if (length $input and
-		((!defined $history[-1]) or $history[-1] ne $input)) {
-		push @history,$input;
-		chomp $input;
-		$term->addhistory($input);
-		#splice @history,0,@history-$$self[MaxHistLen] =();
-		if ($$self[MaxHistLen] >= 0){# <-prevent endless loop
-		    shift @history while @history>$$self[MaxHistLen];
+		if (length $input and
+		    ((!defined $history[-1]) or $history[-1] ne $input)) {
+		    push @history,$input;
+		    chomp $input;
+		    $term->addhistory($input);
+		    #splice @history,0,@history-$$self[MaxHistLen] =();
+		    if ($$self[MaxHistLen] >= 0){# <-prevent endless loop
+			shift @history while @history>$$self[MaxHistLen];
+		    }
 		}
 	    }
 	}
