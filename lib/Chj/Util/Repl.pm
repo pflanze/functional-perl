@@ -541,6 +541,8 @@ sub run {
 			$args=""; # XX HACK
 		    };
 
+		    my $help= sub { $self->print_help ($STDOUT) };
+
 		    my $bt= sub {
 			require Carp;
 			require Chj::Backtrace;
@@ -556,9 +558,9 @@ sub run {
 
 		    my %commands=
 			(
-			 h=> sub { $self->print_help ($STDOUT) },
-			 help=> sub { $self->print_help ($STDOUT) },
-			 '?'=> sub { $self->print_help ($STDOUT) },
+			 h=> $help,
+			 help=> $help,
+			 '?'=> $help,
 			 package=> $set_package,
 			 p=> $set_package,
 			 1=> sub { $$self[Mode_context]="1" },
