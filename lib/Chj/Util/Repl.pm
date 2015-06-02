@@ -245,6 +245,7 @@ sub eval_code {
 }
 
 
+# TODO: split this monstrosity into pieces.
 sub run {
     my $self=shift;
 
