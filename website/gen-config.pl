@@ -4,7 +4,8 @@ our $mydir; # 'import' from main
 
 use PXML::XHTML ":all";
 
-my $logocfg= require "$mydir/logo.pl";
+system 'echo "pwd=`pwd`"';
+my $logocfg= require "./logo.pl";
 
 +{
   indexpath0P=> fun ($path0) {

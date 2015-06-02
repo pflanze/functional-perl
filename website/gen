@@ -4,8 +4,10 @@ set -eu
 
 mydir=`dirname "$0"`
 
-inbase="$mydir/.."
-outbase="$mydir/out"
-configpath="$mydir/gen-config.pl"
+cd "$mydir"
 
-"$mydir/../htmlgen/gen" "$configpath" "$inbase" "$outbase"
+inbase=".."
+outbase="www"
+configpath="./gen-config.pl"
+
+"../htmlgen/gen" "$configpath" "$inbase" "$outbase"
