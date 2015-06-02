@@ -577,6 +577,7 @@ sub run {
 			     my ($maybe_level)=
 				 $args=~ /^i?\s*(\d+)?\s*\z/
 				 or die "expecting digits or no argument, got '$cmd'";
+			     $args=""; # can't s/// above when expecting value
 			     my $lexicals= eval {
 				 PadWalker::peek_my($skip + ($maybe_level // 0));
 			     }; # XXX check exceptions
@@ -593,7 +594,6 @@ sub run {
 			     } else {
 				 print "level too deep\n"
 			     }
-			     $args=""; # XX HACK
 			 },
 			 bt=> $bt,
 			 b=> $bt,
