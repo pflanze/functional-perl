@@ -63,7 +63,7 @@ sub collect_cmd {
     warn "running @_..";
     my $null= xopen_read("/dev/null");
     my $tr= Chj::IO::Command->new_combinedsender_with_stdin
-      ($null, "straceopens", @_);
+      ($null, "notty", "straceopens", @_);
     $tr->xsendfile_to($out);
     my $code= $tr->xfinish;
     if ($code != 0) {
