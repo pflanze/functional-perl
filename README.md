@@ -59,8 +59,10 @@ Please send [me](http://leafpair.com/contact) your suggestions!
   [Chj::xtmpfile](lib/Chj/xtmpfile.pm):
   operations on filehandles that throw exceptions on errors, plus
   many utilities.
-  Should probably be dropped in favor of something else, suggestions
-  welcome.
+  I wrote these around 15 years ago, as a means to offer IO with
+  exceptions and more features, but in the mean time there are
+  probably alternatives that are just as good or better; if you know
+  which replacements I should be using, please tell.
 
 * a few more modules that are used by the above (some originally part
   of [chj-perllib](https://github.com/pflanze/chj-perllib))
