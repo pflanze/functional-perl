@@ -61,14 +61,15 @@ our $out= xtmpfile;
 
 sub collect_cmd {
     warn "running @_..";
-    my $null= xopen_read("/dev/null");
-    my $tr= Chj::IO::Command->new_combinedsender_with_stdin
-      ($null, "notty", "straceopens", @_);
-    $tr->xsendfile_to($out);
-    my $code= $tr->xfinish;
+    my $t= xtmpfile;
+    my $code= xsystem( "daemonize", "--no-ask", "--quiet",
+		       "straceopens", "-o", $t->path, @_);
     if ($code != 0) {
 	warn "straceopens @_: exited with code $code"
     }
+    my $tr= xopen_read($t->path);
+    $tr->xsendfile_to($out);
+    $tr->xclose;
 }
 
 for my $ns (@$namespaces) {
