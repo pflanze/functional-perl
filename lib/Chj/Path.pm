@@ -19,6 +19,8 @@ This doesn't access the file system, and it doesn't resolve
 =cut
 
 
+# XX: refactor to use FP modules!
+
 package Chj::Path;
 
 use strict;
@@ -132,6 +134,7 @@ sub add_segment { # functionally. hm.
     die "segment contains slash: '$segment'" if $segment=~ m{/};
     $s->segments_set
       ([
+	# XXX bad computational complexity, should use FP::List instead
 	@{$$s{segments}},
 	$segment
        ])
