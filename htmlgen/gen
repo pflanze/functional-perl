@@ -699,7 +699,7 @@ perhaps_run_tests __PACKAGE__
   or do {
 
     $opt_repl ? do {
-	require Chj::Backtrace;
+	require Chj::Backtrace; import Chj::Backtrace;
 	require Chj::repl;
 	Chj::repl::repl();
     } : main;
