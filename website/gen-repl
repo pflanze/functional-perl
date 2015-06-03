@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -eu
+
+mydir=`dirname "$0"`
+
+cd "$mydir"
+
+inbase=".."
+outbase="www"
+configpath="./gen-config.pl"
+
+"../htmlgen/gen" --repl "$configpath" "$inbase" "$outbase"
