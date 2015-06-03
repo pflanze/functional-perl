@@ -1,0 +1,5 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+$ENV{RUN_TESTS}=1; exec "website/gen" or exit 1;

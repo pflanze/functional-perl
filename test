@@ -16,6 +16,7 @@ our @t=
 	ftemplate-test
 	ftemplate-test-pxml-text
 	csv2xml
+	htmlgen
 	intro-basics
 	trampoline-fix
 	examples-fibs
