@@ -116,6 +116,19 @@ sub add_segment { # functionally. hm.
 	->has_endslash_set(0);
 }
 
+sub add {
+    my $a=shift;
+    @_==1 or die "wrong number of arguments";
+    my ($b)=@_;
+    $a->segments_set([ @{$a->segments}, @{$b->segments} ])->clean
+}
+
+TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("d/e") )->string }
+  'a/b/C/d/e';
+TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("../d/e") )->string }
+  'a/b/C/../d/e';
+
+
 sub dirname { # functional
     my $s=shift;
     my $seg= $$s{segments};
