@@ -1,5 +1,5 @@
 #
-# Copyright 2011-2015 by Christian Jaeger, christian at jaeger mine nu
+# Copyright 2011-2015 by Christian Jaeger, ch at christianjaeger ch
 # Published under the same terms as perl itself
 #
 
