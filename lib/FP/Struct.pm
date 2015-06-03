@@ -6,7 +6,7 @@
 
 =head1 NAME
 
-FP::Struct
+FP::Struct - classes for functional perl
 
 =head1 SYNOPSIS
 
@@ -36,7 +36,10 @@ FP::Struct
 
 =head1 DESCRIPTION
 
-Simpler than Class::Struct. Ok?
+Create functional setters (i.e. setters that return a copy of the
+object so as to leave the original unharmed), take predicate functions
+(not magic strings) for dynamic type checking, simpler than
+Class::Struct.
 
 _END_ does namespace cleaning: any sub that was defined before the use
 FP::Struct call is removed by the _END_ call (those that are not the
