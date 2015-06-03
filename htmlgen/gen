@@ -382,10 +382,13 @@ fun path02bugtype ($path0) {
 
 # move to lib
 use File::Spec;
+use Chj::Path;
 use Chj::TEST ":all";
 
 fun url_add ($base,$rel) {
-    File::Spec->rel2abs ($rel, $base)
+    Chj::Path->new_from_string($base)->add
+	(Chj::Path->new_from_string($rel), 1)
+	  ->string
 }
 
 TEST{url_add "/foo", "/zoo" } "/zoo";
