@@ -12,7 +12,7 @@ FP::Struct - classes for functional perl
 
  sub is_hash {ref ($_[0]) eq "HASH"}
 
- use FP::Struct Bar=> ["a", [\&is_hash, "b"]]=> ["Foo"];
+ use FP::Struct Bar=> ["a", [\&is_array, "b"]]=> ["Foo"];
  # creates a constructor new that takes positional arguments and
  # copies them to a hash with the keys "a" and "b". Also, sets
  # @Bar::ISA to ("Foo"). [ ] around "Foo" are optional.
@@ -21,12 +21,15 @@ FP::Struct - classes for functional perl
  # true then an exception is thrown.
  {
    package Bar;
+   use Chj::TEST; # the TEST sub will be removed from the package upon
+                  # _END_ (namespace cleaning)
    # instead of use FP::Struct Bar.. above, could use this:
    # use FP::Struct ["a","b"]=> ["Foo"];
    sub sum {
       my $s=shift;
-      $$s{a} + $$s{b}
+      $$s{a} + $$s{b}[0]
    }
+   TEST { Bar->new(1,[2])->sum } 3;
    _END_ # generate accessors for methods of given name which don't
          # exist yet *in either Bar or any super class*. (Does that
          # make sense?)
