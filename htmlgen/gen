@@ -394,6 +394,9 @@ TEST{url_add "/foo", "../zoo" } "/foo/../zoo"; # well. so be it; good
                                                # websites
 TEST{url_add "/foo", "zoo/loo" } "/foo/zoo/loo";
 TEST{url_add "/foo", "zoo//loo/." } "/foo/zoo/loo"; # interesting
+TEST{url_add ".", "zoo/loo" } "zoo/loo"; # definitely
+TEST{url_add ".", "../zoo/loo" } "../zoo/loo"; # yes that's something I want, ok?
+
 
 fun url_diff ($path0from,$path0to) {
     my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
