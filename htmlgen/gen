@@ -8,6 +8,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # Function::Parameters.
 
 use Function::Parameters qw(:strict);
+use Chj::Backtrace;
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -710,7 +711,7 @@ perhaps_run_tests __PACKAGE__
   or do {
 
     $opt_repl ? do {
-	require Chj::Backtrace; import Chj::Backtrace;
+	#require Chj::Backtrace; import Chj::Backtrace;
 	require Chj::repl;
 	Chj::repl::repl();
     } : main;
