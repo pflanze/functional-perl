@@ -7,6 +7,11 @@
 * reimplement parts in C (Pair, perhaps Promise?) to save some space
   and cpu
 
+* read-only enforcing versions of the functional data structures (or,
+  read-only by default, then togglable [or just offering unsafe
+  usually-forbidden] mutators); including, especially, FP::Struct as
+  potential building block of such data structures
+
 * write sequences API declaration, to code alternative implementations
   against for optimization purposes (runtime coalescence of chained
   operations (something like ->map($f1)->map($f2)->filter($f3)->fold($f4,$x)
