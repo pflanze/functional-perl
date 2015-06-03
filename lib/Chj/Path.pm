@@ -23,6 +23,8 @@ package Chj::Path;
 
 use strict;
 
+use Chj::TEST;
+
 use FP::Struct
   [
    'segments', # array of str not containing slashes
@@ -148,10 +150,6 @@ sub contains_dotdot {
     0
 }
 
-_END_;
-
-
-use Chj::TEST;
 
 TEST { (new_from_string Chj::Path "hello//world/you")->string }
   "hello/world/you";
@@ -237,4 +235,5 @@ TEST { Chj::Path->new_from_string("/foo/")->to_relative->string }
  'foo/';
 
 
-1
+_END_
+
