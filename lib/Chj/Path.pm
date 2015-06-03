@@ -103,6 +103,29 @@ sub clean {
 	   });
 }
 
+sub clean_dotdot {
+    my $s=shift;
+    my @s;
+    for my $seg (@{$s->segments}) {
+	if ($seg eq "..") {
+	    if (@s) {
+		pop @s;
+	    } else {
+		if ($s->is_absolute) {
+		    push @s, "..";
+		} else {
+		    die "can't take '..' of root directory"
+		}
+	    }
+	} else {
+	    push @s, $seg
+	}
+    }
+    $s->segments_set (\@s)
+}
+# (should have those functions without the Path wrapper? Maybe, maybe not.)
+
+
 sub add_segment { # functionally. hm.
     my $s=shift;
     my ($segment)=@_;
@@ -118,15 +141,24 @@ sub add_segment { # functionally. hm.
 
 sub add {
     my $a=shift;
-    @_==1 or die "wrong number of arguments";
-    my ($b)=@_;
-    $a->segments_set([ @{$a->segments}, @{$b->segments} ])->clean
+    @_==2 or die "wrong number of arguments";
+    my ($b, $is_url)=@_; # when is_url is true, it cleans dit
+    if ($b->is_absolute) {
+	$b
+    } else {
+	my $c= $a->segments_set([ @{$a->segments}, @{$b->segments} ])->clean;
+	$is_url ? $c->clean_dotdot : $c
+    }
 }
 
-TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("d/e") )->string }
+TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("d/e"), 0 )->string }
   'a/b/C/d/e';
-TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("../d/e") )->string }
+TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("../d/e"), 0 )->string }
   'a/b/C/../d/e';
+TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("../d/e"), 1 )->string }
+  'a/b/d/e';
+TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("/d/e"), 1 )->string }
+  '/d/e';
 
 
 sub dirname { # functional
