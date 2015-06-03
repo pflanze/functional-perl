@@ -392,13 +392,13 @@ fun url_add ($base,$rel) {
 }
 
 TEST{url_add "/foo", "/zoo" } "/zoo";
-TEST{url_add "/foo", "../zoo" } "/foo/../zoo"; # well. so be it; good
-                                               # for filesystems, not
-                                               # websites
+TEST{url_add "/foo", "../zoo" } "/zoo";
 TEST{url_add "/foo", "zoo/loo" } "/foo/zoo/loo";
-TEST{url_add "/foo", "zoo//loo/." } "/foo/zoo/loo"; # interesting
+TEST{url_add "/foo", "zoo//loo/." } "/foo/zoo/loo/";
 TEST{url_add ".", "zoo/loo" } "zoo/loo"; # definitely
-TEST{url_add ".", "../zoo/loo" } "../zoo/loo"; # yes that's something I want, ok?
+TEST_EXCEPTION {url_add ".", "../zoo/loo" }
+  # "../zoo/loo"; # yes that's something I want, ok?
+  "can't take '..' of root directory"; # well, ok?
 
 
 fun url_diff ($path0from,$path0to) {
