@@ -284,6 +284,8 @@ fun puthtmlfile ($path,$p) {
     }
     method all_path0_exists ($path0) {
 	defined $$self{all_path0_exists}{$path0}
+	  or
+	defined $$self{all_path0_exists}{$path0."/"}
     }
     method path0_exists ($path0) {
 	defined $$self{path0_exists}{$path0}
@@ -313,9 +315,18 @@ fun get_filesinfo () {
       } @$files};
 
     my $all_path0_exists=
-      +{map {
-	  path0($_)=>1
-      } @$all_files};
+      +{
+	map {
+	    path0($_)=>1
+	}
+	@$all_files,
+	# and their directories, ok? Any directory that has files
+	# from git will be ok as link target, ok?
+	map {
+	    dirname($_)."/"
+	}
+	@$all_files
+       };
 
     my $path0_exists=
       +{map {
