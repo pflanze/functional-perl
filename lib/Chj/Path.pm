@@ -23,20 +23,15 @@ package Chj::Path;
 
 use strict;
 
-use Class::Array -fields=>
-  -publica=>
-  'segments', # array of str not containing slashes
-  'has_endslash', # bool, whether the path is forcibly specifying a
-                  # dir by using a slash at the end (forcing a dir by
-                  # ending in "." isn't setting this flag)
-  'is_absolute', # bool
-  ;
+use FP::Struct
+  [
+   'segments', # array of str not containing slashes
+   'has_endslash', # bool, whether the path is forcibly specifying a
+                   # dir by using a slash at the end (forcing a dir by
+                   # ending in "." isn't setting this flag)
+   'is_absolute', # bool
+  ];
 
-
-sub new {
-    my $cl=shift;
-    bless [@_], $cl
-}
 
 sub new_from_string {
     my $cl=shift;
@@ -49,7 +44,7 @@ sub new_from_string {
 
 sub string_without_endslash {
     my $s=shift;
-    join("/",@{$$s[Segments]})
+    join("/",@{$$s{segments}})
 }
 
 sub string {
@@ -85,82 +80,75 @@ sub string {
 # without knowing the file system, right?)
 sub clean {
     my $s=shift;
-    my $cl= ref $s;
-    bless [
-	   [
-	    grep {
-		not ($_ eq ".")
-	    } @{$$s[Segments]}
-	   ],
+    $s->segments_set
+      ([
+	grep {
+	    not ($_ eq ".")
+	} @{$$s{segments}}
+       ])
+	->has_endslash_set
+	  (
 	   # set forced dir flag if the last segment was a ".", even
 	   # if previously it didn't end in "/"
-	   ($$s[Has_endslash]
-	    or
-	    do {
-		if (defined (my $last= ${$$s[Segments]}[-1])) {
-		    $last eq "."
-		} else {
-		    0
-		}
-	    }),
-	   @$s[2..$#$s]
-	  ], $cl;
+	   $$s{has_endslash}
+	   or
+	   do {
+	       if (defined (my $last= ${$$s{segments}}[-1])) {
+		   $last eq "."
+	       } else {
+		   0
+	       }
+	   });
 }
 
 sub add_segment { # functionally. hm.
     my $s=shift;
     my ($segment)=@_;
     die "segment contains slash: '$segment'" if $segment=~ m{/};
-    my $cl= ref $s;
-    bless [
-	   [
-	    @{$$s[Segments]},
-	    $segment
-	   ],
-	   0, # no forced endslash anymore
-	   @$s[2..$#$s]
-	  ], $cl;
+    $s->segments_set
+      ([
+	@{$$s{segments}},
+	$segment
+       ])
+	# no forced endslash anymore
+	->has_endslash_set(0);
 }
 
 sub dirname { # functional
     my $s=shift;
-    my $seg= $$s[Segments];
+    my $seg= $$s{segments};
     @$seg or die "can't take dirname of empty path";
-    my $cl= ref $s;
-    bless [
-	   [
-	    @{$seg}[0..($#$seg-1)]
-	   ],
-	   0, # no forced endslash anymore
-	   @$s[2..$#$s]
-	  ], $cl;
+    $s->segments_set
+      ([
+	@{$seg}[0..($#$seg-1)]
+       ])
+	# no forced endslash anymore
+	->has_endslash_set(0);
 }
 
 sub to_relative {
     my $s=shift;
     die "is already relative" unless $s->is_absolute;
-    my $seg= $$s[Segments];
-    my $cl= ref $s;
-    bless [
-	   [
-	    # drop first entry
-	    @{$seg}[1..($#$seg)]
-	   ],
-	   scalar $s->has_endslash, # XX hm always? what about the dropping of first entry?
-	   0, # not absolute
-	   @$s[3..$#$s]
-	  ], $cl;
+    my $seg= $$s{segments};
+    $s->segments_set
+      ([
+	# drop first entry
+	@{$seg}[1..($#$seg)]
+       ])
+	# keep has_endslash, # XX hm always? what about the dropping of first entry?
+	# not absolute
+	->is_absolute_set(0);
 }
 
 sub contains_dotdot {
     my $s=shift;
-    for my $segment (@{$$s[Segments]}) {
+    for my $segment (@{$$s{segments}}) {
 	return 1 if $segment eq ".."
     }
     0
 }
 
-end Class::Array;
+_END_;
 
 
 use Chj::TEST;
