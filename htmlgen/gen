@@ -719,7 +719,7 @@ fun copyfiles ($filesinfo) {
     }
     # copy CSS file
     xcopyfile_utf8 (existingpath_or (path02inpath($css_path),
-				     path02inpath("html/$css_path")),
+				     path02inpath("htmlgen/$css_path")),
 		    path02outpath($css_path));
 }
 
