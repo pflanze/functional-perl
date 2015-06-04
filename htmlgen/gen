@@ -3,8 +3,8 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # Method::Signatures versions 20120523 and 20141021 are working badly
-# for this file, (1) each package needs its own import, (2) error
-# locations are completely off. Thus, still use trusty
+# for this file, because (1) each package needs its own import, (2)
+# error locations are completely off. Thus, still use the trusty
 # Function::Parameters.
 
 use Function::Parameters qw(:strict);
