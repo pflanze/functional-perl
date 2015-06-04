@@ -189,7 +189,8 @@ sub _pxml_print_fragment_fast {
 	    # deleted streams, the reason why I changed from using
 	    # undef to null)? But exception won't show a good
 	    # backtrace anyway at this point.
-	    warn "warning: ignoring undef in PXML datastructure";
+	    #warn "warning: ignoring undef in PXML datastructure";
+	    # XXX what to do about this?
 	} else {
 	    #print $fh content_escape($v) or die $!;
 	    $v=~ s/([&<>])/$content_escape{$1}/sg;
