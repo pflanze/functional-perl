@@ -213,12 +213,12 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	    if (length $path) {
 		my $p0= url_add(dirname ($selfpath0), $path);
 		$p0=~ s|^\./||;#hack. grr y
-		$filesinfo->all_path0_exists($p0)
-		  or do {
-		      warn "link target does not exist: '$p0' ('$path' from '$selfpath0', link '$$atts{href}')";
-		      #use Chj::repl;repl;
-		  };
-		$filesinfo->all_path0_used_inc($p0);
+		if ($filesinfo->all_path0_exists($p0)) {
+		    $filesinfo->all_path0_used_inc($p0);
+		} else {
+		    warn "link target does not exist: '$p0' ('$path' from '$selfpath0', link '$$atts{href}')";
+		    #use Chj::repl;repl;
+		}
 	    }
 	}
 	$path= perhaps_suffix_md2html ($path);
