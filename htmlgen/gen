@@ -288,6 +288,10 @@ fun puthtmlfile ($path,$p) {
 	  or
 	defined $$self{all_path0_exists}{$path0."/"}
     }
+    method path0_is_directory ($path0) {
+	$path0=~ s|/+$||s;
+	defined $$self{all_path0_exists}{$path0."/"}
+    }
     method path0_exists ($path0) {
 	defined $$self{path0_exists}{$path0}
     }
@@ -709,6 +713,7 @@ fun create_parent_dirs ($path0, $path02outpath) {
 fun copyfiles ($filesinfo) {
     for my $path0 (keys %{$filesinfo->all_path0_used}) {
 	next if $filesinfo->path0_exists($path0); # md path
+	next if $filesinfo->path0_is_directory($path0);
 	create_parent_dirs ($path0, \&path02outpath);
 	xcopyfile_utf8 (path02inpath($path0), path02outpath($path0));
     }
