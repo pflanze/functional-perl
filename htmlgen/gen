@@ -688,10 +688,28 @@ fun existingpath_or (@paths) {
 }
 
 
+use POSIX qw(EEXIST ENOENT);
+
+fun create_parent_dirs ($path0, $path02outpath) {
+    my $path0= dirname $path0;
+    my $outpath= &$path02outpath ($path0);
+    if (mkdir $outpath) {
+	# ok, return
+    } elsif ($! == EEXIST) {
+	# ok, return
+    } elsif ($! == ENOENT) {
+	create_parent_dirs ($path0, $path02outpath);
+	xmkdir $outpath;
+    } else {
+	die "mkdir '$outpath': $!";
+    }
+}
+
 # copy referenced non-.md files:
 fun copyfiles ($filesinfo) {
     for my $path0 (keys %{$filesinfo->all_path0_used}) {
 	next if $filesinfo->path0_exists($path0); # md path
+	create_parent_dirs ($path0, \&path02outpath);
 	xcopyfile_utf8 (path02inpath($path0), path02outpath($path0));
     }
     # copy CSS file
