@@ -18,7 +18,7 @@ Chj::xIOUtil - exception-throwing I/O utilities
 package Chj::xIOUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8);
+@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
