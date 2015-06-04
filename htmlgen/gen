@@ -58,7 +58,7 @@ use Chj::IO::Command;
 use Chj::xperlfunc ':all';
 use Chj::xopen ":all";
 use Chj::chompspace;
-use Chj::xIOUtil qw(xputfile_utf8 xgetfile_utf8 xcopyfile_utf8);
+use Chj::xIOUtil qw(xputfile_utf8 xgetfile_utf8 xcopyfile);
 
 lock_hash %$cfg;
 
@@ -715,12 +715,12 @@ fun copyfiles ($filesinfo) {
 	next if $filesinfo->path0_exists($path0); # md path
 	next if $filesinfo->path0_is_directory($path0);
 	create_parent_dirs ($path0, \&path02outpath);
-	xcopyfile_utf8 (path02inpath($path0), path02outpath($path0));
+	xcopyfile (path02inpath($path0), path02outpath($path0));
     }
     # copy CSS file
-    xcopyfile_utf8 (existingpath_or (path02inpath($css_path),
-				     path02inpath("htmlgen/$css_path")),
-		    path02outpath($css_path));
+    xcopyfile (existingpath_or (path02inpath($css_path),
+				path02inpath("htmlgen/$css_path")),
+	       path02outpath($css_path));
 }
 
 fun main () {

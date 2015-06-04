@@ -18,7 +18,8 @@ Chj::xIOUtil - exception-throwing I/O utilities
 package Chj::xIOUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object);
+@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
+	      xcopyfile);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -68,6 +69,16 @@ sub xputfile_utf8 ($$) {
 sub xcopyfile_utf8 ($$) {
     my ($src,$dest)=@_;
     xputfile_utf8 ($dest, xgetfile_utf8 ($src));
+}
+
+
+use Chj::xperlfunc 'xxsystem';
+
+sub xcopyfile ($$) {
+    my ($src,$dest)=@_;
+    # yes, giving up here. XX write something else or just use
+    # Filecopy or whatever from CPAN.
+    xxsystem "cp", "-a", "--", $src, $dest
 }
 
 
