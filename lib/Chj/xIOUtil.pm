@@ -27,6 +27,7 @@ use Chj::xopen ":all";
 # ^ well, this voids the point of Chj::xIO (to avoid Chj::IO::*)
 use FP::Lazy;
 use FP::List;
+use Chj::xIO "xprint";
 
 sub xgetfile_utf8 ($) {
     my ($path)=@_;
