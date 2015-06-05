@@ -23,7 +23,7 @@ following reasons:
   retention issues when using this style have only been fixed
   recently, and some more exotic ones are still waiting to be fixed
 
-We welcome anyone interested to play with the code, ask
+We welcome anyone to play with the code, ask
 questions, provide feedback, and perhaps contribute examples, ideas or
 teaching materials.  We are also hoping to work with interested core
 perl developers on fixing the remaining issues in the interpreter.
