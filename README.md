@@ -13,7 +13,7 @@ following reasons:
   been released to CPAN yet for this reason
 
 * some modules may be replaced with other more widely used ones in the
-  interest of keeping with the common base
+  interest of staying with the common base
 
 * tutorials are not complete yet, and less experienced Perl
   programmers will have difficulties writing or debugging code in this
