@@ -109,10 +109,11 @@ possibilities.
 
 ## Installation
 
-For simplicity during development there are no installer files,
-instead the bundled scripts modify the library load path to find the
-files locally. All modules are in `lib/`, `use lib` that path is all
-that's needed. (Just tell if you would like installer support.)
+For simplicity during development, instead of providing installer files,
+the bundled scripts modify the library load path to find the
+files locally. All modules are in the `lib/` directory, `use lib
+$path_to_lib` is all that's needed. (Just tell if you would like
+installer support.)
 
 ## Dependencies
 
