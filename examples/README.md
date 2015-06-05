@@ -1,13 +1,13 @@
 ## Some examples showing the possibilities using `functional-perl`
 
-* `fibs` and `primes` show translations of Haskell programs.
+* [`fibs`](fibs) and [`primes`](primes) show translations of Haskell programs.
 
-* `gen-csv` and `csv2xml` show how to stream number series into and
-  from CSV files and into XML.
+* [`gen-csv`](gen-csv) and [`csv2xml`](csv2xml) show how to stream
+  number series into and from CSV files and into XML.
 
-* `diff2html` hows how to generate (X)HTML.
+* [`diff2html`](diff2html) hows how to generate (X)HTML.
 
-* `skip` shows how to implement a sliding window (look-ahead) as a
+* [`skip`](skip) shows how to implement a sliding window (look-ahead) as a
   pure function (that can be easily tested) and then uses it for IO
 
 Copy `template` to create your own script.

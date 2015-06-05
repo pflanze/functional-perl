@@ -14,6 +14,6 @@
 
 * write sequences API declaration, to code alternative implementations
   against for optimization purposes (runtime coalescence of chained
-  operations (something like ->map($f1)->map($f2)->filter($f3)->fold($f4,$x)
-  = ->map_filter_fold(compose($f1,$f2),$f3,$f4,$x))
+  operations (something like `->map($f1)->map($f2)->filter($f3)->fold($f4,$x)`
+  = `->map_filter_fold(compose($f1,$f2),$f3,$f4,$x)`)
 
