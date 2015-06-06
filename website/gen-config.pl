@@ -3,6 +3,7 @@ use Function::Parameters qw(:strict);
 our $mydir; # 'import' from main
 
 use PXML::XHTML ":all";
+use Clone 'clone';
 
 my $logocfg= require "./logo.pl";
 
@@ -20,7 +21,10 @@ my $logocfg= require "./logo.pl";
   },
   head=> fun ($path0) {
       # HTML above navigation
-      $$logocfg{logo}
+
+      # XX hack: clone it so that serialization doesn't kill parts of
+      # it (by way of `weaken`ing)
+      clone $$logocfg{logo}
   },
   belownav=> fun ($path0) {
       # HTML between navigation and page content
