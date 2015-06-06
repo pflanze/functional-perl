@@ -1,3 +1,8 @@
+(Check the [functional-perl website](http://functional-perl.org/) for
+properly formatted versions of these documents.)
+
+---
+
 ## Functional programming in Perl 5 for Schemers
 
 (Note: although I do use Scheme as a paragon, the principles are

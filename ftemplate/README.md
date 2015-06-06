@@ -1,3 +1,9 @@
+(Check the [functional-perl website](http://functional-perl.org/) for
+properly formatted versions of these documents.)
+
+---
+
+
 PXML intends to be a simple, Perl based representation for XML, or at
 least the subset that's necessary for doing most tasks. Currently it
 doesn't support XML namespaces properly (manually prefixing element

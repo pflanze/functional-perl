@@ -1,3 +1,8 @@
+(Check the [functional-perl website](http://functional-perl.org/) for
+properly formatted versions of these documents.)
+
+---
+
 
 * "function signatures", or rather runtime function argument type
   checks, using type predicate functions:

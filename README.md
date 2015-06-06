@@ -1,3 +1,8 @@
+(Check the [functional-perl website](http://functional-perl.org/) for
+properly formatted versions of these documents.)
+
+---
+
 # Functional programming on Perl 5
 
 This project aims to provide modules as well as tutorials and

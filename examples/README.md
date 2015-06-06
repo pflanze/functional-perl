@@ -1,3 +1,8 @@
+(Check the [functional-perl website](http://functional-perl.org/) for
+properly formatted versions of these documents.)
+
+---
+
 ## Some examples showing the possibilities using `functional-perl`
 
 * [`fibs`](fibs) and [`primes`](primes) show translations of Haskell programs.
