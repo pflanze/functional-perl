@@ -41,7 +41,7 @@ but instead of the system doing it automatically, it has to be
 specified explicitely. Admittedly the syntax for this is ugly; but
 thankfully there's already a module that improves on this:
 `Sub::Call::Tail`; see
-[intro/more_tailcalls](intro/more_tailcalls) for
+[intro/more_tailcalls](../intro/more_tailcalls) for
 examples.
 
 - Leak potential: Scheme implementations are usually written with
