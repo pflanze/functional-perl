@@ -17,3 +17,9 @@
   operations (something like `->map($f1)->map($f2)->filter($f3)->fold($f4,$x)`
   = `->map_filter_fold(compose($f1,$f2),$f3,$f4,$x)`)
 
+* a variant of Scalar::Util's `weaken` that takes a value to be put
+  into the spot that held a reference when it is deleted, so that the
+  user can see something more useful like an object that carries a
+  message "weakened by stream_ref" (perhaps including caller location)
+  or some such instead of undef
+
