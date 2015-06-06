@@ -3,6 +3,7 @@ properly formatted versions of these documents.)
 
 ---
 
+# Functional XML (and HTML, SVG, ..) generation
 
 PXML intends to be a simple, Perl based representation for XML, or at
 least the subset that's necessary for doing most tasks. Currently it

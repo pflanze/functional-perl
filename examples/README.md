@@ -3,7 +3,9 @@ properly formatted versions of these documents.)
 
 ---
 
-## Some examples showing the possibilities using `functional-perl`
+# Examples
+
+Some examples showing the possibilities using [functional-perl](../README.md).
 
 * [`fibs`](fibs) and [`primes`](primes) show translations of Haskell programs.
 
