@@ -134,6 +134,22 @@ sub text {
 }
 
 
+# only for debugging? Doesn't emit XML/XHTML prologues!  Also, ugly
+# monkey-access to PXML::Serialize. Circular dependency, too.
+
+use Chj::xIO (); # 'capture_stdout_';
+use Chj::xopen (); # glob2fh
+
+sub string {
+    my $s=shift;
+    Chj::xIO::capture_stdout {
+	PXML::Serialize::pxml_print_fragment_fast
+	    ($s, Chj::xopen::glob2fh(*STDOUT));
+    }
+}
+
+
+
 # XML does not distinguish between void elements and non-void ones in
 # its syntactical representation; whether an element is printed in
 # self-closing representation is orthogonal and can rely simply on
