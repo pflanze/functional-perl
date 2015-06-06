@@ -23,3 +23,6 @@
   message "weakened by stream_ref" (perhaps including caller location)
   or some such instead of undef
 
+  Or, fix the perl interpreter, after all (lexical variable life time
+  analysis.)
+
