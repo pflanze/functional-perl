@@ -247,7 +247,7 @@ sub pxml_xhtml_print_fast ($ $ ;$ ) {
     xprint $fh, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
     # add attributes to toplevel element
     my $v2= $v->maybe_attributes ? $v :
-	$v->set_attributes
+	$v->attributes_set
 	(do {
 	    my $lang= $maybe_lang
 		or die "missing 'lang' attribute from html element and no lang option given";

@@ -47,23 +47,21 @@ sub maybe_attribute {
     $$s[1] and $$s[1]{$name}
 }
 
-# functional setters
-sub set_attributes {
+# functional setters (following the convention I've started to use of
+# "trailing _set means functional, leading set_ means mutation"))
+
+sub attributes_set {
     my $s=shift;
     @_==1 or die;
     bless [ $$s[0], $_[0], $$s[2] ], ref $s
 }
 
-sub set_body {
+sub body_set {
     my $s=shift;
     @_==1 or die;
     bless [ $$s[0], $$s[1], $_[0] ], ref $s
 }
 
-# or, follow the convention I've started to use of "tailing _set means
-# functional" (versus leading set_ normally meaning mutation):
-*body_set= *set_body;
-*attributes_set= *set_attributes;
 
 # functional updaters
 
