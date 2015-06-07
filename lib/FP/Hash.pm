@@ -33,13 +33,28 @@ Clojure)?)
 
 package FP::Hash;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(hash_set hash_delete hash_diff hashes_keys);
+@EXPORT=qw(hash_set hash_delete hash_diff hashes_keys $empty_hash);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
+
+use Const::Fast;
+const my %empty_hash;
+our $empty_hash= \%empty_hash;
+
+#TEST_EXCEPTION { $$empty_hash{a} }
+#  undef;
+#
+# Aw, that also gives 'Attempt to access disallowed key \'a\' in a
+# restricted hash'.  man Const::Fast says: "You have to use exists
+# $a{baz} instead. This is a limitation of perl that can hopefully be
+# solved in the future."
+
+TEST_EXCEPTION { $$empty_hash{a} = 1 }
+  'Attempt to access disallowed key \'a\' in a restricted hash';
 
 sub hash_set ($$$) {
     my ($h,$k,$v)=@_;
