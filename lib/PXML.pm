@@ -30,9 +30,17 @@ sub new {
 sub name {
     $_[0][0]
 }
+
 sub maybe_attributes {
     $_[0][1]
 }
+
+# prefer maybe_attributes to avoid allocating a useless hash on every
+# call!
+sub attributes {
+    $_[0][1] // {}
+}
+
 sub body {
     # could be undef, too, but then undef is the empty list when
     # interpreted as a FP::List, thus no need for the maybe_
