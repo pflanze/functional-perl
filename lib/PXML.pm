@@ -18,6 +18,7 @@ PXML
 package PXML;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+use FP::Hash qw($empty_hash);
 
 # [ name, attributes, body ]
 
@@ -35,16 +36,19 @@ sub maybe_attributes {
     $_[0][1]
 }
 
-# prefer maybe_attributes to avoid allocating a useless hash on every
-# call!
+# NOTE that $empty_hash gives exceptions for accesses to any field!
+# (With the current implementation of locked / const hashes in perl.)
+# `exists` works as expected though. But then, PXML (as all of FP) may
+# move to restricted hashes and arrays everywhere anyway, so this
+# should be consistent then.
 sub attributes {
-    $_[0][1] // {}
+    $_[0][1] // $empty_hash
 }
 
 sub body {
     # could be undef, too, but then undef is the empty list when
     # interpreted as a FP::List, thus no need for the maybe_
-    # prefix.
+    # prefix. -- XXX that's not true anymore, null is not undef anymore.
     $_[0][2]
 }
 
