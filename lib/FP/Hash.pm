@@ -41,8 +41,15 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 
-use Const::Fast;
-const my %empty_hash;
+#use Const::Fast;
+#const my %empty_hash;
+
+# since Const::Fast doesn't (currently) buy anything more than
+# Hash::Util's lock_hash, use the latter for less dependencies.
+use Hash::Util 'lock_hash';
+my %empty_hash;
+lock_hash %empty_hash;
+
 our $empty_hash= \%empty_hash;
 
 #TEST_EXCEPTION { $$empty_hash{a} }
