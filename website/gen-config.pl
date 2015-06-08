@@ -36,7 +36,7 @@ my $my_css_path= "FP.css";
 
       # XX hack: clone it so that serialization doesn't kill parts of
       # it (by way of `weaken`ing)
-      clone $$logocfg{logo}
+      clone $logocfg->($path0)->{logo}
   },
   belownav=> fun ($path0) {
       # HTML between navigation and page content
