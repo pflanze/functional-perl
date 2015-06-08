@@ -46,9 +46,9 @@ GetOptions("verbose"=> \$verbose,
 	   ) or exit 1;
 usage unless @ARGV==3 or ($opt_repl and @ARGV>=1);
 
-our ($cfgpath, $inbase, $outbase)= @ARGV;
+our ($configpath, $inbase, $outbase)= @ARGV;
 
-our $cfg= require $cfgpath;
+our $config= require $configpath;
 
 mkdir $outbase;
 
@@ -60,7 +60,7 @@ use Chj::xopen ":all";
 use Chj::chompspace;
 use Chj::xIOUtil qw(xputfile_utf8 xgetfile_utf8 xcopyfile);
 
-lock_hash %$cfg;
+lock_hash %$config;
 
 # operating on markdown source string
 # XX should this replace the document name with the document title?
@@ -115,11 +115,11 @@ fun path_path0_append ($dir,$relpath0) {
 }
 
 fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
-    if (!$for_title and $$cfg{indexpath0P}->($path0)) {
+    if (!$for_title and $$config{indexpath0P}->($path0)) {
 	@_=(path_path0_append (dirname($path0), "index.xhtml")); goto $then;
     } else {
 	if ($path0=~ s/(.*?)([^\/]*)\.md$/$1$2.xhtml/) {
-	    @_=($$cfg{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml" : $path0);
+	    @_=($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml" : $path0);
 	    goto $then;
 	} else {
 	    @_=($path0); goto $otherwise
@@ -362,7 +362,7 @@ our $path02sortkey= do {
 	      my $file= $_;
 	      $file.= ".md" unless /\.\w{1,7}\z/;
 	      $file=> sprintf('-%04d', $i++)
-	  } @{$cfg->{sortorder} || []}
+	  } @{$config->{sortorder} || []}
 	 }
     };
     fun ($path0) {
@@ -528,12 +528,12 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     my $str= xgetfile_utf8 "$inbase/$path";
 
-    if ($$cfg{warn_hint}) {
+    if ($$config{warn_hint}) {
 	$str=~ s/^\(Check the.*?website.*?---\s+//s
 	  or $path=~/COPYING|bugs\// or warn "'$path' is missing hint";
     }
 
-    if (my $hdl= $cfg->{path0_handlers}->{$path0}) {
+    if (my $hdl= $config->{path0_handlers}->{$path0}) {
 	$str= $hdl->($path,$path0,$str);
     }
 
@@ -635,14 +635,14 @@ fun genfile ($path,$groupname,$genfilestate) {
     puthtmlfile($outpath,
 		HTML (
 		      HEAD (
-			    TITLE ($cfg->{title}->($filetitle)),
+			    TITLE ($config->{title}->($filetitle)),
 			    LINK ({rel=> "stylesheet",
 				   href=> url_diff ($path0, $css_path),
 				   type=> "text/css"}),
-			    $cfg->{head}->($path0),
+			    $config->{head}->($path0),
 			   ),
 		      BODY(
-			   $cfg->{header}->($path0),
+			   $config->{header}->($path0),
 			   UL({class=> "menu"},
 			      array_map_with_islast
 			      (
@@ -663,7 +663,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 			       array_sort
 			       (array_map( \&path0, $genfilestate->nonbugfiles),
 				on $path02sortkey, \&string_cmp))),
-			   $cfg->{belownav}->($path0),
+			   $config->{belownav}->($path0),
 			   $h1,
 			   $body1,
 			   $maybe_buglist,
