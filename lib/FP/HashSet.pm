@@ -22,6 +22,9 @@ FP::HashSet - set operations for hash tables
  hashset_size($A) # -> 3
  hashset_empty($A) # -> false
  hashset_empty(+{}) # -> true
+ hashset_keys_unsorted($A) # ("a","b","c") or in another sort order;
+                           # *keys* not values, hence always strings.
+ hashset_keys ($A) # always ("a","b","c") (sorted)
 
  # a la diff tool:
  hashset_diff($A,$B) # -> {b=>"-",d=>"+"}
@@ -43,6 +46,8 @@ package FP::HashSet;
 @EXPORT=qw(array2hashset
 	   array2lchashset
 	   hashset2array
+	   hashset_keys
+	   hashset_keys_unsorted
 	   hashset_union
 	   hashset_union_defined
 	   hashset_intersection
@@ -79,6 +84,14 @@ sub hashset2array ($) {
     [
      sort values %{$_[0]}
     ]
+}
+
+sub hashset_keys_unsorted ($) {
+    keys %{$_[0]}
+}
+
+sub hashset_keys ($) {
+    sort keys %{$_[0]}
 }
 
 sub hashset_add_hashset_d ($ $) {
