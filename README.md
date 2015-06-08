@@ -28,6 +28,10 @@ following reasons:
   retention issues when using this style have only been fixed
   recently, and some more exotic ones are still waiting to be fixed
 
+* perhaps an improvement in the perl interpreter (lexical variable
+  lifetime analysis) could be implemented to make part of the
+  complications unnecessary
+
 We welcome anyone to play with the code, ask
 questions, provide feedback, and perhaps contribute examples, ideas or
 teaching materials.  We are also hoping to work with interested core
