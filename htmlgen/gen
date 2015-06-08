@@ -20,7 +20,7 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 
-our $css_path= "my.css";
+our $css_path= "htmlgen.css";
 
 sub usage {
     print "$myname config inbase outbase
