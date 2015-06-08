@@ -28,7 +28,7 @@ my $logocfg= require "./logo.pl";
   },
   belownav=> fun ($path0) {
       # HTML between navigation and page content
-      undef
+      ()
   },
   sortorder=>
   [qw(
