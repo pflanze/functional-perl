@@ -8,6 +8,9 @@ use Clone 'clone';
 my $logocfg= require "./logo.pl";
 
 +{
+  copy_paths=>
+  [
+  ],
   indexpath0P=> fun ($path0) {
       # only handle the toplevel README.md file as index file for its
       # dir:
