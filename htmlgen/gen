@@ -641,7 +641,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 				   type=> "text/css"}),
 			   ),
 		      BODY(
-			   $cfg->{head}->($path0),
+			   $cfg->{header}->($path0),
 			   UL({class=> "menu"},
 			      array_map_with_islast
 			      (

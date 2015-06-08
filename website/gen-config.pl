@@ -19,7 +19,7 @@ my $logocfg= require "./logo.pl";
   title=> fun ($filetitle) {
       ($filetitle, " - functional-perl.org")
   },
-  head=> fun ($path0) {
+  header=> fun ($path0) {
       # HTML above navigation
 
       # XX hack: clone it so that serialization doesn't kill parts of
