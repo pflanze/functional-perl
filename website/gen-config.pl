@@ -6,10 +6,13 @@ use PXML::XHTML ":all";
 use Clone 'clone';
 
 my $logocfg= require "./logo.pl";
+my $my_css_path= "FP.css";
 
 +{
   copy_paths=>
   [
+   "FP-logo.png",
+   "FP.css",
   ],
   indexpath0P=> fun ($path0) {
       # only handle the toplevel README.md file as index file for its
@@ -24,7 +27,9 @@ my $logocfg= require "./logo.pl";
   },
   head=> fun ($path0) {
       # HTML to add to the <head> section
-      ()
+      LINK ({rel=> "stylesheet",
+	     href=> url_diff ($path0, $my_css_path),
+	     type=> "text/css"})
   },
   header=> fun ($path0) {
       # HTML above navigation
