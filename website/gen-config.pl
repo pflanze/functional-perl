@@ -19,6 +19,10 @@ my $logocfg= require "./logo.pl";
   title=> fun ($filetitle) {
       ($filetitle, " - functional-perl.org")
   },
+  head=> fun ($path0) {
+      # HTML to add to the <head> section
+      ()
+  },
   header=> fun ($path0) {
       # HTML above navigation
 

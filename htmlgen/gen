@@ -639,6 +639,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 			    LINK ({rel=> "stylesheet",
 				   href=> url_diff ($path0, $css_path),
 				   type=> "text/css"}),
+			    $cfg->{head}->($path0),
 			   ),
 		      BODY(
 			   $cfg->{header}->($path0),
