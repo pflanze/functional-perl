@@ -29,7 +29,10 @@ Using 'tag functions' for shorter code:
     use PXML::XHTML;
     my $element= A({href=> "http://myserver.com"}, "my server");
 
-See '[test](test)' and '[testlazy](testlazy)' for complete examples.
+See [`test`](test) and [`testlazy`](testlazy) for complete examples,
+and [`examples/csv2xml`](../examples/csv2xml) for a simple real
+example, and [`htmlgen/gen`](../htmlgen/gen) for a somewhat real-world
+program.
 
 
 When generating HTML, CGI.pm's tag functions seem similar, what are
