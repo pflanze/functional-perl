@@ -34,3 +34,6 @@ properly formatted versions of these documents.)
 * Byte code optimizer that automatically turns function calls in tail
   position into gotos, if some 'TCO' pragma is in effect
 
+* Provide a 'recursive let' form that includes weakening or
+  application of the fix point combinator
+
