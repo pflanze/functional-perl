@@ -147,8 +147,8 @@ fun t_if_suffix_md2html ($in,$for_title=0) {
 TEST{t_if_suffix_md2html "README.md"}['then','index.xhtml'];
 TEST{t_if_suffix_md2html "README.md",1}['then','readme.xhtml']; # kinda stupid hack.
 TEST{t_if_suffix_md2html "Foo/index.md"}['then','Foo/index.xhtml'];
-TEST{t_if_suffix_md2html "Foo/README.md"}['then','Foo/readme.xhtml'];
-TEST{t_if_suffix_md2html "Foo/READMe.md"}['then','Foo/READMe.xhtml'];
+TEST{t_if_suffix_md2html "Foo/README.md"}['then','Foo/index.xhtml'];
+TEST{t_if_suffix_md2html "Foo/READMe.md"}['then','Foo/index.xhtml']; # XX really?
 TEST{t_if_suffix_md2html "Foo/MY.css"}['otherwise','Foo/MY.css'];
 
 
@@ -399,15 +399,14 @@ fun path02title ($path0) {
 }
 
 TEST{path02title "README.md"} 'Readme';
-TEST{path02title "bugs/wishlist/listserv/index.md"} 'Index';
-# ^ the config used by the test suite does not give true for index.md
-# files.
-TEST{path02title "bugs/wishlist/listserv/README.md"} 'Readme';
+TEST{path02title "bugs/wishlist/listserv/index.md"} 'Listserv';
+TEST{path02title "bugs/wishlist/listserv/README.md"} 'Listserv';
+TEST{path02title "bugs/wishlist/listserv/other.md"} 'Other';
 TEST{
-    local $config= $default_config;
+    local $config= +{indexpath0P=> fun ($v) { $v eq "README.md"}};
     path02title "bugs/wishlist/listserv/README.md"
 }
-  'Listserv';
+  'Readme';
 TEST{path02title "bugs/wishlist/line_wrapping_in_pre-MIME_mails.md"} # even with lcfirst
   'Line wrapping in pre-MIME mails';
 
