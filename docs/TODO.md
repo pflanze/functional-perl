@@ -10,18 +10,7 @@ properly formatted versions of these documents.)
 
 - more tests:
 
-  - +-systematic stream leak testing
-
-- [additionally add old-style FP modules from chj-perllib?]
-
-- xopen_read etc. are throwing exceptions; there are no non-throwing
-  variants currently. What interface is preferred for handling errors:
-  maybe_ variants that return undef (then assume the error is in $! ?),
-  give exceptions types so as to catch them selectively, something
-  else?
-
-- decide whether to offer methods to shorten names like stream_*
-  (I'm inclined against it)
+  - more systematic stream leak testing
 
 - replace FP::Lazy with Data::Thunk? This would be cool from a
   transparency stand point, except that separate code by way of
@@ -35,11 +24,17 @@ properly formatted versions of these documents.)
 
   Also, what about Params::Lazy?
 
+- xopen_read etc. are throwing exceptions; there are no non-throwing
+  variants currently. What interface is preferred for handling errors:
+  maybe_ variants that return undef (then assume the error is in $! ?),
+  give exceptions types so as to catch them selectively, something
+  else? (but, see next Chj::IO comment)
+
 - replace Chj::IO::* with something else?
 
 - work on getting perl issues fixed, see failing tests `t/perl-*`
 
-- messages "expecting 2 arguments" are unclear and inconsistently
+- messages like "expecting 2 arguments" are unclear and inconsistently
   used for functions reused as methods. How should it be? `flip`
   should work, for example, so do we have to live with methods
   including $self in their argument count?
@@ -56,6 +51,8 @@ properly formatted versions of these documents.)
 
   Reimplement it on top of `Devel::CallChecker` or
   `Devel::CallParser`?
+
+  (Would it be obsolete if automatic TCO is implemented?)
 
 - rename PXML to FXML?
 
