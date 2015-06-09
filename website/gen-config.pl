@@ -40,6 +40,7 @@ my $my_css_path= "FP.css";
   sortorder=>
   [qw(
 README.md
+docs/howto.md
 docs/howto_and_comparison_to_Scheme.md
 docs/ideas.md
 examples/README.md
