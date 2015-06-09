@@ -28,9 +28,10 @@ following reasons:
   retention issues when using this style have only been fixed
   recently, and some more exotic ones are still waiting to be fixed
 
-* perhaps an improvement in the perl interpreter (lexical variable
-  lifetime analysis) could be implemented to make part of the
-  complications unnecessary
+* some of the complications when writing functional code (as described
+  in the docs of this project) might be solvable through modules or
+  core interpreter changes. That would make some code easier to write
+  and look at. (See [[ideas]].)
 
 We welcome anyone to play with the code, ask
 questions, provide feedback, and perhaps contribute examples, ideas or
