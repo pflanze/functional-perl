@@ -20,7 +20,9 @@ properly formatted versions of these documents.)
 * write sequences API declaration, to code alternative implementations
   against for optimization purposes (runtime coalescence of chained
   operations (something like `->map($f1)->map($f2)->filter($f3)->fold($f4,$x)`
-  = `->map_filter_fold(compose($f1,$f2),$f3,$f4,$x)`)
+  = `->map_filter_fold(compose($f1,$f2),$f3,$f4,$x)`) (or would
+  deforestation be feasible? Or just compile time optimization of the
+  same as above?)
 
 * a variant of Scalar::Util's `weaken` that takes a value to be put
   into the spot that held a reference when it is deleted, so that the
