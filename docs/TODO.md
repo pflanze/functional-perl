@@ -56,3 +56,7 @@ properly formatted versions of these documents.)
 
 - rename PXML to FXML?
 
+- rename FP::ArrayUtil to FP::Array; also, possibly generally bless
+  result arrays to enable OO? (without requiring the ... module which
+  is lexically scoped only anyway)
+
