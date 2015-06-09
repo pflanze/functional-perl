@@ -42,9 +42,11 @@ my $my_css_path= "FP.css";
 README.md
 docs/howto.md
 docs/howto_and_comparison_to_Scheme.md
-docs/ideas.md
 examples/README.md
 functional_XML/README.md
+htmlgen/README.md
+docs/ideas.md
+docs/TODO.md
     )],
 
   warn_hint=> 1, # warn if the website hint (header) is missing in a
