@@ -8,6 +8,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # Function::Parameters.
 
 use Function::Parameters qw(:strict);
+use Sub::Call::Tail;
 use Chj::Backtrace;
 
 # find modules from functional-perl working directory (not installed)
@@ -129,13 +130,13 @@ fun path_path0_append ($dir,$relpath0) {
 
 fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
     if (!$for_title and $$config{indexpath0P}->($path0)) {
-	@_=(path_path0_append (dirname($path0), "index.xhtml")); goto $then;
+	tail &$then (path_path0_append (dirname($path0), "index.xhtml"))
     } else {
 	if ($path0=~ s/(.*?)([^\/]*)\.md$/$1$2.xhtml/) {
-	    @_=($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml" : $path0);
-	    goto $then;
+	    tail &$then
+	      ($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml" : $path0);
 	} else {
-	    @_=($path0); goto $otherwise
+	    tail &$otherwise($path0)
 	}
     }
 }
