@@ -22,7 +22,7 @@ following reasons:
 
 * tutorials are not complete yet, and less experienced Perl
   programmers will have difficulties writing or debugging code in this
-  style on Perl without proper introduction
+  style on Perl without proper introduction (although, getting there)
 
 * some problems in the perl interpreter leading to memory leaks or
   retention issues when using this style have only been fixed
@@ -32,6 +32,9 @@ following reasons:
   in the docs of this project) might be solvable through modules or
   core interpreter changes. That would make some code easier to write
   and look at. (See [[ideas]].)
+
+  That may also change where explicit indication about memory
+  retention are still expected. (Possibly backward incompatible.)
 
 We welcome anyone to play with the code, ask
 questions, provide feedback, and perhaps contribute examples, ideas or
