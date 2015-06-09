@@ -29,5 +29,8 @@ properly formatted versions of these documents.)
   or some such instead of undef
 
   Or, fix the perl interpreter, after all (lexical variable life time
-  analysis.)
+  analysis.) Could this be done as a module working on the byte code?
+
+* Byte code optimizer that automatically turns function calls in tail
+  position into gotos, if some 'TCO' pragma is in effect
 
