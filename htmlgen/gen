@@ -141,16 +141,15 @@ fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
 }
 
 use Chj::TEST ":all";
-fun TEST_if_suffix_md2html ($in,$thenotherwise,$out,$for_title=0) {
-    TEST{if_suffix_md2html $in, $for_title, sub {["then",@_]}, sub{["otherwise",@_]}}
-      [$thenotherwise,$out];
+fun t_if_suffix_md2html ($in,$for_title=0) {
+    if_suffix_md2html $in, $for_title, sub {["then",@_]}, sub{["otherwise",@_]}
 }
-TEST_if_suffix_md2html "README.md",'then','index.xhtml';
-TEST_if_suffix_md2html "README.md",'then','readme.xhtml',1; # kinda stupid hack.
-TEST_if_suffix_md2html "Foo/index.md",'then','Foo/index.xhtml';
-TEST_if_suffix_md2html "Foo/README.md",'then','Foo/readme.xhtml';
-TEST_if_suffix_md2html "Foo/READMe.md",'then','Foo/READMe.xhtml';
-TEST_if_suffix_md2html "Foo/MY.css",'otherwise','Foo/MY.css';
+TEST{t_if_suffix_md2html "README.md"}['then','index.xhtml'];
+TEST{t_if_suffix_md2html "README.md",1}['then','readme.xhtml']; # kinda stupid hack.
+TEST{t_if_suffix_md2html "Foo/index.md"}['then','Foo/index.xhtml'];
+TEST{t_if_suffix_md2html "Foo/README.md"}['then','Foo/readme.xhtml'];
+TEST{t_if_suffix_md2html "Foo/READMe.md"}['then','Foo/READMe.xhtml'];
+TEST{t_if_suffix_md2html "Foo/MY.css"}['otherwise','Foo/MY.css'];
 
 
 fun perhaps_suffix_md2html ($path,$for_title=0) {
