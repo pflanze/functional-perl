@@ -56,7 +56,7 @@ Please send [me](http://leafpair.com/contact) your suggestions!
   [PXML::Tags](lib/PXML/Tags.pm),
   [PXML::Serialize](lib/PXML/Serialize.pm):
   "templating system" for XML based markup languages by way of Perl
-  functions. Docs and tests are in [ftemplate/](ftemplate/).
+  functions. Docs and tests are in [functional_XML/](functional_XML/).
 
 * some developer utilities: [Chj::repl](lib/Chj/repl.pm),
   [Chj::ruse](lib/Chj/ruse.pm), [Chj::Backtrace](lib/Chj/Backtrace.pm)

@@ -13,6 +13,6 @@ our $sigpipe_is_fine= sub {
     $? == SIGPIPE ? $buf : &$default_on_error();
 };
 
-is readin ("ftemplate/testlazy|", $sigpipe_is_fine), readin ("< t/testlazy.expected");
+is readin ("functional_XML/testlazy|", $sigpipe_is_fine), readin ("< t/testlazy.expected");
 
 done_testing;

@@ -9,6 +9,6 @@ use Test::More;
 
 $ENV{N}= 10;
 $ENV{T}= 0;
-is readin ("ftemplate/testlazy|"), readin ("< t/testlazy10.expected");
+is readin ("functional_XML/testlazy|"), readin ("< t/testlazy10.expected");
 
 done_testing;

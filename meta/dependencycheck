@@ -51,7 +51,7 @@ our $executables=
       not ($v=~ m{^t(?:/|est)}
 	   or $v=~ m{^meta/}
 	   or $v=~ m{/t/}
-	   or $v=~ m{ftemplate/testlazy} #runs endlessly ah yes of course.
+	   or $v=~ m{functional_XML/testlazy} #runs endlessly ah yes of course.
 	  )
   },
   array_filter sub { -x $_[0] },

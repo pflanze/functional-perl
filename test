@@ -13,8 +13,8 @@ our @t=
 	require_and_run_tests
 	testlazy
 	testlazy10
-	ftemplate-test
-	ftemplate-test-pxml-text
+	functional_XML-test
+	functional_XML-test-pxml-text
 	csv2xml
 	htmlgen
 	intro-basics

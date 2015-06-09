@@ -7,9 +7,9 @@ require "./test.pl";
 
 use Test::More;
 
-system ("ftemplate/test 10001000") == 0
+system ("functional_XML/test 10001000") == 0
   or die;
 
-is readin ("< out.xhtml"), readin ("< t/ftemplate-test.expected");
+is readin ("< out.xhtml"), readin ("< t/functional_XML-test.expected");
 
 done_testing;
