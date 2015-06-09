@@ -10,7 +10,9 @@ properly formatted versions of these documents.)
   (Or should Function::Parameters be used instead?)
 
 * reimplement parts in C (Pair, perhaps Promise?) to save some space
-  and cpu
+  and CPU (but then, that prevents serialization [unless more work is
+  done]; also, to really optimize, want a custom/fake SV type that
+  includes the pair fields directly?)
 
 * read-only enforcing versions of the functional data structures (or,
   read-only by default, then togglable [or just offering unsafe
