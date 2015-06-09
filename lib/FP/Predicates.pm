@@ -32,6 +32,8 @@ package FP::Predicates;
 	      is_class_name
 	      is_instance_of
 
+	      is_filehandle
+
 	      is_filename
 
 	      maybe
@@ -45,7 +47,9 @@ package FP::Predicates;
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+use Scalar::Util 'reftype';
 use Chj::TEST;
+
 
 sub is_string ($) {
     not ref ($_[0]) # relax?
@@ -125,6 +129,38 @@ sub is_instance_of ($) {
 	UNIVERSAL::isa ($_[0], $cl);
     }
 }
+
+
+sub is_filehandle ($) {
+    my ($v)=@_;
+    # NOTE: never returns true for strings, even though plain strings
+    # naming globals containing filehandles in their IO slot will work
+    # for IO, too! Let's just leave that depreciated and
+    # 'non-working', ok?
+
+    # NOTE 2: also this only returns true for *references* to globs,
+    # not globs themselves (which could also be used as in
+    # `(*STDOUT)->print( "Huh\n")`). Let's just leave bare globs as
+    # buckets for any of the variable types perl has, and not assume
+    # it's meant to be a filehandle, ok? (Or is that inconsistent with
+    # treating `\*STDOUT` as filehandle? But there's no way around
+    # this one, as that's what `open my $out, ..` gives, and we do
+    # check that the IO slot is actually set in this case.)
+
+    my $r= ref ($v);
+    $r and
+      $r eq "GLOB" ? (*{$v}{IO} ? 1 : '') # explicitely return ''
+                                          # instead of undef
+	: (reftype($v) eq "IO");
+}
+
+TEST {[ map { is_filehandle $_ }
+	"STDOUT", undef,
+	*STDOUT, *STDOUT{IO}, \*STDOUT,
+	*SMK69GXDB, *SMK69GXDB{IO}, \*SMK69GXDB ]}
+  ['', '',
+   '', 1, 1,
+   '', '', ''];
 
 
 # should probably be in a filesystem lib instead?
