@@ -137,19 +137,10 @@ TEST { fibonacci 30 }
 # we're not using a bignum library, thus we're restricted by Perl's
 # floating point range and precision.
 
-sub timeit (&$) {
-    my ($thunk,$msg)=@_;
-    my $a= [times];
-    my $res= &$thunk;
-    my $b= [times];
-    my $m= [qw(user system cuser csystem)];
-    my $d= [map { $$m[$_]."=".($$b[$_] - $$a[$_]) } 0..$#$a ];
-    warn "times for $msg: ".join(", ",@$d)."\n";
-    $res
-}
+use Chj::time_this;
 
-my $a= lazy{timeit{ fib (1400) } "fib"};
-my $b= lazy{timeit{ fibonacci (1400) } "fibonacci"};
+my $a= lazy{time_this{ fib (1400) } "fib"};
+my $b= lazy{time_this{ fibonacci (1400) } "fibonacci"};
 
 TEST {
     # Hack: stringify to drop invisible but different digits
