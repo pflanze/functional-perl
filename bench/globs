@@ -1,0 +1,50 @@
+#!/usr/bin/env perl
+
+
+# This file checks whether passing global functions as *foo instead of
+# \&foo incurs (much) overhead.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+# Find modules from the functional-perl working directory (not
+# installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+# for development/debugging
+#use Chj::ruse; # get the 'ruse' procedure which will reload modules;
+                # since we're putting the meat of the program into the
+                # main file, this won't help us here.
+use Chj::Backtrace; # show backtraces when an error happens
+use Chj::repl; # get the 'repl' procedure.
+use Chj::TEST;
+
+# ------------------------------------------------------------------
+use Chj::time_this;
+use FP::Div "inc";
+
+our $n= 1500000;
+
+sub t {
+    my ($f)=@_;
+    my $z=0;
+    for (1..$n) {
+	$z= &$f ($z)
+    }
+    $z
+}
+
+sub tim {
+    time_this { t *inc } " *";
+    time_this { t \&inc } "\\&";
+}
+
+tim for 1..3;
+
+#perhaps_run_tests "main" or repl;
