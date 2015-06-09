@@ -1,3 +1,8 @@
+(Check the [functional-perl website](http://functional-perl.org/) for
+properly formatted versions of these documents.)
+
+---
+
 - clean up licensing (some files currently are MIT license even though
   COPYING claims Perl licensing)
 
@@ -7,7 +12,7 @@
 
   - +-systematic stream leak testing
 
-[- additionally add old-style FP modules from chj-perllib?]
+- [additionally add old-style FP modules from chj-perllib?]
 
 - xopen_read etc. are throwing exceptions; there are no non-throwing
   variants currently. What interface is preferred for handling errors:
