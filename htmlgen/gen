@@ -402,8 +402,9 @@ TEST{path02title "README.md"} 'Readme';
 TEST{path02title "bugs/wishlist/listserv/index.md"} 'Listserv';
 TEST{path02title "bugs/wishlist/listserv/README.md"} 'Listserv';
 TEST{path02title "bugs/wishlist/listserv/other.md"} 'Other';
+use FP::Predicates 'false';
 TEST{
-    local $config= +{indexpath0P=> fun ($v) { $v eq "README.md"}};
+    local $config= +{indexpath0P=> *false};
     path02title "bugs/wishlist/listserv/README.md"
 }
   'Readme';
