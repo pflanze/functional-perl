@@ -153,18 +153,17 @@ my $b= lazy{timeit{ fibonacci (1400) } "fibonacci"};
 
 TEST {
     # Hack: stringify to drop invisible but different digits
-    force($a).""
+    FORCE($a).""
 }
   "2.7682097123729e+292";
 
 TEST {
     # same hack
-    force($a)."" == force($b).""
+    $a."" == FORCE($b).""
 }
   1;
 
 TEST {
-    my ($a,$b)= (force($a), force($b));
     # same as above but more properly:
     abs(($a - $b) / $b) < 1e-14
 }
