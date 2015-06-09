@@ -48,7 +48,7 @@ usage unless @ARGV==3 or ($opt_repl and @ARGV>=1);
 
 our ($configpath, $inbase, $outbase)= @ARGV;
 
-our $config= require $configpath;
+our $user_config= require $configpath;
 
 mkdir $outbase;
 
@@ -60,6 +60,18 @@ use Chj::xopen ":all";
 use Chj::chompspace;
 use Chj::xIOUtil qw(xputfile_utf8 xgetfile_utf8 xcopyfile);
 use FP::HashSet ":all";
+
+
+our $default_config=
+  +{
+    indexpath0P => fun ($path0) {
+	my $bn= lc basename($path0);
+	$bn eq "index.md" or $bn eq "readme.md"
+    },
+   };
+
+
+our $config = hashset_union ($user_config, $default_config);
 
 lock_hash %$config;
 
@@ -387,18 +399,13 @@ fun path02title ($path0) {
     }
 }
 
-fun default_indexpath0P ($path0) {
-    my $bn= lc basename($path0);
-    $bn eq "index.md" or $bn eq "readme.md"
-}
-
 TEST{path02title "README.md"} 'Readme';
 TEST{path02title "bugs/wishlist/listserv/index.md"} 'Index';
 # ^ the config used by the test suite does not give true for index.md
 # files.
 TEST{path02title "bugs/wishlist/listserv/README.md"} 'Readme';
 TEST{
-    local $config= +{indexpath0P=> *default_indexpath0P};
+    local $config= $default_config;
     path02title "bugs/wishlist/listserv/README.md"
 }
   'Listserv';
