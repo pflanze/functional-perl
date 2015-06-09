@@ -110,6 +110,7 @@ sub FORCE {
     for (@_) {
 	$_ = force $_
     }
+    wantarray ? @_ : $_[-1]
 }
 
 {
