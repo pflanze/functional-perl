@@ -14,9 +14,14 @@ FP::Predicates
 
  *is_age= both *is_natural0, sub { $_[0] < 130 };
  # ^ wrap in BEGIN {  } to employ namespace cleaning;
- # or assign to a scalar instead (my $is_age), of course.
+ # or assign to a scalar instead (my $is_age), of course;
+ # or use an inline expression (second line below)
 
  use FP::Struct [[*is_string, "name"], [*is_age, "age"]];
+
+ # use FP::Struct [[*is_string, "name"],
+ #                 [both (*is_natural0, less_than 130), "age"]];
+
  _END_
 
 =head1 DESCRIPTION
@@ -61,6 +66,11 @@ package FP::Predicates;
 	      is_filehandle
 
 	      is_filename
+
+	      less_than
+	      greater_than
+	      less_equal
+	      greater_equal
 
 	      maybe
 	      true
@@ -111,6 +121,42 @@ TEST { [map { is_odd $_ } -3..3] }
 TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
   # XX what should it give?
   ['','',1,1,1];
+
+
+# no `is_` prefix as those are not the final predicates (they are not
+# combinators either, as they take a number; well, they are curried
+# forms of < and > etc.)
+
+# names? (number versus string comparison) (wish Perl hat generics
+# for those instead..)
+
+sub less_than ($) {
+    my ($x)=@_;
+    sub ($) {
+	$_[0] < $x
+    }
+}
+
+sub greater_than ($) {
+    my ($x)=@_;
+    sub ($) {
+	$_[0] > $x
+    }
+}
+
+sub less_equal ($) {
+    my ($x)=@_;
+    sub ($) {
+	$_[0] <= $x
+    }
+}
+
+sub greater_equal ($) {
+    my ($x)=@_;
+    sub ($) {
+	$_[0] >= $x
+    }
+}
 
 
 # strictly 0 or 1
