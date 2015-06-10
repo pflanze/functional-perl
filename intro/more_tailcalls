@@ -153,6 +153,30 @@ TEST { trampoline tramp_even 60000 }
   1;
 
 
+# or
+
+func tramp2_odd ($n) {
+    if ($n == 0) {
+	0
+    } else {
+	TC *tramp2_even, $n - 1
+    }
+}
+
+func tramp2_even ($n) {
+    if ($n == 0) {
+	1
+    } else {
+	TC *tramp2_odd, $n - 1
+    }
+}
+
+TEST { trampoline tramp2_even 60000 }
+  1;
+
+
+
+
 # ------------------------------------------------------------------
 # Also note: all of the above example are defining functions as
 # package globals, which makes it trivial to call themselves
