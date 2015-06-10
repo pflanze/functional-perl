@@ -109,7 +109,7 @@ TEST { [map { is_even $_ } -3..3] }
 TEST { [map { is_odd $_ } -3..3] }
   [1,0,1,0,1,0,1];
 TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
-  # XXX what should it give?
+  # XX what should it give?
   ['','',1,1,1];
 
 
