@@ -30,6 +30,7 @@ usage if @ARGV;
 use FP::List ":all";
 use FP::ArrayUtil ":all";
 use FP::Array_sort ":all";
+use Chj::TEST;
 
 # for development/debugging
 use Chj::ruse;
