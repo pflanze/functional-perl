@@ -131,7 +131,7 @@ func opt_even ($n) {
 # ------------------------------------------------------------------
 # Note: there's also trampolining as a potential solution:
 
-use FP::trampoline;
+use FP::Trampoline;
 
 func tramp_odd ($n) {
     if ($n == 0) {
