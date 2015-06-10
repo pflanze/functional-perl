@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-PXML
+PXML - base class for PXML objects
 
 =head1 SYNOPSIS
 
