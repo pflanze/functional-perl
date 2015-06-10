@@ -132,6 +132,7 @@ func opt_even ($n) {
 # Note: there's also trampolining as a potential solution:
 
 use FP::Trampoline;
+use Chj::time_this;
 
 func tramp_odd ($n) {
     if ($n == 0) {
@@ -149,7 +150,7 @@ func tramp_even ($n) {
     }
 }
 
-TEST { trampoline tramp_even 60000 }
+TEST { time_this { trampoline tramp_even 60000 } "T" }
   1;
 
 
@@ -171,7 +172,7 @@ func tramp2_even ($n) {
     }
 }
 
-TEST { trampoline tramp2_even 60000 }
+TEST { time_this { trampoline tramp2_even 60000 } "TC" }
   1;
 
 

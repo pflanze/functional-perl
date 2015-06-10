@@ -46,7 +46,7 @@ Returns a `FP::Trampoline::Call` object, which represents the same
 thing, but can only be used for a call ('Trampoline Call'). The
 advantage is that the arguments for the call are evaluated eagerly,
 which makes it work for dynamic variables, too (like `$_` or
-local'ized globals).
+local'ized globals). It may also be a bit faster.
 
 =item trampoline ($value)
 
