@@ -9,6 +9,16 @@ FP::Predicates
 
 =head1 SYNOPSIS
 
+ package Foo;
+ use FP::Predicates;
+
+ *is_age= both *is_natural0, sub { $_[0] < 130 };
+ # ^ wrap in BEGIN {  } to employ namespace cleaning;
+ # or assign to a scalar instead (my $is_age), of course.
+
+ use FP::Struct [[*is_string, "name"], [*is_age, "age"]];
+ _END_
+
 =head1 DESCRIPTION
 
 Useful as predicates for FP::Struct field definitions.
