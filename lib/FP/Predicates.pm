@@ -13,6 +13,22 @@ FP::Predicates
 
 Useful as predicates for FP::Struct field definitions.
 
+These are simple functions expecting one value and returning a
+boolean. They are composable with `maybe`, `complement`, `either`,
+`all_of`/`both`, which are combinator functions.
+
+This is a functional approach to achieve the same aim as
+`Moose::Util::TypeConstraints`, which basically uses a syntactical
+sublanguage instead (implemented as a mix of functions and string
+interpretation). It was written because it's way simpler. The drawback
+is that (currently) there's no way to get a nice message string from
+them to say why a match fails. Perhaps it would be possible to do so
+using more introspection? (That would be nice because message
+generation would be fully automatic and hence consistent.) Or,
+alternatively, modifying the predicate and combinator functions to
+compose messages themselves when they fail (still mostly automatic),
+e.g. using message objects that are false.
+
 =cut
 
 
