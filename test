@@ -21,6 +21,7 @@ our @t=
 	trampoline-fix
 	examples-fibs
 	examples-primes
+	predicates
 	skip-internal
 	skip
 	skip-leak

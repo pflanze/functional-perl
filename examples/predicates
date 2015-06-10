@@ -1,0 +1,60 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+use Chj::TEST;
+use Chj::Backtrace;
+use Chj::repl;
+
+
+{
+    package Foo;
+    use FP::Predicates;
+
+    BEGIN { *is_age= both *is_natural0, sub { $_[0] < 130 } }
+
+    use FP::Struct [[*is_string, "name"],
+		    [*is_age, "age"]];
+    _END_
+}
+
+{
+    package Bar;
+    use FP::Predicates;
+
+    use FP::Struct [[*is_string, "name"],
+		    [both (*is_natural0, less_than 130), "age"]];
+    _END_
+}
+
+sub test {
+    my ($class)=@_;
+
+    my $f= $class->new ("Heinz", 105);
+    TEST { $f->age }
+      105;
+    TEST {
+	# check namespace cleaning
+	$f->can("is_age")
+    } undef;
+    TEST_EXCEPTION { $f= $class->new ("Maria", 1300) }
+      'unacceptable value for field \'age\': \'1300\'';
+    TEST_EXCEPTION { $f= $class->new ("Maria", 104.5) }
+      'unacceptable value for field \'age\': \'104.5\'';
+}
+
+test "Foo";
+test "Bar";
+
+perhaps_run_tests "main" or repl;
+
