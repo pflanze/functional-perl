@@ -15,6 +15,8 @@ FP::Trampoline -- tail call optimization without reliance on goto
  sub iterative_fact {
      my ($n,$tot)= @_;
      $n > 1 ? T{ iterative_fact ($n-1, $tot*$n) } : $tot
+     # or
+     # $n > 1 ? TC *iterative_fact, $n-1, $tot*$n : $tot
  }
  sub fact {
      my ($n)=@_;
@@ -35,36 +37,58 @@ language. Its drawbacks are more overhead and the requirement to put a
 
 =item T { ... }
 
-Returns a closure blessed into the `FP::Trampoline` namespace,
-which represents a trampolining continuation.
+Returns a closure blessed into the `FP::Trampoline::Continuation`
+namespace, which represents a trampolining continuation.
+
+=item TC $fn, $arg1...
+
+Returns a `FP::Trampoline::Call` object, which represents the same
+thing, but can only be used for a call ('Trampoline Call'). The
+advantage is that the arguments for the call are evaluated eagerly,
+which makes it work for dynamic variables, too (like `$_` or
+local'ized globals).
 
 =item trampoline ($value)
 
-The trampoline that bounces back as long as need be: if $value is
-blessed into the `FP::Trampoline` namespace, it is called and the
-result fed back into `trampoline`, otherwise it is returned directly.
+The trampoline that bounces back as long as it receives a trampolining
+continuation: if so, the continuation is run, and the result passed to
+the `trampoline` again, otherwise it is returned directly.
 
 =cut
 
 
 package FP::Trampoline;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(T trampoline);
+@EXPORT=qw(T TC trampoline);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
 
 sub T (&) {
-    bless $_[0], __PACKAGE__
+    bless $_[0], "FP::Trampoline::Continuation"
+}
+
+sub TC {
+    bless [@_], "FP::Trampoline::Call"
 }
 
 sub trampoline ($) {
     my ($v)=@_;
-    while (ref ($v) eq __PACKAGE__) {
-	$v=&$v()
+    @_=(); # so that calling a continuation does not need () (possible
+           # speedup)
+    while (1) {
+	if (my $r= ref $v) {
+	    $v=
+	      ($r eq "FP::Trampoline::Continuation" ? &$v
+	       : $r eq "FP::Trampoline::Call" ? do {
+		   $$v[0]->(@$v[1..$#$v])
+	       }
+	       : return $v);
+	} else {
+	    return $v
+	}
     }
-    $v
 }
 
 1
