@@ -228,7 +228,7 @@ sub perhaps_run_tests {
 
 	require Test::More;
 	import Test::More;
-	is( eval { run_tests(@_) } // do { diag $@; undef},
+	is( eval { run_tests(@_) } // do { diag ($@); undef},
 	    0,
 	    "run_tests" );
 	done_testing();
