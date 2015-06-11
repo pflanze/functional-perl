@@ -1,10 +1,13 @@
 .gitignore
 COPYING
+FP-logo.png
+FP.css
 MANIFEST
 README.md
+bench/globs
 bin/expand-tail
 bin/repl
-docs/TODO
+docs/TODO.md
 docs/howto_and_comparison_to_Scheme.md
 docs/ideas.md
 examples/README.md
@@ -23,11 +26,10 @@ functional_XML/t/stream
 functional_XML/t/stream_
 functional_XML/test
 functional_XML/testlazy
+htmlgen/README.md
 htmlgen/doc-formatting.txt
 htmlgen/gen
-htmlgen/gen-ml2json.pl
-htmlgen/logo.pl
-htmlgen/my.css
+htmlgen/htmlgen.css
 intro/basics
 intro/more_tailcalls
 intro/tailcalls
@@ -41,6 +43,7 @@ lib/Chj/IO/File.pm
 lib/Chj/IO/Pipe.pm
 lib/Chj/IO/Tempfile.pm
 lib/Chj/Package/OfPath.pm
+lib/Chj/Path.pm
 lib/Chj/TEST.pm
 lib/Chj/TerseDumper.pm
 lib/Chj/Unix/Exitcode.pm
@@ -48,11 +51,13 @@ lib/Chj/Unix/Signal.pm
 lib/Chj/Unix/exitcode.pm
 lib/Chj/Util/Repl.pm
 lib/Chj/Util/Repl/corefuncs.pm
+lib/Chj/chompspace.pm
 lib/Chj/noTEST.pm
 lib/Chj/pp.pm
 lib/Chj/repl.pm
 lib/Chj/ruse.pm
 lib/Chj/singlequote.pm
+lib/Chj/time_this.pm
 lib/Chj/xIO.pm
 lib/Chj/xIOUtil.pm
 lib/Chj/xopen.pm
@@ -78,9 +83,9 @@ lib/FP/Predicates.pm
 lib/FP/Stream.pm
 lib/FP/Struct.pm
 lib/FP/Text/CSV.pm
+lib/FP/Trampoline.pm
 lib/FP/Values.pm
 lib/FP/fix.pm
-lib/FP/trampoline.pm
 lib/FP/url_.pm
 lib/PXML.pm
 lib/PXML/HTML5.pm
@@ -97,6 +102,7 @@ t/examples-primes
 t/functional_XML-test
 t/functional_XML-test-pxml-text
 t/functional_XML-test.expected
+t/htmlgen
 t/intro-basics
 t/perl-goto-leak
 t/perl-weaken-coderef
@@ -121,3 +127,7 @@ t/trampoline-fix
 test
 test.pl
 testmem.pl
+website/gen
+website/gen-config.pl
+website/gen-repl
+website/logo.pl
