@@ -60,3 +60,10 @@ properly formatted versions of these documents.)
   result arrays to enable OO? (without requiring the ... module which
   is lexically scoped only anyway)
 
+
+## Less important:
+
+- port PXML to FP::Struct (it was originally written before that existed, iirc).
+  Create a version/extension of FP::Struct that uses arrays instead of hashes,
+  or is that irrelevant and stupid? (benchmark cpu and memory)
+
