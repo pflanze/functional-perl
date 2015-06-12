@@ -24,7 +24,7 @@ use FP::Hash qw($empty_hash);
 
 sub new {
     my $cl=shift;
-    @_==3 or die;
+    @_==3 or die "wrong number of arguments";
     bless [@_], $cl
 }
 
@@ -53,7 +53,7 @@ sub body {
 }
 
 sub maybe_attribute {
-    @_==2 or die;
+    @_==2 or die "wrong number of arguments";
     my $s=shift;
     my ($name)=@_;
     $$s[1] and $$s[1]{$name}
@@ -64,13 +64,13 @@ sub maybe_attribute {
 
 sub attributes_set {
     my $s=shift;
-    @_==1 or die;
+    @_==1 or die "wrong number of arguments";
     bless [ $$s[0], $_[0], $$s[2] ], ref $s
 }
 
 sub body_set {
     my $s=shift;
-    @_==1 or die;
+    @_==1 or die "wrong number of arguments";
     bless [ $$s[0], $$s[1], $_[0] ], ref $s
 }
 
@@ -79,14 +79,14 @@ sub body_set {
 
 sub attributes_update {
      my $s=shift;
-     @_==1 or die;
+     @_==1 or die "wrong number of arguments";
      my ($fn)=@_;
      bless [ $$s[0], &$fn($$s[1]), $$s[2] ], ref $s
  }
 
 sub body_update {
      my $s=shift;
-     @_==1 or die;
+     @_==1 or die "wrong number of arguments";
      my ($fn)=@_;
      bless [ $$s[0], $$s[1], &$fn($$s[2]) ], ref $s
 }
