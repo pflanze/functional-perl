@@ -362,7 +362,7 @@ fun get_filesinfo () {
 
 
 use PXML::XHTML ":all";
-use FP::ArrayUtil ":all";
+use FP::Array ":all";
 use File::Spec;
 use FP::Array_sort;
 use FP::Ops qw(string_cmp number_cmp);
@@ -457,7 +457,7 @@ use FP::Stream ":all";
 
 {
     package CHJ::Cost;
-    use FP::ArrayUtil ":all";
+    use FP::Array ":all";
     use FP::Struct [qw(name is_purchaseable basecosts val)];
     method cost ($index) {
 	$$self{_cost} ||= do {

@@ -32,7 +32,7 @@ FP::HashSet - set operations for hash tables
 =head1 DESCRIPTION
 
 Hashsets are hash tables that are expected to have keys representing
-the values unambiguously (FP::ArrayUtil::array2hashset will just
+the values unambiguously (FP::Array::array2hashset will just
 use the stringification).
 
 Note that hashset2array will use the *values* of the hashes, not the

@@ -153,7 +153,7 @@ discussed in the section above).
 
 It would be possible to really only use one namespace in Perl, too
 (scalars), and write functions like so, even when they are global
-(`array_map` can be found in `FP::ArrayUtil`):
+(`array_map` can be found in `FP::Array`):
 
     our $square= sub {
         my ($a)=@_;

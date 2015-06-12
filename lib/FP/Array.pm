@@ -6,7 +6,7 @@
 
 =head1 NAME
 
-FP::ArrayUtil
+FP::Array
 
 =head1 SYNOPSIS
 
@@ -16,7 +16,7 @@ FP::ArrayUtil
 =cut
 
 
-package FP::ArrayUtil;
+package FP::Array;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(array

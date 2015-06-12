@@ -390,7 +390,7 @@ sub functional_fact_iter {
 # around, without any object wrapper.
 
 use FP::List ":all"; # cons, car, cdr, first, rest
-use FP::ArrayUtil ":all"; # list2array
+use FP::Array ":all"; # list2array
 
 # main> cons(1,2)
 # $VAR1 = bless( [

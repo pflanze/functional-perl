@@ -28,7 +28,7 @@ usage if @ARGV;
 
 # example module use:
 use FP::List ":all";
-use FP::ArrayUtil ":all";
+use FP::Array ":all";
 use FP::Array_sort ":all";
 use Chj::TEST;
 

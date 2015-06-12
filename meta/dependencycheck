@@ -14,7 +14,7 @@ use v5.10;
 use lib "./lib";
 use Chj::IO::Command;
 use Chj::xtmpfile;
-use FP::ArrayUtil ":all";
+use FP::Array ":all";
 use FP::Div ":all";
 use Chj::xperlfunc;
 use Chj::xopen 'xopen_read';
