@@ -122,11 +122,14 @@ possibilities.
 
 ## Installation
 
-For simplicity during development, instead of providing installer files,
-the bundled scripts modify the library load path to find the
+For simplicity during development, instead of providing installer
+files, the bundled scripts modify the library load path to find the
 files locally. All modules are in the `lib/` directory, `use lib
 $path_to_lib` is all that's needed. (Just tell if you would like
-installer support.)
+installer support. But probably, for CPAN release the project would
+generate multiple packages. Are you fine with installing each part
+separately even from the unified Git checkout or would you want one
+single "make install"? What's the best way to achieve this?)
 
 ## Dependencies
 
