@@ -41,3 +41,13 @@ properly formatted versions of these documents.)
 * Provide a 'recursive let' form that includes weakening or
   application of the fix point combinator
 
+* change `FP::Struct` into a Moose extension? Is Moose ok to have as a
+  hard dependency? (Because why are there all these Moose alternatives
+  like `Moo`?)
+
+  Are `MooseX::Locked`, `MooseX::MultiMethods` good?
+
+  What about the nice-and-simple predicate approach? Extend that to
+  make multimethod dispatch still fast? Would that then (really?) be
+  the same as `Moose::Util::TypeConstraints`? 
+
