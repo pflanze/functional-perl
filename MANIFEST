@@ -2,12 +2,12 @@
 COPYING
 FP-logo.png
 FP.css
-HACKING.md
 MANIFEST
 README.md
 bench/globs
 bin/expand-tail
 bin/repl
+docs/HACKING.md
 docs/TODO.md
 docs/howto_and_comparison_to_Scheme.md
 docs/ideas.md
