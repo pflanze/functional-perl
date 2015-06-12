@@ -83,12 +83,19 @@ sub body_set {
 
 # functional updaters
 
+sub name_update {
+     my $s=shift;
+     @_==1 or die "wrong number of arguments";
+     my ($fn)=@_;
+     bless [ &$fn($$s[0]), $$s[1], $$s[2] ], ref $s
+}
+
 sub attributes_update {
      my $s=shift;
      @_==1 or die "wrong number of arguments";
      my ($fn)=@_;
      bless [ $$s[0], &$fn($$s[1]), $$s[2] ], ref $s
- }
+}
 
 sub body_update {
      my $s=shift;
