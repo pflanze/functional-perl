@@ -123,9 +123,7 @@ sub stream_iota {
 		}
 	    }
 	};
-	# sigh, perl doesn't accept `goto Weakened($rec)`
-	my $_rec= Weakened $rec;
-	@_=($start); goto $_rec;
+	@_=($start); goto &{Weakened $rec};
     } else {
 	my $rec; $rec= sub {
 	    my ($i)=@_;
@@ -134,8 +132,7 @@ sub stream_iota {
 		cons ($i, &$rec($i+1))
 	    }
 	};
-	my $_rec= Weakened $rec;
-	@_=($start); goto $_rec;
+	@_=($start); goto &{Weakened $rec};
     }
 }
 
@@ -346,8 +343,7 @@ sub make_stream__fold_right {
 		}
 	    }
 	};
-	my $rec_= Weakened $rec;
-	&$rec_($start)
+	&{Weakened $rec}($start)
     }
 }
 
@@ -538,8 +534,7 @@ sub stream_slice ($ $) {
 	    }
 	}
     };
-    my $rec2= Weakened($rec);
-    @_=($start); goto $rec2
+    @_=($start); goto &{Weakened $rec};
 }
 
 *FP::List::List::stream_slice= *stream_slice;
