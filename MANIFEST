@@ -9,6 +9,7 @@ bin/expand-tail
 bin/repl
 docs/HACKING.md
 docs/TODO.md
+docs/howto.md
 docs/howto_and_comparison_to_Scheme.md
 docs/ideas.md
 examples/README.md
