@@ -92,6 +92,18 @@ sub body_update {
 }
 
 
+# mapping
+
+use FP::Stream qw(stream_mixed_flatten stream_map);
+
+sub body_map {
+    my $s=shift;
+    @_==1 or die "wrong number of arguments";
+    my ($fn)=@_;
+    $s->body_update (sub { stream_map $fn, stream_mixed_flatten $_[0] })
+}
+
+
 # "body text", a string, dropping tags; not having knowledge about
 # which XML tags have 'relevant body text', this returns all of it.
 
