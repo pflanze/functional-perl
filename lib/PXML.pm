@@ -62,6 +62,12 @@ sub maybe_attribute {
 # functional setters (following the convention I've started to use of
 # "trailing _set means functional, leading set_ means mutation"))
 
+sub name_set {
+    my $s=shift;
+    @_==1 or die "wrong number of arguments";
+    bless [ $_[0], $$s[1], $$s[2] ], ref $s
+}
+
 sub attributes_set {
     my $s=shift;
     @_==1 or die "wrong number of arguments";
