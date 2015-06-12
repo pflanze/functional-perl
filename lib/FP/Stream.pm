@@ -86,25 +86,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
 use FP::List ":all";
-use Scalar::Util 'weaken';
 use FP::Div qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
-
-
-# protect a variable from being pruned by callees that prune their
-# arguments
-sub Keep ($) {
-    my ($v)=@_;
-    $v
-}
-
-# weaken a variable, but also provide a non-weakened reference to its
-# value as result
-sub Weakened ($) {
-    my ($ref)= @_;
-    weaken $_[0];
-    $ref
-}
+use FP::Weak;
 
 
 sub stream_iota {
