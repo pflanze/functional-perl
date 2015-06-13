@@ -57,6 +57,8 @@ use Chj::TEST;
 
 {
     package FP::List::List;
+    use FP::Pure;
+    our @ISA= qw(FP::Pure);
 }
 
 {

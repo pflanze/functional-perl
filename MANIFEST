@@ -83,6 +83,7 @@ lib/FP/List.pm
 lib/FP/Ops.pm
 lib/FP/OrderedCollection.pm
 lib/FP/Predicates.pm
+lib/FP/Pure.pm
 lib/FP/Stream.pm
 lib/FP/Struct.pm
 lib/FP/Text/CSV.pm

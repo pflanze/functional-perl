@@ -50,6 +50,7 @@ e.g. using message objects that are false.
 package FP::Predicates;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
+	      is_pure
 	      is_string
 	      is_nonnullstring
 	      is_natural0
@@ -85,7 +86,16 @@ package FP::Predicates;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Scalar::Util 'reftype';
 use Chj::TEST;
+use FP::Pure;
 
+sub is_pure ($) {
+    # XX also treat numbers (or booleans, hum) as pure? But then by
+    # way of references and string appending they can be mutated into
+    # modified strings. (Hm, what about immutable SVs? Even new
+    # types?)
+    # XX check for read-only flags?
+    UNIVERSAL::isa ($_[0], "FP::Pure")
+}
 
 sub is_string ($) {
     not ref ($_[0]) # relax?

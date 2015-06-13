@@ -56,5 +56,22 @@ sub test {
 test "Foo";
 test "Bar";
 
+
+use FP::Predicates;
+use FP::List;
+
+TEST { is_pure cons 1,2 }
+  1;
+
+TEST { is_pure [ 1,2 ] }
+  '';
+
+use FP::Lazy;
+
+TEST { is_pure lazy { cons 1,2 } }
+  ''; # or should it force it?
+
+
+
 perhaps_run_tests "main" or repl;
 
