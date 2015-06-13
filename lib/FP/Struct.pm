@@ -57,6 +57,20 @@ _END__ instead of _END_.
 
 See FP::Predicates for some useful predicates.
 
+=head1 PURITY
+
+FP::Struct uses `FP::Pure` as default base class (i.e. when no other
+base class is given). This means objects from classes based on
+FP::Struct are automatically treated as pure by `is_pure` from
+`FP::Predicates`.
+
+To hold this promise true, your code must not mutate any object fields
+except when it's impossible for the outside world to detect
+(e.g. using a hash key to hold a cached result is fine as long as you
+also override all the functional setters for fields that are used for
+the calculation of the cached value to clean the cache (TODO: provide
+option to turn of generation of setters, and/or provide hook).)
+
 =cut
 
 
@@ -175,8 +189,9 @@ sub import {
     no strict 'refs';
     if (@isa) {
 	require_package $_ for @isa;
-	*{"${package}::ISA"}= \@isa;
     }
+    @isa= "FP::Pure" unless @isa;
+    *{"${package}::ISA"}= \@isa;
 
     my $allfields=[ all_fields (\@isa), @$fields ];
     # (^ ah, could store them in the package as well; but well, no

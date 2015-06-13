@@ -72,6 +72,12 @@ TEST { is_pure lazy { cons 1,2 } }
   ''; # or should it force it?
 
 
+use FP::OrderedCollection; # based on FP::Struct
+
+TEST { is_pure ( FP::OrderedCollection->new_from_array([1,2]) ) }
+  1; # (XX this assumes that the array passed in is not mutated by the
+     # caller!)
+
 
 perhaps_run_tests "main" or repl;
 
