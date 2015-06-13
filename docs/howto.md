@@ -244,7 +244,11 @@ are self-referential closures:
         &{Weakened $rec} ($start)
     }
 
-Without the `Weakened` call, this would leak the closure at $rec.
+Without the `Weakened` call, this would leak the closure at $rec. (In
+principle, setting `$rec = undef; ` when the subroutine is done would
+work, too, but the subroutine might lose control due to an unavoidable
+exception like out of memory or a signal handler that calls `die`, in
+which case it would still be leaked.)
 
 Note that alternative, and often better, solutions for
 self-referential closures exist: `FP::fix`, and `_SUB_` from `use
