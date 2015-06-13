@@ -161,18 +161,23 @@ sub Show ($) {
 sub import {
     my $_importpackage= shift;
     return unless @_;
-    my ($package, $fields, @isa);
+    my ($package, $fields, @perhaps_isa);
     if (ref $_[0]) {
-	($fields, @isa)= @_;
+	($fields, @perhaps_isa)= @_;
 	$package= caller;
     } else {
-	($package, $fields, @isa)= @_;
+	($package, $fields, @perhaps_isa)= @_;
     }
+    my @isa= (@perhaps_isa==1 and ref($perhaps_isa[0])) ?
+      $perhaps_isa[0]
+	: @perhaps_isa;
+
     no strict 'refs';
     if (@isa) {
 	require_package $_ for @isa;
-	*{"${package}::ISA"}= (@isa==1 and ref($isa[0])) ? $isa[0] : \@isa;
+	*{"${package}::ISA"}= \@isa;
     }
+
     my $allfields=[ all_fields (\@isa), @$fields ];
     # (^ ah, could store them in the package as well; but well, no
     # worries)
