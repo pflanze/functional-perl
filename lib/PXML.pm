@@ -177,6 +177,7 @@ use Chj::xopen (); # glob2fh
 
 sub string {
     my $s=shift;
+    require PXML::Serialize;
     Chj::xIO::capture_stdout {
 	PXML::Serialize::pxml_print_fragment_fast
 	    ($s, Chj::xopen::glob2fh(*STDOUT));
