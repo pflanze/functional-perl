@@ -108,7 +108,7 @@ sub import {
 	}
     }
     my $sub= $class->can("SUPER::import")
-      or die;
+      or die "$class does not have an 'import' procedure";
     @_=($class, @args); goto $sub;
 }
 

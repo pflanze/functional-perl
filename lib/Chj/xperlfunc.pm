@@ -598,7 +598,7 @@ sub mk_caching_getANYid {
     my ($function,$scalarindex)=@_;
     my %cache;
     sub {
-	@_==1 or die;
+	@_==1 or die "wrong number of arguments";
 	my ($id)= @_;
 	my $v;
 	if (not defined ($v= $cache{$id})) {

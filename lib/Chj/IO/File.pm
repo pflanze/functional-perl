@@ -314,7 +314,7 @@ sub set_layer_or_encoding {
     my $layer=
       ($layer_or_encoding=~ /^:/ ? $layer_or_encoding
        : ":encoding($layer_or_encoding)");
-    binmode($self, $layer) or die;
+    binmode($self, $layer) or die "binmode";
 }
 
 sub perhaps_set_layer_or_encoding {
@@ -328,7 +328,7 @@ sub perhaps_set_layer_or_encoding {
 sub set_encoding {
     my $self=shift;
     my ($encoding)=@_;
-    binmode($self, ":encoding($encoding)") or die;
+    binmode($self, ":encoding($encoding)") or die "binmode";
 }
 
 

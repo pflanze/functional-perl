@@ -101,7 +101,7 @@ sub array_zip2 ($$) {
 }
 
 sub array_map {
-    @_>1 or die;
+    @_>1 or die "wrong number of arguments";
     my $fn=shift;
     my $len= min (map { scalar @$_ } @_);
     my @res;
@@ -116,7 +116,7 @@ TEST{ array_map sub { $_[0]+$_[1]}, [1,2,20], [-1,4] } [ 0,6 ];
 
 # (should one use multi-arg stream_map with stream_iota instead?..)
 sub array_map_with_i {
-    @_>1 or die;
+    @_>1 or die "wrong number of arguments";
     my $fn=shift;
     my $len= min (map { scalar @$_ } @_);
     my @res;
@@ -130,7 +130,7 @@ TEST{ array_map_with_i sub {[@_]}, [qw(a b)], [20..40] }
   [[0,"a",20], [1,"b",21]];
 
 sub array_map_with_islast {
-    @_>1 or die;
+    @_>1 or die "wrong number of arguments";
     my $fn=shift;
     my $len= min (map { scalar @$_ } @_);
     my $last= $len - 1;
@@ -146,7 +146,7 @@ TEST{ array_map_with_islast sub { $_[0] }, [1,2,20] }
 
 
 sub array_filter ($$) {
-    @_==2 or die;
+    @_==2 or die "wrong number of arguments";
     my ($fn,$v)=@_;
     [
      grep {

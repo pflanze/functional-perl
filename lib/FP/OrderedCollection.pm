@@ -32,7 +32,7 @@ use FP::Struct
 
 sub new_from_array {
     my $cl=shift;
-    @_==1 or die;
+    @_==1 or die "wrong number of arguments";
     my ($a)=@_;
     my %h;
     for my $i (0..$#$a) {
@@ -48,13 +48,13 @@ sub new_from_values {
 
 sub contains {
     my $s=shift;
-    @_==1 or die;
+    @_==1 or die "wrong number of arguments";
     exists $$s{hash}{$_[0]}
 }
 
 sub maybe_position {
     my $s=shift;
-    @_==1 or die;
+    @_==1 or die "wrong number of arguments";
     $$s{hash}{$_[0]}
 }
 

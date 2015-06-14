@@ -123,7 +123,7 @@ sub fh2csvstream ($;$) {
 sub xopen_csv_stream ($;$) {
     my ($path, $maybe_params)=@_;
     my $in= xopen_read $path;
-    binmode($in, ":encoding(utf-8)") or die;
+    binmode($in, ":encoding(utf-8)") or die "binmode";
     fh2csvstream $in, $maybe_params
 }
 

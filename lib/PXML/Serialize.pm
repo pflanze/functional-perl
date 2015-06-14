@@ -71,7 +71,7 @@ sub content_escape {
 }
 
 sub _pxml_print_fragment_fast {
-    @_==4 or die;
+    @_==4 or die "wrong number of arguments";
     my ($v,$fh,$html5compat,$void_element_h)=@_;
     weaken $_[0]
       # necessary since we're also called with strings:
@@ -278,7 +278,7 @@ sub putxmlfile ($$) {
     my ($path,$xml)=@_;
     weaken $_[1] if ref $_[0]; # ref check perhaps unnecessary here
     my $f= xopen_write $path;
-    binmode($f, ":utf8") or die;
+    binmode($f, ":utf8") or die "binmode";
     pxml_print($xml,$f);
     $f->xclose;
 }
@@ -288,7 +288,7 @@ sub puthtmlfile ($$;$) {
     weaken $_[1] if ref $_[0]; # ref check perhaps unnecessary here
     #xmkdir_p dirname $path;
     my $out= xopen_write($path);
-    binmode $out, ":utf8" or die;
+    binmode $out, ":utf8" or die "binmode";
     pxml_xhtml_print_fast($v, $out, $maybe_lang||"en");
     $out->xclose;
 }

@@ -376,7 +376,7 @@ TEST{ list2string string2list "Hello" }
 
 
 sub array_fold_right ($$$) {
-    @_==3 or die;
+    @_==3 or die "wrong number of arguments";
     my ($fn,$tail,$a)=@_;
     my $i= @$a - 1;
     while ($i >= 0) {
@@ -782,7 +782,7 @@ sub mixed_flatten ($;$$) {
 		redo LP;
 	    } elsif (ref $v eq "ARRAY") {
 		@_= (sub {
-			 @_==2 or die;
+			 @_==2 or die "wrong number of arguments";
 			 my ($v,$tail)=@_;
 			 no warnings 'recursion';
 			 # ^XX don't understand why it warns here
