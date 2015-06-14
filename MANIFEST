@@ -75,6 +75,7 @@ lib/Class/Array.pm
 lib/FP/Array.pm
 lib/FP/Array_sort.pm
 lib/FP/Char.pm
+lib/FP/Combinators.pm
 lib/FP/Div.pm
 lib/FP/Equal.pm
 lib/FP/Hash.pm

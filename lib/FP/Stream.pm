@@ -86,7 +86,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
 use FP::List ":all";
-use FP::Div qw(flip flip2_3 rot3right rot3left);
+use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
 use FP::Weak;
 
