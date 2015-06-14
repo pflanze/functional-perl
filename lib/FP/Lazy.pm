@@ -25,6 +25,20 @@ FP::Lazy
  print is_promise $b ? "promise" : "non-promise", "\n"; # -> "non-promise"
  print $b, "\n"; # -> "0.5"
 
+ # Note that lazy evaluation and mutation usually doesn't mix well -
+ # lazy programs better be purely functional. Here $tot depends not
+ # just on the inputs, but also on how many elements were evaluated:
+ my $tot=0;
+ # `stream_map` is from `FP::Stream` and uses `lazy`
+ my $l= stream_map sub {
+     my ($x)=@_;
+     $tot+=$x;
+     $x*$x
+ }, list (5,7,8);
+ print "$tot\n"; # still 0
+ print $l->first, " $tot\n"; # 25 5
+ print $l->length, " $tot\n"; # 3 20
+
 =head1 DESCRIPTION
 
 This implements promises, a data type that represents an unevaluated

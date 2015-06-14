@@ -806,4 +806,24 @@ TEST { my $s= string2stream "Hello";
   '';
 
 
+# Lazyness check, and be-careful reminder: (example from SYNOPSIS in
+# Lazy.pm)
+
+{
+    my $tot;
+    my $l;
+    TEST { $tot= 0;
+	   $l= stream_map sub {
+	       my ($x)=@_;
+	       $tot+=$x;
+	       $x*$x
+	   }, list (5,7,8);
+	   $tot }
+      0;
+    TEST { [$l->first, $tot] }
+      [25, 5];
+    TEST { [$l->length, $tot] }
+      [3, 20];
+}
+
 1
