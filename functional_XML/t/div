@@ -12,13 +12,14 @@ BEGIN {
 }
 use lib "$mydir/../../lib";
 
+use Chj::TEST ":all";
 use PXML::XHTML ":all";
 use PXML::Serialize "pxml_print_fragment_fast";
 use FP::Lazy;
 use FP::List;
 use FP::Stream;
-use Chj::TEST ":all";
-
+use FP::Array ":all"; # XXX inconsistency in export directives
+use FP::PureArray;
 
 TEST_STDOUT { pxml_print_fragment_fast
 		( A({href=>"hah"},
@@ -32,7 +33,16 @@ TEST { A({href=>"hah"},
 	 cons(" ", string2stream("You're great.")))->text }
   'Hello World! You\'re great.';
 
+TEST { P(list)->string }
+  '<p></p>';
+
 TEST { P(list 1, 2, 3)->string }
+  '<p>123</p>';
+
+TEST { P(array 1, 2, 3)->string }
+  '<p>123</p>';
+
+TEST { P(purearray 1, 2, 3)->string }
   '<p>123</p>';
 
 
