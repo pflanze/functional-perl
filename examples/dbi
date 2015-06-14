@@ -45,7 +45,30 @@ TEST {
   [2, {a=>4, b=>3.3, c=>"foo", d=>"bar"}];
 
 
-# XX more tests (leaks, more bad usage)
+# interlock tests:
+
+TEST {
+    $get->execute;
+    my $s= $get->array_stream;
+    $s->first
+} [1,2,3,4];
+
+TEST_EXCEPTION {
+    $get->execute;
+    my $s= $get->array_stream;
+    $get->execute;
+    $s->first
+} "stream was interrupted by another execute or stream request";
+
+TEST_EXCEPTION {
+    $get->execute;
+    my $s= $get->array_stream;
+    my $s2= $get->hash_stream;
+    $s->first
+} "stream was interrupted by another execute or stream request";
+
+
+# XX leak tests?
 
 
 perhaps_run_tests __PACKAGE__ or repl;

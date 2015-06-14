@@ -22,9 +22,9 @@ FP::DBI - DBI with results as lazy lists
  # then:
  my $s= $sth->row_stream;    # purearrays blessed to FP::DBI::Row
  # or
- my $s1= $sth->array_stream; # arrays
+ #my $s= $sth->array_stream; # arrays
  # or
- my $s2= $sth->hash_stream;  # hashes
+ #my $s= $sth->hash_stream;  # hashes
 
  use PXML::XHTML;
  TABLE
@@ -34,6 +34,16 @@ FP::DBI - DBI with results as lazy lists
 =head1 DESCRIPTION
 
 Get rows as items in a lazy linked list (functional stream).
+
+NOTE: `DBI` is designed so that when running another `execute` on the
+same statement handle, fetching returns rows for the new execute; this
+means, a new execute makes it impossible to retrieve further results
+from the previous one. Thus if a result stream isn't fully used before
+a new `execute` or a different result request is being made, then the
+original stream can't be further evaluated anymore; to prevent this
+from happening, an interlock mechanism is built in that throws an
+error in this case.
+
 
 =head1 SEE ALSO
 
@@ -54,7 +64,12 @@ use Chj::NamespaceCleanAbove;
 {
     package FP::DBI::db;
     our @ISA= 'DBI::db';
-    # what for? DBI warns otherwise.
+
+    sub prepare {
+	my $s=shift;
+	my $st= $s->SUPER::prepare(@_);
+	bless $st, "FP::DBI::st"
+    }
 }
 
 {
@@ -69,15 +84,18 @@ use Chj::NamespaceCleanAbove;
     use FP::Weak;
     use FP::List;
 
-    # XX there should already be code like this in IOStream.pm?
     sub make_X_stream {
-	my ($method)=@_;
+	my ($method, $maybe_mapfn)=@_;
 	sub {
 	    my $s=shift;
+	    my $id= ++$$s{fp__dbi__id};
 	    my $lp; $lp= sub {
 		lazy {
+		    $$s{fp__dbi__id} == $id
+		      or die ("stream was interrupted by another execute".
+			      " or stream request");
 		    if (my $v= $s->$method) {
-			cons $v, &$lp;
+			cons ($maybe_mapfn ? &$maybe_mapfn($v) : $v, &$lp);
 		    } else {
 			null
 		    }
@@ -89,21 +107,17 @@ use Chj::NamespaceCleanAbove;
 
     use Chj::NamespaceCleanAbove;
 
-    sub row_stream {
+
+    sub execute {
 	my $s=shift;
-	my $lp; $lp= sub {
-	    lazy {
-		#bless $s->fetchrow_arrayref, "FP::DBI::Row"  nope, readonly
-		if (my @r= $s->fetchrow_array) {
-		    cons bless (\@r, "FP::DBI::Row"), &$lp;
-		} else {
-		    null
-		}
-	    }
-	};
-	Weakened ($lp)->()
+	$$s{fp__dbi__id}++;
+	$s->SUPER::execute (@_)
     }
 
+    *row_stream= make_X_stream ("fetchrow_arrayref",
+				sub {
+				    bless ([ @{$_[0]} ], "FP::DBI::Row")
+				});
     *array_stream= make_X_stream ("fetchrow_arrayref");
     *hash_stream= make_X_stream ("fetchrow_hashref");
 
