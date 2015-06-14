@@ -67,3 +67,5 @@ properly formatted versions of these documents.)
   Create a version/extension of FP::Struct that uses arrays instead of hashes,
   or is that irrelevant and stupid? (benchmark cpu and memory)
 
+- fix the now horrible hand-optimized-but-convoluted code in
+  PXML::Serialize (and figure out an automatic way to make it fast)
