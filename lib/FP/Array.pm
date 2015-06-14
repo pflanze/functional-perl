@@ -230,9 +230,7 @@ sub array_sum ($) {
     array_fold \&add, 0, $_[0]
 }
 
-sub array_first ($) {
-    $_[0][0]
-}
+*array_first= *array_fst;
 
 sub array_rest ($) {
     my ($a)= @_;
