@@ -41,6 +41,7 @@ my $my_css_path= "FP.css";
   [qw(
 README.md
 docs/howto.md
+docs/design.md
 docs/howto_and_comparison_to_Scheme.md
 examples/README.md
 functional_XML/README.md
