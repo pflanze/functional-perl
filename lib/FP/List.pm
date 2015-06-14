@@ -107,6 +107,7 @@ use Chj::TEST;
     sub cddddr { $_[0]->cdr->cdr->cdr->cdr }
 
     sub cadr { $_[0]->cdr->car }
+    *second= *cadr;
     sub caddr { $_[0]->cdr->cdr->car }
     sub cadddr { $_[0]->cdr->cdr->cdr->car }
     sub caddddr { $_[0]->cdr->cdr->cdr->cdr->car }
