@@ -16,6 +16,7 @@ docs/ideas.md
 examples/README.md
 examples/csv2xml
 examples/csv2xml-example.csv
+examples/dbi
 examples/diff2html
 examples/fibs
 examples/gen-csv
@@ -77,6 +78,7 @@ lib/FP/Array.pm
 lib/FP/Array_sort.pm
 lib/FP/Char.pm
 lib/FP/Combinators.pm
+lib/FP/DBI.pm
 lib/FP/Div.pm
 lib/FP/Equal.pm
 lib/FP/Hash.pm
@@ -108,6 +110,7 @@ meta/dependencycheck
 t/csv2xml
 t/csv2xml.expected
 t/csvstreams
+t/dbi
 t/examples-fibs
 t/examples-primes
 t/functional_XML-t-div

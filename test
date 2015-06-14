@@ -22,6 +22,7 @@ our @t=
 	examples-fibs
 	examples-primes
 	predicates
+	dbi
 	skip-internal
 	skip
 	skip-leak
