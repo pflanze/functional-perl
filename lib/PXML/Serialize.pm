@@ -147,6 +147,15 @@ sub _pxml_print_fragment_fast {
 					   $html5compat, $void_element_h);
 		#_pxml_print_fragment_fast (cdr $v, $fh);
 		redo LP;
+	    } elsif (my $for_each= UNIVERSAL::can ($v, "for_each")) {
+		# catches null, too. Well.
+		&$for_each
+		  ($v,
+		   sub {
+		       my ($a)=@_;
+		       _pxml_print_fragment_fast ($a, $fh,
+						  $html5compat, $void_element_h);
+		   });
 	    } elsif ($ref eq "FP::Lazy::Promise"
 		     or
 		     $ref eq "FP::Lazy::PromiseLight") {
@@ -174,6 +183,8 @@ sub _pxml_print_fragment_fast {
 		    redo LP;
 		} elsif (is_null $v) {
 		    # end of linked list, nothing
+		    # XX obsolete now, since UNIVERSAL::can ($v,
+		    # "for_each") above will catch it already.
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
 		    # evil.
