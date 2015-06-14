@@ -14,7 +14,7 @@ our @t=
 	testlazy
 	testlazy10
 	functional_XML-test
-	functional_XML-test-pxml-text
+	functional_XML-t-div
 	csv2xml
 	htmlgen
 	intro-basics
