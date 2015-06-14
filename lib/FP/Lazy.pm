@@ -39,6 +39,17 @@ FP::Lazy
  print $l->first, " $tot\n"; # 25 5
  print $l->length, " $tot\n"; # 3 20
 
+ # Also note that `local` does mutation (even if in a somewhat
+ # controlled way):
+ our $foo= "";
+ sub moo {
+     my ($bar)=@_;
+     local $foo= "Hello";
+     lazy { "$foo $bar" }
+ }
+ moo ("you")->force  # returns " you"
+
+
 =head1 DESCRIPTION
 
 This implements promises, a data type that represents an unevaluated
@@ -160,5 +171,19 @@ sub FORCE {
     package FP::Lazy::PromiseLight;
     our @ISA= qw(FP::Lazy::Promise);
 }
+
+use Chj::TEST;
+
+TEST {
+    our $foo= "";
+    sub moo {
+	my ($bar)=@_;
+	local $foo= "Hello";
+	lazy { "$foo $bar" }
+    }
+    moo ("you")->force
+}
+  " you";
+
 
 1
