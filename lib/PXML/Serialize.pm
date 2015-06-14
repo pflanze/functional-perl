@@ -159,7 +159,7 @@ sub _pxml_print_fragment_fast {
 		if ($ref eq "ARRAY") {
 		    no warnings "recursion"; # hu.
 		    for (@$v) {
-			# XX use Keep around $_ to prevent mutation of tree?
+			# XXX use Keep around $_ to prevent mutation of tree?
 			# nope, can't, will prevent streaming.
 			_pxml_print_fragment_fast
 			  ($_, $fh, $html5compat, $void_element_h);
