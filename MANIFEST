@@ -96,6 +96,7 @@ lib/PXML/HTML5.pm
 lib/PXML/SVG.pm
 lib/PXML/Serialize.pm
 lib/PXML/Tags.pm
+lib/PXML/Util.pm
 lib/PXML/XHTML.pm
 meta/dependencycheck
 t/csv2xml
