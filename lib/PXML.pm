@@ -18,7 +18,20 @@ PXML - base class for PXML objects
 package PXML;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+use FP::Stream qw(stream_mixed_flatten stream_map);
 use FP::Hash qw($empty_hash);
+
+# XX Depend on these? PXML::Serialize uses these, so any app that
+# serializes PXML would require them anyway.
+use FP::Lazy;
+use FP::List;
+
+use Chj::xIO qw(capture_stdout);
+use Chj::xopen 'glob2fh';
+
+
+use Chj::NamespaceCleanAbove;
 
 # [ name, attributes, body ]
 
@@ -107,8 +120,6 @@ sub body_update {
 
 # mapping
 
-use FP::Stream qw(stream_mixed_flatten stream_map);
-
 sub body_map {
     my $s=shift;
     @_==1 or die "wrong number of arguments";
@@ -124,10 +135,6 @@ sub body_map {
 # to touch the code there... so, here goes. Really, better languages
 # have been created to write code in.
 
-# XX Depend on these? PXML::Serialize uses these, so any app that
-# serializes PXML would require them anyway.
-use FP::Lazy;
-use FP::List;
 
 sub _text {
     my ($v)=@_;
@@ -172,13 +179,10 @@ sub text {
 # only for debugging? Doesn't emit XML/XHTML prologues!  Also, ugly
 # monkey-access to PXML::Serialize. Circular dependency, too.
 
-use Chj::xIO (); # 'capture_stdout_';
-use Chj::xopen (); # glob2fh
-
 sub string {
     my $s=shift;
     require PXML::Serialize;
-    Chj::xIO::capture_stdout {
+    capture_stdout {
 	PXML::Serialize::pxml_print_fragment_fast
 	    ($s, Chj::xopen::glob2fh(*STDOUT));
     }
@@ -200,4 +204,5 @@ sub require_printing_nonvoid_elements_nonselfreferential  {
 #    undef
 #}
 
-1
+
+_END_
