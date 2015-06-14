@@ -176,6 +176,9 @@ sub array_fold ($$$) {
     $start
 }
 
+TEST{ array_fold sub{[@_]}, 's', [3,4] }
+  [4, [3,'s']];
+
 sub array_join ($$) {
     my ($ary,$val)=@_;
     my @res;
