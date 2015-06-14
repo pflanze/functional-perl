@@ -126,8 +126,8 @@ sub array_map_with_i {
     \@res
 }
 
-TEST{ array_map_with_i sub { $_[0]+$_[1]+$_[2] }, [1,2,20], [-1,4] }
-  [ 0,7 ];
+TEST{ array_map_with_i sub {[@_]}, [qw(a b)], [20..40] }
+  [[0,"a",20], [1,"b",21]];
 
 sub array_map_with_islast {
     @_>1 or die;
