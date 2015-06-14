@@ -60,6 +60,9 @@ properly formatted versions of these documents.)
   result arrays to enable OO? (without requiring the ... module which
   is lexically scoped only anyway)
 
+- enforce FP::List to be proper lists (only accept pairs and null in
+  rest position)? (And add a separate pair type that doesn't, but also
+  doesn't inherit from the future sequences base class?)
 
 ## Less important:
 
