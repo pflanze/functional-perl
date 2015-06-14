@@ -139,10 +139,10 @@ sub _pxml_print_fragment_fast {
 					       $html5compat, $void_element_h);
 		    print $fh "</$n>" or die $!;
 		}
-	    } elsif ($ref eq "Pair") {
+	    } elsif (my $car_and_cdr= UNIVERSAL::can ($v, "car_and_cdr")) {
 	      PAIR:
 		#my $a;
-		($a,$v)= $v->car_and_cdr;
+		($a,$v)= &$car_and_cdr($v);
 		_pxml_print_fragment_fast ($a, $fh,
 					   $html5compat, $void_element_h);
 		#_pxml_print_fragment_fast (cdr $v, $fh);
