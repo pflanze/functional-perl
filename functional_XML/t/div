@@ -32,6 +32,8 @@ TEST { A({href=>"hah"},
 	 cons(" ", string2stream("You're great.")))->text }
   'Hello World! You\'re great.';
 
+TEST { P(list 1, 2, 3)->string }
+  '<p>123</p>';
 
 
 use Chj::Backtrace;
