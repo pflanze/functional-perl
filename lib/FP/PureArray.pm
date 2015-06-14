@@ -91,6 +91,7 @@ sub array {
 *xone= \&array_xone;
 *hashing_uniq= blessing \&array_hashing_uniq;
 *zip2= blessing \&array_zip2;
+*for_each= flip \&array_for_each;
 *map= blessing flip \&array_map;
 *map_with_i= blessing flip \&array_map_with_i;
 *map_with_islast= blessing flip \&array_map_with_islast;
@@ -152,5 +153,10 @@ TEST_EXCEPTION { purearray (3,4)->xone } 'expecting 1 element, got 2';
 
 TEST { purearray (1,3)->append (purearray (4,5)->reverse)->array }
   [1,3,5,4];
+
+TEST_STDOUT {
+    require Chj::xIO; import Chj::xIO 'xprintln';
+    purearray(1,3)->for_each (*xprintln)
+} "1\n3\n";
 
 _END_

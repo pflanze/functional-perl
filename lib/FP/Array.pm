@@ -27,6 +27,7 @@ package FP::Array;
 	      array_xone
 	      array_hashing_uniq
 	      array_zip2
+	      array_for_each
 	      array_map
 	      array_map_with_i
 	      array_map_with_islast
@@ -98,6 +99,11 @@ sub array_zip2 ($$) {
 	$res[$i]= [ $$l[$i], $$m[$i] ];
     }
     \@res
+}
+
+sub array_for_each ($$) {
+    my ($fn,$v)=@_;
+    for my $a (@$v) { &$fn ($a) }
 }
 
 sub array_map {
