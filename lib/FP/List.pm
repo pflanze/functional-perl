@@ -51,7 +51,7 @@ package FP::List;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
-use Chj::xIO 'xprint';
+use Chj::xIO qw(xprint xprintln);
 use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
 
@@ -354,6 +354,27 @@ sub list2values ($) {
 }
 
 *FP::List::List::values= *list2values;
+
+
+# (modified copy from FP::Stream, as always.. (todo))
+sub list_for_each ($ $ ) {
+    my ($proc, $s)=@_;
+  LP: {
+	$s= force $s; # still leave that in for the case of
+                      # heterogenous lazyness?
+	if (!is_null $s) {
+	    &$proc(car $s);
+	    $s= cdr $s;
+	    redo LP;
+	}
+    }
+}
+
+*FP::List::List::for_each= flip \&list_for_each;
+
+TEST_STDOUT {
+    list(1,3)->for_each (*xprintln)
+} "1\n3\n";
 
 
 sub string2list ($;$) {
