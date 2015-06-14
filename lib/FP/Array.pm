@@ -167,6 +167,8 @@ sub array_zip {
     array_map \&array, @_
 }
 
+TEST { array_zip [3,4], [qw(a b c)] }
+  [[3,"a"], [4,"b"]];
 
 sub array_fold ($$$) {
     my ($fn,$start,$ary)=@_;
