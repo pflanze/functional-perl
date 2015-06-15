@@ -36,17 +36,20 @@ TEST { A({href=>"hah"},
 TEST { P(list)->string }
   '<p></p>';
 
-TEST { P(list 1, 2, 3)->string }
-  '<p>123</p>';
+TEST { P(list 1, 2, B(3))->string }
+  '<p>12<b>3</b></p>';
 
-TEST { P(array 1, 2, 3)->string }
-  '<p>123</p>';
+TEST { P(array 1, 2, B(3))->string }
+  '<p>12<b>3</b></p>';
 
-TEST { P(purearray 1, 2, 3)->string }
-  '<p>123</p>';
+TEST { P(purearray 1, 2, B(3))->string }
+  '<p>12<b>3</b></p>';
 
 TEST { P(cons "Hello", "World")->string }
   '<p>HelloWorld</p>';
+
+TEST { P(cons I("Hello"), B(cons null, "World"))->string }
+  '<p><i>Hello</i><b>World</b></p>';
 
 
 use Chj::Backtrace;
