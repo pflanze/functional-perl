@@ -2,6 +2,7 @@
 COPYING
 FP-logo.png
 FP.css
+HACKING.md
 MANIFEST
 README.md
 bench/globs
@@ -16,6 +17,7 @@ examples/csv2xml-example.csv
 examples/diff2html
 examples/fibs
 examples/gen-csv
+examples/predicates
 examples/primes
 examples/skip
 examples/template
@@ -114,6 +116,7 @@ t/perl/weaken-coderef-alternative-__SUB__
 t/perl/weaken-coderef-alternative-fix
 t/perl/weaken-coderef-alternative-local
 t/perl/weaken-coderef-simplified
+t/predicates
 t/require_and_run_tests
 t/skip
 t/skip-internal
