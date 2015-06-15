@@ -138,7 +138,27 @@ sub stream_length ($) {
 *FP::List::List::stream_length= *stream_length;
 
 
-# left fold, sometimes called `foldl` or `reduce`
+# left fold, sometimes called `foldl` or `reduce`.
+
+# All functional languages seem to agree that right fold should pass
+# the state argument as the second argument (to the right) to the
+# build function (i.e. f(element,state)). But they don't when it comes
+# to left fold: Scheme (SRFI-1) still calls f(element,state), whereas
+# Haskell and Ocaml call f(state,element), perhaps according to the
+# logic that both the walking order (which element of the list should
+# be combined with the original state first?) and the argument order
+# should be flipped, perhaps to try make them visually accordant. But
+# then Ocaml also flips the start and input argument order in
+# `fold_left`, so this one is different anyway. And Clojure calls it
+# `reduce`, and has a special case when only two arguments are
+# provided. Kinda hopeless?
+
+# The author of this library decided to stay with the Scheme
+# tradition: it seems to make sense to keep the argument order the
+# same (as determined by the type of the arguments) for both kinds of
+# fold. If nothing more this allows `*cons` to be passed as $fn
+# directly to construct a list.
+
 sub stream_fold ($$$) {
     my ($fn,$start,$l)=@_;
     weaken $_[2];
@@ -147,7 +167,7 @@ sub stream_fold ($$$) {
 	$l= force $l;
 	if (is_pair $l) {
 	    ($v,$l)= first_and_rest $l;
-	    $start= &$fn ($start, $v);
+	    $start= &$fn ($v, $start);
 	    redo LP;
 	}
     }
@@ -158,6 +178,15 @@ sub stream_fold ($$$) {
 
 TEST{ stream_fold sub { $_[0] + $_[1] }, 5, stream_iota (10,2) }
   5+10+11;
+
+# and actually argument order dependent tests:
+
+TEST{ stream_fold sub { [ @_ ] }, 0, stream (1,2) }
+  [2, [1,0]];
+
+TEST{ stream_fold (\&cons, null, stream (1,2))->array }
+  [2,1];
+
 
 sub stream_append ($$) {
     @_==2 or die "wrong number of arguments";

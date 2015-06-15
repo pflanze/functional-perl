@@ -176,6 +176,9 @@ sub array_zip {
 TEST { array_zip [3,4], [qw(a b c)] }
   [[3,"a"], [4,"b"]];
 
+
+# see discussion for `stream_fold` in `FP::Stream` for the reasoning
+# behind the argument order of $fn
 sub array_fold ($$$) {
     my ($fn,$start,$ary)=@_;
     for (@$ary) {
@@ -186,6 +189,11 @@ sub array_fold ($$$) {
 
 TEST{ array_fold sub{[@_]}, 's', [3,4] }
   [4, [3,'s']];
+
+TEST{ require FP::List;
+      array_fold (\&FP::List::cons, &FP::List::null, array (1,2))->array }
+  [2,1];
+
 
 sub array_join ($$) {
     my ($ary,$val)=@_;

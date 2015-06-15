@@ -553,7 +553,7 @@ sub list_fold ($$$) {
   LP: {
 	if (is_pair $l) {
 	    ($v,$l)= first_and_rest $l;
-	    $start= &$fn ($start, $v);
+	    $start= &$fn ($v, $start);
 	    redo LP;
 	}
     }
@@ -562,9 +562,11 @@ sub list_fold ($$$) {
 
 *FP::List::List::fold= rot3left \&list_fold;
 
+TEST{ list_fold (\&cons, null, list (1,2))->array }
+  [2,1];
+
 TEST { list(1,2,3)->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
   9;
-
 
 sub list_fold_right ($ $ $);
 sub list_fold_right ($ $ $) {
