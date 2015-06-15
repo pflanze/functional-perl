@@ -153,12 +153,19 @@ usually type check in the array case either!).
   `perhaps_` prefix is used for functions which return `()` as
   indication for the absense of a value.
 
+* Since handling arrays and hashes by reference is the normal way of
+  working functionally (see [[howto]] for why), naming things `array`
+  and `hash` is preferred over `arrayref` and `hashref`. (`ref` is
+  used in names of functions/methods to access fields in data
+  structures (e.g. a function that takes an array and an index and
+  returns $array->[$index] would be called `array_ref`).)
+
 * Functional setters (those which leave their arguments unmodified,
   i.e. for persistent data structures) *end* with `_set` instead of
   starting with `set_` as is common in the imperative world. (This is
   consistent with the Scheme naming conventions (first the type, then
-  the field name, then the operation), and hints that it's not
-  imperative code.)
+  the field name, then the operation), and hints that it's different
+  from imperative code.)
 
 
 ## Purity
