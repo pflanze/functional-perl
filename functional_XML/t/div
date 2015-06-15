@@ -45,6 +45,9 @@ TEST { P(array 1, 2, 3)->string }
 TEST { P(purearray 1, 2, 3)->string }
   '<p>123</p>';
 
+TEST { P(cons "Hello", "World")->string }
+  '<p>HelloWorld</p>';
+
 
 use Chj::Backtrace;
 use Chj::repl;
