@@ -56,9 +56,10 @@ properly formatted versions of these documents.)
 
 - rename PXML to FXML?
 
-- rename FP::Array to FP::Array; also, possibly generally bless
-  result arrays to enable OO? (without requiring the ... module which
-  is lexically scoped only anyway)
+- change FP::Array to use `autobox`? (But that's lexically scoped, how
+  will that 'scale'? Or, what about blessing and then providing an
+  overload for dumping? Not exist, right. What about writing an
+  alternative Dump?)
 
 - enforce FP::List to be proper lists (only accept pairs and null in
   rest position)? (And add a separate pair type that doesn't, but also
