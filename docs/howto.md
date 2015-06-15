@@ -36,7 +36,7 @@ project could look into as well. But that should be understood as an
 optimization. Alternative optimizations are possible, and may be
 preferrable (e.g. the Haskell compiler applies various other
 optimizations to achieve performance without manually written code
-using iterators).)
+that uses iterators).)
 
 
 <with_toc>
@@ -201,20 +201,19 @@ or then still
 
 ## Memory handling
 
-The second pain, or at least inconveniencing, point with regards to
-functional programming on Perl is to get programs to handle memory
-correctly. Functional programming languages usually use tracing
-garbage collection, and have compilers that do live time analysis of
-variables, and optimize tail calls by default (although some like
-Clojure don't do the latter), the sum of which mostly does away with
-concerning about memory. Perl offers none of these three features. It
-still does provide all the features to handle these issues manually,
-though.
+The second area where Perl is inconvenient to get functional programs
+working is for them to handle memory correctly. Functional programming
+languages usually use tracing garbage collection, have compilers that
+do live time analysis of variables, and optimize tail calls by default
+(although some like Clojure don't do the latter), the sum of which
+mostly resolves concerns about memory. Perl 5 currently offers none of
+these three features. But it still does provide all the features to
+handle these issues manually, and often the places where they are
+needed are in lower level parts of programs, which are often shared as
+libraries, and hence you might not need to use the tricks described
+here often. You need to know about them though, lest you might end up
+scratching your head for a long time.
 
-// -- TODO^ vs -v ?
-
-There are several potential challenges with memory when using Perl,
-which are exacerbated by some kinds of functional programs.
 
 ### Reference cycles (and self-referential closures)
 
@@ -296,10 +295,10 @@ Without further ado, this will retain all lines of the file at $path
 in `$s` while the for_each forces in (and itself releases) line after
 line.
 
-This is a problem that many programming language implementations
-have. Luckily in the case of Perl, it can be worked around, by
-assigning `undef` or better weakening the variable from within the
-called method:
+This is a problem that many programming language implementations (that
+are not written to support lazy evaluation) have. Luckily in the case
+of Perl, it can be worked around, by assigning `undef` or better
+weakening the variable from within the called method:
 
     sub for_each ($ $ ) {
         my ($s, $proc)=@_;
@@ -337,11 +336,13 @@ really want to do the following:
         $s->for_each (sub { print "again: > ".$_[0]."\n" });
     }
 
-Perhaps the interpreter could be changed (or a module written to
-modify programs on the bytecode level) so that lexical variables are
-automatically cleared upon their last access. The only argument
-against this is inspection using debuggers or debugging functionality;
-so it will have to be enabled explicitely in any case.
+This is probably the ugliest part when programming functionally on
+Perl.  Perhaps the interpreter could be changed (or a lowlevel module
+written) so that lexical variables are automatically cleared upon
+their last access (and something like @_=() is enough to clear it from
+the perl calling stack, if not automatic). An argument against this is
+inspection using debuggers or modules like `PadWalker`, so it will
+have to be enabled explicitely (lexically scoped).
 
 
 ### Stack memory and tail calls
@@ -406,10 +407,10 @@ make the interpreter run out of stack space, which will be reported as
 a segfault on most systems. There are two different possible remedies
 for this:
 
-    - increase system stack size by changing the corresponding
+  * increase system stack size by changing the corresponding
     resource limit (e.g. see `help ulimit` in Bash.)
 
-    - being careful not to let go of a deeply nested structure at
+  * being careful not to let go of a deeply nested structure at
     once. By using FP::Stream instead of FP::List for bigger lists and
     taking care that the head of the stream is not being retained,
     there will never be any long list in memory at any given time (it
