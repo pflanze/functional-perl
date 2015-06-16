@@ -117,6 +117,7 @@ sub empty {
 *pop= blessing_snd \&array_pop;
 *shift= blessing_snd \&array_shift;
 *unshift= blessing \&array_unshift;
+*sub= blessing \&array_sub;
 *append= blessing \&array_append;
 *reverse= blessing \&array_reverse;
 *xone= \&array_xone;
@@ -161,6 +162,23 @@ TEST {
 }
   [ 5, [-1,4,7], [-1,4,8], 6,
     99, 9, 77, [-1,4,8,9,99] ];
+
+TEST {
+    my $a= purearray (1,4,5,7);
+    my @a= ($a->sub (0,2),
+	    $a->sub (1,3));
+    push @a, $a->sub (2,4);
+    # throw out of range errors or what?
+    push @a, $a->sub (3,5);
+    # XX and what about negative positions?
+    push @a, $a->sub (-1,1);
+    # XX and about this case? Should this be an error, or revert the
+    # range, or?
+    push @a, $a->sub (3,1);
+
+    array_map sub{$_[0]->array}, \@a
+}
+  [[1,4], [4,5], [5,7], [7,undef], [7,1], []];
 
 TEST {
     purearray (1,4,5)->map (*inc)->sum

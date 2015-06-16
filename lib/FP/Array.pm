@@ -30,6 +30,7 @@ package FP::Array;
 	      array_pop
 	      array_shift
 	      array_unshift
+	      array_sub
 	      array_append
               array_reverse
 	      array_xone
@@ -123,6 +124,11 @@ sub array_unshift {
     my $a2= [@$a];
     unshift @$a2, @_;
     $a2
+}
+
+sub array_sub {
+    my ($a,$from,$to)=@_; # incl $from, excl $to
+    bless [@$a[$from..$to-1]], ref $a
 }
 
 
