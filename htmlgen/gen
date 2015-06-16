@@ -286,7 +286,7 @@ fun puthtmlfile ($path,$p) {
 
 
 {
-    package CHJ::Filesinfo;
+    package PFLANZE::Filesinfo;
     use FP::Struct [qw(files
 			filename2path0
 			all_path0_exists
@@ -353,7 +353,7 @@ fun get_filesinfo () {
 
     my $all_path0_used= {};
 
-    CHJ::Filesinfo->new($files,
+    PFLANZE::Filesinfo->new($files,
 			$filename2path0,
 			$all_path0_exists,
 			$path0_exists,
@@ -456,7 +456,7 @@ use FP::List ":all";
 use FP::Stream ":all";
 
 {
-    package CHJ::Cost;
+    package PFLANZE::Cost;
     use FP::Array ":all";
     use FP::Struct [qw(name is_purchaseable basecosts val)];
     method cost ($index) {
@@ -471,7 +471,7 @@ use FP::Stream ":all";
     _END_
 }
 {
-    package CHJ::Totalcost;
+    package PFLANZE::Totalcost;
     use FP::Array_sort ":all";
     use FP::Struct [qw(costs)];
     method range () {
@@ -511,7 +511,7 @@ fun groupkey ($path) {
 
 
 {
-    package CHJ::Genfilestate;
+    package PFLANZE::Genfilestate;
     use FP::Struct [qw(filesinfo
 			groupedfiles
 			nonbugfiles
@@ -535,7 +535,7 @@ fun get_genfilestate ($filesinfo) {
     my $costranges={};
     # path0 -> costrange-string; filled when processing non-buglist groups
 
-    CHJ::Genfilestate->new ($filesinfo, # just so as to bundle it up, too, ugly?
+    PFLANZE::Genfilestate->new ($filesinfo, # just so as to bundle it up, too, ugly?
 			    $groupedfiles,
 			    $nonbugfiles,
 			    $costranges)
@@ -589,16 +589,16 @@ fun genfile ($path,$groupname,$genfilestate) {
 	    my $name= &$perhaps_nameplus2name($nameplus);
 	    my @basecosts= map { &$perhaps_nameplus2name($_) }
 	      split /\s*\+\s*/, $basecosts;
-	    push @$costs, new CHJ::Cost ($name,
+	    push @$costs, new PFLANZE::Cost ($name,
 					 (not $nameplus
 					  or not($nameplus=~ /^\(/)),
 					 \@basecosts,
 					 $val);
 	}
 	#local our $totalcost=
-	#  CHJ::Totalcost->new($costs);
+	#  PFLANZE::Totalcost->new($costs);
 	#use Chj::Backtrace; use Chj::repl;repl if @$costs;#exit;
-	@$costs ? CHJ::Totalcost->new($costs)->range : undef
+	@$costs ? PFLANZE::Totalcost->new($costs)->range : undef
     };
     if (defined $maybe_costrange) {
 	$genfilestate->set_costrange($path0, $maybe_costrange);
