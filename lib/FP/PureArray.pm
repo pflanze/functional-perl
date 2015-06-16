@@ -41,18 +41,20 @@ use FP::Predicates 'is_pure';
 sub blessing ($) {
     my ($m)= @_;
     sub {
-	bless &$m (@_), "FP::PureArray"
+	my $class=ref $_[0];
+	bless &$m (@_), $class
     }
 }
 
 sub blessing_snd ($) {
     my ($m)= @_;
     sub {
+	my $class=ref $_[0];
 	wantarray ? do {
 	    my ($v,$a)= &$m (@_);
-	    ($v, bless $a, "FP::PureArray")
+	    ($v, bless $a, $class)
 	}
-	  : bless &$m (@_);
+	  : bless &$m (@_), $class;
     }
 }
 
@@ -201,5 +203,20 @@ TEST_STDOUT {
     require Chj::xIO;
     purearray(1,3)->for_each (*Chj::xIO::xprintln)
 } "1\n3\n";
+
+
+# subclassing
+
+{
+    package FP::PureArray::_Test;
+    our @ISA= 'FP::PureArray'
+}
+
+TEST {
+    my $empty= FP::PureArray::_Test->empty;
+    $empty->set (1,5)
+}
+  bless [undef, 5], 'FP::PureArray::_Test';
+
 
 _END_
