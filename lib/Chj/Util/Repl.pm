@@ -240,8 +240,12 @@ sub eval_code {
 	      keys %$eval_lexicals);
     my $use_method_signatures=
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
+    my $use_functional_parameters_=
+      $Function::Parameters::VERSION ? "use Function::Parameters" : "";
     myeval ("package ".&$get_package()."; $aliascode; (); ".
-	    "no strict 'vars'; $use_warnings; $use_method_signatures; $code")
+	    "no strict 'vars'; $use_warnings; ".
+	    "$use_method_signatures; $use_functional_parameters_; ".
+	    $code)
 }
 
 
