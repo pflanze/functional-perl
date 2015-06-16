@@ -81,6 +81,8 @@ package FP::Stream;
 	      stream_zip_with
 	      stream2array
 	      stream_mixed_flatten
+	      stream_mixed_fold_right
+	      stream_mixed_state_fold
 	      stream_any
 	      stream_show
 	 );
@@ -776,6 +778,29 @@ TEST{ stream_iota->state_fold
 	)->(10)->take(3)->array }
   [[0,10], [1,11], [2,12]];
 
+
+
+
+# are these warranted?: (or should they be deprecated right upon
+# introduction?)
+
+sub stream_mixed_fold_right {
+    @_==3 or die "wrong number of arguments";
+    my ($fn,$state,$v)=@_;
+    weaken $_[2];
+    @_=($fn, $state, stream_mixed_flatten $v); goto \&stream_fold_right
+}
+
+*FP::List::List::stream_mixed_fold_right= rot3left \&stream_mixed_fold_right;
+
+sub stream_mixed_state_fold {
+    @_==3 or die "wrong number of arguments";
+    my ($fn,$statefn,$v)=@_;
+    weaken $_[2];
+    @_=($fn, $statefn, stream_mixed_flatten $v);goto \&stream_state_fold
+}
+
+*FP::List::List::stream_mixed_state_fold= rot3left \&stream_mixed_state_fold;
 
 
 # ----- Tests ----------------------------------------------------------
