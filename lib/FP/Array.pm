@@ -22,6 +22,14 @@ package FP::Array;
 @EXPORT_OK=qw(array
 	      array_fst
 	      array_snd
+	      array_ref
+	      array_length
+	      array_set
+	      array_update
+	      array_push
+	      array_pop
+	      array_shift
+	      array_unshift
 	      array_append
               array_reverse
 	      array_xone
@@ -61,6 +69,64 @@ sub array_fst ($) {
 sub array_snd ($) {
     $_[0][1]
 }
+
+sub array_ref ($$) {
+    my ($a,$i)=@_;
+    $$a[$i]
+}
+
+sub array_length ($) {
+    scalar @{$_[0]}
+}
+
+# functional updates
+
+sub array_set ($$$) {
+    @_==3 or die "wrong number of arguments";
+    my ($a,$i,$v)=@_;
+    my $a2= [@$a];
+    $$a2[$i]= $v;
+    $a2
+}
+
+sub array_update ($$$) {
+    @_==3 or die "wrong number of arguments";
+    my ($a,$i,$fn)=@_;
+    my $a2= [@$a];
+    $$a2[$i]= &$fn ($$a2[$i]);
+    $a2
+}
+
+sub array_push {
+    my $a=shift;
+    my $a2= [@$a];
+    push @$a2, @_;
+    $a2
+}
+
+sub array_pop ($) {
+    my ($a)= @_;
+    my $a2= [@$a];
+    my $v= pop @$a2;
+    ($v, $a2)
+}
+
+sub array_shift ($) {
+    my ($a)= @_;
+    my $a2= [@$a];
+    my $v= shift @$a2;
+    ($v, $a2)
+}
+
+sub array_unshift {
+    my $a=shift;
+    my $a2= [@$a];
+    unshift @$a2, @_;
+    $a2
+}
+
+
+# various
 
 sub array_append {
     [ map { @$_ } @_ ]

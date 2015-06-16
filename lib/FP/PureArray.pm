@@ -45,6 +45,17 @@ sub blessing ($) {
     }
 }
 
+sub blessing_snd ($) {
+    my ($m)= @_;
+    sub {
+	wantarray ? do {
+	    my ($v,$a)= &$m (@_);
+	    ($v, bless $a, "FP::PureArray")
+	}
+	  : bless &$m (@_);
+    }
+}
+
 use Chj::NamespaceCleanAbove;
 
 sub purearray {
@@ -86,6 +97,14 @@ sub array {
 *first= \&array_fst;
 *snd= \&array_snd;
 *second= \&array_second;
+*ref= \&array_ref;
+*length= \&array_length;
+*set= blessing \&array_set;
+*update= blessing \&array_update;
+*push= blessing \&array_push;
+*pop= blessing_snd \&array_pop;
+*shift= blessing_snd \&array_shift;
+*unshift= blessing \&array_unshift;
 *append= blessing \&array_append;
 *reverse= blessing \&array_reverse;
 *xone= \&array_xone;
@@ -116,6 +135,20 @@ TEST {
     is_pure (purearray (4,5))
 }
   1;
+
+TEST {
+    my $a= purearray (1,4,5);
+    my $a2= $a->set (2,7)->set (0,-1);
+    my $a3= $a2->update (2,*inc);
+    my $a4= $a3->push (9,99)->unshift (77);
+    my ($p,$a5)= $a4->pop;
+    my ($s,undef)= $a4->shift;
+    my $a6= $a4->shift;
+    [$a->ref (2), $a2->array, $a3->array, $a4->length,
+     $p, $a5->ref(-1), $s, $a6->array]
+}
+  [ 5, [-1,4,7], [-1,4,8], 6,
+    99, 9, 77, [-1,4,8,9,99] ];
 
 TEST {
     purearray (1,4,5)->map (*inc)->sum
