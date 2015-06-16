@@ -11,11 +11,42 @@ FP::List - singly linked (purely functional) lists
 
  use FP::List ':all';
  list2string(cons("H",cons("e",cons("l",cons("l",cons("o",null))))))
- #-> "Hello"
+ # "Hello"
+
+ list (1,2,3)->map(sub{ $_[0]*$_[0]})->array
+ # [1,4,9]
+
+ list (qw(a b c))->first # "a"
+ list (qw(a b c))->rest->array # ["b","c"]
+
+ # etc.
+
+ # currently work like lisp pairs, no enforcement of sequences:
+ cons ("a","b")->rest # "b"
+ cons ("a","b")->cdr  # "b"
+ list (5,6,7)->caddr # 7
 
 =head1 DESCRIPTION
 
-Create and dissect sequences using pure functions (or methods).
+Create and dissect sequences using pure functions or methods.
+
+=head1 NAMING
+
+Most functional programming languages are using either the `:` or `::`
+operator to prepend an item to a list. The name `cons` comes from
+lisps, where it's the basic (lisp = list processing!) "construction"
+function.
+
+Cons cells (pairs) in lisps can also be used to build other data
+structures than lists: they don't enforce the rest slot to be a pair
+or null. Lisps traditionally use `car` and `cdr` as accessors for the
+two fields, to respect this feature, and also because 'a' and 'd'
+combine easily into composed names like `caddr`. This library offers
+`car` and `cdr` as aliases to `first` and `rest`.
+
+Some languages call the accessory `head` and `tail`, but `tail` would
+conflict with `Sub::Call::Tail`, hence those are not used here (except
+in the `head_and_tail` function, an alias to `first_and_rest`.)
 
 =cut
 
