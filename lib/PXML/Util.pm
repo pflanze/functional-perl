@@ -46,7 +46,7 @@ sub pxml_eager_map ($$;$$) {
 	}
     };
     if (my $r= ref $v) {
-	if (UNIVERSAL::isa ($v, "PXML")) {
+	if (UNIVERSAL::isa ($v, "PXML::Element")) {
 	    # XX TCO?
 	    &$elementfn ($v->body_map(&$rec_with_uplist ($uplist2)),
 			 $uplist);

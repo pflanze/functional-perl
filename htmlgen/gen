@@ -192,7 +192,7 @@ fun url_is_internal ($str) {
 }
 
 
-use PXML;
+use PXML::Element;
 
 # fix internal links, add anchors, .. in generated HTML, as well as
 # convert it to PXML.
@@ -238,7 +238,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	$uri->path($path);
 	$$atts{href}= "$uri";# mutation.
     }
-    my $res= PXML->new
+    my $res= PXML::Element->new
 	($name,
 	 $atts,
 	 [

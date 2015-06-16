@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-PXML - base class for PXML objects
+PXML::Element - base class for PXML elements
 
 =head1 SYNOPSIS
 
@@ -15,7 +15,7 @@ PXML - base class for PXML objects
 =cut
 
 
-package PXML;
+package PXML::Element;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -140,7 +140,7 @@ sub _text {
     my ($v)=@_;
     if (defined $v) {
 	if (ref $v)  {
-	    if (UNIVERSAL::isa ($v, "PXML")) {
+	    if (UNIVERSAL::isa ($v, "PXML::Element")) {
 		$v->text
 	    } elsif (UNIVERSAL::isa ($v, "ARRAY")) {
 		join("",

@@ -26,7 +26,7 @@ package PXML::Tags;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use PXML ();
+use PXML::Element;
 
 sub import {
     my $caller=caller;
@@ -37,7 +37,7 @@ sub import {
 	no strict 'refs';
 	*$fqname= sub {
 	    my $atts= ref($_[0]) eq "HASH" ? shift : undef;
-	    PXML->new($name, $atts, [@_]);
+	    PXML::Element->new($name, $atts, [@_]);
 	};
     }
     1

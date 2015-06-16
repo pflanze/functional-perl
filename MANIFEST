@@ -99,7 +99,7 @@ lib/FP/Values.pm
 lib/FP/Weak.pm
 lib/FP/fix.pm
 lib/FP/url_.pm
-lib/PXML.pm
+lib/PXML/Element.pm
 lib/PXML/HTML5.pm
 lib/PXML/SVG.pm
 lib/PXML/Serialize.pm

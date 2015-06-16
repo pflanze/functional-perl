@@ -20,7 +20,7 @@ package PXML::SVG;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use PXML;
+use PXML::Element;
 
 our $tags=
   [
@@ -69,7 +69,7 @@ our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
 {
     package PXML::PSVG;
-    our @ISA= "PXML";
+    our @ISA= "PXML::Element";
     # serialize to HTML5 compatible representation: -- nope, not
     # necessary for SVG, ok? Assuming XHTML always? And different tags
     # anyway, ok?

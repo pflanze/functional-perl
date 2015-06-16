@@ -20,7 +20,7 @@ package PXML::XHTML;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use PXML;
+use PXML::Element;
 
 our $nbsp= "\xa0";
 
@@ -142,7 +142,7 @@ our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
 {
     package PXML::PXHTML;
-    our @ISA= "PXML";
+    our @ISA= "PXML::Element";
     # serialize to HTML5 compatible representation:
     sub require_printing_nonvoid_elements_nonselfreferential  {
 	1

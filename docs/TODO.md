@@ -68,7 +68,7 @@ properly formatted versions of these documents.)
 
 ## Less important:
 
-- port PXML to FP::Struct (it was originally written before that existed, iirc).
+- port PXML::Element to FP::Struct (it was originally written before that existed, iirc).
   Create a version/extension of FP::Struct that uses arrays instead of hashes,
   or is that irrelevant and stupid? (benchmark cpu and memory)
 
