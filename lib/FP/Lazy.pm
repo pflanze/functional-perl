@@ -59,7 +59,7 @@ promise, and subsequent requests for evaluation are simply returning
 the saved value.
 
  $p = lazy { ...... } # returns a promise that represents the computation
-                       # given in the block of code
+                      # given in the block of code
 
  force $p  # runs the block of code and stores the result within the
            # promise and also returns it
@@ -72,6 +72,27 @@ the saved value.
 
  is_promise $x # returns true iff $x holds a promise
 
+
+=head1 NAMING
+
+The name `lazy` for the delaying form was chosen because it seems what
+most frameworks for functional programming on non-functional
+programming languages are using, as well as Ocaml. We don't want to
+stand in the way of what people expect, after all.
+
+Scheme calls the lazy evaluation form `delay`. This seems to make
+sense, as that's a verb, unlike `lazy`. There's a conceptually
+different way to introduce lazyness, which is to change the language
+to be lazy by default, and `lazy` could be misunderstood to be a form
+that changes the language in its scope to be that. Both for this
+current (slight?) risk for misinterpretation, and to reserve it for
+possible future implementation of this latter feature, it seems to be
+wise to use `delay` and not `lazy` for what this module offers.
+
+What should we do?
+
+(To experiment with the style, or in case you're stubborn, you can
+explicitely import `delay` or import the `:all` export tag to get it.)
 
 =head1 SEE ALSO
 
@@ -87,7 +108,7 @@ Alternative Scalar::Defer?
 package FP::Lazy;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(lazy lazyLight force FORCE is_promise);
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(delay);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -105,6 +126,10 @@ sub lazyLight (&) {
 sub is_promise ($) {
     (UNIVERSAL::isa ($_[0], "FP::Lazy::Promise"))
 }
+
+sub delay (&);  *delay = \&lazy;
+sub delayLight (&); *delayLight= \&lazyLight;
+
 
 sub force ($;$) {
     my ($perhaps_promise,$nocache)=@_;
