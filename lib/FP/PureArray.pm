@@ -92,6 +92,16 @@ sub array {
     [@$s]
 }
 
+# emptyness constructor that works for subclassing (using singletons
+# for performance (perhaps), and, well, perhaps more so to punish
+# people who hijack purearrays; might teach them!, so they will do the
+# right thing even if PureArray doesn't make arrays readonly (yet))
+my %empties;
+sub empty {
+    my $cl=shift;
+    $empties{$cl} ||= bless [], $cl
+}
+
 
 *fst= \&array_fst;
 *first= \&array_fst;
