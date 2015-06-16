@@ -16,6 +16,9 @@ FP::Stream - functions for lazily generated, singly linked (purely functional) l
  stream_length stream_iota (undef, 5000000)
  # => 5000000;
 
+ stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum
+ # => 30  (0+1+4+9+16)
+
  use FP::Lazy;
  force stream_fold_right sub { my ($n,$rest)=@_; $n + force $rest }, 0, stream_iota undef, 5
  # => 10;
@@ -60,6 +63,7 @@ package FP::Stream;
 	      stream__array_fold_right
 	      stream__string_fold_right
 	      stream__subarray_fold_right stream__subarray_fold_right_reverse
+	      stream_sum
 	      array2stream stream
 	      subarray2stream subarray2stream_reverse
 	      string2stream
@@ -186,6 +190,24 @@ TEST{ stream_fold sub { [ @_ ] }, 0, stream (1,2) }
 
 TEST{ stream_fold (\&cons, null, stream (1,2))->array }
   [2,1];
+
+
+sub stream_sum ($) {
+    my ($s)=@_;
+    weaken $_[0];
+    stream_fold (sub { $_[0] + $_[1] },
+		 0,
+		 $s)
+}
+
+*FP::List::List::stream_sum= *stream_sum;
+
+TEST{ stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum }
+  30;
+
+# leak test:  XXX make this into a LEAK_TEST or so form(s), and env var, ok?
+#TEST{ stream_iota->rest->take(100000)->sum }
+#  5000050000;
 
 
 sub stream_append ($$) {
