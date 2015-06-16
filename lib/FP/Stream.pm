@@ -60,6 +60,7 @@ package FP::Stream;
 	      stream_fold
 	      stream_foldr1
 	      stream_fold_right
+	      stream_state_fold
 	      stream__array_fold_right
 	      stream__string_fold_right
 	      stream__subarray_fold_right stream__subarray_fold_right_reverse
@@ -687,6 +688,94 @@ sub stream_show ($) {
 }
 
 *FP::List::List::stream_show= *stream_show;
+
+
+
+# A stateful fold: collect state while going to the end (starting from
+# the left). Then it's basically a fold_right.
+
+sub stream_state_fold {
+    @_==3 or die "wrong number of arguments";
+    my ($fn,$stateupfn,$s)=@_;
+    sub {
+	@_==1 or die "wrong number of arguments";
+	my ($statedown)=@_;
+	FORCE $s;
+	if (is_null $s) {
+	    &$stateupfn ($statedown)
+	} else {
+	    my ($v,$s)= $s->first_and_rest;
+	    &$fn($v,
+		 $statedown,
+		 stream_state_fold ($fn, $stateupfn, $s))
+	}
+    }
+}
+
+*FP::List::List::stream_state_fold= rot3left \&stream_state_fold;
+
+
+TEST{ stream_state_fold
+	(
+	 sub {
+	     my ($v,$statedown,$restfn)=@_;
+	     [$v, &$restfn($statedown.".")]
+	 },
+	 sub {
+	     my ($statedown)=@_;
+	     $statedown."end"
+	 },
+	 stream(3,4)
+	)->("start") }
+  [3, [4, "start..end"]];
+
+TEST{ stream_state_fold
+	(
+	 sub {
+	     my ($v,$statedown,$restfn)=@_;
+	     cons $v, &$restfn ($statedown)
+	 },
+	 sub{$_[0]}, # \&identity
+	 stream(3,4)
+	)->(list 5,6)->array }
+  [3,4,5,6];
+
+TEST{ stream_state_fold
+	(
+	 sub {
+	     my ($v,$statedown,$restfn)=@_;
+	     cons $v, &$restfn (cons $v, $statedown)
+	 },
+	 sub{$_[0]}, # \&identity
+	 stream(3,4)
+	)->(list 5,6)->array }
+  [3,4,4,3,5,6];
+
+TEST{ stream_state_fold
+	(
+	 sub {
+	     my ($v,$statedown,$restfn)=@_;
+	     lazy {
+		 cons [$v,$statedown], &$restfn ($statedown + 1)
+	     }
+	 },
+	 undef, # \&identity, but never reached
+	 stream_iota
+	)->(10)->take(3)->array }
+  [[0,10], [1,11], [2,12]];
+
+# modified test from above
+TEST{ stream_iota->state_fold
+	(sub {
+	     my ($v,$statedown,$restfn)=@_;
+	     lazy {
+		 cons [$v,$statedown], &$restfn ($statedown + 1)
+	     }
+	 },
+	 undef, # \&identity, but never reached
+	)->(10)->take(3)->array }
+  [[0,10], [1,11], [2,12]];
+
 
 
 # ----- Tests ----------------------------------------------------------
