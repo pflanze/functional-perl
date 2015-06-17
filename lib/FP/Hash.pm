@@ -14,6 +14,9 @@ FP::Hash
  my $a= {a=>1, b=>2};
  my $b= hash_set($a, "b", 3);
  my $c= hash_delete($b, "a");
+ if (my ($v)= hash_ref ($c, "x")) {
+    ...
+ }
 
  print Dumper($c); # {b => 3}
  print Dumper($a); # {a => 1, b => 2}
@@ -33,7 +36,8 @@ Clojure)?)
 
 package FP::Hash;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(hash_set hash_delete hash_diff hashes_keys $empty_hash);
+@EXPORT=qw(hash_set hash_ref hash_xref
+	   hash_delete hash_diff hashes_keys $empty_hash);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -88,6 +92,25 @@ sub hash_delete ($$) {
     $h2
 }
 
+# should in principle be called hash_perhaps_ref ?
+sub hash_ref ($$) {
+    my ($h,$k)=@_;
+    if (exists $$h{$k}) {
+	$$h{$k}
+    } else {
+	()
+    }
+}
+
+sub hash_xref ($$) {
+    my ($h,$k)=@_;
+    if (exists $$h{$k}) {
+	$$h{$k}
+    } else {
+	die "unbound table key"; # no such key. unknown key. unbound
+                                 # hash key. ?
+    }
+}
 
 
 # looking for definedness, not exists. Ok? Also, only handles strings
