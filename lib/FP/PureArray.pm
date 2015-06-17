@@ -20,6 +20,11 @@ If you hand someone an FP::PureArray you guarantee that you won't
 mutate it. This might be enforced in the future by making them
 immutable (todo).
 
+=head1 TODO
+
+Write alternative implementation that is efficient for updates on big
+arrays.
+
 =cut
 
 
