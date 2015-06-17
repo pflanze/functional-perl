@@ -141,6 +141,7 @@ sub empty {
 *zip= blessing \&array_zip;
 *fold= rot3left \&array_fold;
 *join= blessing \&array_join;
+*strings_join= \&array_strings_join;
 *every= flip \&array_every;
 *any= flip \&array_any;
 *sum= \&array_sum;
@@ -211,6 +212,9 @@ TEST { (purearray 3,4)->zip([qw(a b c)]) }
 
 TEST { (purearray 2,3)->join("a") }
   bless [2, "a", 3], 'FP::PureArray';
+
+TEST{ purearray(1,2,3)->strings_join("-") }
+  "1-2-3";
 
 TEST{ (purearray 1, 2, 3)->every (sub { ($_[0] % 2) == 0 }) }
   0;

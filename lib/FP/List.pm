@@ -502,6 +502,20 @@ TEST{ list2string list_reverse string2list "Hello" }
   'olleH';
 
 
+sub list_strings_join ($$) {
+    my ($l,$val)=@_;
+    # now depend on FP::Array anyway. Lazily. XX hack~
+    require FP::Array;
+    FP::Array::array_strings_join( list2array ($l), $val);
+}
+
+*FP::List::List::strings_join= *list_strings_join;
+
+TEST { list (1,2,3)->strings_join("-") }
+  "1-2-3";
+
+
+
 # write as a S-expr (trying to follow R5RS Scheme)
 sub _write_sexpr ($ $ $);
 sub _write_sexpr ($ $ $) {

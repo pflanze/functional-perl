@@ -69,6 +69,7 @@ package FP::Stream;
 	      subarray2stream subarray2stream_reverse
 	      string2stream
 	      stream2string
+	      stream_strings_join
 	      stream_for_each
 	      stream_drop
 	      stream_take
@@ -474,6 +475,22 @@ sub stream2string ($) {
 }
 
 *FP::List::List::stream_string= *stream2string;
+
+sub stream_strings_join ($$) {
+    my ($l,$val)=@_;
+    weaken $_[0];
+    # XX can't I just use list_strings_join? no, the other way round
+    # would work.
+
+    # depend on FP::Array. Lazily, for depencency cycle?
+    require FP::Array;
+    FP::Array::array_strings_join( stream2array ($l), $val);
+}
+
+*FP::List::List::stream_strings_join= *stream_strings_join;
+
+TEST { stream (1,2,3)->strings_join("-") }
+  "1-2-3";
 
 
 sub stream_for_each ($ $ ) {
