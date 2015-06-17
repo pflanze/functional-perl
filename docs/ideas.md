@@ -51,3 +51,7 @@ properly formatted versions of these documents.)
   make multimethod dispatch still fast? Would that then (really?) be
   the same as `Moose::Util::TypeConstraints`? 
 
+* (Add AUTOLOAD to FP::List to auto-generate lisp style c[ad]*r
+  accessors? Benchmark the overhead of adding a DESTROY method,
+  though!)
+
