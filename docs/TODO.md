@@ -80,3 +80,6 @@ properly formatted versions of these documents.)
   - those not using lazy internally: implement the List variants using
     Keep and the stream variants.
 
+- add `join` method for all sequences by finally starting sequences
+  base class.
+
