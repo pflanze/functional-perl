@@ -39,6 +39,9 @@ TEST { P(list)->string }
 TEST { P(list 1, 2, B(3))->string }
   '<p>12<b>3</b></p>';
 
+TEST { P(stream 1, 2, lazy { B(3) })->string }
+  '<p>12<b>3</b></p>';
+
 TEST { P(array 1, 2, B(3))->string }
   '<p>12<b>3</b></p>';
 
