@@ -143,6 +143,19 @@ use Chj::TEST;
     sub cadddr { $_[0]->cdr->cdr->cdr->car }
     sub caddddr { $_[0]->cdr->cdr->cdr->cdr->car }
 
+    sub c_r {
+	my ($s,$chain)=@_;
+	my $c;
+	while (length ($c= chop $chain)) {
+	    $s= $c eq "a" ? FP::List::car ($s)
+	      : $c eq "d" ? FP::List::cdr ($s)
+		: die "only 'a' and 'd' acceptable in chain, have: '$chain'";
+	}
+	$s
+    }
+
+    # Use AUTOLOAD to autogenerate instead? But be careful about the
+    # overhead of the then necessary DESTROY method.
 }
 
 
