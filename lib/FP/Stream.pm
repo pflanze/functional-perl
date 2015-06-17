@@ -652,6 +652,21 @@ sub stream2array ($) {
 
 *FP::List::List::stream_array= *stream2array;
 
+sub stream2purearray {
+    my ($l)=@_;
+    weaken $_[0];
+    my $a= stream2array $l;
+    require FP::PureArray;
+    FP::PureArray::array2purearray ($a)
+}
+
+*FP::List::List::stream_purearray= *stream2purearray;
+
+TEST {
+    stream (1,3,4)->purearray->map (sub{$_[0]**2})
+}
+  bless [1,9,16], "FP::PureArray";
+
 
 sub stream_mixed_flatten ($;$$) {
     my ($v,$maybe_tail,$maybe_delay)=@_;

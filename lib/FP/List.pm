@@ -384,6 +384,20 @@ sub list2array ($) {
 
 *FP::List::List::array= *list2array;
 
+sub list2purearray {
+    my ($l)=@_;
+    my $a= list2array $l;
+    require FP::PureArray;
+    FP::PureArray::array2purearray ($a)
+}
+
+*FP::List::List::purearray= *list2purearray;
+
+TEST {
+    list (1,3,4)->purearray->map (sub{$_[0]**2})
+}
+  bless [1,9,16], "FP::PureArray";
+
 
 sub rlist2array ($) {
     my ($l)=@_;
