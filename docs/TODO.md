@@ -74,3 +74,9 @@ properly formatted versions of these documents.)
 
 - fix the now horrible hand-optimized-but-convoluted code in
   PXML::Serialize (and figure out an automatic way to make it fast)
+
+- avoid the duplication between FP::List and FP::Stream as much as possible.
+
+  - those not using lazy internally: implement the List variants using
+    Keep and the stream variants.
+
