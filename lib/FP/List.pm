@@ -75,6 +75,7 @@ package FP::List;
 	      caddr
 	      cadddr
 	      caddddr
+	      c_r
 	      list_ref
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -143,17 +144,7 @@ use Chj::TEST;
     sub cadddr { $_[0]->cdr->cdr->cdr->car }
     sub caddddr { $_[0]->cdr->cdr->cdr->cdr->car }
 
-    sub c_r {
-	my ($s,$chain)=@_;
-	my $c;
-	while (length ($c= chop $chain)) {
-	    $s= $c eq "a" ? FP::List::car ($s)
-	      : $c eq "d" ? FP::List::cdr ($s)
-		: die "only 'a' and 'd' acceptable in chain, have: '$chain'";
-	}
-	$s
-    }
-
+    # Re `c_r`:
     # Use AUTOLOAD to autogenerate instead? But be careful about the
     # overhead of the then necessary DESTROY method.
 }
@@ -257,6 +248,23 @@ sub caddr ($) { car cdr cdr $_[0] }
 sub cadddr ($) { car cdr cdr cdr $_[0] }
 sub caddddr ($) { car cdr cdr cdr cdr $_[0] }
 
+
+sub c_r {
+    @_==2 or die "wrong number of arguments";
+    my ($s,$chain)=@_;
+    my $c;
+    while (length ($c= chop $chain)) {
+	$s= $c eq "a" ? car ($s)
+	  : $c eq "d" ? cdr ($s)
+	    : die "only 'a' and 'd' acceptable in chain, have: '$chain'";
+    }
+    $s
+}
+
+*FP::List::List::c_r= *c_r;
+
+TEST { list(1,list(4,7,9),5)->c_r("addad") }
+  9;
 
 
 sub car_and_cdr ($) {
