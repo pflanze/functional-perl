@@ -25,7 +25,7 @@ immutable (todo).
 
 package FP::PureArray;
 #@ISA="Exporter"; require Exporter; see hack below
-@EXPORT=qw(purearray array2purearray); # or optional export only?
+@EXPORT=qw(purearray array2purearray unsafe_array2purearray); # or optional export only?
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -67,6 +67,11 @@ sub purearray {
 sub array2purearray ($) {
     # XX assume it, and turn on readonly flag instead of copying?
     bless [@{$_[0]}], "FP::PureArray"
+}
+
+sub unsafe_array2purearray ($) {
+    # XX turn on readonly flag?
+    bless $_[0], "FP::PureArray"
 }
 
 

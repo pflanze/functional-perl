@@ -388,7 +388,7 @@ sub list2purearray {
     my ($l)=@_;
     my $a= list2array $l;
     require FP::PureArray;
-    FP::PureArray::array2purearray ($a)
+    FP::PureArray::unsafe_array2purearray ($a)
 }
 
 *FP::List::List::purearray= *list2purearray;

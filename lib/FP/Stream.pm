@@ -657,7 +657,7 @@ sub stream2purearray {
     weaken $_[0];
     my $a= stream2array $l;
     require FP::PureArray;
-    FP::PureArray::array2purearray ($a)
+    FP::PureArray::unsafe_array2purearray ($a)
 }
 
 *FP::List::List::stream_purearray= *stream2purearray;
