@@ -43,6 +43,7 @@ package FP::Array;
 	      array_filter
 	      array_zip
 	      array_fold
+	      array_fold_right
 	      array_join
 	      array_every
 	      array_any
@@ -265,6 +266,24 @@ TEST{ array_fold sub{[@_]}, 's', [3,4] }
 TEST{ require FP::List;
       array_fold (\&FP::List::cons, &FP::List::null, array (1,2))->array }
   [2,1];
+
+
+sub array_fold_right ($$$) {
+    @_==3 or die "wrong number of arguments";
+    my ($fn,$tail,$a)=@_;
+    my $i= @$a - 1;
+    while ($i >= 0) {
+	$tail= &$fn($$a[$i], $tail);
+	$i--;
+    }
+    $tail
+}
+
+TEST{ require FP::List;
+      FP::List::list2array (array_fold_right (\&FP::List::cons,
+					      &FP::List::null,
+					      [1,2,3])) }
+  [1,2,3];
 
 
 sub array_join ($$) {

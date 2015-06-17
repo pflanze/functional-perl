@@ -67,7 +67,6 @@ package FP::List;
 	      list_zip2
 	      list_every list_any
 	      is_charlist ldie
-	      array_fold_right
 	      cddr
 	      cdddr
 	      cddddr
@@ -86,6 +85,8 @@ use FP::Lazy;
 use Chj::xIO qw(xprint xprintln);
 use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
+#use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
+#(Chj::xIOUtil triggers it)
 
 {
     package FP::List::List;
@@ -463,6 +464,7 @@ TEST{ list2string string2list "Hello" }
   'Hello';
 
 
+# XX HACK, COPY from FP::Array to work around circular dependency
 sub array_fold_right ($$$) {
     @_==3 or die "wrong number of arguments";
     my ($fn,$tail,$a)=@_;
@@ -473,9 +475,6 @@ sub array_fold_right ($$$) {
     }
     $tail
 }
-
-TEST{ list2array array_fold_right \&cons, null, [1,2,3] }
-  [1,2,3];
 
 
 sub array2list ($;$) {
