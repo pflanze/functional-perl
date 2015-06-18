@@ -40,6 +40,7 @@ intro/more_tailcalls
 intro/tailcalls
 lib/Chj/Backtrace.pm
 lib/Chj/BinHexOctDec.pm
+lib/Chj/BuiltinTypePredicates.pm
 lib/Chj/Class/methodnames.pm
 lib/Chj/IO/Command.pm
 lib/Chj/IO/CommandCommon.pm
