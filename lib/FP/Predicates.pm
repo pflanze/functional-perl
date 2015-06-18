@@ -227,23 +227,19 @@ sub is_filehandle ($) {
     # it's meant to be a filehandle, ok? (Or is that inconsistent with
     # treating `\*STDOUT` as filehandle? But there's no way around
     # this one, as that's what `open my $out, ..` gives, and we do
-    # check that the IO slot is actually set in this case.)
+    # check that the IO slot is actually set in this case.) (hm could
+    # take reference to the bare glob and treat it the same then,
+    # though; but still.)
 
-    my $r= ref ($v);
-    $r and
-      $r eq "GLOB" ? (*{$v}{IO} ? 1 : '') # explicitely return ''
-                                          # instead of undef
-	: (reftype($v) eq "IO");
+    if (defined (my $rt= reftype ($v))) {
+	(($rt eq "GLOB" and *{$v}{IO})
+	 or
+	 $rt eq "IO") ? 1 : '';
+	# explicitely return '' instead of undef
+    } else {
+	''
+    }
 }
-
-# sub is_filehandle ($) {
-#     my ($v)=@_;
-#     (ref ($v) and (reftype($v) eq "IO"))
-#       ? 1 : ''
-# }
-# fails for \*STDOUT
-
-# what about this alternative implementation?:
 
 # sub is_filehandle ($) {
 #     my ($v)=@_;
@@ -251,7 +247,7 @@ sub is_filehandle ($) {
 #     (length $r and ($r eq "GLOB" ? (*{$v}{IO} ? 1 : '')
 # 		    : UNIVERSAL::isa($v, "IO"))) ? 1 : ''
 # }
-
+# fails for bless $in, "MightActullyBeIO" case
 
 TEST {[ map { is_filehandle $_ }
 	"STDOUT", undef,
@@ -266,8 +262,7 @@ TEST {[ map { is_filehandle $_ }
    '', 1, 1,
    '', '', '',
    '',
-   '', # 1 expected really, thus not even reftype will find out
-       # whether it really is a filehandle! !
+   1
   ];
 
 
