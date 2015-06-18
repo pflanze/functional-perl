@@ -25,18 +25,16 @@ package Chj::xIO;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+use Chj::BuiltinTypePredicates 'is_filehandle';
+
 sub xprint {
-    my $r= ref($_[0]);
-    my $fh= (length $r and ($r eq "GLOB" or UNIVERSAL::isa($_[0],"IO")))
-      ? shift : *STDOUT{IO};
+    my $fh= is_filehandle ($_[0]) ? shift : *STDOUT{IO};
     print $fh @_
       or die "printing to $fh: $!"
 }
 
 sub xprintln {
-    my $r= ref($_[0]);
-    my $fh= (length $r and (ref($_[0]) eq "GLOB" or UNIVERSAL::isa($_[0],"IO")))
-      ? shift : *STDOUT{IO};
+    my $fh= is_filehandle ($_[0]) ? shift : *STDOUT{IO};
     print $fh @_,"\n"
       or die "printing to $fh: $!"
 }
