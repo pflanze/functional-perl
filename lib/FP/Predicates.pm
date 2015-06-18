@@ -205,27 +205,27 @@ my $classpart_re= qr/\w+/;
 
 sub is_class_name ($) {
     my ($v)= @_;
-    not ref ($v) and $v=~ /^(?:${classpart_re}::)*$classpart_re\z/;
+    ! length ref ($v) and $v=~ /^(?:${classpart_re}::)*$classpart_re\z/;
 }
 
 sub instance_of ($) {
     my ($cl)=@_;
     is_class_name $cl or die "need class name string, got: $cl";
     sub ($) {
-	ref $_[0] and UNIVERSAL::isa ($_[0], $cl);
+	length ref $_[0] ? UNIVERSAL::isa ($_[0], $cl) : ''
     }
 }
 
 sub is_instance_of ($$) {
     my ($v,$cl)=@_;
     # is_class_name $cl or die "need class name string, got: $cl";
-    ref $v and UNIVERSAL::isa ($v, $cl);
+    length ref $v ? UNIVERSAL::isa ($v, $cl) : ''
 }
 
 sub is_subclass_of ($$) {
     my ($v,$cl)=@_;
     # is_class_name $cl or die "need class name string, got: $cl";
-    !ref $v and UNIVERSAL::isa ($v, $cl);
+    !length ref $v and UNIVERSAL::isa ($v, $cl);
 }
 
 TEST { my $v= "IO"; is_instance_of $v, "IO" } '';
