@@ -36,6 +36,10 @@ following reasons:
   That may also change where explicit indication about memory
   retention are still expected. (Possibly backward incompatible.)
 
+* there are also various ways to explore performance improvements
+  (read-only guarantees and caching, sequences, PXML specializations,
+  implement code inlining, ...)
+
 We welcome anyone to play with the code, ask
 questions, provide feedback, and perhaps contribute examples, ideas or
 teaching materials.  We are also hoping to work with interested core
