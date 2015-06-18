@@ -61,6 +61,20 @@ use Chj::xopen ":all";
 use Chj::chompspace;
 use Chj::xIOUtil qw(xputfile_utf8 xgetfile_utf8 xcopyfile);
 use FP::HashSet ":all";
+use PXML::XHTML ":all";
+use FP::Array ":all";
+use File::Spec;
+use FP::Array_sort;
+use FP::Ops qw(string_cmp number_cmp);
+use Chj::TEST ":all";
+use FP::List ":all";
+use FP::Lazy ":all";
+use FP::Stream ":all";
+use PXML "is_pxml_element";
+use PXML::Util ":all";
+use FP::Hash ":all";
+use FP::Div 'identity';
+use PXML::Tags qw(with_toc);
 
 
 our $default_config=
@@ -141,7 +155,6 @@ fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
     }
 }
 
-use Chj::TEST ":all";
 fun t_if_suffix_md2html ($in,$for_title=0) {
     if_suffix_md2html $in, $for_title, sub {["then",@_]}, sub{["otherwise",@_]}
 }
@@ -191,8 +204,6 @@ fun url_is_internal ($str) {
     not defined $u->scheme
 }
 
-
-use PXML::Element;
 
 # fix internal links, add anchors, .. in generated HTML, as well as
 # convert it to PXML.
@@ -271,6 +282,175 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 fun htmlparse ($str,$whichtag,$selfpath0,$filesinfo) {
     htmlmap htmlparse_raw ($str,$whichtag), $selfpath0, $filesinfo
 }
+
+
+#  the body
+
+{
+    package PFLANZE::TocCounter;
+    use base 'FP::PureArray';
+    use FP::Predicates;
+    use Chj::NamespaceCleanAbove;
+
+    sub inc {
+	my ($s,$level)=@_;
+	is_natural $level or die "invalid level: $level";
+	$s->sub (0,$level)
+	  ->update ($level-1, sub {
+			my $v= $_[0] // 0;
+			$v + 1
+		    });
+    }
+
+    sub string {
+	my $s=shift;
+	join ".", map { ($_//0) } @$s
+    }
+
+    sub level {
+	my $s=shift;
+	scalar @$s
+    }
+
+    _END_
+}
+
+our $empty_toccounter= PFLANZE::TocCounter->empty;
+
+TEST {
+    use FP::Array ":all"; use FP::Ops "the_method";
+    my $c;
+    my $s1= $c= $empty_toccounter->inc (1);
+    my $s1_1= $c= $c->inc (2);
+    my $s1_2= $c= $c->inc (2);
+    my $s2= $c= $c->inc (1);
+    #array_map the_method ("string"), [$s1, $s1_1, $s1_2, $s2]
+    #[$s1, $s1_1, $s1_2, $s2]->map(the_method "string")
+    #list($s1, $s1_1, $s1_2, $s2)->map(the_method "string")
+    #[map { $_->string } $s1, $s1_1, $s1_2, $s2]
+    #(map .string (list s1 s1_1 s1_2 s2))
+    # so much for rich syntax (incl. fingernail clippings)
+    [map { [$_->string, $_->level] } $s1, $s1_1, $s1_2, $s2]
+}
+  [["1",1], ["1.1",2], ["1.2",2], ["2",1]];
+
+
+fun process_with_toc_body ($body, $counter) {
+    # -> (processed_body, incremented_counter)
+    stream_mixed_state_fold
+      (
+       fun ($v,$counter,$rest) {
+	   warn "V[$v]: counter=".$counter->string;
+	   if (is_pxml_element ($v)) {
+	       if (my ($level)= $v->name =~ /^[hH](\d+)$/s) {
+		   warn "Section header of level $level";
+		   my $counter= $counter->inc($level);
+		   my ($tail, $counter2)= &$rest ($counter);
+		   (cons ($v->body_update
+			  (fun ($body)
+			   { cons ($counter->string." ", $body) }),
+			  $tail),
+		    $counter2)
+	       } else {
+		   warn "Other element: ".$v->name;
+		   # map $v's body
+		   my ($body2, $counter2)= process_with_toc_body
+		     ($v->body,$counter);
+		   my ($tail, $counter3)= &$rest ($counter2);
+		   (cons ($v->body_set ($body2), $tail),
+		    $counter3)
+	       }
+	   } else {
+	       warn "Single value, no recurse: '$v'";
+	       my ($tail, $counter2)= &$rest ($counter);
+	       (cons ($v, $tail), $counter2)
+	   }
+       },
+       fun ($counter) {
+	   warn "END: counter=".$counter->string;
+	   # return counter back up the chain
+	   (null, $counter)
+       },
+       $body)->($counter);
+}
+
+TEST {[map {$_->string}
+       process_with_toc_body ["foo"], $empty_toccounter ]}
+  [
+   'foo',
+   ''
+  ];
+
+TEST {HTML((process_with_toc_body ["foo",H1("hed"),"bar"],
+	    $empty_toccounter)[0])->string}
+  '<html>foo<h1>1 hed</h1>bar</html>';
+
+TEST {HTML((process_with_toc_body ["foo",H1("hed"),P("bar")],
+	    $empty_toccounter)[0])->string}
+  '<html>foo<h1>1 hed</h1><p>bar</p></html>';
+
+TEST {HTML((process_with_toc_body [cons "foo",[H1("hed"),H2("hud"),["",P("bar")]]],
+	    $empty_toccounter)[0])->string}
+  '<html>foo<h1>1 hed</h1><h2>1.1 hud</h2><p>bar</p></html>';
+
+TEST {HTML ((process_with_toc_body [" ", P ("blabla"), H1 ("for one")],
+	     $empty_toccounter)
+	    [0])->string}
+  '<html> <p>blabla</p><h1>1 for one</h1></html>';
+
+# map <with_toc> element
+fun with_toc ($e, $uplist) {
+    (process_with_toc_body ($e->body, $empty_toccounter))[0]
+}
+
+fun pxml_map_elements ($s, $name2mapper) {
+    pxml_eager_map ($s,
+		    fun ($e, $uplist) {
+			if (my ($mapper)= hash_ref $name2mapper, $e->name) {
+			    &$mapper ($e, $uplist)
+			} else {
+			    $e
+			}
+		    },
+		    undef);
+}
+
+
+our $pxml_name2mapper=
+  +{
+    with_toc=> \&with_toc,
+   };
+
+fun process_body ($s) {
+    pxml_map_elements ($s, $pxml_name2mapper)
+}
+
+TEST { HTML( process_body  (["Hello", WITH_TOC H1 "world"]))->string }
+  '<html>Hello<h1>1 world</h1></html>';
+
+TEST { HTML( process_body  (["Hello", WITH_TOC ["some", H1 "world"]]))->string }
+  '<html>Hellosome<h1>1 world</h1></html>';
+
+TEST { HTML( process_body  ([P("Hello"),
+			     WITH_TOC
+			     [" ",
+			      P ("blabla"),
+			      H1 ("for one"),
+			     ]]))->string }
+  '<html><p>Hello</p> <p>blabla</p><h1>1 for one</h1></html>';
+
+TEST { HTML( process_body  ([P("Hello"),
+			     WITH_TOC
+			     [" ",
+			      P ("blabla"),
+			      H1 ("for one"),
+			      H2 ("more one"),
+			      P ("blah"),
+			      H1 ("sub two"),
+			      DIV ("bla"),
+			     ]]))->string }
+  '<html><p>Hello</p> <p>blabla</p><h1>1 for one</h1><h2>1.1 more one</h2><p>blah</p><h1>2 sub two</h1><div>bla</div></html>';
+
 
 use PXML::Serialize 'pxml_xhtml_print_fast';
 
@@ -361,12 +541,6 @@ fun get_filesinfo () {
 }
 
 
-use PXML::XHTML ":all";
-use FP::Array ":all";
-use File::Spec;
-use FP::Array_sort;
-use FP::Ops qw(string_cmp number_cmp);
-
 our $path02sortkey= do {
     my $sortprio= do {
 	my $i=1;
@@ -451,9 +625,6 @@ TEST{url_diff "foo", "bar.css"} 'bar.css';
 
 #/lib
 
-use FP::Lazy ":all";
-use FP::List ":all";
-use FP::Stream ":all";
 
 {
     package PFLANZE::Cost;
@@ -687,7 +858,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 				on $path02sortkey, \&string_cmp))),
 			   $config->{belownav}->($path0),
 			   $h1,
-			   $body1,
+			   process_body ($body1),
 			   $maybe_buglist,
 			   BR,
 			   HR,
