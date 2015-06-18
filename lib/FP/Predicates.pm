@@ -62,7 +62,7 @@ package FP::Predicates;
 	      is_array
 	      is_procedure
 	      is_class_name
-	      is_instance_of
+	      instance_of
 
 	      is_filehandle
 
@@ -206,7 +206,7 @@ sub is_class_name ($) {
     not ref ($v) and $v=~ /^(?:${classpart_re}::)*$classpart_re\z/;
 }
 
-sub is_instance_of ($) {
+sub instance_of ($) {
     my ($cl)=@_;
     is_class_name $cl or die "need class name string, got: $cl";
     sub ($) {
