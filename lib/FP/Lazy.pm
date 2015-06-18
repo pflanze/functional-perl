@@ -124,7 +124,7 @@ sub lazyLight (&) {
 }
 
 sub is_promise ($) {
-    (UNIVERSAL::isa ($_[0], "FP::Lazy::Promise"))
+    length ref $_[0] ? UNIVERSAL::isa ($_[0], "FP::Lazy::Promise") : ''
 }
 
 sub delay (&);  *delay = \&lazy;
@@ -134,21 +134,25 @@ sub delayLight (&); *delayLight= \&lazyLight;
 sub force ($;$) {
     my ($perhaps_promise,$nocache)=@_;
   LP: {
-	if (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::PromiseLight")) {
-	    $perhaps_promise= &$perhaps_promise;
-	    redo LP;
-	} elsif (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::Promise")) {
-	    if (my $thunk= $$perhaps_promise[0]) {
-		my $v= &$thunk;
-		unless ($nocache) {
-		    $$perhaps_promise[1]= $v;
-		    $$perhaps_promise[0]= undef;
+	if (length (my $r= ref $perhaps_promise)) {
+	    if (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::PromiseLight")) {
+		$perhaps_promise= &$perhaps_promise;
+		redo LP;
+	    } elsif (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::Promise")) {
+		if (my $thunk= $$perhaps_promise[0]) {
+		    my $v= &$thunk;
+		    unless ($nocache) {
+			$$perhaps_promise[1]= $v;
+			$$perhaps_promise[0]= undef;
+		    }
+		    $perhaps_promise= $v;
+		    redo LP;
+		} else {
+		    $perhaps_promise= $$perhaps_promise[1];
+		    redo LP;
 		}
-		$perhaps_promise= $v;
-		redo LP;
 	    } else {
-		$perhaps_promise= $$perhaps_promise[1];
-		redo LP;
+		$perhaps_promise
 	    }
 	} else {
 	    $perhaps_promise

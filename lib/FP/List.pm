@@ -159,11 +159,14 @@ sub cons ($ $) {
 sub is_pair ($);
 sub is_pair ($) {
     my ($v)=@_;
-    (UNIVERSAL::isa($v, "FP::List::Pair")
-     or
-     # XX evil: inlined `is_promise`
-     UNIVERSAL::isa($v, "FP::Lazy::Promise")
-     && is_pair (force $v))
+    my $r= ref $v;
+    length $r ?
+      (UNIVERSAL::isa($v, "FP::List::Pair")
+       or
+       # XX evil: inlined `is_promise`
+       UNIVERSAL::isa($v, "FP::Lazy::Promise")
+       && is_pair (force $v))
+	: '';
 }
 
 sub is_pair_of ($$) {
@@ -187,11 +190,13 @@ sub null () {
 sub is_null ($);
 sub is_null ($) {
     my ($v)=@_;
-    (UNIVERSAL::isa($v, "FP::List::Null")
-     or
-     # XX evil: inlined `is_promise`
-     UNIVERSAL::isa($v, "FP::Lazy::Promise")
-     && is_null (force $v))
+    my $r= ref $v;
+    length $r ?
+      (UNIVERSAL::isa($v, "FP::List::Null")
+       or
+       # XX evil: inlined `is_promise`
+       UNIVERSAL::isa($v, "FP::Lazy::Promise") && is_null (force $v))
+	: '';
 }
 
 TEST { null ->cons(1)->cons(2)->array }
@@ -216,7 +221,8 @@ sub not_a_pair ($) {
 
 sub car ($) {
     my ($v)=@_;
-    if (UNIVERSAL::isa($v, "FP::List::Pair")) {
+    my $r= ref $v;
+    if (length $r and UNIVERSAL::isa($v, "FP::List::Pair")) {
 	$$v[0]
     } elsif (is_promise $v) {
 	@_=force $v; goto \&car;
@@ -229,7 +235,8 @@ sub first ($); *first=*car;
 
 sub cdr ($) {
     my ($v)=@_;
-    if (ref $v and UNIVERSAL::isa($v, "FP::List::Pair")) {
+    my $r= ref $v;
+    if (length $r and UNIVERSAL::isa($v, "FP::List::Pair")) {
 	$$v[1]
     } elsif (is_promise $v) {
 	@_=force $v; goto \&cdr;
@@ -270,7 +277,8 @@ TEST { list(1,list(4,7,9),5)->c_r("addad") }
 
 sub car_and_cdr ($) {
     my ($v)=@_;
-    if (UNIVERSAL::isa($v, "FP::List::Pair")) {
+    my $r= ref $v;
+    if (length $r and UNIVERSAL::isa($v, "FP::List::Pair")) {
 	@{$_[0]}
     } elsif (is_promise $v) {
 	@_=force $v; goto \&car_and_cdr;
