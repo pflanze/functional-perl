@@ -232,8 +232,8 @@ TEST { purearray (1,3)->append (purearray (4,5)->reverse)->array }
   [1,3,5,4];
 
 TEST_STDOUT {
-    require Chj::xIO;
-    purearray(1,3)->for_each (*Chj::xIO::xprintln)
+    require Chj::xperlfunc;
+    purearray(1,3)->for_each (\&Chj::xperlfunc::xprintln)
 } "1\n3\n";
 
 

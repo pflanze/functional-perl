@@ -34,7 +34,7 @@ use PXML::Element;
 use FP::Lazy;
 use FP::List;
 use FP::Stream;
-use Chj::xIO;
+use Chj::xperlfunc qw(xprint xprintln);
 use Scalar::Util 'weaken';
 
 sub perhaps_dump {
@@ -254,8 +254,8 @@ sub pxml_xhtml_print_fast ($ $ ;$ ) {
     if (not "html" eq $v->name) {
 	die "not an 'html' element: ".(perhaps_dump $v);
     }
-    xprint $fh, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-    xprint $fh, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
+    xprint ($fh, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+    xprint ($fh, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
     # add attributes to toplevel element
     my $v2= $v->maybe_attributes ? $v :
 	$v->attributes_set

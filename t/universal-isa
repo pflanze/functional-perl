@@ -7,7 +7,8 @@ require "./test.pl";
 
 use Test::More;
 use lib "./lib";
-use Chj::xIO ":all";
+use Chj::xperlfunc qw(xprintln);
+use Chj::xIO qw(capture_stdout);
 use Chj::Backtrace;
 
 # UNIVERSAL::isa does not require a reference
@@ -19,8 +20,7 @@ is capture_stdout { xprintln (" a Foo") },
   " a Foo\n";
 
 
-# the actual tests (can't "use Chj::TEST" in Chj::xIO, circular
-# dependencies)
+# the actual tests
 
 is capture_stdout { xprintln ("IO") },
   "IO\n";

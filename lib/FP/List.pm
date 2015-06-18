@@ -82,7 +82,7 @@ package FP::List;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
-use Chj::xIO qw(xprint xprintln);
+use Chj::xperlfunc qw(xprint xprintln);
 use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
