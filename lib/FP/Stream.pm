@@ -644,8 +644,12 @@ sub F ($) {
     } else {
 	if (is_pair $v) {
 	    cons (F(car $v), F(cdr $v))
+	} elsif (is_null $v) {
+	    $v
 	} elsif (ref ($v) eq "ARRAY") {
 	    [ map { F $_ } @$v ]
+	} elsif (UNIVERSAL::isa ($v, "ARRAY")) {
+	    bless [ map { F $_ } @$v ], ref $v
 	} else {
 	    $v
 	}
