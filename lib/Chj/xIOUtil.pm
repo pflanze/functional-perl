@@ -25,10 +25,10 @@ package Chj::xIOUtil;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::xopen ":all";
-# ^ well, this voids the point of Chj::xIO (to avoid Chj::IO::*)
+# ^ well, this voids the purpose of Chj::xIO (to avoid Chj::IO::*)
 use FP::Lazy;
 use FP::List;
-use Chj::xIO "xprint";
+use Chj::xperlfunc qw(xxsystem xprint);
 
 sub xgetfile_utf8 ($) {
     my ($path)=@_;
@@ -71,8 +71,6 @@ sub xcopyfile_utf8 ($$) {
     xputfile_utf8 ($dest, xgetfile_utf8 ($src));
 }
 
-
-use Chj::xperlfunc 'xxsystem';
 
 sub xcopyfile ($$) {
     my ($src,$dest)=@_;

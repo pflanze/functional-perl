@@ -19,26 +19,11 @@ Chj::xopen modules.
 
 package Chj::xIO;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(xprint xprintln);
+@EXPORT=qw();
 @EXPORT_OK=qw(capture_stdout capture_stdout_);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
-
-use Chj::BuiltinTypePredicates 'is_filehandle';
-
-sub xprint {
-    my $fh= is_filehandle ($_[0]) ? shift : *STDOUT{IO};
-    print $fh @_
-      or die "printing to $fh: $!"
-}
-
-sub xprintln {
-    my $fh= is_filehandle ($_[0]) ? shift : *STDOUT{IO};
-    print $fh @_,"\n"
-      or die "printing to $fh: $!"
-}
-
 
 sub capture_stdout_ {
     my ($thunk)=@_;
