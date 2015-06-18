@@ -236,13 +236,39 @@ sub is_filehandle ($) {
 	: (reftype($v) eq "IO");
 }
 
+# sub is_filehandle ($) {
+#     my ($v)=@_;
+#     (ref ($v) and (reftype($v) eq "IO"))
+#       ? 1 : ''
+# }
+# fails for \*STDOUT
+
+# what about this alternative implementation?:
+
+# sub is_filehandle ($) {
+#     my ($v)=@_;
+#     my $r= ref ($v);
+#     (length $r and ($r eq "GLOB" ? (*{$v}{IO} ? 1 : '')
+# 		    : UNIVERSAL::isa($v, "IO"))) ? 1 : ''
+# }
+
+
 TEST {[ map { is_filehandle $_ }
 	"STDOUT", undef,
 	*STDOUT, *STDOUT{IO}, \*STDOUT,
-	*SMK69GXDB, *SMK69GXDB{IO}, \*SMK69GXDB ]}
+	*SMK69GXDB, *SMK69GXDB{IO}, \*SMK69GXDB,
+	bless (\*WOFWEOXVV, "ReallyNotIO"),
+	do { open my $in, $0 or die $!;
+	     #warn "HM".<$in>;  # works
+	     bless $in, "MightActullyBeIO" }
+      ]}
   ['', '',
    '', 1, 1,
-   '', '', ''];
+   '', '', '',
+   '',
+   '', # 1 expected really, thus not even reftype will find out
+       # whether it really is a filehandle! !
+  ];
 
 
 # should probably be in a filesystem lib instead?
