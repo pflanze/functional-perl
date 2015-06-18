@@ -234,13 +234,11 @@ sub pxml_print_fragment_fast ($ $ ) {
 	    @_=($v); goto $with_first_element;
 	} else {
 	    my $s= force(stream_mixed_flatten ($v));
-	    if ($s) {
-		@_= (car $s); goto $with_first_element;
-	    } else {
+	    if (is_null $s) {
 		goto $no_element
+	    } else {
+		@_= (car $s); goto $with_first_element;
 	    }
-	} else {
-	    goto $no_element
 	}
     } else {
 	goto $no_element
