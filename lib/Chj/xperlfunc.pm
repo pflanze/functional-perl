@@ -1,6 +1,5 @@
-# Sat Apr 26 16:42:57 2003  Christian Jaeger, christian at jaeger mine nu
 #
-# Copyright 2003-2014 by Christian Jaeger
+# Copyright 2003-2015 by Christian Jaeger, ch at christianjaeger ch
 # Published under the same terms as perl itself
 #
 
