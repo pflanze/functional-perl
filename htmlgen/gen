@@ -340,10 +340,8 @@ fun process_with_toc_body ($body, $counter) {
     stream_mixed_state_fold
       (
        fun ($v,$counter,$rest) {
-	   warn "V[$v]: counter=".$counter->string;
 	   if (is_pxml_element ($v)) {
 	       if (my ($level)= $v->name =~ /^[hH](\d+)$/s) {
-		   warn "Section header of level $level";
 		   my $counter= $counter->inc($level);
 		   my ($tail, $counter2)= &$rest ($counter);
 		   (cons ($v->body_update
@@ -352,7 +350,6 @@ fun process_with_toc_body ($body, $counter) {
 			  $tail),
 		    $counter2)
 	       } else {
-		   warn "Other element: ".$v->name;
 		   # map $v's body
 		   my ($body2, $counter2)= process_with_toc_body
 		     ($v->body,$counter);
@@ -361,13 +358,11 @@ fun process_with_toc_body ($body, $counter) {
 		    $counter3)
 	       }
 	   } else {
-	       warn "Single value, no recurse: '$v'";
 	       my ($tail, $counter2)= &$rest ($counter);
 	       (cons ($v, $tail), $counter2)
 	   }
        },
        fun ($counter) {
-	   warn "END: counter=".$counter->string;
 	   # return counter back up the chain
 	   (null, $counter)
        },
