@@ -229,7 +229,7 @@ sub first ($); *first=*car;
 
 sub cdr ($) {
     my ($v)=@_;
-    if (UNIVERSAL::isa($v, "FP::List::Pair")) {
+    if (ref $v and UNIVERSAL::isa($v, "FP::List::Pair")) {
 	$$v[1]
     } elsif (is_promise $v) {
 	@_=force $v; goto \&cdr;
