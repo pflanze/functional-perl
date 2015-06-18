@@ -11,6 +11,7 @@ $ENV{TEST}=1;
 our @t=
   qw(
 	require_and_run_tests
+	universal-isa
 	testlazy
 	testlazy10
 	functional_XML-test

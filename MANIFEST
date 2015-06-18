@@ -139,6 +139,7 @@ t/testlazy.expected
 t/testlazy10
 t/testlazy10.expected
 t/trampoline-fix
+t/universal-isa
 test
 test.pl
 testmem.pl
