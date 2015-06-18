@@ -51,6 +51,7 @@ package FP::Predicates;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
 	      is_pure
+	      is_pure_class
 	      is_string
 	      is_nonnullstring
 	      is_natural0
@@ -98,7 +99,11 @@ sub is_pure ($) {
     # modified strings. (Hm, what about immutable SVs? Even new
     # types?)
     # XX check for read-only flags?
-    UNIVERSAL::isa ($_[0], "FP::Pure")
+    length ref $_[0] and UNIVERSAL::isa ($_[0], "FP::Pure")
+}
+
+sub is_pure_class ($) {
+    is_class_name $_[0] and UNIVERSAL::isa ($_[0], "FP::Pure")
 }
 
 sub is_string ($) {
