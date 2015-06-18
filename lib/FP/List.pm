@@ -245,6 +245,13 @@ sub cdr ($) {
     }
 }
 
+TEST { is_pair cons(2,3) } 1;
+TEST { is_pair "FP::List::Pair" } '';
+TEST { car cons(2,3) } 2;
+TEST_EXCEPTION { car "FP::List::Pair" } "not a pair: 'FP::List::Pair'\n";  #why the \n?
+TEST_EXCEPTION { cdr "FP::List::Pair" } "not a pair: 'FP::List::Pair'\n";  #why the \n?
+
+
 sub rest ($); *rest= *cdr;
 
 sub cddr ($) { cdr cdr $_[0] }
