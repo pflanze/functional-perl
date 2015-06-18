@@ -63,6 +63,8 @@ package FP::Predicates;
 	      is_procedure
 	      is_class_name
 	      instance_of
+	      is_instance_of
+	      is_subclass_of
 
 	      is_filehandle
 
@@ -210,9 +212,27 @@ sub instance_of ($) {
     my ($cl)=@_;
     is_class_name $cl or die "need class name string, got: $cl";
     sub ($) {
-	UNIVERSAL::isa ($_[0], $cl);
+	ref $_[0] and UNIVERSAL::isa ($_[0], $cl);
     }
 }
+
+sub is_instance_of ($$) {
+    my ($v,$cl)=@_;
+    # is_class_name $cl or die "need class name string, got: $cl";
+    ref $v and UNIVERSAL::isa ($v, $cl);
+}
+
+sub is_subclass_of ($$) {
+    my ($v,$cl)=@_;
+    # is_class_name $cl or die "need class name string, got: $cl";
+    !ref $v and UNIVERSAL::isa ($v, $cl);
+}
+
+TEST { my $v= "IO"; is_instance_of $v, "IO" } '';
+TEST { my $v= bless [], "IO"; is_instance_of $v, "IO" } 1;
+TEST { my $v= "IO"; is_subclass_of $v, "IO" } 1;
+TEST { require Chj::IO::File;
+       is_subclass_of "Chj::IO::File", "IO" } 1;
 
 
 # is_filename in Chj::BuiltinTypePredicates
