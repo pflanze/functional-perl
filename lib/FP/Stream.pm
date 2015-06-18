@@ -642,14 +642,18 @@ sub F ($) {
     if (is_promise $v) {
 	F force $v;
     } else {
-	if (is_pair $v) {
-	    cons (F(car $v), F(cdr $v))
-	} elsif (is_null $v) {
-	    $v
-	} elsif (ref ($v) eq "ARRAY") {
-	    [ map { F $_ } @$v ]
-	} elsif (UNIVERSAL::isa ($v, "ARRAY")) {
-	    bless [ map { F $_ } @$v ], ref $v
+	if (length (my $r= ref $v)) {
+	    if (is_pair $v) {
+		cons (F(car $v), F(cdr $v))
+	    } elsif (is_null $v) {
+		$v
+	    } elsif ($r eq "ARRAY") {
+		[ map { F $_ } @$v ]
+	    } elsif (UNIVERSAL::isa ($v, "ARRAY")) {
+		bless [ map { F $_ } @$v ], ref $v
+	    } else {
+		$v
+	    }
 	} else {
 	    $v
 	}

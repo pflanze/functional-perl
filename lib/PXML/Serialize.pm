@@ -188,7 +188,7 @@ sub _pxml_print_fragment_fast {
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
 		    # evil.
-		    goto PXML if (UNIVERSAL::isa($v, "PXML::Element"));
+		    goto PXML if ($ref and UNIVERSAL::isa($v, "PXML::Element"));
 		    goto PAIR if is_pair $v;
 		    goto PROMISE if is_promise $v;
 		    die "unexpected type of reference: ".(perhaps_dump $v);
@@ -229,10 +229,10 @@ sub pxml_print_fragment_fast ($ $ ) {
 	    ($html5compat and $firstel->void_element_h));
 	goto \&_pxml_print_fragment_fast;
     };
-    if (UNIVERSAL::isa($v, "PXML::XHTML")) {
-	@_=($v); goto $with_first_element;
-    } else {
-	if (ref $v) {
+    if (length (my $r= ref $v)) {
+	if (UNIVERSAL::isa($v, "PXML::XHTML")) {
+	    @_=($v); goto $with_first_element;
+	} else {
 	    my $s= force(stream_mixed_flatten ($v));
 	    if ($s) {
 		@_= (car $s); goto $with_first_element;
@@ -242,13 +242,16 @@ sub pxml_print_fragment_fast ($ $ ) {
 	} else {
 	    goto $no_element
 	}
+    } else {
+	goto $no_element
     }
+	
 }
 
 sub pxml_xhtml_print_fast ($ $ ;$ ) {
     my ($v, $fh, $maybe_lang)= @_;
     weaken $_[0] if ref $_[0]; # ref check perhaps unnecessary here
-    if (not UNIVERSAL::isa($v, "PXML::Element")) {
+    if (not ref $v or not UNIVERSAL::isa($v, "PXML::Element")) {
 	die "not an element: ".(perhaps_dump $v);
     }
     if (not "html" eq $v->name) {
