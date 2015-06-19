@@ -421,20 +421,20 @@ TEST {[map {$_->string}
 
 TEST {HTML((process_with_toc_body ["foo",H1("hed"),"bar"],
 	    $empty_toccounter)[0])->string}
-  '<html>foo<h1>1 hed</h1>bar</html>';
+  '<html>foo<h1>1. hed</h1>bar</html>';
 
 TEST {HTML((process_with_toc_body ["foo",H1("hed"),P("bar")],
 	    $empty_toccounter)[0])->string}
-  '<html>foo<h1>1 hed</h1><p>bar</p></html>';
+  '<html>foo<h1>1. hed</h1><p>bar</p></html>';
 
 TEST {HTML((process_with_toc_body [cons "foo",[H1("hed"),H2("hud"),["",P("bar")]]],
 	    $empty_toccounter)[0])->string}
-  '<html>foo<h1>1 hed</h1><h2>1.1 hud</h2><p>bar</p></html>';
+  '<html>foo<h1>1. hed</h1><h2>1.1. hud</h2><p>bar</p></html>';
 
 TEST {HTML ((process_with_toc_body [" ", P ("blabla"), H1 ("for one")],
 	     $empty_toccounter)
 	    [0])->string}
-  '<html> <p>blabla</p><h1>1 for one</h1></html>';
+  '<html> <p>blabla</p><h1>1. for one</h1></html>';
 
 # map <with_toc> element
 fun with_toc ($e, $uplist) {
@@ -466,10 +466,10 @@ fun process_body ($v) {
 }
 
 TEST { HTML( process_body  (["Hello", WITH_TOC H1 "world"]))->string }
-  '<html>Hello<h1>1 world</h1></html>';
+  '<html>Hello<h1>1. world</h1></html>';
 
 TEST { HTML( process_body  (["Hello", WITH_TOC ["some", H1 "world"]]))->string }
-  '<html>Hellosome<h1>1 world</h1></html>';
+  '<html>Hellosome<h1>1. world</h1></html>';
 
 TEST { HTML( process_body  ([P("Hello"),
 			     WITH_TOC
@@ -477,7 +477,7 @@ TEST { HTML( process_body  ([P("Hello"),
 			      P ("blabla"),
 			      H1 ("for one"),
 			     ]]))->string }
-  '<html><p>Hello</p> <p>blabla</p><h1>1 for one</h1></html>';
+  '<html><p>Hello</p> <p>blabla</p><h1>1. for one</h1></html>';
 
 TEST { HTML( process_body  ([P("Hello"),
 			     WITH_TOC
@@ -489,7 +489,7 @@ TEST { HTML( process_body  ([P("Hello"),
 			      H1 ("sub two"),
 			      DIV ("bla"),
 			     ]]))->string }
-  '<html><p>Hello</p> <p>blabla</p><h1>1 for one</h1><h2>1.1 more one</h2><p>blah</p><h1>2 sub two</h1><div>bla</div></html>';
+  '<html><p>Hello</p> <p>blabla</p><h1>1. for one</h1><h2>1.1. more one</h2><p>blah</p><h1>2. sub two</h1><div>bla</div></html>';
 
 
 use PXML::Serialize 'pxml_xhtml_print_fast';
