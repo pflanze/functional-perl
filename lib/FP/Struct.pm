@@ -10,36 +10,66 @@ FP::Struct - classes for functional perl
 
 =head1 SYNOPSIS
 
- sub is_hash {ref ($_[0]) eq "HASH"}
+ use FP::Predicates qw(is_array maybe);
 
- use FP::Struct Bar=> ["a", [\&is_array, "b"]]=> ["Foo"];
+ use FP::Struct Foo=>
+         ["name",
+          [maybe (\&is_array), "animals"]] # => "Baz"
+            ;
+ Foo::_END_;
+
  # creates a constructor new that takes positional arguments and
- # copies them to a hash with the keys "a" and "b". Also, sets
- # @Bar::ISA to ("Foo"). [ ] around "Foo" are optional.
- # If a field is specified as an array then the first entry is a
- # predicate that receives the value in question, if it doesn't return
- # true then an exception is thrown.
+ # copies them to a hash with the keys "name" and "animals". Also,
+ # sets @Bar::ISA to ("Baz") if the '#' is removed. [ ] around "Baz"
+ # are optional.  If an array is given as a field declaration, then
+ # the first entry is a predicate that receives the value in question,
+ # if it doesn't return true then an exception is thrown.
+
+ new Foo ("Tim")->name # => "Tim"
+ new Foo ("Tim", 0) # exception
+ new Foo (undef, ["Struppi"])->animals->[0] # "Struppi"
+ new_ Foo (animals=> ["Struppi"])->animals->[0] # "Struppi"
+
+
+ # alternative: define the struct from within the package:
+
+ # a mixin package, if this weren't defined at the time of 'use
+ # FP::Struct' below, it would try to load Hum.pm
+ {
+   package Hum;
+   sub hum {
+      my $s=shift;
+      $s->name." hums ".$s->a." over ".$s->b
+   }
+ }
+
  {
    package Bar;
    use Chj::TEST; # the TEST sub will be removed from the package upon
                   # _END_ (namespace cleaning)
-   # instead of use FP::Struct Bar.. above, could use this:
-   use FP::Struct ["a","b"]=> ["Foo"];
-   sub sum {
+   use FP::Struct ["a","b"]=> "Foo", "Hum";
+   sub div {
       my $s=shift;
-      $$s{a} + $$s{b}[0]
+      $$s{a} / $$s{b}
    }
-   TEST { Bar->new(1,[2])->sum } 3;
+   TEST { Bar->new_(a=> 1, b=> 2)->div } 1/2;
    _END_ # generate accessors for methods of given name which don't
          # exist yet *in either Bar or any super class*. (Does that
          # make sense?)
  }
- new Bar (1,2)-> sum #=> 3
- new_ Bar (a=>1,b=>2)-> sum # dito
 
- new Bar (1,2)->b_set(3)->sum # 4
+ my $bar= new Bar ("Franz", ["Barney"], 1,2);
+
+ $bar-> div # => 1/2
+
+ new_ Bar (a=>1,b=>2)-> div # => 1/2
+
+ $bar->b_set(3)->div # => 1/3
+
  use FP::Div 'inc';
- new Bar (1,2)->b_update(\&inc)->sum # 4
+ $bar->b_update(\&inc)->div # => 1/3
+
+ $bar->hum # => "Franz hums 1 over 2"
 
 =head1 DESCRIPTION
 
@@ -59,7 +89,8 @@ i.e. they will not shadow super class methods. (Thanks to Matt S Trout
 for pointing out the idea.) To avoid the namespace cleaning, write
 _END__ instead of _END_.
 
-See FP::Predicates for some useful predicates.
+See FP::Predicates for some useful predicates (others are in the
+respective modules that define them, like `is_pair` in `FP::List`).
 
 =head1 PURITY
 
