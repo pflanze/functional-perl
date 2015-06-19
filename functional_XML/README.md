@@ -8,16 +8,20 @@ properly formatted versions of these documents.)
 PXML intends to be a simple, Perl based representation for XML, or at
 least the subset that's necessary for doing most tasks. Currently it
 doesn't support XML namespaces properly (manually prefixing element
-names may be a workable solution, though?). It is meant to *produce*
-XML output; handling parsed XML is out of the current scope. 
+names may be a workable solution, though?). It is primarily meant to
+*produce* XML output; parsing of XML is of secondary interest (but
+[`htmlgen`](../htmlgen/README.md) already has some code to parse by
+way of `HTML::TreeBuilder`).
 
-Its in-memory representation are `PXML::Element`
-objects. Serialization to file handles is done using procedures from
-`PXML::Serialize`.
+Its in-memory representation are
+[`PXML::Element`](../lib/PXML/Element.pm) (or subclassed)
+objects. Serialization is done using functions/procedures from
+[`PXML::Serialize`](../lib/PXML/Serialize.pm).
 
-The body of elements can be a mix of standard Perl arrays, linked
-lists based on `FP::List`, and promises (`FP::Lazy`) which
-allows for the generation of streaming output.
+The body of elements can be a mix of standard Perl arrays,
+[`FP::PureArray`](../lib/FP/PureArray.pm)s, linked lists based on
+`FP::List`, and promises (`FP::Lazy`, `FP::Stream`), the latter of
+which allow for the generation of streaming output.
 
 Direct creation of XML elements:
 
@@ -29,12 +33,25 @@ Using 'tag functions' for shorter code:
 
     use PXML::XHTML;
     my $element= A({href=> "http://myserver.com"}, "my server");
+    my 
 
 See [`test`](test) and [`testlazy`](testlazy) for complete examples,
 and [`examples/csv2xml`](../examples/csv2xml) for a simple real
-example, and [`htmlgen/gen`](../htmlgen/gen) for a somewhat real-world
-program.
+example, and [`htmlgen/gen`](../htmlgen/gen) for the program that
+generates this website. [`FP::DBI`](../lib/FP/DBI.pm) is supposed to
+fit well with PXML.
 
+## Module list
+
+[`PXML`](../lib/PXML.pm),
+[`PXML::XHTML`](../lib/PXML/XHTML.pm),
+[`PXML::HTML5`](../lib/PXML/HTML5.pm),
+[`PXML::SVG`](../lib/PXML/SVG.pm),
+[`PXML::Tags`](../lib/PXML/Tags.pm),
+[`PXML::Serialize`](../lib/PXML/Serialize.pm),
+[`PXML::Util`](../lib/PXML/Util.pm)
+
+## Comparison with CGI.pm
 
 When generating HTML, CGI.pm's tag functions seem similar, what are
 the differences?
@@ -58,4 +75,14 @@ the differences?
    clutter both for the eyes and for the programmer wanting to access
    attributes from such hashes, and added complexity/runtime cost for
    the serializer.
+
+
+## Naming
+
+Perhaps PXML should be renamed to FXML. The idea behind PXML was
+originally to provide something similar to
+[SXML](https://en.wikipedia.org/wiki/SXML), using Perl arrays and
+hashes (hence 'P' instead of 'S'), but that has proven to be pretty
+impractical, wrapper functions producing blessed objects is a much
+better user interface.
 

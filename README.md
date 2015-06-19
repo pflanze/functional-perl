@@ -57,16 +57,12 @@ Please send [me](http://leafpair.com/contact) your suggestions!
   functional setters and takes predicate functions for type checking
 
 * [lib/FP/](lib/FP/): library of pure functions and
-  functional data structures
+  functional data structures, including various sequences (pure
+  arrays, linked lists and lazy streams).
 
-* [PXML](lib/PXML.pm),
-  [PXML::XHTML](lib/PXML/XHTML.pm),
-  [PXML::HTML5](lib/PXML/HTML5.pm),
-  [PXML::SVG](lib/PXML/SVG.pm),
-  [PXML::Tags](lib/PXML/Tags.pm),
-  [PXML::Serialize](lib/PXML/Serialize.pm):
-  "templating system" for XML based markup languages by way of Perl
-  functions. Docs and tests are in [functional_XML/](functional_XML/).
+* the PXML [functional XML](functional_XML/README.md) "templating
+  system" for XML based markup languages by way of Perl
+  functions.
 
 * some developer utilities: [Chj::repl](lib/Chj/repl.pm),
   [Chj::ruse](lib/Chj/ruse.pm), [Chj::Backtrace](lib/Chj/Backtrace.pm)
@@ -86,6 +82,9 @@ Please send [me](http://leafpair.com/contact) your suggestions!
 
 * a few more modules that are used by the above (some originally part
   of [chj-perllib](https://github.com/pflanze/chj-perllib))
+
+* [htmlgen](htmlgen/README.md), the tool used to generate this
+  website, built on top of the above.
 
 
 ## Documentation

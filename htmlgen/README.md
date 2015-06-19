@@ -7,9 +7,8 @@ properly formatted versions of these documents.)
 
 [This](gen) is the Perl program that generates the main part of the
 [functional-perl.org](http://functional-perl.org) website. It makes
-use of functional-perl itself quite a bit (although it's not taking
-purity very far at all), and hence might suit you as another source of
-example code, but that was not its primary purpose.
+use of functional-perl itself quite a bit, although it was primarily
+written for practical purposes, not as a demo. (Todo: make it nicer?)
 
 ## Hacking
 
@@ -27,9 +26,9 @@ example code, but that was not its primary purpose.
   so that it can be reused by the mailing list archive generator.
 
 * `$filesinfo` (passed around explicitely for no particular reason?),
-  is a `CHJ::Filesinfo` object, mutated to add information (bah, and
-  that in a functional program?), maintains information about all the
-  files that make up the website.
+  is a `PFLANZE::Filesinfo` object, mutated to add information
+  (remember that I said it was not meant as a demo), maintains
+  information about all the files that make up the website.
 
 * its TEST forms are run as part of the functional-perl test suite (if
   the necessary dependencies are available)
