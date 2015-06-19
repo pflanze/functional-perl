@@ -193,6 +193,7 @@ use HTML::TreeBuilder;
 fun htmlparse_raw ($htmlstr,$whichtag) {
     warn "HTMLPARSE_RAW htmlstr: $htmlstr";
     my $t= HTML::TreeBuilder->new;
+    $t->ignore_unknown(0); # allow <with_toc> elements
     $t->parse_content ($htmlstr);
     my $e= $t->elementify;
     # (^ actually mutates $t into the HTML::Element object already, ugh)
