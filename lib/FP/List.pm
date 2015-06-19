@@ -53,7 +53,8 @@ in the `head_and_tail` function, an alias to `first_and_rest`.)
 
 package FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons is_pair null is_null is_pair_of is_list_of
+@EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
+	   is_list_of
 	   car cdr first rest _car _cdr
 	   car_and_cdr first_and_rest
 	   list);
@@ -188,6 +189,10 @@ sub null () {
     $null
 }
 
+TEST { null ->cons(1)->cons(2)->array }
+  [2,1];
+
+
 sub is_null ($);
 sub is_null ($) {
     my ($v)=@_;
@@ -200,8 +205,29 @@ sub is_null ($) {
 	: '';
 }
 
-TEST { null ->cons(1)->cons(2)->array }
-  [2,1];
+
+# XX if in the future FP::List::Pair restricts cdr's to
+# `is_pair_or_null`, then the latter could be renamed to `is_list`
+
+sub is_pair_or_null ($);
+sub is_pair_or_null ($) {
+    my ($v)=@_;
+    my $r= ref $v;
+    length $r ?
+      (UNIVERSAL::isa($v, "FP::List::Pair")
+       or
+       UNIVERSAL::isa($v, "FP::List::Null")
+       or
+       # XX evil: inlined `is_promise`
+       UNIVERSAL::isa($v, "FP::Lazy::Promise") && is_pair_or_null (force $v))
+	: '';
+}
+
+TEST { is_pair_or_null cons 1,2 } 1;
+TEST { is_pair_or_null null } 1;
+TEST { is_pair_or_null 1 } '';
+TEST { is_pair_or_null bless [], "NirvAna" } '';
+# test subclassing? whatever
 
 
 # leading underscore means: unsafe (but perhaps a tad faster)
