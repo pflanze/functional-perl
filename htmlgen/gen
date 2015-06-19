@@ -345,7 +345,9 @@ TEST{
 
     sub string {
 	my $s=shift;
-	join ".", map { ($_//0) } @$s
+	my @l= @$s;
+	shift @l while @l and not defined $l[0];
+	join ".", map { ($_//0) } @l;
     }
 
     sub level {
@@ -387,7 +389,7 @@ fun process_with_toc_body ($body, $counter) {
 		   my ($tail, $counter2)= &$rest ($counter);
 		   (cons ($v->body_update
 			  (fun ($body)
-			   { cons ($counter->string." ", $body) }),
+			   { cons ($counter->string.". ", $body) }),
 			  $tail),
 		    $counter2)
 	       } else {
