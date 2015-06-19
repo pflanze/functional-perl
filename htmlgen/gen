@@ -770,7 +770,13 @@ fun genfile ($path,$groupname,$genfilestate) {
 	$genfilestate->set_costrange($path0, $maybe_costrange);
     }
 
-    my $body= htmlparse(markdown (mediawiki_expand $str), "body", $path0,
+    my $htmlstr= markdown (mediawiki_expand $str);
+
+    # XX hack: fix '<p><with_toc></p> .. <p></with_toc></p>' before
+    # parsing, to avoid losing the with_toc element. Bah.
+    $htmlstr=~ s|<p>\s*(</?with_toc[^<>]*>)\s*</p>|$1|sg;
+
+    my $body= htmlparse($htmlstr, "body", $path0,
 			$genfilestate->filesinfo);
 
     my ($h1,$body1)= do {
