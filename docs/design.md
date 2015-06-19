@@ -8,6 +8,10 @@ properly formatted versions of these documents.)
 <!--What guiding principles were followed in creating the functional-perl
 modules?-->
 
+<with_toc>
+
+## General
+
 ### Be properly functional first.
 
 As already mentioned in the introduction on the [[howto]] page, the
@@ -236,3 +240,6 @@ autobox.pm, Moose::Util::TypeConstraints, MooseX::MultiMethods, or just, now,
 Class::Multimethods (Class::Multimethods::Pure?)
 
 -->
+
+</with_toc>
+
