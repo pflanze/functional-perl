@@ -24,7 +24,7 @@ FP::Struct - classes for functional perl
    use Chj::TEST; # the TEST sub will be removed from the package upon
                   # _END_ (namespace cleaning)
    # instead of use FP::Struct Bar.. above, could use this:
-   # use FP::Struct ["a","b"]=> ["Foo"];
+   use FP::Struct ["a","b"]=> ["Foo"];
    sub sum {
       my $s=shift;
       $$s{a} + $$s{b}[0]
@@ -36,6 +36,10 @@ FP::Struct - classes for functional perl
  }
  new Bar (1,2)-> sum #=> 3
  new_ Bar (a=>1,b=>2)-> sum # dito
+
+ new Bar (1,2)->b_set(3)->sum # 4
+ use FP::Div 'inc';
+ new Bar (1,2)->b_update(\&inc)->sum # 4
 
 =head1 DESCRIPTION
 
@@ -216,7 +220,9 @@ sub import {
     my $end= sub {
 	#warn "_END_ called for package '$package'";
 	for my $_field (@$fields) {
-	    my ($maybe_predicate,$name)= field_maybe_predicate_and_name $_field;
+	    my ($maybe_predicate,$name)=
+	      field_maybe_predicate_and_name $_field;
+
 	    # accessors
 	    if (not $package->can($name)) {
 		*{"${package}::$name"}= sub {
@@ -224,30 +230,62 @@ sub import {
 		    $$s{$name}
 		};
 	    }
-	    # functional setters
-	    my $name_set= $name."_set";
-	    if (not $package->can($name_set)) {
-		*{"${package}::$name_set"}=
-		  ($maybe_predicate ?
-		   sub {
-		       my $s=shift;
-		       @_==1 or die "$name_set: need 1 argument";
-		       my $v=shift;
-		       &$maybe_predicate($v)
-			 or die "unacceptable value for field '$name': ".Show($v);
-		       my $new= +{%$s};
-		       ($$new{$name})=@_;
-		       bless $new, ref $s
-		   }
-		   :
-		   sub {
-		       my $s=shift;
-		       @_==1 or die "$name_set: need 1 argument";
-		       my $new= +{%$s};
-		       ($$new{$name})=@_;
-		       bless $new, ref $s
-		   });
-	    }
+
+	    # functional modifiers
+	    my $add_modifier= sub {
+		my ($modifierappendix,$modifier)= @_;
+		my $modifiername= "$name$modifierappendix";
+		unless ($package->can($modifiername)) {
+		    *{"${package}::$modifiername"}= $modifier;
+		}
+	    };
+
+	    &$add_modifier
+	      ("_set",
+	       $maybe_predicate ?
+	       sub {
+		   my $s=shift;
+		   @_==1 or die "${name}_set: need 1 argument";
+		   my $v=shift;
+		   &$maybe_predicate($v)
+		     or die "unacceptable value for field '$name': "
+		       .Show($v);
+		   my $new= +{%$s};
+		   ($$new{$name})=@_;
+		   bless $new, ref $s
+	       }
+	       :
+	       sub {
+		   my $s=shift;
+		   @_==1 or die "${name}_set: need 1 argument";
+		   my $new= +{%$s};
+		   ($$new{$name})=@_;
+		   bless $new, ref $s
+	       });
+
+	    &$add_modifier
+	      ("_update",
+	       $maybe_predicate ?
+	       sub {
+		   @_==2 or die "${name}_update: need 1 argument";
+		   my ($s,$fn)=@_;
+		   my $v= &$fn ($s->{$name});
+		   &$maybe_predicate($v)
+		     or die "unacceptable value for field '$name': "
+		       .Show($v);
+		   my $new= +{%$s};
+		   ($$new{$name})= $v;
+		   bless $new, ref $s
+	       }
+	       :
+	       sub {
+		   @_==2 or die "${name}_update: need 1 argument";
+		   my ($s,$fn)=@_;
+		   my $v= &$fn ($s->{$name});
+		   my $new= +{%$s};
+		   ($$new{$name})= $v;
+		   bless $new, ref $s
+	       });
 	}
 	1 # make module load succeed at the same time.
     };
