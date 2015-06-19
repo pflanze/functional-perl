@@ -35,7 +35,9 @@ use FP::Lazy;
 use FP::List;
 use FP::Stream;
 use Chj::xperlfunc qw(xprint xprintln);
-use Scalar::Util 'weaken';
+use FP::Weak 'weaken'; # instead of from Scalar::Util so that it can
+                       # be turned off globally (and we depend on FP
+                       # anyway)
 
 sub perhaps_dump {
     my ($v)=@_;
