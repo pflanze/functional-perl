@@ -384,7 +384,7 @@ TEST {
   [["1",1], ["1.1",2], ["1.2",2], ["2",1]];
 
 
-fun process_with_toc_body ($body, $counter) {
+fun process__with_toc__body ($body, $counter) {
     # -> (processed_body, incremented_counter)
     stream_mixed_state_fold
       (
@@ -400,7 +400,7 @@ fun process_with_toc_body ($body, $counter) {
 		    $counter2)
 	       } else {
 		   # map $v's body
-		   my ($body2, $counter2)= process_with_toc_body
+		   my ($body2, $counter2)= process__with_toc__body
 		     ($v->body,$counter);
 		   my ($tail, $counter3)= &$rest ($counter2);
 		   (cons ($v->body_set ($body2), $tail),
@@ -419,33 +419,33 @@ fun process_with_toc_body ($body, $counter) {
 }
 
 TEST {[map {$_->string}
-       process_with_toc_body ["foo"], $empty_toccounter ]}
+       process__with_toc__body ["foo"], $empty_toccounter ]}
   [
    'foo',
    ''
   ];
 
-TEST {HTML((process_with_toc_body ["foo",H1("hed"),"bar"],
+TEST {HTML((process__with_toc__body ["foo",H1("hed"),"bar"],
 	    $empty_toccounter)[0])->string}
   '<html>foo<h1>1. hed</h1>bar</html>';
 
-TEST {HTML((process_with_toc_body ["foo",H1("hed"),P("bar")],
+TEST {HTML((process__with_toc__body ["foo",H1("hed"),P("bar")],
 	    $empty_toccounter)[0])->string}
   '<html>foo<h1>1. hed</h1><p>bar</p></html>';
 
-TEST {HTML((process_with_toc_body [cons "foo",
+TEST {HTML((process__with_toc__body [cons "foo",
 				   [H1("hed"),H2("hud"),["",P("bar")]]],
 	    $empty_toccounter)[0])->string}
   '<html>foo<h1>1. hed</h1><h2>1.1. hud</h2><p>bar</p></html>';
 
-TEST {HTML ((process_with_toc_body [" ", P ("blabla"), H1 ("for one")],
+TEST {HTML ((process__with_toc__body [" ", P ("blabla"), H1 ("for one")],
 	     $empty_toccounter)
 	    [0])->string}
   '<html> <p>blabla</p><h1>1. for one</h1></html>';
 
 # map <with_toc> element
 fun with_toc ($e, $uplist) {
-    (process_with_toc_body ($e->body, $empty_toccounter))[0]
+    (process__with_toc__body ($e->body, $empty_toccounter))[0]
 }
 
 fun pxml_map_elements ($v, $name2mapper) {
