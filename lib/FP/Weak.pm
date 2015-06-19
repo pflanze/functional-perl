@@ -54,8 +54,7 @@ package FP::Weak;
 
 use strict; use warnings FATAL => 'uninitialized';
 
-#use Scalar::Util 'weaken';
-sub weaken ($) { }
+use Scalar::Util 'weaken';
 
 # protect a variable from being pruned by callees that prune their
 # arguments
