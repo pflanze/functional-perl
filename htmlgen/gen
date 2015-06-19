@@ -269,10 +269,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
     if ($name =~ /^h(\d)$/) {
 	my $text= $res->text;
 	$text=~ s/ /_/sg;
-	[
-	 A({name=> $text}),
-	 $res
-	]
+	A({name=> $text}, $res)
     } else {
 	$res
     }
