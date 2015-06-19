@@ -148,7 +148,8 @@ fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
     } else {
 	if ($path0=~ s/(.*?)([^\/]*)\.md$/$1$2.xhtml/) {
 	    tail &$then
-	      ($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml" : $path0);
+	      ($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
+	       : $path0);
 	} else {
 	    tail &$otherwise($path0)
 	}
@@ -156,13 +157,17 @@ fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
 }
 
 fun t_if_suffix_md2html ($in,$for_title=0) {
-    if_suffix_md2html $in, $for_title, sub {["then",@_]}, sub{["otherwise",@_]}
+    if_suffix_md2html ($in, $for_title,
+		       sub {["then",@_]},
+		       sub{["otherwise",@_]})
 }
 TEST{t_if_suffix_md2html "README.md"}['then','index.xhtml'];
-TEST{t_if_suffix_md2html "README.md",1}['then','readme.xhtml']; # kinda stupid hack.
+TEST{t_if_suffix_md2html "README.md",1}['then','readme.xhtml'];
+# ^ kinda stupid hack.
 TEST{t_if_suffix_md2html "Foo/index.md"}['then','Foo/index.xhtml'];
 TEST{t_if_suffix_md2html "Foo/README.md"}['then','Foo/index.xhtml'];
-TEST{t_if_suffix_md2html "Foo/READMe.md"}['then','Foo/index.xhtml']; # XX really?
+TEST{t_if_suffix_md2html "Foo/READMe.md"}['then','Foo/index.xhtml'];
+# ^ XX really?
 TEST{t_if_suffix_md2html "Foo/MY.css"}['otherwise','Foo/MY.css'];
 
 
@@ -241,7 +246,8 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 		if ($filesinfo->all_path0_exists($p0)) {
 		    $filesinfo->all_path0_used_inc($p0);
 		} else {
-		    warn "link target does not exist: '$p0' ('$path' from '$selfpath0', link '$$atts{href}')";
+		    warn "link target does not exist: '$p0' ".
+		      "('$path' from '$selfpath0', link '$$atts{href}')";
 		    #use Chj::repl;repl;
 		}
 	    }
@@ -366,6 +372,7 @@ TEST {
     my $s1_1= $c= $c->inc (2);
     my $s1_2= $c= $c->inc (2);
     my $s2= $c= $c->inc (1);
+
     #array_map the_method ("string"), [$s1, $s1_1, $s1_2, $s2]
     #[$s1, $s1_1, $s1_2, $s2]->map(the_method "string")
     #list($s1, $s1_1, $s1_2, $s2)->map(the_method "string")
@@ -426,7 +433,8 @@ TEST {HTML((process_with_toc_body ["foo",H1("hed"),P("bar")],
 	    $empty_toccounter)[0])->string}
   '<html>foo<h1>1. hed</h1><p>bar</p></html>';
 
-TEST {HTML((process_with_toc_body [cons "foo",[H1("hed"),H2("hud"),["",P("bar")]]],
+TEST {HTML((process_with_toc_body [cons "foo",
+				   [H1("hed"),H2("hud"),["",P("bar")]]],
 	    $empty_toccounter)[0])->string}
   '<html>foo<h1>1. hed</h1><h2>1.1. hud</h2><p>bar</p></html>';
 
@@ -465,7 +473,8 @@ fun process_body ($v) {
 TEST { HTML( process_body  (["Hello", WITH_TOC H1 "world"]))->string }
   '<html>Hello<h1>1. world</h1></html>';
 
-TEST { HTML( process_body  (["Hello", WITH_TOC ["some", H1 "world"]]))->string }
+TEST { HTML( process_body  (["Hello", WITH_TOC ["some", H1 "world"]]))
+	 ->string }
   '<html>Hellosome<h1>1. world</h1></html>';
 
 TEST { HTML( process_body  ([P("Hello"),
@@ -486,7 +495,8 @@ TEST { HTML( process_body  ([P("Hello"),
 			      H1 ("sub two"),
 			      DIV ("bla"),
 			     ]]))->string }
-  '<html><p>Hello</p> <p>blabla</p><h1>1. for one</h1><h2>1.1. more one</h2><p>blah</p><h1>2. sub two</h1><div>bla</div></html>';
+  '<html><p>Hello</p> <p>blabla</p><h1>1. for one</h1>'.
+  '<h2>1.1. more one</h2><p>blah</p><h1>2. sub two</h1><div>bla</div></html>';
 
 
 use PXML::Serialize 'pxml_xhtml_print_fast';
@@ -620,7 +630,8 @@ TEST{
     path02title "bugs/wishlist/listserv/README.md"
 }
   'README'; # XXX why?, expected: 'Readme';
-TEST{path02title "bugs/wishlist/line_wrapping_in_pre-MIME_mails.md"} # even with lcfirst
+TEST{path02title "bugs/wishlist/line_wrapping_in_pre-MIME_mails.md"}
+  # even with lcfirst
   'Line wrapping in pre-MIME mails';
 
 
@@ -743,10 +754,11 @@ fun get_genfilestate ($filesinfo) {
     my $costranges={};
     # path0 -> costrange-string; filled when processing non-buglist groups
 
-    PFLANZE::Genfilestate->new ($filesinfo, # just so as to bundle it up, too, ugly?
-			    $groupedfiles,
-			    $nonbugfiles,
-			    $costranges)
+    PFLANZE::Genfilestate->new
+	($filesinfo, # just so as to bundle it up, too, ugly?
+	 $groupedfiles,
+	 $nonbugfiles,
+	 $costranges)
 }
 
 fun genfile ($path,$groupname,$genfilestate) {
@@ -872,7 +884,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 			      (
 			       fun ($is_last,$file0) {
 				   my $filetitle= path02title $file0;
-				   LI({class=> ($is_last ? "menu_last" : "menu")},
+				   LI({class=> ($is_last ? "menu_last"
+						: "menu")},
 				      ($file0 eq $path0 ?
 				       SPAN({class=> "menu_selected"},
 					    $filetitle)
@@ -885,7 +898,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 				      " ")
 			       },
 			       array_sort
-			       (array_map( \&path0, $genfilestate->nonbugfiles),
+			       (array_map (\&path0,
+					   $genfilestate->nonbugfiles),
 				on $path02sortkey, \&string_cmp))),
 			   $config->{belownav}->($path0),
 			   $h1,
