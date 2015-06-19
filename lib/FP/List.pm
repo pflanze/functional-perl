@@ -54,7 +54,7 @@ in the `head_and_tail` function, an alias to `first_and_rest`.)
 package FP::List;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
-	   list_of
+	   list_of  is_null_or_pair_of null_or_pair_of
 	   car cdr first rest _car _cdr
 	   car_and_cdr first_and_rest
 	   list);
@@ -158,6 +158,16 @@ sub cons ($ $) {
     bless [@_], "FP::List::Pair";
 }
 
+# leading underscore means: unsafe (but perhaps a tad faster)
+sub _car ($) {
+    $_[0][0]
+}
+
+sub _cdr ($) {
+    $_[0][1]
+}
+
+
 sub is_pair ($);
 sub is_pair ($) {
     my ($v)=@_;
@@ -229,15 +239,35 @@ TEST { is_pair_or_null 1 } '';
 TEST { is_pair_or_null bless [], "NirvAna" } '';
 # test subclassing? whatever
 
-
-# leading underscore means: unsafe (but perhaps a tad faster)
-sub _car ($) {
-    $_[0][0]
+sub is_null_or_pair_of ($$$);
+sub is_null_or_pair_of ($$$) {
+    my ($v,$p0,$p1)=@_;
+    FORCE $v;
+    (is_null $v
+     or
+     (is_pair $v
+      and
+      &$p0 (_car $v)
+      and
+      &$p1 (_cdr $v)))
 }
 
-sub _cdr ($) {
-    $_[0][1]
+sub null_or_pair_of ($$) {
+    my ($p0,$p1)= @_;
+    sub ($) {
+	my ($v)=@_;
+	is_null_or_pair_of ($v,$p0,$p1)
+    }
 }
+
+TEST { require FP::Array;
+       FP::Array::array_map
+	   (null_or_pair_of (*is_null, *is_pair),
+	    [null, cons (1,2), cons (null,1), cons (null,null),
+	     cons (null,cons(1,1)), cons (cons (1,1),cons(1,1))]) }
+  [1, '', '', '',
+   1, ''];
+
 
 use Chj::TerseDumper;
 use Carp;
