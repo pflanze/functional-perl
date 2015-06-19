@@ -54,7 +54,7 @@ in the `head_and_tail` function, an alias to `first_and_rest`.)
 package FP::List;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
-	   is_list_of
+	   list_of
 	   car cdr first rest _car _cdr
 	   car_and_cdr first_and_rest
 	   list);
@@ -384,16 +384,16 @@ sub delayed (&) {
     }
 }
 
-sub is_list_of ($);
-sub is_list_of ($) {
+sub list_of ($);
+sub list_of ($) {
     my ($p)= @_;
-    either \&is_null, is_pair_of ($p, delayed { is_list_of $p })
+    either \&is_null, is_pair_of ($p, delayed { list_of $p })
 }
 
-TEST { is_list_of (\&is_natural) -> (list 1,2,3) } 1;
-TEST { is_list_of (\&is_natural) -> (list -1,2,3) } 0;
-TEST { is_list_of (\&is_natural) -> (list 1,2," 3") } 0;
-TEST { is_list_of (\&is_natural) -> (1) } 0;
+TEST { list_of (\&is_natural) -> (list 1,2,3) } 1;
+TEST { list_of (\&is_natural) -> (list -1,2,3) } 0;
+TEST { list_of (\&is_natural) -> (list 1,2," 3") } 0;
+TEST { list_of (\&is_natural) -> (1) } 0;
 
 
 sub list_length ($) {
