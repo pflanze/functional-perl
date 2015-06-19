@@ -791,7 +791,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	   },
 	   $b);
 	my $b0= car $bwithoutanchor;
-	if (ref $b0 and $b0->name eq "h1") {
+	if (is_pxml_element ($b0) and $b0->name eq "h1") {
 	    ($b0, stream2array(cdr $bwithoutanchor))
 	} else {
 	    (H1(path02title ($path0)), $body)
