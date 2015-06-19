@@ -115,6 +115,7 @@ t/csvstreams
 t/dbi
 t/examples-fibs
 t/examples-primes
+t/fp-struct
 t/functional_XML-t-div
 t/functional_XML-test
 t/functional_XML-test.expected
