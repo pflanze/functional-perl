@@ -76,6 +76,7 @@ package FP::List;
 	      caddddr
 	      c_r
 	      list_ref
+	      list_perhaps_one
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -295,6 +296,28 @@ sub car_and_cdr ($) {
 }
 
 sub first_and_rest($); *first_and_rest= *car_and_cdr;
+
+
+sub list_perhaps_one ($) {
+    my ($s)=@_;
+    FORCE $s; # make work for stre
+    if (is_pair ($s)) {
+	my ($a,$r)= first_and_rest $s;
+	if (is_null $r) {
+	    ($a)
+	} else {
+	    ()
+	}
+    } else {
+	()
+    }
+}
+
+*FP::List::List::perhaps_one= *list_perhaps_one;
+
+TEST{ [ list (8)->perhaps_one ] } [8];
+TEST{ [ list (8,9)->perhaps_one ] } [];
+TEST{ [ list ()->perhaps_one ] } [];
 
 
 # XX adapted copy from Stream.pm
