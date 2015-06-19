@@ -191,7 +191,6 @@ fun path02outpath ($path0) {
 
 use HTML::TreeBuilder;
 fun htmlparse_raw ($htmlstr,$whichtag) {
-    warn "HTMLPARSE_RAW htmlstr: $htmlstr";
     my $t= HTML::TreeBuilder->new;
     $t->ignore_unknown(0); # allow <with_toc> elements
     $t->parse_content ($htmlstr);
@@ -438,7 +437,6 @@ TEST {HTML ((process_with_toc_body [" ", P ("blabla"), H1 ("for one")],
 
 # map <with_toc> element
 fun with_toc ($e, $uplist) {
-    warn "with_toc";
     (process_with_toc_body ($e->body, $empty_toccounter))[0]
 }
 
@@ -461,7 +459,6 @@ our $pxml_name2mapper=
    };
 
 fun process_body ($v) {
-    warn "BODY=".HTML ($v)->string;
     pxml_map_elements ($v, $pxml_name2mapper)
 }
 
