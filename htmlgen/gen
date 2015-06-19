@@ -781,7 +781,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     my ($h1,$body1)= do {
 	my $body= $body->body;
-	my $b= stream_mixed_flatten(do{my $body=$body;$body});
+	my $b= stream_mixed_flatten(Keep $body);
 	my $bwithoutanchor= force stream_drop_while
 	  (
 	   fun ($v) {
