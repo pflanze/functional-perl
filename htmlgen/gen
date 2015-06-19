@@ -384,6 +384,38 @@ TEST {
   [["1",1], ["1.1",2], ["1.2",2], ["2",1]];
 
 
+{
+    package PFLANZE::Toc;
+    use FP::Predicates;
+    use FP::List;
+    use FP::Ops 'the_method';
+    use FP::Struct [[instance_of ("PFLANZE::TocCounter"),
+		     "counter"],
+		    [null_or_pair_of (*is_pair,*is_pair_or_null),
+		     "sections"]];
+
+    method counter_inc ($level) {
+	$self->counter_update (the_method "inc", $level)
+    }
+
+    method sections_cons ($v) {
+	$self->sections_update (the_method "cons", $v)
+    }
+
+    _END_
+}
+
+our $empty_toc= PFLANZE::Toc->new($empty_toccounter, null);
+
+TEST { $empty_toc->counter_inc (1)->counter_inc(2)->counter->string }
+  '1.1';
+
+TEST_STDOUT { $empty_toc->sections_cons (list "1", (list "1.1"),
+					 (list "1.2", (list "1.2.1")))
+		->sections->write_sexpr }
+  '(("1" ("1.1") ("1.2" ("1.2.1"))))';
+
+
 fun process__with_toc__body ($body, $counter) {
     # -> (processed_body, incremented_counter)
     stream_mixed_state_fold
