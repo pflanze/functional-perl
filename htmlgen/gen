@@ -75,7 +75,7 @@ use PXML::Util ":all";
 use FP::Hash ":all";
 use FP::Div 'identity';
 use PXML::Tags qw(with_toc);
-
+use FP::fix;
 
 our $default_config=
   +{
@@ -280,6 +280,48 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 fun htmlparse ($str,$whichtag,$selfpath0,$filesinfo) {
     htmlmap htmlparse_raw ($str,$whichtag), $selfpath0, $filesinfo
 }
+
+
+# Return <h1> element if available, and rest. HACKY: compensate for
+# 'add anchors'. XX Stupid: should add anchors *afterwards* instead.
+fun pxml_body_split_h1 ($body) {
+    my $rec= fix fun ($rec, $b) {
+	if (is_null $b) {
+	    (undef, $body)
+	} else {
+	    my ($v,$rest)= $b->first_and_rest;
+	    if (is_pxml_element $v
+		and $v->name eq "a"
+		and defined $v->maybe_attribute("name")) {
+		my $v2;
+		if (($v2)= stream_mixed_flatten($v->body)->perhaps_one
+		    and is_pxml_element $v2
+		    and $v2->name eq "h1") {
+		    ($v2, $rest)
+		} else {
+		    (undef, $body)
+		}
+	    } else {
+		(undef, $body)
+	    }
+	}
+    };
+    &$rec (stream_mixed_flatten $body)
+}
+
+TEST{ [pxml_body_split_h1 ["foo"]] }
+  [ undef, ['foo']];
+
+TEST{ [pxml_body_split_h1 [H1 ("x"), "foo"]]->[0] }
+  undef; # because we *really* expect the A wrapper now. stupid, again
+
+TEST{
+    my ($h1,$rest)=
+      pxml_body_split_h1 [A({name=>"x"}, H1 ("x", "y")), "foo", B "bar"];
+    [ $h1->string, BODY($rest)->string ]
+}
+  ['<h1>xy</h1>', '<body>foo<b>bar</b></body>'];
+
 
 
 #  the body
@@ -781,21 +823,9 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     my ($h1,$body1)= do {
 	my $body= $body->body;
-	my $b= stream_mixed_flatten(Keep $body);
-	my $bwithoutanchor= force stream_drop_while
-	  (
-	   fun ($v) {
-	       (ref $v
-		and $v->name eq "a"
-		and $v->maybe_attribute("name"))
-	   },
-	   $b);
-	my $b0= car $bwithoutanchor;
-	if (is_pxml_element ($b0) and $b0->name eq "h1") {
-	    ($b0, stream2array(cdr $bwithoutanchor))
-	} else {
-	    (H1(path02title ($path0)), $body)
-	}
+	my ($maybe_h1, $rest)= pxml_body_split_h1 ($body);
+	defined $maybe_h1 ? ($maybe_h1, $rest)
+	  : (H1(path02title ($path0)), $body);
     };
 
     my $maybe_buglist= $groupname eq "buglist" && do {
