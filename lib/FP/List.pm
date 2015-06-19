@@ -55,7 +55,7 @@ package FP::List;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
 	   list_of  is_null_or_pair_of null_or_pair_of
-	   car cdr first rest _car _cdr
+	   car cdr first rest unsafe_car unsafe_cdr
 	   car_and_cdr first_and_rest
 	   list);
 @EXPORT_OK=qw(string2list list_length list_reverse
@@ -158,12 +158,12 @@ sub cons ($ $) {
     bless [@_], "FP::List::Pair";
 }
 
-# leading underscore means: unsafe (but perhaps a tad faster)
-sub _car ($) {
+# no type checking, but perhaps faster
+sub unsafe_car ($) {
     $_[0][0]
 }
 
-sub _cdr ($) {
+sub unsafe_cdr ($) {
     $_[0][1]
 }
 
@@ -247,9 +247,9 @@ sub is_null_or_pair_of ($$$) {
      or
      (is_pair $v
       and
-      &$p0 (_car $v)
+      &$p0 (unsafe_car $v)
       and
-      &$p1 (_cdr $v)))
+      &$p1 (unsafe_cdr $v)))
 }
 
 sub null_or_pair_of ($$) {
