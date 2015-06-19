@@ -398,8 +398,8 @@ fun with_toc ($e, $uplist) {
     (process_with_toc_body ($e->body, $empty_toccounter))[0]
 }
 
-fun pxml_map_elements ($s, $name2mapper) {
-    pxml_eager_map ($s,
+fun pxml_map_elements ($v, $name2mapper) {
+    pxml_eager_map ($v,
 		    fun ($e, $uplist) {
 			if (my ($mapper)= hash_ref $name2mapper, $e->name) {
 			    &$mapper ($e, $uplist)
@@ -416,8 +416,8 @@ our $pxml_name2mapper=
     with_toc=> \&with_toc,
    };
 
-fun process_body ($s) {
-    pxml_map_elements ($s, $pxml_name2mapper)
+fun process_body ($v) {
+    pxml_map_elements ($v, $pxml_name2mapper)
 }
 
 TEST { HTML( process_body  (["Hello", WITH_TOC H1 "world"]))->string }
