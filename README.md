@@ -14,11 +14,14 @@ style on Perl.
 The project should not be used for production code yet for the
 following reasons:
 
-* the chosen namespaces and interfaces are still in flux; it hasn't
-  been released to CPAN yet for this reason
-
-* some modules may be replaced with other more widely used ones in the
-  interest of staying with the common base
+* the namespaces are not fixed yet (in particular, everything in
+  `Chj::` should probably be renamed); also, the interfaces should be
+  treated as alpha: this is freshly released and very much open to
+  input. Some modules may be replaced with other more widely used ones
+  in the interest of staying with the common base (in particular, the
+  `Chj::IO::` infrastructure should likely be deprecated or
+  reimplemented.) For these reasons, the modules have not been
+  packaged and released on CPAN yet.
 
 * tutorials are not complete yet, and less experienced Perl
   programmers will have difficulties writing or debugging code in this
