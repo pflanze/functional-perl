@@ -55,7 +55,7 @@ package FP::List;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
 	   list_of  is_null_or_pair_of null_or_pair_of
-	   car cdr first rest unsafe_car unsafe_cdr
+	   car cdr first rest unsafe_cons unsafe_car unsafe_cdr
 	   car_and_cdr first_and_rest
 	   list);
 @EXPORT_OK=qw(string2list list_length list_reverse
@@ -157,12 +157,24 @@ use Chj::TEST;
 
 sub cons ($$) {
     @_==2 or die "wrong number of arguments";
-    # still use method calls internally, to allow for subclassing
-    $_[1]->cons ($_[0])
+    if (my $f= UNIVERSAL::can ($_[1], "cons")) {
+	@_=(reverse @_); goto $f;
+    } else {
+	bless [@_], "FP::List::Pair";
+    }
 }
 
 
-# no type checking, but perhaps faster
+# no type checking, but perhaps faster (especially if inlining ever
+# becomes possible). Note that unsafe_car and unsafe_cdr are safe if
+# subclasses are keeping the first fields the same and the argument
+# was confirmed to be a pair with `is_pair`. unsafe_cons is safe if
+# the rest argument should never dictate the type of the result.
+
+sub unsafe_cons ($ $) {
+    bless [@_], "FP::List::Pair";
+}
+
 sub unsafe_car ($) {
     $_[0][0]
 }
