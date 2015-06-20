@@ -78,6 +78,7 @@ package FP::List;
 	      c_r
 	      list_ref
 	      list_perhaps_one
+	      list_sort
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -509,6 +510,32 @@ TEST {
     list (1,3,4)->purearray->map (sub{$_[0]**2})
 }
   bless [1,9,16], "FP::PureArray";
+
+
+sub list_sort ($$) {
+    @_==2 or die "wrong number of arguments";
+    my ($l,$cmp)= @_;
+    list2purearray ($l)->sort ($cmp)
+}
+
+*FP::List::List::sort= *list_sort;
+
+TEST { require FP::Ops;
+       list (5,3,8,4)->sort (\&FP::Ops::number_cmp)->array }
+  [3,4,5,8];
+
+TEST { ref (list (5,3,8,4)->sort (\&FP::Ops::number_cmp)) }
+  'FP::PureArray'; # XX ok? Need to `->list` if a list is needed
+
+TEST { list (5,3,8,4)->sort (\&FP::Ops::number_cmp)->list->car }
+  3; # but then PureArray has `first`, too, if that's all you need.
+
+TEST { list (5,3,8,4)->sort (\&FP::Ops::number_cmp)->first }
+  3;
+
+#(just for completeness)
+TEST { list (5,3,8,4)->sort (\&FP::Ops::number_cmp)->stream->car }
+  3;
 
 
 sub rlist2array ($) {
