@@ -512,11 +512,7 @@ sub run {
 		       &$get_package()."> ");
 		  1
 	      } || do {
-		  if (!ref($@) and
-		      ($@ eq "SIGINT\n"
-		       or $@=~ /^SIGINT\n\t\w/s
-		       # ^ when Chj::Backtrace is in use
-		      )) {
+		  if (!length ref($@) and $@=~ /^SIGINT\n/s) {
 		      print $STDOUT "\n";
 		      redo DO;
 		  } else {
