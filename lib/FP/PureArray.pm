@@ -101,12 +101,28 @@ use base 'FP::Pure';
 BEGIN {undef *array }
 
 sub array {
+    @_==1 or die "wrong number of arguments";
     my $s=shift;
     # 'debless', and copy necessary as the user is entitled to mod it
     # now. (XX: might optimize if only reference left by checking the
     # refcount)
     [@$s]
 }
+
+sub list {
+    @_==1 or die "wrong number of arguments";
+    my $s=shift;
+    require FP::List; # (overhead of repeated require?)
+    FP::List::array2list ($s)
+}
+
+sub stream {
+    @_==1 or die "wrong number of arguments";
+    my $s=shift;
+    require FP::Stream; # (dito)
+    FP::Stream::array2stream ($s)
+}
+
 
 # emptyness constructor that works for subclassing (using singletons
 # for performance (perhaps), and, well, perhaps more so to punish
