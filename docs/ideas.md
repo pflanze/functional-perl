@@ -26,6 +26,8 @@ properly formatted versions of these documents.)
   deforestation be feasible? Or just compile time optimization of the
   same as above?)
 
+* add set API, make `FP::HashSet` and OO based port.
+
 * a variant of Scalar::Util's `weaken` that takes a value to be put
   into the spot that held a reference when it is deleted, so that the
   user can see something more useful like an object that carries a
