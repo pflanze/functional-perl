@@ -31,8 +31,8 @@ with "improper list"). FP::StrictList does, which means that
 `is_strictlist` only needs to check the head pair to know whether it's
 a proper list.
 
-Also, they maintain the list length, so `length` is O(1) instead of
-O(n) like with FP::List.
+Also, they maintain the list length within each pair, thus `length`
+has O(1) complexity instead of O(n) like the `length` from FP::List.
 
 Both of these features dictate that the list can't be lazy (since (in
 a dynamically typed language) it's impossible to know the type that a
@@ -44,15 +44,30 @@ stack proportional to their length. You will want to increase the C
 stack size when handling big strict lists, lest your program will
 segfault.
 
+Currently FP::StrictList mostly only offers method based
+functionality. It inherits all the methods from FP::List, but only
+re-exports those basic functions that are basic and don't have "list_"
+prefixes, and only on demand. The only special functions (and the only
+ones exported by default) are `strictnull` and `is_strictlist`. Since
+StrictList enforcess list structure, methods are guaranteed to always
+work on the rest field of a pair. Hence, the suggestion is to simply
+use method calls and `the_method` from `FP::Ops` to pass methods as
+first class functions.
+
+=head SEE ALSO
+
+L<FP::List>, L<FP::Ops>
+
 =cut
 
 
 package FP::StrictList;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(strictnull is_strictlist
-	   cons 
-	 );
-@EXPORT_OK=qw();
+@EXPORT=qw(strictnull is_strictlist);
+@EXPORT_OK=qw(
+		 cons
+		 first second rest car cdr car_and_cdr first_and_rest
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
