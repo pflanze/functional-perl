@@ -34,9 +34,11 @@ perhaps it will even become easier in the future.
 (Sequences functionality based on iterators is still something this
 project could look into as well. But that should be understood as an
 optimization. Alternative optimizations are possible, and may be
-preferrable (e.g. the Haskell compiler applies various other
-optimizations to achieve performance without manually written code
-that uses iterators).)
+preferrable (e.g. the GHC Haskell compiler applies various other
+optimizations to achieve performance without relying on manually
+written iterator based code, such as compile time application of rules
+to fuse list processing chains as well as using general
+"deforestation" algorithms).)
 
 
 <with_toc>
