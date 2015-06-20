@@ -6,12 +6,23 @@
 
 =head1 NAME
 
-FP::Array
+FP::Array - pure functions to work with native Perl arrays
 
 =head1 SYNOPSIS
 
+ use FP::Array;
+ my $lengts= $list_of_arrays->map(\&array_length);
+
 =head1 DESCRIPTION
 
+To disambiguate from similarly named functions for `FP::List`, they
+are prefixed with `array_`.
+
+These are also used as methods for `FP::PureArray` objects.
+
+=head1 SEE ALSO
+
+L<FP::Array_sort>, L<FP::PureArray>
 
 =cut
 
