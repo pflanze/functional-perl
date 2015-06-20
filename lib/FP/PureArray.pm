@@ -29,8 +29,11 @@ arrays.
 
 
 package FP::PureArray;
+
 #@ISA="Exporter"; require Exporter; see hack below
-@EXPORT=qw(purearray array2purearray unsafe_array2purearray); # or optional export only?
+
+@EXPORT=qw(purearray array2purearray unsafe_array2purearray);
+# or optional export only?
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -39,6 +42,7 @@ use strict; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 
 use FP::Array ":all";
+use FP::Array_sort "array_sort";
 use FP::Combinators qw (flip flip2_3 rot3right rot3left);
 use FP::Div 'inc';
 use FP::Predicates 'is_pure';
@@ -148,6 +152,8 @@ sub empty {
 *rest= blessing \&array_rest;
 *hash_group_by= \&array2hash_group_by;
 
+*sort= blessing \&array_sort;
+
 # XX provide them as functions, too? (prefixed with `purearray_`) (to
 # avoid requiring the user to use `the_method` [and perhaps missing
 # the explicit type check?])
@@ -235,6 +241,11 @@ TEST_STDOUT {
     require Chj::xperlfunc;
     purearray(1,3)->for_each (\&Chj::xperlfunc::xprintln)
 } "1\n3\n";
+
+
+TEST { require FP::Ops;
+       purearray (5,3,8,4)->sort (\&FP::Ops::number_cmp)->array }
+  [3,4,5,8];
 
 
 # subclassing
