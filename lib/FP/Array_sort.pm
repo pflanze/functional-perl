@@ -10,14 +10,43 @@ FP::Array_sort - 'sensible' sorting setup
 
 =head1 SYNOPSIS
 
- use FP::Array_sort; # for array_sort, on, string_cmp, number_cmp, complement
- use FP::List;# for car in this example
+ use FP::Array_sort; # for `array_sort`, `on`, and `cmp_complement`
+ # For this example:
+ use FP::Ops 'number_cmp';
+ use FP::List 'car';
  array_sort $ary, on \&car, \&number_cmp
 
 =head1 DESCRIPTION
 
+Perl's sort is rather verbose and uses repetition of the accessor
+code:
+
+    sort { &$foo ($a) <=> &$foo ($b) } @$ary
+
+Abstracting the repetition of the accessor as a function (`on`) and
+wrapping sort as a higher-order function makes it more
+straight-forward:
+
+    array_sort $ary, on ($foo, \&number_cmp)
+
+In method interfaces the need becomes more obvious: if $ary is one of
+the FP sequences (FP::PureArray, FP::List, FP::StrictList, FP::Stream)
+that supports `sort` (TODO) then:
+
+    $s->sort (on $foo, \&number_cmp)
+
+or if the comparison function already exists:
+
+    $numbers->sort (\&number_cmp)
+
+=head1 SEE ALSO
+
+L<FP::Ops>, L<FP::Combinators>
 
 =cut
+
+
+# XX Should `on` (and `cmp_complement`?) be moved to `FP::Combinators`?
 
 
 package FP::Array_sort;
