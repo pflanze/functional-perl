@@ -155,10 +155,12 @@ use Chj::TEST;
 }
 
 
-
-sub cons ($ $) {
-    bless [@_], "FP::List::Pair";
+sub cons ($$) {
+    @_==2 or die "wrong number of arguments";
+    # still use method calls internally, to allow for subclassing
+    $_[1]->cons ($_[0])
 }
+
 
 # no type checking, but perhaps faster
 sub unsafe_car ($) {

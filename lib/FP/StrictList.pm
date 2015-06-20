@@ -97,22 +97,11 @@ sub strictlist {
     $res
 }
 
-sub strictcons ($$) {
-    @_==2 or die "wrong number of arguments";
-    # use method calls internally anyway, to allow for subclassing,
-    # and since the combination of the null case and the length field
-    # requires a type dispatch anyway
-
-    $_[1]->cons ($_[0])
-}
-# XX should change 'cons' in FP::List to this definition and simply
-# always reuse that one
-
 
 TEST {
     strictlist (4,5)->map (sub{$_[0]+1})
 }
-  strictcons (5, strictcons (6, strictnull));
+  cons (5, cons (6, strictnull));
 
 
 1
