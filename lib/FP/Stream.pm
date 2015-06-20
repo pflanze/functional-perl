@@ -60,7 +60,7 @@ package FP::Stream;
 	      stream_fold
 	      stream_foldr1
 	      stream_fold_right
-	      stream_state_fold
+	      stream_state_fold_right
 	      stream__array_fold_right
 	      stream__string_fold_right
 	      stream__subarray_fold_right stream__subarray_fold_right_reverse
@@ -83,7 +83,7 @@ package FP::Stream;
 	      stream2array
 	      stream_mixed_flatten
 	      stream_mixed_fold_right
-	      stream_mixed_state_fold
+	      stream_mixed_state_fold_right
 	      stream_any
 	      stream_show
 	 );
@@ -736,7 +736,7 @@ sub stream_show ($) {
 # A stateful fold: collect state while going to the end (starting from
 # the left). Then it's basically a fold_right.
 
-sub stream_state_fold {
+sub stream_state_fold_right {
     @_==3 or die "wrong number of arguments";
     my ($fn,$stateupfn,$s)=@_;
     sub {
@@ -749,15 +749,15 @@ sub stream_state_fold {
 	    my ($v,$s)= $s->first_and_rest;
 	    &$fn($v,
 		 $statedown,
-		 stream_state_fold ($fn, $stateupfn, $s))
+		 stream_state_fold_right ($fn, $stateupfn, $s))
 	}
     }
 }
 
-*FP::List::List::stream_state_fold= rot3left \&stream_state_fold;
+*FP::List::List::stream_state_fold_right= rot3left \&stream_state_fold_right;
 
 
-TEST{ stream_state_fold
+TEST{ stream_state_fold_right
 	(
 	 sub {
 	     my ($v,$statedown,$restfn)=@_;
@@ -771,7 +771,7 @@ TEST{ stream_state_fold
 	)->("start") }
   [3, [4, "start..end"]];
 
-TEST{ stream_state_fold
+TEST{ stream_state_fold_right
 	(
 	 sub {
 	     my ($v,$statedown,$restfn)=@_;
@@ -782,7 +782,7 @@ TEST{ stream_state_fold
 	)->(list 5,6)->array }
   [3,4,5,6];
 
-TEST{ stream_state_fold
+TEST{ stream_state_fold_right
 	(
 	 sub {
 	     my ($v,$statedown,$restfn)=@_;
@@ -793,7 +793,7 @@ TEST{ stream_state_fold
 	)->(list 5,6)->array }
   [3,4,4,3,5,6];
 
-TEST{ stream_state_fold
+TEST{ stream_state_fold_right
 	(
 	 sub {
 	     my ($v,$statedown,$restfn)=@_;
@@ -807,7 +807,7 @@ TEST{ stream_state_fold
   [[0,10], [1,11], [2,12]];
 
 # modified test from above
-TEST{ stream_iota->state_fold
+TEST{ stream_iota->state_fold_right
 	(sub {
 	     my ($v,$statedown,$restfn)=@_;
 	     lazy {
@@ -833,14 +833,14 @@ sub stream_mixed_fold_right {
 
 *FP::List::List::stream_mixed_fold_right= rot3left \&stream_mixed_fold_right;
 
-sub stream_mixed_state_fold {
+sub stream_mixed_state_fold_right {
     @_==3 or die "wrong number of arguments";
     my ($fn,$statefn,$v)=@_;
     weaken $_[2];
-    @_=($fn, $statefn, stream_mixed_flatten $v);goto \&stream_state_fold
+    @_=($fn, $statefn, stream_mixed_flatten $v);goto \&stream_state_fold_right
 }
 
-*FP::List::List::stream_mixed_state_fold= rot3left \&stream_mixed_state_fold;
+*FP::List::List::stream_mixed_state_fold_right= rot3left \&stream_mixed_state_fold_right;
 
 
 # ----- Tests ----------------------------------------------------------

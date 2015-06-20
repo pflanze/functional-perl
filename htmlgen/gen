@@ -418,7 +418,7 @@ TEST_STDOUT { $empty_toc->sections_cons (list "1", (list "1.1"),
 
 fun process__with_toc__body ($body, $counter) {
     # -> (processed_body, incremented_counter)
-    stream_mixed_state_fold
+    stream_mixed_state_fold_right
       (
        fun ($v,$counter,$rest) {
 	   if (is_pxml_element ($v)) {
