@@ -100,10 +100,12 @@ use Chj::TEST;
     package FP::List::Null;
     our @ISA= qw(FP::List::List);
 
+    sub pair_namespace { "FP::List::Pair" }
+
     sub cons {
 	my $s=shift;
 	@_==1 or die "expecting 1 method argument";
-	bless [@_,$s], "FP::List::Pair"
+	bless [@_,$s], $s->pair_namespace
     }
 
     sub length {
