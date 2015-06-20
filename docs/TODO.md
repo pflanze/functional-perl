@@ -13,6 +13,8 @@ properly formatted versions of these documents.)
   - more systematic stream leak testing.
     Idea: LEAK_TEST forms in Chj::TEST (see Stream.pm)
 
+  - tests for Chj::TEST itself
+
 - replace FP::Lazy with Data::Thunk? This would be cool from a
   transparency stand point, except that separate code by way of
   dynamic dispatch (method calls) *can't* be used anymore then, and
