@@ -20,8 +20,9 @@ There's no way to take a code reference to Perl operators, hence a
 subroutine wrapper is necessary to pass them as arguments. This module
 provides them.
 
-Also similarly, `the_method("foo")` returns a function that does a
-"foo" method call on its argument.
+Also similarly, `the_method("foo", @args)` returns a function that
+does a "foo" method call on its argument, passing @args and then
+whatever additional arguments the function receives.
 
 Also, `operator_2("foo")` returns a function that uses "foo" as
 operator between 2 arguments. `operator_1("foo")` returns a function
