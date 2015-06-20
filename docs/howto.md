@@ -48,15 +48,15 @@ to fuse list processing chains as well as using general
 ### References and mutation, "variables" versus "bindings"
 
 Pure functions never mutate their arguments, which is why it is never
-necessary to create copies before passing things into such functions. Which
-means, in Perl terms, it is fine (and more efficient) to always pass
-references (this is what implementations for functional languages
-generally do). It probably won't be (much of) a benefit to pass
-references to elementary values such as strings and numbers, which is
-why the functional-perl project generally doesn't do so; but it
-generally assumes that arrays are passed as references. The reason for
-this is also so that functions can be properly generic: all sorts of
-values should be passed the same way, syntactically: regardless
+necessary to create copies of values before passing them into such
+functions. Which means, in Perl terms, it is fine (and more efficient)
+to always pass references (this is what implementations for functional
+languages generally do, too). It probably won't be (much of) a benefit
+to pass references to elementary values such as strings and numbers,
+which is why the functional-perl project generally doesn't do so; but
+it generally assumes that arrays are passed as references. The reason
+for this is also so that functions can be properly generic: all sorts
+of values should be passed the same way, syntactically: regardless
 whether an argument is a subroutine (other function), array, hash,
 string, number, object, if it is always stored in a scalar (as a
 reference in the case of arrays and hashes) then the type doesn't
