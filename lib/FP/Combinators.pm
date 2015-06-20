@@ -10,6 +10,7 @@ FP::Combinators - function combinators
 =head1 SYNOPSIS
 
  use FP::Ops 'div';
+ use FP::Combinators 'flip';
 
  TEST { div 2,3 } 2/3;
  TEST { flip(\&div)-> (2,3) } 3/2;
