@@ -3,6 +3,7 @@ COPYING
 FP-logo.png
 FP.css
 MANIFEST
+Makefile
 README.md
 bench/globs
 bin/expand-tail
