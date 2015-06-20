@@ -5,9 +5,22 @@
 
 =head1 NAME
 
-FP::StrictList - an FP::List enforcing list semantics
+FP::StrictList - an FP::List that enforces list semantics
 
 =head1 SYNOPSIS
+
+ use FP::StrictList;
+ my $l= strictlist (4,5)->map(*inc);
+ is_strictlist $l # true, O(1)
+
+ use FP::Equal 'equal';
+ equal strictnull->cons(1), cons (1, strictnull)
+   # true
+ use FP::List 'null';
+ equal strictnull->cons(1), cons (1, null)
+   # false: `cons` from `FP::List` and `FP::StrictList` are the same
+   # function but it takes the type of their second argument into
+   # consideration.
 
 =head1 DESCRIPTION
 
@@ -16,21 +29,29 @@ or null in their rest (cdr) position. Which means that they may end in
 something else than a null (and operations encountering these will die
 with "improper list"). FP::StrictList does, which means that
 `is_strictlist` only needs to check the head pair to know whether it's
-a proper list. Also, they maintain the list length, so `length` is
-O(1) instead of O(n) like with FP::List. Both of these features
-dictate that the list can't be lazy (since (in a dynamically typed
-language) it's impossible to know the type that a promise will give
-without evaluating it). Keep in mind that destruction of strict lists
-requires space on the C stack proportional to their length. You will
-want to increase the C stack size when handling big strict lists, lest
-your program will segfault.
+a proper list.
+
+Also, they maintain the list length, so `length` is O(1) instead of
+O(n) like with FP::List.
+
+Both of these features dictate that the list can't be lazy (since (in
+a dynamically typed language) it's impossible to know the type that a
+promise will give without evaluating it, or worse, know the length of
+the unevaluated tail).
+
+Keep in mind that destruction of strict lists requires space on the C
+stack proportional to their length. You will want to increase the C
+stack size when handling big strict lists, lest your program will
+segfault.
 
 =cut
 
 
 package FP::StrictList;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw();
+@EXPORT=qw(strictnull is_strictlist
+	   cons 
+	 );
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -102,6 +123,42 @@ TEST {
     strictlist (4,5)->map (sub{$_[0]+1})
 }
   cons (5, cons (6, strictnull));
+
+
+sub is_strictlist ($) {
+    my ($v)=@_;
+    if (length (my $r= ref $v)) {
+	UNIVERSAL::isa($v, "FP::StrictList::Pair")
+	    or
+	UNIVERSAL::isa($v, "FP::StrictList::Null")
+    } else {
+	''
+    }
+}
+
+TEST { [map { is_strictlist $_ } 
+	null, strictnull, cons (1,null), cons (1,strictnull)] }
+  ['', 1, '', 1];
+
+TEST {
+    is_strictlist (strictlist (4,5)->map (sub{$_[0]+1}))
+}
+  1;
+
+TEST {
+    is_strictlist (list (4,5)->map (sub{$_[0]+1}))
+}
+  '';
+
+use FP::Equal 'equal';
+
+TEST {
+    equal strictnull->cons(1), cons (1, strictnull)
+} 1;
+
+TEST {
+    equal strictnull->cons(1), cons (1, null)
+} '';
 
 
 1

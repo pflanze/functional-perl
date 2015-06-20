@@ -64,9 +64,6 @@ properly formatted versions of these documents.)
   overload for dumping? Not exist, right. What about writing an
   alternative Dump?)
 
-- enforce FP::List to be proper lists (only accept pairs and null in
-  rest position)? (And add a separate pair type that doesn't, but also
-  doesn't inherit from the future sequences base class?)
 
 ## Less important:
 
