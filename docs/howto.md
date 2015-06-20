@@ -419,5 +419,16 @@ for this:
     is being reclaimed piece after piece instead of all at once)
 
 
+Note that the same workaround as used with streams (weakening entries
+in `@_`) will help with incremental deallocation with non-lazy lists
+as well, and hence avoid the need for a big C stack, and avoid the
+cumulation of time needed to deallocate the list (bad for soft
+real-time latency). But weakening of non-lazy lists will/would be more
+painful to handle for users, as it's more common to reuse them than
+their lazy cousins. Arguably it would really be best to make the
+language handle lifetimes automatically (lexical variable analysis),
+it would benefit both the lazy and non-lazy cases.
+
+
 </with_toc>
 
