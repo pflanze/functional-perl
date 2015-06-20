@@ -687,11 +687,15 @@ sub list_zip2 ($$);
 sub list_zip2 ($$) {
     @_==2 or die "expecting 2 arguments";
     my ($l,$m)=@_;
-    (is_null $l or is_null $m) ? null
-      : cons([car $l, car $m], list_zip2 (cdr $l, cdr $m))
+    (is_null $l ? $l
+     : is_null $m ? $m
+     : cons([car $l, car $m], list_zip2 (cdr $l, cdr $m)))
 }
 
 TEST { list2array list_zip2 list(qw(a b c)), list(2,3) }
+  [[a=>2], [b=>3]];
+
+TEST { list2array list_zip2 list(qw(a b)), list(2,3,4) }
   [[a=>2], [b=>3]];
 
 *FP::List::List::zip= *list_zip2; # XX make n-ary
@@ -700,7 +704,7 @@ TEST { list2array list_zip2 list(qw(a b c)), list(2,3) }
 sub list_map ($ $);
 sub list_map ($ $) {
     my ($fn,$l)=@_;
-    is_null $l ? null : cons(&$fn(car $l), list_map ($fn,cdr $l))
+    is_null $l ? $l : cons(&$fn(car $l), list_map ($fn,cdr $l))
 }
 
 TEST { list2array list_map sub{$_[0]*$_[0]}, list 1,2,-3 }
@@ -711,7 +715,7 @@ TEST { list2array list_map sub{$_[0]*$_[0]}, list 1,2,-3 }
 sub list_mapn {
     my $fn=shift;
     for (@_) {
-	return null if is_null $_
+	return $_ if is_null $_
     }
     cons(&$fn(map {car $_} @_), list_mapn ($fn, map {cdr $_} @_))
 }
