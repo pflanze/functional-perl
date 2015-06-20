@@ -332,6 +332,9 @@ TEST{
 
 #  the body
 
+
+# builting a TOC = table of contents
+
 {
     package PFLANZE::TocCounter;
     use base 'FP::PureArray';
@@ -386,6 +389,16 @@ TEST {
 
 {
     package PFLANZE::Toc;
+    # The Toc object carries both the running counter, and the
+    # built-up hierarchical TOC. As the hierarchy of elements in the
+    # source html document does not correspond to the hierarchy of the
+    # TOC (which is determined by the numbering of the <hX> elements),
+    # we can't build the latter from the recursive walk using a
+    # fold_right. Instead, we're going to use state_fold_right, which
+    # allows to build it up in the order in which <hX> elements appear
+    # in the document (when viewing flattened, which is how we're
+    # going to thread through the state in our mapping (depth-first)).
+
     use FP::Predicates;
     use FP::List;
     use FP::Ops 'the_method';
