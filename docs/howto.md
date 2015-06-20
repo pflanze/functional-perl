@@ -430,5 +430,26 @@ language handle lifetimes automatically (lexical variable analysis),
 it would benefit both the lazy and non-lazy cases.
 
 
+## Object oriented functional programming
+
+There is a widespread notion that object oriented and functional
+programming are at odds with each other. This is only the case if
+"object oriented" implicates "involving mutation". It's only side
+effects (including mutation) that is at odds with functional
+programming. As long as calling methods on the objects don't have side
+effects on their (or other) state, they are pure functions that just
+happen to also use the type of their (implicit) first argument as part
+of the algorithm. Functional programming languages often use pattern
+matching to express the same idea (perhaps combined with other
+features, e.g. Haskell offers type classes).
+
+To build functional classes easily, have a look at `FP::Struct`. Such
+classes automatically inherit from `FP::Pure` by default, so that
+`is_pure` from `FP::Predicates` will return true (note that currently
+it's your responsibility to not mutate the objects by writing to their
+hash fields directly, though). If you would prefer to extend `Moose`
+for the same purposes, please [tell](mailing_list.md).
+
+
 </with_toc>
 
