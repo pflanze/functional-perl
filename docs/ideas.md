@@ -53,6 +53,12 @@ properly formatted versions of these documents.)
   make multimethod dispatch still fast? Would that then (really?) be
   the same as `Moose::Util::TypeConstraints`? 
 
+* add functional vector implementation with good computational
+  complexity (see paper from which Clojure implemented theirs),
+  perhaps base FP::PureArray on it, implement functional hashmap on
+  it, implement set with it. (There are implementations on JavaScript
+  too, already.)
+
 
 ## Not so good ideas
 
