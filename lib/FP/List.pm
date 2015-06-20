@@ -218,8 +218,9 @@ sub is_null ($) {
 }
 
 
-# XX if in the future FP::List::Pair restricts cdr's to
-# `is_pair_or_null`, then the latter could be renamed to `is_list`
+# If in the future FP::List::Pair restricts cdr's to
+# `is_pair_or_null`, then the latter could be renamed to `is_list` --
+# but see FP::StrictList which does this instead now
 
 sub is_pair_or_null ($);
 sub is_pair_or_null ($) {

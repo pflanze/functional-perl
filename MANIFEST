@@ -94,6 +94,7 @@ lib/FP/Predicates.pm
 lib/FP/Pure.pm
 lib/FP/PureArray.pm
 lib/FP/Stream.pm
+lib/FP/StrictList.pm
 lib/FP/Struct.pm
 lib/FP/Text/CSV.pm
 lib/FP/Trampoline.pm
