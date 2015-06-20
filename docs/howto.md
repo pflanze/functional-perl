@@ -450,6 +450,35 @@ it's your responsibility to not mutate the objects by writing to their
 hash fields directly, though). If you would prefer to extend `Moose`
 for the same purposes, please [tell](mailing_list.md).
 
+A complication with method calls is that they can't be directly passed
+where a function reference is expected, due to them using different
+syntax. The builtin way to pass them as a value is to pass the method
+name as a string, but that requires the receiving code to expect a
+method name, not a function. To require all places that do a function
+call to accomodate for the case of being passed a string instead does
+not look like a good idea (forgetting would be a bug, runtime overhead
+on every call instead of just taking the reference). And although
+references to individual method implementations *can* be taken (like
+`\&Foo::Bar::bar`), that skips the type dispatch and will most likely
+hurt you later on.
+
+Instead, a wrapper subroutine needs to be passed that does the method
+calls, like:
+
+    $foo->map( sub { my $s=shift; $s->bar } )
+
+But thanks to the possibility of passing a method as a string, a
+method-string-to-subroutine converter can easily be written such that
+the above code becomes:
+
+    $foo->map( the_method "bar" )
+
+The function `the_method` (which also takes optional arguments to be
+passed along) is available from `FP::Ops`. (Why is it not in
+`FP::Combinators`? Because the argument is not a function; it really
+fulfills the functionality of the `->` operator (together with
+currying), thus `FP::Ops` seems to be the right place.)
+
 
 </with_toc>
 
