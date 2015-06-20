@@ -81,6 +81,7 @@ package FP::Stream;
 	      stream_zip
 	      stream_zip_with
 	      stream2array
+	      stream_sort
 	      stream_mixed_flatten
 	      stream_mixed_fold_right
 	      stream_mixed_state_fold_right
@@ -691,6 +692,29 @@ TEST {
     stream (1,3,4)->purearray->map (sub{$_[0]**2})
 }
   bless [1,9,16], "FP::PureArray";
+
+
+sub stream_sort ($$) {
+    @_==2 or die "wrong number of arguments";
+    my ($l,$cmp)= @_;
+    stream2purearray ($l)->sort ($cmp)
+}
+
+*FP::List::List::stream_sort= *stream_sort;
+
+TEST { require FP::Ops;
+       stream (5,3,8,4)->sort (\&FP::Ops::number_cmp)->array }
+  [3,4,5,8];
+
+TEST { ref (stream (5,3,8,4)->sort (\&FP::Ops::number_cmp)) }
+  'FP::PureArray'; # XX ok? Need to `->stream` if a stream is needed
+
+TEST { stream (5,3,8,4)->sort (\&FP::Ops::number_cmp)->stream->car }
+  3;
+# but then PureArray has `first`, too, if that's all you need.
+
+
+# add a lazy merge sort instead/in addition?
 
 
 sub stream_mixed_flatten ($;$$) {
