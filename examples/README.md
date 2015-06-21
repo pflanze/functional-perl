@@ -17,4 +17,10 @@ Some examples showing the possibilities using [functional-perl](../README.md).
 * [`skip`](skip) shows how to implement a sliding window (look-ahead) as a
   pure function (that can be easily tested) and then uses it for IO
 
+These are really just test suites, but perhaps still instructive:
+
+* [`dbi`](dbi) shows/tests usage of `FP::DBI`
+
+* [`predicates`](predicates) shows/tests `FP::Predicates`
+
 Copy [`template`](template) to create your own script.
