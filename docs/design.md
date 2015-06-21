@@ -245,6 +245,28 @@ argument to be pure might be useful. Instead of creating a mess of
 variants, something smarter like a pragma should be implemented
 though.)
 
+
+## Lazyness
+
+Promises created with `FP::Lazy` are not automatically forced when
+used by perl builtins (todo: should they?). Also, type predicates
+usually don't force them either, the exception is currently `is_null`,
+so that `FP::List` does not need to care about lazy code. (Perhaps
+this should be changed? But it can't be fully transparent anyway since
+e.g. `ref` will always return the promise namespace.)
+
+OTOH, method calls on promises are always forcing the promise and then
+delegated to the value the promise returns.
+
+Some functions like `car` and `cdr` (`first` and `rest`) are forcing
+them, too (TODO: actually this is coded explicitely, but instead those
+functions should probably simply be defined as `the_method ("car")`
+etc., which would still force them, and be properly OO).
+
+The current mix seems to work well, but details are still open for
+change.
+
+
 <!-- ev?
 
 Function::Parameters vs. Method::Signatures
