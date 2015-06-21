@@ -480,5 +480,45 @@ fulfills the functionality of the `->` operator (together with
 currying), thus `FP::Ops` seems to be the right place.)
 
 
+## Debugging
+
+### General
+
+* Write small functions, test them from an embedded `use Chj::repl;
+  repl;` (or `Chj::repl;` if already loaded elsewhere) placed in the
+  module body. Write bigger functions by reusing smaller ones. Write
+  test cases (using `Chj::TEST` to make it as easy as possible) for
+  all of them so that when you need to adapt a function, you can
+  refactor it to be parameterized (instead of doing copy-paste
+  programming) without fear of breakage.
+
+* You can still use "printf debugging" (well, plain old `warn`) even
+  in pure code.
+
+* When you don't understand what's going on inside a function, place a
+  `repl` right into it and use `:e`, `:b` etc. (see `:?`) to inspect
+  the context and experiment with local function calls.
+
+* Add `use Chj::Backtrace;` to your program to see errors with stack
+  traces.
+
+* Disable tail call optimizations to see the history of function calls
+  (TODO: implement a `Sub::Call::Tail` variant that ignores the tail
+  call declarations or lets them be turned on/off at runtime?)
+
+
+### Lazy code
+
+Debugging lazy code is more challenging since the order of evaluation
+appears pretty chaotic and at least unexpected. Hence, in addition to
+the tips above:
+
+* Try to get the code working without lazyness first (don't use `lazy`
+  forms, use `FP::List` instead of `FP::Stream`). (TODO: write a
+  `FP::noLazy` that ignores `lazy` forms or lets them be turned on/off
+  at runtime?)
+
+
+
 </with_toc>
 
