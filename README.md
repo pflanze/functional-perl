@@ -46,12 +46,21 @@ following reasons:
   (read-only guarantees and caching, sequences, PXML specializations,
   implement code inlining, ...)
 
-We welcome anyone to play with the code, ask
-questions, provide feedback, and perhaps contribute examples, ideas or
-teaching materials.  We are also hoping to work with interested core
-perl developers on fixing the remaining issues in the interpreter.
+Please play with the examples and try to write some of your own, read
+the docs and tell us what's badly explained, and if you've got
+something that might be useful to add to the examples directory, it
+would be cool if you offer it. If the test suite fails or you found a
+bug, please tell us on the [[mailing_list]], or if you prefer submit
+an issue on Github. Feel free to fork the
+[repository](https://github.com/pflanze/functional-perl/) and submit
+your changes on Github or to the list. Documentation improvements are
+very welcome, as are general hints and ideas where to take the
+project.
 
-Please send [me](http://leafpair.com/contact) your suggestions!
+The project is currently led by [Christian
+Jaeger](http://leafpair.com/contact). Feel free to send me private
+mail if you prefer. I'm also on the `#london.pm` and
+`#functional-perl` IRC channels on perl.org as "pflanze".
 
 
 ## Parts
