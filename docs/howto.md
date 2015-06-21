@@ -15,9 +15,9 @@ is that some of the idioms of functional programming require special
 attention on behalf of the programmer to get working reliably. The
 good news is that, once you understand the shortcomings and
 workarounds, it's possible, and after some practising it might become
-part of the set of workarounds that become second nature. Still
-perhaps it will be possible to change the perl interpreter or write
-lowlevel modules to make some of the workarounds unnecessary.
+second nature. Still perhaps it will be possible to change the perl
+interpreter or write lowlevel modules to make some of the workarounds
+unnecessary.
 
 Note that most programming language implementations which were not
 designed for functional programming have some of the same problems;
