@@ -173,7 +173,7 @@ sub xlinkunlink {
 
 sub DESTROY {
     my $self = shift;
-    local ($@, $!, $?);
+    local ($@, $!, $?, $_);
     if (defined(my $path = $self->path)) {
         if ($metadata{ pack "I", $self }[1] == 1) {
             unlink $path

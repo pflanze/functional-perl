@@ -1246,7 +1246,7 @@ if ($has_posix) {
 
 sub DESTROY {
     my $self = shift;
-    local ($@, $!, $?);
+    local ($@, $!, $?, $_);
     if ($self->opened) {
         CORE::close($self->fh) or carp "$self DESTROY: close: $!";
     }
