@@ -97,10 +97,25 @@ yourself to force the lazy variant:
 
 returns a stream.
 
-(Idea: use `Class::Multimethods` or `Class::Multimethods::Pure` or
+NOTE: providing both functions and methods makes things more
+complicated. The reason it was done so far is rather accidental, as
+originally only functions were provided. Some functions like `car` and
+`cons` are now wrappers that actually do method calls if they
+can. `cons` still needs to remain a function because it doesn't
+necessarily receive an object as its rest argument. TODO: figure out
+whether to continue providing functions, perhaps reduce the offer to
+those strictly needed and otherwise request the user to build them on
+the fly using `the_method`? Or figure out a way to generate them for
+whole packages easily. The second reason other than the need to use
+`the_method` is that the functions can take arguments in the same
+order as traditional functional programming languages (the object does
+not need to come first, and with multiple objects it can be unclear
+which to use as the one to dispatch on).
+
+Idea: use `Class::Multimethods` or `Class::Multimethods::Pure` or
 `MooseX::MultiMethods` to provide multimethods as alternative to
 methods; this would allow to retain the traditional argument positions
-and still use short names. Perhaps look at Clojure as an example?)
+and still use short names. (Perhaps look at Clojure as an example?)
 
 ### Use of `*foo` vs `\&foo`
 
