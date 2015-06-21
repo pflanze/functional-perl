@@ -117,9 +117,9 @@ This doesn't go very far yet (todo: add more).
 
 ### Examples
 
-The [examples](examples/) directory contains scripts showing off the
-possibilities. You will probably not understand everything from
-looking at these, but they will give an impression.
+The [examples](examples/README.md) directory contains scripts showing
+off the possibilities. You will probably not understand everything
+from looking at these, but they will give an impression.
 
 ### Howto and design documents
 
