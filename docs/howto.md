@@ -429,6 +429,12 @@ their lazy cousins. Arguably it would really be best to make the
 language handle lifetimes automatically (lexical variable analysis),
 it would benefit both the lazy and non-lazy cases.
 
+### See also
+
+* A [post](https://news.ycombinator.com/item?id=8734719) about streams
+  in Scheme mentioning the memory retention issues that even some
+  Scheme implementations can have.
+
 
 ## Object oriented functional programming
 

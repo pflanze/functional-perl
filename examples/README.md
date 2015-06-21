@@ -24,3 +24,12 @@ These are really just test suites, but perhaps still instructive:
 * [`predicates`](predicates) shows/tests `FP::Predicates`
 
 Copy [`template`](template) to create your own script.
+
+
+## See also
+
+* For a real program using these modules, see
+  [ml2json](http://ml2json.christianjaeger.ch), although it still
+  bundles a much older version of the functional-perl libraries (todo:
+  update to use the current functional-perl instead)
+
