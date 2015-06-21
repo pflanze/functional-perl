@@ -15,7 +15,7 @@ Some examples showing the possibilities using [functional-perl](../README.md).
 * [`diff2html`](diff2html) hows how to generate (X)HTML.
 
 * [`skip`](skip) shows how to implement a sliding window (look-ahead) as a
-  pure function (that can be easily tested) and then uses it for IO
+  pure function (that can easily be tested) and then uses it for IO
 
 These are really just test suites, but perhaps still instructive:
 
