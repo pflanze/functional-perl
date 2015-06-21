@@ -17,7 +17,7 @@ Chj::repl
 
 =head1 DESCRIPTION
 
-for a simple parameterless start.
+For a simple parameterless start of `Chj::Util::Repl`.
 
 =head1 SEE ALSO
 
