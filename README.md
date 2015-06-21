@@ -9,6 +9,9 @@ This project aims to provide modules as well as tutorials and
 introductionary materials and other knowledge to work in a functional
 style on Perl.
 
+
+<with_toc>
+
 ## Status: experimental
 
 The project should not be used for production code yet for the
@@ -89,26 +92,16 @@ Please send [me](http://leafpair.com/contact) your suggestions!
 
 ## Documentation
 
-### How to program functionally in Perl 5
-
-This needs a separate "how to" page; for now, see [howto and
-comparison to Scheme](docs/howto_and_comparison_to_Scheme.md).
-
-Also, to get a general gist of how to do functional programming on
-Perl, check out [Higher-Order Perl](http://hop.perl.plover.com/) by
-Mark Jason Dominus. He glosses over some issues with regards to memory
-retention problems, but to be fair, at the time that he wrote the book
-the perl interpreter wouldn't have allowed to avoid them
-anyway. Unlike him, the functional-perl project properly separates
-lazy evaluation from pairs (when building streams), which should be
-preferable for separation of concerns.
+We suggest you look through the docs roughly in the given order, but
+if you can't follow the presentation, skip to the intro, likewise if
+you're bored skip ahead to the examples and the howto/design
+documents.
 
 ### Presentation
 
 [These](http://functional-perl.org/london.pm-talk/) are the slides of
-a presentation and is a better introduction and doesn't talk about
-Scheme, but there's no recording and the slides may not be saying
-enough for understanding. (Todo: rewrite into a tutorial.)
+an introductory presentation, but there's no recording and the slides
+may not be saying enough for understanding. (Todo: add spoken text?)
 
 ### Intro
 
@@ -120,10 +113,38 @@ progress). The scripts are meant to be viewed in this order:
 1. [tailcalls](intro/tailcalls)
 1. [more_tailcalls](intro/more_tailcalls)
 
+This doesn't go very far yet (todo: add more).
+
 ### Examples
 
 The [examples](examples/) directory contains scripts showing off the
-possibilities.
+possibilities. You will probably not understand everything from
+looking at these, but they will give an impression.
+
+### Howto and design documents
+
+* *[How to write functional programs on Perl 5](docs/howto.md)* is
+  describing the necessary techniques to use the functional style on
+  Perl. (Todo: this may be too difficult for someone who doesn't know
+  anything about functional programming; what to do about it?)
+
+* *[The design principles used in the functional-perl
+  library](docs/design.md)* is descibing the organization and ideas
+  behind the code that the functional-perl project offers.
+
+### Book
+
+If you need a more gentle introduction into the ideas behind
+functional programming, you may find it in [Higher-Order
+Perl](http://hop.perl.plover.com/) by Mark Jason Dominus.  This book
+was written long before the functional-perl project was started, and
+he does various details differently, and IIRC doesn't care about
+memory retention problems (to be fair, at the time the book was
+written the perl interpreter wouldn't have allowed to avoid them
+anyway). (Also, IIRC he bundles lazy evaluation into the pairs;
+separating these concerns should be preferable as they are then more
+universally usable and combinable.) (Todo: reread book, contact
+author.)
 
 
 ## Installation
@@ -158,3 +179,6 @@ single "make install"? What's the best way to achieve this?)
 * A [post](https://news.ycombinator.com/item?id=8734719) about streams
   in Scheme mentioning the memory retention issues that even some
   Scheme implementations can have.
+
+
+</with_toc>
