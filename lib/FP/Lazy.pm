@@ -94,6 +94,21 @@ What should we do?
 (To experiment with the style, or in case you're stubborn, you can
 explicitely import `delay` or import the `:all` export tag to get it.)
 
+=head1 TODO
+
+If the thunk of a promise throws an exception, the promise will remain
+unevaluated. This is the easiest (and most efficient) thing to do, but
+there remains a question about the safety: if the data source is
+read-once (like reading lines from files), and the exception happens
+after the read, then forcing the promise again will fetch and store
+the next line, hence a line will be lost. Since exceptions can happen
+because of out of memory conditions or from signal handlers, this will
+be of real concern in some situations.
+
+Provide safe promises for these situations? (But that would mean that
+they need to be implemented in C as Perl does not offer the features
+to implement them safely, correct?)
+
 =head1 SEE ALSO
 
 https://en.wikipedia.org/wiki/Futures_and_promises
