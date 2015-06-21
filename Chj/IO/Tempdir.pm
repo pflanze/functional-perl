@@ -145,7 +145,7 @@ sub push_on_destruction {
 sub DESTROY {
     my $self=shift;
     #warn "DESTROY $self";
-    local ($@,$!,$?);
+    local ($@,$!,$?,$_);
     my $str= pack "I",$self;
     if (my $arr= $meta{$str}{on_destruction}) {
 	&$_($self) for @$arr
