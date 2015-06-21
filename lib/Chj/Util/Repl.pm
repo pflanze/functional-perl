@@ -583,7 +583,8 @@ sub run {
 					 or die "expecting digits or no argument, got '$cmd'";
 				     $args=""; # can't s/// above when expecting value
 				     my $lexicals= eval {
-					 PadWalker::peek_my($skip + ($maybe_level // 0));
+					 PadWalker::peek_my
+					     ($skip - 1 + ($maybe_level // 0));
 				     }; # XXX check exceptions
 
 				     if (defined $lexicals) {
