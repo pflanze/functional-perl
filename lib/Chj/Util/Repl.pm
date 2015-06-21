@@ -12,7 +12,8 @@ Chj::Util::Repl - read-eval-print loop
  # repl($histfilepath,$package);
  # no, make it different.
  my $repl= new Chj::Util::Repl;
- $repl->set_prompt("foo> ");# if left undefined, "$package> " is used.
+ $repl->set_prompt("foo> ");
+ # ^ if left undefined, "$package$perhapslevel> " is used
  $repl->set_historypath("somefile"); # default is ~/.perl-repl_history
  $repl->run;
 
@@ -122,7 +123,7 @@ use Class::Array -fields=>
   -publica=> (
 	      'Historypath', #undef=none, but a default is set
 	      'MaxHistLen',
-	      'Prompt', # undef= build one from package on the fly
+	      'Prompt', # undef= build fresh one from package&level
 	      'Package', # undef= use caller's package
 	      'DoCatchINT',
 	      'DoRepeatWhenEmpty',
@@ -139,8 +140,6 @@ sub new {
     my$self= $class->SUPER::new;
     $$self[Historypath]= "$ENV{HOME}/.perl-repl_history" if $ENV{HOME};
     $$self[MaxHistLen]= 100;
-    #$$self[Prompt]= "repl> ";
-    #$$self[Package]="repl";
     $$self[DoCatchINT]=1;
     $$self[DoRepeatWhenEmpty]=1;
     $$self[KeepResultIn]="res";
@@ -248,6 +247,7 @@ sub eval_code {
 	    $code)
 }
 
+our $repl_level; # maybe number of repl layers above
 
 # TODO: split this monstrosity into pieces.
 sub run {
@@ -255,6 +255,8 @@ sub run {
 
     my $caller=caller(0);
     my $get_package= sub { $$self[Package] || $caller };
+
+    local $repl_level= defined ($repl_level) ? $repl_level+1 : 0;
 
     my $oldsigint= $SIG{INT};
     # It seems this is the only way to make signal handlers work in
@@ -507,9 +509,9 @@ sub run {
 	      eval {
 		  $line=
 		      $term->readline
-		      ($$self[Prompt]
-		       or
-		       &$get_package()."> ");
+		      ($$self[Prompt] //
+		       &$get_package()
+		       .($repl_level ? " $repl_level":"")."> ");
 		  1
 	      } || do {
 		  if (!length ref($@) and $@=~ /^SIGINT\n/s) {
