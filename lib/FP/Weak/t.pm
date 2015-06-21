@@ -34,7 +34,7 @@ TEST { t }
   undef;
 TEST { with_noweaken { t } }
   [];
-TEST { with_noweaken_ *t }
+TEST { &with_noweaken (*t) }
   [];
 TEST { t }
   undef;
@@ -46,7 +46,7 @@ TEST {
 	$msg=~ s/ at .*/ .../s;
 	push @w, $msg
     };
-    [ with_warnweaken_ *t, @w]
+    [ &with_warnweaken (*t), @w]
 }
   [undef, "weaken (ARRAY(0x...)) ..."];
 

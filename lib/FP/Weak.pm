@@ -61,11 +61,11 @@ Give a warning in addition to the weakening operation.
 
 Give a warning with backtrace in addition to the weakening operation.
 
-=item with_noweaken { code }, with_noweaken_ $proc
+=item with_noweaken { code }, &with_noweaken ($proc)
 
-=item with_warnweaken { code }, with_warnweaken_ $proc
+=item with_warnweaken { code } (and same as above)
 
-=item with_cluckweaken { code }, with_cluckweaken_ $proc
+=item with_cluckweaken { code }
 
 Within their dynamic scope, globally change `weaken` to one of the
 alternatives
@@ -79,9 +79,9 @@ package FP::Weak;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(weaken Weakened Keep);
 @EXPORT_OK=qw(
-		 noweaken noWeakened with_noweaken_ with_noweaken
-		 warnweaken warnWeakened with_warnweaken_ with_warnweaken
-		 cluckweaken cluckWeakened with_cluckweaken_ with_cluckweaken
+		 noweaken noWeakened with_noweaken
+		 warnweaken warnWeakened with_warnweaken
+		 cluckweaken cluckWeakened with_cluckweaken
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -122,8 +122,7 @@ sub noWeakened ($) {
     $_[0]
 }
 
-sub with_noweaken_ ($) { local $weaken= \&noweaken; &{$_[0]}() }
-sub with_noweaken (&) { goto \&with_noweaken_ }
+sub with_noweaken (&) { local $weaken= \&noweaken; &{$_[0]}() }
 
 
 use Carp;
@@ -138,8 +137,7 @@ sub warnWeakened ($) {
     Weakened ($_[0]);
 }
 
-sub with_warnweaken_ ($) { local $weaken= \&warnweaken; &{$_[0]}() }
-sub with_warnweaken (&) { goto \&with_warnweaken_ }
+sub with_warnweaken (&) { local $weaken= \&warnweaken; &{$_[0]}() }
 
 
 use Carp 'cluck';
@@ -154,8 +152,7 @@ sub cluckWeakened ($) {
     Weakened ($_[0]);
 }
 
-sub with_cluckweaken_ ($) { local $weaken= \&cluckweaken; &{$_[0]}() }
-sub with_cluckweaken (&) { goto \&with_cluckweaken_ }
+sub with_cluckweaken (&) { local $weaken= \&cluckweaken; &{$_[0]}() }
 
 
 1
