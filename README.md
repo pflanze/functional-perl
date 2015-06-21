@@ -183,7 +183,9 @@ single "make install"? What's the best way to achieve this?)
 ## See also
 
 * For a real program using these modules, see
-  [ml2json](http://ml2json.christianjaeger.ch).
+  [ml2json](http://ml2json.christianjaeger.ch), although it still
+  bundles a much older version of the functional-perl libraries (todo:
+  update to use the current functional-perl instead)
 
 * A [post](https://news.ycombinator.com/item?id=8734719) about streams
   in Scheme mentioning the memory retention issues that even some
