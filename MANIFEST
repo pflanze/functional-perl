@@ -100,6 +100,7 @@ lib/FP/Text/CSV.pm
 lib/FP/Trampoline.pm
 lib/FP/Values.pm
 lib/FP/Weak.pm
+lib/FP/Weak/t.pm
 lib/FP/fix.pm
 lib/FP/url_.pm
 lib/PXML.pm
