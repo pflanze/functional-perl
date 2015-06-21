@@ -76,6 +76,7 @@ lib/Chj/xperlfunc.pm
 lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
+lib/FP.pm
 lib/FP/Array.pm
 lib/FP/Array_sort.pm
 lib/FP/Char.pm
