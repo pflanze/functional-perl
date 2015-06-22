@@ -300,7 +300,7 @@ sub class_array_namehash_allprotected { # get all protected field definitions in
 	do {
 	    #warn "class_array_namehash_allprotected: werde über \@${workclass}::_CLASS_ARRAY_PROTECTED_FIELDS loopen..";
 	    for (@{"${workclass}::_CLASS_ARRAY_PROTECTED_FIELDS"}) {
-		$hashref->{$_}= eval "${workclass}::$_";
+		$hashref->{$_}= eval "${workclass}::$_"; # XX security?
 		#warn "class_array_namehash_allprotected: did set name '$_' to $hashref->{$_}";
 	    }
 	} while ($workclass= ${"${workclass}::_CLASS_ARRAY_SUPERCLASS"});
@@ -344,7 +344,7 @@ sub class_array_namehash { #(cj 05/10/05: offensichtlich keine publica felder be
             #if (exists $hashref->{$_}) {
             #    warn "DUPLIKAT KEY für '$_' in '$class'";##
             #} nope just overwrite it. since we first gathered the superclass'es values first, we have to.
-            $hashref->{$_}= eval "${class}::$_";
+            $hashref->{$_}= eval "${class}::$_"; # XX security?
         }
         # save it?
 	if ($hashname or $flag_cachehash) {
@@ -520,12 +520,12 @@ sub createaccessors {
 #	warn "loop: $_";
 	my $methodbasename= lcfirstletter($_);
 	if (not defined *{"${calling_class}::$methodbasename"}{CODE}) {
-	    *{"${calling_class}::$methodbasename"} = eval 'sub { shift->['.$namehash->{$_}.'] }';
+	    *{"${calling_class}::$methodbasename"} = eval 'sub { shift->['.$namehash->{$_}.'] }'; # XX security?
 	    die if $@;
 	    #warn "did create '${calling_class}::$methodbasename'";
 	}
 	if (not defined *{"${calling_class}::set_$methodbasename"}{CODE}) {
-	    *{"${calling_class}::set_$methodbasename"} = eval 'sub {my $s=shift; ($$s['.$namehash->{$_}.'])=@_ }';
+	    *{"${calling_class}::set_$methodbasename"} = eval 'sub {my $s=shift; ($$s['.$namehash->{$_}.'])=@_ }'; # XX security?
 	    die if $@;
 	    #warn "did create '${calling_class}::set_$methodbasename'";
 	}

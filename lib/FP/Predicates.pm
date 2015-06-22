@@ -319,7 +319,7 @@ sub all_of {
     my (@fn)=@_;
     sub {
 	for my $fn (@fn) {
-	    return undef unless &$fn;
+	    return '' unless &$fn;
 	}
 	1
     }

@@ -490,9 +490,9 @@ sub run {
 	    # clean history of C based object before we re-add the
 	    # saved one:
 	    $term->clear_history;
-	    if (open HIST,"<$$self[Historypath]"){
-		@history= <HIST>;
-		close HIST;
+	    if (open my $hist, "<", $$self[Historypath]){
+		@history= <$hist>;
+		close $hist;
 		for (@history){
 		    chomp;
 		    $term->addhistory($_);

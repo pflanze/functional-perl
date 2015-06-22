@@ -45,12 +45,12 @@ sub package_of_path {
     }
     warn "path=".singlequote($path) if $DEBUG;
 
-    open IN,"<$path"
+    open my $in, "<", $path
       or die "could not open '$path': $!";
 
     local $/;
-	my $content= <IN>;
-    close IN
+    my $content= <$in>;
+    close $in
       or die "closing '$path': $!";
   CHECK: {
 	while ($content=~ m{\bpackage +([\w:]+)}g) {

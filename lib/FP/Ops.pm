@@ -26,7 +26,8 @@ whatever additional arguments the function receives.
 
 Also, `operator_2("foo")` returns a function that uses "foo" as
 operator between 2 arguments. `operator_1("foo")` returns a function
-that uses "foo" as operator before its single argument.
+that uses "foo" as operator before its single argument. CAREFUL: make
+sure the given strings are secured, as there is no safety check!
 
 =cut
 
@@ -114,6 +115,7 @@ sub operator_2 ($) {
     my ($code)=@_;
     eval 'sub ($$) { @_==2 or die "need 2 arguments"; $_[0] '.$code.' $_[1] }'
       || die "operator_2: '$code': $@";
+    # XX security?
 }
 
 sub operator_1 ($) {
@@ -121,6 +123,7 @@ sub operator_1 ($) {
     my ($code)=@_;
     eval 'sub ($) { @_==1 or die "need 1 argument"; '.$code.' $_[0] }'
       || die "operator_1: '$code': $@";
+    # XX security?
 }
 
 TEST { my $lt= operator_2 "lt";

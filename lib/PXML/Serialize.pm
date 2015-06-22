@@ -293,6 +293,8 @@ sub putxmlfile ($$) {
     weaken $_[1] if ref $_[0]; # ref check perhaps unnecessary here
     my $f= xopen_write $path;
     binmode($f, ":utf8") or die "binmode";
+    # ^ XX should this use ":encoding(UTF-8)"? To validate in-memory
+    # strings? Shouldn't we just check all *inputs*?
     pxml_print($xml,$f);
     $f->xclose;
 }
@@ -303,6 +305,7 @@ sub puthtmlfile ($$;$) {
     #xmkdir_p dirname $path;
     my $out= xopen_write($path);
     binmode $out, ":utf8" or die "binmode";
+    # ^ XX dito, see comment in putxmlfile
     pxml_xhtml_print_fast($v, $out, $maybe_lang||"en");
     $out->xclose;
 }

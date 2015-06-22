@@ -163,8 +163,8 @@ sub reimport {
 	for my $caller (keys %$imports) {
 	    my $code= "package $caller; "
 	      .'$Chj::ruse::orig_import->(@{$$imports{$caller}})';
-	    eval $code;
-	    if (ref$@ or $@) {
+	    eval $code; # XX is this safe? (security)
+	    if (ref $@ or $@) {
 		warn "reimport WARNING: evaling '$code' gave: $@";
 	    }
 	}
