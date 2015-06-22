@@ -554,5 +554,21 @@ the tips above:
 
 
 
+## Tips and recommendations
+
+* Both `Method::Signatures` and `Function::Parameters` offer
+  easy subroutine and method argument
+  declarations. `Function::Parameters` has the advantage that it's
+  lexically scoped, whereas `Method::Signatures` seems to be tied to
+  the namespace it was imported into. This means that in a file with
+  `{ package Foo; ... }` style subnamespace parts, it's still enough
+  to import `Function::Parameters` just once at the top of the file,
+  whereas `Method::Signatures` needs to be imported into every
+  package. (Also, it showed confusing error reports when one forgets.) 
+  (Todo: did I check the newest version?)
+
+  (Todo: see how argument assertments per predicate could be done.)
+
+
 </with_toc>
 
