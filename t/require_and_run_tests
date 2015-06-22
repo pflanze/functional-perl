@@ -14,7 +14,7 @@ use lib "$mydir/../meta";
 
 use ModuleList;
 
-our $modules= modulelist;
+our $modules= modulenamelist;
 
 # ------------------------------------------------------------------
 # Non-core dependencies of modules to decide whether to skip testing

@@ -17,7 +17,7 @@ ModuleList
 
 package ModuleList;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(modulelist);
+@EXPORT=qw(modulenamelist modulepathlist);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -26,23 +26,32 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::xopen 'xopen_read';
 
-our $modulelist;
+our $moduleandpathlist; # [[ name, path ] ...]
 
-sub modulelist {
-    $modulelist //= do {
+sub moduleandpathlist {
+    $moduleandpathlist //= do {
 	my $f = xopen_read "MANIFEST";
 	my @m;
 	local $_;
 	while (<$f>) {
 	    chomp;
+	    my $path= $_;
 	    next unless s/\.pm$//;
 	    s|^(lib\|meta)/|| or die;
 	    s|/|::|sg;
-	    push @m, $_
+	    push @m, [$_, $path]
 	}
 	$f->xclose;
 	\@m
     }
+}
+
+sub modulenamelist {
+    [ map { $$_[0] } @{moduleandpathlist()} ]
+}
+
+sub modulepathlist {
+    [ map { $$_[1] } @{moduleandpathlist()} ]
 }
 
 1
