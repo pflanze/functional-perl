@@ -147,13 +147,12 @@ If you need a more gentle introduction into the ideas behind
 functional programming, you may find it in [Higher-Order
 Perl](http://hop.perl.plover.com/) by Mark Jason Dominus.  This book
 was written long before the functional-perl project was started, and
-he does various details differently, and IIRC doesn't care about
-memory retention problems (to be fair, at the time the book was
-written the perl interpreter wouldn't have allowed to avoid them
-anyway). (Also, IIRC he bundles lazy evaluation into the pairs;
-separating these concerns should be preferable as they are then more
-universally usable and combinable.) (Todo: reread book, contact
-author.)
+does various details differently, and IIRC doesn't care about memory
+retention problems (to be fair, at the time the book was written the
+perl interpreter wouldn't have allowed to avoid them anyway). (Also,
+IIRC he bundles lazy evaluation into the pairs; separating these
+concerns should be preferable as they are then more universally usable
+and combinable.) (Todo: reread book, contact author.)
 
 
 ## Installation
