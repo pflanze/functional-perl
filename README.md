@@ -149,10 +149,10 @@ Perl](http://hop.perl.plover.com/) by Mark Jason Dominus.  This book
 was written long before the functional-perl project was started, and
 does various details differently, and IIRC doesn't care about memory
 retention problems (to be fair, at the time the book was written the
-perl interpreter wouldn't have allowed to avoid them anyway). (Also,
-IIRC he bundles lazy evaluation into the pairs; separating these
+perl interpreter wouldn't have allowed to avoid them anyway). Also,
+IIRC it bundles lazy evaluation into the pairs; separating these
 concerns should be preferable as they are then more universally usable
-and combinable.) (Todo: reread book, contact author.)
+and combinable. (Todo: reread book, contact author.)
 
 
 ## Installation
@@ -171,11 +171,11 @@ single "make install"? What's the best way to achieve this?)
 * to run the test suite: `Test::Requires`
 
 * to run all the tests (otherwise some are skipped):
-  `BSD::Resource`, `Method::Signatures`, `Text::CSV`, `URI`
+  `BSD::Resource`, `Method::Signatures`, `Function::Parameters`,
+  `Sub::Call::Tail`, `Text::CSV`, `URI`. Some of these are also
+  necessary to run htmlgen / build the website.
 
 * to use `bin/repl` or the repl in the intro and examples scripts
   interactively, `Term::ReadLine::Gnu`
-
-* to use nicer syntax for tail call optimization: `Sub::Call::Tail`
 
 </with_toc>
