@@ -526,12 +526,12 @@ currying).)
   refactor it to be parameterized (instead of doing copy-paste
   programming) without fear of breakage.
 
-* You can still use "printf debugging" (well, plain old `warn`) even
+* You can still use "printf debugging" (plain old `warn` etc.) even
   in pure code.
 
 * When you don't understand what's going on inside a function, place a
-  `repl` right into it and use `:e`, `:b` etc. (see `:?`) to inspect
-  the context and experiment with local function calls.
+  `repl` call right into it and use `:e`, `:b` etc. (see `:?`) to
+  inspect the context and experiment with local function calls.
 
 * Add `use Chj::Backtrace;` to your program to see errors with stack
   traces.
