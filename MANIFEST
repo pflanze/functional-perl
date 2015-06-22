@@ -112,6 +112,7 @@ lib/PXML/Serialize.pm
 lib/PXML/Tags.pm
 lib/PXML/Util.pm
 lib/PXML/XHTML.pm
+meta/ModuleList.pm
 meta/dependencycheck
 t/csv2xml
 t/csv2xml.expected

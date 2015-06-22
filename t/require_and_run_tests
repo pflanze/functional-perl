@@ -10,19 +10,11 @@ our ($mydir, $myname); BEGIN {
     ($mydir, $myname)=($1,$2);
 }
 use lib "$mydir/../lib";
+use lib "$mydir/../meta";
 
-use Chj::xopen 'xopen_read';
+use ModuleList;
 
-my $f = xopen_read "$mydir/../MANIFEST";
-our @module;
-while (<$f>) {
-    chomp;
-    next unless s/\.pm$//;
-    s|^lib/|| or die;
-    s|/|::|sg;
-    push @module, $_
-}
-$f->xclose;
+our $modules= modulelist;
 
 # ------------------------------------------------------------------
 # Non-core dependencies of modules to decide whether to skip testing
@@ -40,7 +32,7 @@ our %dependencies=
 
 use Test::More;
 
-for (@module) {
+for (@$modules) {
   SKIP: {
 	if (my $ds= $dependencies{$_}) {
 	    for my $d (@$ds) {
