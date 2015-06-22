@@ -1,0 +1,101 @@
+#!/usr/bin/env perl
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+use lib "$mydir/../meta";
+
+sub usage {
+    print "usage: $myname
+
+  Criticizes the functional-perl code base.
+
+  Options:
+    --repl
+";
+    exit 1;
+}
+
+use Getopt::Long;
+our $verbose=0;
+our $opt_repl;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   "repl"=> \$opt_repl,
+	   ) or exit 1;
+usage if @ARGV;
+
+use Function::Parameters qw(:strict);
+use Perl::Critic;
+use ModuleList;
+use Chj::Backtrace;
+use FP::Array ":all";
+use FP::Stream ":all";
+use FP::PureArray;
+use Chj::xperlfunc qw(xprintln);
+use FP::Ops "the_method";
+use Chj::ruse;
+use Chj::repl;
+
+
+{
+    package PFLANZE::Result;
+    use FP::Struct ["path"];
+    method prefix {
+	$self->path . "\t"
+    }
+    _END_;
+}
+{
+    package PFLANZE::ERR;
+    use FP::Struct ["message"], "PFLANZE::Result";
+    method string {
+	$self->prefix . $self->messsage
+    }
+    _END_;
+}
+{
+    package PFLANZE::OK;
+    use FP::Struct ["critiques"], "PFLANZE::Result";
+    method has_critique {
+	@{ $self->critiques } > 0
+    }
+    method string {
+	my $p= $self->prefix;
+	$self->critiques->map
+	  (fun ($c) {
+	      "$p$c"
+	  })
+	    ->strings_join("");
+    }
+    _END_;
+}
+
+
+fun critique ($path) {
+    eval {
+	my $critic = Perl::Critic->new();
+	PFLANZE::OK->new($path, purearray $critic->critique($path) );
+    }
+      || PFLANZE::ERR->new($path, "$@");
+}
+
+
+our $critiques =  array2stream(modulepathlist)->map(*critique);
+
+if ($opt_repl) {
+    repl;
+} else {
+    $critiques->filter (the_method "has_critique")
+      ->for_each (fun ($c) {
+	  xprintln $c->string
+      });
+}
+
