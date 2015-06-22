@@ -438,52 +438,80 @@ it would benefit both the lazy and non-lazy cases.
 
 ## Object oriented functional programming
 
-There is a widespread notion that object oriented and functional
-programming are at odds with each other. This is only the case if
-"object oriented" implicates "involving mutation". It's only side
-effects (including mutation) that is at odds with functional
-programming. As long as calling methods on the objects don't have side
-effects on their (or other) state, they are pure functions that just
-happen to also use the type of their (implicit) first argument as part
-of the algorithm. Functional programming languages often use pattern
-matching to express the same idea (perhaps combined with other
-features, e.g. Haskell offers type classes).
+Note that "functional" in the context of "functional programming" does
+not mean "using function call syntax instead of method call syntax". A
+subroutine that prints something to stdout or modifies some of its
+arguments or variables outside its inner scope is not a *pure*
+function, which is what "functional" in "functional programming"
+implies. A pure function's *only* effect (as observable by a purely
+functional program, i.e. ignoring the use of machine resources and
+time) is its result value, and is dependent *only* on its arguments
+and immutable values (values that are never modified during a program
+run).
 
-To build functional classes easily, have a look at `FP::Struct`. Such
-classes automatically inherit from `FP::Pure` by default, so that
-`is_pure` from `FP::Predicates` will return true (note that currently
-it's your responsibility to not mutate the objects by writing to their
-hash fields directly, though). If you would prefer to extend `Moose`
-for the same purposes, please [tell](mailing_list.md).
+Even aside the above confusion, there seems to be a widespread notion
+that object oriented and functional programming are at odds with each
+other. This is only the case if "object oriented" implies a style that
+mutates the object(s) or other side effects. So whether there is a
+conflict depends on the definition of "object orientation". The author
+of this text has never found a precise definition.
+[Wikipedia](https://en.wikipedia.org/wiki/Object_oriented_programming)
+writes:
 
-A complication with method calls is that they can't be directly passed
-where a function reference is expected, due to them using different
-syntax. The builtin way to pass them as a value is to pass the method
-name as a string, but that requires the receiving code to expect a
-method name, not a function. To require all places that do a function
-call to accomodate for the case of being passed a string instead does
-not look like a good idea (forgetting would be a bug, runtime overhead
-on every call instead of just taking the reference). And although
-references to individual method implementations *can* be taken (like
-`\&Foo::Bar::bar`), that skips the type dispatch and will most likely
+> *A distinguishing feature of objects is that an object's procedures
+> can access and often modify the data fields of the object with which
+> they are associated.*
+
+It only says "often modify", not that modification is a required part
+of the methodology.
+
+If individual method implementations all follow the rules for a pure
+function, then the method call only adds the dispatch on the object
+type. The object can be thought of (and in Perl actually is) an
+additional function argument and its type simply becomes part of the
+algorithm, and the whole remains pure. Functional programming
+languages often offer pattern matching that can be used to the same
+effect, or other features that are even closer (e.g. Haskell's type
+classes).
+
+To build purely functional classes easily, have a look at
+`FP::Struct`. Classes generated with it automatically inherit from
+`FP::Pure` by default, so that `is_pure` from `FP::Predicates` will
+return true (but currently it's your responsibility to not mutate the
+objects by writing to their hash fields directly, or if you do so,
+only in a manner that doesn't violate the purity as seen from the
+outside (e.g. caching is OK if done correctly)). If you would prefer
+to extend `Moose` for the same purposes, please
+[tell](mailing_list.md).
+
+Due to method calls using different syntax, they can't be directly
+passed where a function reference is expected. The Perl builtin way to
+pass them as a value is to pass the method name as a string, but that
+requires the receiving code to expect a method name, not a
+function. To require all places that do a function call to accomodate
+for the case of being instead passed a string does not look like a
+good idea (forgetting would be a bug, runtime overhead on every call
+instead of just taking the reference). And although references to
+individual method implementations *can* be taken (like
+`\&Foo::Bar::baz`), that skips the type dispatch and will most likely
 hurt you later on.
 
 Instead, a wrapper subroutine needs to be passed that does the method
 calls, like:
 
-    $foo->map( sub { my $s=shift; $s->bar } )
+    $l->map( sub { my $s=shift; $s->baz } )
 
 But thanks to the possibility of passing a method as a string, a
 method-string-to-subroutine converter can easily be written such that
 the above code becomes:
 
-    $foo->map( the_method "bar" )
+    $l->map( the_method "baz" )
 
 The function `the_method` (which also takes optional arguments to be
 passed along) is available from `FP::Ops`. (Why is it not in
-`FP::Combinators`? Because the argument is not a function; it really
-fulfills the functionality of the `->` operator (together with
-currying), thus `FP::Ops` seems to be the right place.)
+`FP::Combinators`? Because (the argument is not a function, and) it
+really fulfills the functionality of the `->` operator (together with
+currying).)
 
 
 ## Debugging
