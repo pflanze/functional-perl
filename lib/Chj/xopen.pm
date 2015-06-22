@@ -13,6 +13,7 @@ Chj::xopen
  {
      my $in= xopen_read "foo.txt";
      my $out= glob2fh(*STDOUT,"utf-8");
+     local $_;
      while (<$in>) { # default operation. (overload not possible :/)
 	 $out->xprint($_); # print, throwing an exception on error
      }

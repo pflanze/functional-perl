@@ -32,6 +32,7 @@ sub modulelist {
     $modulelist //= do {
 	my $f = xopen_read "MANIFEST";
 	my @m;
+	local $_;
 	while (<$f>) {
 	    chomp;
 	    next unless s/\.pm$//;

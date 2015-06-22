@@ -85,6 +85,7 @@ $out->xclose;
 
 our $in= xopen_read $out->path; # bleh?
 our %o;
+local $_;
 while (<$in>) {
     chomp;
     $o{$_}++ if (m{^/} and m{/(?:Chj|FP|PXML)/}); # not |Class
