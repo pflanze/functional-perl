@@ -639,13 +639,9 @@ sub list_reverse ($) {
     list_reverse_with_tail ($l, $l->null)
 }
 
-# since a method always requires parens, it can use an optional second
-# argument with no ill effects on precedence
-sub FP::List::List::reverse {
-    @_ == 1 ? goto \&list_reverse :
-      @_ == 2 ? goto \&list_reverse_with_tail :
-	die "wrong number of arguments";
-}
+
+*FP::List::List::reverse_with_tail= *list_reverse_with_tail;
+*FP::List::List::reverse= *list_reverse;
 
 TEST{ list2string list_reverse string2list "Hello" }
   'olleH';

@@ -184,7 +184,7 @@ TEST {
 } [1, 9, 3];
 
 TEST {
-    strictlist (7)->reverse (8)
+    strictlist (7)->reverse_with_tail (8)
 }
   # falls back on the default list type since '8' is not a List (a
   # strictlist would not accept such a value as the tail anyway; hm,
