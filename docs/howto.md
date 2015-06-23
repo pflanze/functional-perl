@@ -552,7 +552,12 @@ the tips above:
   `FP::noLazy` that ignores `lazy` forms or lets them be turned on/off
   at runtime?)
 
-
+* If you're getting `undef` in some place (like a subtree in a `PXML`
+  document missing (maybe triggering an undef warning in the
+  serializer)) and you don't know where it happens, and think it's
+  because of stream weakening, and just want to get the program
+  working first without worrying about memory retention, then disable
+  weakening using the offerings in `FP::Weak`.
 
 ## Tips and recommendations
 
