@@ -70,6 +70,10 @@ Give a warning with backtrace in addition to the weakening operation.
 Within their dynamic scope, globally change `weaken` to one of the
 alternatives
 
+=item do_weaken (1|0|"yes"|"no"|"on"|"off"|"warn"|"cluck")
+
+Turn weakening on and off (unscoped, 'persistently').
+
 =back
 
 =cut
@@ -79,6 +83,7 @@ package FP::Weak;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(weaken Weakened Keep);
 @EXPORT_OK=qw(
+		 do_weaken
 		 noweaken noWeakened with_noweaken
 		 warnweaken warnWeakened with_warnweaken
 		 cluckweaken cluckWeakened with_cluckweaken
@@ -153,6 +158,27 @@ sub cluckWeakened ($) {
 }
 
 sub with_cluckweaken (&) { local $weaken= \&cluckweaken; &{$_[0]}() }
+
+
+sub do_weaken ($) {
+    my ($v)=@_;
+    my $w=
+      $v ?
+	(+{
+	   1=> \&Scalar::Util::weaken,
+	   "yes"=> \&Scalar::Util::weaken,
+	   "no"=> \&noweaken,
+	   "on"=> \&Scalar::Util::weaken,
+	   "off"=> \&noweaken,
+	   "noweaken"=> \&noweaken,
+	   "warn"=> \&warnweaken,
+	   "warnweaken"=> \&warnweaken,
+	   "cluck"=> \&cluckweaken,
+	   "cluckweaken"=> \&cluckweaken,
+	  }->{$v} // die "do_weaken: unknown key '$v'")
+	  : \&noweaken;
+    $weaken= $w
+}
 
 
 1
