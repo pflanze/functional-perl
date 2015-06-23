@@ -34,12 +34,17 @@ is new_ Foo (animals=> ["Struppi"])->animals->[0], "Struppi";
       $s->name." hums ".$s->a." over ".$s->b
    }
  }
+ {
+   package Hah;
+   use FP::Struct ["aa"];
+   _END_
+ }
 
  {
    package Bar;
    use Chj::TEST; # the TEST sub will be removed from the package upon
                   # _END_ (namespace cleaning)
-   use FP::Struct ["a","b"]=> "Foo", "Hum";
+   use FP::Struct ["a","b"]=> "Foo", "Hum", "Hah";
    sub div {
       my $s=shift;
       $$s{a} / $$s{b}
@@ -50,7 +55,7 @@ is new_ Foo (animals=> ["Struppi"])->animals->[0], "Struppi";
          # make sense?)
  }
 
- my $bar= new Bar ("Franz", ["Barney"], 1,2);
+ my $bar= new Bar ("Franz", ["Barney"], "some aa", 1,2);
 
 is $bar-> div, 1/2;
 
