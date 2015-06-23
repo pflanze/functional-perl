@@ -80,6 +80,7 @@ use Chj::TEST;
     our @ISA= "FP::List::Null";
 
     sub pair_namespace { "FP::StrictList::Pair" }
+    *null= \&FP::StrictList::strictnull;
 
     sub cons {
 	@_==2 or die "wrong number of arguments";
@@ -94,6 +95,8 @@ use Chj::TEST;
 {
     package FP::StrictList::Pair;
     our @ISA= "FP::List::Pair";
+
+    *null= \&FP::StrictList::strictnull;
 
     # represented as blessed [ v, pair-or-null, length]
 
@@ -174,6 +177,11 @@ TEST {
 TEST {
     equal strictnull->cons(1), cons (1, null)
 } '';
+
+TEST {
+    my $l= strictlist (7,8,9)->reverse;
+    [is_strictlist $l, $l->car, $l->length]
+} [1, 9, 3];
 
 
 1

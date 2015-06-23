@@ -95,6 +95,7 @@ use Chj::TEST;
     package FP::List::List;
     use FP::Pure;
     our @ISA= qw(FP::Pure);
+    *null= \&FP::List::null;
 }
 
 {
@@ -413,7 +414,7 @@ sub list_ref ($ $) {
 
 
 sub list {
-    my $res=null;
+    my $res= null;
     for (my $i= $#_; $i>=0; $i--) {
 	$res= cons ($_[$i],$res);
     }
@@ -617,7 +618,7 @@ sub array_fold_right ($$$) {
 
 sub array2list ($;$) {
     my ($a,$maybe_tail)=@_;
-    array_fold_right (\&cons, $maybe_tail||null, $a)
+    array_fold_right (\&cons, $maybe_tail // null, $a)
 }
 
 TEST{ list2string array2list [1,2,3] }
@@ -626,7 +627,7 @@ TEST{ list2string array2list [1,2,3] }
 
 sub list_reverse ($) {
     my ($l)=@_;
-    my $res=null;
+    my $res= $l->null;
     while (!is_null $l) {
 	$res= cons car $l, $res;
 	$l= cdr $l;
@@ -883,7 +884,7 @@ TEST { string2list("Hello World")
 
 sub rtake_while_ ($ $) {
     my ($pred,$l)=@_;
-    my $res=null;
+    my $res= $l->null;
     my $c;
     while (!is_null $l and &$pred($c= car $l)) {
 	$res= cons $c,$res;
