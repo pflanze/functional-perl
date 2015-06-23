@@ -42,12 +42,17 @@ FP::Struct - classes for functional perl
       $s->name." hums ".$s->a." over ".$s->b
    }
  }
+ {
+   package Hah;
+   use FP::Struct ["aa"];
+   _END_
+ }
 
  {
    package Bar;
    use Chj::TEST; # the TEST sub will be removed from the package upon
                   # _END_ (namespace cleaning)
-   use FP::Struct ["a","b"]=> "Foo", "Hum";
+   use FP::Struct ["a","b"]=> "Foo", "Hum", "Hah";
    sub div {
       my $s=shift;
       $$s{a} / $$s{b}
