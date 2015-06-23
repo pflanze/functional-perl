@@ -58,7 +58,7 @@ package FP::List;
 	   car cdr first rest unsafe_cons unsafe_car unsafe_cdr
 	   car_and_cdr first_and_rest
 	   list);
-@EXPORT_OK=qw(string2list list_length list_reverse
+@EXPORT_OK=qw(string2list list_length list_reverse list_reverse_with_tail
 	      list2string list2array rlist2array list2values write_sexpr
 	      array2list mixed_flatten
 	      list_map list_mapn
@@ -625,17 +625,27 @@ TEST{ list2string array2list [1,2,3] }
   '123';
 
 
-sub list_reverse ($) {
-    my ($l)=@_;
-    my $res= $l->null;
+sub list_reverse_with_tail ($$) {
+    my ($l, $tail)=@_;
     while (!is_null $l) {
-	$res= cons car $l, $res;
+	$tail= cons car $l, $tail;
 	$l= cdr $l;
     }
-    $res
+    $tail
 }
 
-*FP::List::List::reverse= *list_reverse;
+sub list_reverse ($) {
+    my ($l)=@_;
+    list_reverse_with_tail ($l, $l->null)
+}
+
+# since a method always requires parens, it can use an optional second
+# argument with no ill effects on precedence
+sub FP::List::List::reverse {
+    @_ == 1 ? goto \&list_reverse :
+      @_ == 2 ? goto \&list_reverse_with_tail :
+	die "wrong number of arguments";
+}
 
 TEST{ list2string list_reverse string2list "Hello" }
   'olleH';

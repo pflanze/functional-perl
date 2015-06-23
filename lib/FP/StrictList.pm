@@ -183,5 +183,15 @@ TEST {
     [is_strictlist $l, $l->car, $l->length]
 } [1, 9, 3];
 
+TEST {
+    strictlist (7)->reverse (8)
+}
+  # falls back on the default list type since '8' is not a List (a
+  # strictlist would not accept such a value as the tail anyway; hm,
+  # hopefully nobody expects this operation to give an exception?)
+  bless( [
+	  7,
+	  8
+	 ], 'FP::List::Pair' );
 
 1
