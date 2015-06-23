@@ -64,6 +64,8 @@ properly formatted versions of these documents.)
   overload for dumping? Not exist, right. What about writing an
   alternative Dump?)
 
+- check 'XX.*[Ss]ecurity' comments
+
 
 ## Less important:
 
