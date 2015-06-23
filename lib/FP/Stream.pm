@@ -768,12 +768,14 @@ sub stream_state_fold_right {
 	my ($statedown)=@_;
 	FORCE $s;
 	if (is_null $s) {
-	    &$stateupfn ($statedown)
+	    @_=($statedown);
+	    goto $stateupfn
 	} else {
 	    my ($v,$s)= $s->first_and_rest;
-	    &$fn($v,
-		 $statedown,
-		 stream_state_fold_right ($fn, $stateupfn, $s))
+	    @_=($v,
+		$statedown,
+		stream_state_fold_right ($fn, $stateupfn, $s));
+	    goto $fn;
 	}
     }
 }
