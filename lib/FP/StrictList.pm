@@ -48,11 +48,11 @@ Currently FP::StrictList mostly only offers method based
 functionality. It inherits all the methods from FP::List, but only
 re-exports those basic functions that are basic and don't have "list_"
 prefixes, and only on demand. The only special functions (and the only
-ones exported by default) are `strictnull` and `is_strictlist`. Since
-StrictList enforcess list structure, methods are guaranteed to always
-work on the rest field of a pair. Hence, the suggestion is to simply
-use method calls and `the_method` from `FP::Ops` to pass methods as
-first class functions.
+ones exported by default) are `strictnull`, `is_strictlist` and
+`strictlist`. Since StrictList enforcess list structure, methods are
+guaranteed to always work on the rest field of a pair. Hence, the
+suggestion is to simply use method calls and `the_method` from
+`FP::Ops` to pass methods as first class functions.
 
 =head SEE ALSO
 
@@ -63,7 +63,7 @@ L<FP::List>, L<FP::Ops>
 
 package FP::StrictList;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(strictnull is_strictlist);
+@EXPORT=qw(strictnull is_strictlist strictlist);
 @EXPORT_OK=qw(
 		 cons
 		 first second rest car cdr car_and_cdr first_and_rest
