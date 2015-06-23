@@ -169,8 +169,8 @@ It would be possible to really only use one namespace in Perl, too
 This is nicely uniform, but perhaps a tad impractical. Perl
 programmers have gotten used to defining local functions with `my
 $foo= sub ..`, but are used to using Perl's subroutine (CODE)
-namespace for global functions; we don't think pushing to a single
-namespace would make enough sense.
+namespace for global functions; pushing people to use a single
+namespace probably won't make sense.
 
 But this means that the above becomes:
 
@@ -198,7 +198,7 @@ or then still
     my $results= array_map *square, \@inputs;
 
 
-(Pick your favorite? Should we give a recommendation?)
+(Pick your favorite? Should this project give a recommendation?)
 
 
 ## Memory handling

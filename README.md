@@ -101,10 +101,10 @@ mail if you prefer. I'm also on the `#london.pm` and
 
 ## Documentation
 
-We suggest you look through the docs roughly in the given order, but
-if you can't follow the presentation, skip to the intro, likewise if
-you're bored skip ahead to the examples and the howto/design
-documents.
+It probably makes sense to look through the docs roughly in the given
+order, but if you can't follow the presentation, skip to the intro,
+likewise if you're bored skip ahead to the examples and the
+howto/design documents.
 
 ### Presentation
 
