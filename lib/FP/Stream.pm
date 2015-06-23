@@ -772,6 +772,7 @@ sub stream_state_fold_right {
 	    goto $stateupfn
 	} else {
 	    my ($v,$s)= $s->first_and_rest;
+	    no warnings 'recursion';
 	    @_=($v,
 		$statedown,
 		stream_state_fold_right ($fn, $stateupfn, $s));
