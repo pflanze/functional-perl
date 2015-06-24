@@ -199,8 +199,9 @@ sub print_help {
 If a command line starts with a ':' or ',', then the remainder of the
 line is interpreted as follows:
 
-  package \$package   use \$package as new compilation package
-  p \$package         currently alias to :package
+  package \$package    use \$package as new compilation package
+  p \$package          currently alias to :package
+  DIGITS              shorthand for 'f n', see below
   CMD args...         one-time command
   MODES code...       change some modes then evaluate code
 
@@ -562,9 +563,15 @@ sub run {
 	    while ( defined (my $input = &$myreadline) ) {
 		if (length $input) {
 		    my ($cmd,$args)=
-		      $input=~ /^ *[:,](\?|[a-zA-Z]+)(.*)/s ?
+		      $input=~ /^ *[:,](\?|[a-zA-Z]+|\d+)(.*)/s ?
 			($1,$2)
 			  :(undef,$input);
+
+		    if ($cmd=~ /^\d+\z/) {
+			# hacky way to allow ":5" etc. as ":f 5"
+			$args= "$cmd $args";
+			$cmd= "f";
+		    }
 
 		    if (defined $cmd) {
 			# handle commands
