@@ -39,6 +39,9 @@ well. (NOTE: this will retain memory for higher-numbered VAR's that
 are not overwritten by subsequent runs! Set ->doKeepResultsInVARX(0)
 to turn this off.)
 
+This does not turn on the Perl debugger, hence programs are not slowed
+down.
+
 
 =item CAVEAT
 
