@@ -40,16 +40,14 @@ package Chj::WithRepl;
 use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::repl;
-use Chj::Backtrace ();
 use Chj::TEST;
 
 sub handler {
     my ($e)=@_;
-    my $msg= Chj::Backtrace::Clean Carp::longmess $e;
-    print STDERR $msg;
+    print STDERR "$e";
     # then what to do upon exiting it? return the value of the repl? 
     # Ehr, XX repl needs new feature, a "quit this context with this value".
-    @_=(); goto \&repl
+    repl(1)
 }
 
 sub withrepl (&) {
