@@ -562,7 +562,7 @@ sub run {
 	    while ( defined (my $input = &$myreadline) ) {
 		if (length $input) {
 		    my ($cmd,$args)=
-		      $input=~ /^ *[:,](\?|\w+\b)(.*)/s ?
+		      $input=~ /^ *[:,](\?|[a-zA-Z]+)(.*)/s ?
 			($1,$2)
 			  :(undef,$input);
 
