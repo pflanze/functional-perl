@@ -9,6 +9,10 @@ Chj::singlequote
 
 =head1 SYNOPSIS
 
+ use Chj::singlequote qw(singlequote singlequote_many with_maxlen);
+
+ with_maxlen 9, sub { singlequote "Darc's place" } # => "'Darc\\'s...'"
+
 =head1 DESCRIPTION
 
 
@@ -18,15 +22,26 @@ Chj::singlequote
 package Chj::singlequote;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(singlequote);
-@EXPORT_OK=qw(singlequote_sh singlequote_many many);
+@EXPORT_OK=qw(singlequote_sh singlequote_many many with_maxlen);
 # importing 'many' is probably not a good idea (depreciated)
-%EXPORT_TAGS=(all=>[qw(singlequote singlequote_sh singlequote_many)]);
+%EXPORT_TAGS=(all=>[@EXPORT, @EXPORT_OK]);
 
 use strict;
+
+our $maybe_maxlen;
+
+sub with_maxlen ($&) {
+    local $maybe_maxlen= $_[0];
+    &{$_[1]}()
+}
+
 
 sub singlequote($ ;$ ) {
     my ($str,$alternative)=@_;
     if (defined $str) {
+	if (defined $maybe_maxlen and length ($str) > $maybe_maxlen) {
+	    $str= substr ($str, 0, $maybe_maxlen-3) . "...";
+	}
 	$str=~ s/\'/\\\'/sg;
 	"'$str'"
     } else {
@@ -55,5 +70,9 @@ sub many {
 }
 *singlequote_many= \&many;
 
+
+use Chj::TEST;
+TEST { with_maxlen 9, sub { singlequote "Darc's place" } }
+  "'Darc\\'s...'";
 
 1
