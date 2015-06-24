@@ -16,6 +16,7 @@ Chj::Util::Repl - read-eval-print loop
  # ^ if left undefined, "$package$perhapslevel> " is used
  $repl->set_historypath("somefile"); # default is ~/.perl-repl_history
  $repl->run;
+ # or $repl->run($skip)  to skip $skip levels
 
 =head1 DESCRIPTION
 
@@ -258,8 +259,9 @@ our $repl_level; # maybe number of repl layers above
 # TODO: split this monstrosity into pieces.
 sub run {
     my $self=shift;
+    my ($maybe_skip)=@_;
 
-    my $stack= Chj::Util::Repl::Stack->get (1);
+    my $stack= Chj::Util::Repl::Stack->get (($maybe_skip//0) + 1);
 
     local $repl_level= ($repl_level // -1) + 1;
 
