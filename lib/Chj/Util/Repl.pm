@@ -573,16 +573,13 @@ sub run {
 			    my $help= sub { $self->print_help ($STDOUT) };
 
 			    my $bt= sub {
-				require Carp;
-				require Chj::Backtrace;
-				#local $Carp::CarpLevel=2;
-				my $msg= Chj::Backtrace::Clean (Carp::longmess());
-				# Since $Carp::CarpLevel doesn't really
-				# seem to do what I want, hack up the
-				# string:
-				$msg=~ s|^\s*at [^\n]+/Repl.pm line \d+\n||s;
-				print $msg;
-				$args=""; # XX HACK; also, really silently drop stuff?
+				my ($maybe_frameno)=
+				  $args=~ /^\s*(\d+)?\s*\z/
+				    or die "expecting digits or no argument, got '$cmd'";
+				print $stack->backtrace ($maybe_frameno
+							 // $frameno);
+				$args=""; # XX HACK; also, really
+                                          # silently drop stuff?
 			    };
 
 			    my %commands=

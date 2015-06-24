@@ -33,6 +33,7 @@ our @fields; BEGIN { @fields= qw(args
     package Chj::Util::Repl::StackFrame;
     use Chj::TerseDumper;
     use FP::Div "Chomp";
+    use Chj::singlequote qw(singlequote_many with_maxlen);
 
     use FP::Struct [@fields];
 
@@ -55,6 +56,17 @@ our @fields; BEGIN { @fields= qw(args
 	($s->subroutine."("
 	 .$s->args_text("  ")
 	 .")\ncalled at ".$s->filename." line ".$s->line)
+    }
+
+    # one-line-desc
+    sub oneline {
+	my $s=shift;
+	my ($maybe_prefix)=@_;
+	(($maybe_prefix // "\t") #parens needed!
+	 .$s->subroutine
+	 ."(".with_maxlen(64, sub{singlequote_many(@{$s->args})}).")"
+	 ." called at ".$s->filename." line ".$s->line
+	 ."\n")
     }
 
     _END_
@@ -101,6 +113,18 @@ sub num_frames {
 for (@fields, "desc") {
     no strict 'refs';
     *{$_}= make_frame_accessor $_;
+}
+
+sub backtrace {
+    my $s=shift;
+    my ($maybe_skip)=@_;
+    my $skip= $maybe_skip//0;
+    my $fs= $s->frames;
+    my @f;
+    for my $i ($skip..$#$fs) {
+	push @f, $$fs[$i]->oneline("$i\t")
+    }
+    join ("", @f)
 }
 
 _END_
