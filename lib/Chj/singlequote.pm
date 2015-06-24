@@ -43,6 +43,10 @@ sub singlequote($ ;$ ) {
 	    $str= substr ($str, 0, $maybe_maxlen-3) . "...";
 	}
 	$str=~ s/\'/\\\'/sg;
+	# avoid newlines (and more?), try to follow the Carp::confess
+	# format, if maxlen is given:
+	$str=~ s/([\t\n\r])/sprintf ('\\x{%x}', ord $1)/sge
+	  if defined $maybe_maxlen;
 	"'$str'"
     } else {
 	defined($alternative)? $alternative:"undef"
