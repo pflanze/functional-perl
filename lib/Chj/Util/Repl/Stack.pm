@@ -110,6 +110,11 @@ sub num_frames {
     scalar @{$s->frames}
 }
 
+sub max_frameno {
+    my $s=shift;
+    $#{$s->frames}
+}
+
 for (@fields, "desc") {
     no strict 'refs';
     *{$_}= make_frame_accessor $_;
