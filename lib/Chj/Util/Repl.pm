@@ -26,8 +26,11 @@ The loop can be exited by typing ctl-d.
 Entering the empty string re-evaluates the last entry.
 Some autocompletion exists.
 
-There are some special commands, they all start with ':'. Enter ':h'
-or ':help' or ':?' to get a help text including the currently active
+When the entered line starts with ':' or ',' (both characters are
+equivalent), then it is interpreted as containing special commands or
+modes. Enter ':h' or ':help' or ':?' (or the equivalents starting with
+the comma like ',?', from now on whenever the text days ':' you can
+also use the comma) to get a help text including the currently active
 settings.
 
 By default, the variable $res is set to either an array holding all
@@ -193,13 +196,13 @@ sub print_help {
     my $V= &$selection(viewer=> 'V');
     my $v= &$selection(viewer=> 'v');
     print $out qq{Repl help:
-If a command line starts with a ':', then it is interpreted as
-follows:
+If a command line starts with a ':' or ',', then the remainder of the
+line is interpreted as follows:
 
-  :package \$package   use \$package as new compilation package
-  :p \$package         currently alias to :package
-  :CMD args...         one-time command
-  :MODES code...       change some modes then evaluate code
+  package \$package   use \$package as new compilation package
+  p \$package         currently alias to :package
+  CMD args...         one-time command
+  MODES code...       change some modes then evaluate code
 
 CMD is one of:
    e [n]  print lexical environment at level n (default: 0)
@@ -559,7 +562,7 @@ sub run {
 	    while ( defined (my $input = &$myreadline) ) {
 		if (length $input) {
 		    my ($cmd,$args)=
-		      $input=~ /^ *\:(\?|\w+\b)(.*)/s ?
+		      $input=~ /^ *[:,](\?|\w+\b)(.*)/s ?
 			($1,$2)
 			  :(undef,$input);
 
