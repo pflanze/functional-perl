@@ -201,6 +201,83 @@ or then still
 (Pick your favorite? Should this project give a recommendation?)
 
 
+## Lazy evaluation
+
+A useful feature that becomes possible with purely functional code is
+lazy, or delayed, evaluation. A lazy expression is an expression that
+is not evaluated when the code path reaches it, but instead yields a
+"promise" value, which promises to evaluate the actual value of the
+expression that it describes when it is needed. Unless a language
+evaluates *all* expressions like this by default (like e.g. Haskell
+does), the programmer needs to indicate lazy evaluation of an
+expression explicitely. In a language that supports closures (like
+Perl) simply wrapping the expression in question as a function that
+doesn't take any arguments (`sub { ... }`) fulfills that role, but
+there are two improvements that can be done: (1) it's useful to make a
+promise distinguishable from subroutines to make the intent, error
+checking and debugging easier; (2) usually one wants
+evaluate-at-most-once semantics, i.e. if the value in a promise is
+needed multiple times, the original expression should be evaluated
+only once and then the result cached. Thanks to Perl's '&' subroutine
+prototype implementing a `lazy { .. }` construct becomes
+straightforward (just write a `sub lazy (&) { Promise->new($_[0]) }`.) 
+This is offered in `FP::Lazy`. (It also provides promises that *don't*
+cache their result, which might be handy as a small optimization for
+code that doesn't request their value multiple times, and has the
+advantage of not showing the memory retention difficulties described
+below.)
+
+The reason this is useful is that it can avoid evaluation cost if the
+value is never actually needed, and that in the case when it *is*
+needed the delay of its evaluation can allow to free up other
+resources first. This enables the declaration of data structures in an
+abstract, "stupid" way: the code declaring them does not need to
+consider what's actually used by the program, it simply says "in case
+the program needs this, it should be the value of this
+expression". The declaration can hence describe a data structure
+that's possibly (much) bigger than what's actually used, bigger than
+the available memory or even infinitely big. This makes the code
+defining the data structure simpler and more reusable because it does
+not encode the pattern of the particular need into it.
+
+The reason that this only becomes possible with purely functional code
+is that if the expression depends on the time when it is being
+evaluated, the code declaring the result could not rely on that the
+value that the user will get upon evaluation is actually what the
+declaration intended. And for expressions that have side effects, the
+time when these side effects are run depends on when the user of the
+promise forces it, which, although deterministic, is quickly complex
+to understand. Thus the only possibly useful sideeffects in lazy code
+are `warn` statements (but even those may confuse you). Note the
+section below about [debugging of lazy code](#Lazy_code).
+
+Perl complicates the part about "freeing up other resources first"
+before evaluating a promise that's referenced by the to-be-freed
+resource; see [memory handling](#Memory_handling) below.
+
+### Terminology
+
+The used terms are rather unstandardized across programming languages.
+A `promise` can mean subtly different things. Don't let that confuse
+you. (Todo: comparison? with JavaScript etc., even CPAN modules?)
+
+### Futures
+
+Also a non-standardized term. What we mean here is the use of a form
+(similar to the `lazy` form, e.g. `future { some costly $expression
+}`) that runs the contained expression immediately, but in a separate
+thread in parallel, and instead returns a "future" value. Forcing
+(getting the value of) the "future" awaits the termination of its
+evaluation (if not already done), then returns the evaluated result
+(and stores it to return it again immediately when requested again).
+
+The functional-perl libraries do not contain an implementation of this
+(yet); there will be various ways how this could be implemented in
+Perl, and there may be modules on CPAN already (todo: see what's
+around and perhaps wrap it in a way consistent with the rest of
+functional-perl).
+
+
 ## Memory handling
 
 The second area where Perl is inconvenient to get functional programs
@@ -281,11 +358,11 @@ important second answer in the context of functional programming is
 that the data structure might be a hierarchical data structure like a
 linked list that's passed on, and then appended to there (by way of
 mutation, or in the case of lazy functional programming, by way of
-mutation hidden in promises [XXX describe above]). The top (or head,
-first, in case of linked lists) of the data structure might be
-released by the called code as time goes on. But the variable in the
-calling scope will still hold on to it, meaning, it will grow,
-possibly without bounds. Example:
+mutation hidden in promises). The top (or head, first, in case of
+linked lists) of the data structure might be released by the called
+code as time goes on. But the variable in the calling scope will still
+hold on to it, meaning, it will grow, possibly without
+bounds. Example:
 
     {
         my $s= xfile_lines $path; # lazy linked list of lines
