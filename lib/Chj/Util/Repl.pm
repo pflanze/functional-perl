@@ -202,6 +202,9 @@ line is interpreted as follows:
   package \$package    use \$package as new compilation package
   p \$package          currently alias to :package
   DIGITS              shorthand for 'f n', see below
+  -                   same as 'f n' where n is the current frameno - 1
+  +                   same as 'f n' where n is the current frameno + 1
+                       (both are the same as 'f' if reaching the end)
   CMD args...         one-time command
   MODES code...       change some modes then evaluate code
 
@@ -572,7 +575,7 @@ sub run {
 	    while ( defined (my $input = &$myreadline) ) {
 		if (length $input) {
 		    my ($cmd,$args)=
-		      $input=~ /^ *[:,](\?|[a-zA-Z]+|\d+)(.*)/s ?
+		      $input=~ /^ *[:,]([?+-]|[a-zA-Z]+|\d+)(.*)/s ?
 			($1,$2)
 			  :(undef,$input);
 
@@ -604,11 +607,37 @@ sub run {
                                           # silently drop stuff?
 			    };
 
+			    my $chooseframe= sub {
+				my ($maybe_frameno)= @_;
+				$frameno= $maybe_frameno
+				  if defined $maybe_frameno;
+				
+				# unset any explicit package as
+				# we want to use the one of the
+				# current frame
+				undef $$self[Package]; # even without frameno? mess
+				$args= ""; # still the hack, right?
+				# Show the context: (XX same
+				# issue as with :e with overly
+				# long data (need viewer, but
+				# don't really want to, so should
+				# really use shortener)
+				print $stack->desc($frameno),"\n";
+			    };
+
 			    my %commands=
 				(
 				 h=> $help,
 				 help=> $help,
 				 '?'=> $help,
+				 '-'=> sub {
+				     &$chooseframe (($frameno > 0) ?
+						    $frameno - 1 : undef)
+				 },
+				 '+'=> sub {
+				     &$chooseframe (($frameno < $stack->max_frameno) ?
+						    $frameno + 1 : undef)
+				 },
 				 package=> $set_package,
 				 p=> $set_package,
 				 1=> sub { $$self[Mode_context]="1" },
@@ -651,20 +680,7 @@ sub run {
 				       $args=~ /^\s*(\d+)?\s*\z/
 					 or die "expecting frame number, ".
 					   "an integer, or nothing, got '$cmd'";
-				     $frameno= $maybe_frameno
-				       if defined $maybe_frameno;
-
-				     # unset any explicit package as
-				     # we want to use the one of the
-				     # current frame
-				     undef $$self[Package]; # even without frameno? mess
-				     $args= ""; # still the hack, right?
-				     # Show the context: (XX same
-				     # issue as with :e with overly
-				     # long data (need viewer, but
-				     # don't really want to, so should
-				     # really use shortener)
-				     print $stack->desc($frameno),"\n";
+				     &$chooseframe ($maybe_frameno)
 				 },
 				 bt=> $bt,
 				 b=> $bt,
