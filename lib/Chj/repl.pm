@@ -34,11 +34,10 @@ use strict;
 use Chj::Util::Repl;
 
 sub repl {
-    my ($opt_package)=@_;
+    my ($maybe_skip)=@_;
     my $r= new Chj::Util::Repl;
-    $r->set_package($opt_package) if $opt_package;
-    #$r->run;
-    my $m= $r->can("run"); @_=($r); goto $m
+    #$r->run ($maybe_skip);
+    my $m= $r->can("run"); @_=($r, $maybe_skip); goto $m
 }
 
 *Chj::repl= \&repl;
