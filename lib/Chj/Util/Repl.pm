@@ -234,9 +234,17 @@ sub eval_code {
     my $_self= shift;
     @_==3 or die "wrong number of arguments";
     my ($code, $in_package, $in_frameno)=@_;
-    my $skip= levels_to_user;
+    my $levels= levels_to_user;
     require PadWalker;
-    local $eval_lexicals= PadWalker::peek_my($skip + $in_frameno);
+    local $eval_lexicals= eval {
+	PadWalker::peek_my($levels + $in_frameno);
+    } || do {
+	$@=~ /Not nested deeply enough/ or die $@;
+	# this happens when running the repl when not in a subroutine,
+	# right.?. XXXhmm but should this not  i mean   s   CALLED FORM B bin/repl so .
+	{}
+    };
+	
     my $aliascode=
 	join ("",
 	      map {
@@ -270,7 +278,8 @@ sub run {
     my $self=shift;
     my ($maybe_skip)=@_;
 
-    my $stack= Chj::Util::Repl::Stack->get (($maybe_skip//0) + 1);
+    my $skip= $maybe_skip // 0;
+    my $stack= Chj::Util::Repl::Stack->get ($skip + 1);
 
     local $repl_level= ($repl_level // -1) + 1;
 
@@ -609,18 +618,18 @@ sub run {
 				 V=> sub { $$self[Mode_viewer]="V" },
 				 v=> sub { $$self[Mode_viewer]="v" },
 				 e=> sub {
-				     my $skip= levels_to_user;
+				     my $levels= levels_to_user;
 				     require PadWalker;
 				     use Data::Dumper;
 				     # XX clean up: don't want i in the regex
-				     my ($maybe_level)=
+				     my ($maybe_frameno)=
 					 $args=~ /^i?\s*(\d+)?\s*\z/
 					 or die "expecting digits or no argument, got '$cmd'";
 				     $args=""; # can't s/// above when expecting value
 				     my $lexicals= eval {
 					 PadWalker::peek_my
-					     ($skip - 1 +
-					      ($maybe_level // $frameno));
+					     ($levels + $skip - 1 +
+					      ($maybe_frameno // $frameno));
 				     }; # XXX check exceptions
 
 				     if (defined $lexicals) {
@@ -633,7 +642,8 @@ sub run {
 					     }
 					 }
 				     } else {
-					 print "level too deep\n"
+					 # XX when STDERR?
+					 print STDERR "non-existent frameno\n"
 				     }
 				 },
 				 f=> sub {
@@ -685,18 +695,20 @@ sub run {
 		    }
 
 		    # build up evaluator
-
+		    my $real_frameno= sub { $skip + $frameno };
 		    my $eval=
 			xchoose_from
 			(+{
 			   1=> sub {
-			       my $vals= [ scalar $self->eval_code
-					   ($args, $get_package, $frameno) ];
+			       my $vals=
+				 [ scalar $self->eval_code
+				   ($args, $get_package, &$real_frameno) ];
 			       ($vals, $@)
 			   },
 			   l=> sub {
-			       my $vals= [ $self->eval_code
-					   ($args, $get_package, $frameno) ];
+			       my $vals=
+				 [ $self->eval_code
+				   ($args, $get_package, &$real_frameno) ];
 			       ($vals, $@)
 			   },
 			  },
