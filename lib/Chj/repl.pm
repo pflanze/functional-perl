@@ -36,7 +36,7 @@ use Chj::Util::Repl;
 sub repl {
     my ($opt_package)=@_;
     my $r= new Chj::Util::Repl;
-    $r->set_package($opt_package || caller);
+    $r->set_package($opt_package) if $opt_package;
     #$r->run;
     my $m= $r->can("run"); @_=($r); goto $m
 }
