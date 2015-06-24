@@ -21,6 +21,7 @@ package FP::Div;
 @EXPORT=qw();
 @EXPORT_OK=qw(inc dec square
 	      identity
+	      Chomp
 	      );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -46,5 +47,12 @@ sub square ($) {
     $_[0] * $_[0]
 }
 
+# is there any better idea than ucfirst to distinguish from the
+# builtin? `fchomp` ?
+sub Chomp ($) {
+    my ($str)=@_;
+    chomp $str;
+    $str
+}
 
 1
