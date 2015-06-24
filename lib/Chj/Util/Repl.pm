@@ -219,8 +219,8 @@ our $use_warnings= q{use warnings; use warnings FATAL => 'uninitialized';};
 our $eval_lexicals;
 use Chj::singlequote 'singlequote';
 sub eval_code {
-    my $self= shift;
-    my ($code, $get_package)=@_;
+    my $_self= shift;
+    my ($code, $in_package)=@_;
     my $skip= levels_to_user;
     require PadWalker;
     local $eval_lexicals= PadWalker::peek_my($skip);
@@ -241,11 +241,12 @@ sub eval_code {
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
       $Function::Parameters::VERSION ? "use Function::Parameters" : "";
-    myeval ("package ".&$get_package()."; $aliascode; (); ".
+    myeval ("package ".&$in_package()."; $aliascode; (); ".
 	    "no strict 'vars'; $use_warnings; ".
 	    "$use_method_signatures; $use_functional_parameters_; ".
 	    $code)
 }
+
 
 our $repl_level; # maybe number of repl layers above
 
@@ -256,7 +257,7 @@ sub run {
     my $caller=caller(0);
     my $get_package= sub { $$self[Package] || $caller };
 
-    local $repl_level= defined ($repl_level) ? $repl_level+1 : 0;
+    local $repl_level= ($repl_level // -1) + 1;
 
     my $oldsigint= $SIG{INT};
     # It seems this is the only way to make signal handlers work in
