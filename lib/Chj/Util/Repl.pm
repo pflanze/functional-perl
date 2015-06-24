@@ -208,8 +208,8 @@ line is interpreted as follows:
 CMD is one of:
    e [n]  print lexical environment at level n (default: 0)
    b|bt   print back trace
-   f n    move to stack frame number n (default: 0)
-           (used for :e and for evaluation)
+   f [n]  move to stack frame number n (at start: 0)
+           without n, shows the current frame again
 
 MODES are a combination of these characters, which change the
 previously used mode (indicated on the left):
@@ -647,14 +647,17 @@ sub run {
 				     }
 				 },
 				 f=> sub {
-				     ($frameno)=
-				       $args=~ /^\s*(\d+)\s*\z/
+				     my ($maybe_frameno)=
+				       $args=~ /^\s*(\d+)?\s*\z/
 					 or die "expecting frame number, ".
-					   "an integer, got '$cmd'";
+					   "an integer, or nothing, got '$cmd'";
+				     $frameno= $maybe_frameno
+				       if defined $maybe_frameno;
+
 				     # unset any explicit package as
 				     # we want to use the one of the
 				     # current frame
-				     undef $$self[Package];
+				     undef $$self[Package]; # even without frameno? mess
 				     $args= ""; # still the hack, right?
 				     # Show the context: (XX same
 				     # issue as with :e with overly
