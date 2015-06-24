@@ -617,7 +617,8 @@ sub run {
 					      # continue with what's left of
 					      # $cmd ?
 				    } else {
-					print $STDERR "unknown command or mode :$cmd\n";
+					print $STDERR "unknown command "
+					  ."or mode: '$subcmd'\n";
 					last;
 				    }
 				}
