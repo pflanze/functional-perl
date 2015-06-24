@@ -190,7 +190,9 @@ sub print_help {
     my $V= &$selection(viewer=> 'V');
     my $v= &$selection(viewer=> 'v');
     print $out qq{Repl help:
-currently these commands are implemented:
+If a command line starts with a ':', then it is interpreted as
+follows:
+
   :package \$package   use \$package as new compilation package
   :p \$package         currently alias to :package
   :CMD args...         one-time command
