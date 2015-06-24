@@ -59,7 +59,9 @@ lib/Chj/Unix/Exitcode.pm
 lib/Chj/Unix/Signal.pm
 lib/Chj/Unix/exitcode.pm
 lib/Chj/Util/Repl.pm
+lib/Chj/Util/Repl/Stack.pm
 lib/Chj/Util/Repl/corefuncs.pm
+lib/Chj/WithRepl.pm
 lib/Chj/chompspace.pm
 lib/Chj/noTEST.pm
 lib/Chj/pp.pm
@@ -113,6 +115,7 @@ lib/PXML/Tags.pm
 lib/PXML/Util.pm
 lib/PXML/XHTML.pm
 meta/ModuleList.pm
+meta/_critic.out
 meta/critic
 meta/dependencycheck
 t/csv2xml

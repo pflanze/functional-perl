@@ -251,18 +251,31 @@ sub eval_code {
 }
 
 
+use Chj::Util::Repl::Stack;
+
 our $repl_level; # maybe number of repl layers above
 
 # TODO: split this monstrosity into pieces.
 sub run {
     my $self=shift;
 
-    my $caller=caller(0);
-    my $get_package= sub { $$self[Package] || $caller };
+    my $stack= Chj::Util::Repl::Stack->get (1);
 
     local $repl_level= ($repl_level // -1) + 1;
 
     my $frameno= 0;
+
+    my $get_package= sub {
+	# (What is $$self[Package] for? Can set the prompt
+	# independently. Security feature or just overengineering?
+	# Ok, remember the ":p" setting; but why not use a lexical
+	# within `run`? Ok how long-lived are the repl objects, same
+	# duration? Then hm is the only reason for the object to be
+	# able to set up things explicitely first? Thus is it ok after
+	# all?)
+	my $r= $$self[Package] || $stack->package($frameno);
+	$r
+    };
 
     my $oldsigint= $SIG{INT};
     # It seems this is the only way to make signal handlers work in
@@ -439,7 +452,7 @@ sub run {
 
 		   length($upperpackage) ?
 		   () :
-		   ($symbols_for_package->($self->[Package]||$caller),
+		   ($symbols_for_package->(&$get_package),
 		    ($validsigil ? () : @builtins))
 		  );
 
@@ -517,7 +530,9 @@ sub run {
 		      $term->readline
 		      ($$self[Prompt] //
 		       &$get_package()
-		       .($repl_level ? " $repl_level":"")."> ");
+		       .($repl_level ? " $repl_level":"")
+		       .($frameno ? "/$frameno" : "")
+		       ."> ");
 		  1
 	      } || do {
 		  if (!length ref($@) and $@=~ /^SIGINT\n/s) {
@@ -612,7 +627,17 @@ sub run {
 				       $args=~ /^\s*(\d+)\s*\z/
 					 or die "expecting frame number, ".
 					   "an integer, got '$cmd'";
+				     # unset any explicit package as
+				     # we want to use the one of the
+				     # current frame
+				     undef $$self[Package];
 				     $args= ""; # still the hack, right?
+				     # Show the context: (XX same
+				     # issue as with :e with overly
+				     # long data (need viewer, but
+				     # don't really want to, so should
+				     # really use shortener)
+				     print $stack->desc($frameno),"\n";
 				 },
 				 bt=> $bt,
 				 b=> $bt,
