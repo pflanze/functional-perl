@@ -198,6 +198,8 @@ currently these commands are implemented:
 CMD is one of:
    e [n]  print lexical environment at level n (default: 0)
    b|bt   print back trace
+   f n    move to stack frame number n (default: 0)
+           (used for :e and for evaluation)
 
 MODES are a combination of these characters, which change the
 previously used mode (indicated on the left):
@@ -220,10 +222,11 @@ our $eval_lexicals;
 use Chj::singlequote 'singlequote';
 sub eval_code {
     my $_self= shift;
-    my ($code, $in_package)=@_;
+    @_==3 or die "wrong number of arguments";
+    my ($code, $in_package, $in_frameno)=@_;
     my $skip= levels_to_user;
     require PadWalker;
-    local $eval_lexicals= PadWalker::peek_my($skip);
+    local $eval_lexicals= PadWalker::peek_my($skip + $in_frameno);
     my $aliascode=
 	join ("",
 	      map {
@@ -258,6 +261,8 @@ sub run {
     my $get_package= sub { $$self[Package] || $caller };
 
     local $repl_level= ($repl_level // -1) + 1;
+
+    my $frameno= 0;
 
     my $oldsigint= $SIG{INT};
     # It seems this is the only way to make signal handlers work in
@@ -585,7 +590,8 @@ sub run {
 				     $args=""; # can't s/// above when expecting value
 				     my $lexicals= eval {
 					 PadWalker::peek_my
-					     ($skip - 1 + ($maybe_level // 0));
+					     ($skip - 1 +
+					      ($maybe_level // $frameno));
 				     }; # XXX check exceptions
 
 				     if (defined $lexicals) {
@@ -600,6 +606,13 @@ sub run {
 				     } else {
 					 print "level too deep\n"
 				     }
+				 },
+				 f=> sub {
+				     ($frameno)=
+				       $args=~ /^\s*(\d+)\s*\z/
+					 or die "expecting frame number, ".
+					   "an integer, got '$cmd'";
+				     $args= ""; # still the hack, right?
 				 },
 				 bt=> $bt,
 				 b=> $bt,
@@ -638,11 +651,13 @@ sub run {
 			xchoose_from
 			(+{
 			   1=> sub {
-			       my $vals= [ scalar $self->eval_code ($args, $get_package) ];
+			       my $vals= [ scalar $self->eval_code
+					   ($args, $get_package, $frameno) ];
 			       ($vals, $@)
 			   },
 			   l=> sub {
-			       my $vals= [ $self->eval_code ($args, $get_package) ];
+			       my $vals= [ $self->eval_code
+					   ($args, $get_package, $frameno) ];
 			       ($vals, $@)
 			   },
 			  },
