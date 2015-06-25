@@ -154,7 +154,7 @@ sub new {
     $$self[Pager]= $ENV{PAGER} || "less";
     $$self[Mode_context]= 'l';
     $$self[Mode_formatter]= 'd';
-    $$self[Mode_viewer]= 'V';
+    $$self[Mode_viewer]= 'a';
     $self
 }
 
@@ -195,6 +195,7 @@ sub print_help {
     my $d= &$selection(formatter=> 'd');
     my $V= &$selection(viewer=> 'V');
     my $v= &$selection(viewer=> 'v');
+    my $a= &$selection(viewer=> 'a');
     print $out qq{Repl help:
 If a command line starts with a ':' or ',', then the remainder of the
 line is interpreted as follows:
@@ -225,6 +226,7 @@ $d d  show dump (default)
   viewer:
 $V V  no pager
 $v v  pipe to pager ($$self[Pager])
+$a a  pipe to 'less --quit-if-one-screen --no-init' (default)
 };
 }
 
@@ -646,6 +648,7 @@ sub run {
 				 d=> sub { $$self[Mode_formatter]="d" },
 				 V=> sub { $$self[Mode_viewer]="V" },
 				 v=> sub { $$self[Mode_viewer]="v" },
+				 a=> sub { $$self[Mode_viewer]="a" },
 				 e=> sub {
 				     my $levels= levels_to_user;
 				     require PadWalker;
@@ -765,6 +768,27 @@ sub run {
 			  },
 			 $self->mode_formatter);
 
+		    my $pager_with_options= sub {
+			my ($maybe_pager, @options)=@_;
+			sub {
+			    eval {
+				# XX this now means that no options
+				# can be passed in $ENV{PAGER} !
+				# (stupid Perl btw). Ok hard code
+				# 'less' instead perhaps!
+				my $o= Chj::xoutpipe ($maybe_pager//$$self[Pager],
+						      @options);
+				$o->xprint($_[0]);
+				$o->xfinish;
+				1
+			    } || do {
+				print $STDERR "error piping to pager ".
+				  "$$self[Pager]: $@\n"
+				    or die $!;
+			    };
+			}
+		    };
+
 		    my $view_string=
 			xchoose_from
 			(+{
@@ -772,18 +796,9 @@ sub run {
 			       print $STDOUT $_[0]
 				 or die "print: $!";
 			   },
-			   v=> sub {
-			       eval {
-				   my $o= Chj::xoutpipe ($$self[Pager]);
-				   $o->xprint($_[0]);
-				   $o->xfinish;
-				   1
-			       } || do {
-				   print $STDERR "error piping to pager ".
-				     "$$self[Pager]: $@\n"
-				       or die $!;
-			       };
-			   },
+			   v=> &$pager_with_options(),
+			   a=> &$pager_with_options
+			       (qw(less --quit-if-one-screen --no-init)),
 			  },
 			 $self->mode_viewer);
 
