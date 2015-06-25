@@ -59,7 +59,7 @@ our @fields; BEGIN { @fields= qw(args
 	my $s=shift;
 	($s->subroutine."("
 	 .$s->args_text("  ")
-	 .")\ncalled at ".$s->filename." line ".$s->line)
+	 ."\n) called at ".$s->filename." line ".$s->line)
     }
 
     # one-line-desc
