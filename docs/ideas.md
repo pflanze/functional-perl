@@ -57,7 +57,7 @@ properly formatted versions of these documents.)
   complexity (see paper from which Clojure implemented theirs),
   perhaps base FP::PureArray on it, implement functional hashmap on
   it, implement set with it. (There are implementations on JavaScript
-  too, already.)
+  too, already. Are there any in C?)
 
 
 ## Not so good ideas
