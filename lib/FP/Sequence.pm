@@ -15,8 +15,9 @@ FP::Sequence - base class for functional sequences
  use FP::StrictList;
  use FP::List;
  use FP::Stream;
+ use FP::Array 'array';
 
- use FP::TEST;
+ use Chj::TEST;
 
  TEST { list(purearray(3,4),
              strictlist(3,4),
@@ -24,9 +25,11 @@ FP::Sequence - base class for functional sequences
              stream(3,4),
              cons(3,4), # ok this can't really count as a sequence,
                         # what to do about it?
-             array(3,4), # Would `autobox` change this?
+             array(3,4), # Could `autobox` change this?
+             3,
+	     {3=>4},
         )->map(*is_sequence)->array }
-  [ 1,1,1,1,1,'' ];
+  [ 1,1,1,1,1,'','','' ];
 
 =head1 DESCRIPTION
 
