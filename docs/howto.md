@@ -21,21 +21,24 @@ unnecessary.
 
 Note that most programming language implementations which were not
 designed for functional programming have some of the same problems;
-sometimes they lead implementors of functional programming libraries
-to avoid certain functional idioms, for example by building `map`
-etc. on top of iterators (an imperative idiom). These may be good (and
-will be performant) workarounds, but that also means that only these
-higher levels are functional (and perhaps sometimes only appear to be
-so and might be leaky abstractions?). For example, it might not be
-possible to define streams in a functional ("Haskell style") way (like
-in [`examples/fibs`](../examples/fibs)).  In Perl it's possible, and
-perhaps it will even become easier in the future.
+they may sometimes be the reason for implementors of functional
+programming libraries to avoid certain functional idioms, for example
+by building `map` etc. on top of iterators (an imperative idiom).
+These may be good (and will be performant) workarounds, but that also
+means that only these higher levels are functional, and there being a
+boundary between the two worlds may mean that extensibility is not
+pretty (they might be leaky abstractions). For example, it might not
+be possible to define streams in a functional ("Haskell style") way
+(like in [`examples/fibs`](../examples/fibs)).  In Perl it's possible,
+and perhaps it will even become easier in the future.
 
-(Sequences functionality based on iterators is still something this
-project could look into as well. But that should be understood as an
-optimization. Alternative optimizations are possible, and may be
-preferrable (e.g. the GHC Haskell compiler applies various other
-optimizations to achieve performance without relying on manually
+(This project might still also (alternatively) use iterators for
+sequences in the future; but they should be understood as an
+optimization only (but then in Perl memory allocation is comparatively
+cheap compared to running code, so iterators may well actually be
+slower than linked lists). Alternative optimizations are possible, and
+may be preferrable (e.g. the GHC Haskell compiler applies various
+other optimizations to achieve performance without relying on manually
 written iterator based code, such as compile time application of rules
 to fuse list processing chains as well as using general
 "deforestation" algorithms).)
