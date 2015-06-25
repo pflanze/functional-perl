@@ -272,7 +272,7 @@ sub is_filename ($) {
 # can't be in `FP::Sequence` since that package is for OO, well, what
 # to do about it?
 sub is_sequence ($) {
-    length ref $_[0] and UNIVERSAL::isa($_[0], "FP::Sequence")
+    length ref $_[0] ? UNIVERSAL::isa($_[0], "FP::Sequence") : ''
 }
 
 
