@@ -70,6 +70,7 @@ package FP::Predicates;
 	      is_filehandle
 
 	      is_filename
+	      is_sequence
 
 	      less_than
 	      greater_than
@@ -267,6 +268,13 @@ sub is_filename ($) {
      and !($v eq ".")
      and !($v eq ".."))
 }
+
+# can't be in `FP::Sequence` since that package is for OO, well, what
+# to do about it?
+sub is_sequence ($) {
+    length ref $_[0] and UNIVERSAL::isa($_[0], "FP::Sequence")
+}
+
 
 sub maybe ($) {
     my ($pred)=@_;

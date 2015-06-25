@@ -9,6 +9,25 @@ FP::Sequence - base class for functional sequences
 
 =head1 SYNOPSIS
 
+ use FP::Predicates "is_sequence"; # since we can't have it in
+                                   # FP::Sequence
+ use FP::PureArray;
+ use FP::StrictList;
+ use FP::List;
+ use FP::Stream;
+
+ use FP::TEST;
+
+ TEST { list(purearray(3,4),
+             strictlist(3,4),
+             list(3,4),
+             stream(3,4),
+             cons(3,4), # ok this can't really count as a sequence,
+                        # what to do about it?
+             array(3,4), # Would `autobox` change this?
+        )->map(*is_sequence)->array }
+  [ 1,1,1,1,1,'' ];
+
 =head1 DESCRIPTION
 
 FP sequences are pure (no mutation is allowed, either by force
@@ -27,30 +46,14 @@ moved here, etc.
 
 package FP::Sequence;
 
-@EXPORT=qw(is_sequence);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
-
 use strict; use warnings FATAL => 'uninitialized';
 
 use FP::Pure;
 our @ISA= qw(FP::Pure);
 
-use FP::Ops "the_method";
+#use FP::Ops "the_method";
 
 use Chj::NamespaceCleanAbove;
-
-# Bad, can't be cleaned but now it's a method, too
-sub is_sequence ($) {
-    length ref $_[0] and UNIVERSAL::isa($_[0], __PACKAGE__)
-}
-
-# EXPORT HACK
-# to make it possible to use this package both for OO and exports
-require Exporter;
-*import= *Exporter::import; # needs to stay around as a method, can't
-                            # be cleaned. Did I say this is a hack?
-
 
 #*car= the_method "first";
 #*cdr= the_method "rest";

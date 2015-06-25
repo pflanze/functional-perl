@@ -66,6 +66,11 @@ properly formatted versions of these documents.)
 
 - check 'XX.*[Ss]ecurity' comments
 
+- what to do about data types that have both a class and some
+  functions, like `is_sequence`, that now lives in FP::Predicates, and
+  might be moved elsewhere in the future, breaking code importing
+  it...?
+
 
 ## Less important:
 
