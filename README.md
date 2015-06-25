@@ -58,7 +58,8 @@ an issue on Github. Feel free to fork the
 [repository](https://github.com/pflanze/functional-perl/) and submit
 your changes on Github or to the list. Documentation improvements are
 very welcome, as are general hints and ideas where to take the
-project.
+project. Also, please point out errors in the use of the english
+language.
 
 The project is currently led by [Christian
 Jaeger](http://leafpair.com/contact). Feel free to send me private
