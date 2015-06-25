@@ -286,6 +286,13 @@ sub run {
     my $skip= $maybe_skip // 0;
     my $stack= Chj::Util::Repl::Stack->get ($skip + 1);
 
+    my $printerror_frameno= sub {
+	my $max = $stack->max_frameno;
+	# XX when STDERR, when STDOUT?
+	print STDERR
+	  "frame number must be between 0..$max\n";
+    };
+
     local $repl_level= ($repl_level // -1) + 1;
 
     my $frameno= 0;
@@ -613,13 +620,10 @@ sub run {
 				my ($maybe_frameno)= @_;
 				$args= ""; # still the hack, right?
 				if (defined $maybe_frameno) {
-				    my $max = $stack->max_frameno;
-				    if ($maybe_frameno <= $max) {
+				    if ($maybe_frameno <= $stack->max_frameno) {
 					$frameno= $maybe_frameno
 				    } else {
-					# XX when STDERR, when STDOUT?
-					print STDERR
-					  "frame number must be between 0..$max\n";
+					&$printerror_frameno ();
 					return;
 				    }
 				}
@@ -684,8 +688,7 @@ sub run {
 					     }
 					 }
 				     } else {
-					 # XX when STDERR?
-					 print STDERR "non-existent frameno\n"
+					 &$printerror_frameno ();
 				     }
 				 },
 				 f=> sub {
