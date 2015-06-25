@@ -286,68 +286,6 @@ sub run {
     my $skip= $maybe_skip // 0;
     my $stack= Chj::Util::Repl::Stack->get ($skip + 1);
 
-    my $printerror_frameno= sub {
-	my $max = $stack->max_frameno;
-	# XX when STDERR, when STDOUT?
-	print STDERR
-	  "frame number must be between 0..$max\n";
-    };
-
-    my ($view_with_port, $view_string)= do {
-	my $port_pager_with_options= sub {
-	    my ($maybe_pager, @options)=@_;
-	    sub {
-		my ($printto)=@_;
-		eval {
-		    # XX this now means that no options
-		    # can be passed in $ENV{PAGER} !
-		    # (stupid Perl btw). Ok hard code
-		    # 'less' instead perhaps!
-		    my $o= Chj::xoutpipe ($maybe_pager//$$self[Pager],
-					  @options);
-		    &$printto ($o);
-		    $o->xfinish;
-		    1
-		} || do {
-		    print $STDERR "error piping to pager ".
-		      "$$self[Pager]: $@\n"
-			or die $!;
-		};
-	    }
-	};
-
-	my $string_pager_with_options= sub {
-	    my $port_pager= &$port_pager_with_options (@_);
-	    sub {
-		my ($v)=@_;
-		&$port_pager (sub {
-				  my ($o)=@_;
-				  $o->xprint($v);
-			      });
-	    }
-	};
-
-	my $choosepager= sub {
-	    my ($pager_with_options)= @_;
-	    xchoose_from
-	      (+{
-		 V=> sub {
-		     print $STDOUT $_[0]
-		       or die "print: $!";
-		 },
-		 v=> &$pager_with_options(),
-		 a=> &$pager_with_options
-		 (qw(less --quit-if-one-screen --no-init)),
-		},
-	       $self->mode_viewer);
-	};
-
-	(&$choosepager ($port_pager_with_options),
-	 &$choosepager ($string_pager_with_options))
-    };
-
-    local $SIG{PIPE}="IGNORE";
-
     local $repl_level= ($repl_level // -1) + 1;
 
     my $frameno= 0;
@@ -363,6 +301,8 @@ sub run {
 	my $r= $$self[Package] || $stack->package($frameno);
 	$r
     };
+
+    local $SIG{PIPE}="IGNORE";
 
     my $oldsigint= $SIG{INT};
     # It seems this is the only way to make signal handlers work in
@@ -586,6 +526,66 @@ sub run {
 
     my $OUT = $term->OUT || *STDOUT;## * correct?
     my $STDOUT= $OUT; my $STDERR= $OUT;
+
+    my $printerror_frameno= sub {
+	my $max = $stack->max_frameno;
+	print $STDERR
+	  "frame number must be between 0..$max\n";
+    };
+
+    my ($view_with_port, $view_string)= do {
+	my $port_pager_with_options= sub {
+	    my ($maybe_pager, @options)=@_;
+	    sub {
+		my ($printto)=@_;
+		eval {
+		    # XX this now means that no options
+		    # can be passed in $ENV{PAGER} !
+		    # (stupid Perl btw). Ok hard code
+		    # 'less' instead perhaps!
+		    my $o= Chj::xoutpipe ($maybe_pager//$$self[Pager],
+					  @options);
+		    &$printto ($o);
+		    $o->xfinish;
+		    1
+		} || do {
+		    print $STDERR "error piping to pager ".
+		      "$$self[Pager]: $@\n"
+			or die $!;
+		};
+	    }
+	};
+
+	my $string_pager_with_options= sub {
+	    my $port_pager= &$port_pager_with_options (@_);
+	    sub {
+		my ($v)=@_;
+		&$port_pager (sub {
+				  my ($o)=@_;
+				  $o->xprint($v);
+			      });
+	    }
+	};
+
+	my $choosepager= sub {
+	    my ($pager_with_options)= @_;
+	    xchoose_from
+	      (+{
+		 V=> sub {
+		     print $STDOUT $_[0]
+		       or die "print: $!";
+		 },
+		 v=> &$pager_with_options(),
+		 a=> &$pager_with_options
+		 (qw(less --quit-if-one-screen --no-init)),
+		},
+	       $self->mode_viewer);
+	};
+
+	(&$choosepager ($port_pager_with_options),
+	 &$choosepager ($string_pager_with_options))
+    };
+
 
     {
 	my @history;
