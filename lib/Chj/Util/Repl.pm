@@ -293,6 +293,59 @@ sub run {
 	  "frame number must be between 0..$max\n";
     };
 
+    my ($view_with_port, $view_string)= do {
+	my $port_pager_with_options= sub {
+	    my ($maybe_pager, @options)=@_;
+	    sub {
+		my ($printto)=@_;
+		eval {
+		    # XX this now means that no options
+		    # can be passed in $ENV{PAGER} !
+		    # (stupid Perl btw). Ok hard code
+		    # 'less' instead perhaps!
+		    my $o= Chj::xoutpipe ($maybe_pager//$$self[Pager],
+					  @options);
+		    &$printto ($o);
+		    $o->xfinish;
+		    1
+		} || do {
+		    print $STDERR "error piping to pager ".
+		      "$$self[Pager]: $@\n"
+			or die $!;
+		};
+	    }
+	};
+
+	my $string_pager_with_options= sub {
+	    my $port_pager= &$port_pager_with_options (@_);
+	    sub {
+		my ($v)=@_;
+		&$port_pager (sub {
+				  my ($o)=@_;
+				  $o->xprint($v);
+			      });
+	    }
+	};
+
+	my $choosepager= sub {
+	    my ($pager_with_options)= @_;
+	    xchoose_from
+	      (+{
+		 V=> sub {
+		     print $STDOUT $_[0]
+		       or die "print: $!";
+		 },
+		 v=> &$pager_with_options(),
+		 a=> &$pager_with_options
+		 (qw(less --quit-if-one-screen --no-init)),
+		},
+	       $self->mode_viewer);
+	};
+
+	(&$choosepager ($port_pager_with_options),
+	 &$choosepager ($string_pager_with_options))
+    };
+
     local $repl_level= ($repl_level // -1) + 1;
 
     my $frameno= 0;
@@ -679,14 +732,22 @@ sub run {
 				     }; # XXX check exceptions
 
 				     if (defined $lexicals) {
-					 local $Data::Dumper::Terse= 1;
-					 for my $key (sort keys %$lexicals) {
-					     if ($key=~ /^\$/) {
-						 print "$key = ".Dumper(${$$lexicals{$key}});
-					     } else {
-						 print "\\$key = ".Dumper($$lexicals{$key});
-					     }
-					 }
+					 &$view_with_port
+					   (sub {
+						my ($o)=@_;
+						local $Data::Dumper::Terse= 1;
+						for my $key (sort keys %$lexicals) {
+						    if ($key=~ /^\$/) {
+							$o->xprint
+							  ("$key = ".Dumper
+							   (${$$lexicals{$key}}));
+						    } else {
+							$o->xprint
+							  ("\\$key = ".
+							   Dumper($$lexicals{$key}));
+						    }
+						}
+					    });
 				     } else {
 					 &$printerror_frameno ();
 				     }
@@ -780,40 +841,6 @@ sub run {
 			   }
 			  },
 			 $self->mode_formatter);
-
-		    my $pager_with_options= sub {
-			my ($maybe_pager, @options)=@_;
-			sub {
-			    eval {
-				# XX this now means that no options
-				# can be passed in $ENV{PAGER} !
-				# (stupid Perl btw). Ok hard code
-				# 'less' instead perhaps!
-				my $o= Chj::xoutpipe ($maybe_pager//$$self[Pager],
-						      @options);
-				$o->xprint($_[0]);
-				$o->xfinish;
-				1
-			    } || do {
-				print $STDERR "error piping to pager ".
-				  "$$self[Pager]: $@\n"
-				    or die $!;
-			    };
-			}
-		    };
-
-		    my $view_string=
-			xchoose_from
-			(+{
-			   V=> sub {
-			       print $STDOUT $_[0]
-				 or die "print: $!";
-			   },
-			   v=> &$pager_with_options(),
-			   a=> &$pager_with_options
-			       (qw(less --quit-if-one-screen --no-init)),
-			  },
-			 $self->mode_viewer);
 
 		    $evaluator= sub {
 			my ($results,$error)= &$eval;
