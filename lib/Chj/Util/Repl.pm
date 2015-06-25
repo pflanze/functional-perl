@@ -346,6 +346,8 @@ sub run {
 	 &$choosepager ($string_pager_with_options))
     };
 
+    local $SIG{PIPE}="IGNORE";
+
     local $repl_level= ($repl_level // -1) + 1;
 
     my $frameno= 0;
