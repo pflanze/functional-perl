@@ -92,7 +92,7 @@ require Exporter;
 
 # ---- Methods ---------------------------------------------------
 
-use base 'FP::Pure';
+use base 'FP::Sequence';
 # XX: ah, and 'FP::Array' as well, this is an array, ok? But then
 # actually move all the method setup below to FP::Array, too. But the
 # current FP::Array is not a class, this will have to change first.
