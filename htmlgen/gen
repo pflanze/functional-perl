@@ -259,8 +259,9 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 		}
 	    }
 	}
-	$path= possibly_suffix_md2html ($path);
-	$uri->path($path);
+	if (length $path) {
+	    $uri->path(possibly_suffix_md2html ($path));
+	}
 	$$atts{href}= "$uri";# mutation.
     }
     my $res= PXML::Element->new
