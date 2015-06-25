@@ -41,7 +41,8 @@ may be preferrable (e.g. the GHC Haskell compiler applies various
 other optimizations to achieve performance without relying on manually
 written iterator based code, such as compile time application of rules
 to fuse list processing chains as well as using general
-"deforestation" algorithms).)
+"deforestation" algorithms). Not having a static type system means
+these can't be done before runtime.)
 
 
 <with_toc>
