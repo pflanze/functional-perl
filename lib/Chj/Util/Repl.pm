@@ -549,9 +549,12 @@ sub run {
 		    $o->xfinish;
 		    1
 		} || do {
-		    print $STDERR "error piping to pager ".
-		      "$$self[Pager]: $@\n"
-			or die $!;
+		    my $e= $@;
+		    unless ($e=~ /broken pipe/) {
+			print $STDERR "error piping to pager ".
+			  "$$self[Pager]: $e\n"
+			    or die $!;
+		    }
 		};
 	    }
 	};
