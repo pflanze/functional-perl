@@ -3,11 +3,14 @@ properly formatted versions of these documents.)
 
 ---
 
-# Functional programming on Perl 5
+# Functional programming on Perl (5)
 
 This project aims to provide modules as well as tutorials and
 introductionary materials and other knowledge to work in a functional
-style on Perl.
+style on Perl. Currently the focus is on getting it to work well for
+programs on Perl 5. We'd appreciate discussing and collaborating with
+people working on Perl 6 now already, though, so as to adapt where
+useful.
 
 
 <with_toc>
