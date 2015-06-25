@@ -97,6 +97,7 @@ lib/FP/Predicates.pm
 lib/FP/Pure.pm
 lib/FP/PureArray.pm
 lib/FP/Sequence.pm
+lib/FP/Sequence/t.pm
 lib/FP/Stream.pm
 lib/FP/StrictList.pm
 lib/FP/Struct.pm
