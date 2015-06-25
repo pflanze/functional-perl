@@ -21,7 +21,9 @@ objects. Serialization is done using functions/procedures from
 The body of elements can be a mix of standard Perl arrays,
 [`FP::PureArray`](../lib/FP/PureArray.pm)s, linked lists based on
 `FP::List`, and promises (`FP::Lazy`, `FP::Stream`), the latter of
-which allow for the generation of streaming output.
+which allow for the generation of streaming output (which means the
+document is generated while it is being serialized, thus there's no
+memory needed to hold the whole document at once).
 
 Direct creation of XML elements:
 
