@@ -171,18 +171,24 @@ TEST{t_if_suffix_md2html "Foo/READMe.md"}['then','Foo/index.xhtml'];
 TEST{t_if_suffix_md2html "Foo/MY.css"}['otherwise','Foo/MY.css'];
 
 
-fun perhaps_suffix_md2html ($path,$for_title=0) {
+fun possibly_suffix_md2html ($path,$for_title=0) {
     if_suffix_md2html
       ($path,
        $for_title,
-       fun ($path) { $path },
-       fun ($path) { $path }
-      )
+       *identity,
+       *identity)
 }
 
 fun xsuffix_md2html ($path0,$for_title) {
-    if_suffix_md2html($path0, $for_title, sub{$_[0]}, sub{die})
+    if_suffix_md2html($path0, $for_title,
+		      *identity,
+		      sub{die "file does not end in .md: '$path0'"})
 }
+
+TEST{ possibly_suffix_md2html "foo" } "foo";
+TEST{ possibly_suffix_md2html "foo.md" } "foo.xhtml";
+TEST_EXCEPTION{ xsuffix_md2html "foo", 0 } "file does not end in .md: 'foo'";
+
 
 fun path02inpath ($path0) {
     "$inbase/".$path0
@@ -191,7 +197,7 @@ fun path02inpath ($path0) {
 fun path02outpath ($path0) {
     #"$outbase/".xsuffix_md2html($path0,0)
     # nope, also used for .pl file copying,
-    "$outbase/".perhaps_suffix_md2html($path0,0)
+    "$outbase/".possibly_suffix_md2html($path0,0)
 }
 
 use HTML::TreeBuilder;
@@ -253,7 +259,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 		}
 	    }
 	}
-	$path= perhaps_suffix_md2html ($path);
+	$path= possibly_suffix_md2html ($path);
 	$uri->path($path);
 	$$atts{href}= "$uri";# mutation.
     }
@@ -829,7 +835,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	# extract Cost indicators:
 	my $namere= qr/\w+/;
 	my $nameplusre= qr/\(?$namere\)?/;
-	my $perhaps_nameplus2name= fun ($maybe_nameplus) {
+	my $possibly_nameplus2name= fun ($maybe_nameplus) {
 	    if (defined $maybe_nameplus) {
 		my ($name)= $maybe_nameplus=~ qr/($namere)/
 		  or die "bug";
@@ -852,8 +858,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 			\$\s*(\d+)
 		   }gx) {
 	    my ($nameplus,$basecosts,$val)=($1,$2,$3);# perl.
-	    my $name= &$perhaps_nameplus2name($nameplus);
-	    my @basecosts= map { &$perhaps_nameplus2name($_) }
+	    my $name= &$possibly_nameplus2name($nameplus);
+	    my @basecosts= map { &$possibly_nameplus2name($_) }
 	      split /\s*\+\s*/, $basecosts;
 	    push @$costs, new PFLANZE::Cost ($name,
 					 (not $nameplus
