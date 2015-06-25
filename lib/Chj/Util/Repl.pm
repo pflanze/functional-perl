@@ -611,14 +611,24 @@ sub run {
 
 			    my $chooseframe= sub {
 				my ($maybe_frameno)= @_;
-				$frameno= $maybe_frameno
-				  if defined $maybe_frameno;
+				$args= ""; # still the hack, right?
+				if (defined $maybe_frameno) {
+				    my $max = $stack->max_frameno;
+				    if ($maybe_frameno <= $max) {
+					$frameno= $maybe_frameno
+				    } else {
+					# XX when STDERR, when STDOUT?
+					print STDERR
+					  "frame number must be between 0..$max\n";
+					return;
+				    }
+				}
 				
 				# unset any explicit package as
 				# we want to use the one of the
 				# current frame
 				undef $$self[Package]; # even without frameno? mess
-				$args= ""; # still the hack, right?
+
 				# Show the context: (XX same
 				# issue as with :e with overly
 				# long data (need viewer, but
