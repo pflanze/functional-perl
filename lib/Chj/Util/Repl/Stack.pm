@@ -43,11 +43,15 @@ our @fields; BEGIN { @fields= qw(args
 	my $args= $s->args;
 	my $str= join ",\n", map {
 	    # XX reinvention forever, too: how to *shorten*-dump a
-	    # value?
+	    # value? Data::Dumper does not seem to support it?
+	    local $Data::Dumper::Maxdepth= 1;
+	    # ^ ok helps a bit sometimes. XX But will now be
+	    # confusing, as there's no way to know references from
+	    # (accidentally) stringified references
 	    Chomp (TerseDumper($_))
 	} @$args;
 	$str= "\n$str" if @$args;
-	$str=~ s/\n/\n$indent/g;
+	$str=~ s/\n/\n$indent/g; # XX there's also $Data::Dumper::Pad
 	$str
     }
 
