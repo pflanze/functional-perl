@@ -170,7 +170,14 @@ usually type check in the array case either!).
 * The `maybe_` prefix is used for variables and functions which
   bind or return `undef` as indication for the absence of a value. The
   `perhaps_` prefix is used for functions which return `()` as
-  indication for the absense of a value.
+  indication for the absence of a value. `possibly_` is used for
+  functions which might return an argument unchanged (i.e. not do
+  anything). Also, functions always return exactly one value unless
+  they have a `perhaps_` prefix or a name that indicates plural and
+  there's a good reason that the values are not returned in an array
+  or linked list instead; this is to reduce the risk of accidental
+  argument misalignment in function calls that have function calls as
+  subexpressions.
 
 * Since handling arrays and hashes by reference is the normal way of
   working functionally (see [[howto]] for why), naming things `array`
