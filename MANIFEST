@@ -68,6 +68,7 @@ lib/Chj/pp.pm
 lib/Chj/repl.pm
 lib/Chj/ruse.pm
 lib/Chj/singlequote.pm
+lib/Chj/singlequote/t.pm
 lib/Chj/time_this.pm
 lib/Chj/xIO.pm
 lib/Chj/xIOUtil.pm

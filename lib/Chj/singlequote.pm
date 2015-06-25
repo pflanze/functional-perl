@@ -75,8 +75,4 @@ sub many {
 *singlequote_many= \&many;
 
 
-use Chj::TEST;
-TEST { with_maxlen 9, sub { singlequote "Darc's place" } }
-  "'Darc\\'s...'";
-
 1
