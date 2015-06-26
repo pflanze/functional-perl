@@ -73,6 +73,51 @@ our @fields; BEGIN { @fields= qw(args
 	 ."\n")
     }
 
+    # CAREFUL: equal stackframes still don't need to be the *same*
+    # stackframe!
+    sub equal {
+	my $s=shift;
+	my ($v)=@_;
+	my $equal_standard_fields= sub {
+	    my $eq= sub {
+		my ($m)=@_;
+		$s->$m eq $v->$m
+	    };
+	    (&$eq ("package")
+	     and
+	     &$eq ("filename")
+	     and
+	     &$eq ("line")
+	     and
+	     &$eq ("subroutine")
+	     and
+	     &$eq ("hasargs")
+	     and
+	     &$eq ("wantarray")
+	     #and
+	     #&$eq ("")
+	     # hints bitmask hinthash ?
+	    )
+	};
+	if (defined $v->args) {
+	    if (defined $s->args) {
+		(&$equal_standard_fields
+		 and do {
+		     require FP::Equal;
+		     FP::Equal::equal ($v->args, $s->args)
+		 })
+	    } else {
+		''
+	    }
+	} else {
+	    if (defined $s->args) {
+		''
+	    } else {
+		&$equal_standard_fields
+	    }
+	}
+    }
+
     _END_
 }
 
