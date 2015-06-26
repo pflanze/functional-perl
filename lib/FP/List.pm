@@ -103,6 +103,8 @@ use Chj::TEST;
 
     sub pair_namespace { "FP::List::Pair" }
 
+    sub is_null { 1 }
+
     sub cons {
 	my $s=shift;
 	@_==1 or die "expecting 1 method argument";
@@ -117,6 +119,8 @@ use Chj::TEST;
 {
     package FP::List::Pair;
     our @ISA= qw(FP::List::List);
+
+    sub is_null { '' }
 
     sub cons {
 	my $s=shift;
