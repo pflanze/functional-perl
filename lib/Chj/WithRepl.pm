@@ -115,9 +115,10 @@ sub have_eval_since_frame ($) {
     }
       while ((@v)= caller $i++);
 
-    die "couldn't find orig frame, ???"
+    #die "couldn't find orig frame, ???"
       # not even tail-calling should be able to do that, unless, not
       # local'ized, hm XXX non-popped handler.
+    0
 }
 
 
