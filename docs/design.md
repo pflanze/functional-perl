@@ -186,6 +186,28 @@ usually type check in the array case either!).
   structures (e.g. a function that takes an array and an index and
   returns $array->[$index] would be called `array_ref`).)
 
+* Functions that compose several other functions into one for
+  efficiency are named from the names of the functions it could be
+  composed of with "__" as separator:
+
+        array_reverse (array_map ($f2, array_filter ($f1, $a)))
+
+  becomes
+
+        array_reverse__map__filter ($f2, $f1, $a)
+
+  and
+
+        $a->filter ($f1)->map ($f2)->reverse
+
+  becomes
+
+        $a->reverse__map__filter ($f2, $f1)
+
+  (Todo: should the order in the method case be reversed? 
+  (i.e. `$a->filter__map__reverse ($f1,$f2)`) A reason against it is
+  that searching for the base function name will find both cases.)
+
 * Functional setters (those which leave their arguments unmodified,
   i.e. for persistent data structures) *end* with `_set` instead of
   starting with `set_` as is common in the imperative world. (This is
