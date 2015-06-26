@@ -13,8 +13,11 @@ Chj::WithRepl
  withrepl { die "foo"; };  # shows the exception, then runs a repl
                            # within the exception context
 
- push_withrepl; # turn on using a repl globally, but storing the
-                # previous handler on a stack
+ push_withrepl (0); # turn on using a repl globally, but storing the
+                    # previous handler on a stack; the argument says
+                    # how many levels from the current one to go back
+                    # for the search of 'eval' (the WORKAROUND, see
+                    # below)
  pop_withrepl; # restore the handler that was pushed last.
 
 
@@ -25,8 +28,11 @@ a repl from L<Chj::repl>. This means, when getting an exception,
 instead of terminating the program (with a message), you get a chance
 to inspect the program state interactively.
 
-PROBLEM: even exceptions within contexts that catch exceptions
-(i.e. `eval { }`) are invoking a repl. HOW TO SOLVE THIS, SIGH?
+Note that it currently employs a WORKAROUND to check from within the
+sig handler whether there's a new `(eval)` frame on the stack between
+the point of the handler call and the point of the handler
+installation (or n frames back from there, as per the argument to
+`push_withrepl`).
 
 =cut
 
@@ -42,16 +48,111 @@ use strict; use warnings FATAL => 'uninitialized';
 use Chj::repl;
 use Chj::TEST;
 
-sub handler {
-    my ($e)=@_;
-    print STDERR "$e";
-    # then what to do upon exiting it? return the value of the repl? 
-    # Ehr, XX repl needs new feature, a "quit this context with this value".
-    repl(1)
+
+# PROBLEM: even exceptions within contexts that catch exceptions
+# (i.e. `eval { }`) are invoking a repl, unless we use a workaround.
+
+# XXX this will be worrysome slow, and on top of that slower for
+# bigger stack depths, easily turning algorithms into O(n^2)! Needs a
+# solution in XS.
+
+sub current_user_frame ($) {
+    my ($skip)=@_;
+    if ($skip) { $skip >= 0 or die "expecting maybe(natural0), got '$skip'"; }
+    my @v;
+    my $i= 0;
+    while ((@v)= caller ($i++)) {
+	if ($v[0] ne "Chj::WithRepl") {
+	    if ($skip) {
+		unless ((@v) = caller ($i + $skip)) {
+		    die "skip value goes beyond the end of the stack";
+		}
+	    }
+	    return Chj::Util::Repl::StackFrame->new(undef, @v);
+	}
+    }
+    die "???"
+}
+
+
+# have_eval_since_frame: is ignoring eval from repl. Uh, so hacky. But
+# otherwise how to enable WithRepl from within a repl? With a special
+# repl command? But even when previously the handler was enabled, a
+# new repl should never be disabling it. (It should not change the
+# handler, just change the catch point. But other exception catchers
+# should change the haandler, but don't, which is the reason we need
+# to analyze here.)
+
+sub have_eval_since_frame ($) {
+    my ($startframe)= @_;
+    warn "have_eval_since_frame($startframe) called";
+
+    my @v;
+    my $i=1;
+
+  SKIP: {
+	while ((@v)= caller $i++) {
+	    last SKIP if ($v[0] ne "Chj::WithRepl");
+	}
+	die "???"
+    }
+
+    do {
+	my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
+	if ($f->equal ($startframe)) {
+	    warn "have_eval_since_frame = no";
+	    return ''
+	} elsif ($f->subroutine eq "(eval)") {
+	    if ((@v)= caller $i++) {
+		my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
+		warn "have subroutine = ".$f->subroutine;
+		if ($f->subroutine eq 'Chj::Util::Repl::myeval') {
+		    warn "a repl, ignore and continue search";
+		} else {
+		    warn "have_eval_since_frame = yes";
+		    return 1
+		}
+	    } else {
+		warn "have_eval_since_frame = yes, end of stack reached";
+		return 1
+	    }
+	}
+    }
+      while ((@v)= caller $i++);
+
+    die "couldn't find orig frame, ???"
+      # not even tail-calling should be able to do that, unless, not
+      # local'ized, hm XXX non-popped handler.
+}
+
+
+
+sub handler_for ($$) {
+    my ($startframe, $orig_handler)=@_;
+    sub {
+	my ($e)=@_;
+	# to show local errors with backtrace:
+	# require Chj::Backtrace; import Chj::Backtrace;
+	if (have_eval_since_frame $startframe) {
+	    warn "calling orig_handler";
+	    goto $orig_handler
+	} else {
+	    print STDERR "Exception: $e";
+	    # then what to do upon exiting it? return the value of the repl?
+	    # Ehr, XX repl needs new feature, a "quit this context with this value".
+	    repl(1)
+	}
+    }
+}
+
+sub handler ($) {
+    my ($skip)= @_;
+    handler_for (current_user_frame($skip),
+		 $SIG{__DIE__} // sub {$_[0]})
 }
 
 sub withrepl (&) {
-    local $SIG{__DIE__}= \&handler;
+    local $SIG{__DIE__}= handler (0);
     &{$_[0]}()
 }
 
@@ -64,9 +165,10 @@ TEST { [ withrepl { "hello", "world" } ] }
 
 our @stack;
 
-sub push_withrepl () {
+sub push_withrepl ($) {
+    my ($skip)= @_;
     push @stack, $SIG{__DIE__};
-    $SIG{__DIE__}= \&handler;
+    $SIG{__DIE__}= handler ($skip);
 }
 
 sub pop_withrepl () {
