@@ -85,7 +85,6 @@ sub current_user_frame ($) {
 
 sub have_eval_since_frame ($) {
     my ($startframe)= @_;
-    warn "have_eval_since_frame($startframe) called";
 
     my @v;
     my $i=1;
@@ -100,20 +99,16 @@ sub have_eval_since_frame ($) {
     do {
 	my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
 	if ($f->equal ($startframe)) {
-	    warn "have_eval_since_frame = no";
 	    return ''
 	} elsif ($f->subroutine eq "(eval)") {
 	    if ((@v)= caller $i++) {
 		my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
-		warn "have subroutine = ".$f->subroutine;
 		if ($f->subroutine eq 'Chj::Util::Repl::myeval') {
-		    warn "a repl, ignore and continue search";
+		    #warn "a repl, ignore and continue search";
 		} else {
-		    warn "have_eval_since_frame = yes";
 		    return 1
 		}
 	    } else {
-		warn "have_eval_since_frame = yes, end of stack reached";
 		return 1
 	    }
 	}
@@ -139,13 +134,12 @@ sub handler_for ($$) {
 	    #   one-shot, of course
 	    #goto &{$orig_handler // sub { die $_[0] }}  nah, try:
 	    if (defined $orig_handler) {
-		warn "calling orig_handler";
 		#goto $orig_handler
 		# ^ just doesn't work, seems to undo the looping
 		#   protection. so..:
 		&$orig_handler ($e)
 	    } else {
-		warn "no orig_handler, returning";
+		#warn "no orig_handler, returning";
 		return
 	    }
 	} else {
