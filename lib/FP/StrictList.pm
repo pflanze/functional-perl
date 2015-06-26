@@ -67,10 +67,10 @@ package FP::StrictList;
 @EXPORT_OK=qw(
 		 cons
 		 first second rest car cdr car_and_cdr first_and_rest
-		 strictlist_reverse_map_with_length_with_tail
-		 strictlist_reverse_map_with_length
-		 strictlist_array_reverse_map_with_length
-		 strictlist_array_map_with_length
+		 strictlist_reverse__map_with_length_with_tail
+		 strictlist_reverse__map_with_length
+		 strictlist_array__reverse__map_with_length
+		 strictlist_array__map_with_length
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -202,7 +202,7 @@ TEST {
 
 
 
-sub make_reverse_map_with_length_with_tail {
+sub make_reverse__map_with_length_with_tail {
     my ($cons)= @_;
     sub {
 	@_==3 or die "wrong number of arguments";
@@ -217,41 +217,41 @@ sub make_reverse_map_with_length_with_tail {
     }
 }
 
-sub strictlist_reverse_map_with_length_with_tail ($$$);
-*strictlist_reverse_map_with_length_with_tail=
-  make_reverse_map_with_length_with_tail(\&cons);
+sub strictlist_reverse__map_with_length_with_tail ($$$);
+*strictlist_reverse__map_with_length_with_tail=
+  make_reverse__map_with_length_with_tail(\&cons);
 
-*FP::StrictList::List::reverse_map_with_length_with_tail=
-  flip2_3 \&strictlist_reverse_map_with_length_with_tail;
+*FP::StrictList::List::reverse__map_with_length_with_tail=
+  flip2_3 \&strictlist_reverse__map_with_length_with_tail;
 
 TEST {
     my $l= strictlist (qw(a b c))
-      ->reverse_map_with_length_with_tail(sub { [@_] }, null);
+      ->reverse__map_with_length_with_tail(sub { [@_] }, null);
     [ is_strictlist ($l), $l->array ]
 }
   ['', [[c=> 1], [b=> 2], [a=> 3]]];
 
-sub strictlist_reverse_map_with_length ($$) {
+sub strictlist_reverse__map_with_length ($$) {
     @_==2 or die "wrong number of arguments";
     my ($fn,$l)=@_;
-    strictlist_reverse_map_with_length_with_tail ($fn, $l, strictnull)
+    strictlist_reverse__map_with_length_with_tail ($fn, $l, strictnull)
 }
 
-*FP::StrictList::List::reverse_map_with_length=
-  flip \&strictlist_reverse_map_with_length;
+*FP::StrictList::List::reverse__map_with_length=
+  flip \&strictlist_reverse__map_with_length;
 
 TEST {
     my $l= strictlist (qw(a b c))
-      ->reverse_map_with_length(sub { [@_] });
+      ->reverse__map_with_length(sub { [@_] });
     [ is_strictlist ($l), $l->array ]
 }
   [1, [[c=> 1], [b=> 2], [a=> 3]]];
 
-sub strictlist_array_reverse_map_with_length ($$) {
+sub strictlist_array__reverse__map_with_length ($$) {
     @_==2 or die "wrong number of arguments";
     my ($fn,$l)=@_;
     my $i= $l->length;
-    make_reverse_map_with_length_with_tail
+    make_reverse__map_with_length_with_tail
       (sub {
 	   my ($v,$ary)=@_;
 	   #unshift @$ary, $v; is this faster?:
@@ -260,21 +260,21 @@ sub strictlist_array_reverse_map_with_length ($$) {
        })->($fn, $l, []);
 }
 
-*FP::StrictList::List::array_reverse_map_with_length=
-  flip \&strictlist_array_reverse_map_with_length;
+*FP::StrictList::List::array__reverse__map_with_length=
+  flip \&strictlist_array__reverse__map_with_length;
 
 TEST {
-    strictlist (qw(a b c))->array_reverse_map_with_length(sub { [@_] });
+    strictlist (qw(a b c))->array__reverse__map_with_length(sub { [@_] });
 }
   [[c=> 1], [b=> 2], [a=> 3]];
 
-sub strictlist_array_map_with_length ($$) {
+sub strictlist_array__map_with_length ($$) {
     @_==2 or die "wrong number of arguments";
     my ($fn,$l)=@_;
     my $i= 0;
     my $len= $l->length;
     my $ary= []; $$ary[$len-1]=undef; # preallocate array, faster?
-    make_reverse_map_with_length_with_tail
+    make_reverse__map_with_length_with_tail
       (sub {
 	   my ($v,$ary)=@_;
 	   #push @$ary, $v;
@@ -283,11 +283,11 @@ sub strictlist_array_map_with_length ($$) {
        })->($fn, $l, $ary);
 }
 
-*FP::StrictList::List::array_map_with_length=
-  flip \&strictlist_array_map_with_length;
+*FP::StrictList::List::array__map_with_length=
+  flip \&strictlist_array__map_with_length;
 
 TEST {
-    strictlist (qw(a b c))->array_map_with_length(sub { [@_] });
+    strictlist (qw(a b c))->array__map_with_length(sub { [@_] });
 }
   [[a=> 3], [b=> 2], [c=> 1]];
 
