@@ -81,7 +81,22 @@ our @fields; BEGIN { @fields= qw(args
 	my $equal_standard_fields= sub {
 	    my $eq= sub {
 		my ($m)=@_;
-		$s->$m eq $v->$m
+		#$s->$m eq $v->$m
+		my $S= $s->$m;
+		my $V= $v->$m;
+		if (defined $S) {
+		    if (defined $V) {
+			$S eq $V
+		    } else {
+			0
+		    }
+		} else {
+		    if (defined $V) {
+			0
+		    } else {
+			1 # both undefined
+		    }
+		}
 	    };
 	    (&$eq ("package")
 	     and
