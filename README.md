@@ -57,8 +57,9 @@ bug, please tell us on the [[mailing_list]], or if you prefer submit
 an issue on Github. Feel free to fork the
 [repository](https://github.com/pflanze/functional-perl/) and submit
 your changes on Github or to the list. Documentation improvements are
-very welcome, as are general hints and ideas where to take the
-project. Also, please point out errors in the use of the english
+very welcome, as are general hints and ideas where to take the project
+or simply whether you liked it or what you liked and what you
+didn't. Also, please point out errors in the use of the english
 language.
 
 The project is currently led by [Christian
