@@ -134,8 +134,20 @@ sub handler_for ($$) {
 	# to show local errors with backtrace:
 	# require Chj::Backtrace; import Chj::Backtrace;
 	if (have_eval_since_frame $startframe) {
-	    warn "calling orig_handler";
-	    goto $orig_handler
+	    #$SIG{__DIE__}= $orig_handler;
+	    # ^ helps against the loop but makes the push_withrepl
+	    #   one-shot, of course
+	    #goto &{$orig_handler // sub { die $_[0] }}  nah, try:
+	    if (defined $orig_handler) {
+		warn "calling orig_handler";
+		#goto $orig_handler
+		# ^ just doesn't work, seems to undo the looping
+		#   protection. so..:
+		&$orig_handler ($e)
+	    } else {
+		warn "no orig_handler, returning";
+		return
+	    }
 	} else {
 	    print STDERR "Exception: $e";
 	    # then what to do upon exiting it? return the value of the repl?
@@ -148,7 +160,7 @@ sub handler_for ($$) {
 sub handler ($) {
     my ($skip)= @_;
     handler_for (current_user_frame($skip),
-		 $SIG{__DIE__} // sub {$_[0]})
+		 $SIG{__DIE__})
 }
 
 sub withrepl (&) {
