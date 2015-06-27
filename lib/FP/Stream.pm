@@ -478,6 +478,7 @@ sub stream2string ($) {
 *FP::List::List::stream_string= *stream2string;
 
 sub stream_strings_join ($$) {
+    @_==2 or die "wrong number of arguments";
     my ($l,$val)=@_;
     weaken $_[0];
     # XX can't I just use list_strings_join? no, the other way round

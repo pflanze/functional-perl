@@ -319,6 +319,7 @@ TEST{ array_join [1,2,3],"a" }
 TEST{ array_join [],"a" } [];
 
 sub array_strings_join ($$) {
+    @_==2 or die "wrong number of arguments";
     my ($ary,$val)=@_;
     join $val, @$ary
 }

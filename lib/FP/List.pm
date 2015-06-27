@@ -651,6 +651,7 @@ TEST{ list2string list_reverse string2list "Hello" }
 
 
 sub list_strings_join ($$) {
+    @_==2 or die "wrong number of arguments";
     my ($l,$val)=@_;
     # now depend on FP::Array anyway. Lazily. XX hack~
     require FP::Array;
