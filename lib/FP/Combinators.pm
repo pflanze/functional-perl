@@ -30,7 +30,8 @@ package FP::Combinators;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(compose compose_scalar maybe_compose
-	      flip flip2_3 rot3right rot3left);
+	      flip flip2_3 rot3right rot3left
+	      perhaps_to_maybe);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -141,6 +142,18 @@ sub rot3left ($) {
     sub {
 	@_==3 or croak "expecting 3 arguments";
 	@_=($_[1], $_[2], $_[0]); goto $f
+    }
+}
+
+
+sub perhaps_to_maybe ($) {
+    my ($f)= @_;
+    sub {
+	if (my ($v)= &$f (@_)) {
+	    $v
+	} else {
+	    undef
+	}
     }
 }
 
