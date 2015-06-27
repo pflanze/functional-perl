@@ -670,8 +670,8 @@ sub run {
 				my ($maybe_frameno)=
 				  $args=~ /^\s*(\d+)?\s*\z/
 				    or die "expecting digits or no argument, got '$cmd'";
-				print $stack->backtrace ($maybe_frameno
-							 // $frameno);
+				print $STDOUT $stack->backtrace ($maybe_frameno
+								 // $frameno);
 				$args=""; # XX HACK; also, really
                                           # silently drop stuff?
 			    };
@@ -698,7 +698,7 @@ sub run {
 				# long data (need viewer, but
 				# don't really want to, so should
 				# really use shortener)
-				print $stack->desc($frameno),"\n";
+				print $STDOUT $stack->desc($frameno),"\n";
 			    };
 
 			    my $select_frame= sub {
