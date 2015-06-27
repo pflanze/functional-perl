@@ -107,3 +107,15 @@ dir.reply {
   margin-top: 0.1em;
   margin-bottom: 0px;
 }
+
+dir.toc {
+  list-style-type: none;
+  margin: 0.2em 0em 0.2em 0em;
+  padding-left: 1em;
+}
+
+div.toc_box {
+  background-color: #f8f4ff;
+  padding: 0.1em 0em 1em 0.4em;
+  margin: 2em 0em 2em 0em;
+}
