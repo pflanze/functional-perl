@@ -553,7 +553,9 @@ additional function argument and its type simply becomes part of the
 algorithm, and the whole remains pure. Functional programming
 languages often offer pattern matching that can be used to the same
 effect, or other features that are even closer (e.g. Haskell's type
-classes).
+classes). Or to say it more pointed: remove side effects from your
+coding, and your produce is purely functional, totally regardless of
+whether it is implementing classes and objects or not.
 
 To build purely functional classes easily, have a look at
 `FP::Struct`. Classes generated with it automatically inherit from
