@@ -204,7 +204,7 @@ TEST {
 
 sub make_reverse__map_with_length_with_tail {
     my ($cons)= @_;
-    sub {
+    sub ($$$) {
 	@_==3 or die "wrong number of arguments";
 	my ($fn,$l,$tail)=@_;
 	my $a;
