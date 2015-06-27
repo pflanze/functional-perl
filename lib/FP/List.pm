@@ -68,6 +68,7 @@ package FP::List;
 	      list_zip2
 	      list_every list_any
 	      list_perhaps_find_tail list_perhaps_find
+	      list_find_tail list_find
 	      is_charlist ldie
 	      cddr
 	      cdddr
@@ -87,7 +88,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
 use Chj::xperlfunc qw(xprint xprintln);
-use FP::Combinators qw(flip flip2_3 rot3right rot3left);
+use FP::Combinators qw(flip flip2_3 rot3right rot3left perhaps_to_maybe);
 use Chj::TEST;
 use FP::Predicates 'is_natural0';
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
@@ -1025,6 +1026,7 @@ TEST{ list_any sub { $_[0] % 2 }, array2list [7] }
 # carry `perhaps` in their name of this reason.
 
 sub list_perhaps_find_tail ($$) {
+    @_==2 or die "wrong number of arguments";
     my ($fn, $l)=@_;
   LP: {
 	if (is_null $l) {
@@ -1052,8 +1054,9 @@ TEST { [list(3,1,37,-5)->perhaps_find_tail (*is_even)] }
 
 
 sub list_perhaps_find ($$) {
+    @_==2 or die "wrong number of arguments";
     my ($fn, $l)=@_;
-    if (my ($l)= list_perhaps_find_tail ($fn,$l)) {
+    if (my ($l)= list_perhaps_find_tail ($fn, $l)) {
 	unsafe_car $l
     } else {
 	()
@@ -1064,6 +1067,28 @@ sub list_perhaps_find ($$) {
 
 TEST { list(3,1,4,1,5,9)->perhaps_find(*is_even) }
   4;
+
+
+# And then still also add the SRFI-1 counterparts, without `maybe` in
+# the names as they should have according to our guidelines, XX hmm.
+
+
+#sub list_find_tail ($$);
+#  sigh, can't retain the prototypes unless writing perhaps_to_maybe
+#  for every number of arguments.
+*list_find_tail= perhaps_to_maybe (\&list_perhaps_find_tail);
+*FP::List::List::find_tail= flip \&list_find_tail;
+
+#sub list_find ($$);
+*list_find= perhaps_to_maybe (\&list_perhaps_find);
+*FP::List::List::find= flip \&list_find;
+
+TEST { list(3,1,4,1,5,9)->find(*is_even) }
+  4;
+TEST { list(3,1,37,-8,-5,0,0)->find_tail (*is_even)->array }
+  [-8,-5,0,0];
+TEST { [list(3,1,37,-5)->find_tail (*is_even)] }
+  [undef];
 
 
 # Turn a mix of (nested) arrays and lists into a flat list.
