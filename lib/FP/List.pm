@@ -405,7 +405,7 @@ sub list_ref ($ $) {
     is_natural0 $i or die "invalid index: '$i'";
     my $orig_i= $i;
   LP: {
-	$s= $s;
+	$s= force $s;
 	if (is_pair $s) {
 	    if ($i <= 0) {
 		unsafe_car $s

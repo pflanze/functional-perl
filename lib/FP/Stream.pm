@@ -655,6 +655,7 @@ sub t_ref {
 	[ Keep($l)->ref (0),
 	  Keep($l)->ref (1),
 	  exn { Keep($l)->ref (-1) },
+	  exn { Keep($l)->ref (0.1) },
 	  exn { Keep($l)->ref ( 2) },
 	  Keep($il)->ref (0),
 	  exn { Keep($il)->ref (1) } ]
@@ -662,6 +663,7 @@ sub t_ref {
       [ "a",
 	"b",
 	"invalid index: '-1'",
+	"invalid index: '0.1'",
 	"requested element 2 of $liststream of length 2",
 	"x",
 	"improper $liststream"
@@ -670,6 +672,10 @@ sub t_ref {
 
 t_ref *list, *cons, "list";
 t_ref *stream, sub { my ($a,$r)=@_; lazy { cons $a, $r }}, "stream";
+
+TEST { list_ref cons(0, stream(1,2,3)), 2 } 2;
+TEST { stream_ref cons(0, stream(1,2,3)), 2 } 2;
+
 
 # force everything deeply
 sub F ($);
