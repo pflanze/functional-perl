@@ -287,7 +287,7 @@ sub import {
 		     or die "unacceptable value for field '$name': "
 		       .Show($v);
 		   my $new= +{%$s};
-		   ($$new{$name})=@_;
+		   $$new{$name}= $v;
 		   bless $new, ref $s
 	       }
 	       :
@@ -310,7 +310,7 @@ sub import {
 		     or die "unacceptable value for field '$name': "
 		       .Show($v);
 		   my $new= +{%$s};
-		   ($$new{$name})= $v;
+		   $$new{$name}= $v;
 		   bless $new, ref $s
 	       }
 	       :
