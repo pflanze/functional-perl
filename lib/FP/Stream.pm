@@ -634,7 +634,7 @@ sub stream_ref ($ $) {
 	    }
 	} else {
 	    die (is_null $s ?
-		 "requested element $orig_i of list of length ".($orig_i-$i)
+		 "requested element $orig_i of stream of length ".($orig_i-$i)
 		 : "improper stream")
 	}
     }
@@ -647,24 +647,29 @@ sub exn (&) {
     eval { &$thunk; '' } // do { $@=~/(.*?) at/; $1 }
 }
 
-TEST {
-    my $l= list (qw(a b));
-    my $il= cons ("x","y");
-    [ list_ref ($l, 0),
-      list_ref ($l, 1),
-      exn { list_ref ($l, -1) },
-      exn { list_ref ($l, 2) },
-      list_ref ($il, 0),
-      exn { list_ref $il, 1 } ]
+sub t_ref {
+    my ($list, $cons, $liststream)= @_;
+    TEST {
+	my $l= &$list(qw(a b));
+	my $il= &$cons ("x","y");
+	[ Keep($l)->ref (0),
+	  Keep($l)->ref (1),
+	  exn { Keep($l)->ref (-1) },
+	  exn { Keep($l)->ref ( 2) },
+	  Keep($il)->ref (0),
+	  exn { Keep($il)->ref (1) } ]
+    }
+      [ "a",
+	"b",
+	"invalid index: '-1'",
+	"requested element 2 of $liststream of length 2",
+	"x",
+	"improper $liststream"
+      ];
 }
-  [ "a",
-    "b",
-    "invalid index: '-1'",
-    "requested element 2 of list of length 2",
-    "x",
-    "improper list"
-  ];
 
+t_ref *list, *cons, "list";
+t_ref *stream, sub { my ($a,$r)=@_; lazy { cons $a, $r }}, "stream";
 
 # force everything deeply
 sub F ($);
