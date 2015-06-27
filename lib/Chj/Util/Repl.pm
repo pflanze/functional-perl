@@ -214,6 +214,8 @@ CMD is one of:
    b|bt   print back trace
    f [n]  move to stack frame number n (at start: 0)
            without n, shows the current frame again
+   y [n]  alias for f
+   q      quit the process (by calling `exit`)
 
 MODES are a combination of these characters, which change the
 previously used mode (indicated on the left):
@@ -699,6 +701,14 @@ sub run {
 				print $stack->desc($frameno),"\n";
 			    };
 
+			    my $select_frame= sub {
+				my ($maybe_frameno)=
+				  $args=~ /^\s*(\d+)?\s*\z/
+				    or die "expecting frame number, ".
+				      "an integer, or nothing, got '$cmd'";
+				&$chooseframe ($maybe_frameno)
+			    };
+
 			    my %commands=
 				(
 				 h=> $help,
@@ -757,12 +767,14 @@ sub run {
 					 &$printerror_frameno ();
 				     }
 				 },
-				 f=> sub {
-				     my ($maybe_frameno)=
-				       $args=~ /^\s*(\d+)?\s*\z/
-					 or die "expecting frame number, ".
-					   "an integer, or nothing, got '$cmd'";
-				     &$chooseframe ($maybe_frameno)
+				 f=> $select_frame,
+				 y=> $select_frame,
+				 q=> sub {
+				     # XX change exit code depending
+				     # on how the repl was called?
+				     # Well, at least make it a config
+				     # field?
+				     exit 0
 				 },
 				 bt=> $bt,
 				 b=> $bt,
