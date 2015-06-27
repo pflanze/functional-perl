@@ -530,12 +530,13 @@ time) is its result value, and is dependent *only* on its arguments
 and immutable values (values that are never modified during a program
 run).
 
-Even aside the above confusion, there seems to be a widespread notion
-that object oriented and functional programming are at odds with each
-other. This is only the case if "object oriented" implies a style that
-mutates the object(s) or other side effects. So whether there is a
-conflict depends on the definition of "object orientation". The author
-of this text has never found a precise definition.
+Even aside the above confusion, there seems to be a rather widespread
+notion that object oriented and functional programming are at odds
+with each other. This is only the case if "object oriented" implies a
+style that mutates the object(s) or other side effects. So whether
+there is a conflict depends on the definition of "object
+orientation". The author of this text has never found a precise
+definition.
 [Wikipedia](https://en.wikipedia.org/wiki/Object_oriented_programming)
 writes:
 
