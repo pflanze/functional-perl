@@ -401,20 +401,49 @@ TEST{ [ list ()->perhaps_one ] } [];
 # XX adapted copy from Stream.pm
 sub list_ref ($ $) {
     my ($s, $i)=@_;
+    my $orig_i= $i;
   LP: {
 	$s= $s;
-	if ($i <= 0) {
-	    car $s
+	if (is_pair $s) {
+	    if ($i <= 0) {
+		unsafe_car $s
+	    } else {
+		$s= unsafe_cdr $s;
+		$i--;
+		redo LP;
+	    }
 	} else {
-	    $s= cdr $s;
-	    $i--;
-	    redo LP;
+	    die (is_null $s ?
+		 "requested element $orig_i of list of length ".($orig_i-$i)
+		 : "improper list")
 	}
     }
 }
 
 *FP::List::List::ref= *list_ref;
 
+sub exn (&) {
+    my ($thunk)=@_;
+    eval { &$thunk; '' } // do { $@=~/(.*?) at/; $1 }
+}
+
+TEST {
+    my $l= list (qw(a b));
+    my $il= cons ("x","y");
+    [ list_ref ($l, 0),
+      list_ref ($l, 1),
+      list_ref ($l, -1),
+      exn { list_ref ($l, 2) },
+      list_ref ($il, 0),
+      exn { list_ref $il, 1 } ]
+}
+  [ "a",
+    "b",
+    "a", # XX?
+    "requested element 2 of list of length 2",
+    "x",
+    "improper list"
+  ];
 
 sub list {
     my $res= null;

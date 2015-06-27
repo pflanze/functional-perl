@@ -620,14 +620,21 @@ sub stream_drop_while ($ $) {
 sub stream_ref ($ $) {
     my ($s, $i)=@_;
     weaken $_[0];
+    my $orig_i= $i;
   LP: {
 	$s= force $s;
-	if ($i <= 0) {
-	    car $s
+	if (is_pair $s) {
+	    if ($i <= 0) {
+		unsafe_car $s
+	    } else {
+		$s= unsafe_cdr $s;
+		$i--;
+		redo LP;
+	    }
 	} else {
-	    $s= cdr $s;
-	    $i--;
-	    redo LP;
+	    die (is_null $s ?
+		 "requested element $orig_i of stream of length ".($orig_i-$i)
+		 : "improper stream")
 	}
     }
 }
