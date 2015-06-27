@@ -67,6 +67,7 @@ package FP::List;
 	      list_append
 	      list_zip2
 	      list_every list_any
+	      list_perhaps_find_tail list_perhaps_find
 	      is_charlist ldie
 	      cddr
 	      cdddr
@@ -1018,6 +1019,51 @@ TEST{ list_any sub { $_[0] % 2 }, array2list [2,5,8]}
 TEST{ list_any sub { $_[0] % 2 }, array2list [7] }
   1;
 
+
+# The following two functions differ from their paragons from SRFI-1
+# in that they do not return false or undef on failure, but (), and
+# carry `perhaps` in their name of this reason.
+
+sub list_perhaps_find_tail ($$) {
+    my ($fn, $l)=@_;
+  LP: {
+	if (is_null $l) {
+	    ()
+	} else {
+	    my ($v,$l1)= $l->first_and_rest;
+	    if (&$fn ($v)) {
+		$l
+	    } else {
+		$l= $l1;
+		redo LP
+	    }
+	}
+    }
+}
+
+*FP::List::List::perhaps_find_tail= flip \&list_perhaps_find_tail;
+
+TEST {
+    require FP::Predicates; import FP::Predicates "is_even";
+    list(3,1,37,-8,-5,0,0)->perhaps_find_tail (*is_even)->array }
+  [-8,-5,0,0];
+TEST { [list(3,1,37,-5)->perhaps_find_tail (*is_even)] }
+  [];
+
+
+sub list_perhaps_find ($$) {
+    my ($fn, $l)=@_;
+    if (my ($l)= list_perhaps_find_tail ($fn,$l)) {
+	unsafe_car $l
+    } else {
+	()
+    }
+}
+
+*FP::List::List::perhaps_find= flip \&list_perhaps_find;
+
+TEST { list(3,1,4,1,5,9)->perhaps_find(*is_even) }
+  4;
 
 
 # Turn a mix of (nested) arrays and lists into a flat list.
