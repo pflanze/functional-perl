@@ -98,7 +98,7 @@ use FP::List ":all";
 use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
 use FP::Weak;
-
+use FP::Predicates 'is_natural0';
 
 sub stream_iota {
     my ($maybe_start, $maybe_n)= @_;
@@ -620,6 +620,7 @@ sub stream_drop_while ($ $) {
 sub stream_ref ($ $) {
     my ($s, $i)=@_;
     weaken $_[0];
+    is_natural0 $i or die "invalid index: '$i'";
     my $orig_i= $i;
   LP: {
 	$s= force $s;
@@ -633,13 +634,36 @@ sub stream_ref ($ $) {
 	    }
 	} else {
 	    die (is_null $s ?
-		 "requested element $orig_i of stream of length ".($orig_i-$i)
+		 "requested element $orig_i of list of length ".($orig_i-$i)
 		 : "improper stream")
 	}
     }
 }
 
 *FP::List::List::stream_ref= *stream_ref;
+
+sub exn (&) {
+    my ($thunk)=@_;
+    eval { &$thunk; '' } // do { $@=~/(.*?) at/; $1 }
+}
+
+TEST {
+    my $l= list (qw(a b));
+    my $il= cons ("x","y");
+    [ list_ref ($l, 0),
+      list_ref ($l, 1),
+      exn { list_ref ($l, -1) },
+      exn { list_ref ($l, 2) },
+      list_ref ($il, 0),
+      exn { list_ref $il, 1 } ]
+}
+  [ "a",
+    "b",
+    "invalid index: '-1'",
+    "requested element 2 of list of length 2",
+    "x",
+    "improper list"
+  ];
 
 
 # force everything deeply
