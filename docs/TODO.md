@@ -89,3 +89,6 @@ properly formatted versions of these documents.)
 - add `join` method for all sequences by finally starting sequences
   base class.
 
+- is it badly inconsistent to have names like `map_with_tail` but have
+  the tail-taking function be named `rest`?
+
