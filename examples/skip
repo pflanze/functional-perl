@@ -61,7 +61,7 @@ sub chunks_change_tail {
     my ($chunks,  $minsize, $fn)=@_;
     weaken $_[0];
 
-    is_null force $chunks
+    is_null $chunks
       and die "got empty input";
 
     # start and rest are parts of the same stream of chunks,
@@ -72,7 +72,10 @@ sub chunks_change_tail {
 	my $next=$next;
 	lazy {
 	  NEXT: {
-		FORCE $start, $rest;
+		FORCE $start, $rest; # optional (since is_null, first
+                                     # etc. are forcing promises
+                                     # anyway), but might reduce
+                                     # overhead slightly?
 		my $first= car $start;
 		my $lenfirst= length $first;
 		my $reserve= $windowsize - $minsize;
@@ -205,7 +208,7 @@ if ($n) {
 }
 
 if ($maybe_m) {
-    my $chunks= force fh2chunks $in, $BUFSIZ;
+    my $chunks= fh2chunks $in, $BUFSIZ;
     if (is_null $chunks) {
 	die "$myname: no remainder left after skipping $n byte(s)\n"
 	    unless $opt_silent;
