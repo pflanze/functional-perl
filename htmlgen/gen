@@ -83,7 +83,7 @@ use FP::Predicates;
 
 our $default_config=
   +{
-    indexpath0P => fun ($path0) {
+    is_indexpath0 => fun ($path0) {
 	my $bn= lc basename($path0);
 	$bn eq "index.md" or $bn eq "readme.md"
     },
@@ -147,7 +147,7 @@ fun path_path0_append ($dir,$relpath0) {
 }
 
 fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
-    if (!$for_title and $$config{indexpath0P}->($path0)) {
+    if (!$for_title and $$config{is_indexpath0}->($path0)) {
 	tail &$then (path_path0_append (dirname($path0), "index.xhtml"))
     } else {
 	if ($path0=~ s/(.*?)([^\/]*)\.md$/$1$2.xhtml/) {
@@ -779,7 +779,7 @@ fun _path02title_mod ($str) {
 
 fun path02title ($path0) {
     my $dn= dirname($path0);
-    if ($dn ne "." and $$config{indexpath0P}->($path0)) {
+    if ($dn ne "." and $$config{is_indexpath0}->($path0)) {
 	_path02title_mod
 	  basename ( xsuffix_md2html($dn.".md",1), ".xhtml");
     } else {
@@ -794,7 +794,7 @@ TEST{path02title "bugs/wishlist/listserv/README.md"} 'Listserv';
 TEST{path02title "bugs/wishlist/listserv/other.md"} 'Other';
 use FP::Predicates 'false';
 TEST{
-    local $config= +{indexpath0P=> *false};
+    local $config= +{is_indexpath0=> *false};
     path02title "bugs/wishlist/listserv/README.md"
 }
   'README'; # XXX why?, expected: 'Readme';
