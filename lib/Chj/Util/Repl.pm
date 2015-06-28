@@ -304,8 +304,6 @@ sub run {
 	$r
     };
 
-    local $SIG{PIPE}="IGNORE";
-
     my $oldsigint= $SIG{INT};
     # It seems this is the only way to make signal handlers work in
     # both perl 5.6 and 5.8:
@@ -540,6 +538,9 @@ sub run {
 	    my ($maybe_pager, @options)=@_;
 	    sub {
 		my ($printto)=@_;
+
+		local $SIG{PIPE}="IGNORE";
+
 		eval {
 		    # XX this now means that no options
 		    # can be passed in $ENV{PAGER} !
