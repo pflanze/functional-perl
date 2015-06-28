@@ -24,11 +24,10 @@ FP::Hash
 =head1 DESCRIPTION
 
 Provides pure functions on hash tables. Note though that hash table
-updates simply copy the whole hash table, thus you might be buying
-into bad computational complexity. (If you really care about that, and
-not so much about interoperability with other Perl code, perhaps port
-a functional hash tables implementation (like the one propagated by
-Clojure)?)
+updates simply copy the whole hash table, thus you may easily get bad
+computational complexity. (If you really care about that, and not so
+much about interoperability with other Perl code, perhaps port a
+functional hash tables implementation (like the one used by Clojure)?)
 
 
 =cut
