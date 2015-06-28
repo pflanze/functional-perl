@@ -3,11 +3,11 @@ properly formatted versions of these documents.)
 
 ---
 
-# Website generator from markdown files
+# A website generator from markdown files
 
-[This](gen) is the Perl program that generates the main part of the
+[This](gen) is the Perl program that generates most of the
 [functional-perl.org](http://functional-perl.org) website. It makes
-use of functional-perl itself quite a bit, although it was primarily
+use of functional-perl itself quite a bit, although it was originally
 written for practical purposes, not as a demo. (Todo: make it nicer?)
 
 ## Hacking
@@ -19,7 +19,7 @@ written for practical purposes, not as a demo. (Todo: make it nicer?)
 * some general layout configuration can be found in `htmlgen.css`;
   this could be supplemented with other files using PXML HTML code
   returned from the function at the `head` config key (see example in
-  [`gen-config`](../website/gen-config.pl)).
+  [`gen-config.pl`](../website/gen-config.pl)).
 
 * the configuration for the functional-perl website chooses to put
   logo generation into its own file, [`logo.pl`](../website/logo.pl),
@@ -27,9 +27,9 @@ written for practical purposes, not as a demo. (Todo: make it nicer?)
 
 * `$filesinfo` (passed around explicitely for no particular reason?),
   is a `PFLANZE::Filesinfo` object, mutated to add information
-  (remember that I said it was not meant as a demo), maintains
-  information about all the files that make up the website.
+  (remember that I said it was not meant as a functional programming
+  demo), maintains information about all the files that make up the website.
 
-* its TEST forms are run as part of the functional-perl test suite (if
-  the necessary dependencies are available)
+* its TEST forms are run as [part of the functional-perl test
+  suite](../t/htmlgen) (if the necessary dependencies are available)
 
