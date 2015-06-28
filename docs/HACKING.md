@@ -5,6 +5,8 @@ properly formatted versions of these documents.)
 
 # Guidelines to hack on the functional-perl project
 
+See also [[design]].
+
 
 ## Style
 
