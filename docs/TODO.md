@@ -92,3 +92,6 @@ properly formatted versions of these documents.)
 - is it badly inconsistent to have names like `map_with_tail` but have
   the tail-taking function be named `rest`?
 
+- should `FORCE` from `FP::Lazy` be renamed to `Force` to avoid the
+  potential conflict with `use PXML::Tags 'force'` ?
+
