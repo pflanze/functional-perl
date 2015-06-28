@@ -42,7 +42,7 @@ other optimizations to achieve performance without relying on manually
 written iterator based code, such as compile time application of rules
 to fuse list processing chains as well as using general
 "deforestation" algorithms). Not having a static type system means
-these can't be done before runtime.)
+these can't be done before runtime or module initialization time.)
 
 
 <with_toc>
