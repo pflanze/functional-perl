@@ -1,0 +1,4 @@
+- automatically clean target directory of files that are not generated
+  anymore? (But then maybe some files are there on purpose? Check git
+  ls-files?)
+
