@@ -95,3 +95,6 @@ properly formatted versions of these documents.)
 - should `FORCE` from `FP::Lazy` be renamed to `Force` to avoid the
   potential conflict with `use PXML::Tags 'force'` ?
 
+- should `stream_iota` be renamed or have different arguments? Compare
+  with APL etc.
+
