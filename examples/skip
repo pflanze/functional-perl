@@ -76,19 +76,19 @@ sub chunks_change_tail {
                                      # etc. are forcing promises
                                      # anyway), but might reduce
                                      # overhead slightly?
-		my $first= car $start;
+		my $first= first $start;
 		my $lenfirst= length $first;
 		my $reserve= $windowsize - $minsize;
 		if ($lenfirst <= $reserve) {
 		    cons ($first,
-			  &$next(cdr $start, $rest, $windowsize - $lenfirst))
+			  &$next(rest $start, $rest, $windowsize - $lenfirst))
 		} else {
 		    if (is_null $rest) {
 			&$fn($start, $windowsize)
 		    } else {
-			#&$next($start, cdr $rest, $windowsize + length car $rest)
-			$windowsize= $windowsize + length car $rest;
-			$rest= cdr $rest;
+			#&$next($start, rest $rest, $windowsize + length first $rest)
+			$windowsize= $windowsize + length first $rest;
+			$rest= rest $rest;
 			redo NEXT;
 		    }
 		}
@@ -226,7 +226,7 @@ if ($maybe_m) {
 			  "after skipping $n byte(s)\n"
 		    }
 		} else {
-		    my $last= car $rest;
+		    my $last= first $rest;
 		    cons(substr ($last, 0, $remainingsize - $maybe_m), null)
 		}
 	     });
