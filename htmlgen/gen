@@ -609,7 +609,7 @@ fun with_toc ($e, $uplist) {
 fun pxml_map_elements ($v, $name2mapper) {
     pxml_eager_map ($v,
 		    fun ($e, $uplist) {
-			if (my ($mapper)= hash_ref $name2mapper, $e->name) {
+			if (my ($mapper)= hash_perhaps_ref $name2mapper, $e->name) {
 			    &$mapper ($e, $uplist)
 			} else {
 			    $e

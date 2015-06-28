@@ -14,7 +14,7 @@ FP::Hash
  my $a= {a=>1, b=>2};
  my $b= hash_set($a, "b", 3);
  my $c= hash_delete($b, "a");
- if (my ($v)= hash_ref ($c, "x")) {
+ if (my ($v)= hash_perhaps_ref ($c, "x")) {
     ...
  }
 
@@ -35,7 +35,7 @@ functional hash tables implementation (like the one used by Clojure)?)
 
 package FP::Hash;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(hash_set hash_ref hash_xref
+@EXPORT=qw(hash_set hash_perhaps_ref hash_xref
 	   hash_delete hash_diff hashes_keys $empty_hash);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -92,7 +92,7 @@ sub hash_delete ($$) {
 }
 
 # should in principle be called hash_perhaps_ref ?
-sub hash_ref ($$) {
+sub hash_perhaps_ref ($$) {
     my ($h,$k)=@_;
     if (exists $$h{$k}) {
 	$$h{$k}
