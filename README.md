@@ -111,13 +111,13 @@ order, but if you can't follow the presentation, skip to the intro,
 likewise if you're bored skip ahead to the examples and the
 howto/design documents.
 
-1. __Presentation__
+* __Presentation__
 
     [These](http://functional-perl.org/london.pm-talk/) are the slides of
     an introductory presentation, but there's no recording and the slides
     may not be saying enough for understanding. (Todo: add spoken text?)
 
-2. __Intro__
+* __Intro__
 
     The [intro](intro/) directory contains scripts introducing the
     concepts, including the basics of functional programming (work in
@@ -129,13 +129,13 @@ howto/design documents.
 
     This doesn't go very far yet (todo: add more).
 
-3. __Examples__
+* __Examples__
 
     The [examples](examples/README.md) directory contains scripts showing
     off the possibilities. You will probably not understand everything
     from looking at these, but they will give an impression.
 
-4. __Howto and design documents__
+* __Howto and design documents__
 
     * *[How to write functional programs on Perl 5](docs/howto.md)* is
       describing the necessary techniques to use the functional style on
@@ -146,7 +146,7 @@ howto/design documents.
       library](docs/design.md)* is descibing the organization and ideas
       behind the code that the functional-perl project offers.
 
-5. __Book__
+* __Book__
 
     If you need a more gentle introduction into the ideas behind
     functional programming, you may find it in [Higher-Order
