@@ -111,53 +111,53 @@ order, but if you can't follow the presentation, skip to the intro,
 likewise if you're bored skip ahead to the examples and the
 howto/design documents.
 
-### Presentation
+1. __Presentation__
 
-[These](http://functional-perl.org/london.pm-talk/) are the slides of
-an introductory presentation, but there's no recording and the slides
-may not be saying enough for understanding. (Todo: add spoken text?)
+    [These](http://functional-perl.org/london.pm-talk/) are the slides of
+    an introductory presentation, but there's no recording and the slides
+    may not be saying enough for understanding. (Todo: add spoken text?)
 
-### Intro
+2. __Intro__
 
-The [intro](intro/) directory contains scripts introducing the
-concepts, including the basics of functional programming (work in
-progress). The scripts are meant to be viewed in this order:
+    The [intro](intro/) directory contains scripts introducing the
+    concepts, including the basics of functional programming (work in
+    progress). The scripts are meant to be viewed in this order:
 
-1. [basics](intro/basics)
-1. [tailcalls](intro/tailcalls)
-1. [more_tailcalls](intro/more_tailcalls)
+    1. [basics](intro/basics)
+    1. [tailcalls](intro/tailcalls)
+    1. [more_tailcalls](intro/more_tailcalls)
 
-This doesn't go very far yet (todo: add more).
+    This doesn't go very far yet (todo: add more).
 
-### Examples
+3. __Examples__
 
-The [examples](examples/README.md) directory contains scripts showing
-off the possibilities. You will probably not understand everything
-from looking at these, but they will give an impression.
+    The [examples](examples/README.md) directory contains scripts showing
+    off the possibilities. You will probably not understand everything
+    from looking at these, but they will give an impression.
 
-### Howto and design documents
+4. __Howto and design documents__
 
-* *[How to write functional programs on Perl 5](docs/howto.md)* is
-  describing the necessary techniques to use the functional style on
-  Perl. (Todo: this may be too difficult for someone who doesn't know
-  anything about functional programming; what to do about it?)
+    * *[How to write functional programs on Perl 5](docs/howto.md)* is
+      describing the necessary techniques to use the functional style on
+      Perl. (Todo: this may be too difficult for someone who doesn't know
+      anything about functional programming; what to do about it?)
 
-* *[The design principles used in the functional-perl
-  library](docs/design.md)* is descibing the organization and ideas
-  behind the code that the functional-perl project offers.
+    * *[The design principles used in the functional-perl
+      library](docs/design.md)* is descibing the organization and ideas
+      behind the code that the functional-perl project offers.
 
-### Book
+5. __Book__
 
-If you need a more gentle introduction into the ideas behind
-functional programming, you may find it in [Higher-Order
-Perl](http://hop.perl.plover.com/) by Mark Jason Dominus.  This book
-was written long before the functional-perl project was started, and
-does various details differently, and IIRC doesn't care about memory
-retention problems (to be fair, at the time the book was written the
-perl interpreter wouldn't have allowed to avoid them anyway). Also,
-IIRC it bundles lazy evaluation into the pairs; separating these
-concerns should be preferable as they are then more universally usable
-and combinable. (Todo: reread book, contact author.)
+    If you need a more gentle introduction into the ideas behind
+    functional programming, you may find it in [Higher-Order
+    Perl](http://hop.perl.plover.com/) by Mark Jason Dominus.  This book
+    was written long before the functional-perl project was started, and
+    does various details differently, and IIRC doesn't care about memory
+    retention problems (to be fair, at the time the book was written the
+    perl interpreter wouldn't have allowed to avoid them anyway). Also,
+    IIRC it bundles lazy evaluation into the pairs; separating these
+    concerns should be preferable as they are then more universally usable
+    and combinable. (Todo: reread book, contact author.)
 
 
 ## Installation
