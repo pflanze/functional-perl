@@ -240,9 +240,14 @@ consider what's actually used by the program, it simply says "in case
 the program needs this, it should be the value of this
 expression". The declaration can hence describe a data structure
 that's possibly (much) bigger than what's actually used, bigger than
-the available memory or even infinitely big. This makes the code
+the available memory or even infinitely big (for example a linked list
+holding all natural numbers, 1..infinity). This makes the code
 defining the data structure simpler and more reusable because it does
-not encode the pattern of the particular need into it.
+not encode the pattern of the particular need into it. If the data
+structure that's lazily generated is a linked list, we call it a
+stream (or *functional* stream to make clear we're not talking about
+filehandles or similar), but the same benefits can apply to trees and
+other data structures.
 
 The reason that this only becomes possible with purely functional code
 is that if the expression depends on the time when it is being
@@ -280,6 +285,32 @@ The functional-perl libraries do not contain an implementation of this
 Perl, and there may be modules on CPAN already (todo: see what's
 around and perhaps wrap it in a way consistent with the rest of
 functional-perl).
+
+### Comparison to generators
+
+Generators (code that can produce a sequence by `yield`ing elements)
+are en vogue in non-functional languages today. They also run code on
+demand ('lazily') to produce data elements. How do they compare to
+streams (lazy linked lists)?
+
+* `yield` interrupts control flow; from the point of view
+  of function application, it is magic, it's not part of what
+  'straight' functions can do. The mechanism of their implementation
+  is often not accessible; if it is (i.e. built as a library using
+  only the host language), then first-class continuations are
+  needed. Those have a bad reputation for being difficult to reason
+  about. Even Schemers, the community where the concept originated,
+  recommend to use them sparingly. In comparison, lazy evaluation is
+  very straight-forward (and even in Scheme implementations with
+  perfectly efficient first-class continuations, an implementation of
+  lazy lists is faster than one of generators).
+
+* One benefit (the only?) that generators have is that they don't need
+  to introduce the concept of linked lists.
+
+* The lazyness mechanism as described above is universal, it doesn't
+  only apply to sequences, but works seamlessly for things like trees,
+  or even individual (but expensive to calculate) values.
 
 
 ## Memory handling
