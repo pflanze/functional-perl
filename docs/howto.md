@@ -629,6 +629,91 @@ really fulfills the functionality of the `->` operator (together with
 currying).)
 
 
+## Pure functions versus I/O and other side-effects
+
+(This section isn't specific to Perl, other than to describe the
+limited safety checking. Also, if this is over your head right now,
+skip this section and come back to it later; or come and ask us your
+way through it, that may also help improve the text here.)
+
+Other than program arguments and exit code, the only way for a process
+to interact with the "world" (the rest of the operating system) is by
+way of side effects, like read and write. Thus almost no program can
+be completely purely functional.
+
+So the quest is to make as much of the code purely functional as
+feasible (in the interest of profiting from the benefits this provides
+for reasoning, testing and composition), and reduce the part that
+interacts with the world to code that basically just passes inputs and
+outputs between the world and the purely functional parts. In essence,
+it then assumes the task of ordering the interactions.
+
+Some programming languages, like Haskell, make the separation between
+those two programming styles explicit in the types and check the
+correct separation at compile time. The pure part of the Haskell
+language can't do side effects (it doesn't have any operator for
+ordering (i.e. no ";")); for that, a separate part of the language is
+responsible that *can* do side effects and has explicit ordering (it
+has ">>", or the syntactic sugar ";").
+
+Even with only runtime type checking, the same thing *could* be
+implemented in Perl, assuming that the *builtin* ordering operator
+(the semicolon) is never used (except as implementation of the new,
+type-checked, sequencing operator). Disabling sequencing by way of ";"
+could perhaps even be implemented as a lowlevel module (e.g. working
+on the bytecode level). But then still all the built-in procedures
+that do I/O (`print`, `<$fh>` etc.) would need to be overridden to
+return wrappers that represent (type-checked) actions, too, to make
+type checking possible. This might be fun to work out (or perhaps not
+so much when having to deal with all the details), but is out of scope
+right now.
+
+But even without type-check based enforcement, the code can be
+properly separated into pure and side-effecting parts, and (usually
+just the pure part) described as such by documentation and
+conventions. What we currently have:
+
+* a convention that functions and methods with names ending in `_set`
+  or `_update` are pure (as opposed to the usual way of *starting*
+  names with `set_` etc.). See also [naming
+  conventions](//design.md#Naming_conventions).
+
+* a base class `FP::Pure` and a predicate `is_pure` (in
+  `FP::Predicates`) that allow to indicate that a value is never
+  modified.
+
+* everything within the `FP::` namespace is purely functional, at
+  least by default (and clearly documented otherwise) (todo: true,
+  feasible? Move e.g. `FP::Weak` out? What about `FP::IOStream`?)
+
+Note that not being checked gives you the freedom to decide what's
+functional yourself (of course only as long as you're making up rules
+that are consistent with all the other rules that govern your
+program).
+
+For example, you could decide that certain files don't change during a
+program run, and hence can be treated as a constant input. With
+`FP::IOStream` you can treat such files as a lazy list of lines or
+characters that is only read on demand. (Haskell once offered the same
+unsafe approach to read files, but has since moved to a more complex
+solution where the type system can still *guarantee* purity, instead
+of just assuming it to be the case. Whereas since we don't have an
+automatic checker anyway, we don't need to cater to it.)
+
+Also note that pure functions can still use side-effects for their
+implementation as long as those are contained so that they are not
+observable (for a friendly observer). It could for example use loop
+constructs and variable mutation, or temporary data structures that
+are mutated, or even write a cache to files in a predetermined (and
+documented as 'untouchable') location. But make sure that the purity
+doesn't break in exceptional situations, like when (temporarily)
+running out of memory, or when exceptions are thrown from signal
+handlers; just like the safe way to write files on unix is to write
+them to a temporary location then doing a rename to guarantee
+atomicity, you shouldn't leave unfinished state linger around when
+interrupted or purity breaks.
+
+
 ## Debugging
 
 ### General
