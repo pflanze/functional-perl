@@ -159,6 +159,10 @@ howto/design documents.
     concerns should be preferable as they are then more universally usable
     and combinable. (Todo: reread book, contact author.)
 
+Ask [me](http://leafpair.com/contact) or on the [[mailing_list]] if
+you'd like to meet up in London or Switzerland to get an introduction
+in person.
+
 
 ## Installation
 
