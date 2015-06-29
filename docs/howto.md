@@ -71,9 +71,11 @@ program, variables are never mutated. Fresh instances of variables are
 *bound* (re-initialized) to new values, but never mutated
 afterwards. This means there's no use thinking of variables as
 containers that can change; the same (instance of a) container always
-only ever gets one value. This is why functional languages tend to use
-the term "binding" instead of "variable": it's just giving a value a
-name, i.e. binding a name to it. So, instead of this code:
+only ever gets one value. This is [*I think, the author*] why
+functional languages tend to use the term "binding" instead of
+"variable": it's just giving a value a name, i.e. binding a name to it
+(versus offering a bucket whose content can be replaced). So, instead
+of this code:
 
     my @a;
     push @a, 1;
