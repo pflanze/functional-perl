@@ -125,6 +125,8 @@ fun author_date ($path) {
        });
     my $res= $c->xreadline;
     $c->xfinish;
+    defined $res
+      or die "can't get author date from file (not committed): '$path'";
     chomp $res; $res;
 }
 
