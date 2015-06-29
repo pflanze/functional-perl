@@ -541,7 +541,11 @@ real-time latency). But weakening of non-lazy lists will/would be more
 painful to handle for users, as it's more common to reuse them than
 their lazy cousins. Arguably it would really be best to make the
 language handle lifetimes automatically (lexical variable analysis),
-it would benefit both the lazy and non-lazy cases.
+it would benefit both the lazy and non-lazy cases. (Side note: *some*
+streams, i.e. those with a definition that uses earlier elements of
+themselves, have reference cycles, and will need weakening of the head
+even with the lexical analysis; but this should be a special case that
+should be fine to handle accordingly.)
 
 ### See also
 
