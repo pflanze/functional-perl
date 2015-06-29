@@ -17,8 +17,7 @@ useful.
 
 ## Status: experimental
 
-The project should not be used for production code yet for the
-following reasons:
+The project is not ready for production yet for the following reasons:
 
 * the namespaces are not fixed yet (in particular, everything in
   `Chj::` should probably be renamed); also, the interfaces should be
@@ -29,38 +28,39 @@ following reasons:
   reimplemented.) For these reasons, the modules have not been
   packaged and released on CPAN yet.
 
-* tutorials are not complete yet, and less experienced Perl
-  programmers will have difficulties writing or debugging code in this
-  style on Perl without proper introduction (although, getting there)
+* the documentation is untested, and introductionary materials
+  unfinished; this, together with a number of complications in Perl,
+  may be asking too much from a Perl programmer who doesn't have
+  previous functional programming experience.
 
-* some problems in the perl interpreter leading to memory leaks or
-  retention issues when using this style have only been fixed
+* some problems in the perl interpreter (leading to memory
+  retention issues) when using this style have only been fixed
   recently, and some more exotic ones are still waiting to be fixed
 
 * some of the complications when writing functional code (as described
-  in the docs of this project) might be solvable through modules or
-  core interpreter changes. That would make some code easier to write
-  and look at. (See [[ideas]].)
+  in the [[howto]]) might be solvable through modules or core
+  interpreter changes. That would make some code easier to write and
+  look at. (See [[ideas]].) This may then also change where explicit
+  indication about memory retention are still expected. (Possibly
+  backwards incompatible.)
 
-  That may also change where explicit indication about memory
-  retention are still expected. (Possibly backward incompatible.)
-
-* there are also various ways to explore performance improvements
-  (read-only guarantees and caching, sequences, PXML specializations,
-  implement code inlining, ...)
+* there are also various ways in which to explore performance
+  improvements (read-only guarantees and caching, sequences, PXML
+  precalculations, implement code inlining, ...)
 
 Please play with the examples and try to write some of your own, read
 the docs and tell us what's badly explained, and if you've got
 something that might be useful to add to the examples directory, it
 would be cool if you offer it. If the test suite fails or you found a
 bug, please tell us on the [[mailing_list]], or if you prefer submit
-an issue on Github. Feel free to fork the
+an issue on Github. You can clone or fork the
 [repository](https://github.com/pflanze/functional-perl/) and submit
-your changes on Github or to the list. Documentation improvements are
-very welcome, as are general hints and ideas where to take the project
-or simply whether you liked it or what you liked and what you
-didn't. Also, please point out errors in the use of the english
-language.
+your changes to Github or the [[mailing_list]]. Documentation
+improvements are very welcome, as are general hints and ideas where to
+take the project or simply whether you liked it or what you liked and
+what you didn't. If you'd like something to be different, now is the
+best time to tell. Also, please point out errors in the use of the
+english language.
 
 The project is currently led by [Christian
 Jaeger](http://leafpair.com/contact). Feel free to send me private
@@ -71,13 +71,13 @@ mail if you prefer. I'm also on the `#london.pm` and
 ## Parts
 
 * [FP::Struct](lib/FP/Struct.pm): a class generator that creates
-  functional setters and takes predicate functions for type checking
+  functional setters and accepts predicate functions for type checking
 
 * [lib/FP/](lib/FP/): library of pure functions and
   functional data structures, including various sequences (pure
   arrays, linked lists and lazy streams).
 
-* the PXML [functional XML](functional_XML/README.md) "templating
+* the "PXML" [functional XML](functional_XML/README.md) "templating
   system" for XML based markup languages by way of Perl
   functions.
 
@@ -93,15 +93,15 @@ mail if you prefer. I'm also on the `#london.pm` and
   operations on filehandles that throw exceptions on errors, plus
   many utilities.
   I wrote these around 15 years ago, as a means to offer IO with
-  exceptions and more features, but in the mean time there are
-  probably alternatives that are just as good or better; if you know
-  which replacements I should be using, please tell.
+  exceptions and more features, but in the mean time alternatives have
+  been grown that are probably just as good or better; if you know
+  which replacements this project should be using, please tell.
 
 * a few more modules that are used by the above (some originally part
   of [chj-perllib](https://github.com/pflanze/chj-perllib))
 
 * [htmlgen](htmlgen/README.md), the tool used to generate this
-  website, built on top of the above.
+  website, built using the above.
 
 
 ## Documentation
