@@ -71,6 +71,9 @@ properly formatted versions of these documents.)
   might be moved elsewhere in the future, breaking code importing
   it...?
 
+- split `htmlgen/gen` into modules (and make some parts more
+  functional)
+
 
 ## Less important:
 
