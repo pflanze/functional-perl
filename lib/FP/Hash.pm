@@ -35,7 +35,7 @@ functional hash tables implementation (like the one used by Clojure)?)
 
 package FP::Hash;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(hash_set hash_perhaps_ref hash_xref
+@EXPORT=qw(hash_set hash_perhaps_ref hash_xref hash_ref_or
 	   hash_delete hash_diff hashes_keys $empty_hash);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -108,6 +108,15 @@ sub hash_xref ($$) {
     } else {
 	die "unbound table key"; # no such key. unknown key. unbound
                                  # hash key. ?
+    }
+}
+
+sub hash_ref_or ($$$) {
+    my ($h,$k,$other)=@_;
+    if (exists $$h{$k}) {
+	$$h{$k}
+    } else {
+	$other
     }
 }
 
