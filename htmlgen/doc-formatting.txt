@@ -1,9 +1,9 @@
-The *.md files support standard Markdown format but with the following
+The *.md files support standard Markdown format plus the following
 additions:
 
- - files are expected to carry a header like
+ - files are expected to carry a header similar to
 
-    "(Check the [Ml2json website](http://ml2json.christianjaeger.ch/) for
+    "(Check the [Foo website](http://foo.org/) for
     properly formatted versions of these documents.)
 
     ---
@@ -14,21 +14,27 @@ additions:
  - local urls starting with // are resolved to the path where the file
     with the given filename resides. Example:
 
-     [better_Id_generation](//better_Id_generation.md)
+     [a thing](//some_thing.md)
 
-   is being resolved to
+   is being resolved to something like
 
-     <a href="../bugs/suggestions/better_Id_generation.xhtml">better_Id_generation</a>
-
-   or similar.
+     <a href="../bar/some_thing.xhtml">a thing</a>
 
  - wiki style links like:
 
-    [[better_Id_generation]]
+    [[some_thing]]
 
    or
 
-    [[better_Id_generation|better ID generation]]
+    [[some_thing|a thing]]
 
-   are supported.
+   are supported, converting to
+
+     <a href="../bar/some_thing.xhtml">some thing</a>
+
+   or
+
+     <a href="../bar/some_thing.xhtml">a thing</a>
+
+   respectively.
 
