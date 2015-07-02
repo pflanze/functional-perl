@@ -208,7 +208,7 @@ if ($n) {
 }
 
 if ($maybe_m) {
-    my $chunks= fh2chunks $in, $BUFSIZ;
+    my $chunks= force fh2chunks $in, $BUFSIZ;
     if (is_null $chunks) {
 	die "$myname: no remainder left after skipping $n byte(s)\n"
 	    unless $opt_silent;
