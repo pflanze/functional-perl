@@ -32,7 +32,6 @@ functional_XML/test
 functional_XML/testlazy
 htmlgen/README.md
 htmlgen/TODO
-htmlgen/doc-formatting.txt
 htmlgen/gen
 htmlgen/htmlgen.css
 intro/basics

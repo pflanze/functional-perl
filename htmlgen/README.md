@@ -25,6 +25,49 @@ whereas the `website/` directory contains the configuration to build
 the functional-perl website.
 
 
+## Formatting
+
+The *.md files support standard Markdown format plus the following
+additions:
+
+ - files are expected to carry a header similar to
+
+        "(Check the [Foo website](http://foo.org/) for
+        properly formatted versions of these documents.)
+
+        ---
+        "
+
+   which is stripped from the file
+
+ - local urls starting with // are resolved to the path where the file
+    with the given filename resides. Example:
+
+         [a thing](//some_thing.md)
+
+   is being resolved to something like
+
+         <a href="../bar/some_thing.xhtml">a thing</a>
+
+ - wiki style links like:
+
+        [[some_thing]]
+
+   or
+
+        [[some_thing|a thing]]
+
+   are supported, converting to
+
+         <a href="../bar/some_thing.xhtml">some thing</a>
+
+   or
+
+         <a href="../bar/some_thing.xhtml">a thing</a>
+
+   respectively.
+
+
 ## Hacking
 
 * to work interactively with the code, run `website/gen-repl`
