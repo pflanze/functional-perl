@@ -122,6 +122,7 @@ meta/ModuleList.pm
 meta/_critic.out
 meta/critic
 meta/dependencycheck
+meta/test.pl
 t/csv2xml
 t/csv2xml.expected
 t/csvstreams
@@ -156,7 +157,6 @@ t/testlazy10
 t/testlazy10.expected
 t/trampoline-fix
 t/universal-isa
-test
 test.pl
 testmem.pl
 website/gen

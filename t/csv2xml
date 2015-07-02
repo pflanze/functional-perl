@@ -3,7 +3,7 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 our $len= 210;
-require "./test.pl";
+require "meta/test.pl";
 
 use Test::Requires qw(Text::CSV);
 use Test::More;

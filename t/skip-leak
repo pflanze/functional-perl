@@ -2,7 +2,7 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-require "./test.pl";
+require "meta/test.pl";
 
 use Test::More;
 

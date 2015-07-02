@@ -1,22 +1,36 @@
-our $len;
+#!/usr/bin/env perl
 
-sub readin {
-    my ($what, $maybe_on_error)=@_;
-    my $default_on_error = sub {
-	warn "$what: $! exit value: $?";
-	undef
-    };
-    my $on_error= $maybe_on_error // $default_on_error;
-    open my $in, $what
-      or die "$what: $!";
-    my $rv=read $in, my ($buf), $len//999999;
-    defined $rv
-      or die $!;
-    if (defined $len) {
-	$rv == $len or die "only got $rv bytes instead of $len";
-    }
-    close $in ? $buf
-      : &$on_error($buf, $default_on_error, $!, $?)
-}
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-1
+use Test::Harness;
+
+# make sure not to carry over a TEST=0 setting, which would make
+# Chj::TEST based testing fail
+$ENV{TEST}=1;
+
+our @t=
+  qw(
+	require_and_run_tests
+	fp-struct
+	universal-isa
+	testlazy
+	testlazy10
+	functional_XML-test
+	functional_XML-t-div
+	csv2xml
+	htmlgen
+	intro-basics
+	trampoline-fix
+	examples-fibs
+	examples-primes
+	predicates
+	dbi
+	skip-internal
+	skip
+	skip-leak
+	csvstreams
+	perl-weaken-coderef
+	perl-goto-leak
+   );
+
+runtests(map {"t/$_"} @t);

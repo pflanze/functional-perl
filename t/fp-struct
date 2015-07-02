@@ -3,7 +3,7 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 our $len= 672;
-require "./test.pl";
+require "meta/test.pl";
 
 use Test::More;
 use lib "./lib";
