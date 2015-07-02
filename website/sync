@@ -1,0 +1,6 @@
+#!/bin/bash
+
+rsync -auvz --delete --exclude .git \
+    /home/chrisperl/functional-perl/website/www/. \
+    servi:www/functional-perl.org/.
+
