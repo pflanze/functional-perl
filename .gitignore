@@ -5,3 +5,9 @@ t/test-a.csv
 t/test-a.xml
 .expansion-*
 /website/www/
+MYMETA.yml
+Makefile
+Makefile.old
+blib/
+pm_to_blib
+*.tar.gz
