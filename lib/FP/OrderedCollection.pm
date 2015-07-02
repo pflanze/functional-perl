@@ -22,7 +22,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use FP::Predicates;
-use FP::Stream qw(subarray2stream subarray2stream_reverse  stream2array);
+use FP::Stream qw(subarray_to_stream subarray_to_stream_reverse  stream_to_array);
 use FP::Lazy;
 use FP::List;
 
@@ -61,13 +61,13 @@ sub maybe_position {
 sub perhaps_following {
     my $s=shift;
     my $i= $s->maybe_position(@_) // return;
-    subarray2stream($$s{array}, $i+1)
+    subarray_to_stream($$s{array}, $i+1)
 }
 
 sub perhaps_previous {
     my $s=shift;
     my $i= $s->maybe_position(@_) // return;
-    subarray2stream_reverse($$s{array}, $i-1)
+    subarray_to_stream_reverse($$s{array}, $i-1)
 }
 
 sub maybe_next {
@@ -104,11 +104,11 @@ TEST {
 
 TEST { [ our $c->perhaps_following ("xx")] }
   [];
-TEST { stream2array( our $c->perhaps_following ("c")) }
+TEST { stream_to_array( our $c->perhaps_following ("c")) }
   [ 'f' ];
-TEST { stream2array( our $c->perhaps_following ("b")) }
+TEST { stream_to_array( our $c->perhaps_following ("b")) }
   [ 'c', 'f' ];
-TEST { stream2array( our $c->perhaps_previous ("c")) }
+TEST { stream_to_array( our $c->perhaps_previous ("c")) }
   [ 'b', 'a' ];
 
 TEST { our $c->maybe_prev("c") }

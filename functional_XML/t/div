@@ -30,7 +30,7 @@ TEST_STDOUT { pxml_print_fragment_fast
 TEST { A({href=>"hah"},
 	 "Hello ",
 	 I("World", undef, B("!")),
-	 cons(" ", string2stream("You're great.")))->text }
+	 cons(" ", string_to_stream("You're great.")))->text }
   'Hello World! You\'re great.';
 
 TEST { P(list)->string }

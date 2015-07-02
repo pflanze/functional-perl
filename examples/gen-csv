@@ -34,7 +34,7 @@ usage unless @ARGV==2;
 
 our ($path,$numrows)=@ARGV;
 
-use FP::Text::CSV qw(csvstream2file);
+use FP::Text::CSV qw(csvstream_to_file);
 use FP::List ":all";
 use FP::Lazy ":all";
 use FP::Stream ":all";
@@ -79,5 +79,5 @@ use Chj::Backtrace;
 
 my $rows= rows-> stream_take($numrows+1); # +1 for the header row
 
-csvstream2file $rows, $path, +{eol=> "\n", sep_char=> ";"};
+csvstream_to_file $rows, $path, +{eol=> "\n", sep_char=> ";"};
 

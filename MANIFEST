@@ -15,10 +15,10 @@ docs/howto.md
 docs/ideas.md
 docs/links.md
 examples/README.md
-examples/csv2xml
-examples/csv2xml-example.csv
+examples/csv_to_xml
+examples/csv_to_xml-example.csv
 examples/dbi
-examples/diff2html
+examples/diff_to_html
 examples/fibs
 examples/gen-csv
 examples/predicates
@@ -123,8 +123,8 @@ meta/_critic.out
 meta/critic
 meta/dependencycheck
 meta/test.pl
-t/csv2xml
-t/csv2xml.expected
+t/csv_to_xml
+t/csv_to_xml.expected
 t/csvstreams
 t/dbi
 t/examples-fibs

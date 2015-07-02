@@ -68,7 +68,7 @@ sub fibs2 {
 
 
 
-TEST { stream2array stream_take Keep($fibs), 10 }
+TEST { stream_to_array stream_take Keep($fibs), 10 }
         [
           1,
           1,

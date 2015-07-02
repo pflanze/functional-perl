@@ -24,7 +24,7 @@ our $db= FP::DBI->connect ("dbi:CSV:");
 
 $db->{csv_sep_char}= ";";
 
-our $get= $db->prepare("select * from examples/csv2xml-example.csv");
+our $get= $db->prepare("select * from examples/csv_to_xml-example.csv");
 
 TEST {
     $get->execute ();

@@ -52,11 +52,11 @@ and
 result in the same choice of algorithm. The shorter method name is
 possible thanks to the dispatch on the type of the object. Compare to:
 
-    stream_map *inc, array2stream ([1,3,4])
+    stream_map *inc, array_to_stream ([1,3,4])
 
 or the corresponding
 
-    array2stream ([1,3,4])->map (*inc)
+    array_to_stream ([1,3,4])->map (*inc)
 
 which shows that there's no need to specify the kind of sequence
 when using method syntax.
@@ -87,13 +87,13 @@ the list; afterwards, the code stays in either `list_map` or
 `stream_map`. This means that prepending a value to a stream makes
 the non-lazy map implementation be used:
 
-    cons (0, array2stream [1,3,4])->map (*inc)
+    cons (0, array_to_stream [1,3,4])->map (*inc)
 
 returns an eagerly evaluated list, not a stream. If that's not
 what you want, you can still prefix the method name with `stream_`
 yourself to force the lazy variant:
 
-    cons (0, array2stream [1,3,4])->stream_map (*inc)
+    cons (0, array_to_stream [1,3,4])->stream_map (*inc)
 
 returns a stream.
 
@@ -159,13 +159,12 @@ usually type check in the array case either!).
   `is_`; but if they only work for a particular data type, the put the
   `is` after the type name (something like `array_is_pure`).
 
-* Data conversion functions are currently named with `2`,
-  e.g. `array2list` (todo: change to `_to_`, or drop entirely,
-  e.g. `array_list`?). This follows the convention in Scheme (except
-  `->` is used there instead of the `2`), but not
-  that of Ocaml, where such functions are called
-  e.g. `list_of_array`. Method names for the same omit both the
-  source type name and the `2` (e.g. `->array`).
+* Data conversion functions are now named with `_to_` (previously with
+  `2`), e.g. `array_to_list`. This follows the convention in Scheme
+  (except `->` is used there instead of the `_to_`), but not that of
+  Ocaml, where such functions are called e.g. `list_of_array`. Method
+  names for the same omit both the source type name and the `_to_`
+  (e.g. `->array`).
 
 * The `maybe_` prefix is used for variables and functions which
   bind or return `undef` as indication for the absence of a value. The

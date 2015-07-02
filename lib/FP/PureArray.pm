@@ -32,7 +32,7 @@ package FP::PureArray;
 
 #@ISA="Exporter"; require Exporter; see hack below
 
-@EXPORT=qw(purearray array2purearray unsafe_array2purearray);
+@EXPORT=qw(purearray array_to_purearray unsafe_array_to_purearray);
 # or optional export only?
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -73,12 +73,12 @@ sub purearray {
     bless [@_], "FP::PureArray"
 }
 
-sub array2purearray ($) {
+sub array_to_purearray ($) {
     # XX assume it, and turn on readonly flag instead of copying?
     bless [@{$_[0]}], "FP::PureArray"
 }
 
-sub unsafe_array2purearray ($) {
+sub unsafe_array_to_purearray ($) {
     # XX turn on readonly flag?
     bless $_[0], "FP::PureArray"
 }
@@ -113,14 +113,14 @@ sub list {
     @_==1 or die "wrong number of arguments";
     my $s=shift;
     require FP::List; # (overhead of repeated require?)
-    FP::List::array2list ($s)
+    FP::List::array_to_list ($s)
 }
 
 sub stream {
     @_==1 or die "wrong number of arguments";
     my $s=shift;
     require FP::Stream; # (dito)
-    FP::Stream::array2stream ($s)
+    FP::Stream::array_to_stream ($s)
 }
 
 
@@ -166,7 +166,7 @@ sub empty {
 *any= flip \&array_any;
 *sum= \&array_sum;
 *rest= blessing \&array_rest;
-*hash_group_by= \&array2hash_group_by;
+*hash_group_by= \&array_to_hash_group_by;
 
 *sort= blessing \&array_sort;
 
@@ -223,7 +223,7 @@ TEST {
 }
   bless [[0,4], [1,5]], 'FP::PureArray';
 
-TEST { array2purearray ([1,2,20])->map_with_islast (sub { $_[0] })->array }
+TEST { array_to_purearray ([1,2,20])->map_with_islast (sub { $_[0] })->array }
   [ '','',1 ];
 
 TEST{ purearray(3,4)->fold (sub{[@_]}, 's') }

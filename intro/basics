@@ -390,7 +390,7 @@ sub functional_fact_iter {
 # around, without any object wrapper.
 
 use FP::List ":all"; # cons, car, cdr, first, rest
-use FP::Array ":all"; # list2array
+use FP::Array ":all"; # list_to_array
 
 # main> cons(1,2)
 # $VAR1 = bless( [
@@ -432,7 +432,7 @@ TEST { cons(1, cons(2, cons(5, null))) }
 # This becomes ugly fast, so, turn it back into an array that Perl
 # will show nicely:
 
-TEST { list2array cons(1, cons(2, cons(5, null))) }
+TEST { list_to_array cons(1, cons(2, cons(5, null))) }
   [
    1,
    2,
@@ -451,7 +451,7 @@ sub iota {
     }
 }
 
-# main> list2array (iota (3, 8))
+# main> list_to_array (iota (3, 8))
 # $VAR1 = [
 #           3,
 #           4,

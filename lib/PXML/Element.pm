@@ -28,7 +28,7 @@ use FP::Lazy;
 use FP::List;
 
 use Chj::xIO qw(capture_stdout);
-use Chj::xopen 'glob2fh';
+use Chj::xopen 'glob_to_fh';
 
 
 use Chj::NamespaceCleanAbove;
@@ -148,7 +148,7 @@ sub _text {
 			 _text ($_)
 		     } @$v);
 	    } elsif (UNIVERSAL::isa ($v, "CODE")) {
-		# correct? XX why does A(string2stream("You're
+		# correct? XX why does A(string_to_stream("You're
 		# great."))->text trigger this case?
 		_text (&$v ());
 	    } elsif (is_pair $v) {
@@ -184,7 +184,7 @@ sub string {
     require PXML::Serialize;
     capture_stdout {
 	PXML::Serialize::pxml_print_fragment_fast
-	    ($s, Chj::xopen::glob2fh(*STDOUT));
+	    ($s, Chj::xopen::glob_to_fh(*STDOUT));
     }
 }
 

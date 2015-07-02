@@ -37,10 +37,10 @@ use FP::IOStream ":all";
 use PXML::Serialize qw(puthtmlfile);
 use PXML::XHTML ":all";
 use FP::Ops ":all";
-use Chj::xopen "glob2fh";
+use Chj::xopen "glob_to_fh";
 
 our $lines=
-  fh2stream (glob2fh (*STDIN, "utf-8"),
+  fh_to_stream (glob_to_fh (*STDIN, "utf-8"),
 	     the_method("xreadline_chomp"),
 	     the_method("xclose"));
 
@@ -100,5 +100,5 @@ puthtmlfile ("-", $html);
 
 
 # TODO: why have `puthtmlfile` to write to magic "-" file as
-# filehandle, but do glob2fh etc. manipulation?
+# filehandle, but do glob_to_fh etc. manipulation?
 

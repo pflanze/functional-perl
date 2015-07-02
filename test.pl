@@ -17,7 +17,7 @@ our @t=
 	testlazy10
 	functional_XML-test
 	functional_XML-t-div
-	csv2xml
+	csv_to_xml
 	htmlgen
 	intro-basics
 	trampoline-fix

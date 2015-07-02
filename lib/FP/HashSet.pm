@@ -12,11 +12,11 @@ FP::HashSet - set operations for hash tables
 
  use FP::HashSet; # ":all";
 
- my $A= array2hashset ["a","b","c"];
- my $B= array2hashset ["a","c","d"];
- hashset2array hashset_union($A,$B) # -> ["a","b","c","d"]
- hashset2array hashset_intersection($A,$B) # -> ["a","c"]
- hashset2array hashset_difference($A,$B) # -> ["b"]
+ my $A= array_to_hashset ["a","b","c"];
+ my $B= array_to_hashset ["a","c","d"];
+ hashset_to_array hashset_union($A,$B) # -> ["a","b","c","d"]
+ hashset_to_array hashset_intersection($A,$B) # -> ["a","c"]
+ hashset_to_array hashset_difference($A,$B) # -> ["b"]
  hashset_subset($B,$A) # -> false
  hashset_subset(+{b=>1},$A) # -> true
  hashset_size($A) # -> 3
@@ -32,10 +32,10 @@ FP::HashSet - set operations for hash tables
 =head1 DESCRIPTION
 
 Hashsets are hash tables that are expected to have keys representing
-the values unambiguously (FP::Array::array2hashset will just
+the values unambiguously (FP::Array::array_to_hashset will just
 use the stringification).
 
-Note that hashset2array will use the *values* of the hashes, not the
+Note that hashset_to_array will use the *values* of the hashes, not the
 keys.
 
 =cut
@@ -43,9 +43,9 @@ keys.
 
 package FP::HashSet;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(array2hashset
-	   array2lchashset
-	   hashset2array
+@EXPORT=qw(array_to_hashset
+	   array_to_lchashset
+	   hashset_to_array
 	   hashset_keys
 	   hashset_keys_unsorted
 	   hashset_union
@@ -63,7 +63,7 @@ package FP::HashSet;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 
-sub array2hashset ($) {
+sub array_to_hashset ($) {
     +{
       map {
 	  $_=> $_
@@ -71,7 +71,7 @@ sub array2hashset ($) {
      }
 }
 
-sub array2lchashset ($) {
+sub array_to_lchashset ($) {
     +{
       map {
 	  lc($_)=> $_
@@ -80,7 +80,7 @@ sub array2lchashset ($) {
 }
 
 
-sub hashset2array ($) {
+sub hashset_to_array ($) {
     [
      sort values %{$_[0]}
     ]
@@ -182,13 +182,13 @@ sub hashset_diff ($ $) {
 }
 
 {
-    my $A= array2hashset ["a","b","c"];
-    my $B= array2hashset ["a","c","d"];
-    TEST{ hashset2array hashset_union($A,$B) }
+    my $A= array_to_hashset ["a","b","c"];
+    my $B= array_to_hashset ["a","c","d"];
+    TEST{ hashset_to_array hashset_union($A,$B) }
       ["a","b","c","d"];
-    TEST{ hashset2array hashset_intersection($A,$B)}
+    TEST{ hashset_to_array hashset_intersection($A,$B)}
       ["a","c"];
-    TEST{ hashset2array hashset_difference($A,$B)}
+    TEST{ hashset_to_array hashset_difference($A,$B)}
       ["b"];
     TEST{ hashset_subset($B,$A) }
       0;

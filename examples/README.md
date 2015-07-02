@@ -9,10 +9,10 @@ Some examples showing the possibilities using [functional-perl](../README.md).
 
 * [`fibs`](fibs) and [`primes`](primes) show translations of Haskell programs.
 
-* [`gen-csv`](gen-csv) and [`csv2xml`](csv2xml) show how to stream
+* [`gen-csv`](gen-csv) and [`csv_to_xml`](csv_to_xml) show how to stream
   number series into and from CSV files and into XML.
 
-* [`diff2html`](diff2html) hows how to generate (X)HTML.
+* [`diff_to_html`](diff_to_html) hows how to generate (X)HTML.
 
 * [`skip`](skip) shows how to implement a sliding window (look-ahead) as a
   pure function (that can easily be tested) and then uses it for IO

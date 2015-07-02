@@ -65,10 +65,10 @@ package FP::Stream;
 	      stream__string_fold_right
 	      stream__subarray_fold_right stream__subarray_fold_right_reverse
 	      stream_sum
-	      array2stream stream
-	      subarray2stream subarray2stream_reverse
-	      string2stream
-	      stream2string
+	      array_to_stream stream
+	      subarray_to_stream subarray_to_stream_reverse
+	      string_to_stream
+	      stream_to_string
 	      stream_strings_join
 	      stream_for_each
 	      stream_drop
@@ -80,7 +80,7 @@ package FP::Stream;
 	      stream_zip2
 	      stream_zip
 	      stream_zip_with
-	      stream2array
+	      stream_to_array
 	      stream_sort
 	      stream_mixed_flatten
 	      stream_mixed_fold_right
@@ -228,7 +228,7 @@ sub stream_append ($$) {
 
 *FP::List::List::stream_append= *stream_append;
 
-TEST{ stream2string (stream_append string2stream("Hello"), string2stream(" World")) }
+TEST{ stream_to_string (stream_append string_to_stream("Hello"), string_to_stream(" World")) }
   'Hello World';
 
 sub stream_map ($ $);
@@ -437,34 +437,34 @@ sub stream__subarray_fold_right_reverse ($$$$$) {
 }
 
 
-sub array2stream ($;$) {
+sub array_to_stream ($;$) {
     my ($a,$maybe_tail)=@_;
     stream__array_fold_right (\&cons, $maybe_tail//null, $a)
 }
 
 sub stream {
-    array2stream [@_]
+    array_to_stream [@_]
 }
 
-sub subarray2stream ($$;$$) {
+sub subarray_to_stream ($$;$$) {
     my ($a, $start, $maybe_end, $maybe_tail)=@_;
     stream__subarray_fold_right
       (\&cons, $maybe_tail//null, $a, $start, $maybe_end)
 }
 
-sub subarray2stream_reverse ($$;$$) {
+sub subarray_to_stream_reverse ($$;$$) {
     my ($a, $start, $maybe_end, $maybe_tail)=@_;
     stream__subarray_fold_right_reverse
       (\&cons, $maybe_tail//null, $a, $start, $maybe_end)
 }
 
 
-sub string2stream ($;$) {
+sub string_to_stream ($;$) {
     my ($str,$maybe_tail)=@_;
     stream__string_fold_right (\&cons, $maybe_tail//null, $str)
 }
 
-sub stream2string ($) {
+sub stream_to_string ($) {
     my ($l)=@_;
     weaken $_[0];
     my $str="";
@@ -475,7 +475,7 @@ sub stream2string ($) {
     $str
 }
 
-*FP::List::List::stream_string= *stream2string;
+*FP::List::List::stream_string= *stream_to_string;
 
 sub stream_strings_join ($$) {
     @_==2 or die "wrong number of arguments";
@@ -486,7 +486,7 @@ sub stream_strings_join ($$) {
 
     # depend on FP::Array. Lazily, for depencency cycle?
     require FP::Array;
-    FP::Array::array_strings_join( stream2array ($l), $val);
+    FP::Array::array_strings_join( stream_to_array ($l), $val);
 }
 
 *FP::List::List::stream_strings_join= *stream_strings_join;
@@ -704,7 +704,7 @@ sub F ($) {
     }
 }
 
-sub stream2array ($) {
+sub stream_to_array ($) {
     my ($l)=@_;
     weaken $_[0];
     my $res= [];
@@ -719,17 +719,17 @@ sub stream2array ($) {
     $res
 }
 
-*FP::List::List::stream_array= *stream2array;
+*FP::List::List::stream_array= *stream_to_array;
 
-sub stream2purearray {
+sub stream_to_purearray {
     my ($l)=@_;
     weaken $_[0];
-    my $a= stream2array $l;
+    my $a= stream_to_array $l;
     require FP::PureArray;
-    FP::PureArray::unsafe_array2purearray ($a)
+    FP::PureArray::unsafe_array_to_purearray ($a)
 }
 
-*FP::List::List::stream_purearray= *stream2purearray;
+*FP::List::List::stream_purearray= *stream_to_purearray;
 
 TEST {
     stream (1,3,4)->purearray->map (sub{$_[0]**2})
@@ -740,7 +740,7 @@ TEST {
 sub stream_sort ($$) {
     @_==2 or die "wrong number of arguments";
     my ($l,$cmp)= @_;
-    stream2purearray ($l)->sort ($cmp)
+    stream_to_purearray ($l)->sort ($cmp)
 }
 
 *FP::List::List::stream_sort= *stream_sort;
@@ -793,7 +793,7 @@ sub stream_show ($) {
     my ($s)=@_;
     join("",
 	 map { "  '$_'\n" }
-	 @{ stream2array $s } )
+	 @{ stream_to_array $s } )
 }
 
 *FP::List::List::stream_show= *stream_show;
@@ -915,13 +915,13 @@ sub stream_mixed_state_fold_right {
 
 # ----- Tests ----------------------------------------------------------
 
-TEST{ stream_any sub { $_[0] % 2 }, array2stream [2,4,8] }
+TEST{ stream_any sub { $_[0] % 2 }, array_to_stream [2,4,8] }
   0;
-TEST{ stream_any sub { $_[0] % 2 }, array2stream [] }
+TEST{ stream_any sub { $_[0] % 2 }, array_to_stream [] }
   0;
-TEST{ stream_any sub { $_[0] % 2 }, array2stream [2,5,8]}
+TEST{ stream_any sub { $_[0] % 2 }, array_to_stream [2,5,8]}
   1;
-TEST{ stream_any sub { $_[0] % 2 }, array2stream [7] }
+TEST{ stream_any sub { $_[0] % 2 }, array_to_stream [7] }
   1;
 
 
@@ -929,7 +929,7 @@ TEST {
     my @v;
     stream_for_each sub { push @v, @_ },
       stream_map sub {my $v=shift; $v*$v},
-	array2stream [10,11,13];
+	array_to_stream [10,11,13];
     \@v
 }
   [ 100, 121, 169 ];
@@ -938,14 +938,14 @@ TEST {
     my @v;
     stream_for_each sub { push @v, @_ },
       stream_map_with_tail( sub {my $v=shift; $v*$v},
-			    array2stream ([10,11,13]),
-			    array2stream ([1,2]));
+			    array_to_stream ([10,11,13]),
+			    array_to_stream ([1,2]));
     \@v
 }
   [ 100, 121, 169, 1, 2 ];
 
 TEST {
-    stream2array
+    stream_to_array
       stream_filter sub { $_[0] % 2 },
 	stream_iota 0, 5;
 }
@@ -954,13 +954,13 @@ TEST {
 # write_sexpr( stream_take( stream_iota (0, 1000000000), 2))
 # ->  ("0" "1")
 
-TEST{ stream2array stream_zip cons (2, null), cons (1, null) }
+TEST{ stream_to_array stream_zip cons (2, null), cons (1, null) }
   [[2,1]];
-TEST{ stream2array stream_zip cons (2, null), null }
+TEST{ stream_to_array stream_zip cons (2, null), null }
   [];
 
 
-TEST{ list2array F stream_zip2 stream_map (sub{$_[0]+10}, stream_iota (0, 5)),
+TEST{ list_to_array F stream_zip2 stream_map (sub{$_[0]+10}, stream_iota (0, 5)),
 	stream_iota (0, 3) }
   [
    [
@@ -977,103 +977,103 @@ TEST{ list2array F stream_zip2 stream_map (sub{$_[0]+10}, stream_iota (0, 5)),
    ]
   ];
 
-TEST{ stream2array stream_take_while sub { my ($x)=@_; $x < 2 }, stream_iota }
+TEST{ stream_to_array stream_take_while sub { my ($x)=@_; $x < 2 }, stream_iota }
   [
    0,
    1
   ];
 
-TEST{stream2array  stream_take stream_drop_while( sub{ $_[0] < 10}, stream_iota ()), 3}
+TEST{stream_to_array  stream_take stream_drop_while( sub{ $_[0] < 10}, stream_iota ()), 3}
   [
    10,
    11,
    12
   ];
 
-TEST{stream2array
+TEST{stream_to_array
        stream_drop_while( sub{ $_[0] < 10}, stream_iota (0, 5))}
   [];
 
 
-TEST { join("", @{stream2array (string2stream("You're great."))}) }
+TEST { join("", @{stream_to_array (string_to_stream("You're great."))}) }
   'You\'re great.';
 
-TEST { stream2string
+TEST { stream_to_string
 	 stream__subarray_fold_right
 	   (\&cons,
-	    string2stream("World"),
+	    string_to_stream("World"),
 	    [split //, "Hello"],
 	    3,
 	    undef) }
   'loWorld';
 
-TEST { stream2string stream__subarray_fold_right \&cons, string2stream("World"), [split //, "Hello"], 3, 4 }
+TEST { stream_to_string stream__subarray_fold_right \&cons, string_to_stream("World"), [split //, "Hello"], 3, 4 }
   'lWorld';
 
-TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",null), [split //, "Hello"], 1, undef }
+TEST { stream_to_string stream__subarray_fold_right_reverse  \&cons, cons("W",null), [split //, "Hello"], 1, undef }
   'eHW';
 
-TEST { stream2string stream__subarray_fold_right_reverse  \&cons, cons("W",null), [split //, "Hello"], 2,0 }
+TEST { stream_to_string stream__subarray_fold_right_reverse  \&cons, cons("W",null), [split //, "Hello"], 2,0 }
   'leW'; # hmm really? exclusive lower boundary?
 
-TEST { stream2string subarray2stream [split //, "Hello"], 1, 3 }
+TEST { stream_to_string subarray_to_stream [split //, "Hello"], 1, 3 }
   'el';
 
-TEST { stream2string subarray2stream [split //, "Hello"], 1, 99 }
+TEST { stream_to_string subarray_to_stream [split //, "Hello"], 1, 99 }
   'ello';
 
-TEST { stream2string subarray2stream [split //, "Hello"], 2 }
+TEST { stream_to_string subarray_to_stream [split //, "Hello"], 2 }
   'llo';
 
-TEST { stream2string subarray2stream_reverse  [split //, "Hello"], 1 }
+TEST { stream_to_string subarray_to_stream_reverse  [split //, "Hello"], 1 }
   'eH';
 
-TEST { stream2string subarray2stream_reverse  [split //, "Hello"], 1, 0 }
+TEST { stream_to_string subarray_to_stream_reverse  [split //, "Hello"], 1, 0 }
   'e'; # dito. BTW it's consistent at least, $start not being 'after the element'(?) either.
 
-TEST { my $s= stream_iota; stream2array stream_slice $s, $s }
+TEST { my $s= stream_iota; stream_to_array stream_slice $s, $s }
   # XX: warns about "Reference is already weak"
   [];
-TEST { my $s= stream_iota; stream2array stream_slice $s, cdr $s }
+TEST { my $s= stream_iota; stream_to_array stream_slice $s, cdr $s }
   [ 0 ];
-TEST { my $s= stream_iota; stream2array stream_slice cdr $s, cdddr $s }
+TEST { my $s= stream_iota; stream_to_array stream_slice cdr $s, cdddr $s }
   [ 1, 2 ];
 
 
 # OO interface:
 
-TEST { string2stream ("Hello")->string }
+TEST { string_to_stream ("Hello")->string }
   "Hello";
 
-TEST { my $s= string2stream "Hello";
+TEST { my $s= string_to_stream "Hello";
        my $ss= $s->force;
        $ss->string }
   "Hello";
 
-TEST { array2stream([1,2,3])->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
+TEST { array_to_stream([1,2,3])->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
   9;
 
 
 # variable life times:
 
-TEST { my $s= string2stream "Hello";
+TEST { my $s= string_to_stream "Hello";
        my $ss= $s->force;
-       # dispatching to list2string
+       # dispatching to list_to_string
        $ss->string;
        is_pair $ss }
   1;
 
-TEST { my $s= string2stream "Hello";
-       stream2string $s;
+TEST { my $s= string_to_stream "Hello";
+       stream_to_string $s;
        defined $s }
   '';
 
-TEST { my $s= string2stream "Hello";
+TEST { my $s= string_to_stream "Hello";
        $s->stream_string;
        defined $s }
   '';
 
-TEST { my $s= string2stream "Hello";
+TEST { my $s= string_to_stream "Hello";
        # still dispatching to stream_string thanks to hack in
        # Lazy.pm
        $s->string;

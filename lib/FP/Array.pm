@@ -62,7 +62,7 @@ package FP::Array;
 	      array_sum
 	      array_first
 	      array_rest
-	      array2hash_group_by
+	      array_to_hash_group_by
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -292,7 +292,7 @@ sub array_fold_right ($$$) {
 }
 
 TEST{ require FP::List;
-      FP::List::list2array (array_fold_right (\&FP::List::cons,
+      FP::List::list_to_array (array_fold_right (\&FP::List::cons,
 					      &FP::List::null,
 					      [1,2,3])) }
   [1,2,3];
@@ -368,7 +368,7 @@ sub array_rest ($) {
     [ @$a[1..$#$a] ]
 }
 
-sub array2hash_group_by ($$) {
+sub array_to_hash_group_by ($$) {
     my ($ary,$on)=@_;
     my %res;
     for (@$ary) {

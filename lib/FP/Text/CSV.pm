@@ -9,7 +9,7 @@ FP::Text::CSV - functional interface to Text::CSV
 
 =head1 SYNOPSIS
 
- use FP::Text::CSV qw(csv_line_xparser fh2csvstream xopen_csv_stream);
+ use FP::Text::CSV qw(csv_line_xparser fh_to_csvstream xopen_csv_stream);
  use Method::Signatures; # func
 
  my $csvparams= +{sep_char=> ";", eol=> "\n"};
@@ -20,7 +20,7 @@ FP::Text::CSV - functional interface to Text::CSV
  my $p= csv_line_xparser $csvparams;
  my @vals= &$p("1;2;3;4\n");
 
- my $stream= fh2csvstream($somefilehandle, $csvparams);
+ my $stream= fh_to_csvstream($somefilehandle, $csvparams);
  # or
  my $stream= xopen_csv_stream($somepath, $csvparams);
 
@@ -37,9 +37,9 @@ FP::Text::CSV - functional interface to Text::CSV
      stream_map func ($i) {
 	 [ $i, $i*$i ]
      }, stream_iota;
- csvstream2fh ($rows, $somefilehandle);
+ csvstream_to_fh ($rows, $somefilehandle);
  # or
- csvstream2file ($rows, "path");
+ csvstream_to_file ($rows, "path");
 
 
 =head1 DESCRIPTION
@@ -56,10 +56,10 @@ package FP::Text::CSV;
 @EXPORT_OK=qw(
 		 new_csv_instance
 		 csv_line_xparser
-		 fh2csvstream
+		 fh_to_csvstream
 		 xopen_csv_stream
-		 csvstream2fh
-		 csvstream2file
+		 csvstream_to_fh
+		 csvstream_to_file
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -102,7 +102,7 @@ sub csv_line_xparser (;$) {
 }
 
 
-sub fh2csvstream ($;$) {
+sub fh_to_csvstream ($;$) {
     my ($in, $maybe_params)=@_;
     my $csv= new_csv_instance ($maybe_params);
     my $next; $next= sub {
@@ -124,7 +124,7 @@ sub xopen_csv_stream ($;$) {
     my ($path, $maybe_params)=@_;
     my $in= xopen_read $path;
     binmode($in, ":encoding(utf-8)") or die "binmode";
-    fh2csvstream $in, $maybe_params
+    fh_to_csvstream $in, $maybe_params
 }
 
 
@@ -132,7 +132,7 @@ sub xopen_csv_stream ($;$) {
 
 use FP::Stream "stream_for_each";
 
-sub csvstream2fh ($$;$) {
+sub csvstream_to_fh ($$;$) {
     my ($s, $fh, $maybe_params)=@_;
     weaken $_[0];
     my $csv= new_csv_instance ($maybe_params);
@@ -146,11 +146,11 @@ sub csvstream2fh ($$;$) {
 
 use Chj::xtmpfile;
 
-sub csvstream2file ($$;$) {
+sub csvstream_to_file ($$;$) {
     my ($s, $path, $maybe_params)=@_;
     weaken $_[0];
     my $out= xtmpfile $path;
-    csvstream2fh ($s, $out, $maybe_params);
+    csvstream_to_fh ($s, $out, $maybe_params);
     $out->xclose;
     $out->xputback (0666 & ~umask);
 }

@@ -38,7 +38,7 @@ Using 'tag functions' for shorter code:
     my 
 
 See [`test`](test) and [`testlazy`](testlazy) for complete examples,
-and [`examples/csv2xml`](../examples/csv2xml) for a simple real
+and [`examples/csv_to_xml`](../examples/csv_to_xml) for a simple real
 example, and [`htmlgen/gen`](../htmlgen/gen) for the program that
 generates this website. [`FP::DBI`](../lib/FP/DBI.pm) is supposed to
 fit well with PXML.

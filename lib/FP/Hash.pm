@@ -161,7 +161,7 @@ TEST {hash_diff {a=>1,b=>2,x=>9}, {a=>undef,b=>3,c=>5,x=>9}}
 use FP::HashSet;
 
 sub hashes_keys {
-    keys %{array2hashset( [map { keys %$_ } @_] )}
+    keys %{array_to_hashset( [map { keys %$_ } @_] )}
 }
 
 

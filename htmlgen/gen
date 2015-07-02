@@ -150,7 +150,7 @@ fun path_path0_append ($dir,$relpath0) {
     $p
 }
 
-fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
+fun if_suffix_md_to_html ($path0,$for_title,$then,$otherwise) {
     if (!$for_title and $$config{is_indexpath0}->($path0)) {
 	tail &$then (path_path0_append (dirname($path0), "index.xhtml"))
     } else {
@@ -164,48 +164,48 @@ fun if_suffix_md2html ($path0,$for_title,$then,$otherwise) {
     }
 }
 
-fun t_if_suffix_md2html ($in,$for_title=0) {
-    if_suffix_md2html ($in, $for_title,
+fun t_if_suffix_md_to_html ($in,$for_title=0) {
+    if_suffix_md_to_html ($in, $for_title,
 		       sub {["then",@_]},
 		       sub{["otherwise",@_]})
 }
-TEST{t_if_suffix_md2html "README.md"}['then','index.xhtml'];
-TEST{t_if_suffix_md2html "README.md",1}['then','readme.xhtml'];
+TEST{t_if_suffix_md_to_html "README.md"}['then','index.xhtml'];
+TEST{t_if_suffix_md_to_html "README.md",1}['then','readme.xhtml'];
 # ^ kinda stupid hack.
-TEST{t_if_suffix_md2html "Foo/index.md"}['then','Foo/index.xhtml'];
-TEST{t_if_suffix_md2html "Foo/README.md"}['then','Foo/index.xhtml'];
-TEST{t_if_suffix_md2html "Foo/READMe.md"}['then','Foo/index.xhtml'];
+TEST{t_if_suffix_md_to_html "Foo/index.md"}['then','Foo/index.xhtml'];
+TEST{t_if_suffix_md_to_html "Foo/README.md"}['then','Foo/index.xhtml'];
+TEST{t_if_suffix_md_to_html "Foo/READMe.md"}['then','Foo/index.xhtml'];
 # ^ XX really?
-TEST{t_if_suffix_md2html "Foo/MY.css"}['otherwise','Foo/MY.css'];
+TEST{t_if_suffix_md_to_html "Foo/MY.css"}['otherwise','Foo/MY.css'];
 
 
-fun possibly_suffix_md2html ($path,$for_title=0) {
-    if_suffix_md2html
+fun possibly_suffix_md_to_html ($path,$for_title=0) {
+    if_suffix_md_to_html
       ($path,
        $for_title,
        *identity,
        *identity)
 }
 
-fun xsuffix_md2html ($path0,$for_title) {
-    if_suffix_md2html($path0, $for_title,
+fun xsuffix_md_to_html ($path0,$for_title) {
+    if_suffix_md_to_html($path0, $for_title,
 		      *identity,
 		      sub{die "file does not end in .md: '$path0'"})
 }
 
-TEST{ possibly_suffix_md2html "foo" } "foo";
-TEST{ possibly_suffix_md2html "foo.md" } "foo.xhtml";
-TEST_EXCEPTION{ xsuffix_md2html "foo", 0 } "file does not end in .md: 'foo'";
+TEST{ possibly_suffix_md_to_html "foo" } "foo";
+TEST{ possibly_suffix_md_to_html "foo.md" } "foo.xhtml";
+TEST_EXCEPTION{ xsuffix_md_to_html "foo", 0 } "file does not end in .md: 'foo'";
 
 
-fun path02inpath ($path0) {
+fun path0_to_inpath ($path0) {
     "$inbase/".$path0
 }
 
-fun path02outpath ($path0) {
-    #"$outbase/".xsuffix_md2html($path0,0)
+fun path0_to_outpath ($path0) {
+    #"$outbase/".xsuffix_md_to_html($path0,0)
     # nope, also used for .pl file copying,
-    "$outbase/".possibly_suffix_md2html($path0,0)
+    "$outbase/".possibly_suffix_md_to_html($path0,0)
 }
 
 use HTML::TreeBuilder;
@@ -247,7 +247,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	if ($$atts{href} =~ m|^//|s) {
 	    my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
 	      or die "bug";
-	    if (defined (my $p0= $filesinfo->filename2path0($op))) {
+	    if (defined (my $p0= $filesinfo->filename_to_path0($op))) {
 		$path= url_diff ($selfpath0,$p0); # mutation
 	    } else {
 		warn "unknown link target '$op' (from '$$atts{href}')";
@@ -268,7 +268,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	    }
 	}
 	if (length $path) {
-	    $uri->path(possibly_suffix_md2html ($path));
+	    $uri->path(possibly_suffix_md_to_html ($path));
 	}
 	$$atts{href}= "$uri";# mutation.
     }
@@ -610,10 +610,10 @@ fun with_toc ($e, $uplist) {
 }
 
 
-fun pxml_map_elements ($v, $name2mapper) {
+fun pxml_map_elements ($v, $name_to_mapper) {
     pxml_eager_map ($v,
 		    fun ($e, $uplist) {
-			if (my ($mapper)= hash_perhaps_ref $name2mapper, $e->name) {
+			if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $e->name) {
 			    &$mapper ($e, $uplist)
 			} else {
 			    $e
@@ -623,13 +623,13 @@ fun pxml_map_elements ($v, $name2mapper) {
 }
 
 
-our $pxml_name2mapper=
+our $pxml_name_to_mapper=
   +{
     with_toc=> \&with_toc,
    };
 
 fun process_body ($v) {
-    pxml_map_elements ($v, $pxml_name2mapper)
+    pxml_map_elements ($v, $pxml_name_to_mapper)
 }
 
 TEST { HTML( process_body
@@ -687,13 +687,13 @@ fun puthtmlfile ($path,$p) {
 {
     package PFLANZE::Filesinfo;
     use FP::Struct [qw(files
-			filename2path0
+			filename_to_path0
 			all_path0_exists
 			path0_exists
 			all_path0_used
 		      )];
-    method filename2path0 ($filename) {
-	$$self{filename2path0}{$filename}
+    method filename_to_path0 ($filename) {
+	$$self{filename_to_path0}{$filename}
     }
     method all_path0_exists ($path0) {
 	defined $$self{all_path0_exists}{$path0}
@@ -726,7 +726,7 @@ fun get_filesinfo () {
 	/\.md$/
     } @$all_files];
 
-    my $filename2path0=
+    my $filename_to_path0=
       +{map {
 	  basename ($_)=> path0($_)
       } @$files};
@@ -753,14 +753,14 @@ fun get_filesinfo () {
     my $all_path0_used= {};
 
     PFLANZE::Filesinfo->new($files,
-			$filename2path0,
+			$filename_to_path0,
 			$all_path0_exists,
 			$path0_exists,
 			$all_path0_used)
 }
 
 
-our $path02sortkey= do {
+our $path0_to_sortkey= do {
     my $sortprio= do {
 	my $i=1;
 	+{
@@ -776,38 +776,38 @@ our $path02sortkey= do {
     }
 };
 
-fun _path02title_mod ($str) {
+fun _path0_to_title_mod ($str) {
     $str=~ s/_/ /sg;
     ucfirst $str
 }
 
-fun path02title ($path0) {
+fun path0_to_title ($path0) {
     my $dn= dirname($path0);
     if ($dn ne "." and $$config{is_indexpath0}->($path0)) {
-	_path02title_mod
-	  basename ( xsuffix_md2html($dn.".md",1), ".xhtml");
+	_path0_to_title_mod
+	  basename ( xsuffix_md_to_html($dn.".md",1), ".xhtml");
     } else {
-	_path02title_mod
-	  basename( xsuffix_md2html ($path0,1),".xhtml");
+	_path0_to_title_mod
+	  basename( xsuffix_md_to_html ($path0,1),".xhtml");
     }
 }
 
-TEST{path02title "README.md"} 'Readme';
-TEST{path02title "bugs/wishlist/listserv/index.md"} 'Listserv';
-TEST{path02title "bugs/wishlist/listserv/README.md"} 'Listserv';
-TEST{path02title "bugs/wishlist/listserv/other.md"} 'Other';
+TEST{path0_to_title "README.md"} 'Readme';
+TEST{path0_to_title "bugs/wishlist/listserv/index.md"} 'Listserv';
+TEST{path0_to_title "bugs/wishlist/listserv/README.md"} 'Listserv';
+TEST{path0_to_title "bugs/wishlist/listserv/other.md"} 'Other';
 use FP::Predicates 'false';
 TEST{
     local $config= +{is_indexpath0=> *false};
-    path02title "bugs/wishlist/listserv/README.md"
+    path0_to_title "bugs/wishlist/listserv/README.md"
 }
   'README'; # XXX why?, expected: 'Readme';
-TEST{path02title "bugs/wishlist/line_wrapping_in_pre-MIME_mails.md"}
+TEST{path0_to_title "bugs/wishlist/line_wrapping_in_pre-MIME_mails.md"}
   # even with lcfirst
   'Line wrapping in pre-MIME mails';
 
 
-fun path02bugtype ($path0) {
+fun path0_to_bugtype ($path0) {
     $path0=~ m|\bbugs/([^/]+)/| or die "no match, '$path0'";
     ucfirst $1
 }
@@ -918,7 +918,7 @@ fun groupkey ($path) {
 }
 
 fun get_genfilestate ($filesinfo) {
-    my $groupedfiles= array2hash_group_by $filesinfo->files, \&groupkey;
+    my $groupedfiles= array_to_hash_group_by $filesinfo->files, \&groupkey;
 
     my $nonbugfiles= [@{$$groupedfiles{normal}},
 		      @{$$groupedfiles{buglist}||[]}];
@@ -935,10 +935,10 @@ fun get_genfilestate ($filesinfo) {
 
 fun genfile ($path,$groupname,$genfilestate) {
     my $path0= path0 $path;
-    my $outpath= path02outpath($path0);
+    my $outpath= path0_to_outpath($path0);
     mkdir dirname( $outpath);
 
-    my $filetitle= path02title $path0;
+    my $filetitle= path0_to_title $path0;
 
     my $str= xgetfile_utf8 "$inbase/$path";
 
@@ -955,7 +955,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	# extract Cost indicators:
 	my $namere= qr/\w+/;
 	my $nameplusre= qr/\(?$namere\)?/;
-	my $possibly_nameplus2name= fun ($maybe_nameplus) {
+	my $possibly_nameplus_to_name= fun ($maybe_nameplus) {
 	    if (defined $maybe_nameplus) {
 		my ($name)= $maybe_nameplus=~ qr/($namere)/
 		  or die "bug";
@@ -978,8 +978,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 			\$\s*(\d+)
 		   }gx) {
 	    my ($nameplus,$basecosts,$val)=($1,$2,$3);# perl.
-	    my $name= &$possibly_nameplus2name($nameplus);
-	    my @basecosts= map { &$possibly_nameplus2name($_) }
+	    my $name= &$possibly_nameplus_to_name($nameplus);
+	    my @basecosts= map { &$possibly_nameplus_to_name($_) }
 	      split /\s*\+\s*/, $basecosts;
 	    push @$costs, new PFLANZE::Cost ($name,
 					 (not $nameplus
@@ -1009,7 +1009,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	my $body= $body->body;
 	my ($maybe_h1, $rest)= pxml_body_split_h1 ($body);
 	defined $maybe_h1 ? ($maybe_h1, $rest)
-	  : (H1(path02title ($path0)), $body);
+	  : (H1(path0_to_title ($path0)), $body);
     };
 
     my $maybe_buglist= $groupname eq "buglist" && do {
@@ -1019,7 +1019,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	     (
 	      fun ($path) {
 		  my $path0= path0 $path;
-		  my $title= path02title $path0;
+		  my $title= path0_to_title $path0;
 		  [$title,$path0,$genfilestate->costrange($path0)]
 	      },
 	      $genfilestate->groupedfiles->{bugs}),
@@ -1031,9 +1031,9 @@ fun genfile ($path,$groupname,$genfilestate) {
 	   THEAD (TH ("Type"), TH ("Title"),TH ("Cost range (USD)")),
 	   map {
 	       my ($title,$p0,$costrange)= @$_;
-	       my $relurl= File::Spec->abs2rel(xsuffix_md2html($p0,0),
+	       my $relurl= File::Spec->abs2rel(xsuffix_md_to_html($p0,0),
 					       basename ($path0));
-	       TR (TD (path02bugtype $p0),
+	       TR (TD (path0_to_bugtype $p0),
 		   TD (A({href=>$relurl},$title)),
 		   TD ({align=>"center"},$costrange))
 	   } @$bugs
@@ -1055,7 +1055,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 			      array_map_with_islast
 			      (
 			       fun ($is_last,$file0) {
-				   my $filetitle= path02title $file0;
+				   my $filetitle= path0_to_title $file0;
 				   LI({class=> ($is_last ? "menu_last"
 						: "menu")},
 				      ($file0 eq $path0 ?
@@ -1064,7 +1064,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 				       : A ({class=> "menu",
 					     href=>
 					     File::Spec->abs2rel
-					     (xsuffix_md2html($file0,0),
+					     (xsuffix_md_to_html($file0,0),
 					      dirname($path0))},
 					    $filetitle)),
 				      " ")
@@ -1072,7 +1072,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 			       array_sort
 			       (array_map (\&path0,
 					   $genfilestate->nonbugfiles),
-				on $path02sortkey, \&string_cmp))),
+				on $path0_to_sortkey, \&string_cmp))),
 			   $config->{belownav}->($path0),
 			   $h1,
 			   process_body ($body1),
@@ -1105,15 +1105,15 @@ fun existingpath_or (@paths) {
 
 use POSIX qw(EEXIST ENOENT);
 
-fun create_parent_dirs ($path0, $path02outpath) {
+fun create_parent_dirs ($path0, $path0_to_outpath) {
     my $path0= dirname $path0;
-    my $outpath= &$path02outpath ($path0);
+    my $outpath= &$path0_to_outpath ($path0);
     if (mkdir $outpath) {
 	# ok, return
     } elsif ($! == EEXIST) {
 	# ok, return
     } elsif ($! == ENOENT) {
-	create_parent_dirs ($path0, $path02outpath);
+	create_parent_dirs ($path0, $path0_to_outpath);
 	xmkdir $outpath;
     } else {
 	die "mkdir '$outpath': $!";
@@ -1124,16 +1124,16 @@ fun create_parent_dirs ($path0, $path02outpath) {
 fun copyfiles ($filesinfo) {
     for my $path0 (hashset_keys
 		   hashset_union($filesinfo->all_path0_used,
-				 array2hashset($config->{copy_paths}))) {
+				 array_to_hashset($config->{copy_paths}))) {
 	next if $filesinfo->path0_exists($path0); # md path
 	next if $filesinfo->path0_is_directory($path0);
-	create_parent_dirs ($path0, \&path02outpath);
-	xcopyfile (path02inpath($path0), path02outpath($path0));
+	create_parent_dirs ($path0, \&path0_to_outpath);
+	xcopyfile (path0_to_inpath($path0), path0_to_outpath($path0));
     }
     # copy CSS file
-    xcopyfile (existingpath_or (path02inpath($css_path),
-				path02inpath("htmlgen/$css_path")),
-	       path02outpath($css_path));
+    xcopyfile (existingpath_or (path0_to_inpath($css_path),
+				path0_to_inpath("htmlgen/$css_path")),
+	       path0_to_outpath($css_path));
 }
 
 fun main () {

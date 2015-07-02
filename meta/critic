@@ -88,7 +88,7 @@ fun critique ($path) {
 }
 
 
-our $critiques =  array2stream(modulepathlist)->map(*critique);
+our $critiques =  array_to_stream(modulepathlist)->map(*critique);
 
 if ($opt_repl) {
     repl;

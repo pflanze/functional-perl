@@ -10,7 +10,7 @@ FP::List - singly linked (purely functional) lists
 =head1 SYNOPSIS
 
  use FP::List ':all';
- list2string(cons("H",cons("e",cons("l",cons("l",cons("o",null))))))
+ list_to_string(cons("H",cons("e",cons("l",cons("l",cons("o",null))))))
  # "Hello"
 
  list (1,2,3)->map(sub{ $_[0]*$_[0]})->array
@@ -58,11 +58,11 @@ package FP::List;
 	   car cdr first rest unsafe_cons unsafe_car unsafe_cdr
 	   car_and_cdr first_and_rest
 	   list);
-@EXPORT_OK=qw(string2list list_length list_reverse list_reverse_with_tail
-	      list2string list2array rlist2array list2values write_sexpr
-	      array2list mixed_flatten
+@EXPORT_OK=qw(string_to_list list_length list_reverse list_reverse_with_tail
+	      list_to_string list_to_array rlist_to_array list_to_values write_sexpr
+	      array_to_list mixed_flatten
 	      list_map list_mapn
-	      list_fold list_fold_right list2perlstring
+	      list_fold list_fold_right list_to_perlstring
 	      drop_while rtake_while take_while
 	      list_append
 	      list_zip2
@@ -478,7 +478,7 @@ TEST { list ()->length } 0;
 TEST { list (4,5)->length } 2;
 
 
-sub list2string ($) {
+sub list_to_string ($) {
     my ($l)=@_;
     my $len= list_length $l;
     my $res= " "x$len;
@@ -492,13 +492,13 @@ sub list2string ($) {
     $res
 }
 
-*FP::List::List::string= *list2string;
+*FP::List::List::string= *list_to_string;
 
 TEST { null->string } "";
 TEST { cons("a",null)->string } "a";
 
 
-sub list2array ($) {
+sub list_to_array ($) {
     my ($l)=@_;
     my $res= [];
     my $i=0;
@@ -510,16 +510,16 @@ sub list2array ($) {
     $res
 }
 
-*FP::List::List::array= *list2array;
+*FP::List::List::array= *list_to_array;
 
-sub list2purearray {
+sub list_to_purearray {
     my ($l)=@_;
-    my $a= list2array $l;
+    my $a= list_to_array $l;
     require FP::PureArray;
-    FP::PureArray::unsafe_array2purearray ($a)
+    FP::PureArray::unsafe_array_to_purearray ($a)
 }
 
-*FP::List::List::purearray= *list2purearray;
+*FP::List::List::purearray= *list_to_purearray;
 
 TEST {
     list (1,3,4)->purearray->map (sub{$_[0]**2})
@@ -530,7 +530,7 @@ TEST {
 sub list_sort ($$) {
     @_==2 or die "wrong number of arguments";
     my ($l,$cmp)= @_;
-    list2purearray ($l)->sort ($cmp)
+    list_to_purearray ($l)->sort ($cmp)
 }
 
 *FP::List::List::sort= *list_sort;
@@ -553,7 +553,7 @@ TEST { list (5,3,8,4)->sort (\&FP::Ops::number_cmp)->stream->car }
   3;
 
 
-sub rlist2array ($) {
+sub rlist_to_array ($) {
     my ($l)=@_;
     my $res= [];
     my $len= list_length $l;
@@ -566,15 +566,15 @@ sub rlist2array ($) {
     $res
 }
 
-*FP::List::List::reverse_array= *rlist2array;
+*FP::List::List::reverse_array= *rlist_to_array;
 
 
-sub list2values ($) {
+sub list_to_values ($) {
     my ($l)=@_;
-    @{list2array ($l)}
+    @{list_to_array ($l)}
 }
 
-*FP::List::List::values= *list2values;
+*FP::List::List::values= *list_to_values;
 
 
 # (modified copy from FP::Stream, as always.. (todo))
@@ -598,7 +598,7 @@ TEST_STDOUT {
 } "1\n3\n";
 
 
-sub string2list ($;$) {
+sub string_to_list ($;$) {
     my ($str,$maybe_tail)=@_;
     my $tail= $maybe_tail // null;
     my $i= length($str)-1;
@@ -609,11 +609,11 @@ sub string2list ($;$) {
     $tail
 }
 
-TEST{ [list2values string2list "abc"] }
+TEST{ [list_to_values string_to_list "abc"] }
   ['a','b','c'];
-TEST{ list_length string2list "ao" }
+TEST{ list_length string_to_list "ao" }
   2;
-TEST{ list2string string2list "Hello" }
+TEST{ list_to_string string_to_list "Hello" }
   'Hello';
 
 
@@ -630,12 +630,12 @@ sub array_fold_right ($$$) {
 }
 
 
-sub array2list ($;$) {
+sub array_to_list ($;$) {
     my ($a,$maybe_tail)=@_;
     array_fold_right (\&cons, $maybe_tail // null, $a)
 }
 
-TEST{ list2string array2list [1,2,3] }
+TEST{ list_to_string array_to_list [1,2,3] }
   '123';
 
 
@@ -657,7 +657,7 @@ sub list_reverse ($) {
 *FP::List::List::reverse_with_tail= *list_reverse_with_tail;
 *FP::List::List::reverse= *list_reverse;
 
-TEST{ list2string list_reverse string2list "Hello" }
+TEST{ list_to_string list_reverse string_to_list "Hello" }
   'olleH';
 
 
@@ -666,7 +666,7 @@ sub list_strings_join ($$) {
     my ($l,$val)=@_;
     # now depend on FP::Array anyway. Lazily. XX hack~
     require FP::Array;
-    FP::Array::array_strings_join( list2array ($l), $val);
+    FP::Array::array_strings_join( list_to_array ($l), $val);
 }
 
 *FP::List::List::strings_join= *list_strings_join;
@@ -719,7 +719,7 @@ sub write_sexpr ($ ; ) {
 
 TEST_STDOUT{ write_sexpr cons("123",cons("4",null)) }
   '("123" "4")';
-TEST_STDOUT{ write_sexpr (string2list "Hello \"World\"")}
+TEST_STDOUT{ write_sexpr (string_to_list "Hello \"World\"")}
   '("H" "e" "l" "l" "o" " " "\"" "W" "o" "r" "l" "d" "\"")';
 TEST_STDOUT{ write_sexpr (cons 1, 2) }
   '("1" . "2")';
@@ -741,10 +741,10 @@ sub list_zip2 ($$) {
      : cons([car $l, car $m], list_zip2 (cdr $l, cdr $m)))
 }
 
-TEST { list2array list_zip2 list(qw(a b c)), list(2,3) }
+TEST { list_to_array list_zip2 list(qw(a b c)), list(2,3) }
   [[a=>2], [b=>3]];
 
-TEST { list2array list_zip2 list(qw(a b)), list(2,3,4) }
+TEST { list_to_array list_zip2 list(qw(a b)), list(2,3,4) }
   [[a=>2], [b=>3]];
 
 *FP::List::List::zip= *list_zip2; # XX make n-ary
@@ -756,7 +756,7 @@ sub list_map ($ $) {
     is_null $l ? $l : cons(&$fn(car $l), list_map ($fn,cdr $l))
 }
 
-TEST { list2array list_map sub{$_[0]*$_[0]}, list 1,2,-3 }
+TEST { list_to_array list_map sub{$_[0]*$_[0]}, list 1,2,-3 }
   [1,4,9];
 
 
@@ -769,13 +769,13 @@ sub list_mapn {
     cons(&$fn(map {car $_} @_), list_mapn ($fn, map {cdr $_} @_))
 }
 
-TEST{ list2array list_mapn (sub { [@_] },
-			    array2list( [1,2,3]),
-			    string2list ("")) }
+TEST{ list_to_array list_mapn (sub { [@_] },
+			    array_to_list( [1,2,3]),
+			    string_to_list ("")) }
   [];
-TEST{ list2array list_mapn (sub { [@_] },
-			    array2list( [1,2,3]),
-			    string2list ("ab")) }
+TEST{ list_to_array list_mapn (sub { [@_] },
+			    array_to_list( [1,2,3]),
+			    string_to_list ("ab")) }
   [[1,'a'],
    [2,'b']];
 
@@ -847,19 +847,19 @@ sub list_append ($ $) {
     list_fold_right (\&cons, $l2, $l1)
 }
 
-TEST{ list2array  list_append (array2list (["a","b"]),
-			       array2list([1,2])) }
+TEST{ list_to_array  list_append (array_to_list (["a","b"]),
+			       array_to_list([1,2])) }
   ['a','b',1,2];
 
 *FP::List::List::append= *list_append;
 
-TEST{ array2list (["a","b"]) ->append(array2list([1,2])) ->array }
+TEST{ array_to_list (["a","b"]) ->append(array_to_list([1,2])) ->array }
   ['a','b',1,2];
 
 
-sub list2perlstring ($) {
+sub list_to_perlstring ($) {
     my ($l)=@_;
-    list2string
+    list_to_string
       cons ("'",
 	    list_fold_right sub {
 		my ($c,$rest)= @_;
@@ -872,12 +872,12 @@ sub list2perlstring ($) {
 	    }, cons("'",null), $l)
 }
 
-TEST{ list2perlstring string2list  "Hello" }
+TEST{ list_to_perlstring string_to_list  "Hello" }
   "'Hello'";
-TEST{ list2perlstring string2list  "Hello's" }
+TEST{ list_to_perlstring string_to_list  "Hello's" }
   q{'Hello\'s'};
 
-*FP::List::List::perlstring= *list2perlstring;
+*FP::List::List::perlstring= *list_to_perlstring;
 
 
 sub drop_while ($ $) {
@@ -888,16 +888,16 @@ sub drop_while ($ $) {
     $l
 }
 
-TEST { list2string drop_while (sub{$_[0] ne 'X'},
-			       string2list "Hello World") }
+TEST { list_to_string drop_while (sub{$_[0] ne 'X'},
+			       string_to_list "Hello World") }
   "";
-TEST { list2string drop_while (sub{$_[0] ne 'o'},
-			       string2list "Hello World") }
+TEST { list_to_string drop_while (sub{$_[0] ne 'o'},
+			       string_to_list "Hello World") }
   "o World";
 
 *FP::List::List::drop_while= flip \&drop_while;
 
-TEST { string2list("Hello World")
+TEST { string_to_list("Hello World")
 	 ->drop_while(sub{$_[0] ne 'o'})
 	   ->string }
   "o World";
@@ -924,8 +924,8 @@ sub rtake_while ($ $) {
 
 *FP::List::List::rtake_while= flip \&rtake_while;
 
-TEST{ list2string list_reverse (rtake_while \&char_is_alphanumeric,
-				string2list "Hello World") }
+TEST{ list_to_string list_reverse (rtake_while \&char_is_alphanumeric,
+				string_to_list "Hello World") }
   'Hello';
 
 sub take_while_ ($ $) {
@@ -945,15 +945,15 @@ sub take_while ($ $) {
 
 *FP::List::List::take_while= flip \&take_while;
 
-TEST { list2string take_while (sub{$_[0] ne 'o'},
-			       string2list "Hello World") }
+TEST { list_to_string take_while (sub{$_[0] ne 'o'},
+			       string_to_list "Hello World") }
   "Hell";
-TEST { list2string take_while (sub{$_[0] eq 'H'},
-			       string2list "Hello World") }
+TEST { list_to_string take_while (sub{$_[0] eq 'H'},
+			       string_to_list "Hello World") }
   "H";
-TEST { list2string take_while (sub{1}, string2list "Hello World") }
+TEST { list_to_string take_while (sub{1}, string_to_list "Hello World") }
   "Hello World";
-TEST { list2string take_while (sub{0}, string2list "Hello World") }
+TEST { list_to_string take_while (sub{0}, string_to_list "Hello World") }
   "";
 
 
@@ -987,9 +987,9 @@ TEST { [ map { list_every sub{$_[0]>0}, $_ }
 
 use FP::Char 'char_is_alphanumeric';
 
-TEST { string2list("Hello") ->every(\&char_is_alphanumeric) }
+TEST { string_to_list("Hello") ->every(\&char_is_alphanumeric) }
   1;
-TEST { string2list("Hello ") ->every(\&char_is_alphanumeric) }
+TEST { string_to_list("Hello ") ->every(\&char_is_alphanumeric) }
   '';
 
 
@@ -1011,13 +1011,13 @@ sub list_any ($ $) {
 
 *FP::List::List::any= flip \&list_any;
 
-TEST{ list_any sub { $_[0] % 2 }, array2list [2,4,8] }
+TEST{ list_any sub { $_[0] % 2 }, array_to_list [2,4,8] }
   0;
-TEST{ list_any sub { $_[0] % 2 }, array2list [] }
+TEST{ list_any sub { $_[0] % 2 }, array_to_list [] }
   0;
-TEST{ list_any sub { $_[0] % 2 }, array2list [2,5,8]}
+TEST{ list_any sub { $_[0] % 2 }, array_to_list [2,5,8]}
   1;
-TEST{ list_any sub { $_[0] % 2 }, array2list [7] }
+TEST{ list_any sub { $_[0] % 2 }, array_to_list [7] }
   1;
 
 
@@ -1141,14 +1141,14 @@ sub mixed_flatten ($;$$) {
 
 *FP::List::List::mixed_flatten= flip \&mixed_flatten;
 
-TEST{ list2array mixed_flatten [1,2,3] }
+TEST{ list_to_array mixed_flatten [1,2,3] }
   [1,2,3];
-TEST{ list2array mixed_flatten [1,2,[3,4]] }
+TEST{ list_to_array mixed_flatten [1,2,[3,4]] }
   [1,2,3,4];
-TEST{ list2array mixed_flatten [1,cons(2, [ string2list "ab" ,4])] }
+TEST{ list_to_array mixed_flatten [1,cons(2, [ string_to_list "ab" ,4])] }
   [1,2,'a','b',4];
-TEST{ list2string mixed_flatten [string2list "abc",
-				 string2list "def",
+TEST{ list_to_string mixed_flatten [string_to_list "abc",
+				 string_to_list "def",
 				 "ghi"] }
   'abcdefghi';  # only works thanks to perl chars and strings being
                 # the same datatype
@@ -1212,7 +1212,7 @@ sub ldie {
     # perl-quoted strings, then everyting is appended
     my @strs= map {
 	if (is_charlist $_) {
-	    list2perlstring $_
+	    list_to_perlstring $_
 	} elsif (is_null $_) {
 	    "()"
 	} else {

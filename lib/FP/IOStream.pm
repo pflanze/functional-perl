@@ -32,11 +32,11 @@ careful.)
 package FP::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(fh2stream
+@EXPORT_OK=qw(fh_to_stream
 	      xopendir_stream
 	      xopendir_pathstream
 	      xfile_lines
-	      fh2chunks);
+	      fh_to_chunks);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -44,7 +44,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use FP::Lazy;
 use Chj::xopendir;
 use FP::List ':all';
-use FP::Stream 'stream_map', 'array2stream', 'Weakened';
+use FP::Stream 'stream_map', 'array_to_stream', 'Weakened';
 use FP::Array_sort;
 use FP::Ops 'the_method';
 
@@ -70,7 +70,7 @@ sub _xopendir_stream_sorted ($$) {
     my $d= xopendir $path;
     my $items= array_sort [$d->xnread], $cmp;
     $d->xclose;
-    array2stream $items
+    array_to_stream $items
 }
 
 sub xopendir_stream ($;$) {
@@ -92,7 +92,7 @@ sub xopendir_pathstream ($;$) {
 
 
 
-sub fh2stream ($$$) {
+sub fh_to_stream ($$$) {
     my ($fh, $read, $close)=@_;
     my $next; $next= sub {
 	my $next=$next;
@@ -121,7 +121,7 @@ sub make_open_stream {
     my ($open,$read,$maybe_close)=@_;
     my $close= $maybe_close // the_method ("xclose");
     sub ($) {
-	fh2stream(scalar &$open(@_),
+	fh_to_stream(scalar &$open(@_),
 		  $read,
 		  $close)
     }
@@ -139,9 +139,9 @@ sub xfile_lines ($);
 # bufiz (since only xsysreadcompletely would guarantee to fill size,
 # but would die on mid-chunk EOF)
 
-sub fh2chunks ($$) {
+sub fh_to_chunks ($$) {
     my ($fh,$bufsiz)= @_;
-    fh2stream ($fh,
+    fh_to_stream ($fh,
 	       sub {
 		   my $buf;
 		   my $n= $fh->xsysread($buf, $bufsiz);

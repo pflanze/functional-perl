@@ -12,7 +12,7 @@ Chj::xopen
  use Chj::xopen;
  {
      my $in= xopen_read "foo.txt";
-     my $out= glob2fh(*STDOUT,"utf-8");
+     my $out= glob_to_fh(*STDOUT,"utf-8");
      local $_;
      while (<$in>) { # default operation. (overload not possible :/)
 	 $out->xprint($_); # print, throwing an exception on error
@@ -74,7 +74,7 @@ require Exporter;
 @EXPORT= qw(xopen);
 @EXPORT_OK= qw(xopen_read xopen_write xopen_append xopen_update
 	       devnull devzero
-	       glob2fh
+	       glob_to_fh
 	      );
 %EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
 
@@ -83,7 +83,7 @@ use Carp;
 
 use Chj::IO::File;
 
-sub glob2fh ($;$) {
+sub glob_to_fh ($;$) {
     my ($glob, $maybe_layer_or_encoding)=@_;
     my $fh= bless (*{$glob}{IO}, "Chj::IO::File");
     $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);

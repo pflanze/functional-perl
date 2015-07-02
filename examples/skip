@@ -30,8 +30,8 @@ exit @_ ? 1 : 0;
 
 use Getopt::Long;
 use FP::Predicates 'is_natural0';
-use Chj::xopen 'glob2fh';
-use FP::IOStream 'fh2chunks';
+use Chj::xopen 'glob_to_fh';
+use FP::IOStream 'fh_to_chunks';
 use FP::Stream ":all";
 use FP::List ":all";
 use FP::Lazy ":all";
@@ -100,8 +100,8 @@ sub chunks_change_tail {
 
 sub test_with_size ($) {
     my ($size)=@_;
-    stream2array
-	chunks_change_tail(array2stream (["foo","bars","baz"]),
+    stream_to_array
+	chunks_change_tail(array_to_stream (["foo","bars","baz"]),
 			   $size,
 			   sub { my ($tail, $len)=@_; cons $len, $tail });
 }
@@ -183,8 +183,8 @@ if (defined $maybe_m) {
 our $mem_start= resource_rss if $opt_leaktest;
 our $mem_end;
 
-our $in= glob2fh *STDIN;
-our $out= glob2fh *STDOUT;
+our $in= glob_to_fh *STDIN;
+our $out= glob_to_fh *STDOUT;
 
 if ($n) {
     $in->seek($n) || do {
@@ -208,7 +208,7 @@ if ($n) {
 }
 
 if ($maybe_m) {
-    my $chunks= force fh2chunks $in, $BUFSIZ;
+    my $chunks= force fh_to_chunks $in, $BUFSIZ;
     if (is_null $chunks) {
 	die "$myname: no remainder left after skipping $n byte(s)\n"
 	    unless $opt_silent;
