@@ -1124,13 +1124,21 @@ fun create_parent_dirs ($path0, $path0_to_outpath) {
 fun copyfiles ($filesinfo) {
     for my $path0 (hashset_keys
 		   hashset_union($filesinfo->all_path0_used,
-				 array_to_hashset($config->{copy_paths}))) {
+				 array_to_hashset
+				 (hash_ref_or ($config, "copy_paths", [])))) {
 	next if $filesinfo->path0_exists($path0); # md path
 	next if $filesinfo->path0_is_directory($path0);
 	create_parent_dirs ($path0, \&path0_to_outpath);
 	xcopyfile (path0_to_inpath($path0), path0_to_outpath($path0));
     }
-    # copy CSS file
+    if (my ($separate)= hash_perhaps_ref($config, "copy_paths_separate")) {
+	for my $root (keys %$separate) {
+	    for my $path0 (@{$$separate{$root}}) {
+		xcopyfile "$root/$path0", path0_to_outpath $path0
+	    }
+	}
+    }
+    # copy htmlgen CSS file
     xcopyfile (existingpath_or (path0_to_inpath($css_path),
 				path0_to_inpath("htmlgen/$css_path")),
 	       path0_to_outpath($css_path));

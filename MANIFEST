@@ -1,7 +1,5 @@
 .gitignore
 COPYING
-FP-logo.png
-FP.css
 MANIFEST
 Makefile.PL
 README.md
@@ -159,6 +157,8 @@ t/trampoline-fix
 t/universal-isa
 test.pl
 testmem.pl
+website/FP-logo.png
+website/FP.css
 website/gen
 website/gen-config.pl
 website/gen-repl
