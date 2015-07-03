@@ -13,17 +13,16 @@ names may be a workable solution, though?). It is primarily meant to
 [`htmlgen`](../htmlgen/README.md) already has some code to parse by
 way of `HTML::TreeBuilder`).
 
-Its in-memory representation are
-[`PXML::Element`](../lib/PXML/Element.pm) (or subclassed)
+Its in-memory representation are `PXML::Element` (or subclassed)
 objects. Serialization is done using functions/procedures from
-[`PXML::Serialize`](../lib/PXML/Serialize.pm).
+`PXML::Serialize`.
 
 The body of elements can be a mix of standard Perl arrays,
-[`FP::PureArray`](../lib/FP/PureArray.pm)s, linked lists based on
-`FP::List`, and promises (`FP::Lazy`, `FP::Stream`), the latter of
-which allow for the generation of streaming output (which means the
-document is generated while it is being serialized, thus there's no
-memory needed to hold the whole document at once).
+`FP::PureArray`s, linked lists based on `FP::List`, and promises
+(`FP::Lazy`, `FP::Stream`), the latter of which allow for the
+generation of streaming output (which means the document is generated
+while it is being serialized, thus there's no memory needed to hold
+the whole document at once).
 
 Direct creation of XML elements:
 
@@ -40,18 +39,17 @@ Using 'tag functions' for shorter code:
 See [`test`](test) and [`testlazy`](testlazy) for complete examples,
 and [`examples/csv_to_xml`](../examples/csv_to_xml) for a simple real
 example, and [`htmlgen/gen`](../htmlgen/gen) for the program that
-generates this website. [`FP::DBI`](../lib/FP/DBI.pm) is supposed to
-fit well with PXML.
+generates this website. `FP::DBI` is supposed to fit well with PXML.
 
 ## Module list
 
-[`PXML`](../lib/PXML.pm),
-[`PXML::XHTML`](../lib/PXML/XHTML.pm),
-[`PXML::HTML5`](../lib/PXML/HTML5.pm),
-[`PXML::SVG`](../lib/PXML/SVG.pm),
-[`PXML::Tags`](../lib/PXML/Tags.pm),
-[`PXML::Serialize`](../lib/PXML/Serialize.pm),
-[`PXML::Util`](../lib/PXML/Util.pm)
+`PXML`,
+`PXML::XHTML`,
+`PXML::HTML5`,
+`PXML::SVG`,
+`PXML::Tags`,
+`PXML::Serialize`,
+`PXML::Util`
 
 ## Comparison with CGI.pm
 

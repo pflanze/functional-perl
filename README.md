@@ -70,7 +70,7 @@ mail if you prefer. I'm also on the `#london.pm` and
 
 ## Parts
 
-* [FP::Struct](lib/FP/Struct.pm): a class generator that creates
+* `FP::Struct`: a class generator that creates
   functional setters and accepts predicate functions for type checking
 
 * [lib/FP/](lib/FP/): library of pure functions and
@@ -81,15 +81,14 @@ mail if you prefer. I'm also on the `#london.pm` and
   system" for XML based markup languages by way of Perl
   functions.
 
-* some developer utilities: [Chj::repl](lib/Chj/repl.pm),
-  [Chj::ruse](lib/Chj/ruse.pm), [Chj::Backtrace](lib/Chj/Backtrace.pm)
+* some developer utilities: `Chj::repl`, `Chj::ruse`, `Chj::Backtrace`
 
 * [lib/Chj/IO/](lib/Chj/IO/), and its users/wrappers
-  [Chj::xopen](lib/Chj/xopen.pm),
-  [Chj::xopendir](lib/Chj/xopendir.pm),
-  [Chj::xoutpipe](lib/Chj/xoutpipe.pm),
-  [Chj::xpipe](lib/Chj/xpipe.pm),
-  [Chj::xtmpfile](lib/Chj/xtmpfile.pm):
+  `Chj::xopen`,
+  `Chj::xopendir`,
+  `Chj::xoutpipe`,
+  `Chj::xpipe`,
+  `Chj::xtmpfile`:
   operations on filehandles that throw exceptions on errors, plus
   many utilities.
   I wrote these around 15 years ago, as a means to offer IO with
