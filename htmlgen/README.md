@@ -24,6 +24,10 @@ The `htmlgen/` directory contains the universally usable program,
 whereas the `website/` directory contains the configuration to build
 the functional-perl website.
 
+Note that the first time you run it, it will test everything that is
+quoted and looks like a namespace on metacpan to see whether it's a
+module, which takes time and can fail with network or server errors;
+the results are cached, thus subsequent runs will be fast.
 
 ## Formatting
 
