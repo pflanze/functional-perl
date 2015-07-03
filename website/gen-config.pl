@@ -11,6 +11,7 @@ my $logocfg= require "./logo.pl";
 my $css_path0= "FP.css";
 
 +{
+  #copy_paths=> [], optional, for path0s from the main source root
   copy_paths_separate=>
   # source_root => path0s
   +{"."=> [
