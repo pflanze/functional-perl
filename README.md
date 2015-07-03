@@ -191,4 +191,6 @@ right now.
 * to use `bin/repl` or the repl in the intro and examples scripts
   interactively, `Term::ReadLine::Gnu`
 
+(Todo: should all of the above be listed in PREREQ_PM in Makefile.PL?)
+
 </with_toc>
