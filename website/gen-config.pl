@@ -5,15 +5,17 @@ our $mydir; # 'import' from main
 use PXML::XHTML ":all";
 use Clone 'clone';
 
+# htmlgen is run with CWD set to website/
 my $logocfg= require "./logo.pl";
-my $css_site_path= "FP.css";
+
+my $css_path0= "FP.css";
 
 +{
   copy_paths_separate=>
   # source_root => path0s
   +{"."=> [
 	   "FP-logo.png",
-	   $css_site_path,
+	   $css_path0,
 	  ]},
   path0_handlers=>
   +{
@@ -24,7 +26,7 @@ my $css_site_path= "FP.css";
   head=> fun ($path0) {
       # HTML to add to the <head> section
       LINK ({rel=> "stylesheet",
-	     href=> url_diff ($path0, $css_site_path),
+	     href=> url_diff ($path0, $css_path0),
 	     type=> "text/css"})
   },
   header=> fun ($path0) {
