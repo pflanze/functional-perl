@@ -22,7 +22,7 @@ Runs Data::Dumper's Dumper with $Data::Dumper::Terse set to 1.
 package Chj::TerseDumper;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(TerseDumper);
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(SortedTerseDumper);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -33,5 +33,11 @@ sub TerseDumper {
     local $Data::Dumper::Terse= 1;
     Dumper(@_)
 }
+
+sub SortedTerseDumper {
+    local $Data::Dumper::Sortkeys= 1;
+    TerseDumper (@_)
+}
+
 
 1
