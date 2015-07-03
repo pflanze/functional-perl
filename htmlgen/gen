@@ -82,6 +82,45 @@ use FP::StrictList;
 use FP::Combinators ":all";
 use FP::Predicates;
 
+# move to lib
+use File::Spec;
+use Chj::Path;
+use Chj::TEST ":all";
+
+fun url_add ($base,$rel) {
+    Chj::Path->new_from_string($base)->add
+	(Chj::Path->new_from_string($rel), 1)
+	  ->string
+}
+
+TEST{url_add "/foo", "/zoo" } "/zoo";
+TEST{url_add "/foo", "../zoo" } "/zoo";
+TEST{url_add "/foo", "zoo/loo" } "/foo/zoo/loo";
+TEST{url_add "/foo", "zoo//loo/." } "/foo/zoo/loo/";
+TEST{url_add ".", "zoo/loo" } "zoo/loo"; # definitely
+TEST_EXCEPTION {url_add ".", "../zoo/loo" }
+  # "../zoo/loo"; # yes that's something I want, ok?
+  "can't take '..' of root directory"; # well, ok?
+
+
+fun url_diff ($path0from,$path0to) {
+    my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
+    File::Spec->abs2rel($path0to, $from);
+}
+
+TEST{url_diff "foo/", "bar.css"} '../bar.css';
+TEST{url_diff "foo/bar.html", "bar.css"} '../bar.css';
+TEST{url_diff "foo", "bar.css"} 'bar.css';
+#TEST{url_diff ".", "bar.css"} 'bar.css';
+
+#/lib
+
+use Chj::CPAN::ModulePODUrl 'perhaps_module_pod_url';
+our $podurl_cache= ".ModulePODUrl-cache"; mkdir $podurl_cache;
+use FP::Memoizing 'memoizing_to_dir';
+*maybe_module_pod_url=
+  memoizing_to_dir $podurl_cache, \&perhaps_module_pod_url;
+
 
 our $default_config=
   +{
@@ -614,9 +653,44 @@ fun with_toc ($e, $uplist) {
 }
 
 
+our $maybe_have_path0; # returns argument if we have it, undef otherwise
+our $current_path0; # XX yes, messy, really add as lexical argument
+                    # everywhere?
+
+# add links to '`Foo::Bar`'
+fun map_code ($e, $uplist) {
+    my $t= $e->text;
+    if (is_class_name ($t)) {
+	my $module_subpath= $t;
+	$module_subpath=~ s/::/\//sg;
+	$module_subpath.=".pm";
+
+	my $maybe_path=
+	  (&$maybe_have_path0("lib/$module_subpath")
+	   //
+	   &$maybe_have_path0("meta/$module_subpath"));
+
+	my $wrap_with_link= sub {
+	    my ($url)=@_;
+	    A {href=> $url}, $e
+	};
+	if (defined $maybe_path) {
+	    &$wrap_with_link (url_diff $current_path0, $maybe_path)
+	} elsif (my $url= maybe_module_pod_url ($t)) {
+	    &$wrap_with_link ($url)
+	} else {
+	    $e
+	}
+    } else {
+	$e
+    }
+}
+
+
 our $pxml_name_to_mapper=
   +{
     with_toc=> \&with_toc,
+    code=> \&map_code,
    };
 
 fun process_body ($v) {
@@ -814,40 +888,6 @@ fun path0_to_bugtype ($path0) {
     ucfirst $1
 }
 
-# move to lib
-use File::Spec;
-use Chj::Path;
-use Chj::TEST ":all";
-
-fun url_add ($base,$rel) {
-    Chj::Path->new_from_string($base)->add
-	(Chj::Path->new_from_string($rel), 1)
-	  ->string
-}
-
-TEST{url_add "/foo", "/zoo" } "/zoo";
-TEST{url_add "/foo", "../zoo" } "/zoo";
-TEST{url_add "/foo", "zoo/loo" } "/foo/zoo/loo";
-TEST{url_add "/foo", "zoo//loo/." } "/foo/zoo/loo/";
-TEST{url_add ".", "zoo/loo" } "zoo/loo"; # definitely
-TEST_EXCEPTION {url_add ".", "../zoo/loo" }
-  # "../zoo/loo"; # yes that's something I want, ok?
-  "can't take '..' of root directory"; # well, ok?
-
-
-fun url_diff ($path0from,$path0to) {
-    my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
-    File::Spec->abs2rel($path0to, $from);
-}
-
-TEST{url_diff "foo/", "bar.css"} '../bar.css';
-TEST{url_diff "foo/bar.html", "bar.css"} '../bar.css';
-TEST{url_diff "foo", "bar.css"} 'bar.css';
-#TEST{url_diff ".", "bar.css"} 'bar.css';
-
-#/lib
-
-
 {
     package PFLANZE::Cost;
     use FP::Array ":all";
@@ -1042,48 +1082,62 @@ fun genfile ($path,$groupname,$genfilestate) {
 	  )
     };
 
-    puthtmlfile($outpath,
-		HTML (
-		      HEAD (
-			    TITLE ($config->{title}->($filetitle)),
-			    LINK ({rel=> "stylesheet",
-				   href=> url_diff ($path0, $css_path),
-				   type=> "text/css"}),
-			    $config->{head}->($path0),
-			   ),
-		      BODY(
-			   $config->{header}->($path0),
-			   UL({class=> "menu"},
-			      array_map_with_islast
-			      (
-			       fun ($is_last,$file0) {
-				   my $filetitle= path0_to_title $file0;
-				   LI({class=> ($is_last ? "menu_last"
-						: "menu")},
-				      ($file0 eq $path0 ?
-				       SPAN({class=> "menu_selected"},
-					    $filetitle)
-				       : A ({class=> "menu",
-					     href=>
-					     File::Spec->abs2rel
-					     (xsuffix_md_to_html($file0,0),
-					      dirname($path0))},
-					    $filetitle)),
-				      " ")
-			       },
-			       array_sort
-			       (array_map (\&path0,
-					   $genfilestate->nonbugfiles),
-				on $path0_to_sortkey, \&string_cmp))),
-			   $config->{belownav}->($path0),
-			   $h1,
-			   process_body ($body1),
-			   $maybe_buglist,
-			   BR,
-			   HR,
-			   ($maybe_costrange ? P("\x{21d2} Cost range: \$",
-						 $maybe_costrange) : ()),
-			   DIV({class=>"footer_date"}, author_date($path)))));
+    # pass values to html mappers:  XX hacky?
+    local $current_path0= $path0;
+    my $filesinfo= $genfilestate->filesinfo;
+    local $maybe_have_path0= fun ($path0) {
+	if ($filesinfo->all_path0_exists ($path0)) {
+	    $filesinfo->all_path0_used_inc($path0);
+	    $path0
+	} else {
+	    undef
+	}
+    };
+
+    my $html=
+      HTML (
+	    HEAD (
+		  TITLE ($config->{title}->($filetitle)),
+		  LINK ({rel=> "stylesheet",
+			 href=> url_diff ($path0, $css_path),
+			 type=> "text/css"}),
+		  $config->{head}->($path0),
+		 ),
+	    BODY(
+		 $config->{header}->($path0),
+		 UL({class=> "menu"},
+		    array_map_with_islast
+		    (
+		     fun ($is_last,$file0) {
+			 my $filetitle= path0_to_title $file0;
+			 LI({class=> ($is_last ? "menu_last"
+				      : "menu")},
+			    ($file0 eq $path0 ?
+			     SPAN({class=> "menu_selected"},
+				  $filetitle)
+			     : A ({class=> "menu",
+				   href=>
+				   File::Spec->abs2rel
+				   (xsuffix_md_to_html($file0,0),
+				    dirname($path0))},
+				  $filetitle)),
+			    " ")
+		     },
+		     array_sort
+		     (array_map (\&path0,
+				 $genfilestate->nonbugfiles),
+		      on $path0_to_sortkey, \&string_cmp))),
+		 $config->{belownav}->($path0),
+		 $h1,
+		 process_body ($body1),
+		 $maybe_buglist,
+		 BR,
+		 HR,
+		 ($maybe_costrange ? P("\x{21d2} Cost range: \$",
+				       $maybe_costrange) : ()),
+		 DIV({class=>"footer_date"}, author_date($path))));
+
+    puthtmlfile($outpath, $html);
 }
 
 
