@@ -229,7 +229,7 @@ fun url_is_internal ($str) {
 # convert it to PXML.
 fun htmlmap ($e,$selfpath0,$filesinfo) {
     my $name= lc($e->tag);
-    my $atts=();
+    my $atts={};
     for ($e->all_external_attr_names) {
 	next if $_ eq "/";
 	die "att name '$_'" unless /^\w+\z/s;
