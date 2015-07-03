@@ -18,6 +18,9 @@ use lib "$mydir/../lib";
 
 sub usage {
     print "$myname [ calculation(s) ]
+
+  Repl-Enhanced PerL
+
   Evaluates the given string(s), or goes into interactive mode if
   none given.
 

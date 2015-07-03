@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-Chj::repl
+Chj::repl - read-eval-print loop
 
 =head1 SYNOPSIS
 
