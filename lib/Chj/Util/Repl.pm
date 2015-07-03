@@ -33,8 +33,9 @@ the comma like ',?', from now on whenever the text days ':' you can
 also use the comma) to get a help text including the currently active
 settings.
 
-By default, the variable $res is set to either an array holding all
-the result values (in :l mode) or the result value (in :1 mode).
+If the 'KeepResultIn' field is set to a string, the scalar with the
+given mae is set to either an array holding all the result values (in
+:l mode) or the result value (in :1 mode).
 
 By default, in :d mode, $VAR1 etc. (as shown by the Data::Dumper, but
 directly, i.e. preserving references and code refs) are set as
@@ -149,7 +150,6 @@ sub new {
     $$self[MaxHistLen]= 100;
     $$self[DoCatchINT]=1;
     $$self[DoRepeatWhenEmpty]=1;
-    $$self[KeepResultIn]="res";
     $$self[DoKeepResultsInVARX]= 1;
     $$self[Pager]= $ENV{PAGER} || "less";
     $$self[Mode_context]= 'l';
