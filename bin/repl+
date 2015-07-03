@@ -37,5 +37,5 @@ $repl \
  -M FP::Ops=:all \
  -M Chj::TEST=:all \
  -M Text::CSV_XS \
- -M FP::DBI
- 
+ -M FP::DBI \
+ "$@"
