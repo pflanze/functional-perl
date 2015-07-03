@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# load repl with most of the more interesting functional-perl packages
+# loaded
+
+repl=`which repl`
+if [ -z "$repl" ]; then repl=bin/repl; fi
+
+$repl \
+ -M Chj::ruse \
+ -M FP::Lazy \
+ -M FP::List=:all \
+ -M FP::Div=:all \
+ -M Chj::Backtrace \
+ -M Chj::pp \
+ -M FP::Stream=:all \
+ -M FP::Predicates=:all \
+ -M Chj::TerseDumper \
+ -M Method::Signatures \
+ -M Function::Parameters=:strict \
+ -M Sub::Call::Tail \
+ -M FP::IOStream=:all \
+ -M FP::Array_sort \
+ -M FP::Ops=:all \
+ -M FP::Div=:all \
+ -M FP::Struct \
+ -M Chj::xopen=:all \
+ -M Chj::Path \
+ -M Chj::xperlfunc=:all \
+ -M PXML::Util=:all \
+ -M PXML::XHTML=:all \
+ -M PXML::Serialize \
+ -M FP::OrderedCollection \
+ -M FP::PureArray \
+ -M FP::Array=:all \
+ -M FP::Combinators=:all \
+ -M FP::Ops=:all \
+ -M Chj::TEST=:all \
+ -M Text::CSV_XS \
+ -M FP::DBI
+ 
