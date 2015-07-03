@@ -28,9 +28,9 @@ sub usage {
   - enter alone re-evaluates last entry. No need to push cursor up for that:)
   - you can use \$variables (there's no strict vars in scope), or define
     subroutines, whatever...:)
-  - the last result is stored in \$res; so you can enter '\$res+1' for example
-  - if you enter the pipe symbol | as the first char, text is read until
-    eof (ctl-d) is reached, thus multi-line entries are possible.
+  - you can refer to '\$VAR1' etc. to get the correspondin result from the
+    previous entry (as long as you're using the default ':d' display mode)
+  - enter ':?' to get a list of special commands and mode switches
 
   Options:
   -H|--no-history  Do not save history to file.
