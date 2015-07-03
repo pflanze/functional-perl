@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-PXML::Util
+PXML::Util - utility functions for PXML trees
 
 =head1 SYNOPSIS
 
@@ -18,7 +18,9 @@ PXML::Util
 package PXML::Util;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(pxml_deferred_map pxml_eager_map);
+@EXPORT_OK=qw(pxml_deferred_map pxml_eager_map
+	      pxml_map_elements
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -26,6 +28,8 @@ use strict; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use FP::List;
 use FP::Stream ":all";
+use FP::Hash "hash_perhaps_ref";
+
 
 # Mapping PXML data (works not just on elements).
 
@@ -152,6 +156,22 @@ TEST { pxml_deferred_map
 	      uplist_show ($uplist) . ($v//"-") . "."
 	  })->string }
   '<p>[][p]foo.<b>[p][b|p]bar.5678</b></p>';
+
+
+
+sub pxml_map_elements ($$) {
+    my ($v, $name_to_mapper)= @_;
+    pxml_eager_map ($v,
+		    sub {
+			my ($e, $uplist)=@_;
+			if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $e->name) {
+			    &$mapper ($e, $uplist)
+			} else {
+			    $e
+			}
+		    },
+		    undef);
+}
 
 
 

@@ -614,19 +614,6 @@ fun with_toc ($e, $uplist) {
 }
 
 
-fun pxml_map_elements ($v, $name_to_mapper) {
-    pxml_eager_map ($v,
-		    fun ($e, $uplist) {
-			if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $e->name) {
-			    &$mapper ($e, $uplist)
-			} else {
-			    $e
-			}
-		    },
-		    undef);
-}
-
-
 our $pxml_name_to_mapper=
   +{
     with_toc=> \&with_toc,
