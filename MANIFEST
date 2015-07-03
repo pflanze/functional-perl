@@ -92,6 +92,7 @@ lib/FP/HashSet.pm
 lib/FP/IOStream.pm
 lib/FP/Lazy.pm
 lib/FP/List.pm
+lib/FP/Memoizing.pm
 lib/FP/Ops.pm
 lib/FP/OrderedCollection.pm
 lib/FP/Predicates.pm
