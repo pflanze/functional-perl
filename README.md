@@ -185,7 +185,8 @@ right now.
 * to run all the tests (otherwise some are skipped):
   `BSD::Resource`, `Method::Signatures`, `Function::Parameters`,
   `Sub::Call::Tail`, `Text::CSV`, `URI`. Some of these are also
-  necessary to run htmlgen / build the website.
+  necessary to run `htmlgen/gen` (or `website/gen` to build the
+  website).
 
 * to use `bin/repl` or the repl in the intro and examples scripts
   interactively, `Term::ReadLine::Gnu`
