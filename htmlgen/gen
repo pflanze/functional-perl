@@ -223,9 +223,10 @@ fun htmlparse_raw ($htmlstr,$whichtag) {
 }
 
 use URI;
-fun url_is_internal ($str) {
-    my $u= URI->new($str);
-    not defined $u->scheme
+
+# avoid monkey-patching by prefixing instead
+method URI_is_internal () {
+    not defined $self->scheme
 }
 
 
@@ -239,12 +240,13 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	die "att name '$_'" unless /^\w+\z/s;
 	$$atts{lc $_}= $e->attr($_);
     }
+
+    my $uri= URI->new($$atts{href}) if $name eq "a";
+
     # fix internal .md links
-    if ($name eq "a"
-	and url_is_internal($$atts{href})) {
+    if ($name eq "a" and URI_is_internal($uri)) {
 
 	# check or find target, then convert to xhtml suffix
-	my $uri= URI->new($$atts{href}); #(h again,see url_is_internal..)
 	my $path= $uri->path;
 
 	# '//' feature (see doc-formatting.txt)
