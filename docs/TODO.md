@@ -40,7 +40,13 @@ properly formatted versions of these documents.)
 - messages like "expecting 2 arguments" are unclear and inconsistently
   used for functions reused as methods. How should it be? `flip`
   should work, for example, so do we have to live with methods
-  including $self in their argument count?
+  including $self in their argument count? (For this reason, much of
+  the code is now simply throwing the message "wrong number of
+  arguments" without any indication of the expected
+  count. Function::Parameters issues "Too many arguments" and "Not
+  enough arguments", Method::Signatures says "missing required
+  argument $a" or "was given too many arguments", both of which are
+  good.)
 
 - which of the car, cdr etc. accessors should weaken their argument in
   the case of streams?
