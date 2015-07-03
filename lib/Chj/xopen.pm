@@ -75,6 +75,7 @@ require Exporter;
 @EXPORT_OK= qw(xopen_read xopen_write xopen_append xopen_update
 	       devnull devzero
 	       glob_to_fh
+	       perhaps_open_read perhaps_xopen_read
 	      );
 %EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
 
@@ -108,6 +109,23 @@ sub xopen_read($) {
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
 }
+
+# XX ok to simply use the 3-argument open and never allow 2-open
+# strings at all? See how I seem to have gotten it wrong anyway, above!
+sub perhaps_xopen_read ($) {
+    @_==1 or die "wrong number of arguments";
+    unshift @_,"<";
+    unshift @_,'Chj::IO::File';
+    goto &Chj::IO::File::perhaps_xopen;
+}
+
+sub perhaps_open_read ($) {
+    @_==1 or die "wrong number of arguments";
+    unshift @_,"<";
+    unshift @_,'Chj::IO::File';
+    goto &Chj::IO::File::perhaps_open;
+}
+
 
 sub xopen_write($) {
     if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
