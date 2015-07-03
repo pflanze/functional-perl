@@ -362,10 +362,8 @@ fun rindices_numberstring ($rindices) {
       $rindices->reverse->map(fun($i){"$i."})->strings_join ("")." ";
 }
 
-TEST {
-    rindices_numberstring (list (2,1))
-}
-  "1.2. ";
+TEST { rindices_numberstring (list ()) }     "";
+TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
 
 
 {
