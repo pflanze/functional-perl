@@ -166,14 +166,17 @@ in person.
 
 ## Installation
 
-For simplicity during development, instead of providing installer
-files, the bundled scripts modify the library load path to find the
-files locally. All modules are in the `lib/` directory, `use lib
-$path_to_lib` is all that's needed. (Just tell if you would like
-installer support. But probably, for CPAN release the project would
-generate multiple packages. Are you fine with installing each part
-separately even from the unified Git checkout or would you want one
-single "make install"? What's the best way to achieve this?)
+The bundled scripts modify the library load path to find the files
+locally, thus no installation is necessary. All modules are in the
+`lib/` directory, `use lib "path/to/functional-perl/lib";` is all
+that's needed.
+
+The normal `perl Makefile.PL; make test && make install` should work
+as well, but it hasn't been tested well and the repository is probably
+going to be split into or will produce several separate CPAN packages
+in the future, thus don't rely on installation working the way it is
+right now.
+
 
 ## Dependencies
 
