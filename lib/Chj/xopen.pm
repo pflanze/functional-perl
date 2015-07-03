@@ -99,7 +99,7 @@ sub xopen {
 sub xopen_read($) {
     if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
 	croak "xopen_read: mode $1 not allowed"
-	  unless $2;
+	  unless $2; # XXX isn't this wong? Too many parens above?
     } elsif (@_==1 and $_[0] eq '-') {
 	@_=("<-")
     } else {
