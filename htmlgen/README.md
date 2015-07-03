@@ -85,6 +85,9 @@ additions:
   logo generation into its own file, [`logo.pl`](../website/logo.pl),
   so that it can be reused by the mailing list archive generator.
 
+* the word "path0" in identifier names refers to a relative path from
+  the site root.
+
 * `$filesinfo` (passed around explicitely for no particular reason?),
   is a `PFLANZE::Filesinfo` object, mutated to add information
   (remember that I said it was not meant as a functional programming
