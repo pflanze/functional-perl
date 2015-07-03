@@ -48,8 +48,8 @@ properly formatted versions of these documents.)
   argument $a" or "was given too many arguments", both of which are
   good.)
 
-- which of the car, cdr etc. accessors should weaken their argument in
-  the case of streams?
+- should `rest` (`cdr`) weaken its argument in the case of streams? 
+  (`first` clearly shouldn't, right?)
 
 - disable stringification and numerification lexically using "no
   stringification"? But it currently doesn't work with bleadperl
