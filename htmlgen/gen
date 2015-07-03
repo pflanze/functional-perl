@@ -247,7 +247,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	if ($$atts{href} =~ m|^//|s) {
 	    my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
 	      or die "bug";
-	    if (defined (my $p0= $filesinfo->filename_to_maybe_path0($op))) {
+	    if (my ($p0)= $filesinfo->perhaps_filename_to_path0($op)) {
 		$path= url_diff ($selfpath0,$p0); # mutation
 	    } else {
 		warn "unknown link target '$op' (from '$$atts{href}')";
@@ -686,6 +686,7 @@ fun puthtmlfile ($path,$p) {
 
 {
     package PFLANZE::Filesinfo;
+    use FP::Hash "hash_perhaps_ref";
     use FP::Struct [qw(files
 			filename_to_path0
 			all_path0_exists
@@ -698,6 +699,12 @@ fun puthtmlfile ($path,$p) {
     }
     method filename_to_maybe_path0 ($filename) {
 	$$self{filename_to_path0}{$filename}
+    }
+    # still very unclear about the exact name styling. Prefer perhaps,
+    # and "then" also move the qualificator to the front? (but leave
+    # the one for hash_ where it is since hash_ is the type prefix?) :
+    method perhaps_filename_to_path0 ($filename) {
+	hash_perhaps_ref ($$self{filename_to_path0}, $filename)
     }
     method all_path0_exists ($path0) {
 	defined $$self{all_path0_exists}{$path0}
