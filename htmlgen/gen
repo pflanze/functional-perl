@@ -362,6 +362,12 @@ fun rindices_numberstring ($rindices) {
       $rindices->reverse->map(fun($i){"$i."})->strings_join ("")." ";
 }
 
+TEST {
+    rindices_numberstring (list (2,1))
+}
+  "1.2. ";
+
+
 {
     package PFLANZE::TocNodeBase;
     use FP::StrictList;
@@ -502,11 +508,6 @@ TEST {
     my $t_paths= list (list(1), list(2), list(1,1));
     $t_paths->map (fun ($path) { $ttoc->ref ($path)-> name }) ->array }
   [qw(a c b)];
-
-TEST {
-    rindices_numberstring (list (2,1))
-}
-  "1.2. ";
 
 TEST { $ttoc->html->string }
   '<div class="toc_box">'
