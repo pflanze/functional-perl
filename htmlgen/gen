@@ -241,10 +241,10 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	$$atts{lc $_}= $e->attr($_);
     }
 
-    my $uri= URI->new($$atts{href}) if $name eq "a";
+    my $uri= lazy { URI->new($$atts{href}) };
 
     # fix internal .md links
-    if ($name eq "a" and URI_is_internal($uri)) {
+    if ($name eq "a" and URI_is_internal(FORCE $uri)) {
 
 	# check or find target, then convert to xhtml suffix
 	my $path= $uri->path;
