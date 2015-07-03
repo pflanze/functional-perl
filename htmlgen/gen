@@ -119,6 +119,10 @@ fun mediawiki_expand ($str) {
     $str
 }
 
+TEST { mediawiki_expand "<foo>[[bar]] baz</foo>" }
+  '<foo>[bar](//bar.md) baz</foo>';
+
+
 fun author_date ($path) {
     my $c= Chj::IO::Command->new_sender
       (sub {
