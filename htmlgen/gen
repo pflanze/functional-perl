@@ -247,7 +247,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	if ($$atts{href} =~ m|^//|s) {
 	    my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
 	      or die "bug";
-	    if (defined (my $p0= $filesinfo->filename_to_path0($op))) {
+	    if (defined (my $p0= $filesinfo->filename_to_maybe_path0($op))) {
 		$path= url_diff ($selfpath0,$p0); # mutation
 	    } else {
 		warn "unknown link target '$op' (from '$$atts{href}')";
@@ -693,6 +693,10 @@ fun puthtmlfile ($path,$p) {
 			all_path0_used
 		      )];
     method filename_to_path0 ($filename) {
+	$$self{filename_to_path0}{$filename}
+	  // die "no mapping for filename '$filename'"
+    }
+    method filename_to_maybe_path0 ($filename) {
 	$$self{filename_to_path0}{$filename}
     }
     method all_path0_exists ($path0) {
