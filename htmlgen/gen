@@ -762,32 +762,36 @@ our $current_path0; # XX yes, messy, really add as lexical argument
 
 # add links to '`Foo::Bar`'
 fun map_code ($e, $uplist) {
-    my $t= $e->text;
-    if (is_class_name ($t)) {
-	my $module_subpath= $t;
-	$module_subpath=~ s/::/\//sg;
-	$module_subpath.=".pm";
+    if (is_pair $uplist and $uplist->first->lcname eq "a") {
+	$e
+    } else {
+	my $t= $e->text;
+	if (is_class_name ($t)) {
+	    my $module_subpath= $t;
+	    $module_subpath=~ s/::/\//sg;
+	    $module_subpath.=".pm";
 
-	my $maybe_path=
-	  (&$maybe_have_path0("lib/$module_subpath")
-	   //
-	   &$maybe_have_path0("meta/$module_subpath"));
+	    my $maybe_path=
+	      (&$maybe_have_path0("lib/$module_subpath")
+	       //
+	       &$maybe_have_path0("meta/$module_subpath"));
 
-	my $wrap_with_link= sub {
-	    my ($url)=@_;
-	    A {href=> $url}, $e
-	};
-	if (defined $maybe_path) {
-	    &$wrap_with_link (url_diff $current_path0, $maybe_path)
-	} elsif (ignore_module_name $t) {
-	    $e
-	} elsif (my $url= maybe_module_pod_url ($t)) {
-	    &$wrap_with_link ($url)
+	    my $wrap_with_link= sub {
+		my ($url)=@_;
+		A {href=> $url}, $e
+	    };
+	    if (defined $maybe_path) {
+		&$wrap_with_link (url_diff $current_path0, $maybe_path)
+	    } elsif (ignore_module_name $t) {
+		$e
+	    } elsif (my $url= maybe_module_pod_url ($t)) {
+		&$wrap_with_link ($url)
+	    } else {
+		$e
+	    }
 	} else {
 	    $e
 	}
-    } else {
-	$e
     }
 }
 
