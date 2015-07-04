@@ -123,9 +123,19 @@ TEST{url_diff "foo", "bar.css"} 'bar.css';
 use Chj::CPAN::ModulePODUrl 'perhaps_module_pod_url';
 our $podurl_cache= ".ModulePODUrl-cache"; mkdir $podurl_cache;
 use FP::Memoizing 'memoizing_to_dir';
-*maybe_module_pod_url=
+*xmaybe_module_pod_url=
   memoizing_to_dir $podurl_cache, \&perhaps_module_pod_url;
 
+fun maybe_module_pod_url ($v) {
+    my $res;
+    eval {
+	$res= xmaybe_module_pod_url ($v);
+	1
+    } || do {
+	$@=~ m/Can't connect/i ? return undef : die $@
+    };
+    $res
+}
 
 our $default_config=
   +{
