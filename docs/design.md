@@ -179,11 +179,13 @@ usually type check in the array case either!).
   subexpressions.
 
 * Since handling arrays and hashes by reference is the normal way of
-  working functionally (see [[howto]] for why), naming things `array`
-  and `hash` is preferred over `arrayref` and `hashref`. (`ref` is
-  used in names of functions/methods to access fields in data
-  structures (e.g. a function that takes an array and an index and
-  returns $array->[$index] would be called `array_ref`).)
+  working functionally (see
+  [[howto#References_and_mutation,_"variables"_versus_"bindings"]] for
+  why), naming things `array` and `hash` is preferred over `arrayref`
+  and `hashref`. (`_ref` is used in names of functions/methods to
+  access fields in data structures (e.g. a function that takes an
+  array and an index and returns $array->[$index] would be called
+  `array_ref`).)
 
 * Functions that compose several other functions into one for
   efficiency are named from the names of the functions it could be
