@@ -131,4 +131,10 @@ sub xauthor_date {
     }
 }
 
+sub ls_files {
+    my $self=shift;
+    $self->command_lines0_chop("ls-files","-z")
+}
+
+
 _END_

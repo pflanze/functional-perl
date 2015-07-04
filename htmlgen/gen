@@ -904,7 +904,7 @@ fun puthtmlfile ($path,$p) {
 }
 
 fun get_filesinfo () {
-    my $all_files= $gitrepository->command_lines0_chop("ls-files","-z")->array;
+    my $all_files= $gitrepository->ls_files->array;
 
     my $files= [grep {
 	/\.md$/
