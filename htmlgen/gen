@@ -132,7 +132,13 @@ fun maybe_module_pod_url ($v) {
 	$res= xmaybe_module_pod_url ($v);
 	1
     } || do {
-	$@=~ m/Can't connect/i ? return undef : die $@
+	my $e= $@;
+	my $firstline= "$e"; $firstline=~ s/\n.*//s;
+	$firstline =~ m/Can't connect/i ? do {
+	    warn "could not look up module '$v': $firstline";
+	    return undef;
+	}
+	  : die $e
     };
     $res
 }
