@@ -165,6 +165,10 @@ in person.
 
 ## Installation
 
+    git clone https://github.com/pflanze/functional-perl.git
+    git checkout -b <fp_version/> <fp_version/> # to get latest release
+    git tag -v <fp_version/> # to verify against MiTM attacks
+
 The bundled scripts modify the library load path to find the files
 locally, thus no installation is necessary. All modules are in the
 `lib/` directory, `use lib "path/to/functional-perl/lib";` is all
