@@ -173,10 +173,7 @@ sub _text {
 
 sub text {
     my $s=shift;
-    join("",
-	 map {
-	     _text ($_)
-	 } @{$s->body});
+    _text ($s->body)
 }
 
 

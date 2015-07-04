@@ -103,15 +103,21 @@ sub _pxml_print_fragment_fast {
 		
 		my $looksempty=
 		  # fast path
-		  (not @$body
+		  (not defined $body # XX allow undef or don't? Please
+                                     # finally settle this!
 		   or
-		   (@$body==1 and
-		    (# XX remove undef check here now, too? OK?--nope, necessary
-		     not defined $$body[0]
+		   (not ref $body and length($body)==0)
+		   or
+		   (ref ($body) eq "ARRAY" and
+		    (not @$body
 		     or
-		     (ref($$body[0]) eq "ARRAY" and not @{$$body[0]})
-		     or
-		     $$body[0] eq "")));
+		     (@$body==1 and
+		      (# XX remove undef check here now, too? OK?--nope, necessary
+		       not defined $$body[0]
+		       or
+		       (ref($$body[0]) eq "ARRAY" and not @{$$body[0]})
+		       or
+		       $$body[0] eq "")))));
 
 		my $selfreferential;
 		if ($html5compat) {
