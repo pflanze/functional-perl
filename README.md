@@ -148,8 +148,8 @@ howto/design documents.
 * __Book__
 
     If you need a more gentle introduction into the ideas behind
-    functional programming, you may find it in [Higher-Order
-    Perl](http://hop.perl.plover.com/) by Mark Jason Dominus.  This book
+    functional programming, you may find it in *[Higher-Order
+    Perl](http://hop.perl.plover.com/)* by Mark Jason Dominus.  This book
     was written long before the functional-perl project was started, and
     does various details differently, and IIRC doesn't care about memory
     retention problems (to be fair, at the time the book was written the
