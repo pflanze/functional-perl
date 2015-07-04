@@ -1,6 +1,6 @@
 use strict; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
-our $mydir; # 'import' from main
+our ($mydir,$gitrepository); # 'import' from main
 
 use PXML::XHTML ":all";
 use Clone 'clone';
@@ -10,7 +10,20 @@ my $logocfg= require "./logo.pl";
 
 my $css_path0= "FP.css";
 
+my $version_numrevisions = lazy {
+    my $describe= $gitrepository->describe ();
+    my ($version,$numrevisions,$shorthash,@wat)= split /-/, $describe;
+    die "huh describe '$describe'" if @wat;
+    [$version, $numrevisions]
+};
+
 +{
+  map_code_body=> fun ($str, $uplist, $path0) {
+      FORCE $version_numrevisions;
+      $str=~ s|\$FP_VERSION\b|$$version_numrevisions[0]|sg;
+      $str=~ s|\$FP_COMMITS_AHEAD\b|$$version_numrevisions[1]//"zero"|sge;
+      $str
+  },
   #copy_paths=> [], optional, for path0s from the main source root
   copy_paths_separate=>
   # source_root => path0s
