@@ -24,6 +24,7 @@ use Chj::IO::Command;
 use FP::IOStream "fh_to_stream";
 use FP::Ops "the_method";
 use FP::Combinators "compose";
+use Chj::xperlfunc qw(xchdir xexec);
 
 our @git= "git";
 
@@ -41,17 +42,21 @@ sub make_perhaps_VAR {
 
 
 use FP::Struct [[maybe(\&is_nonnullstring), "git_dir"],
-		[maybe(\&is_nonnullstring), "work_tree"]
+		[maybe(\&is_nonnullstring), "work_tree"],
+		[maybe(\&is_nonnullstring), "chdir"]
 	       ];
 
 sub git_dir_from_work_tree {
     my $self=shift;
     $$self{_git_dir_from_work_tree} //= do {
-	my $wd= $self->work_tree;
-	$wd=~ s|/\z||;
-	my $d= "$wd/.git";
-	-d $d or die "can't find git_dir from work_tree";
-	$d
+	if (defined (my $wd= $self->work_tree)) {
+	    $wd=~ s|/\z||;
+	    my $d= "$wd/.git";
+	    -d $d or die "can't find git_dir from work_tree";
+	    $d
+	} else {
+	    undef
+	}
     }
 }
 
@@ -67,10 +72,18 @@ sub git_dir {
 sub command_records {
     my $self=shift;
     my ($read,$close,$cmd_and_args)=@_;
-    my $in= Chj::IO::Command->new_sender({$self->perhaps_GIT_DIR,
-					  $self->perhaps_GIT_WORK_TREE},
-					 @git,
-					 @$cmd_and_args);
+    my $in= Chj::IO::Command->new_sender
+      (sub {
+	   if (defined (my $d= $self->chdir)) {
+	       xchdir $d;
+	   }
+	   my $env= {$self->perhaps_GIT_DIR,
+		     $self->perhaps_GIT_WORK_TREE};
+	   for my $var (keys %$env) {
+	       $ENV{$var}= $$env{$var}
+	   }
+	   xexec(@git, @$cmd_and_args);
+       });
     fh_to_stream($in, $read, $close)
 }
 
