@@ -10,4 +10,4 @@ inbase=".."
 outbase="www"
 configpath="./gen-config.pl"
 
-"../htmlgen/gen" "$configpath" "$inbase" "$outbase"
+"../htmlgen/gen" "$configpath" "$inbase" "$outbase" "$@"

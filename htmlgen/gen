@@ -36,16 +36,21 @@ sub usage {
   Assumes that there is a file '$css_path', which is included in the
   <head/> and copied to outbase.
 
+  Options:
+    --repl  open a repl instead of running the main action
+    --trap  trap uncached exception in a repl (implied by --repl)
+
 ";
     exit 1;
 }
 
 use Getopt::Long;
 our $verbose=0;
-our $opt_repl;
+our ($opt_repl,$opt_trap);
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
 	   "repl"=> \$opt_repl,
+	   "trap"=> \$opt_trap,
 	   ) or exit 1;
 usage unless @ARGV==3 or ($opt_repl and @ARGV>=1);
 
@@ -1219,12 +1224,14 @@ fun main () {
 
 perhaps_run_tests __PACKAGE__
   or do {
+      if ($opt_trap) {
+	  require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
+      }
 
-    $opt_repl ? do {
-	require Chj::repl;
-	require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
-	Chj::repl::repl();
-    } : main;
-
+      $opt_repl ? do {
+	  require Chj::repl;
+	  require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
+	  Chj::repl::repl();
+      } : main;
 };
 
