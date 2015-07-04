@@ -166,8 +166,12 @@ in person.
 ## Installation
 
     git clone https://github.com/pflanze/functional-perl.git
-    git checkout -b <fp_version/> <fp_version/> # to get latest release
-    git tag -v <fp_version/> # to verify against MiTM attacks
+
+    # to get the latest release, which is $FP_COMMITS_AHEAD commits behind master:
+    git checkout -b $FP_VERSION $FP_VERSION
+
+    # to verify the same against MitM attacks:
+    git tag -v $FP_VERSION
 
 The bundled scripts modify the library load path to find the files
 locally, thus no installation is necessary. All modules are in the
