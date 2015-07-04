@@ -160,12 +160,18 @@ sub url_decode {
     decode("utf-8", $str2, Encode::FB_CROAK)
 }
 
+# escape [ ] for markdown; is this correct?
+fun squarebracked_escape ($str) {
+    $str=~ s%([\[\]])%\\$1%sg;
+    $str
+}
 
 # operating on markdown source string
 # XX should this replace the document name with the document title?
 fun mediawiki_expand ($str) {
     $str=~ s%(?<=[^\\])\[\[(.*?[^\\])\]\]%
 	my $cont= $1;
+        $cont=~ s|(?<=[^\\])\\(.)|$1|sg; # remove quoting
 	my @parts= map { chompspace $_ } split /(?<=[^\\])\|/, $cont;
 	if (@parts==1) {
 	    my ($docname_and_perhaps_fragment)= @parts;
@@ -197,8 +203,9 @@ fun mediawiki_expand ($str) {
 	    # opaque for the text, though, ok?
 	    my $text= $uri->opaque;
 	    $text=~ tr/_/ /;
-	    # XX escape [ ] in the [] part?
-	    ("[$text$fragmenttext](//"
+	    ("["
+	     . squarebracked_escape ($text.$fragmenttext)
+	     . "](//"
 	     . parens_uri_escape($uri->path).".md"
 	     . do {
 		 my $f= $uri->fragment;
@@ -223,6 +230,8 @@ TEST { mediawiki_expand
 	 ' [[howto#References (and "mutation"), "variables" versus "bindings"]] ' }
   ' [howto (References (and "mutation")..)](//howto.md#References%20%28and%20%22mutation%22%29,%20%22variables%22%20versus%20%22bindings%22) ';
 
+TEST { mediawiki_expand ' [[Foo#yah\\[1\\]]] ' }
+  ' [Foo (yah\\[1\\])](//Foo.md#yah[1]) ';
 
 
 fun author_date ($path) {
