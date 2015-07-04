@@ -2,3 +2,4 @@
   anymore? (But then maybe some files are there on purpose? Check git
   ls-files?)
 
+- also auto-link other files than modules in code?
