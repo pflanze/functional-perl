@@ -45,6 +45,10 @@ sub name {
     $_[0][0]
 }
 
+sub lcname {
+    lc ($_[0][0])
+}
+
 sub maybe_attributes {
     $_[0][1]
 }
