@@ -99,7 +99,7 @@ mail if you prefer. I'm also on the `#london.pm` and
 * a few more modules that are used by the above (some originally part
   of [chj-perllib](https://github.com/pflanze/chj-perllib))
 
-* [htmlgen](htmlgen/README.md), the tool used to generate this
+* [Htmlgen](htmlgen/README.md), the tool used to generate this
   website, built using the above.
 
 

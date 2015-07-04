@@ -32,8 +32,9 @@ way; but this doesn't apply to current Perl 5.</small>
 ### Try to limit dependencies if sensible.
 
 E.g. avoiding the use of `Sub::Call::Tail`, `Method::Signatures`,
-`MooseX::MultiMethods` or `autobox` in the core modules. (Some
-tests, examples and `htmlgen` use them.)
+`MooseX::MultiMethods` or `autobox` in the core modules. (Some tests,
+[examples](../examples/README.md) and [Htmlgen](../htmlgen/README.md)
+use them.)
 
 ### Generally provide functionality both as functions and methods.
 
