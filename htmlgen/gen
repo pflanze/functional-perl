@@ -160,14 +160,13 @@ sub url_decode {
     decode("utf-8", $str2, Encode::FB_CROAK)
 }
 
-# escape [ ] for markdown; is this correct?
+# escape [ ] for markdown; XX is this correct?
 fun squarebracked_escape ($str) {
     $str=~ s%([\[\]])%\\$1%sg;
     $str
 }
 
 # operating on markdown source string
-# XX should this replace the document name with the document title?
 fun mediawiki_expand ($str) {
     $str=~ s%(?<=[^\\])\[\[(.*?[^\\])\]\]%
 	my $cont= $1;
@@ -214,7 +213,7 @@ fun mediawiki_expand ($str) {
 	     .")")
 	} elsif (@parts==2) {
 	    my ($loc,$text)= @parts;
-	    "[$text]($loc)" # XXX escape url?
+	    "[".squarebracked_escape($text)."](".parens_uri_escape($loc).")"
 	} else {
 	    # XX location?...
 	    die "more than 2 parts in a wiki style link: '$cont'";
@@ -232,6 +231,9 @@ TEST { mediawiki_expand
 
 TEST { mediawiki_expand ' [[Foo#yah\\[1\\]]] ' }
   ' [Foo (yah\\[1\\])](//Foo.md#yah[1]) ';
+
+TEST { mediawiki_expand ' [[Foo#(yah)\\[1\\]|Some \\[text\\]]] ' }
+  ' [Some \\[text\\]](Foo#%28yah%29[1]) '; # note: no // and .md added to Foo!
 
 
 fun author_date ($path) {
