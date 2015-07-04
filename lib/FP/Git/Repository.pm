@@ -136,5 +136,14 @@ sub ls_files {
     $self->command_lines0_chop("ls-files","-z")
 }
 
+sub describe {
+    my $self=shift;
+    $self->command_lines_chomp("describe",@_)->xone
+}
+
+sub rev_parse {
+    my $self=shift;
+    $self->command_lines_chomp("rev-parse",@_)->xone
+}
 
 _END_
