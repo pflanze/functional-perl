@@ -105,7 +105,7 @@ sub command_lines_chomp {
 
 sub command_lines0_chop {
     my $self=shift;
-    $self->command_records(the_method("xreadline0chop"),
+    $self->command_records(the_method("xreadline0_chop"),
 			   the_method("xxfinish"),
 			   [@_])
 }
