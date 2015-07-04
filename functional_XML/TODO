@@ -1,5 +1,9 @@
-Handle tag and attribute names safely? For example:
+* Handle tag and attribute names safely? For example:
 
-PXML::Element->new("<>", {"/"=>1}, [])
+        PXML::Element->new("<>", {"/"=>1}, [])
 
-will currently serialize to something like <<> /="1"></<>>
+  will currently serialize to something like <<> /="1"></<>>
+
+* use `HTML::Element`, as base class? Of course that won't work for
+  general XML. LibXML for the latter? Well.. Perhaps parametrizable? 
+
