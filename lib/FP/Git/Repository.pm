@@ -91,6 +91,13 @@ sub command_records {
 
 sub command_lines {
     my $self=shift;
+    $self->command_records(the_method("xreadline"),
+			   the_method("xxfinish"),
+			   [@_])
+}
+
+sub command_lines_chomp {
+    my $self=shift;
     $self->command_records(the_method("xreadline_chomp"),
 			   the_method("xxfinish"),
 			   [@_])
