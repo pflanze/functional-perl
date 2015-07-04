@@ -760,10 +760,25 @@ our $maybe_have_path0; # returns argument if we have it, undef otherwise
 our $current_path0; # XX yes, messy, really add as lexical argument
                     # everywhere?
 
-# add links to '`Foo::Bar`'
 fun map_code ($e, $uplist) {
+
+    # possibly *map contents* of inline code or code sections
+    my $mapped_e= fun () {
+	if (my ($f)= hash_perhaps_ref $config, "map_code_body") {
+	    # rely on code never containing markup, at least *as long
+	    # as there's no other mapper that introduced any*. XX how
+	    # to make sure? (add a xtext method that dies when
+	    # encountering non-sequence non-string parts?)
+	    $e->body_set(&$f ($e->text, $uplist, $current_path0))
+	} else {
+	    $e
+	}
+    };
+
+    # possibly *wrap* inline code or code sections: add links to
+    # '`Foo::Bar`'
     if (is_pair $uplist and $uplist->first->lcname eq "a") {
-	$e
+	&$mapped_e()
     } else {
 	my $t= $e->text;
 	if (is_class_name ($t)) {
@@ -783,14 +798,14 @@ fun map_code ($e, $uplist) {
 	    if (defined $maybe_path) {
 		&$wrap_with_link (url_diff $current_path0, $maybe_path)
 	    } elsif (ignore_module_name $t) {
-		$e
+		&$mapped_e()
 	    } elsif (my $url= maybe_module_pod_url ($t)) {
 		&$wrap_with_link ($url)
 	    } else {
-		$e
+		&$mapped_e()
 	    }
 	} else {
-	    $e
+	    &$mapped_e()
 	}
     }
 }
