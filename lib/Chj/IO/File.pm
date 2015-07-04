@@ -553,7 +553,7 @@ sub xreadline0 {
     $self->xreadline
 }
 #^ 'since it would be tedious' to add  once again  wantarray checking and then mapping with a Chomp   we leave that up to the receiver, good idea?.
-sub xreadline0chop {
+sub xreadline0_chop {
     my $self=shift;
     local $/= "\0";
     # and yes we really *have* to differ. or it would give the number of items. SIGH.
