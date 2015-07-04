@@ -762,6 +762,7 @@ TEST { stream (5,3,8,4)->sort (\&FP::Ops::number_cmp)->stream->car }
 
 sub stream_mixed_flatten ($;$$) {
     my ($v,$maybe_tail,$maybe_delay)=@_;
+    #XXX needed, no? weaken $_[0] if ref $_[0];
     mixed_flatten ($v,$maybe_tail//null, $maybe_delay||\&lazyLight)
 }
 
@@ -897,7 +898,7 @@ TEST{ stream_iota->state_fold_right
 sub stream_mixed_fold_right {
     @_==3 or die "wrong number of arguments";
     my ($fn,$state,$v)=@_;
-    weaken $_[2];
+    weaken $_[2] if ref $_[2];
     @_=($fn, $state, stream_mixed_flatten $v); goto \&stream_fold_right
 }
 
@@ -906,7 +907,7 @@ sub stream_mixed_fold_right {
 sub stream_mixed_state_fold_right {
     @_==3 or die "wrong number of arguments";
     my ($fn,$statefn,$v)=@_;
-    weaken $_[2];
+    weaken $_[2] if ref $_[2];
     @_=($fn, $statefn, stream_mixed_flatten $v);goto \&stream_state_fold_right
 }
 
