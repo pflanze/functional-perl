@@ -733,7 +733,8 @@ interrupted or purity breaks.
   programming) without fear of breakage.
 
 * You can still use "printf debugging" (plain old `warn` etc.) even
-  in pure code.
+  in pure code. Treat STDERR as exempt from the purity
+  requirements.
 
 * When you don't understand what's going on inside a function, place a
   `repl` call right into it and use `:e`, `:b` etc. (see `:?`) to
