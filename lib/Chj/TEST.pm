@@ -31,6 +31,11 @@ Chj::TEST
 
  use Chj::TEST ':all';
  run_tests;
+ # or
+ run_tests __PACKAGE__, Another::Package;
+ # or
+ run_tests_ packages=> __PACKAGE__, numbers=>[2..4];
+ #   aliases package, number, no also accepted
 
  # For conditional running the tests as part of a global test suite:
  perhaps_run_tests "main" or do_something_else;
@@ -53,7 +58,7 @@ required to hold the test code and results.
 package Chj::TEST;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
-@EXPORT_OK=qw(run_tests);
+@EXPORT_OK=qw(run_tests run_tests_);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -191,29 +196,67 @@ sub eval_test ($$) {
 }
 
 sub run_tests_for_package {
-    my ($package,$stat)=@_;
+    my ($package,$stat,$maybe_testnumbers)=@_;
     if (my $tests= $$tests_by_package{$package}) {
 	local $|=1;
-	print "=== running tests in package '$package'\n";
-	for my $test (@$tests) {
-	    eval_test $test, $stat
+	if (defined $maybe_testnumbers) {
+	    print "=== running selected tests in package '$package'\n";
+	    for my $number (@$maybe_testnumbers) {
+		if ($number=~ /^\d+\z/ and $number > 0
+		    and (my $test= $$tests[$number-1])) {
+		    eval_test $test, $stat
+		} else {
+		    print "ignoring invalid test number '$number'\n";
+		}
+	    }
+	} else {
+	    print "=== running tests in package '$package'\n";
+	    for my $test (@$tests) {
+		eval_test $test, $stat
+	    }
 	}
     } else {
 	print "=== no tests for package '$package'\n";
     }
 }
 
-sub run_tests {
-    my (@maybe_packages)=@_;
+sub unify_values {
+    my $maybe_values;
+    for (@_) {
+	if (ref $_) {
+	    push @$maybe_values, @$_
+	} elsif (defined $_) {
+	    push @$maybe_values, $_
+	}
+    }
+    $maybe_values
+}
+
+sub run_tests_ {
+    @_ % 2 and die "need even number of arguments";
+    my $args= +{@_};
+    my $maybe_packages=
+      unify_values delete $$args{packages}, delete $$args{package};
+    my $maybe_testnumbers=
+      unify_values delete $$args{numbers}, delete $$args{number},
+	delete $$args{no};
+    for (keys %$args) { warn "run_tests_: unknown argument '$_'" }
+
     my $stat= {success=>0, fail=>0};
-    if (@maybe_packages) {
-	run_tests_for_package $_,$stat for @maybe_packages;
+    if (defined $maybe_packages and @$maybe_packages) {
+	run_tests_for_package $_,$stat,$maybe_testnumbers
+	  for @$maybe_packages;
     } else {
-	run_tests_for_package $_,$stat for keys %$tests_by_package;
+	run_tests_for_package $_,$stat,$maybe_testnumbers
+	  for keys %$tests_by_package;
     }
     print "===\n";
     print "=> $$stat{success} success(es), $$stat{fail} failure(s)\n";
     $$stat{fail}
+}
+
+sub run_tests {
+    run_tests_ packages=> [@_];
 }
 
 # run tests for test suite:
