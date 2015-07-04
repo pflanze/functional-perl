@@ -96,6 +96,8 @@ additions:
   is a `PFLANZE::Filesinfo` object, mutated to add information
   (remember that I said it was not meant as a functional programming
   demo), maintains information about all the files that make up the website.
+  Likewise, `$genfilestate` is a `PFLANZE::Genfilestate` object, which
+  also contains the former.
 
 * its TEST forms are run as [part of the functional-perl test
   suite](../t/htmlgen) (if the necessary dependencies are available)
