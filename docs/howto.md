@@ -740,8 +740,9 @@ interrupted or purity breaks.
   `repl` call right into it and use `:e`, `:b` etc. (see `:?`) to
   inspect the context and experiment with local function calls.
 
-* Add `use Chj::Backtrace;` to your program to see errors with stack
-  traces.
+* Use `Chj::Backtrace` in your program to see errors with stack
+  traces. Or use `Chj::Trapl` to trap uncatched exceptions into a
+  repl.
 
 * Disable tail call optimizations to see the history of function calls
   (TODO: implement a `Sub::Call::Tail` variant that ignores the tail
