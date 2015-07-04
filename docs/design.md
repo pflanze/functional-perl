@@ -184,7 +184,7 @@ usually type check in the array case either!).
   why), naming things `array` and `hash` is preferred over `arrayref`
   and `hashref`. (`_ref` is used in names of functions/methods to
   access fields in data structures (e.g. a function that takes an
-  array and an index and returns $array->[$index] would be called
+  array and an index and returns `$array->[$index]` would be called
   `array_ref`).)
 
 * Functions that compose several other functions into one for
