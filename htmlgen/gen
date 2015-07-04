@@ -86,6 +86,7 @@ use FP::fix;
 use FP::StrictList;
 use FP::Combinators ":all";
 use FP::Predicates;
+use FP::Git::Repository;
 
 # move to lib
 use File::Spec;
@@ -155,6 +156,8 @@ our $default_config=
 our $config = hashset_union ($user_config, $default_config);
 
 lock_hash %$config;
+
+our $gitrepository= FP::Git::Repository->new_(chdir=> $inbase);
 
 
 # escape parentheses since URI doesn't do that itself, and we'd have a
@@ -253,16 +256,11 @@ TEST { mediawiki_expand ' [[Foo#(yah)\\[1\\]|Some \\[text\\]]] ' }
 
 
 fun author_date ($path) {
-    my $c= Chj::IO::Command->new_sender
-      (sub {
-	   xchdir $inbase;
-	   xexec "git", "log", '--pretty=format:%aD', "--", $path
-       });
-    my $res= $c->xreadline;
-    $c->xfinish;
-    defined $res
+    my $lines= $gitrepository->
+      command_lines_chomp("log", '--pretty=format:%aD', "--", $path);
+    is_pair $lines
       or die "can't get author date from file (not committed): '$path'";
-    chomp $res; $res;
+    $lines->first
 }
 
 fun path0 ($path) {
@@ -914,13 +912,7 @@ fun puthtmlfile ($path,$p) {
 }
 
 fun get_filesinfo () {
-    my $c= Chj::IO::Command->new_sender
-      (sub {
-	   xchdir $inbase;
-	   xexec "git","ls-files","-z"
-       });
-    my $all_files= [$c->xreadline0chop];
-    $c->xxfinish;
+    my $all_files= $gitrepository->command_lines0_chop("ls-files","-z")->array;
 
     my $files= [grep {
 	/\.md$/
