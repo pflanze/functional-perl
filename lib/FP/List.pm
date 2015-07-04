@@ -400,6 +400,28 @@ TEST{ [ list (8)->perhaps_one ] } [8];
 TEST{ [ list (8,9)->perhaps_one ] } [];
 TEST{ [ list ()->perhaps_one ] } [];
 
+sub list_xone ($) {
+    my ($s)=@_;
+    FORCE $s; # make work for stre
+    if (is_pair ($s)) {
+	my ($a,$r)= first_and_rest $s;
+	if (is_null $r) {
+	    $a
+	} else {
+	    die "expected 1 value, got more"
+	}
+    } else {
+	die "expected 1 value, got none"
+    }
+}
+
+*FP::List::List::xone= *list_xone;
+
+TEST{ [ list (8)->xone ] } [8];
+TEST_EXCEPTION{ [ list (8,9)->xone ] } "expected 1 value, got more";
+TEST_EXCEPTION{ [ list ()->xone ] } "expected 1 value, got none";
+
+
 
 # XX adapted copy from Stream.pm
 sub list_ref ($ $) {
