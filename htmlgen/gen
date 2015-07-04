@@ -745,8 +745,13 @@ fun with_toc ($e, $uplist) {
 
 # things that *do* exist as modules on CPAN but which we do not want
 # to link since those are a different thing.
-our $ignore_module_name= +{map {$_=>1}
-			   qw(map tail grep)};
+our $ignore_module_name=
+  +{map {$_=>1}
+    qw(map tail grep car cdr first rest head join primes test)};
+# XX most of those would simply go to local scripts and functions if
+# these were checked for.
+$$ignore_module_name{"X"x3}=1; # avoid tripping search for to-do tags
+
 fun ignore_module_name ($name) {
     $$ignore_module_name{$name}
 }
