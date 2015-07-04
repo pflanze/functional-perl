@@ -111,4 +111,24 @@ sub command_lines0_chop {
 }
 
 
+sub perhaps_author_date {
+    my ($self, $path)=@_;
+    my $lines= $self->
+      command_lines_chomp("log", '--pretty=format:%aD', "--", $path);
+    if (is_null $lines) {
+	()
+    } else {
+	$lines->first
+    }
+}
+
+sub xauthor_date {
+    my ($self, $path)=@_;
+    if (my ($d)= $self->perhaps_author_date ($path)) {
+	$d
+    } else {
+	die "can't get author date from file (not committed): '$path'";
+    }
+}
+
 _END_

@@ -255,14 +255,6 @@ TEST { mediawiki_expand ' [[Foo#(yah)\\[1\\]|Some \\[text\\]]] ' }
   ' [Some \\[text\\]](Foo#%28yah%29[1]) '; # note: no // and .md added to Foo!
 
 
-fun author_date ($path) {
-    my $lines= $gitrepository->
-      command_lines_chomp("log", '--pretty=format:%aD', "--", $path);
-    is_pair $lines
-      or die "can't get author date from file (not committed): '$path'";
-    $lines->first
-}
-
 fun path0 ($path) {
     ## ugly way to strip path prefix
     my $path0= $path;
@@ -1251,7 +1243,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 		 HR,
 		 ($maybe_costrange ? P("\x{21d2} Cost range: \$",
 				       $maybe_costrange) : ()),
-		 DIV({class=>"footer_date"}, author_date($path))));
+		 DIV({class=>"footer_date"},
+		     $gitrepository->xauthor_date ($path))));
 
     puthtmlfile($outpath, $html);
 }
