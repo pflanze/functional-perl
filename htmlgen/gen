@@ -780,6 +780,7 @@ fun map_code ($e, $uplist) {
 	    $module_subpath.=".pm";
 
 	    my $maybe_path=
+	      # XXX this should be moved to configuration of course.
 	      (&$maybe_have_path0("lib/$module_subpath")
 	       //
 	       &$maybe_have_path0("meta/$module_subpath"));
