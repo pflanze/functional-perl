@@ -766,7 +766,8 @@ fun map_code ($e, $uplist) {
     };
 
     # possibly *wrap* inline code or code sections: add links to
-    # '`Foo::Bar`'
+    # '`Foo::Bar`' if found locally or on CPAN. XX perl specific, make
+    # addon.
     if (is_pair $uplist and $uplist->first->lcname eq "a"
 	and $uplist->first->maybe_attribute ("href")) {
 	# already linked
