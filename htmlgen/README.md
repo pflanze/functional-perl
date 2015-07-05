@@ -10,15 +10,27 @@ properly formatted versions of these documents.)
 use of functional-perl itself quite a bit, although it was originally
 written for practical purposes, not as a demo. (Todo: make it nicer?)
 
-The code that builds the table of content is purely functional. It
-uses a variant of `fold_right` that also explicitely passes state
-while recursing down the input lists (the HTML (which is parsed to
-`PXML`) element bodies), which allows to collect the subsection
-headers (which don't need to reside within in the same HTML element)
-and get the numbering while mapping the HTML document to add the
-numbering at the same time. This code may look a bit involved, and
+The code that builds the table of content, `map_with_toc`, is purely
+functional. It uses a variant of `fold_right` that also explicitely
+passes state while recursing down the input lists (the HTML (which is
+parsed to `PXML`) element bodies), which allows to collect the
+subsection headers (which don't need to reside within in the same HTML
+element) and get the numbering while mapping the HTML document to add
+the numbering at the same time. This code may look a bit involved, and
 could perhaps be abstracted into some PXML library functions (how
 would XSLT look to do the same?).
+
+`map_with_toc` is called from `process_body`, which uses
+`pxml_map_elements` from `PXML::Util` to map various HTML
+elements. Mapper functions receive the element and an "uplist", which
+is a linked list with the parents (with the direct one being the
+head). Note that purely functional data structures can't store links
+to parents in their elements (unless when cheating by way of
+recreating the parents on the fly or referring to them lazily); thus
+the mappers wouldn't know the context. But we can instead pass the
+context when those functions are actually called (which in typical
+functional manner is better since the same subtree can now be part of
+various different parents at the same time).
 
 The `htmlgen/` directory contains the universally usable program,
 whereas the `website/` directory contains the configuration to build
