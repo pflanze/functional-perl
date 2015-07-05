@@ -20,9 +20,12 @@ my $version_numrevisions = lazy {
 
 +{
   map_code_body=> fun ($str, $uplist, $path0) {
-      FORCE $version_numrevisions;
-      $str=~ s|\$FP_VERSION\b|$$version_numrevisions[0]|sg;
-      $str=~ s|\$FP_COMMITS_AHEAD\b|$$version_numrevisions[1]//"zero"|sge;
+      my ($version, $maybe_numrevisions)= @{force $version_numrevisions};
+      my $version_underscores= $version;
+      $version_underscores=~ tr/./_/;
+      $str=~ s|\$FP_VERSION\b|$version|sg;
+      $str=~ s|\$FP_VERSION_UNDERSCORES\b|$version_underscores|sg;
+      $str=~ s|\$FP_COMMITS_AHEAD\b|$maybe_numrevisions//"zero"|sge;
       $str
   },
   #copy_paths=> [], optional, for path0s from the main source root
