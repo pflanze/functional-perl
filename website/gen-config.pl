@@ -23,9 +23,15 @@ my $version_numrevisions = lazy {
       my ($version, $maybe_numrevisions)= @{force $version_numrevisions};
       my $version_underscores= $version;
       $version_underscores=~ tr/./_/;
+      my $commits=
+	$maybe_numrevisions ?
+	  ($maybe_numrevisions==1 ? "$maybe_numrevisions commit"
+	   : "$maybe_numrevisions commits")
+	    : "zero commits";
+
       $str=~ s|\$FP_VERSION\b|$version|sg;
       $str=~ s|\$FP_VERSION_UNDERSCORES\b|$version_underscores|sg;
-      $str=~ s|\$FP_COMMITS_AHEAD\b|$maybe_numrevisions//"zero"|sge;
+      $str=~ s|\$FP_COMMITS_DIFFERENCE\b|$commits|sg;
       $str
   },
   #copy_paths=> [], optional, for path0s from the main source root

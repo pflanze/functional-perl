@@ -167,7 +167,7 @@ in person.
 
     git clone https://github.com/pflanze/functional-perl.git
 
-    # to get the latest release, which is $FP_COMMITS_AHEAD commit(s) behind master:
+    # to get the latest release, which is $FP_COMMITS_DIFFERENCE behind master:
     git checkout -b $FP_VERSION_UNDERSCORES $FP_VERSION
 
     # to verify the same against MitM attacks:
