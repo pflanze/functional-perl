@@ -13,9 +13,10 @@ use lib "$mydir/../lib";
 
 sub usage {
     print STDERR map{"$_\n"} @_ if @_;
-    print "$myname vX.Y
+    print "$myname [vX.Y]
 
-  Make a new functional-perl release.
+  Make a new functional-perl release, or, without release number,
+  simply regenerate the website.
 
 ";
 exit (@_ ? 1 : 0);
@@ -27,30 +28,33 @@ GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
 	   #"dry-run"=> \$opt_dry,
 	   ) or exit 1;
-usage unless @ARGV==1;
-
-our ($tag)=@ARGV;
-
-my ($version)= $tag=~ m/^v(\d.*)\z/s
-  or die "tag must start with 'v' and a digit";
+usage unless @ARGV<=1;
 
 use Chj::xopen qw(xopen_read);
 use Chj::xtmpfile;
 use Chj::xperlfunc;
 
-my $path= "lib/FP.pm";
+if (@ARGV) {
+    my ($tag)=@ARGV;
 
-my $cnt= xopen_read ($path)->xcontent;
-$cnt=~ s|(\$VERSION\s*=\s*)"[^"]+"|$1"$version"|s
-  or die "could not replace \$VERSION in $path";
+    my ($version)= $tag=~ m/^v(\d.*)\z/s
+      or die "tag must start with 'v' and a digit";
 
-my $f= xtmpfile $path;
-$f->xprint($cnt);
-$f->xclose;
-$f->xputback;
+    my $path= "lib/FP.pm";
 
-xxsystem "git", "commit", "-a", "-m", "release $tag";
-xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
+    my $cnt= xopen_read ($path)->xcontent;
+    $cnt=~ s|(\$VERSION\s*=\s*)"[^"]+"|$1"$version"|s
+      or die "could not replace \$VERSION in $path";
+
+    my $f= xtmpfile $path;
+    $f->xprint($cnt);
+    $f->xclose;
+    $f->xputback;
+
+    xxsystem "git", "commit", "-a", "-m", "release $tag";
+    xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
+}
+
 xxsystem "website/gen", "--trap";
 
 print "OK, now push to github and sync website\n";
