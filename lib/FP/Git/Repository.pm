@@ -25,6 +25,7 @@ use FP::IOStream "fh_to_stream";
 use FP::Ops "the_method";
 use FP::Combinators "compose";
 use Chj::xperlfunc qw(xchdir xexec);
+use Chj::singlequote qw(singlequote_many);
 
 our @git= "git";
 
@@ -112,9 +113,9 @@ sub command_lines0_chop {
 
 
 sub perhaps_author_date {
-    my ($self, $path)=@_;
+    my $self=shift;
     my $lines= $self->
-      command_lines_chomp("log", '--pretty=format:%aD', "--", $path);
+      command_lines_chomp("log", '--pretty=format:%aD', "--", @_);
     if (is_null $lines) {
 	()
     } else {
@@ -123,27 +124,28 @@ sub perhaps_author_date {
 }
 
 sub xauthor_date {
-    my ($self, $path)=@_;
-    if (my ($d)= $self->perhaps_author_date ($path)) {
+    my $self=shift;
+    if (my ($d)= $self->perhaps_author_date (@_)) {
 	$d
     } else {
-	die "can't get author date from file (not committed): '$path'";
+	die "can't get author date (not committed) for: "
+	  .singlequote_many(@_);
     }
 }
 
 sub ls_files {
     my $self=shift;
-    $self->command_lines0_chop("ls-files","-z")
+    $self->command_lines0_chop("ls-files", "-z", @_)
 }
 
 sub describe {
     my $self=shift;
-    $self->command_lines_chomp("describe",@_)->xone
+    $self->command_lines_chomp("describe", @_)->xone
 }
 
 sub rev_parse {
     my $self=shift;
-    $self->command_lines_chomp("rev-parse",@_)->xone
+    $self->command_lines_chomp("rev-parse", @_)->xone
 }
 
 _END_
