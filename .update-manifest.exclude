@@ -1,2 +1,3 @@
 .update-manifest.exclude
 website/sync
+meta/release
