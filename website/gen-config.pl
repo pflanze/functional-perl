@@ -12,9 +12,10 @@ my $css_path0= "FP.css";
 
 my $version_numrevisions = lazy {
     my $describe= $gitrepository->describe ();
-    my ($version,$numrevisions,$shorthash,@wat)= split /-/, $describe;
-    die "huh describe '$describe'" if @wat;
-    [$version, $numrevisions]
+    my ($version,$maybe_numrevisions,$maybe_shorthash)=
+      $describe=~ /^(.*?)(?:-(\d+)-g(.*))?\z/s
+	or die "huh describe '$describe'";
+    [$version, $maybe_numrevisions]
 };
 
 +{
