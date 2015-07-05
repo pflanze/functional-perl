@@ -1,5 +1,6 @@
 .gitignore
 COPYING
+COPYING.md
 MANIFEST
 Makefile.PL
 README.md
