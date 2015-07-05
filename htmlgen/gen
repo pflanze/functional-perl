@@ -767,7 +767,9 @@ fun map_code ($e, $uplist) {
 
     # possibly *wrap* inline code or code sections: add links to
     # '`Foo::Bar`'
-    if (is_pair $uplist and $uplist->first->lcname eq "a") {
+    if (is_pair $uplist and $uplist->first->lcname eq "a"
+	and $uplist->first->maybe_attribute ("href")) {
+	# already linked
 	&$mapped_e()
     } else {
 	my $t= $e->text;
