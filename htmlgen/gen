@@ -1098,7 +1098,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     if ($$config{warn_hint}) {
 	$str=~ s/^\(Check the.*?website.*?---\s+//s
-	  or $path=~/COPYING|bugs\// or warn "'$path' is missing hint";
+	  or $path=~/COPYING|bugs|licenses\//
+	    or warn "'$path' is missing hint";
     }
 
     if (my $hdl= $config->{path0_handlers}->{$path0}) {
