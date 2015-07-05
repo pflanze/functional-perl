@@ -88,7 +88,11 @@ sub command_records {
     fh_to_stream($in, $read, $close)
 }
 
-# XX why is SIGPIPE no issue?
+# (Why is SIGPIPE no issue? Well, since git is the process that
+# receives it, and *if* it receives it, then it's because we're
+# dropping the stream without exhausting it, in which case
+# Chj::IO::CommandCommon::DESTROY is called, which closes the
+# filehandle and collects the child without complaining.)
 
 sub command_lines {
     my $self=shift;
