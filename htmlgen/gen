@@ -957,6 +957,20 @@ fun get_filesinfo () {
 }
 
 
+# Navigation:
+
+# currently only show the toplevel of the nav hierarchy (pages listed
+# in lower levels in the hierarchy are *not* shown at all)
+our $nav_toplevel= array_map *array_first, $config->{nav};
+
+# all pages in lower hierarchies:
+our $pages_in_lower_hierarchies=
+  mixed_flatten (array_map (*array_rest, $config->{nav}))->array;
+our $page_is_in_lower_hierarchy=
+  hashset_to_predicate array_to_hashset $pages_in_lower_hierarchies;
+
+# still also show pages that are missing in the nav declaration; thus,
+# use the nav declaration to *order* the pages instead:
 our $path0_to_sortkey= do {
     my $sortprio= do {
 	my $i=1;
@@ -965,7 +979,7 @@ our $path0_to_sortkey= do {
 	      my $file= $_;
 	      $file.= ".md" unless /\.\w{1,7}\z/;
 	      $file=> sprintf('-%04d', $i++)
-	  } @{$config->{sortorder} || []}
+	  } @$nav_toplevel
 	 }
     };
     fun ($path0) {
@@ -1246,8 +1260,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 			    " ")
 		     },
 		     array_sort
-		     (array_map (\&path0,
-				 $genfilestate->nonbugfiles),
+		     (array_filter(complement($page_is_in_lower_hierarchy),
+				   array_map (\&path0, $genfilestate->nonbugfiles)),
 		      on $path0_to_sortkey, \&string_cmp))),
 		 $config->{belownav}->($path0),
 		 $h1,
