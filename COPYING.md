@@ -32,7 +32,9 @@ See [Artistic License 2.0](licenses/artistic_license_2.0.md).
 
 ### The MIT License (MIT)
 
-Copyright © 2001-2015 Christian Jaeger
+Copyright © 2001-2015 [Christian
+Jaeger](mailto:copying@christianjaeger.ch), unless stated otherwise within
+a file.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
