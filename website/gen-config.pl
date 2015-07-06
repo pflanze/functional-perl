@@ -18,6 +18,11 @@ my $version_numrevisions = lazy {
     [$version, $maybe_numrevisions]
 };
 
+my $year= (localtime)[5]+1900;
+
+my $email= "copying\@christianjaeger.ch"; # ? or ch@?
+
+
 +{
   map_code_body=> fun ($str, $uplist, $path0) {
       my ($version, $maybe_numrevisions)= @{force $version_numrevisions};
@@ -65,7 +70,21 @@ my $version_numrevisions = lazy {
       ()
   },
   footer=> fun ($path0) {
-      ()
+      my $yearstart= 2014;
+      my $years= $year == $yearstart ? $year : "$yearstart-$year";
+      DIV({class=>"footer_legalese"},
+
+	  # our part
+	  "Copyright (c) $years ",
+	  A ({href=> "mailto:$email"}, "Christian Jaeger"),
+
+	  ". ",
+
+	  # camel logo
+	  "The Perl camel image is a trademark of ",
+	  A({href=> "http://www.oreilly.com"}, "O'Reilly Media, Inc."),
+	  " Used with permission."
+	 )
   },
   sortorder=>
   [qw(
