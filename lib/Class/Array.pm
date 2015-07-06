@@ -10,7 +10,7 @@
 
 package Class::Array;
 
-# Copyright 2001-2008 by Christian Jaeger, christian at jaeger mine nu
+# Copyright 2001-2008 by Christian Jaeger, copying@christianjaeger.ch
 # Published under the same terms as perl itself (i.e. Artistic license/GPL)
 
 
@@ -917,7 +917,7 @@ A: Could it be there is a line 'use Y;' in your X module and you have placed it 
 
 =head1 AUTHOR
 
-Christian Jaeger <christian at jaeger mine nu>. Published under the
+Christian Jaeger <copying@christianjaeger.ch>. Published under the
 same terms as perl itself.
 
 =head1 SEE ALSO

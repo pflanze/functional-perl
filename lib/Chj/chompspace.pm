@@ -1,3 +1,4 @@
+#
 # Copyright (c) 2004 Christian Jaeger, copying@christianjaeger.ch
 # Published under the same terms as perl itself
 #
