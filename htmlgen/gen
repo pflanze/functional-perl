@@ -1258,7 +1258,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 		 ($maybe_costrange ? P("\x{21d2} Cost range: \$",
 				       $maybe_costrange) : ()),
 		 DIV({class=>"footer_date"},
-		     $gitrepository->xauthor_date ($path))));
+		     $gitrepository->xauthor_date ($path)),
+		 $config->{footer}->($path0)));
 
     puthtmlfile($outpath, $html);
 }

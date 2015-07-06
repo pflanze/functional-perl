@@ -64,6 +64,9 @@ my $version_numrevisions = lazy {
       # HTML between navigation and page content
       ()
   },
+  footer=> fun ($path0) {
+      ()
+  },
   sortorder=>
   [qw(
 README.md
