@@ -11,7 +11,11 @@
 package Class::Array;
 
 # Copyright 2001-2008 by Christian Jaeger, copying@christianjaeger.ch
-# Published under the same terms as perl itself (i.e. Artistic license/GPL)
+#
+# This is free software, offered under either the same terms as perl 5
+# or the terms of the Artistic License version 2 or the terms of the
+# MIT License. See the file COPYING.md that came bundled with this
+# file. (i.e. Artistic license/GPL)
 
 
 $VERSION = '0.10pre1';
@@ -917,8 +921,7 @@ A: Could it be there is a line 'use Y;' in your X module and you have placed it 
 
 =head1 AUTHOR
 
-Christian Jaeger <copying@christianjaeger.ch>. Published under the
-same terms as perl itself.
+Christian Jaeger <copying@christianjaeger.ch>.
 
 =head1 SEE ALSO
 
