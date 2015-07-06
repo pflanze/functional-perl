@@ -79,6 +79,10 @@ properly formatted versions of these documents.)
 
 - should I move the licensing statements into the POD of each file?
 
+- should I specify a license for the text? A different one than the
+  ones for the code? Who should be the copyright holder of the
+  website, "the project"?
+
 
 ## Less important:
 
