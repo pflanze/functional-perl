@@ -1,5 +1,5 @@
 #
-# Copyright 2015 by Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
 # This is free software, offered under the terms of the MIT License.
 # See the file COPYING that came bundled with this file.
 #
