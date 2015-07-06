@@ -16,8 +16,6 @@ Add backtrace to all string based exceptions (those thrown by die
 =head1 DESCRIPTION
 
 
-TODO: breaks Chj::repl's signal catching. Surely others, too. What to do about it?
-
 =cut
 
 
