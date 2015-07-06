@@ -659,10 +659,11 @@ sub mk_caching_getANYid {
     sub setgid { !!(shift->[2] & 02000) }
     sub sticky { !!(shift->[2] & 01000) }
     sub filetype { (shift->[2] & 0170000) >> 12 } # 4*3bits
-    # guess access rights from permission bits
+
+    # Guess access rights from permission bits
     # note that these might guess wrong (because of chattr stuff,
     # or things like grsecurity,lids,selinux..)!
-    # also, this does not check parent folders of this item of course.
+    # Also NOTE: this does not check parent folders of this item!
     sub checkaccess_for_submask_by_uid_gids {
 	my $s=shift;
 	my ($mod,$uid,$gids)=@_; # the latter being an array ref!
@@ -721,6 +722,20 @@ sub mk_caching_getANYid {
     sub is_blockdevice { Filetype_is_blockdevice(shift->filetype) }
     sub Filetype_is_pipe { shift == 1 } # or call it is_fifo?
     sub is_pipe { Filetype_is_pipe(shift->filetype) }
+
+    # (See NOTE on checkaccess_for_submask_by_uid_gids!)
+    sub is_executable {
+	my $s=shift;
+	my ($maybe_allow_dirs, $maybe_uid, $maybe_gids)=@_;
+
+	my $allow_dirs = $maybe_allow_dirs // 1;
+	my $uid= $maybe_uid // $>;
+	my $gids= $maybe_gids // [split / /, $) ];
+
+	(($s->is_file or ($allow_dirs and $s->is_dir))
+	 and
+	 $s->executable_by_uid_gids($uid, $gids))
+    }
 
     sub type {
 	my $s=shift;
