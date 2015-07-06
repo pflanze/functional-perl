@@ -3,9 +3,6 @@ properly formatted versions of these documents.)
 
 ---
 
-- clean up licensing (some files currently are MIT license even though
-  COPYING claims Perl licensing)
-
 - more `intro/`, more `examples/`
 
 - more tests:
@@ -79,6 +76,8 @@ properly formatted versions of these documents.)
 
 - split `htmlgen/gen` into modules (and make some parts more
   functional)
+
+- should I move the licensing statements into the POD of each file?
 
 
 ## Less important:
