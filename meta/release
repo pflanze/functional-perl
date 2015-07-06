@@ -1,5 +1,9 @@
 #!/usr/bin/perl -w
 
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
 use strict; use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)

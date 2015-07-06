@@ -1,5 +1,9 @@
 #!/usr/bin/env perl
 
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
 
 # This file shows how to do optimized tail-calls in Perl; see point
 # (4b) in the file `basics` for the version without optimized

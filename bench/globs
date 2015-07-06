@@ -1,5 +1,9 @@
 #!/usr/bin/env perl
 
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
 
 # This file checks whether passing global functions as *foo instead of
 # \&foo incurs (much) overhead.
