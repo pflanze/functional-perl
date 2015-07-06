@@ -1,5 +1,5 @@
 Copyright © 2001-2015 [Christian
-Jaeger](mailto:ch@christianjaeger.ch), unless stated otherwise within
+Jaeger](mailto:copying@christianjaeger.ch), unless stated otherwise within
 a file.
 
 <with_toc>
