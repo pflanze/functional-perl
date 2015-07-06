@@ -86,17 +86,18 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
 	  " Used with permission."
 	 )
   },
-  sortorder=>
-  [qw(
-README.md
-docs/howto.md
-docs/design.md
-examples/README.md
-functional_XML/README.md
-htmlgen/README.md
-docs/ideas.md
-docs/TODO.md
-    )],
+  nav=>
+  [
+   ["README.md"],
+   ["docs/howto.md"],
+   ["docs/design.md"],
+   ["examples/README.md"],
+   ["functional_XML/README.md"],
+   ["htmlgen/README.md"],
+   ["docs/ideas.md"],
+   ["docs/TODO.md"],
+   ["COPYING.md", ["licenses/artistic_license_2.0.md"]],
+  ],
 
   warn_hint=> 1, # warn if the website hint (header) is missing in a
                  # .md file
