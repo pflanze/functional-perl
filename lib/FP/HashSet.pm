@@ -32,6 +32,10 @@ FP::HashSet - set operations for hash tables
  # a la diff tool:
  hashset_diff($A,$B) # -> {b=>"-",d=>"+"}
 
+ # to treat a hashset as a function:
+ my $f= hashset_to_predicate ($A);
+ $f->("a") # -> true
+
 =head1 DESCRIPTION
 
 Hashsets are hash tables that are expected to have keys representing
@@ -49,6 +53,7 @@ package FP::HashSet;
 @EXPORT=qw(array_to_hashset
 	   array_to_lchashset
 	   hashset_to_array
+	   hashset_to_predicate
 	   hashset_keys
 	   hashset_keys_unsorted
 	   hashset_union
@@ -87,6 +92,14 @@ sub hashset_to_array ($) {
     [
      sort values %{$_[0]}
     ]
+}
+
+sub hashset_to_predicate ($) {
+    my ($s)=@_;
+    sub {
+	@_==1 or die "wrong number of arguments";
+	exists $$s{$_[0]}
+    }
 }
 
 sub hashset_keys_unsorted ($) {
@@ -205,6 +218,11 @@ sub hashset_diff ($ $) {
       1;
     TEST{ hashset_diff($A,$B) }
       +{b=>"-",d=>"+"};
+    my $f= hashset_to_predicate ($A);
+    TEST{ $f->("a") }
+      1;
+    TEST{ $f->("x") }
+      '';
 }
 
 1
