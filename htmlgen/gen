@@ -1,5 +1,10 @@
 #!/usr/bin/env perl
 
+#
+# Copyright 2014-2015 by Christian Jaeger, ch at christianjaeger ch
+# Published under the same terms as perl itself
+#
+
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # XX this file should be split into modules
