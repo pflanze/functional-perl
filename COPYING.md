@@ -56,7 +56,7 @@ THE SOFTWARE.
 ## Why so many licenses?
 
 The Perl 5 licensing is to make it as simple as possible for people to
-decide to use, or contribute to, the project. The Artistic License 2
+decide to use the project or contribute to it. The Artistic License 2
 is what the main Perl 6 implementation components have chosen; the
 idea to offer it under that license as well is that porting to / using
 with Perl 6 becomes as easy as possible. The MIT licenses is offered
