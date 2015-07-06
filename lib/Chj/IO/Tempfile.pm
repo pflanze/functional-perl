@@ -19,8 +19,6 @@ Chj::IO::Tempfile
 
 If you kill the program i.e. using Ctl-C, it will not clean up
 it's temp file.
-(wen ich noch wüsst wo ich das mit signals oder whatever gelöst
-hatte. gibts eine sauber lösg?)
 
 =cut
 
