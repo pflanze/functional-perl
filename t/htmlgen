@@ -11,6 +11,7 @@ use Test::Requires
     'Function::Parameters'=> 0,
     'Sub::Call::Tail'=> 0,
     'Text::Markdown'=> 0,
+    'HTML::TreeBuilder'=> 0,
    };
 
 $ENV{RUN_TESTS}=1; exec "website/gen" or exit 1;
