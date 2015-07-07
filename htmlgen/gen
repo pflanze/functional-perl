@@ -800,7 +800,7 @@ fun map_code ($e, $uplist) {
 	    $module_subpath.=".pm";
 
 	    my $maybe_path=
-	      # XXX this should be moved to configuration of course.
+	      # XX this should be moved to configuration of course.
 	      (&$maybe_have_path0("lib/$module_subpath")
 	       //
 	       &$maybe_have_path0("meta/$module_subpath"));
@@ -825,10 +825,35 @@ fun map_code ($e, $uplist) {
 }
 
 
+# XX dito config, well all of the map_a_href
+our $github_base= "https://github.com/pflanze/functional-perl/blob/master";
+
+# change links to non-.md files to go to Github
+fun map_a_href ($e, $uplist) {
+    if (my ($href)= $e->perhaps_attribute("href")) {
+	if (URI_is_internal(my $u= URI->new($href))) {
+	    if (length (my $p= $u->path)) {
+		$u->path(path_add (dirname($current_path0), $p));
+		$u= $u->abs($github_base); # yes, path method is
+                                           # mutator, abs is not!
+		$e->attribute_set("href", "$u")
+	    } else {
+		$e
+	    }
+	} else {
+	    $e
+	}
+    } else {
+	$e
+    }
+}
+
+
 our $pxml_name_to_mapper=
   +{
     with_toc=> \&map_with_toc,
     code=> \&map_code,
+    a=> \&map_a_href,
    };
 
 fun process_body ($v) {
