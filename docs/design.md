@@ -137,7 +137,8 @@ builtin perl checks would still be wrong (e.g. passing `*foo` where an
 array reference is expected will silently access the `@foo` package
 variable, even if it was never declared (empty in this case)).
 
-Worse: globs fail when called using `goto`. (Todo: same with `tail`?)
+Worse: globs fail when called using `goto`. (Interestingly, not so
+with `Sub::Call::Tail`'s `tail`.)
 
 For these reasons, the core modules never use globs (but they don't
 usually type check in the array case either!).
