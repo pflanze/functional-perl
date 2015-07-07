@@ -60,6 +60,7 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
 	     href=> url_diff ($path0, $css_path0),
 	     type=> "text/css"})
   },
+
   header=> fun ($path0) {
       # HTML above navigation
 
@@ -67,6 +68,18 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
       # it (by way of `weaken`ing)
       clone $logocfg->($path0)->{logo}
   },
+  nav=>
+  [
+   ["README.md"],
+   ["docs/howto.md"],
+   ["docs/design.md"],
+   ["examples/README.md"],
+   ["functional_XML/README.md"],
+   ["htmlgen/README.md"],
+   ["docs/ideas.md"],
+   ["docs/TODO.md"],
+   ["COPYING.md", ["licenses/artistic_license_2.0.md"]],
+  ],
   belownav=> fun ($path0) {
       # HTML between navigation and page content
       ()
@@ -88,18 +101,6 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
 	  " Used with permission."
 	 )
   },
-  nav=>
-  [
-   ["README.md"],
-   ["docs/howto.md"],
-   ["docs/design.md"],
-   ["examples/README.md"],
-   ["functional_XML/README.md"],
-   ["htmlgen/README.md"],
-   ["docs/ideas.md"],
-   ["docs/TODO.md"],
-   ["COPYING.md", ["licenses/artistic_license_2.0.md"]],
-  ],
 
   warn_hint=> 1, # warn if the website hint (header) is missing in a
                  # .md file
