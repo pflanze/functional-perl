@@ -13,3 +13,4 @@ blib/
 pm_to_blib
 *.tar.gz
 website/.ModulePODUrl-cache/
+htmlgen/gen_

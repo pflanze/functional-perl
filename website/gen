@@ -14,4 +14,11 @@ inbase=".."
 outbase="www"
 configpath="./gen-config.pl"
 
-"../htmlgen/gen" "$configpath" "$inbase" "$outbase" "$@"
+# to make work without Sub::Call::Tail for t/htmlgen:
+if [ "${HTMLGEN_-}" == 1 ]; then
+    tail="_"
+else
+    tail=""
+fi
+
+"../htmlgen/gen$tail" "$configpath" "$inbase" "$outbase" "$@"

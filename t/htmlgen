@@ -9,9 +9,13 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Test::Requires
   +{
     'Function::Parameters'=> 0,
-    'Sub::Call::Tail'=> 0,
+    #'Sub::Call::Tail'=> 0,
     'Text::Markdown'=> 0,
     'HTML::TreeBuilder'=> 0,
    };
+
+# avoid dependency on Sub::Call::Tail:
+system ("bin/expand-tail", "htmlgen/gen", "htmlgen/gen_")==0 or exit 1;
+$ENV{HTMLGEN_}=1;
 
 $ENV{RUN_TESTS}=1; exec "website/gen" or exit 1;
