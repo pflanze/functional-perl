@@ -30,7 +30,7 @@ Licensing](http://dev.perl.org/licenses/).
 
 See [Artistic License 2.0](licenses/artistic_license_2.0.md).
 
-### The MIT License (MIT)
+### The MIT License (MIT/Expat)
 
 Copyright © 2001-2015 [Christian
 Jaeger](mailto:copying@christianjaeger.ch), unless stated otherwise within
