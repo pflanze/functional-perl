@@ -3,8 +3,8 @@
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
-# MIT License. See the file COPYING.md that came bundled with this
-# file.
+# MIT License (Expat version). See the file COPYING.md that came
+# bundled with this file.
 #
 
 =head1 NAME
