@@ -54,10 +54,10 @@ sub translate {
 	undef
     } elsif (@p= split /->/, $c and @p==2) {
 	my ($before,$after)= @p;
-	'@_='.$after.'; my $c='.$before.'; goto $c'
+	'@_='.$after.'; goto &{'.$before.'}'
     } elsif ($c=~ s/^\&//) {
 	if (my ($ident, $args)= $c=~ m/^(\$${IDENT})\s*(\(.*)/s) {
-	    '@_='.$args.'; goto '.$ident
+	    '@_='.$args.'; goto &'.$ident
 	} else {
 	    die "dunno about '$c'";
 	}
@@ -69,14 +69,14 @@ sub translate {
 }
 
 TEST { translate '&$odd ($n - 1)'."\n\t " }
-  '@_=($n - 1); goto $odd';
+  '@_=($n - 1); goto &$odd';
 TEST { translate 'Weakened($even)->($n)' }
-  '@_=($n); my $c=Weakened($even); goto $c';
+  '@_=($n); goto &{Weakened($even)}';
 TEST { translate ' &$then
    ($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
                : $path0)' }
   '@_=($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
-               : $path0); goto $then';
+               : $path0); goto &$then';
 
 use Chj::xperlfunc 'min';
 
