@@ -1,5 +1,5 @@
-(Check the [functional-perl website](http://functional-perl.org/) for
-properly formatted versions of these documents.)
+Check the [functional-perl website](http://functional-perl.org/) for
+properly formatted versions of these documents.
 
 ---
 

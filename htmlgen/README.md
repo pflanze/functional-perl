@@ -1,5 +1,5 @@
-(Check the [functional-perl website](http://functional-perl.org/) for
-properly formatted versions of these documents.)
+Check the [functional-perl website](http://functional-perl.org/) for
+properly formatted versions of these documents.
 
 ---
 
@@ -48,8 +48,8 @@ additions:
 
  - files are expected to carry a header similar to
 
-        "(Check the [Foo website](http://foo.org/) for
-        properly formatted versions of these documents.)
+        "Check the [Foo website](http://foo.org/) for
+        properly formatted versions of these documents.
 
         ---
         "
