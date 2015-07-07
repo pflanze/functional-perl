@@ -23,17 +23,18 @@ is readin("t/perl/weaken-coderef $n 1 |"),
   $res;
 
 SKIP: {
-    skip "Perl issue", 1 unless $ENV{TEST_PERL};
+    skip "Perl issue", 3 unless $ENV{TEST_PERL};
     # XXX is this really a perl issue?
 
     is readin("t/perl/weaken-coderef-alternative-fix Y $n 1 |"),
       $res;
+
+    is readin("t/perl/weaken-coderef-alternative-fix rec $n 1 |"),
+      $res;
+
+    is readin("t/perl/weaken-coderef-alternative-fix '' $n 1 |"),
+      $res;
+
 }
-
-is readin("t/perl/weaken-coderef-alternative-fix rec $n 1 |"),
-  $res;
-
-is readin("t/perl/weaken-coderef-alternative-fix '' $n 1 |"),
-  $res;
 
 done_testing;
