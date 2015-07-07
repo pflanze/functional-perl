@@ -20,7 +20,6 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
-use Chj::Backtrace;
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -69,6 +68,7 @@ our $user_config= require $configpath;
 
 mkdir $outbase;
 
+use Chj::Backtrace;
 use Hash::Util 'lock_hash';
 use Text::Markdown 'markdown';
 use Chj::IO::Command;
