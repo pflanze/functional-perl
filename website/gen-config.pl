@@ -57,7 +57,7 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
   head=> fun ($path0) {
       # HTML to add to the <head> section
       LINK ({rel=> "stylesheet",
-	     href=> url_diff ($path0, $css_path0),
+	     href=> path_diff ($path0, $css_path0),
 	     type=> "text/css"})
   },
 

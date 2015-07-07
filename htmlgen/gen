@@ -102,18 +102,18 @@ use File::Spec;
 use Chj::Path;
 use Chj::TEST ":all";
 
-fun url_add ($base,$rel) {
+fun path_add ($base,$rel) {
     Chj::Path->new_from_string($base)->add
 	(Chj::Path->new_from_string($rel), 1)
 	  ->string
 }
 
-TEST{url_add "/foo", "/zoo" } "/zoo";
-TEST{url_add "/foo", "../zoo" } "/zoo";
-TEST{url_add "/foo", "zoo/loo" } "/foo/zoo/loo";
-TEST{url_add "/foo", "zoo//loo/." } "/foo/zoo/loo/";
-TEST{url_add ".", "zoo/loo" } "zoo/loo"; # definitely
-TEST_EXCEPTION {url_add ".", "../zoo/loo" }
+TEST{path_add "/foo", "/zoo" } "/zoo";
+TEST{path_add "/foo", "../zoo" } "/zoo";
+TEST{path_add "/foo", "zoo/loo" } "/foo/zoo/loo";
+TEST{path_add "/foo", "zoo//loo/." } "/foo/zoo/loo/";
+TEST{path_add ".", "zoo/loo" } "zoo/loo"; # definitely
+TEST_EXCEPTION {path_add ".", "../zoo/loo" }
   # "../zoo/loo"; # yes that's something I want, ok?
   "can't take '..' of root directory"; # well, ok?
 
@@ -127,15 +127,15 @@ TEST{uri_add "http://bar.com/baz", "zoo"} "http://bar.com/zoo";
 TEST{uri_add "http://bar.com/baz/#ax", "#bx"} "http://bar.com/baz/#bx";
 
 
-fun url_diff ($path0from,$path0to) {
+fun path_diff ($path0from,$path0to) {
     my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
     File::Spec->abs2rel($path0to, $from);
 }
 
-TEST{url_diff "foo/", "bar.css"} '../bar.css';
-TEST{url_diff "foo/bar.html", "bar.css"} '../bar.css';
-TEST{url_diff "foo", "bar.css"} 'bar.css';
-#TEST{url_diff ".", "bar.css"} 'bar.css';
+TEST{path_diff "foo/", "bar.css"} '../bar.css';
+TEST{path_diff "foo/bar.html", "bar.css"} '../bar.css';
+TEST{path_diff "foo", "bar.css"} 'bar.css';
+#TEST{path_diff ".", "bar.css"} 'bar.css';
 
 #/lib
 
@@ -391,15 +391,15 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	    my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
 	      or die "bug";
 	    if (my ($p0)= $filesinfo->perhaps_filename_to_path0($op)) {
-		$path= url_diff ($selfpath0,$p0); # mutation
+		$path= path_diff ($selfpath0,$p0); # mutation
 	    } else {
 		warn "unknown link target '$op' (from '$$atts{href}')";
-		$path= url_diff ($selfpath0, "UNKNOWN/$op");
+		$path= path_diff ($selfpath0, "UNKNOWN/$op");
 	    }
 	    $uri->opaque(""); # mutation
 	} else {
 	    if (length $path) {
-		my $p0= url_add(dirname ($selfpath0), $path);
+		my $p0= path_add(dirname ($selfpath0), $path);
 		$p0=~ s|^\./||;#hack. grr y
 		if ($filesinfo->all_path0_exists($p0)) {
 		    $filesinfo->all_path0_used_inc($p0);
@@ -810,7 +810,7 @@ fun map_code ($e, $uplist) {
 		A {href=> $url}, $e
 	    };
 	    if (defined $maybe_path) {
-		&$wrap_with_link (url_diff $current_path0, $maybe_path)
+		&$wrap_with_link (path_diff $current_path0, $maybe_path)
 	    } elsif (ignore_module_name $t) {
 		&$mapped_e()
 	    } elsif (my $url= maybe_module_pod_url ($t)) {
@@ -1246,7 +1246,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	    HEAD (
 		  TITLE ($config->{title}->($filetitle)),
 		  LINK ({rel=> "stylesheet",
-			 href=> url_diff ($path0, $css_path),
+			 href=> path_diff ($path0, $css_path),
 			 type=> "text/css"}),
 		  $config->{head}->($path0),
 		 ),
