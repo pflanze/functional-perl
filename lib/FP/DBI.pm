@@ -94,6 +94,7 @@ use Chj::NamespaceCleanAbove;
 	    my $s=shift;
 	    my $id= ++$$s{fp__dbi__id};
 	    my $lp; $lp= sub {
+		my $lp=$lp; #keep strong reference
 		lazy {
 		    $$s{fp__dbi__id} == $id
 		      or die ("stream was interrupted by another execute".
