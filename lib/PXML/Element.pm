@@ -24,7 +24,7 @@ package PXML::Element;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Stream qw(stream_mixed_flatten stream_map);
-use FP::Hash qw($empty_hash);
+use FP::Hash qw($empty_hash hash_set);
 
 # XX Depend on these? PXML::Serialize uses these, so any app that
 # serializes PXML would require them anyway.
@@ -104,6 +104,13 @@ sub attributes_set {
     my $s=shift;
     @_==1 or die "wrong number of arguments";
     bless [ $$s[0], $_[0], $$s[2] ], ref $s
+}
+
+sub attribute_set {
+    my $s=shift;
+    @_==2 or die "wrong number of arguments";
+    my ($nam,$v)=@_;
+    bless [ $$s[0], hash_set($$s[1]//{}, $nam, $v), $$s[2] ], ref $s
 }
 
 sub body_set {
