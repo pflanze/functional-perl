@@ -77,7 +77,7 @@ sub maybe_attribute {
     @_==2 or die "wrong number of arguments";
     my $s=shift;
     my ($name)=@_;
-    $$s[1] and $$s[1]{$name}
+    defined $$s[1] and $$s[1]{$name}
 }
 
 # functional setters (following the convention I've started to use of
