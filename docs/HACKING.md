@@ -20,3 +20,15 @@ See also [[design]].
   `XX` is used for "should probably be improved, but not essential for
   security and safety under normal working conditions".
 
+
+## Testing
+
+### Perl issues
+
+Tests that depend on the Perl core being fixed are only run if the
+`TEST_PERL` env variable is true. I.e. run
+
+    TEST_PERL=1 make test
+
+or similar.
+
