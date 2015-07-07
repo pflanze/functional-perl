@@ -369,7 +369,8 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	$$atts{lc $_}= $e->attr($_);
     }
 
-    # fix internal .md links
+    # fix internal .md links; should this be moved to the PXML mapping
+    # phase now?
     if ($name eq "a"
 	and URI_is_internal(my $uri= URI->new($$atts{href}))) {
 
@@ -405,6 +406,7 @@ fun htmlmap ($e,$selfpath0,$filesinfo) {
 	}
 	$$atts{href}= "$uri";# mutation.
     }
+
     my $res= PXML::Element->new
 	($name,
 	 $atts,
