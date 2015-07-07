@@ -80,6 +80,17 @@ sub maybe_attribute {
     defined $$s[1] and $$s[1]{$name}
 }
 
+sub perhaps_attribute {
+    @_==2 or die "wrong number of arguments";
+    my $s=shift;
+    my ($name)=@_;
+    if (defined (my $h= $$s[1])) {
+	exists $$h{$name} ? $$h{$name} : ()
+    } else {
+	()
+    }
+}
+
 # functional setters (following the convention I've started to use of
 # "trailing _set means functional, leading set_ means mutation"))
 
