@@ -83,6 +83,10 @@ properly formatted versions of these documents.
   ones for the code? Who should be the copyright holder of the
   website, "the project"?
 
+- document the change in recent (blead) perl with regards to lexical
+  capture and weak references (e.g. see `FP::DBI` commit 8862338..) in
+  the howto
+
 
 ## Less important:
 
