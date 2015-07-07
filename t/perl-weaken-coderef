@@ -11,7 +11,7 @@ require "meta/test.pl";
 use Test::More;
 
 require "./testmem.pl";
-setlimit_mem_MB (30);
+setlimit_mem_MB ($^V->{version}[1] < 15 ? 30 : 80);
 
 is readin("t/perl/weaken-coderef 2 50000 |"),
   "3\n";
