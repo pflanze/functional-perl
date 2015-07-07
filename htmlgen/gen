@@ -849,10 +849,20 @@ fun map_a_href ($e, $uplist) {
 }
 
 
+# a compose with 1 "side argument" (passed to subsequent invocations unmodified)
+fun compose_side1 ($f, $g) {
+    fun ($a,$b) {
+	&$f (scalar &$g ($a, $b), $b)
+    }
+}
+
 our $pxml_name_to_mapper=
   +{
     with_toc=> \&map_with_toc,
-    code=> \&map_code,
+    # expand link in the result of map_code, too (hacky: relies on
+    # there only being a 'href' attribute for links, otherwise
+    # map_a_href would be applied to non-'a' elements):
+    code=> compose_side1(\&map_a_href, \&map_code),
     a=> \&map_a_href,
    };
 
