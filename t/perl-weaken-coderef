@@ -16,8 +16,8 @@ setlimit_mem_MB ($^V->{version}[1] < 15 ? 30 : 80);
 is readin("t/perl/weaken-coderef 2 50000 |"),
   "3\n";
 
-my $n= 30000;
-my $res= "450015000\n";
+my $n= 80000;
+my $res= "3200040000\n";
 
 is readin("t/perl/weaken-coderef $n 1 |"),
   $res;
