@@ -1,4 +1,6 @@
 use strict; use warnings FATAL => 'uninitialized';
+use utf8;
+
 use Function::Parameters qw(:strict);
 our ($mydir,$gitrepository); # 'import' from main
 
@@ -75,7 +77,7 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
       DIV({class=>"footer_legalese"},
 
 	  # our part
-	  "Copyright (c) $years ",
+	  "© $years ",
 	  A ({href=> "mailto:$email"}, "Christian Jaeger"),
 
 	  ". ",
