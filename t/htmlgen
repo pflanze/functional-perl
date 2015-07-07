@@ -6,6 +6,10 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Test::Requires 'Function::Parameters';
+use Test::Requires
+  +{
+    'Function::Parameters'=> 0,
+    'Sub::Call::Tail'=> 0,
+   };
 
 $ENV{RUN_TESTS}=1; exec "website/gen" or exit 1;
