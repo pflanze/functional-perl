@@ -137,8 +137,19 @@ builtin perl checks would still be wrong (e.g. passing `*foo` where an
 array reference is expected will silently access the `@foo` package
 variable, even if it was never declared (empty in this case)).
 
-Worse: globs fail when called using `goto`. (Interestingly, not so
-with `Sub::Call::Tail`'s `tail`.)
+Worse: globs fail when called using `goto` without using a `&` prefix. E.g. this fails:
+
+    my $x = *inc;
+    goto $x;
+
+whereas this works:
+
+    my $x = *inc;
+    goto &$x;
+
+(`Sub::Call::Tail`'s `tail` seems to be using that latter form. Still
+there may be libraries out there that don't do so. Todo: check? Even
+check *our* libraries!)
 
 For these reasons, the core modules never use globs (but they don't
 usually type check in the array case either!).
