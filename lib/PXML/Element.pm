@@ -38,6 +38,11 @@ use Chj::xopen 'glob_to_fh';
 use Chj::NamespaceCleanAbove;
 
 # [ name, attributes, body ]
+BEGIN {
+    sub NAME () {0}
+    sub ATTRIBUTES () {1}
+    sub BODY () {2}
+}
 
 sub new {
     my $cl=shift;
@@ -46,15 +51,15 @@ sub new {
 }
 
 sub name {
-    $_[0][0]
+    $_[0][NAME]
 }
 
 sub lcname {
-    lc ($_[0][0])
+    lc ($_[0][NAME])
 }
 
 sub maybe_attributes {
-    $_[0][1]
+    $_[0][ATTRIBUTES]
 }
 
 # NOTE that $empty_hash gives exceptions for accesses to any field!
@@ -63,28 +68,28 @@ sub maybe_attributes {
 # move to restricted hashes and arrays everywhere anyway, so this
 # should be consistent then.
 sub attributes {
-    $_[0][1] // $empty_hash
+    $_[0][ATTRIBUTES] // $empty_hash
 }
 
 sub body {
     # could be undef, too, but then undef is the empty list when
     # interpreted as a FP::List, thus no need for the maybe_
     # prefix. -- XXX that's not true anymore, null is not undef anymore.
-    $_[0][2]
+    $_[0][BODY]
 }
 
 sub maybe_attribute {
     @_==2 or die "wrong number of arguments";
     my $s=shift;
     my ($name)=@_;
-    defined ($$s[1]) ? $$s[1]{$name} : undef
+    defined ($$s[ATTRIBUTES]) ? $$s[ATTRIBUTES]{$name} : undef
 }
 
 sub perhaps_attribute {
     @_==2 or die "wrong number of arguments";
     my $s=shift;
     my ($name)=@_;
-    if (defined (my $h= $$s[1])) {
+    if (defined (my $h= $$s[ATTRIBUTES])) {
 	exists $$h{$name} ? $$h{$name} : ()
     } else {
 	()
@@ -97,26 +102,26 @@ sub perhaps_attribute {
 sub name_set {
     my $s=shift;
     @_==1 or die "wrong number of arguments";
-    bless [ $_[0], $$s[1], $$s[2] ], ref $s
+    bless [ $_[0], $$s[ATTRIBUTES], $$s[BODY] ], ref $s
 }
 
 sub attributes_set {
     my $s=shift;
     @_==1 or die "wrong number of arguments";
-    bless [ $$s[0], $_[0], $$s[2] ], ref $s
+    bless [ $$s[NAME], $_[0], $$s[BODY] ], ref $s
 }
 
 sub attribute_set {
     my $s=shift;
     @_==2 or die "wrong number of arguments";
     my ($nam,$v)=@_;
-    bless [ $$s[0], hash_set($$s[1]//{}, $nam, $v), $$s[2] ], ref $s
+    bless [ $$s[NAME], hash_set($$s[1]//{}, $nam, $v), $$s[BODY] ], ref $s
 }
 
 sub body_set {
     my $s=shift;
     @_==1 or die "wrong number of arguments";
-    bless [ $$s[0], $$s[1], $_[0] ], ref $s
+    bless [ $$s[NAME], $$s[ATTRIBUTES], $_[0] ], ref $s
 }
 
 
@@ -126,21 +131,21 @@ sub name_update {
      my $s=shift;
      @_==1 or die "wrong number of arguments";
      my ($fn)=@_;
-     bless [ &$fn($$s[0]), $$s[1], $$s[2] ], ref $s
+     bless [ &$fn($$s[NAME]), $$s[ATTRIBUTES], $$s[BODY] ], ref $s
 }
 
 sub attributes_update {
      my $s=shift;
      @_==1 or die "wrong number of arguments";
      my ($fn)=@_;
-     bless [ $$s[0], &$fn($$s[1]), $$s[2] ], ref $s
+     bless [ $$s[NAME], &$fn($$s[ATTRIBUTES]), $$s[BODY] ], ref $s
 }
 
 sub body_update {
      my $s=shift;
      @_==1 or die "wrong number of arguments";
      my ($fn)=@_;
-     bless [ $$s[0], $$s[1], &$fn($$s[2]) ], ref $s
+     bless [ $$s[NAME], $$s[ATTRIBUTES], &$fn($$s[BODY]) ], ref $s
 }
 
 
