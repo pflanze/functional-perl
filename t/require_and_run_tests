@@ -26,8 +26,10 @@ our $modules= modulenamelist;
 
 our %dependencies=
   (
-   'FP::Text::CSV'=> [qw(Text::CSV)],
-   'FP::url_'=> [qw(URI)],
+   'FP::Text::CSV'=> ['Text::CSV'],
+   'FP::url_'=> ['URI'],
+   'Chj::CPAN::ModulePODUrl'=> ['LWP::UserAgent'],
+   'FP::DBI'=> ['DBI'],
   );
 
 
