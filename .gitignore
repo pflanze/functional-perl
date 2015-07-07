@@ -6,6 +6,7 @@ t/test-a.xml
 .expansion-*
 /website/www/
 MYMETA.yml
+MYMETA.json
 Makefile
 Makefile.old
 blib/
