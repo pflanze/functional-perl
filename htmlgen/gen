@@ -1166,7 +1166,7 @@ fun genfile ($path,$groupname,$genfilestate) {
     my $str= xgetfile_utf8 "$inbase/$path";
 
     if ($$config{warn_hint}) {
-	$str=~ s/^\(Check the.*?website.*?---\s+//s
+	$str=~ s/^\(?Check the.*?website.*?---\s+//s
 	  or $path=~/COPYING|bugs|licenses\//
 	    or warn "'$path' is missing hint";
     }
