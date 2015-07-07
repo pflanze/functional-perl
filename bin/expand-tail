@@ -39,7 +39,7 @@ usage unless @ARGV==2;
 our ($inpath,$outpath)=@ARGV;
 
 use Chj::xopen qw(xopen_read xopen_write);
-use Chj::TEST;
+use Chj::TEST ":all";
 
 our $code= xopen_read($inpath)->xcontent; # evil, doesn't check close return value
 
@@ -50,7 +50,7 @@ sub translate {
     $c=~ s/\s+\z//s; # XX killing line numbering
     $c=~ s/^\s+//s; # dito?
     my @p;
-    if ($c=~ /\#/ or $c=~ /\n/) {
+    if ($c=~ /\#/) {
 	undef
     } elsif (@p= split /->/, $c and @p==2) {
 	my ($before,$after)= @p;
@@ -72,6 +72,105 @@ TEST { translate '&$odd ($n - 1)'."\n\t " }
   '@_=($n - 1); goto $odd';
 TEST { translate 'Weakened($even)->($n)' }
   '@_=($n); my $c=Weakened($even); goto $c';
+TEST { translate ' &$then
+   ($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
+               : $path0)' }
+  '@_=($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
+               : $path0); goto $then';
+
+use Chj::xperlfunc 'min';
+
+sub min_maybe {
+    min grep { defined $_ } @_
+}
+
+
+# register positions of the lines, and their indentation
+sub get_line_position_and_indents {
+    my $line_position_and_indents=[];
+    my $lineno=-1; # 0-based index, *not* what editors expect
+    while ($code=~ /(?:^|\n)([ \t]*)/g) {
+	$lineno++;
+	my $indentstr= $1;
+	my $pos= pos ($code);
+	# the pos where that line starts:
+	my $pos0= $pos - length ($indentstr);
+	my $i=0;
+	for (split //, $indentstr) {
+	    if ($_ eq ' ') {
+		$i++
+	    } elsif ($_ eq "\t") {
+		# 8-based tabs
+		$i= (int ($i / 8) + 1)* 8
+	    } else {
+		die "??"
+	    }
+	}
+	push @$line_position_and_indents,
+	  [$lineno, $pos0, $i];
+    }
+    $line_position_and_indents
+}
+
+our $line_position_and_indents= get_line_position_and_indents;
+
+
+sub find_line_by_pos {
+    my ($pos)=@_;
+    # XX would need binary search for efficiency.
+    my $prevline= $$line_position_and_indents[0];
+    for (@$line_position_and_indents[1..$#$line_position_and_indents]) {
+	my ($lineno, $pos0, $i)= @$_;
+	return $prevline if $pos < $pos0;
+	$prevline=$_;
+    }
+    return $prevline # (don't have len of that line to check, thus trust)
+}
+
+# expand the 'tail' keyword right before pos in $code, set pos to
+# afterwards.
+sub expand_tail_at_pos {
+    my $pos= pos ($code);
+
+    # Where is the end of the arguments? Either when encountering a
+    # ";", or a line with indent the same or smaller than the current
+    # line, whichever comes first.
+
+    my $maybe_endpos_semicolon= pos($code)-1 if $code=~ /;/g;
+    # -1 so as to leave the ';' in *afterwards*.
+
+    my ($tailline_lineno, $tailline_pos0, $tailline_i)=
+      @{find_line_by_pos $pos};
+    my $afterline;
+    for my $lineno ($tailline_lineno+1 .. $#$line_position_and_indents) {
+	$afterline= $$line_position_and_indents[$lineno];
+	last if $$afterline[2] <= $tailline_i;
+    }
+    my $maybe_endpos_indent= $$afterline[1]-1 if $afterline;
+    # -1 so as to leave the "\n" in.
+
+    my $maybe_endpos= min_maybe ($maybe_endpos_semicolon, $maybe_endpos_indent);
+
+    if (defined $maybe_endpos) {
+	my $endpos= $maybe_endpos;
+	my $args= substr $code, $pos, $endpos-$pos;
+	if (defined (my $replacement= translate $args)) {
+	    my $startpos = $pos - 4;
+
+	    substr $code, $startpos, $endpos - $startpos, $replacement;
+
+	    # re-init index. XX nonscalable of course.
+	    $line_position_and_indents= get_line_position_and_indents;
+
+	    pos($code)= $startpos + length $replacement;
+	    #warn "right: '$args'";
+	} else {
+	    #warn "wrong1: '$args'";
+	}
+    } else {
+	#warn "wrong2"
+    }
+}
 
 
 if ($opt_repl) {
@@ -87,7 +186,13 @@ if ($opt_repl) {
     # within a substitution does not work.
     $code=~ s=\n[\t ]*#[^\n]*\btail [^\n]*[^\n]=\n\n=sg;
 
-    $code=~ s=\btail ([^};]*)= translate ($1) // "tail $1" =sge;
+    # Instead of writing a various kinds of parens and various kinds
+    # of quoting parser, look at indentation: after newlines allow
+    # only more indentation than the line where the tail statement is
+    # found on has.
+    while ($code=~ m/(?<!\$)\btail\b/g) {
+	expand_tail_at_pos
+    }
 
     $code=~ s/\buse\s*Sub::Call::Tail\b.*?;//s; # XX kills line numbering
 
