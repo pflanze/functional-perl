@@ -209,11 +209,10 @@ func weakened_even ($n) {
 	    tail &$odd ($n - 1)
 	}
     };
-    #weaken $odd;
-    my $even_= $even;
-    #weaken $even;
-    tail Weakened($even)->($n)
-    #tail &$even($n)
+    # do *not* make this a tail call or $even will become undef on
+    # bleadperl at some point (not so on v5.14.2):
+    # (XXX Perl issue, or what are the rules here?)
+    Weakened($even)->($n)
 }
 
 TEST { ($^V->{version}[1] > 20) ?
