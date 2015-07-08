@@ -54,15 +54,6 @@ TEST_EXCEPTION {path_add ".", "../zoo/loo" }
   # "../zoo/loo"; # yes that's something I want, ok?
   "can't take '..' of root directory"; # well, ok?
 
-fun uri_add ($base,$rel) {
-    URI->new($rel)->abs(URI->new($base)).""
-}
-
-TEST{uri_add "http://bar.com/baz/", "/zoo#hm"} "http://bar.com/zoo#hm";
-TEST{uri_add "http://bar.com/baz/", "zoo"} "http://bar.com/baz/zoo";
-TEST{uri_add "http://bar.com/baz", "zoo"} "http://bar.com/zoo";
-TEST{uri_add "http://bar.com/baz/#ax", "#bx"} "http://bar.com/baz/#bx";
-
 
 fun path_diff ($path0from,$path0to) {
     my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;

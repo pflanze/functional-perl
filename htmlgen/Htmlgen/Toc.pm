@@ -13,24 +13,20 @@ Htmlgen::Toc - building a table of contents
 
 =head1 SYNOPSIS
 
- use Htmlgen::Toc qw(map_with_toc);
- # pass `\&map_with_toc` as part of a mapping table to
- # `pxml_map_elements`
-
 =head1 DESCRIPTION
 
 Expands this syntax in a PXML document:
 
 <with_toc> <h2>..</h2> <h3>..</h3>.. <h2>..</h2> </with_toc>
 
+=head1 SEE ALSO
+
+L<Htmlgen::PXMLMapper>
+
 =cut
 
 
 package Htmlgen::Toc;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(map_with_toc);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -292,8 +288,14 @@ TEST {HTML ((process__with_toc__body
   '<html> <p>blabla</p><a name="a"><h1>1. for one</h1></a></html>';
 
 
-# map <with_toc> element
-fun map_with_toc ($e, $uplist) {
+
+# now the "EXPORT":
+
+use FP::Struct []=> "Htmlgen::PXMLMapper";
+
+method match_element_name () { "with_toc" }
+
+method map_element ($e, $uplist) {
     my ($body, $toc)=
       process__with_toc__body ($e->body,
 			       $e->maybe_attribute("level") // 2,
@@ -301,5 +303,4 @@ fun map_with_toc ($e, $uplist) {
     [ $toc->html, $body]
 }
 
-
-1
+_END_
