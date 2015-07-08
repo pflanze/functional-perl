@@ -20,8 +20,8 @@ FP::HashSet - set operations for hash tables
  hashset_to_array hashset_union($A,$B) # -> ["a","b","c","d"]
  hashset_to_array hashset_intersection($A,$B) # -> ["a","c"]
  hashset_to_array hashset_difference($A,$B) # -> ["b"]
- hashset_subset($B,$A) # -> false
- hashset_subset(+{b=>1},$A) # -> true
+ hashset_is_subset($B,$A) # -> false
+ hashset_is_subset(+{b=>1},$A) # -> true
  hashset_size($A) # -> 3
  hashset_empty($A) # -> false
  hashset_empty(+{}) # -> true
@@ -60,7 +60,7 @@ package FP::HashSet;
 	   hashset_union_defined
 	   hashset_intersection
 	   hashset_difference
-	   hashset_subset
+	   hashset_is_subset
 	   hashset_size
 	   hashset_empty
 	   hashset_diff
@@ -164,7 +164,7 @@ sub hashset_difference ($ $) {
     \%r
 }
 
-sub hashset_subset ($ $) {
+sub hashset_is_subset ($ $) {
     my ($subset,$set)=@_;
     my %r;
     for (keys %$subset) {
@@ -206,9 +206,9 @@ sub hashset_diff ($ $) {
       ["a","c"];
     TEST{ hashset_to_array hashset_difference($A,$B)}
       ["b"];
-    TEST{ hashset_subset($B,$A) }
+    TEST{ hashset_is_subset($B,$A) }
       0;
-    TEST{ hashset_subset(+{b=>1},$A) }
+    TEST{ hashset_is_subset(+{b=>1},$A) }
       1;
     TEST{ hashset_size($A)}
       3;
