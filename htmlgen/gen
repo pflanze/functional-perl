@@ -68,8 +68,6 @@ our ($configpath, $inbase, $outbase)= @ARGV;
 
 our $user_config= require $configpath;
 
-mkdir $outbase;
-
 use Chj::Backtrace;
 use Hash::Util 'lock_hash';
 use Text::Markdown 'markdown';
@@ -721,6 +719,7 @@ fun copyfiles ($filesinfo) {
 }
 
 fun main () {
+    mkdir $outbase;
     my $filesinfo= get_filesinfo;
     genfiles ($filesinfo);
     copyfiles ($filesinfo);
