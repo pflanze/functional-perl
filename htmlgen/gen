@@ -864,7 +864,7 @@ TEST{
     local $config= +{is_indexpath0=> *false};
     path0_to_title "bugs/wishlist/listserv/README.md"
 }
-  'README'; # XXX why?, expected: 'Readme';
+  'Readme';
 TEST{path0_to_title "bugs/wishlist/line_wrapping_in_pre-MIME_mails.md"}
   # even with lcfirst
   'Line wrapping in pre-MIME mails';
