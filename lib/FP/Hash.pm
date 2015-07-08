@@ -42,7 +42,7 @@ functional hash tables implementation (like the one used by Clojure)?)
 
 package FP::Hash;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(hash_set hash_perhaps_ref hash_xref hash_ref_or hash_cache
+@EXPORT=qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref hash_ref_or hash_cache
 	   hash_delete hash_diff
 	   subhash
 	   hashes_keys $empty_hash);
@@ -100,13 +100,23 @@ sub hash_delete ($$) {
     $h2
 }
 
-# should in principle be called hash_perhaps_ref ?
 sub hash_perhaps_ref ($$) {
     my ($h,$k)=@_;
     if (exists $$h{$k}) {
 	$$h{$k}
     } else {
 	()
+    }
+}
+
+# difference of the following to just $$h{$k} is that it won't die on
+# locked hashes
+sub hash_maybe_ref ($$) {
+    my ($h,$k)=@_;
+    if (exists $$h{$k}) {
+	$$h{$k}
+    } else {
+	undef
     }
 }
 
