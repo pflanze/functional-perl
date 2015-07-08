@@ -103,6 +103,7 @@ use Htmlgen::Mediawiki qw(mediawiki_expand);
 use Htmlgen::Cost;
 use Htmlgen::default_config qw($default_config);
 use Htmlgen::UriUtil qw(URI_is_internal);
+use Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
 
 
 our $config = hashset_union ($user_config, $default_config);
@@ -709,32 +710,6 @@ fun genfiles ($filesinfo) {
 	for (@{$genfilestate->groupedfiles->{$groupname}}) {
 	    genfile $_,$groupname,$genfilestate
 	}
-    }
-}
-
-# lib?
-fun existingpath_or (@paths) {
-    for (@paths) {
-	return $_ if -e $_
-    }
-    die "none of the paths exist: @paths";
-}
-
-
-use POSIX qw(EEXIST ENOENT);
-
-fun create_parent_dirs ($path0, $path0_to_outpath) {
-    my $path0= dirname $path0;
-    my $outpath= &$path0_to_outpath ($path0);
-    if (mkdir $outpath) {
-	# ok, return
-    } elsif ($! == EEXIST) {
-	# ok, return
-    } elsif ($! == ENOENT) {
-	create_parent_dirs ($path0, $path0_to_outpath);
-	xmkdir $outpath;
-    } else {
-	die "mkdir '$outpath': $!";
     }
 }
 
