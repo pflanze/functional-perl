@@ -826,7 +826,7 @@ fun map_code ($e, $uplist) {
 
 
 # XX dito config, well all of the map_a_href
-our $github_base= "https://github.com/pflanze/functional-perl/blob/master";
+our $github_base= "https://github.com/pflanze/functional-perl/blob/master/";
 
 # change links to non-.md files to go to Github
 fun map_a_href ($e, $uplist) {
