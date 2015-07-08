@@ -72,8 +72,9 @@ FP::Struct - classes for functional perl
 
  new_ Bar (a=>1,b=>2)-> div # => 1/2
  new__ Bar ({a=>1,b=>2})-> div # => 1/2
- # NOTE: new__ returns the argument hash after checking and blessing
- # it, it doesn't copy it! Be careful.
+ unsafe_new__ Bar ({a=>1,b=>2})-> div # => 1/2
+ # NOTE: unsafe_new__ returns the argument hash after checking and
+ # blessing it, it doesn't copy it! Be careful. `new__` does copy it.
 
  $bar->b_set(3)->div # => 1/3
 
@@ -245,14 +246,20 @@ sub import {
     my $allfields_with_predicate= [grep { field_maybe_predicate $_ } @$allfields];
     *{"${package}::new_"}= sub {
 	my $class=shift;
-	$class->new__(+{@_})
+	$class->unsafe_new__(+{@_})
     };
 
     # constructor with hash parameter:
     *{"${package}::new__"}= sub {
-	# NOTE: new__ reuses (blesses) the argument hash! careful!
 	my $class=shift;
 	@_==1 or croak "wrong number of arguments to ${package}::new__";
+	my ($h)=@_;
+	$class->unsafe_new__(+{%$h})
+    },
+    *{"${package}::unsafe_new__"}= sub {
+	# NOTE: reuses (blesses) the argument hash! careful!
+	my $class=shift;
+	@_==1 or croak "wrong number of arguments to ${package}::unsafe_new__";
 	my ($s)=@_;
 	scalar (keys %$s) <= (@$allfields * 2)
 	  or croak "too many arguments to ${package}::new_";
