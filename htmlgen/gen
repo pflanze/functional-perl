@@ -275,14 +275,12 @@ fun pxml_name_to_mapper (@PXMLMapper_args) {
 }
 
 
-# dynamic passing only so that process_body can be tested easily
-our $current_pxml_name_to_mapper=
-  # fake instance for tests only:
-  pxml_name_to_mapper ("NOPATH", sub{die"NOIMPL"});
-
-
-fun process_body ($v) {
-    pxml_map_elements ($v, $current_pxml_name_to_mapper)
+fun process_body ($v,
+		  $pxml_name_to_mapper=
+		  # fake instance for tests only:
+		  pxml_name_to_mapper ("NOPATH", sub{die"NOIMPL"})
+		 ) {
+    pxml_map_elements ($v, $pxml_name_to_mapper)
 }
 
 TEST { HTML( process_body
@@ -643,8 +641,7 @@ fun genfile ($path,$groupname,$genfilestate) {
     };
 
     my $filesinfo= $genfilestate->filesinfo;
-    # pass values to html mappers:  XX hacky?
-    local $current_pxml_name_to_mapper=
+    my $pxml_name_to_mapper=
       pxml_name_to_mapper ($path0,
 			   fun ($path0) {
 			       if ($filesinfo->all_path0_exists ($path0)) {
@@ -692,7 +689,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 		      on $path0_to_sortkey, \&string_cmp))),
 		 $config->{belownav}->($path0),
 		 $h1,
-		 process_body ($body1),
+		 process_body ($body1, $pxml_name_to_mapper),
 		 $maybe_buglist,
 		 BR,
 		 HR,
