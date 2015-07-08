@@ -34,6 +34,7 @@ htmlgen/Htmlgen/Cost.pm
 htmlgen/Htmlgen/Mediawiki.pm
 htmlgen/Htmlgen/PathTranslate.pm
 htmlgen/Htmlgen/PathUtil.pm
+htmlgen/Htmlgen/Toc.pm
 htmlgen/Htmlgen/default_config.pm
 htmlgen/README.md
 htmlgen/TODO
