@@ -30,9 +30,11 @@ functional_XML/t/stream
 functional_XML/t/stream_
 functional_XML/test
 functional_XML/testlazy
+htmlgen/Htmlgen/Cost.pm
 htmlgen/Htmlgen/Mediawiki.pm
 htmlgen/Htmlgen/PathTranslate.pm
 htmlgen/Htmlgen/PathUtil.pm
+htmlgen/Htmlgen/default_config.pm
 htmlgen/README.md
 htmlgen/TODO
 htmlgen/gen

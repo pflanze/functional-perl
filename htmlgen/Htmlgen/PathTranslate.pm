@@ -29,17 +29,15 @@ use FP::Predicates;
 use Chj::xperlfunc qw(dirname basename);
 use Htmlgen::PathUtil qw(path_path0_append);
 use FP::Div qw(identity);
+use Htmlgen::default_config;
 
-our $t;
+our $t= __PACKAGE__->new_(is_indexpath0=> $$default_config{is_indexpath0},
+			  downcaps=> 1);
+
 fun t_if_suffix_md_to_html ($in,$for_title=0) {
     $t->if_suffix_md_to_html ($in, $for_title,
 		       sub {["then",@_]},
 		       sub{["otherwise",@_]})
-}
-
-fun default__is_indexpath0 ($path0) {
-    my $bn= lc basename($path0);
-    $bn eq "index.md" or $bn eq "readme.md"
 }
 
 fun is_allcaps ($str) {
@@ -66,10 +64,6 @@ method if_suffix_md_to_html ($path0,$for_title,$then,$otherwise) {
     }
 }
 
-
-TEST{$t= __PACKAGE__->new_
-       (is_indexpath0=> \&default__is_indexpath0,
-	downcaps=> 1); 1}1;
 
 TEST{t_if_suffix_md_to_html "README.md"}['then','index.xhtml'];
 TEST{t_if_suffix_md_to_html "README.md",1}['then','readme.xhtml'];

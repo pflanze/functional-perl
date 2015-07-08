@@ -98,6 +98,11 @@ use FP::StrictList;
 use FP::Combinators ":all";
 use FP::Predicates;
 use FP::Git::Repository;
+use Htmlgen::PathTranslate;
+use Htmlgen::PathUtil qw(path_add path_diff path0);
+use Htmlgen::Mediawiki qw(mediawiki_expand);
+use Htmlgen::Cost;
+use Htmlgen::default_config qw($default_config);
 
 
 use Chj::CPAN::ModulePODUrl 'perhaps_module_pod_url';
@@ -123,26 +128,15 @@ fun maybe_module_pod_url ($v) {
     $res
 }
 
-our $default_config=
-  +{
-    is_indexpath0 => \&Htmlgen::PathTranslate::default__is_indexpath0,
-   };
-
 
 our $config = hashset_union ($user_config, $default_config);
 
 lock_hash %$config;
 
-use Htmlgen::PathTranslate;
 our $pathtranslate= Htmlgen::PathTranslate->new__
   (subhash $config, "is_indexpath0", "downcaps");
 
 our $gitrepository= FP::Git::Repository->new_(chdir=> $inbase);
-
-use Htmlgen::PathUtil
-  qw(path_add path_diff
-     path0
-   );
 
 fun path0_to_inpath ($path0) {
     "$inbase/".$path0
@@ -164,7 +158,6 @@ fun htmlparse_raw ($htmlstr,$whichtag) {
     $e->find_by_tag_name($whichtag)
 }
 
-use Htmlgen::Mediawiki qw(mediawiki_expand);
 use URI;
 
 # avoid monkey-patching by prefixing instead
@@ -875,44 +868,7 @@ fun path0_to_bugtype ($path0) {
     ucfirst $1
 }
 
-{
-    package PFLANZE::Cost;
-    use FP::Array ":all";
-    use FP::Struct [qw(name is_purchaseable basecosts val)];
-    method cost ($index) {
-	$$self{_cost} ||= do {
-	    add($self->val,
-		map {
-		    $$index{$_}->cost ($index)
-		} @{$self->basecosts}
-	       );
-	}
-    }
-    _END_
-}
-{
-    package PFLANZE::Totalcost;
-    use FP::Array_sort ":all";
-    use FP::Struct [qw(costs)];
-    method range () {
-	@{$$self{costs}} or die "no costs given";#
-	my $index;
-	for (@{$$self{costs}}) {
-	    if (defined (my $name= $_->name)) {
-		$$index{$name}= $_
-	    }
-	}
-	my $purchaseable= [grep { $_->is_purchaseable } @{$$self{costs}}];
-	@$purchaseable or die "no purchaseable costs";#
-	local our $all= array_sort
-	  ( $purchaseable,
-	    on the_method ("cost",$index), \&number_cmp );
-	(@$all == 1
-	 ? $$all[0]->cost ($index)
-	 : $$all[0]->cost ($index)."..".$$all[-1]->cost($index)),
-    }
-    _END_
-}
+
 
 
 # group $files, to process them in an order that satisfies dependency
