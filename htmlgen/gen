@@ -73,29 +73,24 @@ mkdir $outbase;
 use Chj::Backtrace;
 use Hash::Util 'lock_hash';
 use Text::Markdown 'markdown';
-use Chj::IO::Command;
-use Chj::xperlfunc ':all';
-use Chj::xopen ":all";
-use Chj::chompspace;
-use Chj::xIOUtil qw(xputfile_utf8 xgetfile_utf8 xcopyfile);
+use Chj::xperlfunc qw(basename dirname);
+use Chj::xIOUtil qw(xgetfile_utf8 xcopyfile);
 use FP::HashSet ":all";
 use PXML::XHTML ":all";
+use PXML::Serialize 'puthtmlfile';
 use FP::Array ":all";
 use File::Spec;
 use FP::Array_sort;
 use FP::Ops qw(string_cmp number_cmp the_method);
 use Chj::TEST ":all";
 use FP::List ":all";
-use FP::Lazy ":all";
 use FP::Stream ":all";
 use PXML "is_pxml_element";
 use PXML::Util ":all";
 use FP::Hash ":all";
-use FP::Div qw(identity inc dec);
 use PXML::Tags qw(with_toc);
 use FP::fix;
-use FP::Combinators ":all";
-use FP::Predicates;
+use FP::Predicates qw(complement);
 use FP::Git::Repository;
 use Htmlgen::PathTranslate;
 use Htmlgen::PathUtil qw(path_add path_diff path0);
@@ -321,18 +316,6 @@ TEST { HTML( process_body  ([P("Hello"),
   '<html><p>Hello</p>'.
   '<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#a">1. for one</a><li><dir class="toc"><a href="#b">1.1. more one</a></dir></li></dir></li><li><dir class="toc"><a href="#c">2. sub two</a></dir></li></dir></div>'.
   ' <p>blabla</p><a name="a"><h1>1. for one</h1></a><a name="b"><h2>1.1. more one</h2></a><table><tr><td><p>blah</p><a name="c"><h1>2. sub two</h1></a><div>bla</div></td></tr></table></html>';
-
-
-use PXML::Serialize 'pxml_xhtml_print_fast';
-
-# v- is now in PXML::Serialize, too, except for the xmkdir_p
-fun puthtmlfile ($path,$p) {
-    xmkdir_p dirname $path;
-    my $out= xopen_write($path);
-    binmode $out, ":utf8" or die;
-    pxml_xhtml_print_fast($p, $out, "en");# hard coded lang
-    $out->xclose;
-}
 
 
 
