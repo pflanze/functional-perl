@@ -33,7 +33,7 @@ FP::Combinators - function combinators
 package FP::Combinators;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(compose compose_scalar maybe_compose
+@EXPORT_OK=qw(compose compose_scalar maybe_compose compose_1side
 	      flip flip2_3 rot3right rot3left
 	      perhaps_to_maybe);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -108,6 +108,17 @@ TEST { maybe_compose (sub { die "foo @_" }, sub { undef })->(2,3) }
   undef;
 TEST { maybe_compose (sub { [@_] }, sub { @_ })->(2,3) }
   [2,3];
+
+
+# a compose with 1 "side argument" (passed to subsequent invocations unmodified)
+sub compose_1side ($$) {
+    my ($f, $g)=@_;
+    sub {
+	my ($a,$b)=@_;
+	#XX TCO?
+	&$f (scalar &$g ($a, $b), $b)
+    }
+}
 
 
 
