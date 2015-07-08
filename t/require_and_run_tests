@@ -15,6 +15,7 @@ our ($mydir, $myname); BEGIN {
 }
 use lib "$mydir/../lib";
 use lib "$mydir/../meta";
+use lib "$mydir/../htmlgen";
 
 use ModuleList;
 
