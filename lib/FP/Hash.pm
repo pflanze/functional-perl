@@ -25,6 +25,9 @@ FP::Hash
  print Dumper($c); # {b => 3}
  print Dumper($a); # {a => 1, b => 2}
 
+ subhash({a=>10, b=>11, c=>12}, "a", "c") # {a=>10, c=>12};
+
+
 =head1 DESCRIPTION
 
 Provides pure functions on hash tables. Note though that hash table
@@ -40,7 +43,9 @@ functional hash tables implementation (like the one used by Clojure)?)
 package FP::Hash;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(hash_set hash_perhaps_ref hash_xref hash_ref_or hash_cache
-	   hash_delete hash_diff hashes_keys $empty_hash);
+	   hash_delete hash_diff
+	   subhash
+	   hashes_keys $empty_hash);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -180,6 +185,19 @@ TEST {hash_diff {a=>1,b=>2,x=>9}, {a=>undef,b=>3,c=>5,x=>9}}
     'b' => 'changed',
     'x' => 'unchanged'
 };
+
+
+sub subhash {
+    my $s=shift;
+    my %r;
+    for (@_) {
+	$r{$_}= $$s{$_}
+    }
+    \%r
+}
+
+TEST{ subhash({a=>10, b=>11, c=>12}, "a", "c") }
+  +{a=>10, c=>12};
 
 use FP::HashSet;
 
