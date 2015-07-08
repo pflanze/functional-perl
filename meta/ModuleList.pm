@@ -41,7 +41,7 @@ sub moduleandpathlist {
 	    chomp;
 	    my $path= $_;
 	    next unless s/\.pm$//;
-	    s|^(lib\|meta)/|| or die;
+	    s|^(lib\|meta\|htmlgen)/|| or die "";
 	    s|/|::|sg;
 	    push @m, [$_, $path]
 	}
