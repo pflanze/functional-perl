@@ -11,8 +11,8 @@ repl=`which repl`
 if [ -z "$repl" ]; then repl=bin/repl; fi
 
 $repl \
+ -t \
  -M Chj::ruse \
- -M Chj::Trapl \
  -M FP::Lazy \
  -M FP::List=:all \
  -M FP::Div=:all \

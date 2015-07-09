@@ -37,6 +37,7 @@ sub usage {
   - enter ':?' to get a list of special commands and mode switches
 
   Options:
+  -t               trap exceptions in a repl, too
   -H|--no-history  Do not save history to file.
                    (It is still being read in on startup.)
 ";
@@ -49,6 +50,7 @@ my $MAXHISTLEN= 100;
 my @files;
 my $opt_H;
 my @opt_M;
+my $opt_t;
 for (my $i=0; $i<=$#ARGV; $i++) {
     local $_=$ARGV[$i];
     if (/^--?h(elp)?$/) {
@@ -58,6 +60,8 @@ for (my $i=0; $i<=$#ARGV; $i++) {
 	last;
     } elsif ($_ eq '-H' or $_ eq '--no-history') {
 	$opt_H=1;
+    } elsif ($_ eq '-t') {
+	$opt_t=1;
     } elsif (/^-M(.*)/) {
 	if ($1) {
 	    push @opt_M,$1;
@@ -79,6 +83,9 @@ eval {
     require Chj::BinHexOctDec;
 };
 warn $@ if $@;
+
+require Chj::Trapl
+  if $opt_t;
 
 if (@opt_M) {
     require 'Chj/Package/OfPath.pm';
