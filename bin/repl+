@@ -12,10 +12,10 @@ if [ -z "$repl" ]; then repl=bin/repl; fi
 
 $repl \
  -M Chj::ruse \
+ -M Chj::Trapl \
  -M FP::Lazy \
  -M FP::List=:all \
  -M FP::Div=:all \
- -M Chj::Backtrace \
  -M Chj::pp \
  -M FP::Stream=:all \
  -M FP::Predicates=:all \
