@@ -23,7 +23,7 @@ package PXML::Util;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(pxml_deferred_map pxml_eager_map
-	      pxml_map_elements
+	      pxml_map_elements pxml_map_elements_exhaustively
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -33,6 +33,7 @@ use Chj::TEST;
 use FP::List;
 use FP::Stream ":all";
 use FP::Hash "hash_perhaps_ref";
+use PXML "is_pxml_element";
 
 
 # Mapping PXML data (works not just on elements).
@@ -105,8 +106,9 @@ sub pxml_eager_map ($$;$$) {
 
 sub t_data {
     require PXML::XHTML;
-    PXML::XHTML::P("foo",
-		   PXML::XHTML::B("bar", undef, stream_iota (5)->take(4)))
+    import PXML::XHTML qw(P B A CODE);
+    P("foo",
+      B("bar", undef, stream_iota (5)->take(4)))
 }
 
 TEST { t_data->string }
@@ -177,6 +179,71 @@ sub pxml_map_elements ($$) {
 		    undef);
 }
 
+
+# A variant of pxml_map_elements that applies mapper functions to
+# their result until there's none left or the result matches the same
+# function again (the latter rule is so that mapper functions can
+# return the same element type that they match, i.e. modify elements
+# instead of replacing them)
+
+sub pxml_map_elements_exhaustively ($$) {
+    my ($v, $name_to_mapper)= @_;
+    pxml_eager_map
+      ($v,
+       sub {
+	   my ($e, $uplist)=@_;
+	 LP: {
+	       my $name= $e->name;
+	       if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $name) {
+		   my $v= &$mapper ($e, $uplist);
+		   if (is_pxml_element $v) {
+		       $e= $v;
+		       if ($e->name eq $name) {
+			   $e
+		       } else {
+			   redo LP
+		       }
+		   } else {
+		       $v
+		   }
+	       } else {
+		   $e
+	       }
+	   }
+       },
+       undef);
+}
+
+sub t_exh {
+    my ($map)= @_;
+    &$map
+      (P(A({href=>"fun"}, "hey"), B(CODE ("boo")), B("fi")),
+       {# a mapper does not go into an endless loop:
+	a=> sub { my($e,$uplist)=@_; $e->attribute_set (href=> "foo")},
+	# b mapper's output, if a, still goes through the above as
+	# well in the 'exhaustively' test; also, return value does not
+	# need to be an element. (XX NOTE that a list around an
+	# element, even if the element is the only list value, will
+	# stop exhaustive processing!)
+	b=> sub { my($e,$uplist)=@_;
+		  if (is_pxml_element
+		      stream_mixed_flatten($e->body)->first) {
+		      A({name=>"x"}, $e->body)
+		  } else {
+		      $e->body
+		  }
+		 }})->string
+}
+
+TEST{ t_exh \&pxml_map_elements }
+  '<p><a href="foo">hey</a>'
+  .'<a name="x"><code>boo</code></a>'
+  .'fi</p>';
+
+TEST{ t_exh \&pxml_map_elements_exhaustively }
+  '<p><a href="foo">hey</a>'
+  .'<a href="foo" name="x"><code>boo</code></a>'
+  .'fi</p>';
 
 
 1
