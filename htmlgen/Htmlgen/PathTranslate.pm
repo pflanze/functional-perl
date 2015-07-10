@@ -15,6 +15,8 @@ Htmlgen::PathTranslate
 
 =head1 DESCRIPTION
 
+Configurable source path (.md suffix) to website path (.xhtml suffix
+or similar, index instead of README etc.) mapper.
 
 =cut
 

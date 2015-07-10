@@ -15,6 +15,7 @@ Htmlgen::Mediawiki
 
 =head1 DESCRIPTION
 
+Expand `[[ ]]` in markdown source text into standard markdown format.
 
 =cut
 

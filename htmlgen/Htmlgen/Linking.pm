@@ -15,9 +15,19 @@ Htmlgen::Linking
 
 =head1 DESCRIPTION
 
+Adding/changing links, currently:
+
+- check whether <code> parts contain things that are either module
+  names in our repository or on CPAN, if so link them.
+
+- also, map <code> contents with map_code_body if applicable
+
+- instead of linking non-markdown files locally, make them go to the
+  Github repo
+
 =head1 SEE ALSO
 
-L<Htmlgen::PXMLMapper>
+This is a L<Htmlgen::PXMLMapper>
 
 =cut
 

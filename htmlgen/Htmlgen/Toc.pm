@@ -19,9 +19,12 @@ Expands this syntax in a PXML document:
 
 <with_toc> <h2>..</h2> <h3>..</h3>.. <h2>..</h2> </with_toc>
 
+into a table of contents and then the original contents but with
+numbering added to the hX section headers.
+
 =head1 SEE ALSO
 
-L<Htmlgen::PXMLMapper>
+This is a L<Htmlgen::PXMLMapper>
 
 =cut
 
