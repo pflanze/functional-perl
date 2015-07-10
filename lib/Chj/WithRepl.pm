@@ -46,6 +46,20 @@ installation (or n frames back from there, as per the argument to
 
 
 package Chj::WithRepl;
+
+
+#-- moved up here before any lexicals to avoid their exposure--
+# Wrapping `eval` calls with a special frame
+# (`Chj::WithRepl::WithRepl_eval`) that the handler can test for:
+
+sub WithRepl_eval ($) {
+    my ($arg)=@_;
+    my $package= caller;
+    eval "package $package; $arg"
+}
+#-- /moved--
+
+
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(withrepl push_withrepl pop_withrepl);
 @EXPORT_OK=qw(WithRepl_eval);
@@ -212,15 +226,6 @@ sub pop_withrepl () {
     $SIG{__DIE__}= pop @stack;
 }
 
-
-# Wrapping `eval` calls with a special frame
-# (`Chj::WithRepl::WithRepl_eval`) that the handler can test for:
-
-sub WithRepl_eval ($) {
-    my ($arg)=@_;
-    my $package= caller;
-    eval "package $package; $arg"
-}
 
 1
 
