@@ -218,7 +218,8 @@ sub pop_withrepl () {
 
 sub WithRepl_eval ($) {
     my ($arg)=@_;
-    eval $arg
+    my $package= caller;
+    eval "package $package; $arg"
 }
 
 1
