@@ -7,8 +7,7 @@
 # load repl with most of the more interesting functional-perl packages
 # loaded
 
-repl=`which repl`
-if [ -z "$repl" ]; then repl=bin/repl; fi
+repl=$(dirname "$0")/repl
 
 $repl \
  -t \
