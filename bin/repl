@@ -112,7 +112,7 @@ if (@opt_M) {
 
 if (@files) {
     for (@files) {
-	my $res= eval $_; die $@ if $@;
+	my $res= eval "package $myname; ".$_; die $@ if $@;
 	print "$res\n";
     }
 }
