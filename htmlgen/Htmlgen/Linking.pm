@@ -111,7 +111,9 @@ use Sub::Call::Tail;
 		  # XX this should be moved to configuration of course.
 		  ($self->maybe_have_path0->("lib/$module_subpath")
 		   //
-		   $self->maybe_have_path0->("meta/$module_subpath"));
+		   $self->maybe_have_path0->("meta/$module_subpath")
+		   //
+		   $self->maybe_have_path0->("htmlgen/$module_subpath"));
 
 		my $wrap_with_link= sub {
 		    my ($url)=@_;
