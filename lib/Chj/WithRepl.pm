@@ -22,6 +22,10 @@ Chj::WithRepl
                     # how many levels from the current one to go back
                     # for the search of 'eval' (the WORKAROUND, see
                     # below)
+
+ WithRepl_eval ...; # like `eval` but transparent for WithRepl
+                    # handlers
+
  pop_withrepl; # restore the handler that was pushed last.
 
 
@@ -44,7 +48,7 @@ installation (or n frames back from there, as per the argument to
 package Chj::WithRepl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(withrepl push_withrepl pop_withrepl);
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(WithRepl_eval);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -87,6 +91,8 @@ sub current_user_frame ($) {
 # should change the haandler, but don't, which is the reason we need
 # to analyze here.)
 
+our $debug = 0;
+
 sub have_eval_since_frame ($) {
     my ($startframe)= @_;
 
@@ -103,23 +109,43 @@ sub have_eval_since_frame ($) {
     do {
 	my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
 	if ($f->equal ($startframe)) {
+	    warn "reached startframe, thus return false"
+	      if $debug;
 	    return ''
 	} elsif ($f->subroutine eq "(eval)") {
 	    if ((@v)= caller $i++) {
 		my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
-		if ($f->subroutine eq 'Chj::Util::Repl::myeval') {
-		    #warn "a repl, ignore and continue search";
+		my $sub= $f->subroutine;
+		if ($sub eq 'Chj::Util::Repl::myeval'
+		    or
+		    $sub eq 'main::myxeval_in' # repl script, even
+		    # more of hack.
+		   ) {
+		    warn "(ignore eval since it's from a repl)"
+		      if $debug;
+		} elsif ($sub eq 'Chj::WithRepl::WithRepl_eval') {
+		    warn "(ignore eval since it's from a WithRepl_eval)"
+		      if $debug;
+		} elsif ($sub =~ /::BEGIN\z/) {
+		    # (why does BEGIN use eval?)
+		    warn "(ignore eval since it's from a BEGIN)"
+		      if $debug;
 		} else {
+		    warn "GOT eval (standalone)"
+		      if $debug;
 		    return 1
 		}
 	    } else {
+	        warn "GOT eval right at end of stack"
+		  if $debug;
 		return 1
 	    }
 	}
     }
       while ((@v)= caller $i++);
 
-    #die "couldn't find orig frame, ???"
+    warn "couldn't find orig frame!"
+      if $debug;
       # not even tail-calling should be able to do that, unless, not
       # local'ized, hm XXX non-popped handler.
     0
@@ -186,4 +212,14 @@ sub pop_withrepl () {
     $SIG{__DIE__}= pop @stack;
 }
 
+
+# Wrapping `eval` calls with a special frame
+# (`Chj::WithRepl::WithRepl_eval`) that the handler can test for:
+
+sub WithRepl_eval ($) {
+    my ($arg)=@_;
+    eval $arg
+}
+
 1
+
