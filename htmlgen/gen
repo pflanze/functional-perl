@@ -274,7 +274,7 @@ fun process_body ($v,
 		  # fake instance for tests only:
 		  pxml_name_to_mapper ("NOPATH", sub{die"NOIMPL"})
 		 ) {
-    pxml_map_elements ($v, $pxml_name_to_mapper)
+    pxml_map_elements_exhaustively ($v, $pxml_name_to_mapper)
 }
 
 TEST { HTML( process_body
