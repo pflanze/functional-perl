@@ -11,6 +11,17 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+# before the introduction of any lexical variables:
+sub myxeval_in {
+    #my ($package,$str)=@_; nah, don't want them to be visible as
+    #  lexicals
+    #my $res; # aww, now we've got one anyway, stupid. Oh, can do:
+    local $_;
+    eval "package $_[0]; \$_= do { $_[1] }; 1"
+      or die $@;
+    $_
+}
+
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
     my $location= (-l $0) ? abs_path ($0) : $0;
@@ -112,7 +123,7 @@ if (@opt_M) {
 
 if (@files) {
     for (@files) {
-	my $res= eval "package $myname; ".$_; die $@ if $@;
+	my $res= myxeval_in $myname, $_;
 	print "$res\n";
     }
 }
