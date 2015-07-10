@@ -11,8 +11,6 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-# XX this file should be split into modules
-
 # Method::Signatures versions 20120523 and 20141021 are working badly
 # for this file, because (1) each package needs its own import, (2)
 # error locations are completely off. Thus, still use the trusty
@@ -547,8 +545,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	    }
 	};
 	local our $costs=[];
-	while (#my ($name,$basecosts,$val)=
-	       $str=~ m{\b[Cc]ost
+	while ($str=~ m{\b[Cc]ost
 			# name: parentheses for "library cost"
 			(?:\s+($nameplusre))?
 			:
@@ -559,7 +556,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 			# amount
 			\$\s*(\d+)
 		   }gx) {
-	    my ($nameplus,$basecosts,$val)=($1,$2,$3);# perl.
+	    my ($nameplus,$basecosts,$val)=($1,$2,$3);
 	    my $name= &$possibly_nameplus_to_name($nameplus);
 	    my @basecosts= map { &$possibly_nameplus_to_name($_) }
 	      split /\s*\+\s*/, $basecosts;
@@ -569,9 +566,6 @@ fun genfile ($path,$groupname,$genfilestate) {
 					 \@basecosts,
 					 $val);
 	}
-	#local our $totalcost=
-	#  PFLANZE::Totalcost->new($costs);
-	#use Chj::Backtrace; use Chj::repl;repl if @$costs;#exit;
 	@$costs ? PFLANZE::Totalcost->new($costs)->range : undef
     };
     if (defined $maybe_costrange) {
