@@ -10,15 +10,15 @@ properly formatted versions of these documents.
 use of functional-perl itself quite a bit, although it was originally
 written for practical purposes, not as a demo. (Todo: make it nicer?)
 
-The code that builds the table of content, `map_with_toc`, is purely
-functional. It uses a variant of `fold_right` that also explicitely
-passes state while recursing down the input lists (the HTML (which is
-parsed to `PXML`) element bodies), which allows to collect the
-subsection headers (which don't need to reside within in the same HTML
-element) and get the numbering while mapping the HTML document to add
-the numbering at the same time. This code may look a bit involved, and
-could perhaps be abstracted into some PXML library functions (how
-would XSLT look to do the same?).
+The code that builds the table of content, `process__with_toc__body`
+in `Htmlgen::Toc`, is purely functional. It uses a variant of
+`fold_right` that also explicitely passes state while recursing down
+the input lists (the HTML (which is parsed to `PXML`) element bodies),
+which allows to collect the subsection headers (which don't need to
+reside within in the same HTML element) and get the numbering while
+mapping the HTML document to add the numbering at the same time. This
+code may look a bit involved, and could perhaps be abstracted into
+some PXML library functions (how would XSLT look to do the same?).
 
 `map_with_toc` is called from `process_body`, which uses
 `pxml_map_elements` from `PXML::Util` to map various HTML
