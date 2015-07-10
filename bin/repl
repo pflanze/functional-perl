@@ -95,29 +95,37 @@ eval {
 };
 warn $@ if $@;
 
-require Chj::Trapl
+use Chj::WithRepl qw(push_withrepl WithRepl_eval);
+
+push_withrepl (0)
   if $opt_t;
 
 if (@opt_M) {
     require 'Chj/Package/OfPath.pm';
     Chj::Package::OfPath->import('package_of_path_or_package');
-    eval "package $myname; "
-      .join(";",
-	    map { "use $_" }
-	    map {
-		my $a=$_;
-		$a=~ s/([^=]+)//s
-		  or die "invalid -M option '$_'";
-		my $path_or_package= $1;
-		my $p= package_of_path_or_package($path_or_package);
-		if ($a=~ s/^=//s) {
-		    $p." ".join(", ",map{"'$_'"} split /,/,$a)
-		} else {
-		    $p
-		}
-	    }
-	    @opt_M);
-    die $@ if $@;
+
+    my $code=
+      join(";",
+	   map { "use $_" }
+	   map {
+	       my $a=$_;
+	       $a=~ s/([^=]+)//s
+		 or die "invalid -M option '$_'";
+	       my $path_or_package= $1;
+	       my $p= package_of_path_or_package($path_or_package);
+	       if ($a=~ s/^=//s) {
+		   $p." ".join(", ",map{"'$_'"} split /,/,$a)
+	       } else {
+		   $p
+	       }
+	   }
+	   @opt_M
+	  );
+
+    WithRepl_eval "package $myname; "
+      .$code
+      ."; 1"
+	or die $@;
 }
 
 
