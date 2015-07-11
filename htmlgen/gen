@@ -136,10 +136,11 @@ fun pxml_name_to_mapper (@PXMLMapper_args) {
 fun process_body ($v,
 		  $pxml_name_to_mapper=
 		  # fake instance for tests only:
-		  pxml_name_to_mapper (path0=> "NOPATH",
-				       maybe_have_path0=> sub{die"NOIMPL"},
-				       perhaps_filename_to_path0=> sub{die"NOIMPL"},
-				       pathtranslate=> $pathtranslate),
+		  pxml_name_to_mapper
+		  (path0=> "NOPATH",
+		   maybe_have_path0=> sub{die"NOIMPL"},
+		   perhaps_filename_to_path0=> sub{die"NOIMPL"},
+		   pathtranslate=> $pathtranslate),
 		 ) {
     pxml_map_elements_exhaustively ($v, $pxml_name_to_mapper)
 }
@@ -227,7 +228,8 @@ TEST { HTML( process_body  ([P("Hello"),
 fun get_filesinfo () {
     my $all_files= $gitrepository->ls_files->array;
 
-    my $files= array_filter the_object_method($pathtranslate,"is_md"), $all_files;
+    my $files= array_filter (the_object_method($pathtranslate,"is_md"),
+			     $all_files);
 
     my $filename_to_path0=
       +{map {
