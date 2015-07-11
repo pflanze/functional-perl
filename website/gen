@@ -16,9 +16,9 @@ configpath="./gen-config.pl"
 
 # to make work without Sub::Call::Tail for t/htmlgen:
 if [ "${HTMLGEN_-}" == 1 ]; then
-    tail="_"
+    prefix="."
 else
-    tail=""
+    prefix=""
 fi
 
-"../htmlgen/gen$tail" "$configpath" "$inbase" "$outbase" "$@"
+"../${prefix}htmlgen/gen" "$configpath" "$inbase" "$outbase" "$@"
