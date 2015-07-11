@@ -53,8 +53,9 @@ fun squarebracked_escape ($str) {
 fun mediawiki_expand ($str) {
     my $res=[];
     my $lastpos= 0;
-    while ($str=~ m%(?<=[^\\])\[\[(.*?[^\\])\]\]%sg) {
-	my $cont= $1;
+    while ($str=~ m%(^|.)\[\[(.*?[^\\])\]\]%sg) {
+	next if $1 eq '\\';
+	my $cont= $2;
 	my $pos= pos $str;
 
 	my $matchlen= 2 + length ($cont) + 2;
@@ -140,5 +141,11 @@ TEST { mediawiki_expand ' [[Foo#(yah)\\[1\\]|Some \\[text\\]]] ' }
   [' ', A({href=> 'Foo#(yah)[1]'}, 'Some [text]'), ' ']; # note: no // and .md added to Foo!
 
 
+TEST { mediawiki_expand 'foo [[bar]]' }
+  ['foo ', A{href=>"//bar.md"}, "bar"];
+TEST { mediawiki_expand '[[bar]]' }
+  [A{href=>"//bar.md"}, "bar"];
+TEST { mediawiki_expand ' \[[bar]]' }
+  [' \[[bar]]'];
 
 1
