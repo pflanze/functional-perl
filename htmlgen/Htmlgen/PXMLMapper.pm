@@ -35,7 +35,7 @@ use FP::Struct [
 		[maybe(*is_procedure), "map_code_body"],
 	       ];
 
-method match_element_name ()
+method match_element_names ()
   { die "need implementation that returns an element name" }
 
 

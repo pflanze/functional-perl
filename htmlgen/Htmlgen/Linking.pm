@@ -86,7 +86,7 @@ use Sub::Call::Tail;
 
     use FP::Struct []=> "Htmlgen::PXMLMapper";
 
-    method match_element_name () { "code" }
+    method match_element_names () { [ "code" ] }
 
     method map_element ($e, $uplist) {
 
@@ -155,7 +155,7 @@ use Sub::Call::Tail;
 
     use FP::Struct []=> "Htmlgen::PXMLMapper";
 
-    method match_element_name () { "a" }
+    method match_element_names () { ["a"] }
 
     # XX dito config, well all of the map_a_href
     our $github_base= "https://github.com/pflanze/functional-perl/blob/master/";

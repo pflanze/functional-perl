@@ -129,7 +129,9 @@ fun pxml_name_to_mapper (@PXMLMapper_args) {
   +{
     map {
 	my $m= $_->new(@PXMLMapper_args);
-	($m->match_element_name, sub { $m->map_element(@_)})
+	map {
+	    ($_, sub { $m->map_element(@_)})
+	} @{$m->match_element_names}
     } @$pxml_mappers
    }
 }

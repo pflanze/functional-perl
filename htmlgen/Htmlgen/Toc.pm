@@ -296,7 +296,7 @@ TEST {HTML ((process__with_toc__body
 
 use FP::Struct []=> "Htmlgen::PXMLMapper";
 
-method match_element_name () { "with_toc" }
+method match_element_names () { ["with_toc"] }
 
 method map_element ($e, $uplist) {
     my ($body, $toc)=
