@@ -77,7 +77,7 @@ use PXML::Serialize 'puthtmlfile';
 use FP::Array ":all";
 use File::Spec;
 use FP::Array_sort;
-use FP::Ops qw(string_cmp number_cmp the_method);
+use FP::Ops qw(string_cmp number_cmp the_method the_object_method);
 use Chj::TEST ":all";
 use FP::List ":all";
 use FP::Stream ":all";
@@ -232,9 +232,7 @@ TEST { HTML( process_body  ([P("Hello"),
 fun get_filesinfo () {
     my $all_files= $gitrepository->ls_files->array;
 
-    my $files= [grep {
-	/\.md$/
-    } @$all_files];
+    my $files= array_filter the_object_method($pathtranslate,"is_md"), $all_files;
 
     my $filename_to_path0=
       +{map {

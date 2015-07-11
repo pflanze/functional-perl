@@ -189,23 +189,25 @@ use Sub::Call::Tail;
 
 		# * fix internal .md links
 
-		# check or find target, then convert to xhtml suffix
-		my $path= $uri->path;
-
-		# '//' feature (see 'Formatting' section in htmlgen/README.md)
 		my $selfpath0= $self->path0;
-		if ($href =~ m|^//|s) {
-		    my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
-		      or die "bug";
-		    if (my ($p0)= $self->perhaps_filename_to_path0->($op)) {
-			$path= path_diff ($selfpath0,$p0); # mutation
-		    } else {
-			warn "unknown link target '$op' (from '$href')";
-			$path= path_diff ($selfpath0, "UNKNOWN/$op");
+
+		my ($path,$uri,$is_md)= do {
+		    my $path= $uri->path;
+
+		    # '//' feature (see 'Formatting' section in htmlgen/README.md)
+		    if ($href =~ m|^//|s) {
+			my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
+			  or die "bug";
+			$uri->opaque(""); # mutation
+
+			if (my ($p0)= $self->perhaps_filename_to_path0->($op)) {
+			    (path_diff ($selfpath0,$p0), $uri, 1)
+			} else {
+			    warn "unknown link target '$op' (from '$href')";
+			    (path_diff ($selfpath0, "UNKNOWN/$op"), $uri, 1)
+			}
 		    }
-		    $uri->opaque(""); # mutation
-		} else {
-		    if (length $path) {
+		    elsif (length $path) {
 			my $p0= path_add(dirname ($selfpath0), $path);
 			$p0=~ s|^\./||;#hack. grr y
 			unless ($self->maybe_have_path0->($p0)) {
@@ -213,20 +215,36 @@ use Sub::Call::Tail;
 			      "('$path' from '$selfpath0', link '$href')";
 			    #use Chj::repl;repl;
 			}
+			($path, $uri, $self->pathtranslate->is_md($path))
 		    }
-		}
-		if (length $path) {
+		    else {
+			($path, $uri, $self->pathtranslate->is_md($path))
+		    }
+		};
+
+		my $cont_uri= fun ($uri) {
+		    $e->attribute_set("href", "$uri")
+		};
+		my $cont_path= fun ($path) {
 		    $uri->path($self->pathtranslate->possibly_suffix_md_to_html ($path));
+		    &$cont_uri($uri);
+		};
+
+		if (length $path) {
+		    # * change links to non-.md files to go to Github
+		    if ($is_md) {
+			&$cont_path($path)
+		    } else {
+			if (length (my $p= $uri->path)) {
+			    $uri->path(path_add (dirname($self->path0), $p));
+			    &$cont_uri($uri->abs($github_base))
+			      # yes, the `path` method is a mutator, `abs` is not!
+			}
+		    }
+		} else {
+		    $e
 		}
 
-		# * change links to non-.md files to go to Github
-		if (length (my $p= $uri->path)) {
-		    $uri->path(path_add (dirname($self->path0), $p));
-		    $uri= $uri->abs($github_base); # yes, path method is
-					           # mutator, abs is not!
-		}
-
-		$e->attribute_set("href", "$uri")
 	    } else {
 		$e
 	    }

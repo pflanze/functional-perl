@@ -52,6 +52,11 @@ use FP::Struct [[*is_procedure, "is_indexpath0"],
 		[*is_boolean, "downcaps"],
 	       ];
 
+
+method is_md ($path) {
+    $path=~ /\.md$/s
+}
+
 method if_suffix_md_to_html ($path0,$for_title,$then,$otherwise) {
     if (!$for_title and $$self{is_indexpath0}->($path0)) {
 	tail &$then (path_path0_append (dirname($path0), "index.xhtml"))
