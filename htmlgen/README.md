@@ -29,7 +29,7 @@ don't support OO) and are then used to build a hash table (by
 `pxml_map_elements_exhaustively` from `PXML::Util`. The mapper
 functions in the hash table receive the element and an "uplist", which
 is a linked list with the parents (with the direct one being the
-head). Note that purely functional data structures can't store links
+first). Note that purely functional data structures can't store links
 to parents in their elements (unless when cheating by way of
 recreating the parents on the fly or referring to them lazily); thus
 the mappers wouldn't know the context. But we can instead pass the
