@@ -177,7 +177,10 @@ use Sub::Call::Tail;
 
     method match_element_names () { ["a"] }
 
-    # XX dito config, well all of the map_a_href
+    # XX dito config, well all of the map_a_href (also, NOTE the 'XX'
+    # comment below about /tree/master instead; well, perhaps
+    # configure github repository base url and encode knowhow in the
+    # code)
     our $github_base= "https://github.com/pflanze/functional-perl/blob/master/";
 
     method map_element ($e, $uplist) {
@@ -237,6 +240,10 @@ use Sub::Call::Tail;
 		    } else {
 			if (length (my $p= $uri->path)) {
 			    $uri->path(path_add (dirname($self->path0), $p));
+			    # XX should use "/tree/master" instead of
+			    # "/blob/master" Github url for
+			    # directories, but Github redirects anyway
+			    # so?
 			    &$cont_uri($uri->abs($github_base))
 			      # yes, the `path` method is a mutator, `abs` is not!
 			}
