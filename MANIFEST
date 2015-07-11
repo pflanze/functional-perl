@@ -32,6 +32,7 @@ functional_XML/test
 functional_XML/testlazy
 htmlgen/Htmlgen/Cost.pm
 htmlgen/Htmlgen/FileUtil.pm
+htmlgen/Htmlgen/Htmlparse.pm
 htmlgen/Htmlgen/Linking.pm
 htmlgen/Htmlgen/MarkdownPlus.pm
 htmlgen/Htmlgen/Mediawiki.pm

@@ -22,7 +22,7 @@ Htmlgen::MarkdownPlus
 package Htmlgen::MarkdownPlus;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(htmlparse pxml_body_split_h1);
+@EXPORT_OK=qw(markdownplus_parse);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -32,51 +32,11 @@ use Sub::Call::Tail;
 use Chj::TEST;
 use PXML qw(is_pxml_element);
 use PXML::XHTML ":all";
-use HTML::TreeBuilder;
 use FP::Stream ":all";
-
-
-fun htmlparse_raw ($htmlstr,$whichtag) {
-    my $t= HTML::TreeBuilder->new;
-    $t->ignore_unknown(0); # allow <with_toc> elements
-    $t->parse_content ($htmlstr);
-    my $e= $t->elementify;
-    # (^ actually mutates $t into the HTML::Element object already, ugh)
-    $e->find_by_tag_name($whichtag)
-}
-
-
-
-# convert it to PXML
-fun htmlmap ($e) {
-    my $name= lc($e->tag);
-    my $atts={};
-    for ($e->all_external_attr_names) {
-	next if $_ eq "/";
-	die "att name '$_'" unless /^\w+\z/s;
-	$$atts{lc $_}= $e->attr($_);
-    }
-    PXML::Element->new
-	($name,
-	 $atts,
-	 [
-	  map {
-	      if (ref $_) {
-		  # another HTML::Element
-		  no warnings "recursion";# XX should rather sanitize input?
-		  htmlmap ($_)
-	      } else {
-		  # a string
-		  $_
-	      }
-	  } @{$e->content||[]}
-	 ]);
-}
-
-# parse HTML string to PXML
-fun htmlparse ($str,$whichtag) {
-    htmlmap (htmlparse_raw ($str,$whichtag))
-}
+use Htmlgen::Htmlparse 'htmlparse';
+use Text::Markdown 'markdown';
+use Htmlgen::Mediawiki qw(mediawiki_expand);
+use FP::Lazy;
 
 
 # Return <h1> element if available, and rest.
@@ -104,5 +64,21 @@ TEST{
   ['<h1>xy</h1>', '<body>foo<b>bar</b></body>'];
 
 
+fun markdownplus_parse ($str, $alternative_title) {
+    # -> ($h1,$body1)
+
+    my $htmlstr= markdown (mediawiki_expand $str);
+
+    # XX hack: fix '<p><with_toc></p> .. <p></with_toc></p>' before
+    # parsing, to avoid losing the with_toc element. Bah.
+    $htmlstr=~ s|<p>\s*(</?with_toc[^<>]*>)\s*</p>|$1|sg;
+
+    my $body= htmlparse($htmlstr, "body");
+
+    my $body= $body->body;
+    my ($maybe_h1, $rest)= pxml_body_split_h1 ($body);
+    defined $maybe_h1 ? ($maybe_h1, $rest)
+      : (H1(force ($alternative_title)), $body);
+}
 
 1

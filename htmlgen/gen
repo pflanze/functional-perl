@@ -68,7 +68,6 @@ our $user_config= require $configpath;
 
 use Chj::Backtrace;
 use Hash::Util 'lock_hash';
-use Text::Markdown 'markdown';
 use Chj::xperlfunc qw(basename dirname);
 use Chj::xIOUtil qw(xgetfile_utf8 xcopyfile);
 use FP::HashSet ":all";
@@ -90,12 +89,12 @@ use FP::Predicates qw(complement);
 use FP::Git::Repository;
 use Htmlgen::PathTranslate;
 use Htmlgen::PathUtil qw(path_add path_diff path0);
-use Htmlgen::Mediawiki qw(mediawiki_expand);
 use Htmlgen::Cost;
 use Htmlgen::default_config qw($default_config);
 use Htmlgen::UriUtil qw(URI_is_internal);
 use Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
-use Htmlgen::MarkdownPlus qw(htmlparse pxml_body_split_h1);
+use Htmlgen::MarkdownPlus qw(markdownplus_parse);
+use FP::Lazy;
 
 
 our $config = hashset_union ($user_config, $default_config);
@@ -444,20 +443,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	$genfilestate->set_costrange($path0, $maybe_costrange);
     }
 
-    my $htmlstr= markdown (mediawiki_expand $str);
-
-    # XX hack: fix '<p><with_toc></p> .. <p></with_toc></p>' before
-    # parsing, to avoid losing the with_toc element. Bah.
-    $htmlstr=~ s|<p>\s*(</?with_toc[^<>]*>)\s*</p>|$1|sg;
-
-    my $body= htmlparse($htmlstr, "body");
-
-    my ($h1,$body1)= do {
-	my $body= $body->body;
-	my ($maybe_h1, $rest)= pxml_body_split_h1 ($body);
-	defined $maybe_h1 ? ($maybe_h1, $rest)
-	  : (H1(path0_to_title ($path0)), $body);
-    };
+    my ($h1,$body)= markdownplus_parse ($str, lazy{ path0_to_title ($path0)});
 
     my $maybe_buglist= $groupname eq "buglist" && do {
 	my $bugs=
@@ -544,7 +530,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 		      on $path0_to_sortkey, \&string_cmp))),
 		 $config->{belownav}->($path0),
 		 $h1,
-		 process_body ($body1, $pxml_name_to_mapper),
+		 process_body ($body, $pxml_name_to_mapper),
 		 $maybe_buglist,
 		 BR,
 		 HR,
