@@ -103,7 +103,7 @@ method htmlmap ($e,$selfpath0,$filesinfo) {
 	$$atts{href}= "$uri";# mutation.
     }
 
-    my $res= PXML::Element->new
+    PXML::Element->new
 	($name,
 	 $atts,
 	 [
@@ -118,14 +118,6 @@ method htmlmap ($e,$selfpath0,$filesinfo) {
 	      }
 	  } @{$e->content||[]}
 	 ]);
-    # add anchors
-    if ($name =~ /^h(\d)$/) {
-	my $text= $res->text;
-	$text=~ s/ /_/sg;
-	A({name=> $text}, $res)
-    } else {
-	$res
-    }
 }
 
 # parse HTML string to PXML
@@ -134,42 +126,26 @@ method htmlparse ($str,$whichtag,$selfpath0,$filesinfo) {
 }
 
 
-# Return <h1> element if available, and rest. HACKY: compensate for
-# 'add anchors'. XX Stupid: should add anchors *afterwards* instead.
+# Return <h1> element if available, and rest.
 fun pxml_body_split_h1 ($body) {
-    my $rec= fix fun ($rec, $b) {
-	if (is_null $b) {
-	    (undef, $body)
-	} else {
-	    my ($v,$rest)= $b->first_and_rest;
-	    if (is_pxml_element $v
-		and $v->name eq "a"
-		and defined $v->maybe_attribute("name")) {
-		my $v2;
-		if (($v2)= stream_mixed_flatten($v->body)->perhaps_one
-		    and is_pxml_element $v2
-		    and $v2->name eq "h1") {
-		    ($v2, $rest)
-		} else {
-		    (undef, $body)
-		}
-	    } else {
-		(undef, $body)
-	    }
-	}
-    };
-    &$rec (stream_mixed_flatten $body)
+    my $b= stream_mixed_flatten $body;
+    my ($v,$rest)= $b->first_and_rest;
+    if (is_pxml_element $v and $v->name eq "h1") {
+	($v, $rest)
+    } else {
+	(undef, $body)
+    }
 }
 
 TEST{ [pxml_body_split_h1 ["foo"]] }
   [ undef, ['foo']];
 
 TEST{ [pxml_body_split_h1 [H1 ("x"), "foo"]]->[0] }
-  undef; # because we *really* expect the A wrapper now. stupid, again
+  H1 ("x");
 
 TEST{
     my ($h1,$rest)=
-      pxml_body_split_h1 [A({name=>"x"}, H1 ("x", "y")), "foo", B ("bar")];
+      pxml_body_split_h1 [H1 ("x", "y"), "foo", B ("bar")];
     [ $h1->string, BODY($rest)->string ]
 }
   ['<h1>xy</h1>', '<body>foo<b>bar</b></body>'];

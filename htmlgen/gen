@@ -123,7 +123,8 @@ use Htmlgen::Linking;
 
 # XX make configurable
 our $pxml_mappers=
-  ["Htmlgen::Toc", "Htmlgen::Linking::code", "Htmlgen::Linking::a_href"];
+  ["Htmlgen::Linking::Anchors", "Htmlgen::Toc",
+   "Htmlgen::Linking::code", "Htmlgen::Linking::a_href"];
 
 fun pxml_name_to_mapper (@PXMLMapper_args) {
   +{

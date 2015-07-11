@@ -38,6 +38,26 @@ use strict; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 
+
+{
+    package Htmlgen::Linking::Anchors;
+    # add anchors
+
+    use PXML::XHTML ":all";
+
+    use FP::Struct []=> "Htmlgen::PXMLMapper";
+
+    method match_element_names () { [qw(h1 h2 h3 h4)] }
+
+    method map_element ($e, $uplist) {
+	my $text= $e->text;
+	$text=~ s/ /_/sg;
+	A({name=> $text}, $e)
+    }
+    _END_
+}
+
+
 {
     package Htmlgen::Linking::code;
 
