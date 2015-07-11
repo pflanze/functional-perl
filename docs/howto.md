@@ -634,6 +634,25 @@ passed along) is available from `FP::Ops`. (Why is it not in
 really fulfills the functionality of the `->` operator (together with
 currying).)
 
+### Jungle
+
+What the [wikipedia
+article](https://en.wikipedia.org/wiki/Object_oriented_programming)
+also mentions is that quote by Joe Armstrong:
+
+> *The problem with object-oriented languages is they've got all this
+> implicit environment that they carry around with them. You wanted a
+> banana but what you got was a gorilla holding the banana and the
+> entire jungle.*
+
+What he probably refers to is that objects are bundles of other
+values, and hence those values are not explicitely (individually)
+passed to a function/method; in Perl accessing those 'environments' is
+explicit ("$self->"), which *might* help, but them never changing
+after creation will help too. It will still be a wise idea to keep the
+number of object fields small, and not bundle up things that don't
+belong together, as both understanding and refactoring will suffer.
+
 
 ## Pure functions versus I/O and other side-effects
 
