@@ -20,9 +20,14 @@ mapping the HTML document to add the numbering at the same time. This
 code may look a bit involved, and could perhaps be abstracted into
 some PXML library functions (how would XSLT look to do the same?).
 
-`map_with_toc` is called from `process_body`, which uses
-`pxml_map_elements` from `PXML::Util` to map various HTML
-elements. Mapper functions receive the element and an "uplist", which
+While we're explaining code: `Htmlgen::Toc` is one of the classes that
+follow the `Htmlgen::PXMLMapper` api (for others see the sub-packages
+in `Htmlgen::Linking`), which take a few configuration values (in a
+way similar to how currying might be used in functional languages that
+don't support OO) and are then used to build a hash table (by
+`pxml_name_to_mapper` in the [`gen`](gen) script) which is passed to
+`pxml_map_elements_exhaustively` from `PXML::Util`. The mapper
+functions in the hash table receive the element and an "uplist", which
 is a linked list with the parents (with the direct one being the
 head). Note that purely functional data structures can't store links
 to parents in their elements (unless when cheating by way of
@@ -37,8 +42,8 @@ whereas the `website/` directory contains the configuration to build
 the functional-perl website.
 
 Note that the first time you run it, it will test everything that is
-quoted and looks like a namespace on metacpan to see whether it's a
-module, which takes time and can fail with network or server errors;
+quoted and looks like a namespace on metacpan.org to see whether it's
+a module, which takes time and can fail with network or server errors;
 the results are cached, thus subsequent runs will be fast.
 
 ## Formatting
