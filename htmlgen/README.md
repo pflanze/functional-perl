@@ -91,15 +91,17 @@ additions:
 
 ## Hacking
 
-* to work interactively with the code, run `website/gen-repl`
+* to work interactively with the code, run
+  [`website/gen-repl`](../website/gen-repl)
 
 * it takes the path to a perl file that returns a hash with
   configuration as result of its initialization. This hash is kept in
   locked state in the `$config` global variable.
 
-* some general layout configuration can be found in `htmlgen.css`;
-  this could be supplemented with other files using PXML HTML code
-  returned from the function at the `head` config key (see example in
+* some general layout configuration can be found in
+  [`htmlgen.css`](htmlgen.css); this could be supplemented with other
+  files using PXML HTML code returned from the function at the `head`
+  config key (see example in
   [`gen-config.pl`](../website/gen-config.pl)).
 
 * the configuration for the functional-perl website chooses to put
