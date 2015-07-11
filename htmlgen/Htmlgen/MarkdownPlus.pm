@@ -36,6 +36,7 @@ use FP::Stream ":all";
 use Htmlgen::Htmlparse 'htmlparse';
 use Text::Markdown 'markdown';
 use FP::Lazy;
+use Htmlgen::Mediawiki qw(mediawiki_prepare);
 
 
 # Return <h1> element if available, and rest.
@@ -63,10 +64,13 @@ TEST{
   ['<h1>xy</h1>', '<body>foo<b>bar</b></body>'];
 
 
-fun markdownplus_parse ($str, $alternative_title) {
+fun markdownplus_parse ($str, $alternative_title, $mediawikitoken) {
     # -> ($h1,$body1)
 
-    my $htmlstr= markdown ($str);
+    my ($str1, $table)=
+      mediawiki_prepare ($str, $mediawikitoken);
+
+    my $htmlstr= markdown ($str1);
 
     # XX hack: fix '<p><with_toc></p> .. <p></with_toc></p>' before
     # parsing, to avoid losing the with_toc element. Bah.
@@ -76,8 +80,9 @@ fun markdownplus_parse ($str, $alternative_title) {
 
     my $body= $body->body;
     my ($maybe_h1, $rest)= pxml_body_split_h1 ($body);
-    defined $maybe_h1 ? ($maybe_h1, $rest)
-      : (H1(force ($alternative_title)), $body);
+    ((defined $maybe_h1 ? ($maybe_h1, $rest)
+      : (H1(force ($alternative_title)), $body)),
+     $table)
 }
 
 1

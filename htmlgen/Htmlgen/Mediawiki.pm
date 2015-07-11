@@ -23,7 +23,8 @@ Expand `[[ ]]` in markdown source text into standard markdown format.
 package Htmlgen::Mediawiki;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(mediawiki_expand);
+@EXPORT_OK=qw(mediawiki_prepare mediawiki_replace mediawiki_rexpand
+	      mediawiki_expand);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -50,6 +51,48 @@ fun squarebracked_escape ($str) {
 }
 
 
+
+# meant to preprocess the whole markdown document; keep the returned
+# table and the used token for mediawiki_expand.
+
+fun mediawiki_prepare ($str, $token) {
+    my $table= {};
+    my $n=0;
+    $str=~ s%(^|.)\[\[(.*?[^\\])\]\]%
+      my ($pre,$cont)=($1,$2);
+      $n++;
+      $$table{$n}= $cont;
+      $pre.$token."-".$n."-" # must be inert to markdown parser
+    %sge;
+    ($str, $table)
+}
+
+TEST {[mediawiki_prepare 'foo [[bar]] [[baz]].', 'LO']}
+  ['foo LO-1- LO-2-.',
+   {
+    '1' => 'bar',
+    '2' => 'baz'
+   }
+  ];
+
+
+# possibly should build PXML directly from here instead of string
+# replace, but I'm lazy right now.
+fun mediawiki_replace ($str, $token, $table) {
+    $str=~ s%\Q$token\E-(\d+)-%
+       '[['.$$table{$1}.']]'
+    %sge;
+    $str
+}
+
+# here's the version that returns PXML, through the indirection of a
+# string, which XXX may very well be unsafe.
+fun mediawiki_rexpand ($str, $token, $table) {
+    mediawiki_expand (mediawiki_replace ($str, $token, $table))
+}
+
+
+# text-segment -> PXML
 fun mediawiki_expand ($str) {
     my $res=[];
     my $lastpos= 0;

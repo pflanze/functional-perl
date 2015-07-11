@@ -91,7 +91,8 @@ use Htmlgen::default_config qw($default_config);
 use Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
 use Htmlgen::MarkdownPlus qw(markdownplus_parse);
 use FP::Lazy;
-use Htmlgen::Mediawiki qw(mediawiki_expand);
+use Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
+			  mediawiki_rexpand);
 
 
 our $config = hashset_union ($user_config, $default_config);
@@ -141,6 +142,8 @@ fun process_body ($v,
 		   maybe_have_path0=> sub{die"NOIMPL"},
 		   perhaps_filename_to_path0=> sub{die"NOIMPL"},
 		   pathtranslate=> $pathtranslate),
+		  $mediawikitoken="NOTOKEN",
+		  $mediawikitable={},
 		 ) {
 
     # HACK: can't mediawiki_expand the whole document in string format
@@ -153,10 +156,11 @@ fun process_body ($v,
     my $map_text_mediawiki= fun ($v,$uplist) {
 	if (is_pair $uplist # tests may not have it!
 	    and $uplist->first->name eq "code") {
-	    # don't touch code segments
-	    $v
+	    # don't expand it in code segments
+	    mediawiki_replace($v, $mediawikitoken, $mediawikitable)
 	} else {
-	    my $body= mediawiki_expand($v);
+	    my $body= mediawiki_rexpand
+	      ($v, $mediawikitoken, $mediawikitable);
 	    array_map (
 		       fun ($e) {
 			   pxml_map_elements_exhaustively
@@ -165,13 +169,6 @@ fun process_body ($v,
 		       $body)
 	}
     };
-    # XX breaks on:
-    # '<a href="howto.xhtml#References_and_mutation,_%22variables%22_versus_%22bindings%22">howto (References_and_mutation..)</a>'
-    # in design.md.
-    # '[[howto#References_and_mutation,_"variables"_versus_"bindings"]]'
-    #becomes
-    # '[[howto#References_and_mutation,<em>"variables"</em>versus_"bindings"]]'
-    # (no match, and markdown works on it)
 
     pxml_map_elements_exhaustively ($v,
 				    $pxml_name_to_mapper,
@@ -474,7 +471,10 @@ fun genfile ($path,$groupname,$genfilestate) {
 	$genfilestate->set_costrange($path0, $maybe_costrange);
     }
 
-    my ($h1,$body)= markdownplus_parse ($str, lazy{ path0_to_title ($path0)});
+    my $mediawikitoken= rand; # not fork safe!
+    my ($h1,$body,$mediawikitable)=
+      markdownplus_parse ($str, lazy{ path0_to_title ($path0)},
+			  $mediawikitoken);
 
     my $maybe_buglist= $groupname eq "buglist" && do {
 	my $bugs=
@@ -561,7 +561,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 		      on $path0_to_sortkey, \&string_cmp))),
 		 $config->{belownav}->($path0),
 		 $h1,
-		 process_body ($body, $pxml_name_to_mapper),
+		 process_body ($body, $pxml_name_to_mapper,
+			       $mediawikitoken, $mediawikitable),
 		 $maybe_buglist,
 		 BR,
 		 HR,
