@@ -78,7 +78,7 @@ use File::Spec;
 use FP::Array_sort;
 use FP::Ops qw(string_cmp number_cmp the_method the_object_method);
 use Chj::TEST ":all";
-use FP::List qw(mixed_flatten);
+use FP::List qw(is_pair mixed_flatten);
 use PXML::Util ":all";
 use FP::Hash ":all";
 use PXML::Tags qw(with_toc);
@@ -91,6 +91,7 @@ use Htmlgen::default_config qw($default_config);
 use Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
 use Htmlgen::MarkdownPlus qw(markdownplus_parse);
 use FP::Lazy;
+use Htmlgen::Mediawiki qw(mediawiki_expand);
 
 
 our $config = hashset_union ($user_config, $default_config);
@@ -132,7 +133,6 @@ fun pxml_name_to_mapper (@PXMLMapper_args) {
    }
 }
 
-
 fun process_body ($v,
 		  $pxml_name_to_mapper=
 		  # fake instance for tests only:
@@ -142,7 +142,40 @@ fun process_body ($v,
 		   perhaps_filename_to_path0=> sub{die"NOIMPL"},
 		   pathtranslate=> $pathtranslate),
 		 ) {
-    pxml_map_elements_exhaustively ($v, $pxml_name_to_mapper)
+
+    # HACK: can't mediawiki_expand the whole document in string format
+    # before the markdown parsing, since it would expand examples in
+    # code sections as well. So instead leave the [[ ]] in (unharmed
+    # by markdown) and expand it here on individual text segments,
+    # then map it (and here comes the hacky part, you will forget to
+    # update here when prepending another mapping phase or so, right?) 
+    # the same way the rest of the document is treated.
+    my $map_text_mediawiki= fun ($v,$uplist) {
+	if (is_pair $uplist # tests may not have it!
+	    and $uplist->first->name eq "code") {
+	    # don't touch code segments
+	    $v
+	} else {
+	    my $body= mediawiki_expand($v);
+	    array_map (
+		       fun ($e) {
+			   pxml_map_elements_exhaustively
+			     ($e, $pxml_name_to_mapper, undef);
+		       },
+		       $body)
+	}
+    };
+    # XX breaks on:
+    # '<a href="howto.xhtml#References_and_mutation,_%22variables%22_versus_%22bindings%22">howto (References_and_mutation..)</a>'
+    # in design.md.
+    # '[[howto#References_and_mutation,_"variables"_versus_"bindings"]]'
+    #becomes
+    # '[[howto#References_and_mutation,<em>"variables"</em>versus_"bindings"]]'
+    # (no match, and markdown works on it)
+
+    pxml_map_elements_exhaustively ($v,
+				    $pxml_name_to_mapper,
+				    $map_text_mediawiki)
 }
 
 TEST { HTML( process_body

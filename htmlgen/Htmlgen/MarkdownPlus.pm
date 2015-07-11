@@ -35,7 +35,6 @@ use PXML::XHTML ":all";
 use FP::Stream ":all";
 use Htmlgen::Htmlparse 'htmlparse';
 use Text::Markdown 'markdown';
-use Htmlgen::Mediawiki qw(mediawiki_expand);
 use FP::Lazy;
 
 
@@ -67,7 +66,7 @@ TEST{
 fun markdownplus_parse ($str, $alternative_title) {
     # -> ($h1,$body1)
 
-    my $htmlstr= markdown (mediawiki_expand $str);
+    my $htmlstr= markdown ($str);
 
     # XX hack: fix '<p><with_toc></p> .. <p></with_toc></p>' before
     # parsing, to avoid losing the with_toc element. Bah.
