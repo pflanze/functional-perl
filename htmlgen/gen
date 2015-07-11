@@ -95,7 +95,7 @@ use Htmlgen::Cost;
 use Htmlgen::default_config qw($default_config);
 use Htmlgen::UriUtil qw(URI_is_internal);
 use Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
-use Htmlgen::MarkdownPlus;
+use Htmlgen::MarkdownPlus qw(htmlparse pxml_body_split_h1);
 
 
 our $config = hashset_union ($user_config, $default_config);
@@ -129,7 +129,7 @@ our $pxml_mappers=
 fun pxml_name_to_mapper (@PXMLMapper_args) {
   +{
     map {
-	my $m= $_->new(@PXMLMapper_args);
+	my $m= $_->new_(@PXMLMapper_args);
 	map {
 	    ($_, sub { $m->map_element(@_)})
 	} @{$m->match_element_names}
@@ -141,7 +141,10 @@ fun pxml_name_to_mapper (@PXMLMapper_args) {
 fun process_body ($v,
 		  $pxml_name_to_mapper=
 		  # fake instance for tests only:
-		  pxml_name_to_mapper ("NOPATH", sub{die"NOIMPL"})
+		  pxml_name_to_mapper (path0=> "NOPATH",
+				       maybe_have_path0=> sub{die"NOIMPL"},
+				       perhaps_filename_to_path0=> sub{die"NOIMPL"},
+				       pathtranslate=> $pathtranslate),
 		 ) {
     pxml_map_elements_exhaustively ($v, $pxml_name_to_mapper)
 }
@@ -449,13 +452,11 @@ fun genfile ($path,$groupname,$genfilestate) {
     # parsing, to avoid losing the with_toc element. Bah.
     $htmlstr=~ s|<p>\s*(</?with_toc[^<>]*>)\s*</p>|$1|sg;
 
-    my $markdownplus= Htmlgen::MarkdownPlus->new($pathtranslate);
-    my $body= $markdownplus->htmlparse($htmlstr, "body", $path0,
-			$genfilestate->filesinfo);
+    my $body= htmlparse($htmlstr, "body");
 
     my ($h1,$body1)= do {
 	my $body= $body->body;
-	my ($maybe_h1, $rest)= Htmlgen::MarkdownPlus::pxml_body_split_h1 ($body);
+	my ($maybe_h1, $rest)= pxml_body_split_h1 ($body);
 	defined $maybe_h1 ? ($maybe_h1, $rest)
 	  : (H1(path0_to_title ($path0)), $body);
     };
@@ -490,7 +491,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     my $filesinfo= $genfilestate->filesinfo;
     my $pxml_name_to_mapper=
-      pxml_name_to_mapper ($path0,
+      pxml_name_to_mapper (path0=> $path0,
+			   maybe_have_path0=>
 			   fun ($path0) {
 			       if ($filesinfo->all_path0_exists ($path0)) {
 				   $filesinfo->all_path0_used_inc($path0);
@@ -499,7 +501,14 @@ fun genfile ($path,$groupname,$genfilestate) {
 				   undef
 			       }
 			   },
+			   perhaps_filename_to_path0=>
+			   fun ($filename) {
+			       $filesinfo->perhaps_filename_to_path0($filename)
+			   },
+			   map_code_body=>
 			   hash_maybe_ref ($config, "map_code_body"),
+			   pathtranslate=>
+			   $pathtranslate,
 			  );
 
     my $html=

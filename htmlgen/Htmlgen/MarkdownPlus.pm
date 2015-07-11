@@ -22,7 +22,7 @@ Htmlgen::MarkdownPlus
 package Htmlgen::MarkdownPlus;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(htmlparse pxml_body_split_h1);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -30,15 +30,10 @@ use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 
 use Chj::TEST;
-use Htmlgen::UriUtil qw(URI_is_internal);
-use Htmlgen::PathUtil qw(path_diff path_add);
 use PXML qw(is_pxml_element);
 use PXML::XHTML ":all";
 use HTML::TreeBuilder;
-use Chj::xperlfunc qw(dirname);
 use FP::Stream ":all";
-use FP::fix;
-use FP::Predicates;
 
 
 fun htmlparse_raw ($htmlstr,$whichtag) {
@@ -52,11 +47,8 @@ fun htmlparse_raw ($htmlstr,$whichtag) {
 
 
 
-use FP::Struct [[instance_of("Htmlgen::PathTranslate"), "pathtranslate"]];
-
-
 # convert it to PXML
-method htmlmap ($e,$selfpath0,$filesinfo) {
+fun htmlmap ($e) {
     my $name= lc($e->tag);
     my $atts={};
     for ($e->all_external_attr_names) {
@@ -64,45 +56,6 @@ method htmlmap ($e,$selfpath0,$filesinfo) {
 	die "att name '$_'" unless /^\w+\z/s;
 	$$atts{lc $_}= $e->attr($_);
     }
-
-    # fix internal .md links; should this be moved to the PXML mapping
-    # phase now?
-    if ($name eq "a"
-	and URI_is_internal(my $uri= URI->new($$atts{href}))) {
-
-	# check or find target, then convert to xhtml suffix
-	my $path= $uri->path;
-
-	# '//' feature (see doc-formatting.txt)
-	if ($$atts{href} =~ m|^//|s) {
-	    my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
-	      or die "bug";
-	    if (my ($p0)= $filesinfo->perhaps_filename_to_path0($op)) {
-		$path= path_diff ($selfpath0,$p0); # mutation
-	    } else {
-		warn "unknown link target '$op' (from '$$atts{href}')";
-		$path= path_diff ($selfpath0, "UNKNOWN/$op");
-	    }
-	    $uri->opaque(""); # mutation
-	} else {
-	    if (length $path) {
-		my $p0= path_add(dirname ($selfpath0), $path);
-		$p0=~ s|^\./||;#hack. grr y
-		if ($filesinfo->all_path0_exists($p0)) {
-		    $filesinfo->all_path0_used_inc($p0);
-		} else {
-		    warn "link target does not exist: '$p0' ".
-		      "('$path' from '$selfpath0', link '$$atts{href}')";
-		    #use Chj::repl;repl;
-		}
-	    }
-	}
-	if (length $path) {
-	    $uri->path($self->pathtranslate->possibly_suffix_md_to_html ($path));
-	}
-	$$atts{href}= "$uri";# mutation.
-    }
-
     PXML::Element->new
 	($name,
 	 $atts,
@@ -111,7 +64,7 @@ method htmlmap ($e,$selfpath0,$filesinfo) {
 	      if (ref $_) {
 		  # another HTML::Element
 		  no warnings "recursion";# XX should rather sanitize input?
-		  $self->htmlmap ($_,$selfpath0,$filesinfo)
+		  htmlmap ($_)
 	      } else {
 		  # a string
 		  $_
@@ -121,8 +74,8 @@ method htmlmap ($e,$selfpath0,$filesinfo) {
 }
 
 # parse HTML string to PXML
-method htmlparse ($str,$whichtag,$selfpath0,$filesinfo) {
-    $self->htmlmap (htmlparse_raw ($str,$whichtag), $selfpath0, $filesinfo)
+fun htmlparse ($str,$whichtag) {
+    htmlmap (htmlparse_raw ($str,$whichtag))
 }
 
 
@@ -152,4 +105,4 @@ TEST{
 
 
 
-_END_
+1

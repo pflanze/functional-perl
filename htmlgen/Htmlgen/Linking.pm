@@ -171,7 +171,7 @@ use Sub::Call::Tail;
 
     use Htmlgen::UriUtil qw(URI_is_internal);
     use Chj::xperlfunc qw(dirname);
-    use Htmlgen::PathUtil qw(path_add);
+    use Htmlgen::PathUtil qw(path_add path_diff);
 
     use FP::Struct []=> "Htmlgen::PXMLMapper";
 
@@ -180,18 +180,53 @@ use Sub::Call::Tail;
     # XX dito config, well all of the map_a_href
     our $github_base= "https://github.com/pflanze/functional-perl/blob/master/";
 
-    # change links to non-.md files to go to Github
     method map_element ($e, $uplist) {
 	if (my ($href)= $e->perhaps_attribute("href")) {
-	    if (URI_is_internal(my $u= URI->new($href))) {
-		if (length (my $p= $u->path)) {
-		    $u->path(path_add (dirname($self->path0), $p));
-		    $u= $u->abs($github_base); # yes, path method is
-					       # mutator, abs is not!
-		    $e->attribute_set("href", "$u")
+
+	    my $uri= URI->new($href);
+
+	    if (URI_is_internal($uri)) {
+
+		# * fix internal .md links
+
+		# check or find target, then convert to xhtml suffix
+		my $path= $uri->path;
+
+		# '//' feature (see 'Formatting' section in htmlgen/README.md)
+		my $selfpath0= $self->path0;
+		if ($href =~ m|^//|s) {
+		    my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
+		      or die "bug";
+		    if (my ($p0)= $self->perhaps_filename_to_path0->($op)) {
+			$path= path_diff ($selfpath0,$p0); # mutation
+		    } else {
+			warn "unknown link target '$op' (from '$href')";
+			$path= path_diff ($selfpath0, "UNKNOWN/$op");
+		    }
+		    $uri->opaque(""); # mutation
 		} else {
-		    $e
+		    if (length $path) {
+			my $p0= path_add(dirname ($selfpath0), $path);
+			$p0=~ s|^\./||;#hack. grr y
+			unless ($self->maybe_have_path0->($p0)) {
+			    warn "link target does not exist: '$p0' ".
+			      "('$path' from '$selfpath0', link '$href')";
+			    #use Chj::repl;repl;
+			}
+		    }
 		}
+		if (length $path) {
+		    $uri->path($self->pathtranslate->possibly_suffix_md_to_html ($path));
+		}
+
+		# * change links to non-.md files to go to Github
+		if (length (my $p= $uri->path)) {
+		    $uri->path(path_add (dirname($self->path0), $p));
+		    $uri= $uri->abs($github_base); # yes, path method is
+					           # mutator, abs is not!
+		}
+
+		$e->attribute_set("href", "$uri")
 	    } else {
 		$e
 	    }

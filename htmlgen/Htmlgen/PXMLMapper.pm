@@ -32,7 +32,9 @@ use FP::Predicates;
 use FP::Struct [
 		[*is_nonnullstring, "path0"],
 		[*is_procedure, "maybe_have_path0"],
+		[*is_procedure, "perhaps_filename_to_path0"],
 		[maybe(*is_procedure), "map_code_body"],
+		[instance_of("Htmlgen::PathTranslate"), "pathtranslate"],
 	       ];
 
 method match_element_names ()
