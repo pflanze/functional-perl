@@ -91,8 +91,7 @@ additions:
 
 ## Hacking
 
-* to work interactively with the code, run
-  [`website/gen-repl`](../website/gen-repl)
+* to work interactively with the code, run `website/gen --repl`
 
 * it takes the path to a perl file that returns a hash with
   configuration as result of its initialization. This hash is kept in
