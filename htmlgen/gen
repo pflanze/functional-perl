@@ -149,14 +149,14 @@ fun process_body ($v,
 TEST { HTML( process_body
 	     (["Hello",
 	       WITH_TOC({level=>1},
-			A({name=>"wo"}, H1 "world"))]))
+			H1 "world")]))
 	 ->string }
-  '<html>Hello<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#wo">1. world</a></dir></li></dir></div><a name="wo"><h1>1. world</h1></a></html>';
+  '<html>Hello<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#world">1. world</a></dir></li></dir></div><a name="world"><h1>1. world</h1></a></html>';
 
 TEST { HTML( process_body
-	     (["Hello", WITH_TOC ["some", A {name=>"a"}, H2 "world"]]))
+	     (["Hello", WITH_TOC ["some", H2 "world"]]))
 	 ->string }
-  '<html>Hello<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#a">1. world</a></dir></li></dir></div>some<a name="a"><h2>1. world</h2></a></html>';
+  '<html>Hello<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#world">1. world</a></dir></li></dir></div>some<a name="world"><h2>1. world</h2></a></html>';
 
 TEST { HTML( process_body  ([P("Hello"),
 			     WITH_TOC
@@ -165,24 +165,24 @@ TEST { HTML( process_body  ([P("Hello"),
 			      P ("blabla"),
 			      A({name=>"a"}," ",DIV H1 ("for one")),
 			     ]]))->string }
-  '<html><p>Hello</p><div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#a">1. for one</a></dir></li></dir></div> <p>blabla</p><a name="a"> <div><h1>1. for one</h1></div></a></html>';
+  '<html><p>Hello</p><div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#for_one">1. for one</a></dir></li></dir></div> <p>blabla</p><a name="a"> <div><a name="for_one"><h1>1. for one</h1></a></div></a></html>';
 
 TEST { HTML( process_body  ([P("Hello"),
 			     WITH_TOC
 			     {level=>1},
 			     [" ",
 			      P ("blabla"),
-			      A({name=>"a"}, H1 ("for one")),
-			      A({name=>"b"}, H2 ("more one")),
+			      H1 ("for one"),
+			      H2 ("more one"),
 			      TABLE(TR
 				    TD
 				    P ("blah"),
-				    A ({name=>"c"}, H1 ("sub two")),
+				    H1 ("sub two"),
 				    DIV ("bla")),
 			     ]]))->string }
   '<html><p>Hello</p>'.
-  '<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#a">1. for one</a><li><dir class="toc"><a href="#b">1.1. more one</a></dir></li></dir></li><li><dir class="toc"><a href="#c">2. sub two</a></dir></li></dir></div>'.
-  ' <p>blabla</p><a name="a"><h1>1. for one</h1></a><a name="b"><h2>1.1. more one</h2></a><table><tr><td><p>blah</p><a name="c"><h1>2. sub two</h1></a><div>bla</div></td></tr></table></html>';
+  '<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#for_one">1. for one</a><li><dir class="toc"><a href="#more_one">1.1. more one</a></dir></li></dir></li><li><dir class="toc"><a href="#sub_two">2. sub two</a></dir></li></dir></div>'.
+  ' <p>blabla</p><a name="for_one"><h1>1. for one</h1></a><a name="more_one"><h2>1.1. more one</h2></a><table><tr><td><p>blah</p><a name="sub_two"><h1>2. sub two</h1></a><div>bla</div></td></tr></table></html>';
 
 
 
