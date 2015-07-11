@@ -186,6 +186,7 @@ sub pxml_map_elements ($$) {
 # return the same element type that they match, i.e. modify elements
 # instead of replacing them)
 
+# (do you have a better name?)
 sub pxml_map_elements_exhaustively ($$) {
     my ($v, $name_to_mapper)= @_;
     pxml_eager_map
