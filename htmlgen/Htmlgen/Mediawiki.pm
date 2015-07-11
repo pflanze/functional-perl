@@ -33,15 +33,6 @@ use Chj::chompspace;
 use Chj::TEST ":all";
 use PXML::XHTML ":all";
 
-# escape parentheses since URI doesn't do that itself, and we'd have a
-# problem with the [text](uri) markdown syntax (is that the right way
-# to escape in markdown? isn't it all hacky?)
-fun parens_uri_escape ($str) {
-    $str=~ s|\(|%28|sg;
-    $str=~ s|\)|%29|sg;
-    $str
-}
-
 # and for text display we need to *decode* URIs..
 # COPY from chj-bin's `urldecode`
 use Encode;
@@ -108,17 +99,17 @@ fun mediawiki_expand ($str) {
 	      A({
 		 href=>
 		 "//"
-		 . parens_uri_escape($uri->path).".md"
+		 . $uri->path.".md"
 		 . do {
 		     my $f= $uri->fragment;
-		     length $f ? "#".parens_uri_escape($f) : ""
+		     length $f ? "#".$f : ""
 		 }
 		},
 		$text.$fragmenttext);
 	} elsif (@parts==2) {
 	    my ($loc,$text)= @parts;
 	    push @$res,
-	      A({href=> parens_uri_escape($loc)},
+	      A({href=> $loc},
 		$text)
 	} else {
 	    # XX location?...
@@ -139,14 +130,14 @@ TEST { mediawiki_expand "<foo>[[bar]] baz</foo>" }
 
 TEST { mediawiki_expand
 	 ' [[howto#References (and "mutation"), "variables" versus "bindings"]] ' }
-  [' ', A({href=> '//howto.md#References%20%28and%20%22mutation%22%29,%20%22variables%22%20versus%20%22bindings%22'},
+  [' ', A({href=> '//howto.md#References%20(and%20%22mutation%22),%20%22variables%22%20versus%20%22bindings%22'},
 	  'howto (References (and "mutation")..)'), ' '];
 
 TEST { mediawiki_expand ' [[Foo#yah\\[1\\]]] ' }
   [' ', A({href=> '//Foo.md#yah[1]'}, 'Foo (yah[1])'), ' '];
 
 TEST { mediawiki_expand ' [[Foo#(yah)\\[1\\]|Some \\[text\\]]] ' }
-  [' ', A({href=> 'Foo#%28yah%29[1]'}, 'Some [text]'), ' ']; # note: no // and .md added to Foo!
+  [' ', A({href=> 'Foo#(yah)[1]'}, 'Some [text]'), ' ']; # note: no // and .md added to Foo!
 
 
 
