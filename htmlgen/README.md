@@ -37,9 +37,9 @@ context when those functions are actually called (which in typical
 functional manner is better since the same subtree can now be part of
 various different parents at the same time).
 
-The `htmlgen/` directory contains the universally usable program,
-whereas the `website/` directory contains the configuration to build
-the functional-perl website.
+The [`htmlgen/`](.) directory contains the universally usable program,
+whereas the [`website/`](../website/) directory contains the
+configuration to build the functional-perl website.
 
 Note that the first time you run it, it will test everything that is
 quoted and looks like a namespace on metacpan.org to see whether it's
