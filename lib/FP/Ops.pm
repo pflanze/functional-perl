@@ -28,6 +28,11 @@ Also similarly, `the_method("foo", @args)` returns a function that
 does a "foo" method call on its argument, passing @args and then
 whatever additional arguments the function receives.
 
+`the_object_method` is a variant of the_method which takes the object
+as the first argument: `the_object_method($obj,"foo",@args)` returns a
+function that does a "foo" method call on $obj, passing @args and then
+whatever additional arguments the function receives.
+
 Also, `operator_2("foo")` returns a function that uses "foo" as
 operator between 2 arguments. `operator_1("foo")` returns a function
 that uses "foo" as operator before its single argument. CAREFUL: make
@@ -49,6 +54,7 @@ package FP::Ops;
 		 string_cmp
 		 number_cmp
 		 the_method
+		 the_object_method
 		 operator_2
 		 operator_1
 	    );
@@ -109,6 +115,15 @@ sub the_method {
     sub {
 	my $self=shift;
 	$self->$method(@args,@_)
+	  # any reason to put args before or after _ ? So far I only
+	  # have args, no _.
+    }
+}
+
+sub the_object_method {
+    my ($object,$method,@args)=@_;
+    sub {
+	$object->$method(@args,@_)
 	  # any reason to put args before or after _ ? So far I only
 	  # have args, no _.
     }
