@@ -31,7 +31,7 @@ use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 use Chj::chompspace;
 use Chj::TEST ":all";
-
+use PXML::XHTML ":all";
 
 # escape parentheses since URI doesn't do that itself, and we'd have a
 # problem with the [text](uri) markdown syntax (is that the right way
@@ -58,11 +58,21 @@ fun squarebracked_escape ($str) {
     $str
 }
 
-# operating on markdown source string
+
 fun mediawiki_expand ($str) {
-    $str=~ s%(?<=[^\\])\[\[(.*?[^\\])\]\]%
+    my $res=[];
+    my $lastpos= 0;
+    while ($str=~ m%(?<=[^\\])\[\[(.*?[^\\])\]\]%sg) {
 	my $cont= $1;
-        $cont=~ s|(?<=[^\\])\\(.)|$1|sg; # remove quoting
+	my $pos= pos $str;
+
+	my $matchlen= 2 + length ($cont) + 2;
+	my $prelen= $pos-$matchlen-$lastpos;
+	push @$res, substr $str, $lastpos, $prelen
+	  if $prelen>0;
+	$lastpos=$pos;
+
+	$cont=~ s|(?<=[^\\])\\(.)|$1|sg; # remove quoting
 	my @parts= map { chompspace $_ } split /(?<=[^\\])\|/, $cont;
 	if (@parts==1) {
 	    my ($docname_and_perhaps_fragment)= @parts;
@@ -94,38 +104,49 @@ fun mediawiki_expand ($str) {
 	    # opaque for the text, though, ok?
 	    my $text= $uri->opaque;
 	    $text=~ tr/_/ /;
-	    ("["
-	     . squarebracked_escape ($text.$fragmenttext)
-	     . "](//"
-	     . parens_uri_escape($uri->path).".md"
-	     . do {
-		 my $f= $uri->fragment;
-		 length $f ? "#".parens_uri_escape($f) : ""
-	     }
-	     .")")
+	    push @$res,
+	      A({
+		 href=>
+		 "//"
+		 . parens_uri_escape($uri->path).".md"
+		 . do {
+		     my $f= $uri->fragment;
+		     length $f ? "#".parens_uri_escape($f) : ""
+		 }
+		},
+		$text.$fragmenttext);
 	} elsif (@parts==2) {
 	    my ($loc,$text)= @parts;
-	    "[".squarebracked_escape($text)."](".parens_uri_escape($loc).")"
+	    push @$res,
+	      A({href=> parens_uri_escape($loc)},
+		$text)
 	} else {
 	    # XX location?...
 	    die "more than 2 parts in a wiki style link: '$cont'";
 	}
-    %sge;
-    $str
+    }
+
+    my $postlen= length($str)-$lastpos;
+    push @$res, substr $str, $lastpos, $postlen
+      if $postlen > 0;
+
+    $res
 }
 
+
 TEST { mediawiki_expand "<foo>[[bar]] baz</foo>" }
-  '<foo>[bar](//bar.md) baz</foo>';
+  ['<foo>', A({href=> "//bar.md"}, "bar"), ' baz</foo>'];
 
 TEST { mediawiki_expand
 	 ' [[howto#References (and "mutation"), "variables" versus "bindings"]] ' }
-  ' [howto (References (and "mutation")..)](//howto.md#References%20%28and%20%22mutation%22%29,%20%22variables%22%20versus%20%22bindings%22) ';
+  [' ', A({href=> '//howto.md#References%20%28and%20%22mutation%22%29,%20%22variables%22%20versus%20%22bindings%22'},
+	  'howto (References (and "mutation")..)'), ' '];
 
 TEST { mediawiki_expand ' [[Foo#yah\\[1\\]]] ' }
-  ' [Foo (yah\\[1\\])](//Foo.md#yah[1]) ';
+  [' ', A({href=> '//Foo.md#yah[1]'}, 'Foo (yah[1])'), ' '];
 
 TEST { mediawiki_expand ' [[Foo#(yah)\\[1\\]|Some \\[text\\]]] ' }
-  ' [Some \\[text\\]](Foo#%28yah%29[1]) '; # note: no // and .md added to Foo!
+  [' ', A({href=> 'Foo#%28yah%29[1]'}, 'Some [text]'), ' ']; # note: no // and .md added to Foo!
 
 
 
