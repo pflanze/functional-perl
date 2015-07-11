@@ -7,3 +7,6 @@
 * use `HTML::Element`, as base class? Of course that won't work for
   general XML. LibXML for the latter? Well.. Perhaps parametrizable? 
 
+* how are the rules with regards to URL escaping? No escaping, right?
+  So should actually be fine? Check in detail, tests.
+
