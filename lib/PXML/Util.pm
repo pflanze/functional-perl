@@ -165,8 +165,8 @@ TEST { pxml_deferred_map
 
 
 
-sub pxml_map_elements ($$) {
-    my ($v, $name_to_mapper)= @_;
+sub pxml_map_elements ($$;$) {
+    my ($v, $name_to_mapper, $maybe_otherfn)= @_;
     pxml_eager_map ($v,
 		    sub {
 			my ($e, $uplist)=@_;
@@ -176,7 +176,7 @@ sub pxml_map_elements ($$) {
 			    $e
 			}
 		    },
-		    undef);
+		    $maybe_otherfn);
 }
 
 
@@ -187,8 +187,8 @@ sub pxml_map_elements ($$) {
 # instead of replacing them)
 
 # (do you have a better name?)
-sub pxml_map_elements_exhaustively ($$) {
-    my ($v, $name_to_mapper)= @_;
+sub pxml_map_elements_exhaustively ($$;$) {
+    my ($v, $name_to_mapper, $maybe_otherfn)= @_;
     pxml_eager_map
       ($v,
        sub {
@@ -212,7 +212,7 @@ sub pxml_map_elements_exhaustively ($$) {
 	       }
 	   }
        },
-       undef);
+       $maybe_otherfn);
 }
 
 sub t_exh {
