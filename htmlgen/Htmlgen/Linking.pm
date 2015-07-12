@@ -209,14 +209,20 @@ use Sub::Call::Tail;
 			# should still be improved to never silently
 			# give wrong results!
 			my $path0_in_samedir= path_add dirname($selfpath0), $op;
+			my $path0_docs= path_add "docs", $op;
 			if (my $p0=
 			    # check as full path from root
-			    $self->maybe_have_path0->($op) //
+			    ($op eq $selfpath0 ? undef
+			     : $self->maybe_have_path0->($op)) //
 			    # check in local dir
-			    $self->maybe_have_path0->($path0_in_samedir) //
+			    ($path0_in_samedir eq $selfpath0 ? undef
+			     : $self->maybe_have_path0->($path0_in_samedir)) //
 			    # check in docs
-			    $self->maybe_have_path0->(path_add "docs", $op) //
-			    # check as filename anywhere
+			    ($path0_docs eq $selfpath0 ? undef
+			     : $self->maybe_have_path0->($path0_docs)) //
+			    # check as filename anywhere (XX check
+			    # against $selfpath0 here, too, or rather,
+			    # use this to disambiguate?)
 			    $self->perhaps_filename_to_path0->($op)
 			   ) {
 			    (path_diff ($selfpath0,$p0), $uri, 1)
