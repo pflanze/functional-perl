@@ -75,8 +75,9 @@ mail if you prefer. I'm also on the `#london.pm` and
 
 * `FP::Struct`: a class generator that creates
   functional setters and accepts predicate functions for type checking
+  (for the reasoning see the [[howto#Object_oriented_functional_programming]])
 
-* [lib/FP/](lib/FP/): library of pure functions and
+* [lib/FP/](lib/FP/): a library of pure functions and
   functional data structures, including various sequences (pure
   arrays, linked lists and lazy streams).
 
@@ -84,7 +85,8 @@ mail if you prefer. I'm also on the `#london.pm` and
   system" for XML based markup languages by way of Perl
   functions.
 
-* some developer utilities: `Chj::repl`, `Chj::ruse`, `Chj::Backtrace`
+* some developer utilities: `Chj::repl`, `Chj::ruse`, `Chj::Backtrace`,
+  `Chj::Trapl`.
 
 * [lib/Chj/IO/](lib/Chj/IO/), and its users/wrappers
   `Chj::xopen`,
@@ -92,12 +94,12 @@ mail if you prefer. I'm also on the `#london.pm` and
   `Chj::xoutpipe`,
   `Chj::xpipe`,
   `Chj::xtmpfile`:
-  operations on filehandles that throw exceptions on errors, plus
-  many utilities.
+  operations on filehandles that throw exceptions on errors by
+  default, plus many utilities.
   I wrote these around 15 years ago, as a means to offer IO with
   exceptions and more features, but in the mean time alternatives have
-  been grown that are probably just as good or better; if you know
-  which replacements this project should be using, please tell.
+  been grown that are probably just as good or better. Do you know
+  which replacements this project should be using?
 
 * a few more modules that are used by the above (some originally part
   of [chj-perllib](https://github.com/pflanze/chj-perllib))
@@ -117,7 +119,8 @@ howto/design documents.
 
     [These](http://functional-perl.org/london.pm-talk/) are the slides of
     an introductory presentation, but there's no recording and the slides
-    may not be saying enough for understanding. (Todo: add spoken text?)
+    may not be saying enough for understanding. (Todo: add text of
+    speach somehow?)
 
 * __Intro__
 
@@ -135,9 +138,9 @@ howto/design documents.
 
     The [examples](examples/README.md) directory contains scripts showing
     off the possibilities. You will probably not understand everything
-    from looking at these, but they will give an impression.
+    just from looking at these, but they will give an impression.
 
-* __Howto and design documents__
+* __Our howto and design documents__
 
     * *[How to write functional programs on Perl 5](docs/howto.md)* is
       describing the necessary techniques to use the functional style on
@@ -157,9 +160,10 @@ howto/design documents.
     does various details differently, and IIRC doesn't care about memory
     retention problems (to be fair, at the time the book was written the
     perl interpreter wouldn't have allowed to avoid them anyway). Also,
-    IIRC it bundles lazy evaluation into the pairs; separating these
-    concerns should be preferable as they are then more universally usable
-    and combinable. (Todo: reread book, contact author.)
+    IIRC it bundles lazy evaluation into the list elements (pairs);
+    separating these concerns should be preferable as they are then
+    more universally usable and combinable. (Todo: reread book,
+    contact author.)
 
 Ask [me](http://leafpair.com/contact) or on the [[mailing_list]] if
 you'd like to meet up in London or Switzerland to get an introduction
@@ -184,8 +188,8 @@ that's needed.
 The normal `perl Makefile.PL; make test && make install` process
 should work as well, but it hasn't been tested well and the repository
 is probably going to be split into or will produce several separate
-CPAN packages in the future, thus don't rely on installation process
-working the way it is right now.
+CPAN packages in the future, thus don't rely on the installation
+process working the way it is right now.
 
 
 ## Dependencies
