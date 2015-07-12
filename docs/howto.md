@@ -701,8 +701,9 @@ refactoring will suffer.
 
 (This section isn't specific to Perl, other than to describe the
 limited safety checking. Also, if this is over your head right now,
-skip this section and come back to it later; or come and ask me/us your
-way through it, that may also help improve the text here.)
+skip this section and come back to it later; or come and ask
+[me](//contact.md)/[us](//mailing_list.md) your way through it, that
+may also help improve the text here.)
 
 Other than program arguments and exit code, the only way for a process
 to interact with the "world" (the rest of the operating system) is by
