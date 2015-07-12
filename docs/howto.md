@@ -24,25 +24,25 @@ designed for functional programming have some of the same problems;
 they may sometimes be the reason for implementors of functional
 programming libraries to avoid certain functional idioms, for example
 by building `map` etc. on top of iterators (an imperative idiom).
-These may be good (and will be performant) workarounds, but that also
-means that only these higher levels are functional, and there being a
-boundary between the two worlds may mean that extensibility is not
-pretty (they might be leaky abstractions). For example, it might not
-be possible to define streams in a functional ("Haskell style") way
-(like in [`examples/fibs`](../examples/fibs)).  In Perl it's possible,
-and perhaps it will even become easier in the future.
+These may be good and performant workarounds, but that also means that
+only these higher levels are functional, and there being a boundary
+between the two worlds may mean that extensibility is not pretty
+(complications, or they might be leaky abstractions). For example, it
+might not be possible to define streams in a functional ("Haskell
+style") way (like in [`examples/fibs`](../examples/fibs)).  In Perl
+it's possible, and perhaps it will even become easier in the future.
 
-(This project might still also (alternatively) use iterators for
-sequences in the future; but they should be understood as an
+(This project *might* still also use iterators for sequences in the
+future (as an alternatively); but they should be understood as an
 optimization only (but then in Perl memory allocation is comparatively
 cheap compared to running code, so iterators may well actually be
-slower than linked lists). Alternative optimizations are possible, and
-may be preferrable (e.g. the GHC Haskell compiler applies various
-other optimizations to achieve performance without relying on manually
+slower than linked lists). Alternative optimizations may be possible
+and preferrable (e.g. the GHC Haskell compiler applies various other
+optimizations to achieve performance without relying on manually
 written iterator based code, such as compile time application of rules
 to fuse list processing chains as well as using general
-"deforestation" algorithms). Not having a static type system means
-these can't be done before runtime or module initialization time.)
+"deforestation" algorithms. Not having a static type system means
+these can't be done before runtime or module initialization time.))
 
 
 <with_toc>
@@ -58,24 +58,29 @@ to always pass references (this is what implementations for functional
 languages generally do, too). It probably won't be (much of) a benefit
 to pass references to elementary values such as strings and numbers,
 which is why the functional-perl project generally doesn't do so; but
-it generally assumes that arrays are passed as references. The reason
-for this is also so that functions can be properly generic: all sorts
-of values should be passed the same way, syntactically: regardless
-whether an argument is a subroutine (other function), array, hash,
-string, number, object, if it is always stored in a scalar (as a
-reference in the case of arrays and hashes) then the type doesn't
-matter. Genericism is important for reusability / composability.
+it generally assumes that arrays and hash tables are passed as
+references. The reason for this is also so that functions can be
+properly generic: all sorts of values should be passed the same way,
+syntactically: regardless whether an argument is a subroutine (other
+function), array, hash, string, number, object, if it is always stored
+in a scalar (as a reference in the case of arrays and hashes) then the
+type doesn't matter. Genericism is important for reusability /
+composability.
 
 Another thing to realize is that, in a purely functional (part of a)
 program, variables are never mutated. Fresh instances of variables are
-*bound* (re-initialized) to new values, but never mutated
-afterwards. This means there's no use thinking of variables as
-containers that can change; the same (instance of a) container always
-only ever gets one value. This is [*I think, the author*] why
-functional languages tend to use the term "binding" instead of
-"variable": it's just giving a value a name, i.e. binding a name to it
-(versus offering a bucket whose content can be replaced). So, instead
-of this code:
+*bound* (initialized) to new values, but never modified afterwards
+([`intro/basics`](../intro/basics) shows with the closures in
+`@imperative_inspect` that mutation to the existing instances is
+different from initialization of new instances, but we'll show here
+too in an instant).
+
+This means there's no use thinking of variables as containers that can
+change; the same (instance of a) container always only ever gets one
+value. This is [*I think, the author*] why functional languages tend
+to use the term "binding" instead of "variable": it's just giving a
+value a name, i.e. binding a name to it (versus offering a bucket
+whose content can be replaced). So, instead of this code:
 
     my @a;
     push @a, 1;
@@ -113,25 +118,25 @@ structure are "the same", but we can also write:
 
 In this case, we mutate the array data structure, but not the variable
 (or binding) `$a`. In impure functional languages like Scheme or
-ML/Ocaml, the above is allowed and a common way of doing things
-imperatively: not the variables are mutated, but the object that they
-denote (similar to how you're doing things on objects in Perl; this
-just makes arrays and hashes treated the same way as other objects).
-(ML/Ocaml also provides boxes, for the case where one wants to mutate
-a variable; it separates the binding from the box; versus Perl where
-every binding is a box at the same time. By separating those concerns,
-ML/Ocaml is explicit when the box semantics are to be used. The type
-checker in ML/Ocaml will also verify that only boxes are mutated, it
-won't allow mutation on normal bindings. We don't have that checker in
-Perl, but we can still restrain ourselves to only use the binding
-functionality. Scheme does offer `set!` to mutate bindings,
-i.e. conflates binding and boxing the same way Perl does, but using
-`set!` is generally discouraged. One can search Scheme code for the
-"!" character in identifiers and find the exceptional, dangerous,
-places where they are used. Sadly in Perl "=" is used both for the
-initial binding, as well as for subsequent mutations, but it's still
-syntactically visible which one it is (missing `my` (or `our`)
-keyword).)
+ML/Ocaml, the above is allowed (on some data structures) and a common
+way of doing things imperatively: not the variables are mutated, but
+the object that they denote (similar to how you're doing things on
+objects in Perl; this just makes arrays and hashes treated the same
+way as other objects).  (ML/Ocaml also provides boxes, for the case
+where one wants to mutate a variable; it separates the binding from
+the box; versus Perl where every binding is a box at the same time. By
+separating those concerns, ML/Ocaml is explicit when the box semantics
+are to be used. The type checker in ML/Ocaml will also verify that
+only boxes are mutated, it won't allow mutation on normal bindings. We
+don't have that checker in Perl, but we can still restrain ourselves
+to only use the binding functionality. Scheme does offer `set!` to
+mutate bindings, i.e. conflates binding and boxing the same way Perl
+does, but using `set!` is generally discouraged. One can search Scheme
+code for the "!" character in identifiers and find the exceptional,
+dangerous, places where they are used. Sadly in Perl "=" is used both
+for the initial binding, as well as for subsequent mutations, but it's
+still syntactically visible which one it is (missing `my` (or `our`)
+keyword means mutation).)
 
 It is advisable to use this latter approach when working with impure
 sub-parts in code that's otherwise functional, as it still treats all
@@ -155,9 +160,8 @@ lisp is a Lisp-2, Scheme a Lisp-1. Ocaml, Haskell, Python, Ruby,
 JavaScript are all using 1 namespace (XX what about methods?).
 
 Using 1 namespace is especially nice when writing functional programs,
-so that one can pass variables as arguments exactly the same,
-regardless of type (basically this is all the same as already
-discussed in the section above).
+so that one can pass functions as arguments exactly the same way as
+any other type.
 
 It would be possible to really only use one namespace in Perl, too
 (scalars), and write functions like so, even when they are global
@@ -172,11 +176,25 @@ It would be possible to really only use one namespace in Perl, too
 
     my $results= array_map $square, $inputs;
 
-This is nicely uniform, but perhaps a tad impractical. Perl
+Stop, we're still breaking out into the function namespace here, for
+`array_map`. Let's be completely single-namespace; also, perhaps let's
+only use one kind of scoping:
+
+    my $square= sub {
+        my ($a)=@_;
+        $a * $a
+    };
+
+    my $inputs= [ 1,2,3 ];
+
+    my $results= &$array_map ($square, $inputs);
+
+This is nicely uniform, but perhaps a tad impractical (also,
+`$array_map` can't be in a `my` variable if it was imported). Perl
 programmers have gotten used to defining local functions with `my
 $foo= sub ..`, but are used to using Perl's subroutine (CODE)
-namespace for global functions; pushing people to use a single
-namespace probably won't make sense.
+namespace for global functions; pushing for a single namespace
+probably won't make sense.
 
 But this means that the above becomes:
 
