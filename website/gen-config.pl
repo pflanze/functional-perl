@@ -82,8 +82,15 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
    ["COPYING.md", ["licenses/artistic_license_2.0.md"]],
   ],
   belownav=> fun ($path0) {
-      # HTML between navigation and page content
-      ()
+      # HTML between navigation and page content.
+      # path0 is the source (.md) file.
+
+      DIV({class=> "editandhist"},
+	  A({href=> "https://github.com/pflanze/functional-perl/commits/master/$path0"},
+	    "history"),
+	  " | ",
+	  A({href=> "https://github.com/pflanze/functional-perl/edit/master/$path0"},
+	    "edit"))
   },
   footer=> fun ($path0) {
       my $yearstart= 2014;

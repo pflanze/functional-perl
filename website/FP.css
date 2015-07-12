@@ -6,3 +6,8 @@
   text-align: center;
   font-size: small;
 }
+.editandhist {
+  text-align: right;
+  font-size: small;
+  margin-bottom: -1em;
+}
