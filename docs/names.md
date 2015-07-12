@@ -13,3 +13,5 @@ This list of doubtful names is not exhaustive.
 - `array_to_hash_group_by`
 - `compose_1side`
 - `pxml_map_elements_exhaustively`
+- should `stream_iota` be renamed or have different arguments? Compare
+  with APL etc.
