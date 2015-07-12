@@ -4,20 +4,41 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
+
+# Expand some .pm files to avoid dependency on Sub::Call::Tail:
+
+# (XX could also include intro/more_tailcalls here and call this
+# instead from t/trampoline-fix, but so what)
+
+
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-# avoid dependency on Sub::Call::Tail:
 use lib "./lib";
 use Chj::xopen 'xopen_read';
-use Chj::xperlfunc qw(dirname xxsystem);
+use Chj::xperlfunc qw(dirname xxsystem xLmtime XLmtime);
+
 mkdir ".htmlgen";
+
 my $manif= xopen_read "MANIFEST";
+
 local $_;
 while (<$manif>) {
     chomp;
     next unless m|^htmlgen/|;
-    my $path= $_;
-    mkdir ".".dirname $path;
-    xxsystem ("bin/expand-tail", $path, ".".$path);
+    my $from= $_;
+    my $to= ".".$from;
+    my $t_from= xLmtime $from;
+    my $expand= sub {
+	xxsystem ("bin/expand-tail", $from, $to);
+    };
+    if (my $t_to= XLmtime $to) {
+	if ($t_from >= $t_to) {
+	    &$expand;
+	}
+    } else {
+	mkdir dirname $to;
+	&$expand;
+    }
 }
+
 $manif->xclose;
