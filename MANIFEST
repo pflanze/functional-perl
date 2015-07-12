@@ -136,6 +136,7 @@ meta/ModuleList.pm
 meta/_critic.out
 meta/critic
 meta/dependencycheck
+meta/tail-expand
 meta/test.pl
 t/csv_to_xml
 t/csv_to_xml.expected

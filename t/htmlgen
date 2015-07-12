@@ -14,23 +14,10 @@ use Test::Requires
     'HTML::TreeBuilder'=> 0,
    };
 
-{
-    # avoid dependency on Sub::Call::Tail:
-    use lib "./lib";
-    use Chj::xopen 'xopen_read';
-    use Chj::xperlfunc qw(dirname xxsystem);
-    mkdir ".htmlgen";
-    my $manif= xopen_read "MANIFEST";
-    local $_;
-    while (<$manif>) {
-	chomp;
-	next unless m|^htmlgen/|;
-	my $path= $_;
-	mkdir ".".dirname $path;
-	xxsystem ("bin/expand-tail", $path, ".".$path);
-    }
-    $manif->xclose;
-    $ENV{HTMLGEN_}=1;
-}
+# avoid dependency on Sub::Call::Tail:
+use lib "./lib";
+use Chj::xperlfunc qw(xxsystem);
+xxsystem "meta/tail-expand";
+$ENV{HTMLGEN_}=1;
 
 $ENV{RUN_TESTS}=1; exec "website/gen" or exit 1;
