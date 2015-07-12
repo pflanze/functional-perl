@@ -76,9 +76,9 @@ fun markdownplus_parse ($str, $alternative_title, $mediawikitoken) {
     # parsing, to avoid losing the with_toc element. Bah.
     $htmlstr=~ s|<p>\s*(</?with_toc[^<>]*>)\s*</p>|$1|sg;
 
-    my $body= htmlparse($htmlstr, "body");
+    my $bodyelement= htmlparse($htmlstr, "body");
 
-    my $body= $body->body;
+    my $body= $bodyelement->body;
     my ($maybe_h1, $rest)= pxml_body_split_h1 ($body);
     ((defined $maybe_h1 ? ($maybe_h1, $rest)
       : (H1(force ($alternative_title)), $body)),
