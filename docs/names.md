@@ -15,3 +15,4 @@ This list of doubtful names is not exhaustive. Also see [[TODO#Names]].
 - `pxml_map_elements_exhaustively`
 - should `stream_iota` be renamed or have different arguments? Compare
   with APL etc.
+- `the_object_method`
