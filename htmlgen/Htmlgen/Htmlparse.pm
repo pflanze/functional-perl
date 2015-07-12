@@ -31,7 +31,7 @@ use Sub::Call::Tail;
 
 use HTML::TreeBuilder;
 use PXML::Element;
-
+use Chj::TEST;
 
 fun htmlparse_raw ($htmlstr,$whichtag) {
     my $t= HTML::TreeBuilder->new;
@@ -73,6 +73,22 @@ fun htmlmap ($e) {
 fun htmlparse ($str,$whichtag) {
     htmlmap (htmlparse_raw ($str,$whichtag))
 }
+
+
+# TEST{ htmlparse ('<with_toc><p>abc</p><p>foo</p></with_toc>', "body")
+# 	->string }
+#   '<body><with_toc><p>abc</p><p>foo</p></with_toc></body>';
+# HTML::TreeBuilder VERSION 5.02 drops with_toc here.
+
+TEST{ htmlparse ('x<with_toc><p>abc</p><p>foo</p></with_toc>', "body")
+	->string }
+  '<body>x<with_toc><p>abc</p><p>foo</p></with_toc></body>';
+# interestingly here it doesn't.
+
+# But perhaps it's best to do like:
+TEST{ htmlparse ('<body><with_toc><p>abc</p><p>foo</p></with_toc></body>',
+		 "body")->string }
+  '<body><with_toc><p>abc</p><p>foo</p></with_toc></body>';
 
 
 1
