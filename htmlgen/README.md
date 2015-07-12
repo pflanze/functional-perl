@@ -46,6 +46,9 @@ quoted and looks like a namespace on metacpan.org to see whether it's
 a module, which takes time and can fail with network or server errors;
 the results are cached, thus subsequent runs will be fast.
 
+
+<with_toc>
+
 ## Dependencies
 
 Htmlgen needs `Function::Parameters`, `Sub::Call::Tail`,
@@ -54,14 +57,18 @@ Htmlgen needs `Function::Parameters`, `Sub::Call::Tail`,
 which might be in the core.)
 
 If you don't want to (or can't) install `Sub::Call::Tail`, you can
-instead rely on the bundled tail expansion hack by running:
+instead rely on the bundled tail expansion hack by running the second
+variant shown in the next section.
 
-    meta/tail-expand && HTMLGEN_=1 website/gen
-
-Otherwise you could just run:
+## Run
 
     website/gen
 
+or if you don't have `Sub::Call::Tail` installed:
+
+    meta/tail-expand && HTMLGEN_=1 website/gen
+
+The output is written to `website/www/`.
 
 ## Formatting
 
@@ -137,3 +144,5 @@ additions:
 * its TEST forms are run as [part of the functional-perl test
   suite](../t/htmlgen) (if the necessary dependencies are available)
 
+
+</with_toc>
