@@ -7,18 +7,26 @@ properly formatted versions of these documents.
 
 [This](.) is the Perl program that generates most of the
 [functional-perl.org](http://functional-perl.org) website. It makes
-use of functional-perl itself quite a bit, although it was originally
-written for practical purposes, not as a demo. (Todo: make it nicer?)
+quite heavy use of functional-perl, and may serve as a demo, although
+it was originally written just for practical purposes, and doesn't
+really employ exemplary separation between pure and non-pure parts.
+(Todo: improve that aspect?)
 
 The code that builds the table of content, `process__with_toc__body`
-in `Htmlgen::Toc`, is purely functional. It uses a variant of
+in `Htmlgen::Toc`, *is* purely functional and may serve as an example
+of relatively involved functional code. It uses a variant of
 `fold_right` that also explicitely passes state while recursing down
 the input lists (the HTML (which is parsed to `PXML`) element bodies),
 which allows to collect the subsection headers (which don't need to
 reside within in the same HTML element) and get the numbering while
 mapping the HTML document to add the numbering at the same time. This
 code may look a bit involved, and could perhaps be abstracted into
-some PXML library functions (how would XSLT look to do the same?).
+some PXML library functions (how would XSLT look to do the same?). It
+could be rewritten using normal `fold_right` or `map` (todo: try?) 
+when ditching the purity aim and using side-effects to pass the
+state. (To be fair, Haskell programmers would probably do the same
+(todo: ask/try?), but at least the side-effects would be channeled to
+some extent?)
 
 While we're explaining code: `Htmlgen::Toc` is one of the classes that
 follow the `Htmlgen::PXMLMapper` api (for others see the sub-packages
