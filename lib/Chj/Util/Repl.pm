@@ -653,13 +653,14 @@ sub run {
 			($1,$2)
 			  :(undef,$input);
 
-		    if ($cmd=~ /^\d+\z/) {
-			# hacky way to allow ":5" etc. as ":f 5"
-			$args= "$cmd $args";
-			$cmd= "f";
-		    }
-
 		    if (defined $cmd) {
+
+			if ($cmd=~ /^\d+\z/) {
+			    # hacky way to allow ":5" etc. as ":f 5"
+			    $args= "$cmd $args";
+			    $cmd= "f";
+			}
+
 			# handle commands
 			eval {
 
