@@ -17,8 +17,8 @@ See also [[design]].
   instead?)
 
 * `XXX` in comments is used to mark important outstanding work (todo),
-  `XX` is used for "should probably be improved, but not essential for
-  security and safety under normal working conditions".
+  `XX` is used for "should probably be improved, but not essential
+  under normal working conditions".
 
 
 ## Testing
