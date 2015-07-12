@@ -49,27 +49,6 @@ the results are cached, thus subsequent runs will be fast.
 
 <with_toc>
 
-## Dependencies
-
-Htmlgen needs `Function::Parameters`, `Sub::Call::Tail`,
-`LWP::UserAgent`, `LWP::Protocol::https`, and `Text::Markdown` (and
-`URI` which is probably depended on by LWP anyway, and `File::Spec`,
-which might be in the core.)
-
-If you don't want to (or can't) install `Sub::Call::Tail`, you can
-instead rely on the bundled tail expansion hack by running the second
-variant shown in the next section.
-
-## Run
-
-    website/gen
-
-or if you don't have `Sub::Call::Tail` installed:
-
-    meta/tail-expand && HTMLGEN_=1 website/gen
-
-The output is written to `website/www/`.
-
 ## Formatting
 
 The *.md files support standard Markdown format plus the following
@@ -111,6 +90,28 @@ additions:
          <a href="../bar/some_thing.xhtml">a thing</a>
 
    respectively.
+
+
+## Dependencies
+
+Htmlgen needs `Function::Parameters`, `Sub::Call::Tail`,
+`LWP::UserAgent`, `LWP::Protocol::https`, and `Text::Markdown` (and
+`URI` which is probably depended on by LWP anyway, and `File::Spec`,
+which might be in the core.)
+
+If you don't want to (or can't) install `Sub::Call::Tail`, you can
+instead rely on the bundled tail expansion hack by running the second
+variant shown in the next section.
+
+## Run
+
+    website/gen
+
+or if you don't have `Sub::Call::Tail` installed:
+
+    meta/tail-expand && HTMLGEN_=1 website/gen
+
+The output is written to `website/www/`.
 
 
 ## Hacking
