@@ -10,8 +10,9 @@ least the subset that's necessary for doing most tasks. Currently it
 doesn't support XML namespaces properly (manually prefixing element
 names may be a workable solution, though?). It is primarily meant to
 *produce* XML output; parsing of XML is of secondary interest (but
-[Htmlgen](../htmlgen/README.md) already has some code to parse by
-way of `HTML::TreeBuilder`).
+[Htmlgen](../htmlgen/README.md) already has [some
+code](../htmlgen/Htmlgen/Htmlparse.pm) to parse by way of
+`HTML::TreeBuilder`).
 
 Its in-memory representation are `PXML::Element` (or subclassed)
 objects. Serialization is done using functions/procedures from
