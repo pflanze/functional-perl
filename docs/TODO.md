@@ -3,6 +3,8 @@ properly formatted versions of these documents.
 
 ---
 
+Also see [[ideas]].
+
 <with_toc>
 
 ## Licensing
