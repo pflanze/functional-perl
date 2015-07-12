@@ -115,6 +115,8 @@ properly formatted versions of these documents.
 - should `FORCE` from `FP::Lazy` be renamed to `Force` to avoid the
   potential conflict with `use PXML::Tags 'force'` ?
 
+Also see [[names]].
+
 
 ## Possibilities
 
