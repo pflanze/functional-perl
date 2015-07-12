@@ -25,24 +25,24 @@ properly formatted versions of these documents.
 - more tests:
 
   - more systematic stream leak testing.
-    Idea: LEAK_TEST forms in Chj::TEST (see Stream.pm)
+    Idea: LEAK_TEST forms in `Chj::TEST` (see comment in `FP::Stream`)
 
-  - tests for Chj::TEST itself
+  - tests for `Chj::TEST` itself
 
 
 ## Other people's code
 
-- replace FP::Lazy with Data::Thunk? This would be cool from a
+- replace `FP::Lazy` with `Data::Thunk`? This would be cool from a
   transparency stand point, except that separate code by way of
   dynamic dispatch (method calls) *can't* be used anymore then, and
   thus the only code always needs to do the environment cleaning,
   which is bad from a usability perspective since users not working
   with lazy data will still have their variables (unexpectedly)
-  deleted. Also, when a Data::Thunk thunk (promise) fails, it won't be
+  deleted. Also, when a `Data::Thunk` thunk (promise) fails, it won't be
   run again and is instead silently casted to e.g. an integer in
   number context, which will be a usability neightmare.
 
-  Also, what about Params::Lazy?
+  Also, what about `Params::Lazy`?
 
 - `Sub::Call::Tail` depends on `B::Hooks::OP::Check::EntersubForCV`
   which doesn't work on current bleadperl. Get this fixed.
@@ -60,7 +60,7 @@ properly formatted versions of these documents.
   stringification"? But it currently doesn't work with bleadperl
   anymore. -> Just suggest in docs?
 
-- change FP::Array to use `autobox`? (But that's lexically scoped, how
+- change `FP::Array` to use `autobox`? (But that's lexically scoped, how
   will that 'scale'? Or, what about blessing and then providing an
   overload for dumping? Not exist, right. What about writing an
   alternative Dump?)
@@ -69,9 +69,10 @@ properly formatted versions of these documents.
 ## Code structure
 
 - fix the now horrible hand-optimized-but-convoluted code in
-  PXML::Serialize (and figure out an automatic way to make it fast)
+  `PXML::Serialize` (and figure out an automatic way to make it fast)
 
-- avoid the duplication between FP::List and FP::Stream as much as possible.
+- avoid the duplication between `FP::List` and `FP::Stream` as much as
+  possible.
 
   - those not using lazy internally: implement the List variants using
     Keep and the stream variants.
@@ -80,8 +81,8 @@ properly formatted versions of these documents.
   base class.
 
 - what to do about data types that have both a class and some
-  functions, like `is_sequence`, that now lives in FP::Predicates, and
-  might be moved elsewhere in the future, breaking code importing
+  functions, like `is_sequence`, that now lives in `FP::Predicates`,
+  and might be moved elsewhere in the future, breaking code importing
   it...?
 
 - messages like "expecting 2 arguments" are unclear and inconsistently
@@ -90,8 +91,8 @@ properly formatted versions of these documents.
   including $self in their argument count? (For this reason, much of
   the code is now simply throwing the message "wrong number of
   arguments" without any indication of the expected
-  count. Function::Parameters issues "Too many arguments" and "Not
-  enough arguments", Method::Signatures says "missing required
+  count. `Function::Parameters` issues "Too many arguments" and "Not
+  enough arguments", `Method::Signatures` says "missing required
   argument $a" or "was given too many arguments", both of which are
   good.)
 
@@ -106,7 +107,7 @@ properly formatted versions of these documents.
 
 ## Names
 
-- rename PXML to FXML?
+- rename `PXML` to FXML (functional XML)?
 
 - is it badly inconsistent to have names like `map_with_tail` but have
   the tail-taking function be named `rest`?
@@ -117,8 +118,9 @@ properly formatted versions of these documents.
 
 ## Possibilities
 
-- port PXML::Element to FP::Struct (it was originally written before that existed, iirc).
-  Create a version/extension of FP::Struct that uses arrays instead of hashes,
+- port `PXML::Element` to `FP::Struct` (it was originally written
+  before that existed, iirc). Create a version/extension of
+  `FP::Struct` that uses arrays instead of hashes,
   or is that irrelevant and stupid? (benchmark cpu and memory)
 
 </with_toc>
