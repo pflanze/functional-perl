@@ -24,12 +24,6 @@ properly formatted versions of these documents.
 
   Also, what about Params::Lazy?
 
-- xopen_read etc. are throwing exceptions; there are no non-throwing
-  variants currently. What interface is preferred for handling errors:
-  maybe_ variants that return undef (then assume the error is in $! ?),
-  give exceptions types so as to catch them selectively, something
-  else? (but, see next Chj::IO comment)
-
 - replace Chj::IO::* with something else?
 
 - work on getting perl issues fixed, see failing tests `t/perl-*`
@@ -73,9 +67,6 @@ properly formatted versions of these documents.
   functions, like `is_sequence`, that now lives in FP::Predicates, and
   might be moved elsewhere in the future, breaking code importing
   it...?
-
-- split `htmlgen/gen` into modules (and make some parts more
-  functional)
 
 - should I move the licensing statements into the POD of each file?
 
