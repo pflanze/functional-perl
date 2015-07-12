@@ -5,7 +5,7 @@ properly formatted versions of these documents.
 
 # A website generator from markdown files
 
-[This](gen) is the Perl program that generates most of the
+[This](.) is the Perl program that generates most of the
 [functional-perl.org](http://functional-perl.org) website. It makes
 use of functional-perl itself quite a bit, although it was originally
 written for practical purposes, not as a demo. (Todo: make it nicer?)
