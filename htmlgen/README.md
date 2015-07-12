@@ -51,8 +51,9 @@ the results are cached, thus subsequent runs will be fast.
 
 ## Formatting
 
-The *.md files support standard Markdown format plus the following
-additions:
+The *.md files support standard
+[Markdown](http://daringfireball.net/projects/markdown/syntax) format
+(as implemented by `Text::Markdown`) plus the following additions:
 
  - files are expected to carry a header similar to
 
@@ -96,8 +97,7 @@ additions:
 
 Htmlgen needs `Function::Parameters`, `Sub::Call::Tail`,
 `LWP::UserAgent`, `LWP::Protocol::https`, and `Text::Markdown` (and
-`URI` which is probably depended on by LWP anyway, and `File::Spec`,
-which might be in the core.)
+`URI` which is probably depended on by LWP anyway.)
 
 If you don't want to (or can't) install `Sub::Call::Tail`, you can
 instead rely on the bundled tail expansion hack by running the second
