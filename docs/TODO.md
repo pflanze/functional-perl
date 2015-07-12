@@ -10,7 +10,8 @@ markers in text (website / .md) files.
 
 ## Licensing
 
-- should I move the licensing statements into the POD of each file?
+- should I move the licensing statements from the top of the files
+  into the POD section of each file?
 
 - should I specify a license for the text? A different one than the
   ones for the code? Who should be the copyright holder of the
