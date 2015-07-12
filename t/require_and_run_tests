@@ -42,7 +42,7 @@ our %dependencies=
    'Htmlgen::PXMLMapper'=> ['Function::Parameters'],
    'Htmlgen::PathUtil'=> ['Function::Parameters', 'File::Spec'],
    'Htmlgen::PathTranslate'=> ['Function::Parameters', 'Htmlgen::PathUtil'],
-   'Htmlgen::Mediawiki'=> ['Function::Parameters', 'Encode'],
+   'Htmlgen::Mediawiki'=> ['Function::Parameters', 'Encode', 'URI'],
    'Htmlgen::MarkdownPlus'=> ['Function::Parameters', 'Htmlgen::Htmlparse',
 			      'Text::Markdown', 'Htmlgen::Mediawiki'],
    'Htmlgen::Linking'=> ['Function::Parameters', 'Htmlgen::PathUtil',
