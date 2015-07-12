@@ -193,7 +193,7 @@ working the way it is right now.
   `BSD::Resource`, `Method::Signatures`, `Function::Parameters`,
   `Sub::Call::Tail`, `Text::CSV`, `URI`. Some of these are also
   necessary to run `htmlgen/gen` (or `website/gen` to build the
-  website).
+  website), see [Htmlgen](htmlgen/README.md) for details.
 
 * to use `bin/repl` or the repl in the intro and examples scripts
   interactively, `Term::ReadLine::Gnu`

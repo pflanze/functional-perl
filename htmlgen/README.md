@@ -46,6 +46,23 @@ quoted and looks like a namespace on metacpan.org to see whether it's
 a module, which takes time and can fail with network or server errors;
 the results are cached, thus subsequent runs will be fast.
 
+## Dependencies
+
+Htmlgen needs `Function::Parameters`, `Sub::Call::Tail`,
+`LWP::UserAgent`, `LWP::Protocol::https`, and `Text::Markdown` (and
+`URI` which is probably depended on by LWP anyway, and `File::Spec`,
+which might be in the core.)
+
+If you don't want to (or can't) install `Sub::Call::Tail`, you can
+instead rely on the bundled tail expansion hack by running:
+
+    meta/tail-expand && HTMLGEN_=1 website/gen
+
+Otherwise you could just run:
+
+    website/gen
+
+
 ## Formatting
 
 The *.md files support standard Markdown format plus the following
