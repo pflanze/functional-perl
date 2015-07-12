@@ -170,6 +170,22 @@ you'd like to meet up in London or Switzerland to get an introduction
 in person.
 
 
+## Dependencies
+
+* to run the test suite: `Test::Requires`
+
+* to run all the tests (otherwise some are skipped):
+  `BSD::Resource`, `Method::Signatures`, `Function::Parameters`,
+  `Sub::Call::Tail`, `Text::CSV`, `URI`. Some of these are also
+  necessary to run `htmlgen/gen` (or `website/gen` to build the
+  website), see [Htmlgen](htmlgen/README.md) for details.
+
+* to use `bin/repl` or the repl in the intro and examples scripts
+  interactively, `Term::ReadLine::Gnu`
+
+(Todo: should all of the above be listed in PREREQ_PM in Makefile.PL?)
+
+
 ## Installation
 
     git clone https://github.com/pflanze/functional-perl.git
@@ -191,20 +207,5 @@ is probably going to be split into or will produce several separate
 CPAN packages in the future, thus don't rely on the installation
 process working the way it is right now.
 
-
-## Dependencies
-
-* to run the test suite: `Test::Requires`
-
-* to run all the tests (otherwise some are skipped):
-  `BSD::Resource`, `Method::Signatures`, `Function::Parameters`,
-  `Sub::Call::Tail`, `Text::CSV`, `URI`. Some of these are also
-  necessary to run `htmlgen/gen` (or `website/gen` to build the
-  website), see [Htmlgen](htmlgen/README.md) for details.
-
-* to use `bin/repl` or the repl in the intro and examples scripts
-  interactively, `Term::ReadLine::Gnu`
-
-(Todo: should all of the above be listed in PREREQ_PM in Makefile.PL?)
 
 </with_toc>
