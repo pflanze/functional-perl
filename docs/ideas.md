@@ -6,6 +6,8 @@ properly formatted versions of these documents.
 Also see [[TODO]].
 
 
+## Various
+
 * "function signatures", or rather runtime function argument type
   checks, using type predicate functions:
   does Method::Signatures need to be modified to support this?
@@ -60,6 +62,17 @@ Also see [[TODO]].
   perhaps base FP::PureArray on it, implement functional hashmap on
   it, implement set with it. (There are implementations on JavaScript
   too, already. Are there any in C?)
+
+
+## Website
+
+* improve website layout
+
+* when linking to an anchor (like `todo.xhtml#Names`) is there a way
+  (without javascript) to make the linked-to item (section header)
+  appear high-lighted or something (if the end of the page isn't
+  reached, then it's visually clear which item is meant, but items
+  towards the end of the page don't have that luxury)
 
 
 ## Not so good ideas
