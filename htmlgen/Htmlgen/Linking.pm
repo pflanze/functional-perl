@@ -203,7 +203,22 @@ use Sub::Call::Tail;
 			  or die "bug";
 			$uri->opaque(""); # mutation
 
-			if (my ($p0)= $self->perhaps_filename_to_path0->($op)) {
+			# Have a lookup hierarchy for the given path,
+			# since the same filename can exist multiple
+			# times. XX: `perhaps_filename_to_path0`
+			# should still be improved to never silently
+			# give wrong results!
+			my $path0_in_samedir= path_add dirname($selfpath0), $op;
+			if (my $p0=
+			    # check as full path from root
+			    $self->maybe_have_path0->($op) //
+			    # check in local dir
+			    $self->maybe_have_path0->($path0_in_samedir) //
+			    # check in docs
+			    $self->maybe_have_path0->(path_add "docs", $op) //
+			    # check as filename anywhere
+			    $self->perhaps_filename_to_path0->($op)
+			   ) {
 			    (path_diff ($selfpath0,$p0), $uri, 1)
 			} else {
 			    warn "unknown link target '$op' (from '$href')";
