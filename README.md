@@ -60,7 +60,10 @@ improvements are very welcome, as are general hints and ideas where to
 take the project or simply whether you liked it or what you liked and
 what you didn't. If you'd like something to be different, now is the
 best time to tell. Also, please point out errors in the use of the
-english language.
+english language (all normal pages on the website are part of the
+functional-perl repository; also see the 'history' and 'edit' links at
+the top, the latter of which allows you to edit the page on Github
+without having to check it out).
 
 The project is currently led by [Christian
 Jaeger](http://leafpair.com/contact). Feel free to send me private
