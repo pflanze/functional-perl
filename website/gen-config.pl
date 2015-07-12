@@ -76,7 +76,7 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
    ["docs/design.md"],
    ["examples/README.md"],
    ["functional_XML/README.md"],
-   ["htmlgen/README.md"],
+   ["htmlgen/README.md", ["htmlgen/TODO.md"]],
    ["docs/ideas.md"],
    ["docs/TODO.md"],
    ["COPYING.md", ["licenses/artistic_license_2.0.md"]],

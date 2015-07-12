@@ -44,7 +44,7 @@ htmlgen/Htmlgen/Toc.pm
 htmlgen/Htmlgen/UriUtil.pm
 htmlgen/Htmlgen/default_config.pm
 htmlgen/README.md
-htmlgen/TODO
+htmlgen/TODO.md
 htmlgen/gen
 htmlgen/htmlgen.css
 intro/basics

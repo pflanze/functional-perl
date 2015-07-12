@@ -3,7 +3,7 @@ properly formatted versions of these documents.
 
 ---
 
-Also see [[ideas]], and [htmlgen/TODO](../htmlgen/TODO).
+Also see [[ideas]], and [htmlgen/TODO](../htmlgen/TODO.md).
 
 <with_toc>
 
