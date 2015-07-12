@@ -36,6 +36,7 @@ use PXML::XHTML ":all";
 
 # and for text display we need to *decode* URIs..
 # COPY from chj-bin's `urldecode`
+use URI;
 use Encode;
 sub url_decode {
     my ($str)=@_;
