@@ -233,23 +233,23 @@ is not evaluated when the code path reaches it, but instead yields a
 "promise" value, which promises to evaluate the actual value of the
 expression that it describes when it is needed. Unless a language
 evaluates *all* expressions like this by default (like e.g. Haskell
-does), the programmer needs to indicate lazy evaluation of an
-expression explicitely. In a language that supports closures (like
-Perl) simply wrapping the expression in question as a function that
-doesn't take any arguments (`sub { ... }`) fulfills that role, but
-there are two improvements that can be done: (1) it's useful to make a
-promise distinguishable from subroutines to make the intent, error
-checking and debugging easier; (2) usually one wants
+does), the programmer needs to indicate explicitely which expressions
+he wants to be evaluated lazily. In a language that supports closures
+(like Perl) simply wrapping the expression in question as a function
+that doesn't take any arguments (`sub { ... }`) fulfills that role,
+but there are two improvements that can be done: (1) it's useful to
+make a promise distinguishable from subroutines to make the intent
+clear and error checking and debugging easier; (2) usually one wants
 evaluate-at-most-once semantics, i.e. if the value in a promise is
-needed multiple times, the original expression should be evaluated
-only once and then the result cached. Thanks to Perl's '&' subroutine
-prototype implementing a `lazy { .. }` construct becomes
-straightforward (just write a `sub lazy (&) { Promise->new($_[0]) }`.) 
-This is offered in `FP::Lazy`. (It also provides promises that *don't*
-cache their result, which might be handy as a small optimization for
-code that doesn't request their value multiple times, and has the
-advantage of not showing the memory retention difficulties described
-below.)
+requested multiple times, the original expression should still only be
+evaluated only once and instead the result held in a cache. Thanks to
+Perl's '&' subroutine prototype, implementing a `lazy { .. }` construct
+becomes straightforward (just write a `sub lazy (&) {
+Promise->new($_[0]) }`.) This is offered in `FP::Lazy`. (It also
+provides promises that *don't* cache their result, which might be
+handy as a small optimization for code that doesn't request their
+value multiple times, and has the advantage of not showing the memory
+retention difficulties described below.)
 
 The reason this is useful is that it can avoid evaluation cost if the
 value is never actually needed, and that in the case when it *is*
@@ -286,7 +286,7 @@ resource; see [memory handling](#Memory_handling) below.
 
 ### Terminology
 
-The used terms are rather unstandardized across programming languages.
+The used terms are rather non-standardized across programming languages.
 A `promise` can mean subtly different things. Don't let that confuse
 you. (Todo: comparison? with JavaScript etc., even CPAN modules?)
 
@@ -301,10 +301,10 @@ evaluation (if not already done), then returns the evaluated result
 (and stores it to return it again immediately when requested again).
 
 The functional-perl libraries do not contain an implementation of this
-(yet); there will be various ways how this could be implemented in
-Perl, and there may be modules on CPAN already (todo: see what's
-around and perhaps wrap it in a way consistent with the rest of
-functional-perl).
+(yet); there will be various ways how the parallel evaluation could be
+implemented in Perl, and there may be modules on CPAN already (todo:
+see what's around and perhaps wrap it in a way consistent with the
+rest of functional-perl).
 
 ### Comparison to generators
 
@@ -329,24 +329,26 @@ streams (lazy linked lists)?
   to introduce the concept of linked lists.
 
 * The lazyness mechanism as described above is universal, it doesn't
-  only apply to sequences, but works seamlessly for things like trees,
+  just apply to sequences, but works seamlessly for things like trees,
   or even individual (but expensive to calculate) values.
 
 
 ## Memory handling
 
-The second area where Perl is inconvenient to get functional programs
-working is for them to handle memory correctly. Functional programming
-languages usually use tracing garbage collection, have compilers that
-do live time analysis of variables, and optimize tail calls by default
-(although some like Clojure don't do the latter), the sum of which
-mostly resolves concerns about memory. Perl 5 currently offers none of
-these three features. But it still does provide all the features to
-handle these issues manually, and often the places where they are
-needed are in lower level parts of programs, which are often shared as
-libraries, and hence you might not need to use the tricks described
-here often. You need to know about them though, lest you might end up
-scratching your head for a long time.
+The second area (after the multiple-namespaces) where Perl is
+inconvenient to get functional programs working is for them to handle
+memory correctly. Functional programming languages usually use tracing
+garbage collection, have compilers that do live time analysis of
+variables, and optimize tail calls by default (although some like
+Clojure don't do the latter), the sum of which mostly resolves
+concerns about memory. Perl 5 currently offers none of these three
+features. But it still does provide all the features to handle these
+issues manually, and often the places where they are needed are in
+lower level parts of programs, which are often shared as libraries,
+and hence you might not need to use the tricks described here
+often. You need to know about them though, or you will end up
+scratching your head about out of memory errors, segfaults (uh), and
+undef values in unexpected places at some point.
 
 
 ### Reference cycles (and self-referential closures)
@@ -356,16 +358,17 @@ counting to determine when the last reference to a piece of data is
 let go. Add a reference to the data structure to itself, and it will
 never be freed. The leaked data structures are never reclaimed before
 the exit of the process (or at least the perl interpreter) as they are
-not reachable anymore (by normal programs).
+not reachable anymore (by normal programs). It's well-known in the
+Perl community.
 
 The solution is to strategically weaken a reference in the cycle
 (usually the cyclic reference that's put inside the structure itself),
 using `Scalar::Utils`'s `weaken`. `FP::Weak` also has `Weakened` which
 is often handy, and `Keep` to protect a reference from such weakening
-attacks in case it's warranted.
+attacks in case it should remain strong.
 
-The most frequent case using reference cycles in functional programs
-are self-referential closures:
+The most frequent case involving reference cycles in functional
+programs are self-referential closures:
 
     sub foo {
         my ($start)=@_;
@@ -396,14 +399,14 @@ it visible to itself by default.
 Lexical variables in the current implementation of the perl
 interpreter live until the scope in which they are defined is
 exited. Note explicitely that this means they may still reference
-their data even at points of the code from which on they will never be
-used anymore. Example:
+their data even at points of the code within a scope from which on
+they can never be used anymore. Example:
 
     {
         my $s = ["Hello"];
         print $$s[0], "\n";
         main_event_loop(); # the array remains allocated till the event
-                           # loop return, even though never (normally)
+                           # loop returns, even though never (normally)
                            # accessible
     }
 
@@ -422,12 +425,12 @@ bounds. Example:
     {
         my $s= xfile_lines $path; # lazy linked list of lines
         print "# ".$s->first."\n";
-        $s->for_each (sub { print "> ".$_[0]."\n" });
+        $s->for_each (sub { print "> $_[0]\n" });
     }
 
-Without further ado, this will retain all lines of the file at $path
-in `$s` while the for_each forces in (and itself releases) line after
-line.
+Without further ado, this will retain all lines of the file at `$path`
+in `$s` while the `for_each` forces in (and itself releases) line
+after line.
 
 This is a problem that many programming language implementations (that
 are not written to support lazy evaluation) have. Luckily in the case
@@ -459,8 +462,9 @@ clobbered by passing it through the `Keep` function from `FP::Weak`:
         $s->for_each (sub { print "again: > ".$_[0]."\n" });
     }
 
-Of course this *will* keep the whole file in memory! So perhaps you'd
-really want to do the following:
+Of course this *will* keep the whole file in memory until it reaches
+the second `for_each`! So perhaps you'd really want to do the
+following:
 
     {
         my $s= xfile_lines $path; # lazy linked list of lines
@@ -535,20 +539,25 @@ perhaps also be doable by way of a bytecode optimizer.)
 ### C stack memory and freeing of nested data structures
 
 When Perl deallocates nested data structures, it uses space on the C
-(not Perl language) stack for the recursion. When a structure to be
-freed is nested deeply enough (like with long linked lists), this will
-make the interpreter run out of stack space, which will be reported as
-a segfault on most systems. There are two different possible remedies
-for this:
+(not Perl language) stack for the recursion into the data
+structure. When a structure to be freed is nested deeply enough (like
+with long linked lists), this will make the interpreter run out of
+stack space, which will be reported as a segfault on most
+systems. There are two different possible remedies for this:
 
-  * increase system stack size by changing the corresponding
-    resource limit (e.g. see `help ulimit` in Bash.)
+  * __increase the system stack__ size by changing the corresponding
+    resource limit (e.g. see `help ulimit` in Bash). (Since
+    stack space is virtual memory, giving a huge number (like 1 GB) is
+    not a problem, it will only actually use RAM once needed (alright,
+    it won't be freed anymore afterwards and will eventually go to
+    swap if the program doesn't exit before).)
 
-  * being careful not to let go of a deeply nested structure at
-    once. By using FP::Stream instead of FP::List for bigger lists and
-    taking care that the head of the stream is not being retained,
-    there will never be any long list in memory at any given time (it
-    is being reclaimed piece after piece instead of all at once)
+  * being careful __not to let go of a deeply nested structure at
+    once__. By using `FP::Stream` instead of `FP::List` for bigger
+    lists and taking care that the head of the stream is not being
+    retained, there will never be any long list in memory at any given
+    time (it is being reclaimed piece after piece instead of all at
+    once)
 
 
 Note that the same workaround as used with streams (weakening entries
@@ -557,13 +566,15 @@ as well, and hence avoid the need for a big C stack, and avoid the
 cumulation of time needed to deallocate the list (bad for soft
 real-time latency). But weakening of non-lazy lists will/would be more
 painful to handle for users, as it's more common to reuse them than
-their lazy cousins. Arguably it would really be best to make the
-language handle lifetimes automatically (lexical variable analysis),
-it would benefit both the lazy and non-lazy cases. (Side note: *some*
-streams, i.e. those with a definition that uses earlier elements of
-themselves, have reference cycles, and will need weakening of the head
-even with the lexical analysis; but this should be a special case that
-should be fine to handle accordingly.)
+their lazy cousins, and thus functions in the functional-perl
+libraries for non-lazy lists do not weaken their arguments. Arguably
+it would really be best to make the language handle lifetimes
+automatically (lexical variable analysis), it would benefit both the
+lazy and non-lazy cases. (Side note: *some* streams, i.e. those with a
+definition that uses earlier elements of themselves, have reference
+cycles, and will need weakening of the head even with the lexical
+analysis; but this should be a special case that should be fine to
+handle accordingly.)
 
 ### See also
 
@@ -588,7 +599,7 @@ run).
 Even aside the above confusion, there seems to be a rather widespread
 notion that object oriented and functional programming are at odds
 with each other. This is only the case if "object oriented" implies a
-style that mutates the object(s) or other side effects. So whether
+style that mutates the object(s) or has other side effects. So whether
 there is a conflict depends on the definition of "object
 orientation". The author of this text has never found a precise
 definition.
@@ -600,7 +611,9 @@ writes:
 > they are associated.*
 
 It only says "often modify", not that modification is a required part
-of the methodology.
+of the methodology. (Also, it doesn't say whether the modification is
+carried out by side-effecting the object or by returning a modified
+version of the object.)
 
 If individual method implementations all follow the rules for a pure
 function, then the method call only adds the dispatch on the object
@@ -610,7 +623,7 @@ algorithm, and the whole remains pure. Functional programming
 languages often offer pattern matching that can be used to the same
 effect, or other features that are even closer (e.g. Haskell's type
 classes). Or to say it in a more pointed way: remove side effects from
-your coding, and your produce is purely functional, totally regardless
+your coding, and your code is purely functional, totally regardless
 of whether it is implementing classes and objects or not.
 
 To build purely functional classes easily, have a look at
@@ -623,17 +636,17 @@ outside (e.g. caching is OK if done correctly)). If you would prefer
 to extend `Moose` for the same purposes, please
 [tell](mailing_list.md).
 
-Due to method calls using different syntax, they can't be directly
-passed where a function reference is expected. The Perl builtin way to
-pass them as a value is to pass the method name as a string, but that
-requires the receiving code to expect a method name, not a
+Due to method calls using different syntax, they can't be passed
+directly where a function reference is expected. The Perl builtin way
+to pass them as a value is to pass the method name as a string, but
+that requires the receiving code to expect a method name, not a
 function. To require all places that do a function call to accomodate
 for the case of being instead passed a string does not look like a
-good idea (forgetting would be a bug, runtime overhead on every call
-instead of just taking the reference). And although references to
-individual method implementations *can* be taken (like
-`\&Foo::Bar::baz`), that skips the type dispatch and will most likely
-hurt you later on.
+good idea (forgetting would be a bug, and it would impose runtime
+overhead on every call instead of just on taking the reference). And
+although references to individual method implementations *can* be
+taken (like `\&Foo::Bar::baz`), that skips the type dispatch and will
+most likely hurt you later on.
 
 Instead, a wrapper subroutine needs to be passed that does the method
 calls, like:
