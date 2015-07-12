@@ -32,10 +32,26 @@ our $modules= modulenamelist;
 
 our %dependencies=
   (
+   # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
    'FP::Text::CSV'=> ['Text::CSV'],
    'FP::url_'=> ['URI'],
    'Chj::CPAN::ModulePODUrl'=> ['LWP::UserAgent'],
    'FP::DBI'=> ['DBI'],
+   'Htmlgen::UriUtil'=> ['Function::Parameters', 'URI'],
+   'Htmlgen::Toc'=> ['Function::Parameters'],
+   'Htmlgen::PXMLMapper'=> ['Function::Parameters'],
+   'Htmlgen::PathUtil'=> ['Function::Parameters', 'File::Spec'],
+   'Htmlgen::PathTranslate'=> ['Function::Parameters', 'Htmlgen::PathUtil'],
+   'Htmlgen::Mediawiki'=> ['Function::Parameters', 'Encode'],
+   'Htmlgen::MarkdownPlus'=> ['Function::Parameters', 'Htmlgen::Htmlparse',
+			      'Text::Markdown', 'Htmlgen::Mediawiki'],
+   'Htmlgen::Linking'=> ['Function::Parameters', 'Htmlgen::PathUtil',
+			 'Chj::CPAN::ModulePODUrl', 'Htmlgen::UriUtil',
+			],
+   'Htmlgen::Htmlparse'=> ['Function::Parameters', 'HTML::TreeBuilder'],
+   'Htmlgen::FileUtil'=> ['Function::Parameters' ],
+   'Htmlgen::default_config'=> ['Function::Parameters' ],
+   'Htmlgen::Cost'=> ['Function::Parameters' ],
   );
 
 
