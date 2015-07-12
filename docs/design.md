@@ -298,8 +298,8 @@ so that `FP::List` does not need to care about lazy code. (Perhaps
 this should be changed? But it can't be fully transparent anyway since
 e.g. `ref` will always return the promise namespace.)
 
-OTOH, method calls on promises are always forcing the promise and then
-delegated to the value the promise returns.
+OTOH, method calls on promises are always forcing the promise and are
+then delegated to the value the promise returns.
 
 Some functions like `car` and `cdr` (`first` and `rest`) are forcing
 them, too (TODO: actually this is coded explicitely, but instead those
