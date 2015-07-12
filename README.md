@@ -65,7 +65,7 @@ english language.
 The project is currently led by [Christian
 Jaeger](http://leafpair.com/contact). Feel free to send me private
 mail if you prefer. I'm also on the `#london.pm` and
-`#functional-perl` IRC channels on perl.org as "pflanze".
+`#functional-perl` IRC channels on irc.perl.org as "pflanze".
 
 
 ## Parts
