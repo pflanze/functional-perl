@@ -194,7 +194,7 @@ use Sub::Call::Tail;
 
 		my $selfpath0= $self->path0;
 
-		my ($path,$uri,$is_md)= do {
+		my ($path,$uri,$is_md)= do { # XX $uri can be unmodified there, right?
 		    my $path= $uri->path;
 
 		    # '//' feature (see 'Formatting' section in htmlgen/README.md)
