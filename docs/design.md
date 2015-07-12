@@ -5,9 +5,6 @@ properly formatted versions of these documents.
 
 # The design principles used in the functional-perl library
 
-<!--What guiding principles were followed in creating the functional-perl
-modules?-->
-
 <with_toc>
 
 ## General
@@ -309,17 +306,6 @@ etc., which would still force them, and be properly OO).
 The current mix seems to work well, but details are still open for
 change.
 
-
-<!-- ev?
-
-Function::Parameters vs. Method::Signatures
-
-stream_mixed_flatten
-
-autobox.pm, Moose::Util::TypeConstraints, MooseX::MultiMethods, or just, now,
-Class::Multimethods (Class::Multimethods::Pure?)
-
--->
 
 </with_toc>
 
