@@ -5,6 +5,8 @@ properly formatted versions of these documents.
 
 # Various links
 
+## Function libraries
+
 * [srfi-1](http://srfi.schemers.org/srfi-1/srfi-1.html), the list
   library for Scheme
 
@@ -13,4 +15,11 @@ properly formatted versions of these documents.
 
 * [core-api](http://clojure.github.io/clojure/clojure.core-api.html),
   Clojure core function docs
+
+## Functional programming in various contexts
+
+* [Pure UI](http://rauchg.com/2015/pure-ui/), on purely functional
+  composition of a user interface (using the
+  [React](https://en.wikipedia.org/wiki/React_(JavaScript_library))
+  JavaScript library)
 
