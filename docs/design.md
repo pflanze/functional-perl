@@ -155,6 +155,17 @@ usually type check in the array case either!).
 
 ### Naming conventions
 
+* Functions names are generally choosen to prefer "established"
+  functional languages (like Scheme, Haskell, Ocaml, rather than
+  JavaScript or even Clojure). The name `fold` is hence preferred over
+  `reduce` (which has a slightly different interface in JavaScript and
+  Clojure; well, no problem if you really want it with that interface,
+  we could add it, too). Also all other languages call the filtering
+  function `filter`, not `grep`, for example, and hence it's
+  `list_filter` or the method name `filter` here. (Hopefully you'll be
+  ok with that recognizing that the Perl builtin has a weird,
+  "non-functional" interface anyway.)
+
 * Function names *start* with the data type that they are made for;
   for example `array_map` versus `list_map`. (This follows the
   conventions in Scheme (and some other functional languages?).)
