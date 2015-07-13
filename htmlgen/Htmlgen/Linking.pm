@@ -94,7 +94,7 @@ use Sub::Call::Tail;
     # to link since those are a different thing.
     our $ignore_module_name=
       +{map {$_=>1}
-	qw(map tail grep car cdr first rest head join primes test)};
+	qw(map tail grep fold car cdr first rest head join primes test)};
     # XX most of those would simply go to local scripts and functions if
     # these were checked for.
     $$ignore_module_name{"X"x3}=1; # avoid tripping search for to-do tags
