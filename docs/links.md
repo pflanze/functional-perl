@@ -23,3 +23,6 @@ properly formatted versions of these documents.
   [React](https://en.wikipedia.org/wiki/React_(JavaScript_library))
   JavaScript library)
 
+* [Professor Frisby's Mostly Adequate Guide to Functional Programming (in javascript)](https://github.com/DrBoolean/mostly-adequate-guide)
+  ([HN](https://news.ycombinator.com/item?id=9884616))
+
