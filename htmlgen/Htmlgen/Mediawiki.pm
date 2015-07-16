@@ -126,6 +126,9 @@ fun mediawiki_expand ($str) {
 		    if (length $f > 40) {
 			$f= substr ($f, 0, 28). ".."
 		    }
+		    # convert underscores back to spaces (XX
+		    # well.. that's lossy!)
+		    $f=~ s/_/ /sg;
 		    " ($f)";
 		} else {
 		    ""
@@ -178,11 +181,11 @@ TEST { mediawiki_expand
   [' ', A({href=> '//howto.md#References%20(and%20%22mutation%22),%20%22variables%22%20versus%20%22bindings%22'},
 	  'howto (References (and "mutation")..)'), ' '];
 
-TEST { mediawiki_expand ' [[Foo#yah\\[1\\]]] ' }
-  [' ', A({href=> '//Foo.md#yah[1]'}, 'Foo (yah[1])'), ' '];
+TEST { mediawiki_expand ' [[Foo#yah_Hey\\[1\\]]] ' }
+  [' ', A({href=> '//Foo.md#yah_Hey[1]'}, 'Foo (yah Hey[1])'), ' '];
 
-TEST { mediawiki_expand ' [[Foo#(yah)\\[1\\]|Some \\[text\\]]] ' }
-  [' ', A({href=> 'Foo#(yah)[1]'}, 'Some [text]'), ' ']; # note: no // and .md added to Foo!
+TEST { mediawiki_expand ' [[Foo#(yah_Hey)\\[1\\]|Some \\[text\\]]] ' }
+  [' ', A({href=> 'Foo#(yah_Hey)[1]'}, 'Some [text]'), ' ']; # note: no // and .md added to Foo!
 
 
 TEST { mediawiki_expand 'foo [[bar]]' }
