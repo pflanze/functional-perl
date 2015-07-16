@@ -602,9 +602,8 @@ with each other. This is only the case if "object oriented" implies a
 style that mutates the object(s) or has other side effects. So whether
 there is a conflict depends on the definition of "object
 orientation". The author of this text has never found a precise
-definition.
-[Wikipedia](https://en.wikipedia.org/wiki/Object_oriented_programming)
-writes:
+definition. Wikipedia
+[writes](https://en.wikipedia.org/wiki/Object_oriented_programming):
 
 > *A distinguishing feature of objects is that an object's procedures
 > can access and often modify the data fields of the object with which
