@@ -203,7 +203,19 @@ sub _pxml_print_fragment_fast {
 		    goto PXML if ($ref and UNIVERSAL::isa($v, "PXML::Element"));
 		    goto PAIR if is_pair $v;
 		    goto PROMISE if is_promise $v;
-		    die "unexpected type of reference: ".(perhaps_dump $v);
+
+		    # XX should this instead simply stringify using
+		    # '"$v"'? That would not show up errors with
+		    # context. But it would be less interruptive
+		    # perhaps? Just issue a warning? Ideal would
+		    # probably be to do the '""', but give a warning
+		    # if it was Perl's default stringification. How to
+		    # do this?
+		    if (my $m= UNIVERSAL::can($v,"string")) {
+			&$m ($v)
+		    } else {
+			die "unexpected type of reference that doesn't have a 'string' method: ".(perhaps_dump $v);
+		    }
 		}
 	    }
 	} elsif (not defined $v) {
