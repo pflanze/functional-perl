@@ -19,6 +19,32 @@ Chj::singlequote
 
 =head1 DESCRIPTION
 
+Turn strings to quoted strings.
+
+=over 4
+
+=item singlequote ($str, $maybe_alternative)
+
+Perl style quoting.
+
+If $maybe_alternative is not given, uses the string "undef" for the
+undef value.
+
+=item singlequote_sh ($str, $maybe_alternative)
+
+Shell style quoting.
+
+Also currently uses the "undef" value as default alternative, although
+not making much sense.
+
+=item singlequote_many (@maybe_strs)
+
+In list context returns each argument quoted. In scalar context, join
+them with a comma inbetween.
+
+Unlike the separate ones above, this captures exceptions during the
+quoting process (stringification errors) and returns "<stringification
+error: $@>" in that case.
 
 =cut
 
@@ -70,10 +96,18 @@ sub singlequote_sh($ ;$ ) {
 *Chj::singlequote_sh= \&singlequote_sh;
 
 sub many {
+    my @strs= map {
+	my $str;
+	if (eval { $str= singlequote($_); 1 }) {
+	    $str
+	} else {
+	    "<stringification error: $@>"
+	}
+    } @_;
     if (wantarray) {
-	map { singlequote($_) } @_
+	@strs
     } else {
-	join ", ", map { singlequote($_) } @_
+	join ", ", @strs
     }
 }
 *singlequote_many= \&many;
