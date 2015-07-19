@@ -16,6 +16,8 @@ PXML - functional XML handling, general functions
  use PXML;
  use PXML::XHTML;
  is_pxml_element P() # => 1
+ use PXML ":all";
+ pxmlbody ("foo")->string # => "foo"
 
 =head1 DESCRIPTION
 
@@ -33,7 +35,7 @@ L<http://functional-perl/>
 package PXML;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(is_pxml_element);
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(pxmlbody);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -43,5 +45,23 @@ use PXML::Element;
 use FP::Predicates 'instance_of';
 
 sub is_pxml_element ($); *is_pxml_element= instance_of("PXML::Element");
+
+
+{
+    package PXML::Body;
+    # hacky?.
+    *string = *PXML::Element::string;
+}
+
+sub pxmlbody {
+    bless [@_], "PXML::Body"
+}
+
+# XX make this cleaner:
+# - make PXML::Body and PXML::Element inherit both from a base class
+# - move `string` there (and perhaps all of serialization)
+# - automatically use PXML::Body for bodies? (now that I moved away
+#   from requiring bodies to be arrays, though?)
+
 
 1
