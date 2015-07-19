@@ -93,6 +93,7 @@ use Htmlgen::MarkdownPlus qw(markdownplus_parse);
 use FP::Lazy;
 use Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
 			  mediawiki_rexpand);
+use PXML::Preserialize qw(pxmlpre);
 
 
 our $config = hashset_union ($user_config, $default_config);
@@ -411,6 +412,16 @@ fun get_genfilestate ($filesinfo) {
 	 $costranges)
 }
 
+our $HEAD= pxmlpre 3, fun ($title, $csspath, $user_additions) {
+    HEAD (
+	  TITLE ($title),
+	  LINK ({rel=> "stylesheet",
+		 href=> $csspath,
+		 type=> "text/css"}),
+	  $user_additions,
+	 )
+};
+
 fun genfile ($path,$groupname,$genfilestate) {
     my $path0= path0 $path;
     my $outpath= path0_to_outpath($path0);
@@ -528,13 +539,9 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     my $html=
       HTML (
-	    HEAD (
-		  TITLE ($config->{title}->($filetitle)),
-		  LINK ({rel=> "stylesheet",
-			 href=> path_diff ($path0, $css_path),
-			 type=> "text/css"}),
-		  $config->{head}->($path0),
-		 ),
+	    &$HEAD([$config->{title}->($filetitle)],
+		   scalar path_diff ($path0, $css_path),
+		   scalar $config->{head}->($path0)),
 	    BODY(
 		 $config->{header}->($path0),
 		 UL({class=> "menu"},
