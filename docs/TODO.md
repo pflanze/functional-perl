@@ -3,8 +3,8 @@ properly formatted versions of these documents.
 
 ---
 
-See also [[ideas]], [htmlgen/TODO](../htmlgen/TODO.md) and the "todo"
-markers in text (website / .md) files.
+See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
+"todo" markers in text (website / .md) files.
 
 <with_toc>
 

@@ -25,7 +25,7 @@ examples/primes
 examples/skip
 examples/template
 functional_XML/README.md
-functional_XML/TODO
+functional_XML/TODO.md
 functional_XML/t/div
 functional_XML/t/stream
 functional_XML/t/stream_
