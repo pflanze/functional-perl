@@ -127,6 +127,8 @@ lib/FP/url_.pm
 lib/PXML.pm
 lib/PXML/Element.pm
 lib/PXML/HTML5.pm
+lib/PXML/Preserialize.pm
+lib/PXML/Preserialize/t.pm
 lib/PXML/SVG.pm
 lib/PXML/Serialize.pm
 lib/PXML/Serialize/t.pm
