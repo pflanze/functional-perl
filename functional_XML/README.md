@@ -16,7 +16,8 @@ code](../htmlgen/Htmlgen/Htmlparse.pm) to parse by way of
 
 Its in-memory representation are `PXML::Element` (or subclassed)
 objects. Serialization is done using functions/procedures from
-`PXML::Serialize`.
+`PXML::Serialize` (also, using `PXML::Preserialize` if necessary for
+performance).
 
 The body of elements can be a mix of standard Perl arrays,
 `FP::PureArray`s, linked lists based on `FP::List`, and promises
@@ -50,6 +51,7 @@ generates this website. `FP::DBI` is supposed to fit well with PXML.
 `PXML::SVG`,
 `PXML::Tags`,
 `PXML::Serialize`,
+`PXML::Preserialize`,
 `PXML::Util`
 
 ## Comparison with CGI.pm
