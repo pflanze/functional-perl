@@ -10,3 +10,13 @@
 * how are the rules with regards to URL escaping? No escaping, right?
   So should actually be fine? Check in detail, tests.
 
+* tests are scattered to functional_XML/{test,testlazy},
+  functional_XML/t/*, and lib/PXML/Preserialize/t.pm and
+  lib/PXML/Serialize/t.pm, which is probably too much of a mess.
+
+* clean up PXML::Serialize, it's an awful mess now (undo all those
+  useless constant optimizations)
+
+* make a proper hierarchy (PXML::Element and PXML::Body should
+  probably have a common base class), move code to proper locations.
+
