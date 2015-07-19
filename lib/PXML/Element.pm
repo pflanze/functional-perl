@@ -32,8 +32,6 @@ use FP::Lazy;
 use FP::List;
 
 use Chj::xIO qw(capture_stdout);
-use Chj::xopen 'glob_to_fh';
-
 
 use Chj::NamespaceCleanAbove;
 
@@ -212,7 +210,7 @@ sub string {
     require PXML::Serialize;
     capture_stdout {
 	PXML::Serialize::pxml_print_fragment_fast
-	    ($s, Chj::xopen::glob_to_fh(*STDOUT));
+	    ($s, *STDOUT);
     }
 }
 
