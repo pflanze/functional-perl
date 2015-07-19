@@ -20,3 +20,6 @@
 * make a proper hierarchy (PXML::Element and PXML::Body should
   probably have a common base class), move code to proper locations.
 
+* optimization: examine whether it would be worthwhile to use mapping
+  functions that reuse inputs if unchanged
+
