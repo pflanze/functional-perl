@@ -25,6 +25,8 @@ package PXML::Serialize::t;
 use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
+use PXML::Serialize qw(pxml_print_fragment_fast);
+use PXML::XHTML ":all";
 
 TEST_STDOUT { pxml_print_fragment_fast ["abc",P(2)], *STDOUT }
   'abc<p>2</p>';

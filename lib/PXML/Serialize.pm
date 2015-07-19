@@ -63,6 +63,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Data::Dumper;
 use PXML::Element;
+use PXML qw(is_pxml_element);
 use FP::Lazy;
 use FP::List;
 use FP::Stream;
@@ -323,7 +324,8 @@ sub pxml_print_fragment_fast ($ $ ) {
 	if (UNIVERSAL::isa($v, "PXML::XHTML")) {
 	    @_=($v); goto $with_first_element;
 	} else {
-	    my $s= force(stream_mixed_flatten ($v));
+	    my $s= force(stream_filter *is_pxml_element,
+			 stream_mixed_flatten ($v));
 	    if (is_null $s) {
 		goto $no_element
 	    } else {
@@ -333,7 +335,6 @@ sub pxml_print_fragment_fast ($ $ ) {
     } else {
 	goto $no_element
     }
-	
 }
 
 sub pxml_xhtml_print_fast ($ $ ;$ ) {
