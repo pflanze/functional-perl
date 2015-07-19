@@ -199,7 +199,7 @@ use Sub::Call::Tail;
 
 		    # '//' feature (see 'Formatting' section in htmlgen/README.md)
 		    if ($href =~ m|^//|s) {
-			my ($op)= $uri->opaque() =~ m|^//([^/]+)$|s
+			my ($op)= $uri->opaque() =~ m|^//([^/].*)$|s
 			  or die "bug";
 			$uri->opaque(""); # mutation
 
