@@ -16,6 +16,32 @@ PXML::Serialize
 =head1 DESCRIPTION
 
 
+=head1 SPECIAL VALUES
+
+There are a number of special values that the serializer will force (evaluate)
+transparently:
+
+=over 4
+
+=item promises from FP::Lazy
+
+will be force'd
+
+=item thunks (CODE values)
+
+will be called with no arguments
+
+=item objects
+
+In body context, their `pxml_serialized_body_string` method (if
+available) will be called, in attribute context,
+`pxml_serialized_attribute_string`, in both cases the string is
+inserted into the output without escaping (see `PXML::Preserialize`
+for an example that uses this). Missing those, `string` will be called
+if available and the result escaped, otherwise an exception is thrown.
+
+=back
+
 =cut
 
 
@@ -76,6 +102,44 @@ sub content_escape {
     $str
 }
 
+sub pxmlforce ($);
+sub pxmlforce ($) {
+    my ($v)=@_;
+    if (my $r= ref $v) {
+	if ($r eq "CODE") {
+	    pxmlforce (&$r())
+	} else {
+	    force $v
+	}
+    } else {
+	$v
+    }
+}
+
+sub object_force_escape ($$$);
+sub object_force_escape ($$$) {
+    my ($v, $string_method_for_context, $escape)=@_;
+    if (my $m=
+	UNIVERSAL::can($v, $string_method_for_context)) {
+	# no escaping
+	&$m($v)
+    } elsif ($m=
+	   # XX should this instead simply stringify using
+	   # '"$v"'? That would not show up errors with
+	   # context. But it would be less interruptive
+	   # perhaps? Just issue a warning? Ideal would
+	   # probably be to do the '""', but give a warning
+	   # if it was Perl's default stringification. How to
+	   # do this?
+	   UNIVERSAL::can($v,"string")) {
+	&$escape(&$m ($v))
+    } else {
+	die "unexpected type of reference that doesn't have a 'string' method: "
+	  .(perhaps_dump $v);
+    }
+}
+
+
 sub _pxml_print_fragment_fast {
     @_==4 or die "wrong number of arguments";
     my ($v,$fh,$html5compat,$void_element_h)=@_;
@@ -94,12 +158,15 @@ sub _pxml_print_fragment_fast {
 		if (my $attrs= $v->maybe_attributes) {
 		    for my $k (sort keys %$attrs) {
 			my $v= $$attrs{$k};
-			# XX ugly, should have one place to evaluate
-			# things (like promises, too!)
-			if (ref($v) eq "CODE") {
-			    $v= &$v();
-			}
-			print $fh " $k=\"", attribute_escape($v),"\""
+			my $str=
+			  (ref ($v) ?
+			   object_force_escape
+			   (pxmlforce($v),
+			    "pxml_serialized_attribute_string",
+			    *attribute_escape) :
+			   # fast path:
+			   attribute_escape $v);
+			print $fh " $k=\"$str\""
 			  or die $!;
 		    }
 		}
@@ -174,7 +241,7 @@ sub _pxml_print_fragment_fast {
 	      PROMISE:
 		#_pxml_print_fragment_fast (force($v), $fh,
 		#                           $html5compat, $void_element_h);
-		$v= force($v,1);
+		$v= force($v,1); # XXX why nocache?
 		redo LP;
 	    } else {
 		if ($ref eq "ARRAY") {
@@ -200,22 +267,17 @@ sub _pxml_print_fragment_fast {
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
 		    # evil.
-		    goto PXML if ($ref and UNIVERSAL::isa($v, "PXML::Element"));
+		    $ref or die "BUG"; # we're in the if ref scope, right?
+		    goto PXML if UNIVERSAL::isa($v, "PXML::Element");
 		    goto PAIR if is_pair $v;
 		    goto PROMISE if is_promise $v;
 
-		    # XX should this instead simply stringify using
-		    # '"$v"'? That would not show up errors with
-		    # context. But it would be less interruptive
-		    # perhaps? Just issue a warning? Ideal would
-		    # probably be to do the '""', but give a warning
-		    # if it was Perl's default stringification. How to
-		    # do this?
-		    if (my $m= UNIVERSAL::can($v,"string")) {
-			&$m ($v)
-		    } else {
-			die "unexpected type of reference that doesn't have a 'string' method: ".(perhaps_dump $v);
-		    }
+		    print $fh
+		      object_force_escape
+			($v,
+			 "pxml_serialized_body_string",
+			 *content_escape)
+			  or die $!;;
 		}
 	    }
 	} elsif (not defined $v) {
