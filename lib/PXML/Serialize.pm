@@ -72,6 +72,12 @@ use FP::Weak 'weaken'; # instead of from Scalar::Util so that it can
                        # be turned off globally (and we depend on FP
                        # anyway)
 
+sub is_somearray ($) {
+    my $r= ref($_[0]);
+    # XX mess, make this a proper dependency
+    $r eq "ARRAY" or $r eq "PXML::Body"
+}
+
 sub perhaps_dump {
     my ($v)=@_;
     if (ref ($v) eq "ARRAY" or ref($v) eq "HASH") {
@@ -184,14 +190,14 @@ sub _pxml_print_fragment_fast {
 		   or
 		   (not ref $body and length($body)==0)
 		   or
-		   (ref ($body) eq "ARRAY" and
+		   (is_somearray($body) and
 		    (not @$body
 		     or
 		     (@$body==1 and
 		      (# XX remove undef check here now, too? OK?--nope, necessary
 		       not defined $$body[0]
 		       or
-		       (ref($$body[0]) eq "ARRAY" and not @{$$body[0]})
+		       (is_somearray($$body[0]) and not @{$$body[0]})
 		       or
 		       $$body[0] eq "")))));
 
@@ -249,7 +255,7 @@ sub _pxml_print_fragment_fast {
 		$v= force($v,1); # XXX why nocache?
 		redo LP;
 	    } else {
-		if ($ref eq "ARRAY") {
+		if (is_somearray($v)) {
 		    no warnings "recursion"; # hu.
 		    for (@$v) {
 			# XXX use Keep around $_ to prevent mutation of tree?
