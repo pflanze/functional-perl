@@ -78,6 +78,10 @@ sub is_somearray ($) {
     $r eq "ARRAY" or $r eq "PXML::Body"
 }
 
+sub is_empty_string ($) {
+    defined $_[0] and !length ref $_[0] and $_[0] eq ""
+}
+
 sub perhaps_dump {
     my ($v)=@_;
     if (ref ($v) eq "ARRAY" or ref($v) eq "HASH") {
@@ -199,7 +203,7 @@ sub _pxml_print_fragment_fast {
 		       or
 		       (is_somearray($$body[0]) and not @{$$body[0]})
 		       or
-		       $$body[0] eq "")))));
+		       is_empty_string($$body[0]))))));
 
 		my $selfreferential;
 		if ($html5compat) {
