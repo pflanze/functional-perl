@@ -129,6 +129,7 @@ lib/PXML/Element.pm
 lib/PXML/HTML5.pm
 lib/PXML/SVG.pm
 lib/PXML/Serialize.pm
+lib/PXML/Serialize/t.pm
 lib/PXML/Tags.pm
 lib/PXML/Util.pm
 lib/PXML/XHTML.pm
