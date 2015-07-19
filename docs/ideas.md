@@ -63,6 +63,9 @@ Also see [[TODO]].
   it, implement set with it. (There are implementations on JavaScript
   too, already. Are there any in C?)
 
+* currying, pattern matching, multimethods, ...: see if existing
+  modules can be used. Experiment, embrace, extend...
+
 
 ## Website
 
