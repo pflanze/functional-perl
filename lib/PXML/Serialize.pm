@@ -157,6 +157,8 @@ sub _pxml_print_fragment_fast {
 		print $fh "<$n" or die $!;
 		if (my $attrs= $v->maybe_attributes) {
 		    for my $k (sort keys %$attrs) {
+			print $fh " $k=\""
+			  or die $!;
 			my $v= $$attrs{$k};
 			my $str=
 			  (ref ($v) ?
@@ -166,7 +168,7 @@ sub _pxml_print_fragment_fast {
 			    *attribute_escape) :
 			   # fast path:
 			   attribute_escape $v);
-			print $fh " $k=\"$str\""
+			print $fh "$str\""
 			  or die $!;
 		    }
 		}
