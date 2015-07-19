@@ -101,7 +101,9 @@ sub many {
 	if (eval { $str= singlequote($_); 1 }) {
 	    $str
 	} else {
-	    "<stringification error: $@>"
+	    my $e= "$@";
+	    $e=~ s/\n.*//s;
+	    "<stringification error: $e>"
 	}
     } @_;
     if (wantarray) {
