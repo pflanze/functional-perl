@@ -46,7 +46,7 @@ The project is not ready for production yet for the following reasons:
 
 * there are also various ways in which to explore performance
   improvements (read-only guarantees and caching, sequences, PXML
-  precalculations, implement code inlining, ...)
+  compile time preserialization, implement code inlining, ...)
 
 Please play with the examples and try to write some of your own, read
 the docs and tell us what's badly explained, and if you've got
