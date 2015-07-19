@@ -54,6 +54,8 @@ package PXML::Serialize;
 	      pxml_print_fragment_fast
 	      putxmlfile
 	      puthtmlfile
+	      attribute_escape
+	      content_escape
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
