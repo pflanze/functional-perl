@@ -69,6 +69,16 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   overload for dumping? Not exist, right. What about writing an
   alternative Dump?)
 
+- extend Data::Dumper (or alternative dumper(s)) to show a simpler
+  syntax for linked lists, and streams (and perhaps more) (mostly for
+  the repl, but also in general):
+
+        FP::list(1,2,3)  # instead of bless [1, bless [2, bless ...],...
+
+  (Show only evaluated part of streams (and the rest as a promise), or
+  force evaluation of the first n items then cut off the same way as
+  for lists?)
+
 
 ## Code structure
 
