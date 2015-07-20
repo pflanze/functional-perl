@@ -14,7 +14,7 @@ FP - functional programming on Perl
 =head1 SYNOPSIS
 
  use FP;
- $FP::VERSION # current version
+ FP->VERSION # or $FP::VERSION, current version
 
 =head1 DESCRIPTION
 
