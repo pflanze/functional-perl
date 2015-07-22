@@ -240,6 +240,12 @@ sub _numquote {
 }
 
 
+# this exists for subclasses that wrap the filehandle
+sub fh {
+    $_[0]
+}
+
+
 sub new {
     my $class=shift;
     my $self= gensym;
@@ -252,9 +258,9 @@ sub perhaps_open {
     my $self= ref $proto ? $proto : $proto->new;
     my $rv;
     if (@_==1) {
-	$rv= open $self,$_[0];
+	$rv= open $self->fh,$_[0];
     } elsif (@_>=2) {
-	$rv= open $self,$_[0],@_[1..$#_];
+	$rv= open $self->fh,$_[0],@_[1..$#_];
     } else {
 	croak "xopen @_: wrong number of arguments";
     }
@@ -300,9 +306,9 @@ sub xsysopen {
     my $self= ref $proto ? $proto : $proto->new;
     my $rv;
     if (@_==2) {
-	$rv= sysopen $self,$_[0],$_[1]    # @_[1..$#_]; geht nicht. oder doch, war nicht dieser fehler. hrm.
+	$rv= sysopen $self->fh,$_[0],$_[1]    # @_[1..$#_]; geht nicht. oder doch, war nicht dieser fehler. hrm.
     } elsif (@_==3) {
-	$rv= sysopen $self,$_[0],$_[1],$_[2];
+	$rv= sysopen $self->fh,$_[0],$_[1],$_[2];
     } else {
 	croak "xsysopen @_: wrong number of arguments";
     }
@@ -320,9 +326,9 @@ sub sysopen {
     my $self= ref $proto ? $proto : $proto->new;
     my $rv;
     if (@_==2) {
-	$rv= sysopen $self,$_[0],$_[1]    # @_[1..$#_]; geht nicht. oder doch, war nicht dieser fehler. hrm.
+	$rv= sysopen $self->fh,$_[0],$_[1]    # @_[1..$#_]; geht nicht. oder doch, war nicht dieser fehler. hrm.
     } elsif (@_==3) {
-	$rv= sysopen $self,$_[0],$_[1],$_[2];
+	$rv= sysopen $self->fh,$_[0],$_[1],$_[2];
     } else {
 	croak "sysopen @_: wrong number of arguments";
     }
@@ -339,7 +345,7 @@ sub set_layer_or_encoding {
     my $layer=
       ($layer_or_encoding=~ /^:/ ? $layer_or_encoding
        : ":encoding($layer_or_encoding)");
-    binmode($self, $layer) or die "binmode";
+    binmode($self->fh, $layer) or die "binmode";
 }
 
 sub perhaps_set_layer_or_encoding {
@@ -353,22 +359,22 @@ sub perhaps_set_layer_or_encoding {
 sub set_encoding {
     my $self=shift;
     my ($encoding)=@_;
-    binmode($self, ":encoding($encoding)") or die "binmode";
+    binmode($self->fh, ":encoding($encoding)") or die "binmode";
 }
 
 
 sub read {
     my $self=shift;
-    if (@_==2) {	CORE::read $self,$_[0],$_[1] }
-    elsif (@_==3) {	CORE::read $self,$_[0],$_[1],$_[2] }
+    if (@_==2) {	CORE::read $self->fh,$_[0],$_[1] }
+    elsif (@_==3) {	CORE::read $self->fh,$_[0],$_[1],$_[2] }
     else {		croak "read: wrong number of arguments" }
 }
 
 sub xread { ## (falls Perl die nicht eh schon abfangt hier:) was ist mit EINTR und EAGAIN? geben die exceptions? sollten. Eben: sollte typisierte haben. WIRKLICH.  OOooder: keine exception sondern fertigmachenrepetieren.  oooch. aber sicher nicht so wie bareperl dass non exception unfertiger return.
     my $self=shift;
     my $rv;
-    if (@_==2) {	$rv= CORE::read $self,$_[0],$_[1] }
-    elsif (@_==3) {	$rv= CORE::read $self,$_[0],$_[1],$_[2] }
+    if (@_==2) {	$rv= CORE::read $self->fh,$_[0],$_[1] }
+    elsif (@_==3) {	$rv= CORE::read $self->fh,$_[0],$_[1],$_[2] }
     else { croak "xread: wrong number of arguments" }
     defined $rv or croak "xread from ".($self->quotedname).": $!";
     $rv
@@ -378,7 +384,7 @@ sub xreadchunk {
     my $self=shift;
     @_==1 or croak "xreadchunk: expecting 1 parameter (length)";
     my $buf;
-    my $rv=CORE::read $self,$buf,$_[0];
+    my $rv=CORE::read $self->fh,$buf,$_[0];
     defined $rv or croak "xreadchunk ".$self->quotedname.": $!";
     $rv ? $buf : undef
 }
@@ -387,23 +393,23 @@ sub xxreadchunk {
     my $self=shift;
     @_==1 or croak "xreadchunk: expecting 1 parameter (length)";
     my $buf;
-    my $rv=CORE::read $self,$buf,$_[0];
+    my $rv=CORE::read $self->fh,$buf,$_[0];
     defined $rv or croak "xreadchunk ".$self->quotedname.": $!";
     $rv ? $buf : die "EOF\n";
 }
 
 sub sysread { ## na, könnte auch read normal lassen (von Chj::IO::File erben). Nun?
     my $self=shift;
-    if (@_==2) {	CORE::sysread $self,$_[0],$_[1] }
-    elsif (@_==3) {	CORE::sysread $self,$_[0],$_[1],$_[2] }
+    if (@_==2) {	CORE::sysread $self->fh,$_[0],$_[1] }
+    elsif (@_==3) {	CORE::sysread $self->fh,$_[0],$_[1],$_[2] }
     else {		croak "sysread: wrong number of arguments" };
 }
 
 sub xsysread { ## dito. (macht buffering einen sinn? oder besser der gefahren ausweichen? na, ich will wohl eben doch noch ein spezielles xopen_excl das per dup oder so arbeitet und normalen fh macht draus.)
     my $self=shift;
     my $rv;
-    if (@_==2) {	$rv= CORE::sysread $self,$_[0],$_[1] }
-    elsif (@_==3) {	$rv= CORE::sysread $self,$_[0],$_[1],$_[2] }
+    if (@_==2) {	$rv= CORE::sysread $self->fh,$_[0],$_[1] }
+    elsif (@_==3) {	$rv= CORE::sysread $self->fh,$_[0],$_[1],$_[2] }
     else {		croak "xsysread: wrong number of arguments" };
     defined $rv or croak "xsysread from ".($self->quotedname).": $!";
     $rv
@@ -424,7 +430,7 @@ sub xsysreadcompletely {
     my $restlen= $len;
     my $restoffset= $offset;
   LP: {
-	my $rv= CORE::sysread $self,$_[0],$restlen,$restoffset;
+	my $rv= CORE::sysread $self->fh,$_[0],$restlen,$restoffset;
 	if (defined $rv) {
 	    $restlen -= $rv;
 	    $restoffset += $rv;
@@ -459,18 +465,18 @@ sub xsysreadcompletely {
 
 sub syswrite {
     my $self=shift;
-    if (@_==1) {	CORE::syswrite $self,$_[0] }
-    elsif (@_==2) {	CORE::syswrite $self,$_[0],$_[1] }
-    elsif (@_==3) {	CORE::syswrite $self,$_[0],$_[1],$_[2] }
+    if (@_==1) {	CORE::syswrite $self->fh,$_[0] }
+    elsif (@_==2) {	CORE::syswrite $self->fh,$_[0],$_[1] }
+    elsif (@_==3) {	CORE::syswrite $self->fh,$_[0],$_[1],$_[2] }
     else {		croak "syswrite: wrong number of arguments" };
 }
 
 sub xsyswrite {
     my $self=shift;
     my $rv;
-    if (@_==1) {	$rv= CORE::syswrite $self,$_[0] }
-    elsif (@_==2) {	$rv= CORE::syswrite $self,$_[0],$_[1] }
-    elsif (@_==3) {	$rv= CORE::syswrite $self,$_[0],$_[1],$_[2] }
+    if (@_==1) {	$rv= CORE::syswrite $self->fh,$_[0] }
+    elsif (@_==2) {	$rv= CORE::syswrite $self->fh,$_[0],$_[1] }
+    elsif (@_==3) {	$rv= CORE::syswrite $self->fh,$_[0],$_[1],$_[2] }
     else {		croak "xsyswrite: wrong number of arguments" };
     defined $rv or croak "xsyswrite: from ".($self->quotedname).": $!";
     $rv
@@ -491,7 +497,7 @@ sub xsyswritecompletely {
     my $restlen= $len;
     my $restoffset= $offset;
   LP: {
-	my $rv= CORE::syswrite $self,$_[0],$restlen,$restoffset;
+	my $rv= CORE::syswrite $self->fh,$_[0],$restlen,$restoffset;
 	if (defined $rv) {
 	    $restlen -= $rv;
 	    $restoffset += $rv;
@@ -516,13 +522,13 @@ sub xreadline { ## todo: test error case. Difficult to do.
     my $self=shift;
     undef $!; # needed!
     if (wantarray) {
-	my $lines= [ CORE::readline($self) ];
+	my $lines= [ CORE::readline($self->fh) ];
 	if ($!) {
 	    croak "xreadline from ".($self->quotedname).": $!";
 	}
 	@$lines
     } else {
-	my $bufref= \ (scalar CORE::readline($self)); # dito
+	my $bufref= \ (scalar CORE::readline($self->fh)); # dito
 	if ($!) {
 	    croak "xreadline from ".($self->quotedname).": $!";
 	}
@@ -548,7 +554,8 @@ sub xreadline_chomp {
 
 sub getline {
     my $self=shift;
-    <$self>
+    my $fh= $self->fh;
+    <$fh>
 }
 
 sub xreadline0 {
@@ -590,7 +597,7 @@ sub xreadline_backwards {
     my $bufferp= \($$data{buffer}||="");
     while(!@$lines) {
 	#$self->xseek(-$SLICE_LENGTH,SEEK_CUR);# problem: was passiert wenn ich über fileanfang hinweg seeke? xseek on 'xyz': Das Argument ist ungültig at (eval 19) line 1
-	my $curpos= tell($self);
+	my $curpos= tell($self->fh);
 	if (!defined($curpos) or $curpos<0) {##correct? docu is very unprecise!
 	    croak "xreadline_backwards on ".$self->quotedname.": can't seek on this filehandle?: tell: $!";
 	}
@@ -662,14 +669,14 @@ sub content {
     my $self=shift;
     #carp "content: you are using a non-error checking function";
     local $/;
-    CORE::readline($self)
+    CORE::readline($self->fh)
 }
 
 sub xcontent {
     my $self=shift;
     undef $!; # neeeded!
     local $/;
-    my $ref= \ scalar CORE::readline($self);
+    my $ref= \ scalar CORE::readline($self->fh);
     # ^- scalar is needed! or it will give undef on empty files.
     croak "xcontent on ".($self->quotedname).": $!" if $!;
     $$ref
@@ -680,7 +687,7 @@ sub xcontentref {
     my $self=shift;
     undef $!; # neeeded!
     local $/;
-    my $ref= \ scalar CORE::readline($self);
+    my $ref= \ scalar CORE::readline($self->fh);
     # ^- scalar is needed! or it will give undef on empty files.
     croak "xcontentref on ".($self->quotedname).": $!" if $!;
     $ref
@@ -709,16 +716,19 @@ sub xsyscontent { # funny, but it seems this is more memory efficient than xcont
 
 sub print {
     my $self=shift;
-    print $self @_
+    my $fh= $self->fh;
+    print $fh @_
 }
 sub xprint {
     my $self=shift;
-    print $self @_ or croak "xprint to ".($self->quotedname).": $!";
+    my $fh= $self->fh;
+    print $fh @_ or croak "xprint to ".($self->quotedname).": $!";
 }
 
 sub xprintln {
     my $self=shift;
-    print $self @_,"\n" or croak "xprintln to ".($self->quotedname).": $!";
+    my $fh= $self->fh;
+    print $fh @_,"\n" or croak "xprintln to ".($self->quotedname).": $!";
 }
 
 # is there any need for something like xsysprint? Maybe once unicode is used!
@@ -747,8 +757,8 @@ sub xsysprint { # (returns the number of chars written = length of all inputs)
     my $n;
     while ($pos<$len) {
 	$pos>0 ?
-	  $n=CORE::syswrite $self,substr($$bufref,$pos)
-	  : $n=CORE::syswrite $self,$$bufref ;
+	  $n=CORE::syswrite $self->fh, substr($$bufref,$pos)
+	  : $n=CORE::syswrite $self->fh, $$bufref ;
 	# Empirics show that even substr with pos 0 makes a copy, thus we specialcase it.
 	defined $n or croak "xsysprint to ".($self->quotedname).": $!";##hm, will this die in the EINTR case? (should it?) todo
 	$pos+=$n;
@@ -781,7 +791,7 @@ sub xsendfile_to {
     if (0&&$use_sendfile) {
 	# seems buggy, perhaps with big files (stream-cut script)
 	undef $!;
-	IO::SendFile::sendfile(CORE::fileno $out, fileno $self,
+	IO::SendFile::sendfile(CORE::fileno $out, fileno $self->fh,
 			       \ $offset,
 			       $count);
 	# or die "xsendfile_to from ".($self->quotedname).": $!";
@@ -875,28 +885,28 @@ sub xprintfile_to {
 
 sub xrewind {
     my $self=shift;
-    seek $self,0,0
+    seek $self->fh,0,0
       or croak "xrewind on ".($self->quotedname).": $!";
-    sysseek $self,0,0
+    sysseek $self->fh,0,0
       or croak "xrewind on ".($self->quotedname).": $!";
 }
 
 sub xseek {
     my $self=shift;  @_==1 or @_==2
       or croak "xseek: wrong number of arguments";
-    seek $self,$_[0], defined $_[1] ? $_[1] : SEEK_SET
+    seek $self->fh,$_[0], defined $_[1] ? $_[1] : SEEK_SET
       or croak "xseek on ".($self->quotedname).": $!";
 }
 
 sub seek {
     my $self=shift;  @_==1 or @_==2 or croak "seek: wrong number of arguments";
-    seek $self,$_[0], defined $_[1] ? $_[1] : SEEK_SET;
+    seek $self->fh,$_[0], defined $_[1] ? $_[1] : SEEK_SET;
 }
 
 sub xtell {
     my $self=shift; @_==0
       or croak "xtell: wrong number of arguments";
-    my $res= tell $self;
+    my $res= tell $self->fh;
     if ($res==-1) {
 	croak "xtell on ".($self->quotedname).": $!";
     } else {
@@ -907,7 +917,7 @@ sub xtell {
 sub tell {
     my $self=shift; @_==0
       or croak "tell: wrong number of arguments";
-    my $res= tell $self;
+    my $res= tell $self->fh;
     if ($res==-1) {
 	undef
     } else {
@@ -920,7 +930,7 @@ sub xtruncate {
     my $self=shift;
     my ($len)=@_;
     $len||=0;
-    truncate ($self,$len)
+    truncate ($self->fh,$len)
       or croak "xtruncate on ".($self->quotedname).": $!";
 }
 
@@ -928,7 +938,7 @@ sub truncate {
     my $self=shift;
     my ($len)=@_;
     $len||=0;
-    truncate ($self,$len);
+    truncate ($self->fh,$len);
 }
 
 
@@ -943,7 +953,7 @@ sub dup2 {
 
 sub xdup2 {
     my $self=shift;
-    my $myfileno= CORE::fileno $self;
+    my $myfileno= CORE::fileno $self->fh;
     defined $myfileno
       or croak "xdup2: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
     require POSIX;
@@ -963,7 +973,7 @@ sub xdup2 {
 sub xdup { # (return objects)
     my $self=shift;
     warn "xdup: this method is unfinished and only can create output filehandles yet";
-    my $myfileno= CORE::fileno $self;
+    my $myfileno= CORE::fileno $self->fh;
     defined $myfileno
       or croak "xdup: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
     require POSIX;
@@ -994,30 +1004,37 @@ sub autoflush {
     my $self=shift;
     if (@_) {
 	my ($v)=@_;
-	my $old=select $self;my $oldv=$|; $|=$v; select $old; $oldv
+	my $old=select $self->fh;
+	my $oldv=$|;
+	$|=$v;
+	select $old;
+	$oldv
     } else {
 	defined wantarray
 	  or croak "autoflush: used in void context without arguments (note that this is ".__PACKAGE__.", not IO::Handle)";
-	my $old=select $self;my $oldv=$|; select $old; $oldv
+	my $old=select $self->fh;
+	my $oldv=$|;
+	select $old;
+	$oldv
     }
 }
 
 sub flush {
     my $self=shift;
     require IO::Handle;
-    IO::Handle::flush($self);
+    IO::Handle::flush($self->fh);
 }
 
 sub xflush {
     my $self=shift;
     require IO::Handle;
-    IO::Handle::flush($self)
+    IO::Handle::flush($self->fh)
 	or die "xflush ".$self->quotedname.": $!";
 }
 
 sub xclose {
     my $self=shift;
-    CORE::close $self or croak "xclose ".$self->quotedname.": $!";
+    CORE::close $self->fh or croak "xclose ".$self->quotedname.": $!";
     $self->set_opened(0);
 }
 
@@ -1070,7 +1087,7 @@ sub xlinkunlink {
 if ($has_posix) { # untested?
     *stat= sub {
 	my $self=shift;
-	if (defined (my $fd=CORE::fileno($self))) {
+	if (defined (my $fd=CORE::fileno($self->fh))) {
 	    POSIX::fstat($fd);
 	} else {
 	    (); ## or die?
@@ -1129,7 +1146,7 @@ sub DESTROY {
     my $self=shift;
     local ($@,$!,$?);
     if ($self->opened) {
-	CORE::close($self)
+	CORE::close($self->fh)
 	  or carp "$self DESTROY: close: $!";
     }
     delete $filemetadata{pack "I",$self};
