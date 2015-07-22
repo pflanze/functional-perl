@@ -16,3 +16,4 @@ This list of doubtful names is not exhaustive. Also see [[TODO#Names]].
 - should `stream_iota` be renamed or have different arguments? Compare
   with APL etc.
 - `the_object_method`
+- `Chj::WithRepl`, `WithRepl_eval`, `Chj::Trapl`
