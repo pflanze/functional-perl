@@ -58,12 +58,12 @@ use strict; use warnings FATAL => 'uninitialized';
 # Wrapping `eval` calls with a special frame
 # (`Chj::WithRepl::WithRepl_eval`) that the handler can test for:
 
-sub WithRepl_eval ($) {
-    my ($arg)=@_;
+sub WithRepl_eval ($;$) {
+    my ($arg, $maybe_package)=@_;
     if (ref $arg) {
 	eval { &$arg() }
     } else {
-	my $package= caller;
+	my $package= $maybe_package // caller;
 	eval "package $package; $arg"
     }
 }
