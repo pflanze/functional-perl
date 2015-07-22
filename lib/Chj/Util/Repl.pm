@@ -468,7 +468,7 @@ sub run {
 		     # what we want.
 		     '&'=>'CODE'
 		    }->{$sigil});
-		#print $STDERR "<$validsigil>";
+		#print $ERROR "<$validsigil>";
 
 		my $symbols_for_package= sub {
 		    my ($package)=@_;
@@ -477,7 +477,7 @@ sub run {
 			/^\w+(?:::)?\z/
 		    } do {
 			if ($validsigil) {
-			    #print $STDERR ".$validsigil.";
+			    #print $ERROR ".$validsigil.";
 			    grep {
 				(/::\z/
 				 # either it's a namespace which we
@@ -500,7 +500,7 @@ sub run {
 		    ($validsigil ? () : @builtins))
 		  );
 
-		#print $STDOUT Data::Dumper::Dumper(\@a);
+		#print $OUTPUT Data::Dumper::Dumper(\@a);
 
 		# Now, if it ends in ::, or even generally, care about
 		# it not appending space on completion:
@@ -525,7 +525,7 @@ sub run {
 	    }
 	};
 	if (@matches) {
-	    #print $STDERR "<".join(",",@matches).">";
+	    #print $ERROR "<".join(",",@matches).">";
 
 	    $attribs->{completion_word}= \@matches;
 	    # (no sorting necessary)
@@ -541,18 +541,18 @@ sub run {
 	}
     };
 
-    my ($STDOUT, $STDERR)= do {
+    my ($INPUT, $OUTPUT, $ERROR)= do {
 	my ($maybe_in, $maybe_out)=
 	  ($self->maybe_input,$self->maybe_output);
 	my $in= $maybe_in // $term->IN // *STDIN;
 	my $out= $maybe_out // $term->OUT // *STDOUT;
 	$term->newTTY ($in,$out);
-	($in,$out)
+	($in,$out,$out)
     };
 
     my $printerror_frameno= sub {
 	my $max = $stack->max_frameno;
-	print $STDERR
+	print $ERROR
 	  "frame number must be between 0..$max\n";
     };
 
@@ -575,8 +575,8 @@ sub run {
 		      (sub {
 			   # set stdin/out/err in case they are
 			   # redirected.
-			   fh_to_fh ($STDIN)->xdup2(0);
-			   my $out= fh_to_fh ($STDOUT);
+			   fh_to_fh ($INPUT)->xdup2(0);
+			   my $out= fh_to_fh ($OUTPUT);
 			   $out->xdup2(1);
 			   $out->xdup2(2);
 			   xexec $pagercmd, @options
@@ -587,7 +587,7 @@ sub run {
 		} || do {
 		    my $e= $@;
 		    unless ($e=~ /broken pipe/) {
-			print $STDERR "error piping to pager ".
+			print $ERROR "error piping to pager ".
 			  "$pagercmd: $e\n"
 			    or die $!;
 		    }
@@ -611,7 +611,7 @@ sub run {
 	    xchoose_from
 	      (+{
 		 V=> sub {
-		     print $STDOUT $_[0]
+		     print $OUTPUT $_[0]
 		       or die "print: $!";
 		 },
 		 v=> &$pager_with_options(),
@@ -671,7 +671,7 @@ sub run {
 		  1
 	      } || do {
 		  if (!length ref($@) and $@=~ /^SIGINT\n/s) {
-		      print $STDOUT "\n";
+		      print $OUTPUT "\n";
 		      redo DO;
 		  } else {
 		      die $@
@@ -708,13 +708,13 @@ sub run {
 				$args=""; # XX HACK
 			    };
 
-			    my $help= sub { $self->print_help ($STDOUT) };
+			    my $help= sub { $self->print_help ($OUTPUT) };
 
 			    my $bt= sub {
 				my ($maybe_frameno)=
 				  $args=~ /^\s*(\d+)?\s*\z/
 				    or die "expecting digits or no argument, got '$cmd'";
-				print $STDOUT $stack->backtrace ($maybe_frameno
+				print $OUTPUT $stack->backtrace ($maybe_frameno
 								 // $frameno);
 				$args=""; # XX HACK; also, really
                                           # silently drop stuff?
@@ -742,7 +742,7 @@ sub run {
 				# long data (need viewer, but
 				# don't really want to, so should
 				# really use shortener)
-				print $STDOUT $stack->desc($frameno),"\n";
+				print $OUTPUT $stack->desc($frameno),"\n";
 			    };
 
 			    my $select_frame= sub {
@@ -837,7 +837,7 @@ sub run {
 					      # continue with what's left of
 					      # $cmd ?
 				    } else {
-					print $STDERR "unknown command "
+					print $ERROR "unknown command "
 					  ."or mode: '$subcmd'\n";
 					last;
 				    }
@@ -846,7 +846,7 @@ sub run {
 
 			    1
 			} || do {
-			    print $STDERR "$@";
+			    print $ERROR "$@";
 			    redo READ;
 			}
 		    }
@@ -949,7 +949,7 @@ sub run {
 		}
 	    }
 	}
-	print $STDOUT "\n";
+	print $OUTPUT "\n";
 	if (defined $$self[Historypath]) {
 	    eval {
 		my $f= xtmpfile $$self[Historypath];
