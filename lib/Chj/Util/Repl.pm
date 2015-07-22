@@ -573,9 +573,8 @@ sub run {
 		    # 'less' instead perhaps!
 		    my $o= Chj::xoutpipe
 		      (sub {
-			   # set stdin/out/err in case they are
-			   # redirected.
-			   fh_to_fh ($INPUT)->xdup2(0);
+			   # set stdout and stderr in case they are
+			   # redirected (stdin is the pipe)
 			   my $out= fh_to_fh ($OUTPUT);
 			   $out->xdup2(1);
 			   $out->xdup2(2);
