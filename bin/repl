@@ -122,10 +122,10 @@ if (@opt_M) {
 	   @opt_M
 	  );
 
-    WithRepl_eval "package $myname; "
-      .$code
-      ."; 1"
-	or die $@;
+    &WithRepl_eval ("package $myname; "
+		    .$code
+		    ."; 1")
+      or die $@;
 }
 
 

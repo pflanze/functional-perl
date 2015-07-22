@@ -95,7 +95,7 @@ use strict;
 # to be at the top before any lexicals are defined! so that lexicals
 # from this module are not active in the eval'ed code.
 
-sub WithRepl_eval ($;$) {
+sub WithRepl_eval (&;$) {
     my ($arg, $maybe_package)=@_;
     if (ref $arg) {
 	eval { &$arg() }
@@ -285,11 +285,11 @@ sub eval_code {
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
       $Function::Parameters::VERSION ? "use Function::Parameters" : "";
-    WithRepl_eval ("$aliascode; (); ".
-		   "no strict 'vars'; $use_warnings; ".
-		   "$use_method_signatures; $use_functional_parameters_; ".
-		   $code,
-		   &$in_package())
+    &WithRepl_eval ("$aliascode; (); ".
+		    "no strict 'vars'; $use_warnings; ".
+		    "$use_method_signatures; $use_functional_parameters_; ".
+		    $code,
+		    &$in_package())
 }
 
 
@@ -566,7 +566,7 @@ sub run {
 
 		my $pagercmd= $maybe_pager // $self->pager;
 
-		WithRepl_eval (sub {
+		WithRepl_eval {
 		    # XX this now means that no options
 		    # can be passed in $ENV{PAGER} !
 		    # (stupid Perl btw). Ok hard code
@@ -584,7 +584,7 @@ sub run {
 		    &$printto ($o);
 		    $o->xfinish;
 		    1
-		}) || do {
+		} || do {
 		    my $e= $@;
 		    unless ($e=~ /broken pipe/) {
 			print $STDERR "error piping to pager ".
