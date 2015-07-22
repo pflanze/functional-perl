@@ -60,8 +60,12 @@ use strict; use warnings FATAL => 'uninitialized';
 
 sub WithRepl_eval ($) {
     my ($arg)=@_;
-    my $package= caller;
-    eval "package $package; $arg"
+    if (ref $arg) {
+	eval { &$arg() }
+    } else {
+	my $package= caller;
+	eval "package $package; $arg"
+    }
 }
 
 
