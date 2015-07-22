@@ -38,7 +38,7 @@ use Chj::TEST;
 
 # for development/debugging
 use Chj::ruse;
-use Chj::Backtrace;
+use Chj::Trapl; # or Chj::Backtrace
 use Chj::repl;
 
 # add your own code.... (possibly adding `repl` calls within, too;
