@@ -100,6 +100,8 @@ sub myeval {# this has to be at the top before any lexicals are
 use Chj::Class::methodnames;
 use Chj::xoutpipe();
 use Chj::xtmpfile;
+use Chj::xperlfunc qw(xexec);
+use Chj::xopen qw(fh_to_fh);
 use POSIX;
 
 sub xone_nonwhitespace {
@@ -560,7 +562,16 @@ sub run {
 		    # can be passed in $ENV{PAGER} !
 		    # (stupid Perl btw). Ok hard code
 		    # 'less' instead perhaps!
-		    my $o= Chj::xoutpipe ($pagercmd, @options);
+		    my $o= Chj::xoutpipe
+		      (sub {
+			   # set stdin/out/err in case they are
+			   # redirected.
+			   fh_to_fh ($STDIN)->xdup2(0);
+			   my $out= fh_to_fh ($STDOUT);
+			   $out->xdup2(1);
+			   $out->xdup2(2);
+			   xexec $pagercmd, @options
+		       });
 		    &$printto ($o);
 		    $o->xfinish;
 		    1
