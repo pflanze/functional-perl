@@ -600,8 +600,17 @@ sub run {
 	       $self->mode_viewer);
 	};
 
-	(&$choosepager ($port_pager_with_options),
-	 &$choosepager ($string_pager_with_options))
+	my $pager= sub {
+	    my ($pager_with_options)= @_;
+	    sub {
+		my ($v)=@_;
+		my $pager= &$choosepager ($pager_with_options);
+		&$pager ($v)
+	    }
+	};
+
+	(&$pager ($port_pager_with_options),
+	 &$pager ($string_pager_with_options))
     };
 
 
