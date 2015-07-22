@@ -91,10 +91,18 @@ package Chj::Util::Repl;
 
 use strict;
 
-sub myeval {# this has to be at the top before any lexicals are
-            # defined! so that lexicals from this module are not
-            # active in the eval'ed code.
-    eval $_[0]
+# Copy from Chj::WithRepl, to prevent circular dependency.  This has
+# to be at the top before any lexicals are defined! so that lexicals
+# from this module are not active in the eval'ed code.
+
+sub WithRepl_eval ($;$) {
+    my ($arg, $maybe_package)=@_;
+    if (ref $arg) {
+	eval { &$arg() }
+    } else {
+	my $package= $maybe_package // caller;
+	eval "package $package; $arg"
+    }
 }
 
 use Chj::Class::methodnames;
@@ -277,10 +285,11 @@ sub eval_code {
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
       $Function::Parameters::VERSION ? "use Function::Parameters" : "";
-    myeval ("package ".&$in_package()."; $aliascode; (); ".
-	    "no strict 'vars'; $use_warnings; ".
-	    "$use_method_signatures; $use_functional_parameters_; ".
-	    $code)
+    WithRepl_eval ("$aliascode; (); ".
+		   "no strict 'vars'; $use_warnings; ".
+		   "$use_method_signatures; $use_functional_parameters_; ".
+		   $code,
+		   &$in_package())
 }
 
 
@@ -557,7 +566,7 @@ sub run {
 
 		my $pagercmd= $maybe_pager // $self->pager;
 
-		eval {
+		WithRepl_eval (sub {
 		    # XX this now means that no options
 		    # can be passed in $ENV{PAGER} !
 		    # (stupid Perl btw). Ok hard code
@@ -575,7 +584,7 @@ sub run {
 		    &$printto ($o);
 		    $o->xfinish;
 		    1
-		} || do {
+		}) || do {
 		    my $e= $@;
 		    unless ($e=~ /broken pipe/) {
 			print $STDERR "error piping to pager ".

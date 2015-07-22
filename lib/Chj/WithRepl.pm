@@ -132,14 +132,7 @@ sub have_eval_since_frame ($) {
 	    if ((@v)= caller $i++) {
 		my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
 		my $sub= $f->subroutine;
-		if ($sub eq 'Chj::Util::Repl::myeval'
-		    or
-		    $sub eq 'main::myxeval_in' # repl script, even
-		    # more of hack.
-		   ) {
-		    warn "(ignore eval since it's from a repl)"
-		      if $debug;
-		} elsif ($sub eq 'Chj::WithRepl::WithRepl_eval') {
+		if ($sub =~ /::WithRepl_eval\z/) {
 		    warn "(ignore eval since it's from a WithRepl_eval)"
 		      if $debug;
 		} elsif ($sub =~ /::BEGIN\z/) {
