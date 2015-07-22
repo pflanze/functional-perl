@@ -37,9 +37,30 @@ package Chj::repl;
 use strict;
 use Chj::Util::Repl;
 
+sub maybe_tty {
+    my $path= `tty`;
+    chomp $path;
+    if (length $path) {
+	open my $fh, "+>", $path
+	  or die "opening '$path': $!";
+	$fh
+    } else {
+	undef
+    }
+}
+
 sub repl {
-    my ($maybe_skip)=@_;
+    my ($maybe_skip, $maybe_tty)=@_;
     my $r= new Chj::Util::Repl;
+
+    # Since `Term::Readline::Gnu`'s `OUT` method does not actually
+    # return the filehandle that the readline library is using,
+    # instead get the tty ourselves and set it explicitely. Stupid.
+    if (defined (my $still_maybe_tty= $maybe_tty // maybe_tty)) {
+	$r->set_maybe_input ($still_maybe_tty);
+	$r->set_maybe_output ($still_maybe_tty);
+    }
+
     #$r->run ($maybe_skip);
     my $m= $r->can("run"); @_=($r, $maybe_skip); goto $m
 }
