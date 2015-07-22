@@ -79,6 +79,10 @@ require Exporter;
 @EXPORT_OK= qw(xopen_read xopen_write xopen_append xopen_update
 	       devnull devzero
 	       glob_to_fh
+	       fd_to_fh
+	       inout_fd_to_fh
+	       input_fd_to_fh
+	       output_fd_to_fh
 	       perhaps_open_read perhaps_xopen_read
 	      );
 %EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
@@ -93,6 +97,38 @@ sub glob_to_fh ($;$) {
     my $fh= bless (*{$glob}{IO}, "Chj::IO::File");
     $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);
     $fh
+}
+
+
+# XXX: these `dup(2)` the input file descriptor
+# (i.e. `fileno(input_fd_to_fh 0)` is not 0). Is there a way to just
+# get a new wrapper around the existing file descriptor instead?
+
+sub fd_to_fh ($$;$) {
+    my ($fd, $mode, $maybe_layer_or_encoding)=@_;
+    $fd=~ /^\d+\z/s
+      or die "fd argument must be a natural number";
+    my $redir= $mode."&".$fd;
+    open my $fh, $redir
+      or die "open $redir: $!";
+    bless $fh, "Chj::IO::File";
+    $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);
+    $fh
+}
+
+sub inout_fd_to_fh ($;$) {
+    my ($fd, $maybe_layer_or_encoding)=@_;
+    fd_to_fh $fd, ">+", $maybe_layer_or_encoding
+}
+
+sub input_fd_to_fh ($;$) {
+    my ($fd, $maybe_layer_or_encoding)=@_;
+    fd_to_fh $fd, "<", $maybe_layer_or_encoding
+}
+
+sub output_fd_to_fh ($;$) {
+    my ($fd, $maybe_layer_or_encoding)=@_;
+    fd_to_fh $fd, ">", $maybe_layer_or_encoding
 }
 
 
