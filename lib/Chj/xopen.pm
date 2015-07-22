@@ -77,13 +77,14 @@ package Chj::xopen;
 require Exporter;
 @EXPORT= qw(xopen);
 @EXPORT_OK= qw(xopen_read xopen_write xopen_append xopen_update
+	       perhaps_open_read perhaps_xopen_read
 	       devnull devzero
 	       glob_to_fh
 	       fd_to_fh
 	       inout_fd_to_fh
 	       input_fd_to_fh
 	       output_fd_to_fh
-	       perhaps_open_read perhaps_xopen_read
+	       fh_to_fh
 	      );
 %EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
 
@@ -130,6 +131,14 @@ sub output_fd_to_fh ($;$) {
     my ($fd, $maybe_layer_or_encoding)=@_;
     fd_to_fh $fd, ">", $maybe_layer_or_encoding
 }
+
+
+sub fh_to_fh ($) {
+    my ($fh)=@_;
+    require Chj::IO::WrappedFile;
+    Chj::IO::WrappedFile->new($fh)
+}
+
 
 
 sub xopen {
