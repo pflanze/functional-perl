@@ -33,6 +33,8 @@ L<Chj::Util::Repl>
 package Chj::repl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(repl);
+@EXPORT_OK=qw(maybe_tty);
+%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
 use Chj::Util::Repl;
