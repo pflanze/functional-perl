@@ -553,13 +553,14 @@ sub run {
 
 		local $SIG{PIPE}="IGNORE";
 
+		my $pagercmd= $maybe_pager // $self->pager;
+
 		eval {
 		    # XX this now means that no options
 		    # can be passed in $ENV{PAGER} !
 		    # (stupid Perl btw). Ok hard code
 		    # 'less' instead perhaps!
-		    my $o= Chj::xoutpipe ($maybe_pager//$$self[Pager],
-					  @options);
+		    my $o= Chj::xoutpipe ($pagercmd, @options);
 		    &$printto ($o);
 		    $o->xfinish;
 		    1
@@ -567,7 +568,7 @@ sub run {
 		    my $e= $@;
 		    unless ($e=~ /broken pipe/) {
 			print $STDERR "error piping to pager ".
-			  "$$self[Pager]: $e\n"
+			  "$pagercmd: $e\n"
 			    or die $!;
 		    }
 		};
