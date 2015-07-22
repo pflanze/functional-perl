@@ -145,6 +145,8 @@ use Class::Array -fields=>
               'Mode_context', # char
               'Mode_formatter', # char
               'Mode_viewer', # char
+	      'Maybe_input', # fh
+	      'Maybe_output', # fh
 	     );
 
 sub new {
@@ -528,8 +530,14 @@ sub run {
 	}
     };
 
-    my $OUT = $term->OUT || *STDOUT;## * correct?
-    my $STDOUT= $OUT; my $STDERR= $OUT;
+    my ($STDOUT, $STDERR)= do {
+	my ($maybe_in, $maybe_out)=
+	  ($self->maybe_input,$self->maybe_output);
+	my $in= $maybe_in // $term->IN // *STDIN;
+	my $out= $maybe_out // $term->OUT // *STDOUT;
+	$term->newTTY ($in,$out);
+	($in,$out)
+    };
 
     my $printerror_frameno= sub {
 	my $max = $stack->max_frameno;
