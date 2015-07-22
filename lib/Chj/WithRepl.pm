@@ -47,6 +47,12 @@ installation (or n frames back from there, as per the argument to
 
 package Chj::WithRepl;
 
+@ISA="Exporter"; require Exporter;
+@EXPORT=qw(withrepl push_withrepl pop_withrepl);
+@EXPORT_OK=qw(WithRepl_eval);
+%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+
+use strict; use warnings FATAL => 'uninitialized';
 
 #-- moved up here before any lexicals to avoid their exposure--
 # Wrapping `eval` calls with a special frame
@@ -57,15 +63,7 @@ sub WithRepl_eval ($) {
     my $package= caller;
     eval "package $package; $arg"
 }
-#-- /moved--
 
-
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(withrepl push_withrepl pop_withrepl);
-@EXPORT_OK=qw(WithRepl_eval);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
-
-use strict; use warnings FATAL => 'uninitialized';
 
 use Chj::repl;
 use Chj::TEST;
