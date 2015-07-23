@@ -17,3 +17,5 @@ This list of doubtful names is not exhaustive. Also see [[TODO#Names]].
   with APL etc.
 - `the_object_method`
 - `Chj::WithRepl`, `WithRepl_eval`, `Chj::Trapl`
+- `FP::Struct`: rename to `FP::Class` or should that name remain
+  reserved for a new implementation on top of `Moose` or something?
