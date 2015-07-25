@@ -8,8 +8,13 @@ you've got some comments on some names, like how the same or similar
 functions are named in other languages or ideas on how they could be
 named for more consistency, please [tell](//mailing_list.md).
 
-This list of doubtful names is not exhaustive. Also see [[TODO#Names]].
+This list of doubtful names is not exhaustive.
 
+- is it badly inconsistent to have names like `map_with_tail` but have
+  the tail-taking function be named `rest`?
+- should `FORCE` from `FP::Lazy` be renamed to `Force` to avoid the
+  potential conflict with `use PXML::Tags 'force'` ?
+- rename `PXML` to FXML (functional XML)?
 - `array_to_hash_group_by`
 - `compose_1side`
 - `pxml_map_elements_exhaustively`

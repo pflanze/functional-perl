@@ -4,7 +4,7 @@ properly formatted versions of these documents.
 ---
 
 See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
-"todo" markers in text (website / .md) files.
+"todo" markers in text (website / .md) files. Also, the [[names]] page.
 
 <with_toc>
 
@@ -117,19 +117,6 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 ## Security, safety
 
 - check 'XX.*[Ss]ecurity' comments
-
-
-## Names
-
-- rename `PXML` to FXML (functional XML)?
-
-- is it badly inconsistent to have names like `map_with_tail` but have
-  the tail-taking function be named `rest`?
-
-- should `FORCE` from `FP::Lazy` be renamed to `Force` to avoid the
-  potential conflict with `use PXML::Tags 'force'` ?
-
-Also see [[names]].
 
 
 ## Possibilities
