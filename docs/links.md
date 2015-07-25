@@ -16,6 +16,12 @@ properly formatted versions of these documents.
 * [core-api](http://clojure.github.io/clojure/clojure.core-api.html),
   Clojure core function docs
 
+## Functional programming in X
+
+* [Functional Programming in Python
+  (pdf)](http://www.oreilly.com/programming/free/files/functional-programming-python.pdf)
+  ([HN](https://news.ycombinator.com/item?id=9941748))
+
 ## Functional programming in various contexts
 
 * [Pure UI](http://rauchg.com/2015/pure-ui/), on purely functional
