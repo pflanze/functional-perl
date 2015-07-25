@@ -18,6 +18,9 @@ properly formatted versions of these documents.
 
 ## Functional programming in X
 
+* [Professor Frisby's Mostly Adequate Guide to Functional Programming (in javascript)](https://github.com/DrBoolean/mostly-adequate-guide)
+  ([HN](https://news.ycombinator.com/item?id=9884616))
+
 * [Functional Programming in Python
   (pdf)](http://www.oreilly.com/programming/free/files/functional-programming-python.pdf)
   ([HN](https://news.ycombinator.com/item?id=9941748))
@@ -31,7 +34,4 @@ properly formatted versions of these documents.
   composition of a user interface (using the
   [React](https://en.wikipedia.org/wiki/React_(JavaScript_library))
   JavaScript library)
-
-* [Professor Frisby's Mostly Adequate Guide to Functional Programming (in javascript)](https://github.com/DrBoolean/mostly-adequate-guide)
-  ([HN](https://news.ycombinator.com/item?id=9884616))
 
