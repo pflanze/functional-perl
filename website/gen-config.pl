@@ -79,6 +79,7 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
    ["htmlgen/README.md", ["htmlgen/TODO.md"]],
    ["docs/ideas.md"],
    ["docs/TODO.md"],
+   ["docs/names.md"],
    ["COPYING.md", ["licenses/artistic_license_2.0.md"]],
   ],
   belownav=> fun ($path0) {
