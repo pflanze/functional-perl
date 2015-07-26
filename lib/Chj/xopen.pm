@@ -101,17 +101,19 @@ sub glob_to_fh ($;$) {
 }
 
 
-# XXX: these `dup(2)` the input file descriptor
-# (i.e. `fileno(input_fd_to_fh 0)` is not 0). Is there a way to just
-# get a new wrapper around the existing file descriptor instead?
+# --------------------------------------------------
+# Turn unix fd-s to Chj::IO::File handles
+
+# `open my $fh, '<&'.$fd` dup's the file descriptor, so use
+# IO::Handle's `new_from_fd` instead
+
+use IO::Handle;
 
 sub fd_to_fh ($$;$) {
     my ($fd, $mode, $maybe_layer_or_encoding)=@_;
     $fd=~ /^\d+\z/s
       or die "fd argument must be a natural number";
-    my $redir= $mode."&".$fd;
-    open my $fh, $redir
-      or die "open $redir: $!";
+    my $fh= IO::Handle->new_from_fd($fd, $mode);
     bless $fh, "Chj::IO::File";
     $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);
     $fh
@@ -119,19 +121,23 @@ sub fd_to_fh ($$;$) {
 
 sub inout_fd_to_fh ($;$) {
     my ($fd, $maybe_layer_or_encoding)=@_;
-    fd_to_fh $fd, ">+", $maybe_layer_or_encoding
+    fd_to_fh $fd, "rw", $maybe_layer_or_encoding
 }
 
 sub input_fd_to_fh ($;$) {
     my ($fd, $maybe_layer_or_encoding)=@_;
-    fd_to_fh $fd, "<", $maybe_layer_or_encoding
+    fd_to_fh $fd, "r", $maybe_layer_or_encoding
 }
 
 sub output_fd_to_fh ($;$) {
     my ($fd, $maybe_layer_or_encoding)=@_;
-    fd_to_fh $fd, ">", $maybe_layer_or_encoding
+    fd_to_fh $fd, "w", $maybe_layer_or_encoding
 }
 
+
+# --------------------------------------------------
+# Wrap a Perl fh of another kind (class) as a Chj::IO::File handle,
+# for cases where reblessing is not ok.
 
 sub fh_to_fh ($) {
     my ($fh)=@_;
@@ -139,6 +145,9 @@ sub fh_to_fh ($) {
     Chj::IO::WrappedFile->new($fh)
 }
 
+
+# --------------------------------------------------
+# Open filehandles from paths:
 
 
 sub xopen {
