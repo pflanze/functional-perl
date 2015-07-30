@@ -21,6 +21,13 @@ properly formatted versions of these documents.
 * [Professor Frisby's Mostly Adequate Guide to Functional Programming (in javascript)](https://github.com/DrBoolean/mostly-adequate-guide)
   ([HN](https://news.ycombinator.com/item?id=9884616))
 
+  Also see:
+
+  * [ES6 Tail Call Optimization Explained](http://benignbemine.github.io/2015/07/19/es6-tail-calls/)
+  * [Trampolines in JavaScript](http://raganwald.com/2013/03/28/trampolines-in-javascript.html)
+  * [lemonad](http://fogus.github.io/lemonad/)
+
+
 * [Functional Programming in Python
   (pdf)](http://www.oreilly.com/programming/free/files/functional-programming-python.pdf)
   ([HN](https://news.ycombinator.com/item?id=9941748))
