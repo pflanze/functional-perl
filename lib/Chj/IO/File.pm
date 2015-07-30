@@ -583,8 +583,8 @@ sub xreadline0_chop {
 
 {
     my $SLICE_LENGTH= 1024*8;
-    my $LINEBREAK= "\n";# \r\n usw alles testen todo  und ins obj eben
-    my $REVERSELINEBREAK= reverse $LINEBREAK;#!
+    my $LINEBREAK= "\n"; # XX test \r\n etc. (and move into object?)
+    my $REVERSELINEBREAK= reverse $LINEBREAK;
 
 sub xreadline_backwards {
     my $self=shift;
@@ -594,8 +594,11 @@ sub xreadline_backwards {
     my $bufferp= \($$data{buffer}||="");
     while(!@$lines) {
 	my $curpos= tell($self->fh);
-	if (!defined($curpos) or $curpos<0) {##correct? docu is very unprecise!
-	    croak "xreadline_backwards on ".$self->quotedname.": can't seek on this filehandle?: tell: $!";
+	if (!defined($curpos) or $curpos<0) {# XX correct? doc is very
+                                             # imprecise!
+	    croak ("xreadline_backwards on "
+		   . $self->quotedname
+		   . ": can't seek on this filehandle?: tell: $!");
 	}
 	my $newpos= $curpos - $SLICE_LENGTH; $newpos=0 if $newpos<0;
 	my $len_to_go= ($curpos > $SLICE_LENGTH)? $SLICE_LENGTH : $curpos;
@@ -603,7 +606,8 @@ sub xreadline_backwards {
 	    #warn "debug xreadline_backwards: start of file reached and nothing to go";
 	    return;
 	}
-	$self->xseek(-($curpos > $SLICE_LENGTH ? $SLICE_LENGTH : $len_to_go),SEEK_CUR);
+	$self->xseek(-($curpos > $SLICE_LENGTH ? $SLICE_LENGTH : $len_to_go),
+		     SEEK_CUR);
 	my $totbuf;
 	while ($len_to_go) {
 	    my $buf;
@@ -623,24 +627,27 @@ sub xreadline_backwards {
 	
 	# now append that to BUFFER.
 	$$bufferp.= reverse $totbuf;
+
 	# now tac off stuff from beginning.
-	if ($newpos>0) { # there is something left to be read from top of file, so require a linebreak to be seen
+	if ($newpos>0) { # there is something left to be read from top
+                         # of file, so require a linebreak to be seen
 	    while (length ($$bufferp)
 		   and
 		   $$bufferp=~ s/^(\Q$REVERSELINEBREAK\E)(?=\Q$REVERSELINEBREAK\E)//s
 		   ||
 		   $$bufferp=~ s/^(.+?)(?=\Q$REVERSELINEBREAK\E)//s
 		  ) {
-		push @$lines,scalar reverse( $1);
+		push @$lines, scalar reverse( $1);
 	    }
-	} else { # no need to require a linebreak, begin of string is ok too.
+	} else { # no need to require a linebreak, begin of string is
+                 # ok, too.
 	    while (length ($$bufferp)
 		   and
 		   $$bufferp=~ s/^(\Q$REVERSELINEBREAK\E)(\Q$LINEBREAK\E|\z)/$2/s
 		   ||
 		   $$bufferp=~ s/^(.+?)(\Q$LINEBREAK\E|\z)/$2/s
 		  ) {
-		push @$lines,scalar reverse( $1);#boah scalar.
+		push @$lines, scalar reverse( $1);#boah scalar.
 	    }
 	}
     }
