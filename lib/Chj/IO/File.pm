@@ -163,7 +163,8 @@ BEGIN {
 
 our $DEBUG=0;
 
-my %filemetadata; # numified => [ opened, name, path , xreadline_backwards:data  ]
+# numified => [ opened, name, path , xreadline_backwards:data  ]
+my %filemetadata;
 
 sub set_path { # sets name, too
     my $self=shift;
@@ -201,11 +202,15 @@ sub path {
 }
 sub xpath {# ATTENTION: if path is overridden, xpath must be as well!
     my $self=shift;
-    my $meta= $filemetadata{pack "I",$self} or croak "xpath: file object has not yet been opened";
-    defined $$meta[2] or croak "xpath: file object does not have a path - it may have been opened with a mixed path spec";
+    my $meta= $filemetadata{pack "I",$self}
+      or croak "xpath: file object has not yet been opened";
+    defined $$meta[2]
+      or croak "xpath: file object does not have a path - "
+	."it may have been opened with a mixed path spec";
     $$meta[2]
 }
-sub set_opened_name { # arguments: opened,name; well could give _path too as third argument.
+sub set_opened_name {
+    # arguments: opened,name; well could give _path too as third argument.
     my $self=shift;
     $filemetadata{pack "I",$self}= [@_];
 }
@@ -306,7 +311,7 @@ sub xsysopen {
     my $self= ref $proto ? $proto : $proto->new;
     my $rv;
     if (@_==2) {
-	$rv= sysopen $self->fh,$_[0],$_[1]    # @_[1..$#_]; geht nicht. oder doch, war nicht dieser fehler. hrm.
+	$rv= sysopen $self->fh,$_[0],$_[1];
     } elsif (@_==3) {
 	$rv= sysopen $self->fh,$_[0],$_[1],$_[2];
     } else {
@@ -314,9 +319,12 @@ sub xsysopen {
     }
     $rv or do{
 	$Chj::IO::ERRSTR=$!; $Chj::IO::ERRNO=$!+0;
-	croak "xsysopen "._quote($_[0]).", mode $_[1], perms "._numquote($_[2]).": $!";
+	croak ("xsysopen "
+	       . _quote($_[0])
+	       . ", mode $_[1], perms "
+	       . _numquote($_[2])
+	       . ": $!");
     };
-    #$metadata{pack "I",$self}= $_[0]; #join(" ",@_); ## same as above. hm. no not quite same.
     $self->set_opened_path(1,$_[0]);
     $self
 }
@@ -326,14 +334,13 @@ sub sysopen {
     my $self= ref $proto ? $proto : $proto->new;
     my $rv;
     if (@_==2) {
-	$rv= sysopen $self->fh,$_[0],$_[1]    # @_[1..$#_]; geht nicht. oder doch, war nicht dieser fehler. hrm.
+	$rv= sysopen $self->fh,$_[0],$_[1];
     } elsif (@_==3) {
 	$rv= sysopen $self->fh,$_[0],$_[1],$_[2];
     } else {
 	croak "sysopen @_: wrong number of arguments";
     }
     $rv or return undef;
-    #$metadata{pack "I",$self}= $_[0]; #join(" ",@_); ## same as above. hm. no not quite same.
     $self->set_opened_path(1,$_[0]);
     $self
 }
@@ -370,7 +377,8 @@ sub read {
     else {		croak "read: wrong number of arguments" }
 }
 
-sub xread { ## (falls Perl die nicht eh schon abfangt hier:) was ist mit EINTR und EAGAIN? geben die exceptions? sollten. Eben: sollte typisierte haben. WIRKLICH.  OOooder: keine exception sondern fertigmachenrepetieren.  oooch. aber sicher nicht so wie bareperl dass non exception unfertiger return.
+sub xread {
+    # XX EINTR / EAGAIN?
     my $self=shift;
     my $rv;
     if (@_==2) {	$rv= CORE::read $self->fh,$_[0],$_[1] }
@@ -398,14 +406,14 @@ sub xxreadchunk {
     $rv ? $buf : die "EOF\n";
 }
 
-sub sysread { ## na, könnte auch read normal lassen (von Chj::IO::File erben). Nun?
+sub sysread {
     my $self=shift;
     if (@_==2) {	CORE::sysread $self->fh,$_[0],$_[1] }
     elsif (@_==3) {	CORE::sysread $self->fh,$_[0],$_[1],$_[2] }
     else {		croak "sysread: wrong number of arguments" };
 }
 
-sub xsysread { ## dito. (macht buffering einen sinn? oder besser der gefahren ausweichen? na, ich will wohl eben doch noch ein spezielles xopen_excl das per dup oder so arbeitet und normalen fh macht draus.)
+sub xsysread {
     my $self=shift;
     my $rv;
     if (@_==2) {	$rv= CORE::sysread $self->fh,$_[0],$_[1] }
@@ -518,7 +526,7 @@ sub xsyswritecompletely {
     }
 }
 
-sub xreadline { ## todo: test error case. Difficult to do.
+sub xreadline { # XX: test error case (difficult to do)
     my $self=shift;
     undef $!; # needed!
     if (wantarray) {
@@ -694,13 +702,18 @@ sub syscontent { # prolly not that efficient
     };
     $@ ? undef : $$buf
 }
+
 use constant BUFSIZ=> 4096*16; # 64kb
-sub xsyscontent { # funny, but it seems this is more memory efficient than xcontent??
-		# but it's slower. So it makes mem copies but is able to work with
-		# lower memory limits??
+
+sub xsyscontent {
+    # funny, but it seems this is more memory efficient than
+    # xcontent??  but it's slower. So it makes mem copies but is able
+    # to work with lower memory limits?
     my $self=shift;
     my ($buf,@buf);
-    while ($self->xread($buf,BUFSIZ)){ # guaranteed to either give true and data or false and it's the end or an exception
+    while ($self->xread($buf,BUFSIZ)){
+	# ^ guaranteed to either give true and data or false and it's
+	# the end or an exception
 	push @buf,$buf;
     }
     join("",@buf)
@@ -711,7 +724,8 @@ sub print {
     my $fh= $self->fh;
     print $fh @_
 }
-sub xprint {
+
+  sub xprint {
     my $self=shift;
     my $fh= $self->fh;
     print $fh @_ or croak "xprint to ".($self->quotedname).": $!";
@@ -723,10 +737,6 @@ sub xprintln {
     print $fh @_,"\n" or croak "xprintln to ".($self->quotedname).": $!";
 }
 
-# is there any need for something like xsysprint? Maybe once unicode is used!
-# I'll not write it yet.
-# Hm, oder doch:
-
 sub sysprint {
     my $self=shift;
     local $@;
@@ -736,14 +746,17 @@ sub sysprint {
     $@ ? undef : $rv
 }
 
-sub xsysprint { # (returns the number of chars written = length of all inputs)
-		## is this unicode safe?
+# (returns the number of chars written = length of all inputs)
+# XX is this unicode safe?
+sub xsysprint {
     my $self=shift;
-    # hm, writev(2) would make sense here.. but we are not going so far.
-    # Would it make sense to write all parts in individual write calls? Prolly not. So:
+    # hm, writev(2) would make sense here.. but we are not going that far.
+    # Would it make sense to write all parts in individual write calls?
     my $bufref= @_ > 1 ?  \ join("",@_) : \$_[0];
-    # Empirics (perl 5.6.1 iirc) show that join costs a copy even in the nargs==1 case
-    # (even with taking a reference), thus we special case it.
+
+    # Measurements (perl 5.6.1 iirc) show that join costs a copy even
+    # in the nargs==1 case (even with taking a reference), thus we
+    # special case it.
     my $len=length $$bufref;
     my $pos=0;
     my $n;
@@ -751,8 +764,10 @@ sub xsysprint { # (returns the number of chars written = length of all inputs)
 	$pos>0 ?
 	  $n=CORE::syswrite $self->fh, substr($$bufref,$pos)
 	  : $n=CORE::syswrite $self->fh, $$bufref ;
-	# Empirics show that even substr with pos 0 makes a copy, thus we specialcase it.
-	defined $n or croak "xsysprint to ".($self->quotedname).": $!";##hm, will this die in the EINTR case? (should it?) todo
+	# Measurements show that even substr with pos 0 makes a copy,
+	# thus we specialcase it.
+	defined $n or croak "xsysprint to ".($self->quotedname).": $!";
+	# XXX hm, will this die in the EINTR case? (should it?)
 	$pos+=$n;
     }
     $pos
@@ -947,18 +962,24 @@ sub xdup2 {
     my $self=shift;
     my $myfileno= CORE::fileno $self->fh;
     defined $myfileno
-      or croak "xdup2: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
+      or croak ("xdup2: filehandle of "
+		. $self->quotedname
+		. " is undefined (maybe it's closed?)");
     require POSIX;
     for my $dup (@_) {
 	my $fileno= $dup=~ /^\d+\z/s ? $dup : CORE::fileno $dup;
 	defined $fileno
-	  or croak "xdup2: filehandle $dup returns no fileno (maybe it's closed?)";
+	  or croak ("xdup2: filehandle $dup returns no fileno ".
+		    "(maybe it's closed?)");
 	#open $dup,'<&'.$myfileno or croak "?: $!";
-	# Works for reading handles. Problem: must use < or > depending on handle,
+	# Works for reading handles. Problem: must use < or >
+	# depending on handle,
 	# even +> does not work instead of <.
 	# Thus instead:
 	POSIX::dup2($myfileno,$fileno)
-	  or croak "xdup2 ".$self->quotedname." (fd $myfileno) to $dup (fd $fileno): $!";
+	    or croak ("xdup2 "
+		      . $self->quotedname
+		      . " (fd $myfileno) to $dup (fd $fileno): $!");
     }
 }
 
