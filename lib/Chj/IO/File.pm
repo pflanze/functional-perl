@@ -566,6 +566,18 @@ sub getline {
     <$fh>
 }
 
+sub xreadline_lf {
+    my $self=shift;
+    local $/= "\n";
+    $self->xreadline
+}
+
+sub xreadline_lf_chomp {
+    my $self=shift;
+    local $/= "\n";
+    $self->xreadline_chomp
+}
+
 sub xreadline0 {
     my $self=shift;
     local $/= "\0";
