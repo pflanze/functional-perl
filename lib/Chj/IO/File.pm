@@ -563,11 +563,12 @@ sub xreadline0 {
     local $/= "\0";
     $self->xreadline
 }
-#^ 'since it would be tedious' to add  once again  wantarray checking and then mapping with a Chomp   we leave that up to the receiver, good idea?.
+
 sub xreadline0_chop {
     my $self=shift;
     local $/= "\0";
-    # and yes we really *have* to differ. or it would give the number of items. SIGH.
+    # yes really *have* to check context. or it would give the number
+    # of items
     if (wantarray) {
 	map {
 	    chop; $_
@@ -585,10 +586,6 @@ sub xreadline0_chop {
     my $LINEBREAK= "\n";# \r\n usw alles testen todo  und ins obj eben
     my $REVERSELINEBREAK= reverse $LINEBREAK;#!
 
-    ##todo zeug in obj sollte gelöscht werden wenn eine der setpos methoden gemacht  und  hm  objekt vs filehandle  was in perlcore  was hier  was in OS  mess.:
-    #my $BUFFER="";# string in *rerverse* order so that the *%&* regexes work.
-    #my @LINES;
-
 sub xreadline_backwards {
     my $self=shift;
     my $meta= $filemetadata{pack "I",$self}||=[];
@@ -596,7 +593,6 @@ sub xreadline_backwards {
     my $lines= $$data{lines}||=[];
     my $bufferp= \($$data{buffer}||="");
     while(!@$lines) {
-	#$self->xseek(-$SLICE_LENGTH,SEEK_CUR);# problem: was passiert wenn ich über fileanfang hinweg seeke? xseek on 'xyz': Das Argument ist ungültig at (eval 19) line 1
 	my $curpos= tell($self->fh);
 	if (!defined($curpos) or $curpos<0) {##correct? docu is very unprecise!
 	    croak "xreadline_backwards on ".$self->quotedname.": can't seek on this filehandle?: tell: $!";
@@ -620,11 +616,9 @@ sub xreadline_backwards {
 	    } else {
 		#die "strange error (bug?, or maybe file changed while reading?): expecting len_to_go=$len_to_go but xread returns len $len";
 		#return;
-		# nix mehr zu lesen   problem hinter fileende lesen?
 	    }
 	}
-	#$self->xseek(-($curpos > $SLICE_LENGTH ? $SLICE_LENGTH : $len_to_go),SEEK_CUR);
-	# ^- nochmals! weil damit es wieder da isch wo wir angefangen hatten  zickzacknähen.
+
 	$self->xseek($newpos,SEEK_SET);
 	
 	# now append that to BUFFER.
@@ -633,12 +627,10 @@ sub xreadline_backwards {
 	if ($newpos>0) { # there is something left to be read from top of file, so require a linebreak to be seen
 	    while (length ($$bufferp)
 		   and
-		   # eine zeile ist: entweder string+ ohne linebreak hintendran, oder string{0} und linebreak  bis \z.
 		   $$bufferp=~ s/^(\Q$REVERSELINEBREAK\E)(?=\Q$REVERSELINEBREAK\E)//s
 		   ||
 		   $$bufferp=~ s/^(.+?)(?=\Q$REVERSELINEBREAK\E)//s
 		  ) {
-		#warn "match1!!!!!!!!!!!: '$1'";
 		push @$lines,scalar reverse( $1);
 	    }
 	} else { # no need to require a linebreak, begin of string is ok too.
@@ -648,18 +640,11 @@ sub xreadline_backwards {
 		   ||
 		   $$bufferp=~ s/^(.+?)(\Q$LINEBREAK\E|\z)/$2/s
 		  ) {
-		#warn "match2: '$1'";
-		#push @LINES,reverse $1;
-		#warn "pushed2: ".reverse($1);
-		#my $a=$1;
 		push @$lines,scalar reverse( $1);#boah scalar.
 	    }
-	} # PUH.
+	}
     }
-    #my $rv=
-      shift @$lines;
-    #warn "returning: '$rv'";
-    #$rv
+    shift @$lines;
 }
 }
 	
