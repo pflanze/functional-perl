@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-FP::Lazy
+FP::Lazy - lazy evaluation (delayed evaluation, promises)
 
 =head1 SYNOPSIS
 
@@ -121,6 +121,8 @@ Alternative Data::Thunk, but see note in TODO file about problems.
 
 Alternative Scalar::Defer?
 
+L<FP::TransparentLazy>
+
 =cut
 
 
@@ -189,6 +191,9 @@ sub FORCE {
 {
     package FP::Lazy::Promise;
     *force= *FP::Lazy::force;
+    sub FORCE {
+	$_[0] = force ($_[0]);
+    }
     sub DESTROY {
 	# nothing, catch this to prevent it from entering AUTOLOAD
     }
