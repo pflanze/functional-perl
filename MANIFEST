@@ -159,6 +159,7 @@ t/htmlgen
 t/intro-basics
 t/perl-goto-leak
 t/perl-weaken-coderef
+t/perl-weaken-coderef-correctness
 t/perl/goto-leak
 t/perl/weaken-coderef
 t/perl/weaken-coderef-alternative

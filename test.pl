@@ -33,6 +33,7 @@ our @t=
 	skip
 	skip-leak
 	csvstreams
+	perl-weaken-coderef-correctness
 	perl-weaken-coderef
 	perl-goto-leak
    );

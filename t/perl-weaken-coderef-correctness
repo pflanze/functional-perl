@@ -1,0 +1,13 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+# test t/perl-weaken-coderef without memory pressure, to check code
+# correctness aside memory behaviour
+
+exec "TEST_PERL=1 N=800 RES=320400 t/perl-weaken-coderef"
+  or exit 127;
