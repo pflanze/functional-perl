@@ -250,9 +250,7 @@ sub _pxml_print_fragment_fast {
 		       _pxml_print_fragment_fast ($a, $fh,
 						  $html5compat, $void_element_h);
 		   });
-	    } elsif ($ref eq "FP::Lazy::Promise"
-		     or
-		     $ref eq "FP::Lazy::PromiseLight") {
+	    } elsif (UNIVERSAL::isa($ref, "FP::Lazy::Promise")) {
 	      PROMISE:
 		#_pxml_print_fragment_fast (force($v), $fh,
 		#                           $html5compat, $void_element_h);
