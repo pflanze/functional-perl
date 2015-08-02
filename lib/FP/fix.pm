@@ -79,6 +79,7 @@ use strict; use warnings FATAL => 'uninitialized';
 
 
 # Haskell recursive let based implementation:
+#   XXX move this code to separate file to avoid dependencies
 
 #   fix f = let x = f x in x
 
@@ -90,6 +91,19 @@ use FP::TransparentLazy qw(lazy lazyLight);
     my $x; $x= &$f(lazy { $x });  # can't use lazyLight here, why?
     $x
 };
+
+use Chj::TEST;
+TEST {
+    my $f= haskell_curried (sub {
+	my ($self)= @_;
+	sub {
+	    my ($x)=@_;
+	    $x > 0 ? $x * &$self($x-1) : 1
+	}
+    });
+    [ &$f(0), &$f(3) ]
+} [1, 6];
+
 
 *haskell_uncurried= sub {
     my ($f)= @_;
