@@ -77,7 +77,34 @@ use strict; use warnings FATAL => 'uninitialized';
 	}
     };
 
-# self-referencing through package variable
+
+# Haskell recursive let based implementation:
+
+#   fix f = let x = f x in x
+
+use FP::TransparentLazy qw(lazy lazyLight);
+
+# this variant is different since it requires $f to be curried
+*haskell_curried= sub {
+    my ($f)= @_;
+    my $x; $x= &$f(lazy { $x });  # can't use lazyLight here, why?
+    $x
+};
+
+*haskell_uncurried= sub {
+    my ($f)= @_;
+    my $fc= sub {
+        my ($fc)=@_;
+        sub {
+            unshift @_, $fc; goto $f;
+        };
+    };
+    my $x; $x= &$fc(lazy { $x });  # can't use lazyLight here, why?
+    $x
+};
+
+
+# indirectly self-referencing through package variable
 *rec=
     sub ($) {
 	my ($f)=@_;
@@ -87,7 +114,7 @@ use strict; use warnings FATAL => 'uninitialized';
 	}
     };
 
-# locally self-referencing
+# directly locally self-referencing
 
 use Scalar::Util 'weaken';
 
@@ -101,6 +128,8 @@ use Scalar::Util 'weaken';
     };
 
 
+
+# choose implementation:
 
 sub fix ($);
 

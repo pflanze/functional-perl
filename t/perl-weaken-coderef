@@ -32,6 +32,9 @@ SKIP: {
     is readin("t/perl/weaken-coderef-alternative-fix rec $n 1 |"),
       $res;
 
+    is readin("t/perl/weaken-coderef-alternative-fix haskell_uncurried $n 1 |"),
+      $res;
+
     is readin("t/perl/weaken-coderef-alternative-fix '' $n 1 |"),
       $res;
 
