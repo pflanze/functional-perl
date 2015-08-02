@@ -29,7 +29,7 @@ FP::Trampoline -- tail call optimization without reliance on goto
 =head1 DESCRIPTION
 
 Perl has direct support for optimized (i.e. non-stack-eating) tail
-calls, by way of `goto $subref`, but there are still bugs in current
+calls, by way of `goto &$subref`, but there are still bugs in current
 versions of Perl with regards to memory handling in certain situations
 (see L<t/perl/goto-leak>). Trampolining is a technique that works
 without reliance on any tail call optimization support by the host

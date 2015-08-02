@@ -145,8 +145,7 @@ whereas this works:
     goto &$x;
 
 (`Sub::Call::Tail`'s `tail` seems to be using that latter form. Still
-there may be libraries out there that don't do so. Todo: check? Even
-check *our* libraries!)
+there may be libraries out there that don't do so. Todo: check?)
 
 For these reasons, the core modules never use globs (but they don't
 usually type check in the array case either!).

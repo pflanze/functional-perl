@@ -72,7 +72,7 @@ sub new_import {
     my $caller=caller;
     my ($class)=@_;
     $rdep{$class}{$caller}=[@_];
-    goto $orig_import;
+    goto &$orig_import;
 }
 
 {

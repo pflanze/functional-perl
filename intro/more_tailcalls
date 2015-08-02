@@ -61,7 +61,7 @@ func functional_fact_iter ($x, $res) {
 	#
 	#  functional_fact_iter($x - 1,  $x * $res)
 	#
-	# we could be making use of Perl's goto $subroutine feature (see
+	# we could be making use of Perl's goto &$subroutine feature (see
 	# `perldoc -f goto`):
 	#
 	# @_=($x - 1,  $x * $res);

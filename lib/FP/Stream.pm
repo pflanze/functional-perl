@@ -817,14 +817,14 @@ sub stream_state_fold_right {
 	FORCE $s;
 	if (is_null $s) {
 	    @_=($statedown);
-	    goto $stateupfn
+	    goto &$stateupfn
 	} else {
 	    my ($v,$s)= $s->first_and_rest;
 	    no warnings 'recursion';
 	    @_=($v,
 		$statedown,
 		stream_state_fold_right ($fn, $stateupfn, $s));
-	    goto $fn;
+	    goto &$fn;
 	}
     }
 }

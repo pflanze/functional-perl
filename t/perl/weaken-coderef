@@ -26,7 +26,7 @@ sub naturals {
 	}
     };
     my $f_= $f; weaken $f;
-    goto $f_;
+    goto &$f_;
 }
 
 sub stream_sum {

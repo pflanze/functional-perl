@@ -47,7 +47,7 @@ sub functional_fact_iter {
 	#
 	#  functional_fact_iter($x - 1,  $x * $res)
 	#
-	# we're making use of Perl's goto $subroutine feature (see
+	# we're making use of Perl's goto &$subroutine feature (see
 	# `perldoc -f goto`):
 
 	@_=($x - 1,  $x * $res);

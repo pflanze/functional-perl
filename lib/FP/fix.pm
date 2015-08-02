@@ -68,7 +68,7 @@ use strict; use warnings FATAL => 'uninitialized';
 	my $fix0= sub {
 	    my ($fix0, $f)=@_;
 	    sub {
-		@_=(&$fix0 ($fix0, $f), @_); goto $f;
+		@_=(&$fix0 ($fix0, $f), @_); goto &$f;
 	    }
 	};
 	sub ($) {
@@ -96,7 +96,7 @@ use FP::TransparentLazy qw(lazy lazyLight);
     my $fc= sub {
         my ($fc)=@_;
         sub {
-            unshift @_, $fc; goto $f;
+            unshift @_, $fc; goto &$f;
         };
     };
     my $x; $x= &$fc(lazy { $x });  # can't use lazyLight here, why?
@@ -109,8 +109,8 @@ use FP::TransparentLazy qw(lazy lazyLight);
     sub ($) {
 	my ($f)=@_;
 	sub {
-	    #@_=(fix ($f), @_); goto $f;
-	    unshift @_, fix ($f); goto $f;
+	    #@_=(fix ($f), @_); goto &$f;
+	    unshift @_, fix ($f); goto &$f;
 	}
     };
 
@@ -122,7 +122,7 @@ use Scalar::Util 'weaken';
     sub ($) {
 	my ($f)=@_;
 	my $f2; $f2= sub {
-	    unshift @_, $f2; goto $f
+	    unshift @_, $f2; goto &$f
 	};
 	my $f2_=$f2; weaken $f2; $f2_
     };
@@ -144,7 +144,7 @@ sub fixn {
     for (my $i=0; $i<@f; $i++) {
 	my $f= $f[$i];
 	$ff[$i]= sub {
-	    unshift @_, @ff; goto $f;
+	    unshift @_, @ff; goto &$f;
 	}
     }
     my @ff_= @ff;

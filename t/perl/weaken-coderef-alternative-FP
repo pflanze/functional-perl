@@ -36,7 +36,7 @@ sub naturals {
 	}
     };
     my $f_= $f; weaken $f;
-    goto $f_;
+    goto &$f_;
 }
 
 sub stream_sum {
@@ -51,10 +51,10 @@ sub stream_sum {
 	if (is_null $s) {
 	    $tot
 	} else {
-	    @_=(car ($s) + $tot, cdr $s); goto $lp;
+	    @_=(car ($s) + $tot, cdr $s); goto &$lp;
 	}
     };
-    @_=(0, $s); my $lp_=$lp; weaken $lp; goto $lp_;
+    @_=(0, $s); my $lp_=$lp; weaken $lp; goto &$lp_;
 }
 
 

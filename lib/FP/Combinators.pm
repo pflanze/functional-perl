@@ -64,7 +64,7 @@ sub compose_scalar {
 	for my $fn (@fn) {
 	    $v= &$fn($v);
 	}
-	@_=($v); goto $f0
+	@_=($v); goto &$f0
     }
 }
 
@@ -128,7 +128,7 @@ sub flip ($) {
     my ($f)=@_;
     sub {
 	@_==2 or croak "expecting 2 arguments";
-	@_=($_[1], $_[0]); goto $f
+	@_=($_[1], $_[0]); goto &$f
     }
 }
 
@@ -140,7 +140,7 @@ sub flip2_3 ($) {
     my ($f)=@_;
     sub {
 	@_==3 or croak "expecting 3 arguments";
-	@_=($_[1], $_[0], $_[2]); goto $f
+	@_=($_[1], $_[0], $_[2]); goto &$f
     }
 }
 
@@ -148,7 +148,7 @@ sub rot3right ($) {
     my ($f)=@_;
     sub {
 	@_==3 or croak "expecting 3 arguments";
-	@_=($_[2], $_[0], $_[1]); goto $f
+	@_=($_[2], $_[0], $_[1]); goto &$f
     }
 }
 
@@ -156,7 +156,7 @@ sub rot3left ($) {
     my ($f)=@_;
     sub {
 	@_==3 or croak "expecting 3 arguments";
-	@_=($_[1], $_[2], $_[0]); goto $f
+	@_=($_[1], $_[2], $_[0]); goto &$f
     }
 }
 

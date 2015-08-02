@@ -330,18 +330,18 @@ sub pxml_print_fragment_fast ($ $ ) {
     };
     if (length (my $r= ref $v)) {
 	if (UNIVERSAL::isa($v, "PXML::XHTML")) {
-	    @_=($v); goto $with_first_element;
+	    @_=($v); goto &$with_first_element;
 	} else {
 	    my $s= force(stream_filter *is_pxml_element,
 			 stream_mixed_flatten ($v));
 	    if (is_null $s) {
-		goto $no_element
+		goto &$no_element
 	    } else {
-		@_= (car $s); goto $with_first_element;
+		@_= (car $s); goto &$with_first_element;
 	    }
 	}
     } else {
-	goto $no_element
+	goto &$no_element
     }
 }
 

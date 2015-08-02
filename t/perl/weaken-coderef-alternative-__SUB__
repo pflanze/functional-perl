@@ -21,7 +21,7 @@ sub foo {
 	    }
 	}
     };
-    goto $f
+    goto &$f
 }
 
 my $res= &{foo 2};

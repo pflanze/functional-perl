@@ -64,7 +64,7 @@ sub repl {
     }
 
     #$r->run ($maybe_skip);
-    my $m= $r->can("run"); @_=($r, $maybe_skip); goto $m
+    my $m= $r->can("run"); @_=($r, $maybe_skip); goto &$m
 }
 
 *Chj::repl= \&repl;

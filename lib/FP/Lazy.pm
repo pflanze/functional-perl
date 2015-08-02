@@ -212,7 +212,7 @@ sub FORCE {
 	    # can't change @_ or it would break 'env clearing' ability
 	    # of the method. Thus assign to $_[0], which will effect
 	    # our env, too, but so what? XX still somewhat bad.
-	    $_[0]= $v; goto $method;
+	    $_[0]= $v; goto &$method;
 	} else {
 	    # XX imitate perl's ~exact error message?
 	    die "no method '$methodname' found for object: $v";

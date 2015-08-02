@@ -53,7 +53,7 @@ sub stream_sum_OK {
 # -----------------------------------------------------------
 # variant using trampolines to implement tail call optimization, also
 # confirming that the algorithm is sane and that it's got something to
-# do with how perl handles goto $coderef / stack memory or so.
+# do with how perl handles goto &$coderef / stack memory or so.
 
 sub T (&) {
     bless $_[0], "TrampolineContinuation"

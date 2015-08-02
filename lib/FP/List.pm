@@ -170,7 +170,7 @@ use FP::Predicates 'is_natural0';
 sub cons ($$) {
     @_==2 or die "wrong number of arguments";
     if (my $f= UNIVERSAL::can ($_[1], "cons")) {
-	@_=(reverse @_); goto $f;
+	@_=(reverse @_); goto &$f;
     } else {
 	bless [@_], "FP::List::Pair";
     }
@@ -469,7 +469,7 @@ sub delayed (&) {
 	# evaluate thunk, expecting a function and pass our arguments
 	# to that function
 	my $cont= &$thunk();
-	goto $cont
+	goto &$cont
     }
 }
 

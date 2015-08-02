@@ -101,7 +101,7 @@ use Scalar::Util ();
 our $weaken= \&Scalar::Util::weaken;
 
 sub weaken ($) {
-    goto $weaken
+    goto &$weaken
 }
 # XX is there really no way (short of re-exporting everywhere with a
 # Chj::ruse approach) to avoid the extra function call cost?

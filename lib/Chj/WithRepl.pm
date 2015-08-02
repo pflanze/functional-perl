@@ -176,7 +176,7 @@ sub handler_for ($$) {
 	    if (defined $orig_handler) {
 		#goto $orig_handler
 		# ^ just doesn't work, seems to undo the looping
-		#   protection. so..:
+		#   protection. so..:  -- XX test goto &$orig_handler
 		&$orig_handler ($e)
 	    } else {
 		#warn "no orig_handler, returning";
