@@ -23,7 +23,7 @@ FP::Stream - functions for lazily generated, singly linked (purely functional) l
  stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum
  # => 30  (0+1+4+9+16)
 
- use FP::TransparentLazy;
+ use FP::Lazy;
  force stream_fold_right sub { my ($n,$rest)=@_; $n + force $rest }, 0, stream_iota undef, 5
  # => 10;
 
@@ -97,7 +97,7 @@ package FP::Stream;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use FP::TransparentLazy;
+use FP::Lazy;
 use FP::List ":all";
 use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;

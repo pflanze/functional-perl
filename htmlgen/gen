@@ -90,7 +90,7 @@ use Htmlgen::Cost;
 use Htmlgen::default_config qw($default_config);
 use Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
 use Htmlgen::MarkdownPlus qw(markdownplus_parse);
-use FP::TransparentLazy;
+use FP::Lazy;
 use Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
 			  mediawiki_rexpand);
 use PXML::Preserialize qw(pxmlpre);

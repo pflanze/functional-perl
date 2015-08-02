@@ -30,7 +30,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::xopen ":all";
 # ^ well, this voids the purpose of Chj::xIO (to avoid Chj::IO::*)
-use FP::TransparentLazy;
+use FP::Lazy;
 use FP::List;
 use Chj::xperlfunc qw(xxsystem xprint);
 

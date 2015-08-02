@@ -275,7 +275,7 @@ sub is_filename ($) {
 
 # can't be in `FP::Sequence` since that package is for OO, well, what
 # to do about it?
-use FP::TransparentLazy; # sigh dependency, too.
+use FP::Lazy; # sigh dependency, too.
 sub is_sequence ($);
 sub is_sequence ($) {
     length ref $_[0] ?

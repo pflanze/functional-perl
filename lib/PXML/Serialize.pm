@@ -64,7 +64,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Data::Dumper;
 use PXML::Element;
 use PXML qw(is_pxml_element);
-use FP::TransparentLazy;
+use FP::Lazy;
 use FP::List;
 use FP::Stream;
 use Chj::xperlfunc qw(xprint xprintln);

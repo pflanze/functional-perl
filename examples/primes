@@ -24,7 +24,7 @@ use Chj::repl;
 use Chj::TEST use=> 'Method::Signatures';
 use FP::List ":all";
 use FP::Ops ":all";
-use FP::TransparentLazy ":all";
+use FP::Lazy ":all";
 use FP::Stream ":all";
 
 

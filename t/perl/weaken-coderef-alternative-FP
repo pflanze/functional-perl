@@ -21,7 +21,7 @@ use Scalar::Util 'weaken';
 our ($impl, $n, $m) = @ARGV;
 
 use FP::List ":all";
-use FP::TransparentLazy ":all";
+use FP::Lazy ":all";
 
 sub naturals {
     my $f; $f= sub {

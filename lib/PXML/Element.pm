@@ -28,7 +28,7 @@ use FP::Hash qw($empty_hash hash_set);
 
 # XX Depend on these? PXML::Serialize uses these, so any app that
 # serializes PXML would require them anyway.
-use FP::TransparentLazy;
+use FP::Lazy;
 use FP::List;
 
 use Chj::xIO qw(capture_stdout);
