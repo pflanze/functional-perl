@@ -90,7 +90,7 @@ package FP::List;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use FP::Lazy;
+use FP::TransparentLazy;
 use Chj::xperlfunc qw(xprint xprintln);
 use FP::Combinators qw(flip flip2_3 rot3right rot3left perhaps_to_maybe);
 use Chj::TEST;

@@ -45,7 +45,7 @@ package FP::IOStream;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use FP::Lazy;
+use FP::TransparentLazy;
 use Chj::xopendir;
 use FP::List ':all';
 use FP::Stream 'stream_map', 'array_to_stream', 'Weakened';

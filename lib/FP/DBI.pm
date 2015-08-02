@@ -84,7 +84,7 @@ use Chj::NamespaceCleanAbove;
 {
     package FP::DBI::st;
     our @ISA= 'DBI::st';
-    use FP::Lazy;
+    use FP::TransparentLazy;
     use FP::Weak;
     use FP::List;
 

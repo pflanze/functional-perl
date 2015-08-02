@@ -22,7 +22,7 @@ use Chj::repl;
 use Chj::TEST;
 use FP::List ":all";
 use FP::Ops ":all";
-use FP::Lazy ":all";
+use FP::TransparentLazy ":all";
 use FP::Stream ":all";
 
 

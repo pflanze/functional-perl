@@ -70,7 +70,7 @@ package FP::Text::CSV;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::List ":all";
-use FP::Lazy ":all";
+use FP::TransparentLazy ":all";
 use FP::Stream 'Weakened', 'weaken';
 use Text::CSV;
 use FP::HashSet 'hashset_union';

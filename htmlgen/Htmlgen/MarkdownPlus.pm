@@ -35,7 +35,7 @@ use PXML::XHTML ":all";
 use FP::Stream ":all";
 use Htmlgen::Htmlparse 'htmlparse';
 use Text::Markdown 'markdown';
-use FP::Lazy;
+use FP::TransparentLazy;
 use Htmlgen::Mediawiki qw(mediawiki_prepare);
 
 

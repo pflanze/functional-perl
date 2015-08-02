@@ -40,7 +40,7 @@ our ($path,$numrows)=@ARGV;
 
 use FP::Text::CSV qw(csvstream_to_file);
 use FP::List ":all";
-use FP::Lazy ":all";
+use FP::TransparentLazy ":all";
 use FP::Stream ":all";
 use FP::Ops qw(add);
 

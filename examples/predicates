@@ -70,7 +70,7 @@ TEST { is_pure cons 1,2 }
 TEST { is_pure [ 1,2 ] }
   '';
 
-use FP::Lazy;
+use FP::TransparentLazy;
 
 TEST { is_pure lazy { cons 1,2 } }
   ''; # or should it force it?

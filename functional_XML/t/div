@@ -16,7 +16,7 @@ use lib "$mydir/../../lib";
 use Chj::TEST ":all";
 use PXML::XHTML ":all";
 use PXML::Serialize "pxml_print_fragment_fast";
-use FP::Lazy;
+use FP::TransparentLazy;
 use FP::List;
 use FP::Stream;
 use FP::Array ":all"; # XXX inconsistency in export directives

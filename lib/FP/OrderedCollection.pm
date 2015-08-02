@@ -26,7 +26,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use FP::Predicates;
 use FP::Stream qw(subarray_to_stream subarray_to_stream_reverse  stream_to_array);
-use FP::Lazy;
+use FP::TransparentLazy;
 use FP::List;
 
 use FP::Struct

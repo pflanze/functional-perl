@@ -38,7 +38,7 @@ use Chj::xopen 'glob_to_fh';
 use FP::IOStream 'fh_to_chunks';
 use FP::Stream ":all";
 use FP::List ":all";
-use FP::Lazy ":all";
+use FP::TransparentLazy ":all";
 use POSIX 'ESPIPE';
 use Chj::TEST;
 

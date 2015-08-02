@@ -16,7 +16,7 @@ use lib "$mydir/../lib";
 
 
 use PXML::XHTML ':all';
-use FP::Lazy;
+use FP::TransparentLazy;
 use FP::List;
 use PXML::Serialize;
 

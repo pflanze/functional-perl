@@ -6,7 +6,7 @@ our ($mydir,$gitrepository); # 'import' from main
 
 use PXML::XHTML ":all";
 use Clone 'clone';
-use FP::Lazy;
+use FP::TransparentLazy;
 
 # htmlgen is run with CWD set to website/
 my $logocfg= require "./logo.pl";
