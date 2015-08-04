@@ -42,3 +42,11 @@ properly formatted versions of these documents.
   [React](https://en.wikipedia.org/wiki/React_(JavaScript_library))
   JavaScript library)
 
+
+## Experiments
+
+* [The list monad in Perl and
+  Python](http://blog.plover.com/prog/monad-search-2.html)
+  (by mjd, author of *[Higher-Order Perl](http://hop.perl.plover.com/)*)
+  ([HN](https://news.ycombinator.com/item?id=10002173))
+
