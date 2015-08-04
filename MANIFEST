@@ -60,6 +60,7 @@ lib/Chj/IO/CommandCommon.pm
 lib/Chj/IO/Dir.pm
 lib/Chj/IO/File.pm
 lib/Chj/IO/Pipe.pm
+lib/Chj/IO/PipelessCommand.pm
 lib/Chj/IO/Tempfile.pm
 lib/Chj/IO/WrappedFile.pm
 lib/Chj/NamespaceClean.pm
