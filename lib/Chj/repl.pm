@@ -38,11 +38,11 @@ package Chj::repl;
 
 use strict;
 use Chj::Util::Repl;
+use POSIX qw(ttyname);
 
 sub maybe_tty {
-    my $path= `tty`;
-    chomp $path;
-    if (length $path) {
+    my $path= ttyname (0);
+    if (defined $path) {
 	open my $fh, "+>", $path
 	  or die "opening '$path': $!";
 	$fh
