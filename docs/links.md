@@ -34,8 +34,10 @@ properly formatted versions of these documents.
 
 * [Functional programming in C++](http://gamasutra.com/view/news/169296/Indepth_Functional_programming_in_C.php) ([John Carmack](https://en.wikipedia.org/wiki/John_Carmack)) ([alternative link](https://web.archive.org/web/20130819160454/http://www.altdevblogaday.com/2012/04/26/functional-programming-in-c/))
 
-* Lua: [functional-lua](https://github.com/jhoonb/functional-lua),
-  [Wikibooks](https://en.wikibooks.org/wiki/Lua_Functional_Programming/Functions)
+* [Lua Functional](https://github.com/rtsisyk/luafun)
+  ([docs](http://rtsisyk.github.io/luafun/index.html),
+   [HN](https://news.ycombinator.com/item?id=6770698))
+  (also, [functional-lua](https://github.com/jhoonb/functional-lua))
 
 
 ## Functional programming in various contexts
