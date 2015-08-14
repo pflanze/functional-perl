@@ -24,3 +24,6 @@ This list of doubtful names is not exhaustive.
 - `Chj::WithRepl`, `WithRepl_eval`, `Chj::Trapl`
 - `FP::Struct`: rename to `FP::Class` or should that name remain
   reserved for a new implementation on top of `Moose` or something?
+- should `null` always be used, including instead of `empty_trie`
+  etc. (i.e. rename those to `null_trie` etc.)?
+
