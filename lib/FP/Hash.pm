@@ -44,6 +44,7 @@ package FP::Hash;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref hash_ref_or hash_cache
 	   hash_delete hash_diff
+	   hash_length
 	   subhash
 	   hashes_keys $empty_hash);
 @EXPORT_OK=qw();
@@ -99,6 +100,15 @@ sub hash_delete ($$) {
     delete $$h2{$k};
     $h2
 }
+
+sub hash_length ($) {
+    my ($h)=@_;
+    scalar keys %$h
+}
+
+TEST { hash_length +{} } 0;
+TEST { hash_length +{a=>4, b=>5} } 2;
+
 
 sub hash_perhaps_ref ($$) {
     my ($h,$k)=@_;
