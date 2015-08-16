@@ -21,6 +21,10 @@ FP::Hash
  if (my ($v)= hash_perhaps_ref ($c, "x")) {
     ...
  }
+ my $d= hash_update $a, 'a', sub { $_[0]+10 };
+ # +{ a=> 11, b=> 2 };
+ my $e= hash_update $a, 'x', sub { [@_] };
+ # +{ a=> 1, b=> 2, x=>[] };
 
  print Dumper($c); # {b => 3}
  print Dumper($a); # {a => 1, b => 2}
@@ -43,7 +47,7 @@ functional hash tables implementation (like the one used by Clojure)?)
 package FP::Hash;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref hash_ref_or hash_cache
-	   hash_delete hash_diff
+	   hash_delete hash_update hash_diff
 	   hash_length
 	   subhash
 	   hashes_keys $empty_hash);
@@ -83,12 +87,13 @@ sub hash_set ($$$) {
     $h2
 }
 
-TEST { my $h= {a=>1, b=>2}; hash_set $h, b=>3 }
+my $h= {a=>1, b=>2};
+TEST { hash_set $h, b=>3 }
 +{
     'a' => 1,
     'b' => 3
 };
-TEST { my $h= {a=>1, b=>2}; hash_set $h, b=>3; $h }
+TEST { $h }
 +{
     'a' => 1,
     'b' => 2
@@ -100,6 +105,18 @@ sub hash_delete ($$) {
     delete $$h2{$k};
     $h2
 }
+
+sub hash_update ($$$) {
+    my ($h,$k,$fn)=@_;
+    my $h2= +{%$h};
+    $$h2{$k}= &$fn (exists $$h{$k} ? $$h{$k} : ());
+    $h2
+}
+
+TEST { hash_update $h, 'a', sub { $_[0]+10 } }
+  +{ a=> 11, b=> 2 };
+TEST { hash_update $h, 'x', sub { [@_] } }
+  +{ a=> 1, b=> 2, x=>[] };
 
 sub hash_length ($) {
     my ($h)=@_;
