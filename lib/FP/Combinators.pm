@@ -35,7 +35,7 @@ package FP::Combinators;
 @EXPORT=qw();
 @EXPORT_OK=qw(compose compose_scalar maybe_compose compose_1side
 	      flip flip2_3 rot3right rot3left
-	      perhaps_to_maybe perhaps_to_x perhaps_to_or);
+	      perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -192,6 +192,17 @@ sub perhaps_to_or ($) {
 	    $v
 	} else {
 	    $other
+	}
+    }
+}
+
+sub perhaps_to_exists ($) {
+    my ($f)= @_;
+    sub {
+	if (my ($_v)= &$f (@_)) {
+	    1
+	} else {
+	    ''
 	}
     }
 }
