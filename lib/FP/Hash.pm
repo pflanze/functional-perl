@@ -26,6 +26,11 @@ FP::Hash
  my $e= hash_update $a, 'x', sub { [@_] };
  # +{ a=> 1, b=> 2, x=>[] };
 
+ # The function passed to hash_update is run in list context! Empty
+ # list means, delete the item.
+ my $e= hash_update $a, 'a', sub { () };
+ # +{ b=> 2 };
+
  print Dumper($c); # {b => 3}
  print Dumper($a); # {a => 1, b => 2}
 
@@ -109,7 +114,11 @@ sub hash_delete ($$) {
 sub hash_update ($$$) {
     my ($h,$k,$fn)=@_;
     my $h2= +{%$h};
-    $$h2{$k}= &$fn (exists $$h{$k} ? $$h{$k} : ());
+    if (my ($v)= &$fn (exists $$h{$k} ? $$h{$k} : ())) {
+	$$h2{$k}= $v;
+    } else {
+	delete $$h2{$k}
+    }
     $h2
 }
 
@@ -117,6 +126,8 @@ TEST { hash_update $h, 'a', sub { $_[0]+10 } }
   +{ a=> 11, b=> 2 };
 TEST { hash_update $h, 'x', sub { [@_] } }
   +{ a=> 1, b=> 2, x=>[] };
+TEST { hash_update $h, 'a', sub { () } }
+  +{ b=> 2 };
 
 sub hash_length ($) {
     my ($h)=@_;
