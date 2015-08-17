@@ -282,13 +282,16 @@ use strict; use warnings FATAL => 'uninitialized';
 	$t->alist->stream_map (sub { $_[0][1] })
     }
 
+    # Turn trie to a nested list representation, for debugging or
+    # interoperation; call `write_sexpr` on it to get a readable
+    # printout.
     sub sexpr {
 	my ($t)=@_;
 	my $sublevels= $t->sublevels;
-	[[$t->perhaps_value],
-	 map {
-	     [$_, $$sublevels{$_}->sexpr]
-	 } sort keys %$sublevels]
+	cons(list($t->perhaps_value),
+	     list(map {
+		      list($_, $$sublevels{$_}->sexpr)
+		  } sort keys %$sublevels))
     }
 
     _END_
