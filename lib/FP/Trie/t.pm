@@ -141,7 +141,7 @@ TEST_EXCEPTION {
 
 # Randomized tests for delete (too many edge cases):
 sub random_key {
-    my $len= int rand 4;
+    my $len= int rand 3;
     join("",
 	 map {
 	     chr (32 + int rand 64)
@@ -170,7 +170,7 @@ TEST {
 	my $oldk= random_key;
 	&$set_both ($oldk, -1);
 
-	for my $i (1..10000) {
+	for my $i (1..1000) {
 	    my $k= random_key;
 	    &$set_both ($k, $i);
 	    $trie->xref (string_to_list $oldk) == $$hash{$oldk}
