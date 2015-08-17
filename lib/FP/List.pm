@@ -70,7 +70,7 @@ package FP::List;
 	      list_strings_join list_strings_join_reverse
 	      list_filter list_map list_mapn
 	      list_fold list_fold_right list_to_perlstring
-	      drop_while rtake_while take_while
+	      drop_last drop_while rtake_while take_while
 	      list_append
 	      list_zip2
 	      list_alist
@@ -986,6 +986,26 @@ TEST{ list_to_perlstring string_to_list  "Hello's" }
   q{'Hello\'s'};
 
 *FP::List::List::perlstring= *list_to_perlstring;
+
+
+# XX where did the list_ prefix go? See also drop_while. Also, name?
+sub drop_last ($) {
+    my ($l)=@_;
+    if (is_null ($l)) {
+	die "drop_last: got empty list"
+	# XX could make use of OO for the distinction instead
+    } else {
+	my ($a,$r)= $l->first_and_rest;
+	is_null ($r) ? $r : cons($a, drop_last $r)
+    }
+}
+
+*FP::List::List::drop_last= *drop_last;
+
+TEST { list (3,4,5)->drop_last->array }
+  [3,4];
+TEST_EXCEPTION { list ()->drop_last->array }
+  "drop_last: got empty list";
 
 
 sub drop_while ($ $) {
