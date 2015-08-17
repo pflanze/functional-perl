@@ -70,6 +70,7 @@ package FP::List;
 	      drop_while rtake_while take_while
 	      list_append
 	      list_zip2
+	      list_alist
 	      list_every list_any
 	      list_perhaps_find_tail list_perhaps_find
 	      list_find_tail list_find
@@ -774,6 +775,24 @@ TEST { list_to_array list_zip2 list(qw(a b)), list(2,3,4) }
   [[a=>2], [b=>3]];
 
 *FP::List::List::zip= *list_zip2; # XX make n-ary
+
+
+sub list_to_alist ($);
+sub list_to_alist ($) {
+    @_==1 or die "expecting 2 arguments";
+    my ($l)=@_;
+    is_null ($l) ? $l
+      : do {
+	  my ($k, $l2)= $l->first_and_rest;
+	  my ($v, $l3)= $l2->first_and_rest;
+	  cons (cons ($k, $v),
+		list_to_alist $l3)
+      }
+}
+*FP::List::List::alist= *list_to_alist;
+
+TEST_STDOUT { list (a=> 10, b=>20)->alist->write_sexpr }
+  '(("a" . "10") ("b" . "20"))';
 
 
 sub list_map ($ $);
