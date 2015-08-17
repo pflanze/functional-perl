@@ -66,6 +66,11 @@ Also see [[TODO]].
 * currying, pattern matching, multimethods, ...: see if existing
   modules can be used. Experiment, embrace, extend...
 
+* serialisation of closures: should we provide helpers to create
+  closures that can be serialised on older Perl releases, or should we
+  depend on newest Perl and a serializer that can handle normal
+  closures?
+
 
 ## Website
 
