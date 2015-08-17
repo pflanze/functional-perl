@@ -15,10 +15,10 @@ FP::Path
 
 =head1 DESCRIPTION
 
-Not sure why I'm creating something from scratch here.
+Not really sure why I'm creating something from scratch here.
 
-This doesn't access the file system, and it doesn't resolve
-"..". These are things that have to be implemented by the user.
+This doesn't access the file system, and it doesn't resolve ".." 
+unless when told to (`clean_dotdot` method).
 
 =cut
 
@@ -85,7 +85,7 @@ sub string {
 }
 
 # remove "." entries: (leave ".." in, because these cannot be resolved
-# without knowing the file system, right?)
+# without reading the file system or knowing the usage)
 sub clean {
     my $s=shift;
     $s->segments_set
