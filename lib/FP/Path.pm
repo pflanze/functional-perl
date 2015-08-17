@@ -53,6 +53,11 @@ sub new_from_string {
 	     scalar $str=~ m{^/}s)
 }
 
+sub segments {
+    my $s=shift;
+    $s->rsegments->reverse
+}
+
 sub string_without_endslash {
     my $s=shift;
     $s->rsegments->strings_join_reverse("/")
