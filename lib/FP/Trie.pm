@@ -54,6 +54,11 @@ strings to character lists using `string_to_list`.
 `perhaps_skip` returns the remainder of the trie with the given prefix
 skipped (again a trie, if available).
 
+`skip` returns ($ending_level, $maybe_keyremainder,
+$maybe_lastvaluelevel), where $maybe_keyremainder is the remainder of
+the key list after the last matching level, $ending_level is that
+level, and $maybe_lastvaluelevel is the last level holding a value.
+
 =head1 PERFORMANCE
 
 Update performance is bad because we don't have an efficiently
