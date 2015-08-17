@@ -63,7 +63,9 @@ package FP::List;
 	   car_and_cdr first_and_rest
 	   list);
 @EXPORT_OK=qw(string_to_list list_length list_reverse list_reverse_with_tail
-	      list_to_string list_to_array rlist_to_array list_to_values write_sexpr
+	      list_to_string list_to_array rlist_to_array
+	      list_to_values rlist_to_values
+	      write_sexpr
 	      array_to_list mixed_flatten
 	      list_strings_join list_strings_join_reverse
 	      list_map list_mapn
@@ -603,6 +605,18 @@ sub list_to_values ($) {
 }
 
 *FP::List::List::values= *list_to_values;
+
+# XX naming inconsistency versus docs/design.md ? Same with
+# rlist_to_array.
+sub rlist_to_values ($) {
+    my ($l)=@_;
+    @{rlist_to_array ($l)}
+}
+
+*FP::List::List::reverse_values= *rlist_to_values;
+
+TEST { [ list(3,4,5)->reverse_values ] }
+  [5,4,3];
 
 
 # (modified copy from FP::Stream, as always.. (todo))
