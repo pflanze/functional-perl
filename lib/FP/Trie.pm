@@ -282,6 +282,15 @@ use strict; use warnings FATAL => 'uninitialized';
 	$t->alist->stream_map (sub { $_[0][1] })
     }
 
+    sub sexpr {
+	my ($t)=@_;
+	my $sublevels= $t->sublevels;
+	[[$t->perhaps_value],
+	 map {
+	     [$_, $$sublevels{$_}->sexpr]
+	 } sort keys %$sublevels]
+    }
+
     _END_
 }
 
