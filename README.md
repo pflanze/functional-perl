@@ -48,6 +48,12 @@ The project is not ready for production yet for the following reasons:
   improvements (read-only guarantees and caching, sequences, PXML
   compile time preserialization, implement code inlining, ...)
 
+* there are possible improvements to be worked on with regards to
+  binding it better into 'normal' Perl. For example, Perl's lazy
+  operations on sequences created with the ".." operator, or "keys
+  %hash", could be made usable with functions the way they are with
+  "foreach".
+
 Please play with the examples and try to write some of your own, read
 the docs and tell us what's badly explained, and if you've got
 something that might be useful to add to the examples directory, it
