@@ -59,6 +59,11 @@ skipped (again a trie, if available).
 Update performance is bad because we don't have an efficiently
 updatable pure (hash) table datastructure yet.
 
+=head1 NAMES
+
+Are the method names ok? What names are other common implementations
+using? (todo: check Hoogle etc.)
+
 =cut
 
 
