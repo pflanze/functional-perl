@@ -65,6 +65,7 @@ package FP::List;
 @EXPORT_OK=qw(string_to_list list_length list_reverse list_reverse_with_tail
 	      list_to_string list_to_array rlist_to_array list_to_values write_sexpr
 	      array_to_list mixed_flatten
+	      list_strings_join list_strings_join_reverse
 	      list_map list_mapn
 	      list_fold list_fold_right list_to_perlstring
 	      drop_while rtake_while take_while
@@ -700,6 +701,19 @@ sub list_strings_join ($$) {
 
 TEST { list (1,2,3)->strings_join("-") }
   "1-2-3";
+
+sub list_strings_join_reverse ($$) {
+    @_==2 or die "wrong number of arguments";
+    my ($l,$val)=@_;
+    # now depend on FP::Array anyway. Lazily. XX hack~
+    require FP::Array;
+    FP::Array::array_strings_join( rlist_to_array ($l), $val);
+}
+
+*FP::List::List::strings_join_reverse= *list_strings_join_reverse;
+
+TEST { list (1,2,3)->strings_join_reverse("-") }
+  "3-2-1";
 
 
 
