@@ -55,9 +55,11 @@ strings to character lists using `string_to_list`.
 skipped (again a trie, if available).
 
 `skip` returns ($ending_level, $maybe_keyremainder,
-$maybe_lastvaluelevel), where $maybe_keyremainder is the remainder of
-the key list after the last matching level, $ending_level is that
-level, and $maybe_lastvaluelevel is the last level holding a value.
+$maybe_lastvaluelevel, $maybe_keyremainder_lvl), where
+$maybe_keyremainder is the remainder of the key list after the last
+matching level, $ending_level is that level, and $maybe_lastvaluelevel
+is the last level holding a value and $maybe_keyremainder_lvl the
+remainder of the key at that point.
 
 =head1 PERFORMANCE
 
@@ -136,29 +138,27 @@ use strict; use warnings FATAL => 'uninitialized';
     *xref= perhaps_to_x *perhaps_ref, $key_not_found_exception;
     *exists= perhaps_to_exists *perhaps_ref;
 
-    # returns ($ending_level, $maybe_keyremainder, $maybe_lastvaluelevel);
-    #
-    # $maybe_lastvaluelevel is undef if no value-holding level appears
-    # in the part matched by the prefix, otherwise it is the one
-    # closest to the ending level; it is the same as $ending_level if
-    # the latter is a value-holding level.
+    # returns ($ending_level, $maybe_keyremainder,
+    # $maybe_lastvaluelevel, $maybe_keyremainder_lvl)
     sub skip {
-	@_==2 or @_==3 or die "wrong number of arguments";
-	my ($t, $l, $maybe_lastvaluelevel)=@_;
-	my $maybe_lvl= UNIVERSAL::isa($t, "FP::Trie::ValueLevel") ? $t
-	  : $maybe_lastvaluelevel;
+	@_==2 or @_==4 or die "wrong number of arguments";
+	my ($t, $l, $maybe_lastvaluelevel, $maybe_keyremainder_lvl)=@_;
+	my ($maybe_lvl, $maybe_r_lvl)=
+	  UNIVERSAL::isa($t, "FP::Trie::ValueLevel") ?
+	      ($t, $l)
+		: ($maybe_lastvaluelevel, $maybe_keyremainder_lvl);
 	if ($l->is_null) {
 	    # found the node, which is perhaps holding a value
-	    ($t, undef, $maybe_lvl)
+	    ($t, undef, $maybe_lvl, $maybe_r_lvl)
 	} else {
 	    my ($a, $l2)= $l->first_and_rest;
 	    if (my ($t2)= hash_perhaps_ref($$t{sublevels}, $a)) {
 		# XX TCO
-		$t2->skip ($l2, $maybe_lvl)
+		$t2->skip ($l2, $maybe_lvl, $maybe_r_lvl)
 	    } else {
 		# no value for the full key; $t is the last seen
 		# level, $l the remainder of the key
-		($t, $l, $maybe_lvl)
+		($t, $l, $maybe_lvl, $maybe_r_lvl)
 	    }
 	}
     }

@@ -212,26 +212,27 @@ my $t7= $t4->set (string_to_list("Hare"), "Krishna")
 
 sub t {
     my ($key)=@_;
-    my ($t,$r,$maybe_last)= $t7->skip (string_to_list($key));
+    my ($t,$r,$maybe_last,$maybe_r)= $t7->skip (string_to_list($key));
     [ $t->sublevels_length, $r, [$t->perhaps_value],
-      $maybe_last ? $maybe_last->perhaps_value : undef]
+      $maybe_last ? $maybe_last->perhaps_value : undef,
+      $maybe_r ? $maybe_r->string : undef ]
 }
 
 TEST {t ""}
-  [1, undef, [], undef];
+  [1, undef, [], undef, undef];
 
 TEST {t "H"}
-  [2, undef, ['Heroic'], 'Heroic'];
+  [2, undef, ['Heroic'], 'Heroic', ""];
 
 TEST {t "Ha"}
-  [1, undef, [], 'Heroic'];
+  [1, undef, [], 'Heroic', "a"];
 
 TEST {t "Hell"}
-  [1, undef, ["no"], 'no'];
+  [1, undef, ["no"], 'no', ""];
 
 TEST {t "Hello"}
   do{my $v= ["World",2];
-     [0, undef, [$v], $v]};
+     [0, undef, [$v], $v, ""]};
 
 
 1
