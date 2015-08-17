@@ -122,6 +122,8 @@ lib/FP/Struct.pm
 lib/FP/Text/CSV.pm
 lib/FP/Trampoline.pm
 lib/FP/TransparentLazy.pm
+lib/FP/Trie.pm
+lib/FP/Trie/t.pm
 lib/FP/Values.pm
 lib/FP/Weak.pm
 lib/FP/Weak/t.pm
