@@ -206,31 +206,26 @@ TEST {
 
 # verify that forked structures work:
 
-my $t7= $t4->set (string_to_list("Hare"), "Krishna");
+my $t7= $t4->set (string_to_list("Hare"), "Krishna")
+  ->set (string_to_list ("H"),"Heroic");
 
-TEST {
-    my ($t,$r)= $t7->skip (string_to_list("H"));
-    [ $t->sublevels_length, $r ]
+sub t {
+    my ($key)=@_;
+    my ($t,$r)= $t7->skip (string_to_list($key));
+    [ $t->sublevels_length, $r, [$t->perhaps_value] ]
 }
-  [2, undef];
 
-TEST {
-    my ($t,$r)= $t7->skip (string_to_list("Ha"));
-    [ $t->sublevels_length, $r ]
-}
-  [1, undef];
+TEST {t "H"}
+  [2, undef, ['Heroic']];
 
-TEST {
-    my ($t,$r)= $t7->skip (string_to_list("Hell"));
-    [ $t->sublevels_length, $r ]
-}
-  [1, undef];
+TEST {t "Ha"}
+  [1, undef, []];
 
-TEST {
-    my ($t,$r)= $t7->skip (string_to_list("Hello"));
-    [ $t->sublevels_length, $r ]
-}
-  [0, undef];
+TEST {t "Hell"}
+  [1, undef, ["no"]];
+
+TEST {t "Hello"}
+  [0, undef, [["World",2]]];
 
 
 1
