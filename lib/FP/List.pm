@@ -66,7 +66,7 @@ package FP::List;
 	      list_to_string list_to_array rlist_to_array
 	      list_to_values rlist_to_values
 	      write_sexpr
-	      array_to_list mixed_flatten
+	      array_to_list array_to_list_reverse mixed_flatten
 	      list_strings_join list_strings_join_reverse
 	      list_map list_mapn
 	      list_fold list_fold_right list_to_perlstring
@@ -670,7 +670,14 @@ sub array_fold_right ($$$) {
     }
     $tail
 }
-
+sub array_fold ($$$) {
+    my ($fn,$start,$ary)=@_;
+    for (@$ary) {
+	$start= &$fn($_,$start);
+    }
+    $start
+}
+# /HACK
 
 sub array_to_list ($;$) {
     my ($a,$maybe_tail)=@_;
@@ -679,6 +686,16 @@ sub array_to_list ($;$) {
 
 TEST{ list_to_string array_to_list [1,2,3] }
   '123';
+
+
+# XX naming correct?
+sub array_to_list_reverse ($;$) {
+    my ($a,$maybe_tail)=@_;
+    array_fold (\&cons, $maybe_tail // null, $a)
+}
+
+TEST{ list_to_string array_to_list_reverse [1,2,3] }
+  '321';
 
 
 sub list_reverse_with_tail ($$) {
