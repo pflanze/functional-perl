@@ -68,7 +68,7 @@ package FP::List;
 	      write_sexpr
 	      array_to_list array_to_list_reverse mixed_flatten
 	      list_strings_join list_strings_join_reverse
-	      list_map list_mapn
+	      list_filter list_map list_mapn
 	      list_fold list_fold_right list_to_perlstring
 	      drop_while rtake_while take_while
 	      list_append
@@ -838,6 +838,24 @@ sub list_to_alist ($) {
 
 TEST_STDOUT { list (a=> 10, b=>20)->alist->write_sexpr }
   '(("a" . "10") ("b" . "20"))';
+
+
+# (mostly-copy from Stream.pm as always)
+sub list_filter ($ $);
+sub list_filter ($ $) {
+    my ($fn,$l)=@_;
+    #weaken $_[1];
+    #lazy {
+	$l= force $l;
+	is_null $l ? null : do {
+	    my $a= car $l;
+	    my $r= list_filter ($fn,cdr $l);
+	    &$fn($a) ? cons($a, $r) : $r
+	}
+    #}
+}
+
+*FP::List::List::filter= flip \&list_filter;
 
 
 sub list_map ($ $);
