@@ -24,14 +24,15 @@ The project is not ready for production yet for the following reasons:
   treated as alpha: this is freshly released and very much open to
   input. Some modules may be replaced with other more widely used ones
   in the interest of staying with the common base (in particular, the
-  `Chj::IO::` infrastructure should likely be deprecated or
-  reimplemented.) For these reasons, the modules have not been
-  packaged and released on CPAN yet.
+  `Chj::IO::` infrastructure should likely be deprecated and the
+  interesting bits reimplemented.) For these reasons, the modules have
+  not been packaged and released on CPAN yet.
 
 * the documentation is untested, and introductionary materials
   unfinished; this, together with a number of complications in Perl,
   may be asking too much from a Perl programmer who doesn't have
-  previous functional programming experience.
+  previous functional programming experience, unless he or she is
+  really patient (please tell, I'll try to help).
 
 * some problems in the perl interpreter (leading to memory
   retention issues) when using this style have only been fixed
@@ -41,8 +42,8 @@ The project is not ready for production yet for the following reasons:
   in the [[howto]]) might be solvable through modules or core
   interpreter changes. That would make some code easier to write and
   look at. (See [[ideas]].) This may then also change where explicit
-  indication about memory retention are still expected. (Possibly
-  backwards incompatible.)
+  indication about memory retention are still expected (possibly
+  backwards incompatibly.)
 
 * there are also various ways in which to explore performance
   improvements (read-only guarantees and caching, sequences, PXML
@@ -50,9 +51,9 @@ The project is not ready for production yet for the following reasons:
 
 * there are possible improvements to be worked on with regards to
   binding it better into 'normal' Perl. For example, Perl's lazy
-  operations on sequences created with the ".." operator, or "keys
-  %hash", could be made usable with functions the way they are with
-  "foreach".
+  operations on sequences created with the `..` operator, or `keys
+  %foo`, could be made usable with functions the way they are with
+  `foreach`.
 
 Please play with the examples and try to write some of your own, read
 the docs and tell us what's badly explained, and if you've got
@@ -171,9 +172,9 @@ howto/design documents.
     more universally usable and combinable. (Todo: reread book,
     contact author.)
 
-Ask [me](http://leafpair.com/contact) or on the [[mailing_list]] if
-you'd like to meet up in London or Switzerland to get an introduction
-in person.
+Please ask [me](http://leafpair.com/contact) or on the
+[[mailing_list]] if you'd like to meet up in London or Switzerland to
+get an introduction in person.
 
 
 ## Dependencies
