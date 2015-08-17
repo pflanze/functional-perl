@@ -23,17 +23,16 @@ unless when told to (`clean_dotdot` method).
 =cut
 
 
-# XX: refactor to use FP modules!
-
 package FP::Path;
 
 use strict;
 
 use Chj::TEST;
+use FP::List ":all";
 
 use FP::Struct
   [
-   'segments', # array of str not containing slashes
+   'rsegments', # reverse FP::List::List of str not containing slashes
    'has_endslash', # bool, whether the path is forcibly specifying a
                    # dir by using a slash at the end (forcing a dir by
                    # ending in "." isn't setting this flag)
@@ -45,14 +44,18 @@ sub new_from_string {
     my $cl=shift;
     my ($str)=@_;
     my @p= split m{/+}, $str;
-    $cl->new(\@p,
+    # We want a split that drops superfluous empty strings at the end,
+    # but not the start ('/' case). This is not it (and passing -1 to
+    # split isn't it either), so we need to handle this case manually:
+    @p= ('') if (!@p and $str=~ m{^/+$}s);
+    $cl->new(array_to_list_reverse(\@p),
 	     scalar $str=~ m{/$}s,
 	     scalar $str=~ m{^/}s)
 }
 
 sub string_without_endslash {
     my $s=shift;
-    join("/",@{$$s{segments}})
+    $s->rsegments->strings_join_reverse("/")
 }
 
 sub string {
@@ -88,31 +91,29 @@ sub string {
 # without reading the file system or knowing the usage)
 sub clean {
     my $s=shift;
-    $s->segments_set
-      ([
-	grep {
-	    not ($_ eq ".")
-	} @{$$s{segments}}
-       ])
-	->has_endslash_set
-	  (
-	   # set forced dir flag if the last segment was a ".", even
-	   # if previously it didn't end in "/"
-	   $$s{has_endslash}
-	   or
-	   do {
-	       if (defined (my $last= ${$$s{segments}}[-1])) {
-		   $last eq "."
-	       } else {
-		   0
-	       }
-	   });
+    my $rseg= $s->rsegments;
+    $s->rsegments_set ($rseg->filter(sub { not ($_[0] eq ".") }))
+      ->has_endslash_set
+	(
+	 # set forced dir flag if the last segment was a ".", even
+	 # if previously it didn't end in "/"
+	 $$s{has_endslash}
+	 or
+	 do {
+	     if (is_null $rseg) {
+		 0
+	     } else {
+		 $rseg->car  eq "."
+	     }
+	 });
 }
 
 sub clean_dotdot {
     my $s=shift;
+    # XX this might actually be more efficient when working on the reverse
+    # order? But leaving old imperative algorithm for now.
     my @s;
-    for my $seg (@{$s->segments}) {
+    for my $seg ($s->rsegments->reverse_values) {
 	if ($seg eq "..") {
 	    if (@s) {
 		pop @s;
@@ -127,7 +128,7 @@ sub clean_dotdot {
 	    push @s, $seg
 	}
     }
-    $s->segments_set (\@s)
+    $s->rsegments_set (array_to_list_reverse \@s)
 }
 # (should have those functions without the Path wrapper? Maybe, maybe not.)
 
@@ -135,13 +136,12 @@ sub clean_dotdot {
 sub add_segment { # functionally. hm.
     my $s=shift;
     my ($segment)=@_;
-    die "segment contains slash: '$segment'" if $segment=~ m{/};
-    $s->segments_set
-      ([
-	# XXX bad computational complexity, should use FP::List instead
-	@{$$s{segments}},
-	$segment
-       ])
+    die "segment contains slash: '$segment'"
+      if $segment=~ m{/};
+    $s->rsegments_update
+      (sub {
+	   cons $segment, $_[0]
+       })
 	# no forced endslash anymore
 	->has_endslash_set(0);
 }
@@ -153,7 +153,8 @@ sub add {
     if ($b->is_absolute) {
 	$b
     } else {
-	my $c= $a->segments_set([ @{$a->segments}, @{$b->segments} ])->clean;
+	my $c= $a->rsegments_set ($b->rsegments->append($a->rsegments))
+	  ->clean;
 	$is_url ? $c->clean_dotdot : $c
     }
 }
@@ -168,38 +169,27 @@ TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("/d/e")
   '/d/e';
 
 
-sub dirname { # functional
+sub dirname {
     my $s=shift;
-    my $seg= $$s{segments};
-    @$seg or die "can't take dirname of empty path";
-    $s->segments_set
-      ([
-	@{$seg}[0..($#$seg-1)]
-       ])
-	# no forced endslash anymore
-	->has_endslash_set(0);
+    is_null $$s{rsegments}
+      and die "can't take dirname of empty path";
+    $s->rsegments_update(*cdr)
+      ->has_endslash_set(0);
 }
 
 sub to_relative {
     my $s=shift;
-    die "is already relative" unless $s->is_absolute;
-    my $seg= $$s{segments};
-    $s->segments_set
-      ([
-	# drop first entry
-	@{$seg}[1..($#$seg)]
-       ])
-	# keep has_endslash, # XX hm always? what about the dropping of first entry?
-	# not absolute
-	->is_absolute_set(0);
+    die "is already relative"
+      unless $s->is_absolute;
+    $s->rsegments_update(*drop_last)
+      # keep has_endslash, # XX hm always? what about the dropping of first entry?
+      # not absolute
+      ->is_absolute_set(0);
 }
 
 sub contains_dotdot {
     my $s=shift;
-    for my $segment (@{$$s{segments}}) {
-	return 1 if $segment eq ".."
-    }
-    0
+    $s->rsegments->any(sub { $_[0] eq ".." })
 }
 
 
