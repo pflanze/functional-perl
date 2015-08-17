@@ -66,7 +66,6 @@ lib/Chj/IO/WrappedFile.pm
 lib/Chj/NamespaceClean.pm
 lib/Chj/NamespaceCleanAbove.pm
 lib/Chj/Package/OfPath.pm
-lib/Chj/Path.pm
 lib/Chj/TEST.pm
 lib/Chj/TerseDumper.pm
 lib/Chj/Trapl.pm
@@ -111,6 +110,7 @@ lib/FP/List.pm
 lib/FP/Memoizing.pm
 lib/FP/Ops.pm
 lib/FP/OrderedCollection.pm
+lib/FP/Path.pm
 lib/FP/Predicates.pm
 lib/FP/Pure.pm
 lib/FP/PureArray.pm

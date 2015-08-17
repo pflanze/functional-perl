@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Chj::Path
+FP::Path
 
 =head1 SYNOPSIS
 
@@ -25,7 +25,7 @@ This doesn't access the file system, and it doesn't resolve
 
 # XX: refactor to use FP modules!
 
-package Chj::Path;
+package FP::Path;
 
 use strict;
 
@@ -158,13 +158,13 @@ sub add {
     }
 }
 
-TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("d/e"), 0 )->string }
+TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("d/e"), 0 )->string }
   'a/b/C/d/e';
-TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("../d/e"), 0 )->string }
+TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("../d/e"), 0 )->string }
   'a/b/C/../d/e';
-TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("../d/e"), 1 )->string }
+TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("../d/e"), 1 )->string }
   'a/b/d/e';
-TEST{ Chj::Path->new_from_string("a/b/C")->add( Chj::Path->new_from_string("/d/e"), 1 )->string }
+TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("/d/e"), 1 )->string }
   '/d/e';
 
 
@@ -203,87 +203,87 @@ sub contains_dotdot {
 }
 
 
-TEST { (new_from_string Chj::Path "hello//world/you")->string }
+TEST { (new_from_string FP::Path "hello//world/you")->string }
   "hello/world/you";
-TEST { (new_from_string Chj::Path "/hello//world/you")->string }
+TEST { (new_from_string FP::Path "/hello//world/you")->string }
   "/hello/world/you";
-TEST { (new_from_string Chj::Path "/hello//world/you/")->string }
+TEST { (new_from_string FP::Path "/hello//world/you/")->string }
   "/hello/world/you/";
-TEST { (new_from_string Chj::Path "/")->string }
+TEST { (new_from_string FP::Path "/")->string }
   "/";
-TEST { (new_from_string Chj::Path ".")->string }
+TEST { (new_from_string FP::Path ".")->string }
   ".";
-TEST { (new_from_string Chj::Path "./")->string }
+TEST { (new_from_string FP::Path "./")->string }
   "./";
-TEST { (new_from_string Chj::Path "./")->clean->string }
+TEST { (new_from_string FP::Path "./")->clean->string }
   "./";
-TEST { (new_from_string Chj::Path "./..")->string }
+TEST { (new_from_string FP::Path "./..")->string }
   "./..";
-TEST { (new_from_string Chj::Path "./..")->clean->string }
+TEST { (new_from_string FP::Path "./..")->clean->string }
   "..";
 
-TEST { (new_from_string Chj::Path "./foo/../bar/.//baz/.")->clean->string }
+TEST { (new_from_string FP::Path "./foo/../bar/.//baz/.")->clean->string }
   "foo/../bar/baz/";
-TEST { (new_from_string Chj::Path "")->clean->string }
+TEST { (new_from_string FP::Path "")->clean->string }
   # XX should this be an error?
   '.';
 
-TEST { (new_from_string Chj::Path ".")->string }
+TEST { (new_from_string FP::Path ".")->string }
   ".";
-TEST { (new_from_string Chj::Path ".")->clean->string }
+TEST { (new_from_string FP::Path ".")->clean->string }
   './';
 
-TEST { (new_from_string Chj::Path "/")->string }
+TEST { (new_from_string FP::Path "/")->string }
   "/";
-TEST { (new_from_string Chj::Path "/")->clean->string }
+TEST { (new_from_string FP::Path "/")->clean->string }
   "/";
-TEST { (new_from_string Chj::Path "/.")->clean->string }
+TEST { (new_from_string FP::Path "/.")->clean->string }
   "/";
-TEST { (new_from_string Chj::Path "/./")->clean->string }
+TEST { (new_from_string FP::Path "/./")->clean->string }
   "/";
-TEST { (new_from_string Chj::Path "/./")->string }
+TEST { (new_from_string FP::Path "/./")->string }
   "/./";
-TEST { (new_from_string Chj::Path "/.")->string }
+TEST { (new_from_string FP::Path "/.")->string }
   "/.";
 
-TEST { (new_from_string Chj::Path "/.")->contains_dotdot }
+TEST { (new_from_string FP::Path "/.")->contains_dotdot }
   "0";
-TEST { (new_from_string Chj::Path "foo/bar/../baz")->contains_dotdot }
+TEST { (new_from_string FP::Path "foo/bar/../baz")->contains_dotdot }
   "1";
-TEST { (new_from_string Chj::Path "../baz")->contains_dotdot }
+TEST { (new_from_string FP::Path "../baz")->contains_dotdot }
   "1";
-TEST { (new_from_string Chj::Path "baz/..")->contains_dotdot }
+TEST { (new_from_string FP::Path "baz/..")->contains_dotdot }
   "1";
-TEST { (new_from_string Chj::Path "baz/..")->clean->contains_dotdot }
+TEST { (new_from_string FP::Path "baz/..")->clean->contains_dotdot }
   "1";
 
-TEST_EXCEPTION { Chj::Path->new_from_string(".")->clean->dirname }
+TEST_EXCEPTION { FP::Path->new_from_string(".")->clean->dirname }
   q{can't take dirname of empty path};
-TEST { Chj::Path->new_from_string("foo")->clean->dirname->string }
+TEST { FP::Path->new_from_string("foo")->clean->dirname->string }
   '.';
-TEST { Chj::Path->new_from_string("foo/bar")->clean->dirname->string }
+TEST { FP::Path->new_from_string("foo/bar")->clean->dirname->string }
   'foo';
-TEST_EXCEPTION { Chj::Path->new_from_string("")->dirname }
+TEST_EXCEPTION { FP::Path->new_from_string("")->dirname }
   q{can't take dirname of empty path};
 
-TEST { Chj::Path->new_from_string(".")->clean->has_endslash }
+TEST { FP::Path->new_from_string(".")->clean->has_endslash }
   1;
-TEST { Chj::Path->new_from_string(".")->clean->string }
+TEST { FP::Path->new_from_string(".")->clean->string }
   './';
 #ok
-TEST { Chj::Path->new_from_string("")->clean->has_endslash }
+TEST { FP::Path->new_from_string("")->clean->has_endslash }
   0;
-TEST { Chj::Path->new_from_string("")->clean->string }
+TEST { FP::Path->new_from_string("")->clean->string }
   '.';
 #h
 
-TEST { Chj::Path->new_from_string("/foo")->to_relative->string }
+TEST { FP::Path->new_from_string("/foo")->to_relative->string }
   'foo';
-TEST { Chj::Path->new_from_string("/")->to_relative->string }
+TEST { FP::Path->new_from_string("/")->to_relative->string }
   './';
-TEST_EXCEPTION { Chj::Path->new_from_string("")->to_relative->string }
+TEST_EXCEPTION { FP::Path->new_from_string("")->to_relative->string }
   q{is already relative};
-TEST { Chj::Path->new_from_string("/foo/")->to_relative->string }
+TEST { FP::Path->new_from_string("/foo/")->to_relative->string }
  'foo/';
 
 

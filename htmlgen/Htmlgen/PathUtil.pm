@@ -35,13 +35,13 @@ use Sub::Call::Tail;
 
 # move to lib
 use File::Spec;
-use Chj::Path;
+use FP::Path;
 use Chj::xperlfunc qw(dirname);
 use Chj::TEST ":all";
 
 fun path_add ($base,$rel) {
-    Chj::Path->new_from_string($base)->add
-	(Chj::Path->new_from_string($rel), 1)
+    FP::Path->new_from_string($base)->add
+	(FP::Path->new_from_string($rel), 1)
 	  ->string
 }
 

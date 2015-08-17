@@ -28,7 +28,7 @@ $repl \
  -M FP::Div=:all \
  -M FP::Struct \
  -M Chj::xopen=:all \
- -M Chj::Path \
+ -M FP::Path \
  -M Chj::xperlfunc=:all \
  -M PXML::Util=:all \
  -M PXML::XHTML=:all \
