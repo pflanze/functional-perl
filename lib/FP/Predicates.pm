@@ -112,23 +112,33 @@ sub is_pure_class ($) {
 }
 
 sub is_string ($) {
-    not ref ($_[0]) # relax?
+    my ($v)=@_;
+    (defined $v
+     and not ref $v) # relax?
 }
 
 sub is_nonnullstring ($) {
-    not ref ($_[0]) # relax?
-      and length $_[0]
+    my ($v)=@_;
+    (defined $v
+     and not ref $v # relax?
+     and length $v)
 }
 
 sub is_natural0 ($) {
-    not ref ($_[0]) # relax?
-      and $_[0]=~ /^\d+\z/
+    my ($v)=@_;
+    (defined $v
+     and not ref $v # relax?
+     and $v=~ /^\d+\z/)
 }
 
 sub is_natural ($) {
-    not ref ($_[0]) # relax?
-      and $_[0]=~ /^\d+\z/ and $_[0]
+    my ($v)=@_;
+    (defined $v
+     and not ref $v # relax?
+     and $v=~ /^\d+\z/ and $v)
 }
+
+# XX careful these do not check for number types first
 
 sub is_even ($) {
     ($_[0] & 1) == 0
