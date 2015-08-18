@@ -83,7 +83,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 ## Code structure
 
 - fix the now horrible hand-optimized-but-convoluted code in
-  `PXML::Serialize` (and figure out an automatic way to make it fast)
+  `PXML::Serialize` (and figure out an automatic way to make it fast).
+
+- finish PXML's HTML5 support.
 
 - avoid the duplication between `FP::List` and `FP::Stream` as much as
   possible.
