@@ -470,9 +470,12 @@ sub send_response
 	elsif (length($content)) {
 	    $res->header("Content-Length" => length($content));
 	}
+	elsif (lc($res->header('connection')//"") =~ /\bkeep-alive\b/) {
+	    # don't close connection if user asks for it to stay open
+	}
 	else {
 	    $self->force_last_request;
-            $res->header('connection','close'); 
+            $res->header('connection','close');
 	}
 	print $self $res->headers_as_string($CRLF) or die $!;
 	print $self $CRLF or die $!;  # separates headers and content
