@@ -404,14 +404,14 @@ sub send_status_line
     $status  ||= RC_OK;
     $message ||= status_message($status) || "";
     $proto   ||= $HTTP::Daemon::PROTO || "HTTP/1.1";
-    print $self "$proto $status $message$CRLF";
+    print $self "$proto $status $message$CRLF" or die $!;
 }
 
 
 sub send_crlf
 {
     my $self = shift;
-    print $self $CRLF;
+    print $self $CRLF or die $!;
 }
 
 
@@ -420,9 +420,9 @@ sub send_basic_header
     my $self = shift;
     return if $self->antique_client;
     $self->send_status_line(@_);
-    print $self "Date: ", time2str(time), $CRLF;
+    print $self "Date: ", time2str(time), $CRLF or die $!;
     my $product = $self->daemon->product_tokens;
-    print $self "Server: $product$CRLF" if $product;
+    print $self "Server: $product$CRLF" or die $! if $product;
 }
 
 
@@ -432,7 +432,7 @@ sub send_header
     while (@_) {
 	my($k, $v) = splice(@_, 0, 2);
 	$v = "" unless defined($v);
-	print $self "$k: $v$CRLF";
+	print $self "$k: $v$CRLF" or die $!;
     }
 }
 
@@ -474,8 +474,8 @@ sub send_response
 	    $self->force_last_request;
             $res->header('connection','close'); 
 	}
-	print $self $res->headers_as_string($CRLF);
-	print $self $CRLF;  # separates headers and content
+	print $self $res->headers_as_string($CRLF) or die $!;
+	print $self $CRLF or die $!;  # separates headers and content
     }
     if ($self->head_request) {
 	# no content
@@ -485,16 +485,17 @@ sub send_response
 	    my $chunk = &$content();
 	    last unless defined($chunk) && length($chunk);
 	    if ($chunked) {
-		printf $self "%x%s%s%s", length($chunk), $CRLF, $chunk, $CRLF;
+		printf $self "%x%s%s%s", length($chunk), $CRLF, $chunk, $CRLF
+		  or die $!;
 	    }
 	    else {
-		print $self $chunk;
+		print $self $chunk or die $!;
 	    }
 	}
-	print $self "0$CRLF$CRLF" if $chunked;  # no trailers either
+	print $self "0$CRLF$CRLF" or die $! if $chunked;  # no trailers either
     }
     elsif (length $content) {
-	print $self $content;
+	print $self $content or die $!;
     }
 }
 
@@ -508,13 +509,13 @@ sub send_redirect
     my $base = $self->daemon->url;
     $loc = $HTTP::URI_CLASS->new($loc, $base) unless ref($loc);
     $loc = $loc->abs($base);
-    print $self "Location: $loc$CRLF";
+    print $self "Location: $loc$CRLF" or die $!;
     if ($content) {
 	my $ct = $content =~ /^\s*</ ? "text/html" : "text/plain";
-	print $self "Content-Type: $ct$CRLF";
+	print $self "Content-Type: $ct$CRLF" or die $!;
     }
-    print $self $CRLF;
-    print $self $content if $content && !$self->head_request;
+    print $self $CRLF or die $!;
+    print $self $content or die $! if $content && !$self->head_request;
     $self->force_last_request;  # no use keeping the connection open
 }
 
@@ -533,11 +534,11 @@ $error
 EOT
     unless ($self->antique_client) {
         $self->send_basic_header($status);
-        print $self "Content-Type: text/html$CRLF";
-	print $self "Content-Length: " . length($mess) . $CRLF;
-        print $self $CRLF;
+        print $self "Content-Type: text/html$CRLF" or die $!;
+	print $self "Content-Length: " . length($mess) . $CRLF or die $!;
+        print $self $CRLF or die $!;
     }
-    print $self $mess unless $self->head_request;
+    print $self $mess or die $! unless $self->head_request;
     $status;
 }
 
@@ -558,11 +559,12 @@ sub send_file_response
 	my($size,$mtime) = (stat _)[7,9];
 	unless ($self->antique_client) {
 	    $self->send_basic_header;
-	    print $self "Content-Type: $ct$CRLF";
-	    print $self "Content-Encoding: $ce$CRLF" if $ce;
-	    print $self "Content-Length: $size$CRLF" if $size;
-	    print $self "Last-Modified: ", time2str($mtime), "$CRLF" if $mtime;
-	    print $self $CRLF;
+	    print $self "Content-Type: $ct$CRLF" or die $!;
+	    print $self "Content-Encoding: $ce$CRLF" or die $! if $ce;
+	    print $self "Content-Length: $size$CRLF" or die $! if $size;
+	    print $self "Last-Modified: ", time2str($mtime), "$CRLF" or die $!
+	      if $mtime;
+	    print $self $CRLF or die $!;
 	}
 	$self->send_file(\*F) unless $self->head_request;
 	return RC_OK;
@@ -598,7 +600,7 @@ sub send_file
     while ($n = sysread($file, $buf, 8*1024)) {
 	last if !$n;
 	$cnt += $n;
-	print $self $buf;
+	print $self $buf or die $!;
     }
     close($file) if $opened;
     $cnt;
