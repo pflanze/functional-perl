@@ -118,6 +118,14 @@ also override all the functional setters for fields that are used for
 the calculation of the cached value to clean the cache (TODO: provide
 option to turn of generation of setters, and/or provide hook).)
 
+=head1 IDEAS
+
+- Option to have it generate constructor wrapper functions
+  automatically in a specified package, like:
+
+      sub Foo { Chj::Foo->new (@_) }
+      sub Foo_ { Chj::Foo->new_ (@_) }
+
 =cut
 
 
