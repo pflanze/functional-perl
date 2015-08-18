@@ -63,7 +63,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Data::Dumper;
 use PXML::Element;
-use PXML qw(is_pxml_element);
+use PXML qw(is_pxml_element is_pxmlflush);
 use FP::Lazy;
 use FP::List;
 use FP::Stream;
@@ -277,6 +277,8 @@ sub _pxml_print_fragment_fast {
 		    # end of linked list, nothing
 		    # XX obsolete now, since UNIVERSAL::can ($v,
 		    # "for_each") above will catch it already.
+		} elsif (is_pxmlflush $v) {
+		    flush $fh or die $!
 		} else {
 		    # slow fallback...  again, see above **NOTE** re
 		    # evil.
