@@ -384,7 +384,8 @@ sub pxml_print ($ $ ) {
     my ($v, $fh)= @_;
     weaken $_[0] if ref $_[0]; # ref check perhaps unnecessary here
     xprintln($fh, q{<?xml version="1.0"?>});
-    @_=($v, $fh); goto \&pxml_print_fragment_fast;
+    #@_=($v, $fh);
+    goto \&pxml_print_fragment_fast;
 }
 
 sub putxmlfile ($$) {
