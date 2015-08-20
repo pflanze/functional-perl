@@ -281,6 +281,12 @@ TEST_EXCEPTION { FP::Path->new_from_string("")->to_relative->string }
 TEST { FP::Path->new_from_string("/foo/")->to_relative->string }
  'foo/';
 
+use FP::Equal;
+
+TEST { equal (FP::Path->new_from_string("/"),
+	      FP::Path->new_from_string("//"),
+	      FP::Path->new_from_string("///")) }
+  1;
 
 _END_
 
