@@ -145,6 +145,17 @@ sub perhaps_clean_dotdot {
 # (should have those functions without the Path wrapper? Maybe, maybe not.)
 
 
+# XX is only valid to be applied to paths that have already been
+# `clean`ed !
+sub xclean_dotdot {
+    my $s=shift;
+    if (my ($v)= $s->perhaps_clean_dotdot) {
+	$v
+    } else {
+	die "can't take '..' of root directory"
+    }
+}
+
 sub add_segment { # functionally. hm.
     my $s=shift;
     my ($segment)=@_;
@@ -167,7 +178,7 @@ sub add {
     } else {
 	my $c= $a->rsegments_set ($b->rsegments->append($a->rsegments))
 	  ->clean;
-	$is_url ? $c->clean_dotdot : $c
+	$is_url ? $c->xclean_dotdot : $c
     }
 }
 
