@@ -311,22 +311,22 @@ TEST { equal (FP::Path->new_from_string("/"),
 # - if a path is absolute, the cleaned path is always absolute, too?
 
 # previously: why?
-# TEST { FP::Path->new_from_string("/..")->clean_dotdot->string }
+# TEST { FP::Path->new_from_string("/..")->xclean_dotdot->string }
 #   '/';
-# TEST { FP::Path->new_from_string("/../..")->clean_dotdot->string }
+# TEST { FP::Path->new_from_string("/../..")->xclean_dotdot->string }
 #   '..';
-# TEST_EXCEPTION { FP::Path->new_from_string("..")->clean_dotdot->string }
+# TEST_EXCEPTION { FP::Path->new_from_string("..")->xclean_dotdot->string }
 #   'can\'t take \'..\' of root directory';
-# TEST_EXCEPTION { FP::Path->new_from_string("../..")->clean_dotdot->string }
+# TEST_EXCEPTION { FP::Path->new_from_string("../..")->xclean_dotdot->string }
 #   'can\'t take \'..\' of root directory';
 
-TEST_EXCEPTION { FP::Path->new_from_string("..")->clean_dotdot->string }
+TEST_EXCEPTION { FP::Path->new_from_string("..")->xclean_dotdot->string }
   'can\'t take \'..\' of root directory'; # ".."; ?
-TEST_EXCEPTION { FP::Path->new_from_string("../..")->clean_dotdot->string }
+TEST_EXCEPTION { FP::Path->new_from_string("../..")->xclean_dotdot->string }
   'can\'t take \'..\' of root directory'; # "../.."; ?
-TEST_EXCEPTION { FP::Path->new_from_string("/..")->clean_dotdot->string }
+TEST_EXCEPTION { FP::Path->new_from_string("/..")->xclean_dotdot->string }
   'can\'t take \'..\' of root directory';
-TEST_EXCEPTION { FP::Path->new_from_string("/../..")->clean_dotdot->string }
+TEST_EXCEPTION { FP::Path->new_from_string("/../..")->xclean_dotdot->string }
   'can\'t take \'..\' of root directory';
 
 
