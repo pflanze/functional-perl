@@ -113,6 +113,8 @@ sub clean {
 	 });
 }
 
+# XX is only valid to be applied to paths that have already been
+# `clean`ed !
 sub clean_dotdot {
     my $s=shift;
     # XX this might actually be more efficient when working on the reverse
@@ -121,13 +123,18 @@ sub clean_dotdot {
     for my $seg ($s->rsegments->reverse_values) {
 	if ($seg eq "..") {
 	    if (@s) {
-		pop @s;
-	    } else {
-		if ($s->is_absolute) {
-		    push @s, "..";
-		} else {
+		my $v= pop @s;
+		# XXX why was there no check here before?
+		if (! length $v and ! @s) {
 		    die "can't take '..' of root directory"
 		}
+	    } else {
+#XXX why was it this way, and what should it be?
+#		if ($s->is_absolute) {
+#		    push @s, "..";
+#		} else {
+		    die "can't take '..' of root directory"
+#		}
 	    }
 	} else {
 	    push @s, $seg
@@ -291,6 +298,25 @@ TEST { equal (FP::Path->new_from_string("/"),
 # XX rules-based testing rules?:
 
 # - if a path is absolute, the cleaned path is always absolute, too?
+
+# previously: why?
+# TEST { FP::Path->new_from_string("/..")->clean_dotdot->string }
+#   '/';
+# TEST { FP::Path->new_from_string("/../..")->clean_dotdot->string }
+#   '..';
+# TEST_EXCEPTION { FP::Path->new_from_string("..")->clean_dotdot->string }
+#   'can\'t take \'..\' of root directory';
+# TEST_EXCEPTION { FP::Path->new_from_string("../..")->clean_dotdot->string }
+#   'can\'t take \'..\' of root directory';
+
+TEST_EXCEPTION { FP::Path->new_from_string("..")->clean_dotdot->string }
+  'can\'t take \'..\' of root directory'; # ".."; ?
+TEST_EXCEPTION { FP::Path->new_from_string("../..")->clean_dotdot->string }
+  'can\'t take \'..\' of root directory'; # "../.."; ?
+TEST_EXCEPTION { FP::Path->new_from_string("/..")->clean_dotdot->string }
+  'can\'t take \'..\' of root directory';
+TEST_EXCEPTION { FP::Path->new_from_string("/../..")->clean_dotdot->string }
+  'can\'t take \'..\' of root directory';
 
 
 _END_
