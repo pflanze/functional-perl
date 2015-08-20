@@ -288,5 +288,10 @@ TEST { equal (FP::Path->new_from_string("/"),
 	      FP::Path->new_from_string("///")) }
   1;
 
+# XX rules-based testing rules?:
+
+# - if a path is absolute, the cleaned path is always absolute, too?
+
+
 _END_
 
