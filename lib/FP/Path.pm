@@ -18,7 +18,7 @@ FP::Path
 Not really sure why I'm creating something from scratch here.
 
 This doesn't access the file system, and it doesn't resolve ".." 
-unless when told to (`clean_dotdot` method).
+unless when told to (`perhaps_clean_dotdot` method).
 
 =cut
 
@@ -115,7 +115,7 @@ sub clean {
 
 # XX is only valid to be applied to paths that have already been
 # `clean`ed !
-sub clean_dotdot {
+sub perhaps_clean_dotdot {
     my $s=shift;
     # XX this might actually be more efficient when working on the reverse
     # order? But leaving old imperative algorithm for now.
@@ -126,14 +126,14 @@ sub clean_dotdot {
 		my $v= pop @s;
 		# XXX why was there no check here before?
 		if (! length $v and ! @s) {
-		    die "can't take '..' of root directory"
+		    return ()
 		}
 	    } else {
 #XXX why was it this way, and what should it be?
 #		if ($s->is_absolute) {
 #		    push @s, "..";
 #		} else {
-		    die "can't take '..' of root directory"
+		    return ()
 #		}
 	    }
 	} else {
