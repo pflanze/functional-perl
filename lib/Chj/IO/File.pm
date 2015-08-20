@@ -345,6 +345,19 @@ sub sysopen {
     $self
 }
 
+# but see set_encoding instead!
+sub xbinmode {
+    my $self=shift;
+    if (@_ == 1) {
+	binmode ($self->fh, $_[0])
+	  or die "binmode: $!";
+    } elsif (@_ == 0) {
+	binmode ($self->fh)
+	  or die "binmode: $!";
+    } else {
+	die "wrong number of arguments";
+    }
+}
 
 sub set_layer_or_encoding {
     my $self=shift;
@@ -352,7 +365,7 @@ sub set_layer_or_encoding {
     my $layer=
       ($layer_or_encoding=~ /^:/ ? $layer_or_encoding
        : ":encoding($layer_or_encoding)");
-    binmode($self->fh, $layer) or die "binmode";
+    $self->xbinmode($layer);
 }
 
 sub perhaps_set_layer_or_encoding {
@@ -366,7 +379,7 @@ sub perhaps_set_layer_or_encoding {
 sub set_encoding {
     my $self=shift;
     my ($encoding)=@_;
-    binmode($self->fh, ":encoding($encoding)") or die "binmode";
+    $self->xbinmode(":encoding($encoding)");
 }
 
 
