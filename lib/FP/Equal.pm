@@ -29,6 +29,12 @@ Deep structure equality comparison.
 
 NOTE: currently using Data::Dumper and thus slow.
 
+For a more proper solution, see FP::Equals
+
+=head1 SEE ALSO
+
+L<FP::Equals>
+
 =cut
 
 
