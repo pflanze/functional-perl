@@ -62,6 +62,7 @@ package FP::Predicates;
 	      is_natural
 	      is_even is_odd
 	      is_boolean01
+	      is_booleanyesno
 	      is_boolean
 	      is_hash
 	      is_array
@@ -197,6 +198,12 @@ sub greater_equal ($) {
 sub is_boolean01 ($) {
     not ref ($_[0]) # relax?
       and $_[0]=~ /^[01]\z/
+}
+
+sub is_booleanyesno ($) {
+    my ($v)=@_;
+    not ref $v
+      and $v eq "yes" or $v eq "no"
 }
 
 # undef, 0, "", or 1
