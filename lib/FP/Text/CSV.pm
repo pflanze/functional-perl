@@ -62,6 +62,7 @@ package FP::Text::CSV;
 		 csv_line_xparser
 		 fh_to_csvstream
 		 xopen_csv_stream
+		 csv_printer
 		 csvstream_to_fh
 		 csvstream_to_file
 	    );
@@ -134,18 +135,23 @@ sub xopen_csv_stream ($;$) {
 
 # -- Output: ---
 
+sub csv_printer ($;$) {
+    my ($fh, $maybe_params)=@_;
+    my $csv= new_csv_instance ($maybe_params);
+    sub {
+	my ($row)=@_;
+	$csv->print($fh, $row)
+	  or die "could not write CSV row: ".$csv->error_diag;
+	# XX ok?
+    }
+}
+
 use FP::Stream "stream_for_each";
 
 sub csvstream_to_fh ($$;$) {
     my ($s, $fh, $maybe_params)=@_;
     weaken $_[0];
-    my $csv= new_csv_instance ($maybe_params);
-    stream_for_each sub {
-	my ($row)= @_;
-	$csv->print($fh, $row)
-	  or die "could not write CSV row: ".$csv->error_diag;
-	# XX ok?
-    }, $s
+    stream_for_each csv_printer($fh, $maybe_params), $s
 }
 
 use Chj::xtmpfile;
