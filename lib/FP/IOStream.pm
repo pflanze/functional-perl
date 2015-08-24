@@ -40,7 +40,8 @@ package FP::IOStream;
 	      xopendir_stream
 	      xopendir_pathstream
 	      xfile_lines
-	      fh_to_chunks);
+	      fh_to_chunks
+	      timestream);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -152,6 +153,24 @@ sub fh_to_chunks ($$) {
 		   $n == 0 ? undef : $buf
 	       },
 	       the_method("xclose"));
+}
+
+
+# A stream of floating-point unix timestamps representing the time
+# when each cell is being forced. Optional argument in seconds
+# (floating point) to sleep before returning the next element.
+
+sub timestream (;$) {
+    my ($maybe_sleep)=@_;
+    require Time::HiRes;
+    my $lp; $lp= sub {
+	lazy {
+	    Time::HiRes::sleep ($maybe_sleep)
+		if $maybe_sleep;
+	    cons (Time::HiRes::time (), &$lp())
+	}
+    };
+    Weakened ($lp)->();
 }
 
 
