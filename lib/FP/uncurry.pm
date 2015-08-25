@@ -54,7 +54,7 @@ package FP::uncurry;
 	      uncurry
 	      uncurry_1_1
 	      uncurry_2_1
-	      uncurry_2_1
+	      uncurry_1_2
 	      uncurry_2_2
 	      uncurry_1_1_1
 	 );
@@ -86,7 +86,7 @@ sub uncurry_2_1 ($) {
     }
 }
 
-sub uncurry_2_1 ($) {
+sub uncurry_1_2 ($) {
     my ($f)=@_;
     sub {
 	@_==3 or die "expecting 3 arguments";
