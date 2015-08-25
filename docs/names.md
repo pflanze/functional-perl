@@ -27,3 +27,8 @@ This list of doubtful names is not exhaustive.
 - should `null` always be used, including instead of `empty_trie`
   etc. (i.e. rename those to `null_trie` etc.)?
 
+
+## TODO
+
+- rename csvstream_to_fh to rows_to_csv_fh,
+  csvstream_to_file to rows_to_csv_file, etc.
