@@ -44,7 +44,7 @@ use FP::Lazy ":all";
 use FP::Stream ":all";
 use FP::Ops qw(add);
 use FP::fix;
-
+use FP::uncurry;
 
 func fibs () {
     # (Also see the [[fibs]] example script; unlike there, where
@@ -56,11 +56,13 @@ func fibs () {
     $fibs
 }
 
-func exps ($base, $start) {
-    fix (func ($rec, $x) {
-	lazy { cons $x, &$rec ($x * $base) }
-    })->($start)
-}
+#func exps($base, $start)
+sub exps; *exps= uncurry
+  func ($base) {
+      fix func ($rec, $x) {
+	  lazy { cons $x, &$rec ($x * $base) }
+      }
+  };
 
 func rows () {
     my $a= 1.01;
