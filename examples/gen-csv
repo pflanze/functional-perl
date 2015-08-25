@@ -43,6 +43,7 @@ use FP::List ":all";
 use FP::Lazy ":all";
 use FP::Stream ":all";
 use FP::Ops qw(add);
+use FP::fix;
 
 
 func fibs () {
@@ -56,11 +57,9 @@ func fibs () {
 }
 
 func exps ($base, $start) {
-    my $rec; $rec= func ($x) {
-	my $rec=$rec;
+    fix (func ($rec, $x) {
 	lazy { cons $x, &$rec ($x * $base) }
-    };
-    Weakened ($rec)->($start)
+    })->($start)
 }
 
 func rows () {
