@@ -129,6 +129,7 @@ lib/FP/Weak.pm
 lib/FP/Weak/t.pm
 lib/FP/fix.pm
 lib/FP/url_.pm
+lib/HTTP/Daemon.pm
 lib/PXML.pm
 lib/PXML/Element.pm
 lib/PXML/HTML5.pm
