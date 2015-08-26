@@ -37,8 +37,6 @@ GetOptions("verbose"=> \$verbose,
 usage unless @ARGV;
 
 use FP::Text::CSV qw(csv_file_to_rows);
-use FP::List qw(rest);
-use FP::Stream qw(stream_map);
 
 use PXML::Tags
   # create tag functions for the following XML tag names. Casing is
@@ -70,18 +68,16 @@ sub print_csv_as_xml {
       MYEXAMPLE
 	(PROTOCOL_VERSION ("0.123"),
 	 RECORDS # here we embed the lazily computed part:
-	 (stream_map
-	  (sub {
-	       my ($row)=@_;
-	       @$row == 4 or die "row doesn't contain 4 columns: @$row";
-	       my ($a,$b,$c,$d)= @$row;
+	 ($rows->map (sub {
+			  my ($row)=@_;
+			  @$row == 4 or die "row doesn't contain 4 columns: @$row";
+			  my ($a,$b,$c,$d)= @$row;
 
-	       RECORD(A ($a),
-		      B ($b),
-		      C ($c),
-		      D ($d))
-	   },
-	   $rows)));
+			  RECORD(A ($a),
+				 B ($b),
+				 C ($c),
+				 D ($d))
+		      })));
 
     # walk and print the PXML data structure, forcing its evaluation
     # as needed
