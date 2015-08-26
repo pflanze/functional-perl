@@ -38,7 +38,7 @@ usage unless @ARGV==2;
 
 our ($path,$numrows)=@ARGV;
 
-use FP::Text::CSV qw(csvstream_to_file);
+use FP::Text::CSV qw(rows_to_csv_file);
 use FP::List ":all";
 use FP::Lazy ":all";
 use FP::Stream ":all";
@@ -86,5 +86,5 @@ func page ($title, $rows) {
 # of memory:
 my $page= page (series);
 
-csvstream_to_file $page, $path, +{eol=> "\n", sep_char=> ";"};
+rows_to_csv_file $page, $path, +{eol=> "\n", sep_char=> ";"};
 

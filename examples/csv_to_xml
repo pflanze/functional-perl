@@ -36,7 +36,7 @@ GetOptions("verbose"=> \$verbose,
 	   ) or exit 1;
 usage unless @ARGV;
 
-use FP::Text::CSV qw(xopen_csv_stream);
+use FP::Text::CSV qw(csv_file_to_rows);
 use FP::List qw(rest);
 use FP::Stream qw(stream_map);
 
@@ -59,7 +59,7 @@ use PXML::Serialize qw(pxml_print);
 sub print_csv_as_xml {
     my ($fh, $path)= @_;
 
-    my $rows= xopen_csv_stream $path, +{eol=> "\n", sep_char=> ";"};
+    my $rows= csv_file_to_rows $path, +{eol=> "\n", sep_char=> ";"};
     # $rows is a lazily-computed linked list of the rows
 
     # skip the header row from the CSV file:
