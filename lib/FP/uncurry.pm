@@ -45,7 +45,7 @@ Sub::Call::Tail is fixed, or better, we've got a switchable variant.
 There are various modules for currying (the inverse of uncurry) on
 CPAN.
 
-`the_method` and `curry_method` in L<FP::Ops>.
+`the_method` and `cut_method` in L<FP::Ops>.
 
 =cut
 

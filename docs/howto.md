@@ -662,17 +662,16 @@ The function `the_method` (which also takes optional arguments to be
 passed along) is available from `FP::Ops`. (Why is it not in
 `FP::Combinators`? Because (the argument is not a function, and) it
 really fulfills the functionality of the `->` operator (together with
-optional currying).)
+optional currying (spicing?)).)
 
 The above is good if the object is what's in the list, and the method
 is your "function" to be applied. If instead the object is carrying
-information for the method that you want to pass, use
-`curry_method`:
+information for the method that you want to pass, use `cut_method`:
 
     my $bazzer= Foo::Bar->new($a,$b,$c);
-    $l->map( curry_method $bazzer, "baz" ) # will pass sub { $bazzer->baz(@_) }
+    $l->map( cut_method $bazzer, "baz" ) # will pass sub { $bazzer->baz(@_) }
 
-(Anyone's got a better name for this function?)
+(Does anyone have a better name for this function?)
 
 
 ### Jungle
