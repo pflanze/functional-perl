@@ -15,6 +15,32 @@ useful.
 
 <with_toc>
 
+## Teaser
+
+This is an example of the kind of code we want to make possible:
+
+    use PXML::Tags qw(myexample protocol-version records record a b c d);
+
+    # create a data structure describing an XML document, partially lazily
+    MYEXAMPLE
+      (PROTOCOL_VERSION ("0.123"),
+       RECORDS
+       (# read lazy list of rows from CSV file
+        csv_file_to_rows($inpath, {eol=> "\n", sep_char=> ";"})
+        # skip the header row
+        ->rest
+        # map rows to XML elements
+        ->map(sub {
+                  my ($a,$b,$c,$d)= @{$_[0]};
+                  RECORD A($a), B($b), C($c), D($d)
+              })))
+      # print data structure to disk, forcing its evaluation as needed
+      ->xmlfile($outpath);
+
+See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
+complete script.
+
+
 ## Status: experimental
 
 The project is not ready for production yet for the following reasons:
