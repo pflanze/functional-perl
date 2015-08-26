@@ -667,10 +667,10 @@ currying).)
 The above is good if the object is what's in the list, and the method
 is your "function" to be applied. If instead the object is carrying
 information for the method that you want to pass, use
-`the_object_method`:
+`curry_method`:
 
     my $bazzer= Foo::Bar->new($a,$b,$c);
-    $l->map( the_object_method $bazzer, "baz" ) # will pass sub { $bazzer->baz(@_) }
+    $l->map( curry_method $bazzer, "baz" ) # will pass sub { $bazzer->baz(@_) }
 
 (Anyone's got a better name for this function?)
 

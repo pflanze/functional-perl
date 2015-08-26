@@ -20,7 +20,6 @@ This list of doubtful names is not exhaustive.
 - `pxml_map_elements_exhaustively`
 - should `stream_iota` be renamed or have different arguments? Compare
   with APL etc.
-- `the_object_method`
 - `Chj::WithRepl`, `WithRepl_eval`, `Chj::Trapl`
 - `FP::Struct`: rename to `FP::Class` or should that name remain
   reserved for a new implementation on top of `Moose` or something?

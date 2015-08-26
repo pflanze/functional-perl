@@ -28,8 +28,8 @@ Also similarly, `the_method("foo", @args)` returns a function that
 does a "foo" method call on its argument, passing @args and then
 whatever additional arguments the function receives.
 
-`the_object_method` is a variant of the_method which takes the object
-as the first argument: `the_object_method($obj,"foo",@args)` returns a
+`curry_method` is a variant of the_method which takes the object
+as the first argument: `curry_method($obj,"foo",@args)` returns a
 function that does a "foo" method call on $obj, passing @args and then
 whatever additional arguments the function receives.
 
@@ -54,7 +54,7 @@ package FP::Ops;
 		 string_cmp
 		 number_cmp
 		 the_method
-		 the_object_method
+		 curry_method
 		 operator_2
 		 operator_1
 	    );
@@ -120,7 +120,7 @@ sub the_method {
     }
 }
 
-sub the_object_method {
+sub curry_method {
     my ($object,$method,@args)=@_;
     sub {
 	$object->$method(@args,@_)
