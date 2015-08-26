@@ -9,7 +9,8 @@ Some examples showing the possibilities using [functional-perl](../README.md).
 
 * [`fibs`](fibs) and [`primes`](primes) show translations of Haskell programs.
 
-* [`gen-csv`](gen-csv) and [`csv_to_xml`](csv_to_xml) show how to stream
+* [`gen-csv`](gen-csv) and [`csv_to_xml`](csv_to_xml) (and the shorter
+  variant [`csv_to_xml_short`](csv_to_xml_short)) show how to stream
   number series into and from CSV files and into XML.
 
 * [`diff_to_html`](diff_to_html) hows how to generate (X)HTML.
@@ -27,6 +28,9 @@ Copy [`template`](template) to create your own script.
 
 
 ## See also
+
+* [Htmlgen](htmlgen/README.md), the script that generates this
+  website.
 
 * For a real program using these modules, see
   [ml2json](http://ml2json.christianjaeger.ch), although it still

@@ -38,7 +38,7 @@ This is an example of the kind of code we want to make possible:
       ->xmlfile($outpath);
 
 See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
-complete script.
+complete script, and the [examples](examples/README.md) page for more.
 
 
 ## Status: experimental
