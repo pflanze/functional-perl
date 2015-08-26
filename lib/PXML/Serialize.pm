@@ -398,6 +398,12 @@ sub putxmlfile ($$) {
     $f->xclose;
 }
 
+sub PXML::Element::xmlfile {
+    my ($v, $path)=@_;
+    weaken $_[0];
+    putxmlfile ($path, $v)
+}
+
 sub puthtmlfile ($$;$) {
     my ($path,$v,$maybe_lang)=@_;
     weaken $_[1] if ref $_[0]; # ref check perhaps unnecessary here
@@ -409,5 +415,10 @@ sub puthtmlfile ($$;$) {
     $out->xclose;
 }
 
+sub PXML::Element::htmlfile {
+    my ($v, $path, $maybe_lang)=@_;
+    weaken $_[0];
+    puthtmlfile ($path, $v, $maybe_lang)
+}
 
 1
