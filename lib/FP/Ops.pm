@@ -124,8 +124,6 @@ sub curry_method {
     my ($object,$method,@args)=@_;
     sub {
 	$object->$method(@args,@_)
-	  # any reason to put args before or after _ ? So far I only
-	  # have args, no _.
     }
 }
 

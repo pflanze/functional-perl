@@ -662,7 +662,7 @@ The function `the_method` (which also takes optional arguments to be
 passed along) is available from `FP::Ops`. (Why is it not in
 `FP::Combinators`? Because (the argument is not a function, and) it
 really fulfills the functionality of the `->` operator (together with
-currying).)
+optional currying).)
 
 The above is good if the object is what's in the list, and the method
 is your "function" to be applied. If instead the object is carrying
