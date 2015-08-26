@@ -64,7 +64,7 @@ sub exps; *exps= uncurry
       }
   };
 
-func rows () {
+func series () {
     my $a= 1.01;
     my $b= 0.99;
     my $ns= rest stream_iota;
@@ -72,14 +72,13 @@ func rows () {
     my $bs= exps $b, $b;
     my $fibs= fibs;
 
-    cons [ "n", "$a^n", "$b^n", "fib" ],
-      stream_zip ($ns, $as, $bs, $fibs)
+    ([ "n", "$a^n", "$b^n", "fib" ],
+     stream_zip $ns, $as, $bs, $fibs)
 }
 
-# Really need to specify "streaming wanted" here by way of the `stream_`
-# method prefix, as the head of the input is not lazy.
+func page ($title, $rows) {
+    cons $title, $rows->take($numrows)
+}
 
-my $rows= rows-> stream_take($numrows+1); # +1 for the header row
-
-csvstream_to_file $rows, $path, +{eol=> "\n", sep_char=> ";"};
+csvstream_to_file page (series), $path, +{eol=> "\n", sep_char=> ";"};
 
