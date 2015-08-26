@@ -113,8 +113,8 @@ TEST_EXCEPTION {equals *STDIN{IO}, *STDOUT{IO}}
 use utf8;
 {
     my ($s1,$s2);
-    TEST{$s1= "Smørebröd";
-	 $s2= "Smørebröd";
+    TEST{$s1= "Smørrebrød";
+	 $s2= "Smørrebrød";
 	 equals $s1, $s2} 1;
     TEST{utf8::encode($s2);
 	 equals $s1, $s2} '';
