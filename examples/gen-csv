@@ -80,5 +80,11 @@ func page ($title, $rows) {
     cons $title, $rows->take($numrows)
 }
 
-csvstream_to_file page (series), $path, +{eol=> "\n", sep_char=> ";"};
+# Because of an unresolved issue (apparently in the Perl interpreter),
+# the resulting stream has to be assigned to a lexical variable first,
+# or the stream head would be held on to and the process would run out
+# of memory:
+my $page= page (series);
+
+csvstream_to_file $page, $path, +{eol=> "\n", sep_char=> ";"};
 
