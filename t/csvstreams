@@ -15,6 +15,8 @@ setlimit_mem_MB (80); # 14 is enough on 32bit Debian, 64bit will need more
 is system ("examples/gen-csv t/test-a.csv 40000"), 0;
 # 20000 pass on 32bit Debian even with bug
 
+is system ("examples/csv_to_xml_short t/test-a.csv t/test-a.xml"), 0;
+
 is system ("examples/csv_to_xml t/test-a.csv -o t/test-a.xml"), 0;
 
 done_testing;

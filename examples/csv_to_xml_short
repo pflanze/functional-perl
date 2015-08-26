@@ -1,0 +1,65 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: $myname csvfile xmlfile
+
+  Variant of csv_to_xml with shorter code. Only supports one csvfile.
+
+";
+    exit (@_ ? 1 : 0);
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage unless @ARGV==2;
+
+our ($inpath, $outpath)=@ARGV;
+
+use FP::Text::CSV qw(csv_file_to_rows);
+use PXML::Serialize;
+
+# create tag functions for the following XML tag names. Casing is
+# preserved for the output, but the tag functions are all-uppercase
+# (to try to avoid name conflicts and for better visibility) and
+# replace the minus with the underscore.
+use PXML::Tags qw(myexample protocol-version records record a b c d);
+
+# create a data structure describing an XML document, partially lazily
+MYEXAMPLE
+  (PROTOCOL_VERSION ("0.123"),
+   RECORDS
+   (# read lazy list of rows from CSV file
+    csv_file_to_rows($inpath, {eol=> "\n", sep_char=> ";"})
+    # skip the header row
+    ->rest
+    # map rows to XML elements
+    ->map(sub {
+	      my ($a,$b,$c,$d)= @{$_[0]};
+	      RECORD A($a), B($b), C($c), D($d)
+	  })))
+  # print data structure to disk, forcing its evaluation as needed
+  ->xmlfile($outpath);
+
+
+# XXX this may not actually use constant memory on your Perl. Work
+# still needs to be done.
+

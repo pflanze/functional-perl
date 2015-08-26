@@ -16,6 +16,7 @@ docs/names.md
 examples/README.md
 examples/csv_to_xml
 examples/csv_to_xml-example.csv
+examples/csv_to_xml_short
 examples/dbi
 examples/diff_to_html
 examples/fibs
