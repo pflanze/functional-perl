@@ -40,6 +40,14 @@ This is an example of the kind of code we want to make possible:
 See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
 complete script, and the [examples](examples/README.md) page for more.
 
+Note that the above example merely shows the use of (lazy)
+sequences. But functional programming is the paradigm that was used to
+implement them. The example actually isn't strictly purely functional,
+as it reads from and writes to files, which makes it carry out, or be
+exposed to, side effects; see
+[[howto#Pure_functions_versus_I/O_and_other_side-effects]] for a
+discussion about this.
+
 
 ## Status: experimental
 
