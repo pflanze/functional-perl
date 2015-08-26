@@ -88,15 +88,11 @@ sub print_csv_as_xml {
     pxml_print $xmlstream, $fh;
 }
 
-use Chj::Backtrace;
-
 use Chj::xtmpfile;
+use Chj::xopen qw(glob_to_fh);
 
-if (defined $outpath) {
-    my $fh= xtmpfile $outpath;
-    print_csv_as_xml $fh, $_ for @ARGV;
-    $fh->xclose;
-    $fh->xputback (0666 & ~umask);
-} else {
-    print_csv_as_xml *STDOUT{IO}, $_ for @ARGV;
-}
+my $fh= defined $outpath ? xtmpfile $outpath : glob_to_fh *STDOUT;
+print_csv_as_xml $fh, $_ for @ARGV;
+$fh->xclose;
+$fh->xputback (0666 & ~umask) if defined $outpath;
+
