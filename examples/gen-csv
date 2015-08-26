@@ -76,11 +76,8 @@ func rows () {
       stream_zip ($ns, $as, $bs, $fibs)
 }
 
-use Chj::Backtrace;
-#use Chj::repl;repl;
-
-# Really need to specify "streaming wanted" here by way of the stream_
-# method prefix, as the input head is not lazy.
+# Really need to specify "streaming wanted" here by way of the `stream_`
+# method prefix, as the head of the input is not lazy.
 
 my $rows= rows-> stream_take($numrows+1); # +1 for the header row
 
