@@ -37,6 +37,7 @@ package FP::Array;
 	      array_fst
 	      array_snd
 	      array_ref
+	      array_xref
 	      array_length
 	      array_set
 	      array_update
@@ -91,6 +92,19 @@ sub array_ref ($$) {
     my ($a,$i)=@_;
     $$a[$i]
 }
+
+sub array_xref ($$) {
+    my ($a,$i)=@_;
+    # XX also check that $i is integer?
+    ($i >= 0 and $i < @$a)
+      or die "index out of bounds";
+    $$a[$i]
+}
+
+TEST_EXCEPTION { array_xref [], 0 } "index out of bounds";
+TEST { array_xref [5], 0 } 5;
+TEST_EXCEPTION { array_xref [5], 1 } "index out of bounds";
+TEST_EXCEPTION { array_xref [5], -1 } "index out of bounds";
 
 sub array_length ($) {
     scalar @{$_[0]}
