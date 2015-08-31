@@ -10,7 +10,7 @@ use Test::Requires qw(Function::Parameters Text::CSV);
 use Test::More;
 
 require "./testmem.pl";
-setlimit_mem_MB (80); # 14 is enough on 32bit Debian, 64bit will need more
+setlimit_mem_MB ($^V->{version}[1] < 15 ? 30 : 80); # 14 is enough on 32bit Debian, 64bit will need more
 
 is system ("examples/gen-csv t/test-a.csv 40000"), 0;
 # 20000 pass on 32bit Debian even with bug
