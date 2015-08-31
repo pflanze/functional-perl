@@ -64,7 +64,13 @@ TEST{equals "a", "a"} 1;
 TEST{equals "2", 2} 1;
 TEST{equals "2.0", 2.0} '';
 
-TEST{equals 1e+20000, "inf"} 1;
+my $inf= $^V->{version}[1] > 20 ?
+  # XX where exactly was it changed?
+  # v5.14.2: inf
+  # v5.21.11-27-g57e8809: Inf
+  "Inf" : "inf";
+
+TEST{equals 1e+20000, $inf} 1;
 TEST{ 1e+20000 == "inf" } 1;
 TEST{equals 1/(-1e+2000), 1/(1e+2000) } 1;
 TEST{ 1/(-1e+2000) == 1/(1e+2000) } 1;
@@ -74,7 +80,7 @@ TEST{ 1/(-1e+2000) == 1/(1e+2000) } 1;
 TEST{ -1e1000 == "-1e1000" } 1;
 TEST{ -1e1000 eq "-1e1000" } '';
 TEST{ equals -1e1000, "-1e1000" } '';
-TEST{ equals -1e1000, "-inf" } 1;
+TEST{ equals -1e1000, "-$inf" } 1;
 TEST{ -1e1000 == "-inf" } 1;
 
 TEST{equals 2, 2.0} 1;	   # those are converted to the same value at
