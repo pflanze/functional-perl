@@ -37,6 +37,8 @@ package FP::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(fh_to_stream
+	      perhaps_opendir_stream
+	      perhaps_opendir_pathstream
 	      xopendir_stream
 	      xopendir_pathstream
 	      xfile_lines
@@ -47,30 +49,35 @@ package FP::IOStream;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
-use Chj::xopendir;
+use Chj::xopendir qw(perhaps_opendir);
 use FP::List ':all';
 use FP::Stream 'stream_map', 'array_to_stream', 'Weakened';
 use FP::Array_sort;
 use FP::Ops 'the_method';
+use Carp;
+use Chj::singlequote ":all";
 
-sub _xopendir_stream ($) {
+sub _perhaps_opendir_stream ($) {
     my ($path)=@_;
-    my $d= xopendir $path;
-    my $next; $next= sub {
-	my $next=$next;
-	lazy {
-	    if (defined (my $item= $d->xnread)) {
-		cons $item, &$next
-	    } else {
-		$d->xclose;
-		null
+    if (my ($d)= perhaps_opendir $path) {
+	my $next; $next= sub {
+	    my $next=$next;
+	    lazy {
+		if (defined (my $item= $d->xnread)) {
+		    cons $item, &$next
+		} else {
+		    $d->xclose;
+		    null
+		}
 	    }
-	}
-    };
-    &{Weakened $next}
+	};
+	&{Weakened $next}
+    } else {
+	()
+    }
 }
 
-sub _xopendir_stream_sorted ($$) {
+sub _perhaps_opendir_stream_sorted ($$) {
     my ($path,$cmp)=@_;
     my $d= xopendir $path;
     my $items= array_sort [$d->xnread], $cmp;
@@ -78,23 +85,44 @@ sub _xopendir_stream_sorted ($$) {
     array_to_stream $items
 }
 
-sub xopendir_stream ($;$) {
+sub perhaps_opendir_stream ($;$) {
     my ($path,$maybe_cmp)=@_;
     if ($maybe_cmp) {
-	_xopendir_stream_sorted $path,$maybe_cmp;
+	_perhaps_opendir_stream_sorted $path,$maybe_cmp;
     } else {
-	_xopendir_stream $path;
+	_perhaps_opendir_stream $path;
+    }
+}
+
+sub perhaps_opendir_pathstream ($;$) {
+    my ($base,$maybe_cmp)=@_;
+    if (my ($s)= perhaps_opendir_stream $base,$maybe_cmp) {
+	stream_map sub {
+	    my ($item)= @_;
+	    "$base/$item"
+	}, $s
+    } else {
+	()
+    }
+}
+
+sub xopendir_stream ($;$) {
+    my ($path,$maybe_cmp)=@_;
+    if (my ($s)= perhaps_opendir_stream ($path, $maybe_cmp)) {
+	$s
+    } else {
+	croak "xopendir_stream(".singlequote_many(@_)."): $!";
     }
 }
 
 sub xopendir_pathstream ($;$) {
-    my ($base,$maybe_cmp)=@_;
-    stream_map sub {
-	my ($item)= @_;
-	"$base/$item"
-    }, xopendir_stream $base,$maybe_cmp
+    my ($path,$maybe_cmp)=@_;
+    if (my ($s)= perhaps_opendir_pathstream ($path, $maybe_cmp)) {
+	$s
+    } else {
+	croak "xopendir_pathstream(".singlequote_many(@_)."): $!";
+    }
 }
-
 
 
 sub fh_to_stream ($$$) {
