@@ -74,7 +74,7 @@ package FP::List;
 	      list_append
 	      list_zip2
 	      list_alist
-	      list_every list_any
+	      list_every list_any list_none
 	      list_perhaps_find_tail list_perhaps_find
 	      list_find_tail list_find
 	      is_charlist ldie
@@ -465,7 +465,7 @@ sub list {
     $res
 }
 
-use FP::Predicates qw(either is_natural);
+use FP::Predicates qw(either is_natural complement);
 
 sub delayed (&) {
     my ($thunk)=@_;
@@ -1085,7 +1085,7 @@ TEST { list_to_string take_while (sub{0}, string_to_list "Hello World") }
   "";
 
 
-sub list_every ($ $) {
+sub list_every ($$) {
     my ($pred,$l)=@_;
   LP: {
 	if (is_pair $l) {
@@ -1119,6 +1119,31 @@ TEST { string_to_list("Hello") ->every(\&char_is_alphanumeric) }
   1;
 TEST { string_to_list("Hello ") ->every(\&char_is_alphanumeric) }
   '';
+
+
+sub list_none ($$) {
+    my ($pred,$l)=@_;
+    list_every (complement ($pred), $l)
+}
+
+*FP::List::List::none= flip \&list_none;
+
+TEST { string_to_list("Hello") ->none(\&char_is_alphanumeric) }
+  '';
+TEST { string_to_list(" -()&") ->none(\&char_is_alphanumeric) }
+  1;
+TEST {
+    my $z=0;
+    my $r=string_to_list(" -()&a")->none(sub { $z++; char_is_alphanumeric $_[0] });
+    [$z,$r]
+}
+  [6, ''];
+TEST {
+    my $z=0;
+    my $r=string_to_list(" a-()&a")->none(sub { $z++; char_is_alphanumeric $_[0] });
+    [$z,$r]
+}
+  [2, ''];
 
 
 sub list_any ($ $) {
