@@ -222,7 +222,7 @@ get an introduction in person.
   website), see [Htmlgen](htmlgen/README.md) for details.
 
 * to use `bin/repl` or the repl in the intro and examples scripts
-  interactively, `Term::ReadLine::Gnu`
+  interactively, `Term::ReadLine::Gnu` and `PadWalker`
 
 (Todo: should all of the above be listed in PREREQ_PM in Makefile.PL?)
 
