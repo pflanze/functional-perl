@@ -26,6 +26,8 @@ use strict;
 
 use Symbol;
 use Carp;
+use Chj::singlequote ();
+
 BEGIN {
     if ($^O eq 'linux') {
 	eval 'sub EEXIST() {17}; sub EBADF() {9}'; die if $@;
@@ -50,7 +52,7 @@ sub xopendir {
 	return $hdl;
     }
     else {
-	croak "xopendir @_: $!";
+	croak "xopendir ".Chj::singlequote::singlequote_many(@_).": $!";
     }
 }
 # *new= \&xopendir;  really? no.
