@@ -74,7 +74,7 @@ package FP::List;
 	      list_append
 	      list_zip2
 	      list_alist
-	      list_every list_any list_none
+	      list_every list_all list_any list_none
 	      list_perhaps_find_tail list_perhaps_find
 	      list_find_tail list_find
 	      is_charlist ldie
@@ -1105,6 +1105,13 @@ sub list_every ($$) {
 }
 
 *FP::List::List::every= flip \&list_every;
+
+# XXX do we want this alias? Or do we just want to rename every to
+# all?
+sub list_all ($$);
+*list_all= *list_every;
+
+*FP::List::List::all= flip \&list_every;
 
 TEST { [ map { list_every sub{$_[0]>0}, $_ }
 	 list (1,2,3),
