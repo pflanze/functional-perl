@@ -153,6 +153,30 @@ sub object_force_escape ($$$) {
 }
 
 
+# XXX hack, the code is really hopeless, should use ~same code as for
+# body parts.
+sub _attributeval_to_string {
+    my ($v,$fh)= @_;
+    my $ref= ref $v;
+    (length ($ref) ?
+     ($ref eq "ARRAY" ?
+      join ("",
+	      map {
+		  _attributeval_to_string ($_, $fh)
+	      } @$v)
+      :
+      is_pxmlflush($v) ?
+      do { flush $fh or die $!; "" }
+      :
+      object_force_escape
+      (pxmlforce($v),
+       "pxml_serialized_attribute_string",
+       *attribute_escape))
+     :
+     # fast path:
+     attribute_escape $v)
+}
+
 sub _pxml_print_fragment_fast {
     @_==4 or die "wrong number of arguments";
     my ($v,$fh,$html5compat,$void_element_h)=@_;
@@ -172,15 +196,7 @@ sub _pxml_print_fragment_fast {
 		    for my $k (sort keys %$attrs) {
 			print $fh " $k=\""
 			  or die $!;
-			my $v= $$attrs{$k};
-			my $str=
-			  (ref ($v) ?
-			   object_force_escape
-			   (pxmlforce($v),
-			    "pxml_serialized_attribute_string",
-			    *attribute_escape) :
-			   # fast path:
-			   attribute_escape $v);
+			my $str= _attributeval_to_string $$attrs{$k}, $fh;
 			print $fh "$str\""
 			  or die $!;
 		    }
