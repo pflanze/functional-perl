@@ -5,7 +5,7 @@
 # with this file.
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
-use Method::Signatures;
+use Function::Parameters ":strict";
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -46,7 +46,7 @@ use FP::Ops qw(add);
 use FP::fix;
 use FP::uncurry;
 
-func fibs () {
+fun fibs () {
     # (Also see the [[fibs]] example script; unlike there, where
     # global scope is used, here we don't use Keep around $fibs as
     # it's correct when the local variable, which goes out of scope,
@@ -56,15 +56,15 @@ func fibs () {
     $fibs
 }
 
-#func exps($base, $start)
+#fun exps($base, $start)
 sub exps; *exps= uncurry
-  func ($base) {
-      fix func ($rec, $x) {
+  fun ($base) {
+      fix fun ($rec, $x) {
 	  lazy { cons $x, &$rec ($x * $base) }
       }
   };
 
-func series () {
+fun series () {
     my $a= 1.01;
     my $b= 0.99;
     my $ns= rest stream_iota;
@@ -76,7 +76,7 @@ func series () {
      stream_zip $ns, $as, $bs, $fibs)
 }
 
-func page ($title, $rows) {
+fun page ($title, $rows) {
     cons $title, $rows->take($numrows)
 }
 

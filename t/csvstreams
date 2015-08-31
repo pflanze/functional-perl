@@ -6,7 +6,7 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Test::Requires qw(Method::Signatures Text::CSV);
+use Test::Requires qw(Function::Parameters Text::CSV);
 use Test::More;
 
 require "./testmem.pl";
