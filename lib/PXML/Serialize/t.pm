@@ -27,10 +27,15 @@ use strict; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use PXML::Serialize qw(pxml_print_fragment_fast);
 use PXML::XHTML ":all";
+use PXML qw(pxmlflush);
 
 TEST_STDOUT { pxml_print_fragment_fast ["abc",P(2)], *STDOUT }
   'abc<p>2</p>';
 TEST_STDOUT { pxml_print_fragment_fast ["abc"], *STDOUT }
   'abc';
+
+TEST_STDOUT { pxml_print_fragment_fast P({foo=> ["a",["b", pxmlflush, "c"], "d"]},
+					 "abc"), *STDOUT{IO} }
+  '<p foo="abcd">abc</p>';
 
 1
