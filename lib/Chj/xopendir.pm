@@ -39,6 +39,16 @@ blessed into Chj::xopendir::dir, which can be used both as object
 or filehandle (more correctly: anonymous glob) (? always? Perl is a
 bit complicated when handling filehandles in indirect object notation).
 
+=item perhaps_opendir ($path)
+
+Try to open given directory path, if successful return the filehandle,
+otherwise return () and leave $! set.
+
+=item perhaps_xopendir ($path)
+
+Same as perhaps_opendir but throw exception on all errors except for
+ENOENT.
+
 =back
 
 =head1 CLASS METHODS
@@ -87,7 +97,7 @@ L<Chj::xopen>
 
 package Chj::xopendir;
 @ISA='Exporter'; require Exporter;
-@EXPORT= qw(xopendir);
+@EXPORT= qw(xopendir perhaps_opendir perhaps_xopendir);
 
 use strict;
 use Chj::IO::Dir;
@@ -95,6 +105,16 @@ use Chj::IO::Dir;
 sub xopendir($) {
     unshift @_, 'Chj::IO::Dir';
     goto &Chj::IO::Dir::xopendir;
+}
+
+sub perhaps_opendir($) {
+    unshift @_, 'Chj::IO::Dir';
+    goto &Chj::IO::Dir::perhaps_opendir;
+}
+
+sub perhaps_xopendir($) {
+    unshift @_, 'Chj::IO::Dir';
+    goto &Chj::IO::Dir::perhaps_xopendir;
 }
 
 1;

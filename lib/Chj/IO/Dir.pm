@@ -27,14 +27,7 @@ use strict;
 use Symbol;
 use Carp;
 use Chj::singlequote ();
-
-BEGIN {
-    if ($^O eq 'linux') {
-	eval 'sub EEXIST() {17}; sub EBADF() {9}'; die if $@;
-    } else {
-	eval 'use POSIX "EEXIST","EBADF"'; die if $@;
-    }
-}
+use POSIX qw(EEXIST EBADF ENOENT);
 
 my %metadata; # -> [ is_open, path ]
 $foo::foo=\%metadata;
@@ -69,6 +62,29 @@ sub opendir {
 	undef
     }
 }
+
+sub perhaps_opendir {
+    my $class=shift;
+    if (defined (my $fh= $class->opendir(@_))) {
+	$fh
+    } else {
+	()
+    }
+}
+
+# (adapted copy of perhaps_xopen of File.pm)
+# die on all errors except ENOENT
+sub perhaps_xopendir {
+    my $proto=shift;
+    if (my ($fh)= $proto->perhaps_opendir (@_)) {
+	$fh
+    } elsif ($! == ENOENT) {
+	()
+    } else {
+	croak "xopen @_: $!";
+    }
+}
+
 
 sub new {
     my $class=shift;
