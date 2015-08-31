@@ -1,0 +1,138 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+use Function::Parameters ":strict";
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: rootdir
+
+  Print all directories below rootdir that follow the Maildir or
+  Maildir++ format (https://en.wikipedia.org/wiki/Maildir).
+";
+    exit 1;
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage unless @ARGV==1;
+
+my ($rootdir)=@ARGV;
+
+use FP::IOStream qw(perhaps_opendir_pathstream);
+use FP::Stream qw(stream_fold_right);
+use FP::List qw(list cons null);
+use Chj::xperlfunc qw(xlstat xprintln);
+use FP::Ops qw(the_method);
+use FP::Weak;
+use FP::fix qw(fixn);
+
+
+# This is a work in progress. Doing things functionally here doesn't
+# really make sense until it's at a point where reading the filesystem
+# is a functionally combinable "framework".
+
+
+# ---- failure objects -------------------------------------------------
+# XX: provide these kinds of failure objects globally (and return them
+# instead of using functions named perhaps_*)?
+
+{
+    package find_maildirs::Failure;
+    use FP::Struct ["path", "message"];
+    method xprintln () {
+	print STDERR $self->path, ": ", $self->message, "\n"
+    }
+    _END_
+}
+
+{
+    package find_maildirs::Success;
+    use FP::Struct ["path"];
+    method xprintln () {
+	print STDOUT $self->path,"\n"
+	  or die $!;
+    }
+    _END_
+}
+
+# ---- the tests --------------------------------------------------------
+
+# XX is there a better way to test for a Git directory?
+
+my $is_gitdir_subdirs= list qw(refs branches objects info); # hooks ?
+
+fun is_gitdir ($path) {
+    $path =~ /\.git\z/
+      and $is_gitdir_subdirs->all(sub{ -d "$path/$_[0]" })
+}
+
+fun is_maildir ($path) {
+    (-d "$path/cur" and
+     -d "$path/new" and
+     -d "$path/tmp")
+}
+
+fun is_maildir_plusplus_subfolder ($path) {
+    -f "$path/maildirfolder" and is_maildir $path
+}
+
+
+# ---- tree folding -----------------------------------------------------
+
+fun find_below ($path, $pred) {
+
+    my ($fold_path, $fold_dirpath)=
+      fixn(
+	   fun ($fold_path, $fold_dirpath,
+		$path, $rest) {
+	       my $s= xlstat $path; # XX: replace with one returning failure
+	       # objects, too (for cases where the
+	       # filesystem is modified between the readdir
+	       # and stat)
+	       if ($s->is_dir) {
+		   if (&$pred ($path)) {
+		       cons (find_maildirs::Success->new($path), $rest)
+		   } else {
+		       &$fold_dirpath($path, $rest)
+		   }
+	       } else {
+		   $rest
+	       }
+	   },
+
+	   fun ($fold_path, $fold_dirpath,
+		$path, $rest) {
+	       if (my ($s)= perhaps_opendir_pathstream ($path)) {
+		   stream_fold_right ($fold_path, $rest, $s)
+	       } else {
+		   cons (find_maildirs::Failure->new($path, "$!"), $rest)
+	       }
+	   });
+
+    &$fold_dirpath($path, null)
+}
+
+
+#use Chj::Trapl; # or Chj::Backtrace
+#use Chj::repl;repl;
+
+my $s= find_below ($rootdir, *is_maildir);
+$s->for_each (the_method "xprintln");
+

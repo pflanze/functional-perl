@@ -20,6 +20,7 @@ examples/csv_to_xml_short
 examples/dbi
 examples/diff_to_html
 examples/fibs
+examples/find-maildirs
 examples/gen-csv
 examples/predicates
 examples/primes
