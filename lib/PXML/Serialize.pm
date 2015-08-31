@@ -129,13 +129,13 @@ sub pxmlforce ($) {
     }
 }
 
-sub object_force_escape ($$$);
-sub object_force_escape ($$$) {
-    my ($v, $string_method_for_context, $escape)=@_;
+sub object_force_escape ($$$$);
+sub object_force_escape ($$$$) {
+    my ($v, $string_method_for_context, $escape, $fh)=@_;
     if (my $m=
 	UNIVERSAL::can($v, $string_method_for_context)) {
 	# no escaping
-	&$m($v)
+	&$m($v, $fh)
     } elsif ($m=
 	   # XX should this instead simply stringify using
 	   # '"$v"'? That would not show up errors with
@@ -171,7 +171,8 @@ sub _attributeval_to_string {
       object_force_escape
       (pxmlforce($v),
        "pxml_serialized_attribute_string",
-       *attribute_escape))
+       *attribute_escape,
+       $fh))
      :
      # fast path:
      attribute_escape $v)
@@ -307,7 +308,8 @@ sub _pxml_print_fragment_fast {
 		      object_force_escape
 			($v,
 			 "pxml_serialized_body_string",
-			 *content_escape)
+			 *content_escape,
+			 $fh)
 			  or die $!;;
 		}
 	    }
