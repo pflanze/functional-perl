@@ -149,11 +149,15 @@ use strict; use warnings FATAL => 'uninitialized';
     # Called when used correctly:
     sub pxml_serialized_body_string {
 	my $self=shift;
+	my ($fh)=@_;
+	flush $fh or die $!;
 	$self->effecter-> (0, $self->n);
 	""
     }
     sub pxml_serialized_attribute_string {
 	my $self=shift;
+	my ($fh)=@_;
+	flush $fh or die $!;
 	$self->effecter-> (1, $self->n);
 	""
     }
@@ -161,9 +165,11 @@ use strict; use warnings FATAL => 'uninitialized';
 }
 
 use PXML::Serialize qw(pxml_print_fragment_fast attribute_escape);
-use PXML qw(pxmlbody);
+use PXML qw(pxmlbody pxmlflush);
 use Chj::xperlfunc qw(max);
 
+# passes $fn $nargs arguments that it will use during serialization to
+# cut apart the serialized representation.
 sub _pxmlpre ($$) {
     my ($nargs,$fn)=@_;
 
@@ -184,7 +190,7 @@ sub _pxmlpre ($$) {
     };
 
     my @args= map {
-	PXML::Preserialize::Argument->new ($effecter, $_);
+	PXML::Preserialize::Argument->new ($effecter, $_)
     } 0..$nargs-1;
 
     my $res= &$fn (@args);
