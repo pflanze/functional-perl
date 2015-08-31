@@ -96,10 +96,11 @@ sub perhaps_opendir_stream ($;$) {
 
 sub perhaps_opendir_pathstream ($;$) {
     my ($base,$maybe_cmp)=@_;
+    $base.= "/" unless $base=~ /\/\z/;
     if (my ($s)= perhaps_opendir_stream $base,$maybe_cmp) {
 	stream_map sub {
 	    my ($item)= @_;
-	    "$base/$item"
+	    "$base$item"
 	}, $s
     } else {
 	()
