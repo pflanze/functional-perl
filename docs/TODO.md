@@ -115,6 +115,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 - should `rest` (`cdr`) weaken its argument in the case of streams? 
   (`first` clearly shouldn't, right?)
 
+- add `FP::List`'s `none` and the `all` alias (also, remove `every`
+  *or* `all`?) to `FP::Stream`, or to common base class.
+
 
 ## Security, safety
 
