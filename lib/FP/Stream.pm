@@ -297,7 +297,7 @@ sub stream_zip {
 
 sub stream_zip_with {
     my ($f, $l1, $l2)= @_;
-    undef $_[1]; undef $_[2];
+    weaken $_[1]; weaken $_[2];
     lazy
     {
 	my $l1= force $l1;
