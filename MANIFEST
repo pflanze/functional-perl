@@ -68,6 +68,7 @@ lib/Chj/IO/WrappedFile.pm
 lib/Chj/NamespaceClean.pm
 lib/Chj/NamespaceCleanAbove.pm
 lib/Chj/Package/OfPath.pm
+lib/Chj/Serialize.pm
 lib/Chj/TEST.pm
 lib/Chj/TerseDumper.pm
 lib/Chj/Trapl.pm
