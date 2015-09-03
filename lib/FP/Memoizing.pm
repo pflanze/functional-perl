@@ -169,7 +169,7 @@ sub file_cache ($$$) {
 	my $val= &$generate;
 	fh_xnstore ($out, $val);
 	$out->xclose;
-	$out->xputback(0666);
+	$out->xputback(0444);
 	$val
     }
 }
