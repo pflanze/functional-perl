@@ -48,10 +48,10 @@ use FP::Hash qw(hash_cache);
 # ----------------------------------------------------------------
 # For keys:
 
-sub xnfreeze ($) {
-    nfreeze ($_[0])
-      // die "can't freeze this: ".TerseDumper ($_[0]);
-}
+# sub xnfreeze ($) {
+#     nfreeze ($_[0])
+#       // die "can't freeze this: ".TerseDumper ($_[0]);
+# }
 
 sub xncanonicalfreeze ($) {
     local $Storable::canonical= 1;
