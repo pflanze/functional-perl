@@ -152,7 +152,8 @@ use Chj::xopen qw(perhaps_xopen_read);
 use Chj::xtmpfile;
 
 # Same API as hash_cache (and like it, only works in scalar context).
-# CAREFUL, $k is not checked, only use with hashed keys or so!
+# CAREFUL, $k is not checked for subversive values ("../" etc.), only
+# use with hashed keys or so!
 
 sub file_cache ($$$) {
     my ($basepath,$k,$generate)=@_;
