@@ -166,7 +166,7 @@ sub file_cache ($$$) {
     }
     else {
 	my $out= xtmpfile $path;
-	my $val= &$generate;
+	my $val= &$generate ();
 	fh_xnstore ($out, $val);
 	$out->xclose;
 	$out->xputback(0444);
