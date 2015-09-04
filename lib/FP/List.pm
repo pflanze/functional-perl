@@ -125,6 +125,11 @@ use FP::Predicates 'is_natural0';
     sub length {
 	0
     }
+
+    sub equals {
+	my ($a,$b)=@_;
+	FP::List::is_null($b)
+    }
 }
 
 {
@@ -168,7 +173,24 @@ use FP::Predicates 'is_natural0';
     # Re `c_r`:
     # Use AUTOLOAD to autogenerate instead? But be careful about the
     # overhead of the then necessary DESTROY method.
+
+    sub equals {
+	my ($a,$b)=@_;
+	(FP::List::is_pair($b)
+	 and
+	 FP::Equals::equals($a->car, $b->car)
+	 and
+	 FP::Equals::equals($a->cdr, $b->cdr))
+    }
 }
+
+use FP::Equals;
+TEST {
+    equals(list(2,3,4), list(2,3))
+} undef;
+TEST {
+    equals(list(2,3,4), list(2,3,4))
+} 1;
 
 
 sub cons ($$) {
