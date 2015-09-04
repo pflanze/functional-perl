@@ -15,10 +15,11 @@ FP::Path
 
 =head1 DESCRIPTION
 
-Not really sure why I'm creating something from scratch here.
+Not really sure why I'm creating something from scratch here?
 
-This doesn't access the file system, and it doesn't resolve ".." 
-unless when told to (`perhaps_clean_dotdot` method).
+This doesn't do I/O (access the file system, ask the system for the
+hostname, etc.), and it doesn't resolve ".." unless when told to
+(`perhaps_clean_dotdot` method).
 
 =cut
 
@@ -29,6 +30,7 @@ use strict;
 
 use Chj::TEST;
 use FP::List ":all";
+use FP::Equals ();
 
 use FP::Struct
   [
@@ -51,6 +53,18 @@ sub new_from_string {
     $cl->new(array_to_list_reverse(\@p),
 	     scalar $str=~ m{/$}s,
 	     scalar $str=~ m{^/}s)
+}
+
+sub equals {
+    @_==2 or die "wrong number of arguments";
+    my ($a,$b)=@_;
+    # no need to compare is_absolute, since it is being distinguished
+    # anyway? Or better be safe than sorry?
+    (FP::Equals::equals (!!$a->is_absolute, !!$b->is_absolute)
+     and
+     FP::Equals::equals (!!$a->has_endslash, !!$b->has_endslash)
+     and
+     FP::Equals::equals ($a->rsegments, $b->rsegments))
 }
 
 sub segments {
@@ -305,6 +319,45 @@ TEST { equal (FP::Path->new_from_string("/"),
 	      FP::Path->new_from_string("//"),
 	      FP::Path->new_from_string("///")) }
   1;
+
+
+# equals:
+
+sub t_equals ($$) {
+    my ($a,$b)=@_;
+    FP::Equals::equals
+	(FP::Path->new_from_string($a),
+	 FP::Path->new_from_string($b))
+}
+
+TEST { t_equals "/foo", "/foo" } 1;
+TEST { t_equals "/foo", "foo" } '';
+TEST { t_equals "/foo", "/foo/" } '';
+TEST { t_equals "/foo", "/bar" } '';
+TEST { t_equals "/", "/" } 1;
+TEST { t_equals "/foo/..", "/" } '';
+TEST { t_equals "/foo", "/foo/bar" } '';
+
+# test booleanization (!!) in equals method
+TEST { my $p= FP::Path->new_from_string("/foo");
+       FP::Equals::equals $p, $p->has_endslash_set(0) } 1;
+
+sub t_str_clean ($) {
+    my ($a)=@_;
+    FP::Path->new_from_string($a)->clean->xclean_dotdot;
+}
+
+sub t_equals_clean ($$) {
+    my ($a,$b)=@_;
+    FP::Equals::equals (t_str_clean $a, t_str_clean $b);
+}
+
+TEST { t_equals_clean "/foo", "/foo" } 1;
+TEST { t_equals_clean "/foo", "foo" } '';
+TEST { t_equals_clean "/foo/bar/..", "/foo" } 1;
+# hmm, because "/" has_endslash true (necessarily??), we get:
+TEST { t_equals_clean "/foo/..", "/" } '';
+
 
 # XX rules-based testing rules?:
 
