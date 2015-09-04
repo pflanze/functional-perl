@@ -28,7 +28,6 @@ package FP::Path;
 
 use strict;
 
-use Chj::TEST;
 use FP::List ":all";
 use FP::Equals ();
 
@@ -196,16 +195,6 @@ sub add {
     }
 }
 
-TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("d/e"), 0 )->string }
-  'a/b/C/d/e';
-TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("../d/e"), 0 )->string }
-  'a/b/C/../d/e';
-TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("../d/e"), 1 )->string }
-  'a/b/d/e';
-TEST{ FP::Path->new_from_string("a/b/C")->add( FP::Path->new_from_string("/d/e"), 1 )->string }
-  '/d/e';
-
-
 sub dirname {
     my $s=shift;
     is_null $$s{rsegments}
@@ -228,159 +217,6 @@ sub contains_dotdot {
     my $s=shift;
     $s->rsegments->any(sub { $_[0] eq ".." })
 }
-
-
-TEST { (new_from_string FP::Path "hello//world/you")->string }
-  "hello/world/you";
-TEST { (new_from_string FP::Path "/hello//world/you")->string }
-  "/hello/world/you";
-TEST { (new_from_string FP::Path "/hello//world/you/")->string }
-  "/hello/world/you/";
-TEST { (new_from_string FP::Path "/")->string }
-  "/";
-TEST { (new_from_string FP::Path ".")->string }
-  ".";
-TEST { (new_from_string FP::Path "./")->string }
-  "./";
-TEST { (new_from_string FP::Path "./")->clean->string }
-  "./";
-TEST { (new_from_string FP::Path "./..")->string }
-  "./..";
-TEST { (new_from_string FP::Path "./..")->clean->string }
-  "..";
-
-TEST { (new_from_string FP::Path "./foo/../bar/.//baz/.")->clean->string }
-  "foo/../bar/baz/";
-TEST { (new_from_string FP::Path "")->clean->string }
-  # XX should this be an error?
-  '.';
-
-TEST { (new_from_string FP::Path ".")->string }
-  ".";
-TEST { (new_from_string FP::Path ".")->clean->string }
-  './';
-
-TEST { (new_from_string FP::Path "/")->string }
-  "/";
-TEST { (new_from_string FP::Path "/")->clean->string }
-  "/";
-TEST { (new_from_string FP::Path "/.")->clean->string }
-  "/";
-TEST { (new_from_string FP::Path "/./")->clean->string }
-  "/";
-TEST { (new_from_string FP::Path "/./")->string }
-  "/./";
-TEST { (new_from_string FP::Path "/.")->string }
-  "/.";
-
-TEST { (new_from_string FP::Path "/.")->contains_dotdot }
-  "0";
-TEST { (new_from_string FP::Path "foo/bar/../baz")->contains_dotdot }
-  "1";
-TEST { (new_from_string FP::Path "../baz")->contains_dotdot }
-  "1";
-TEST { (new_from_string FP::Path "baz/..")->contains_dotdot }
-  "1";
-TEST { (new_from_string FP::Path "baz/..")->clean->contains_dotdot }
-  "1";
-
-TEST_EXCEPTION { FP::Path->new_from_string(".")->clean->dirname }
-  q{can't take dirname of empty path};
-TEST { FP::Path->new_from_string("foo")->clean->dirname->string }
-  '.';
-TEST { FP::Path->new_from_string("foo/bar")->clean->dirname->string }
-  'foo';
-TEST_EXCEPTION { FP::Path->new_from_string("")->dirname }
-  q{can't take dirname of empty path};
-
-TEST { FP::Path->new_from_string(".")->clean->has_endslash }
-  1;
-TEST { FP::Path->new_from_string(".")->clean->string }
-  './';
-#ok
-TEST { FP::Path->new_from_string("")->clean->has_endslash }
-  0;
-TEST { FP::Path->new_from_string("")->clean->string }
-  '.';
-#h
-
-TEST { FP::Path->new_from_string("/foo")->to_relative->string }
-  'foo';
-TEST { FP::Path->new_from_string("/")->to_relative->string }
-  './';
-TEST_EXCEPTION { FP::Path->new_from_string("")->to_relative->string }
-  q{is already relative};
-TEST { FP::Path->new_from_string("/foo/")->to_relative->string }
- 'foo/';
-
-use FP::Equal;
-
-TEST { equal (FP::Path->new_from_string("/"),
-	      FP::Path->new_from_string("//"),
-	      FP::Path->new_from_string("///")) }
-  1;
-
-
-# equals:
-
-sub t_equals ($$) {
-    my ($a,$b)=@_;
-    FP::Equals::equals
-	(FP::Path->new_from_string($a),
-	 FP::Path->new_from_string($b))
-}
-
-TEST { t_equals "/foo", "/foo" } 1;
-TEST { t_equals "/foo", "foo" } '';
-TEST { t_equals "/foo", "/foo/" } '';
-TEST { t_equals "/foo", "/bar" } '';
-TEST { t_equals "/", "/" } 1;
-TEST { t_equals "/foo/..", "/" } '';
-TEST { t_equals "/foo", "/foo/bar" } '';
-
-# test booleanization (!!) in equals method
-TEST { my $p= FP::Path->new_from_string("/foo");
-       FP::Equals::equals $p, $p->has_endslash_set(0) } 1;
-
-sub t_str_clean ($) {
-    my ($a)=@_;
-    FP::Path->new_from_string($a)->clean->xclean_dotdot;
-}
-
-sub t_equals_clean ($$) {
-    my ($a,$b)=@_;
-    FP::Equals::equals (t_str_clean $a, t_str_clean $b);
-}
-
-TEST { t_equals_clean "/foo", "/foo" } 1;
-TEST { t_equals_clean "/foo", "foo" } '';
-TEST { t_equals_clean "/foo/bar/..", "/foo" } 1;
-# hmm, because "/" has_endslash true (necessarily??), we get:
-TEST { t_equals_clean "/foo/..", "/" } '';
-
-
-# XX rules-based testing rules?:
-
-# - if a path is absolute, the cleaned path is always absolute, too?
-
-# previously: why?
-# TEST { FP::Path->new_from_string("/..")->xclean_dotdot->string }
-#   '/';
-# TEST { FP::Path->new_from_string("/../..")->xclean_dotdot->string }
-#   '..';
-# TEST_EXCEPTION { FP::Path->new_from_string("..")->xclean_dotdot->string }
-#   'can\'t take \'..\' of root directory';
-# TEST_EXCEPTION { FP::Path->new_from_string("../..")->xclean_dotdot->string }
-#   'can\'t take \'..\' of root directory';
-
-TEST_EXCEPTION { FP::Path->new_from_string("..")->xclean_dotdot->string }
-  'can\'t take \'..\' of root directory'; # ".."; ?
-TEST_EXCEPTION { FP::Path->new_from_string("../..")->xclean_dotdot->string }
-  'can\'t take \'..\' of root directory'; # "../.."; ?
-TEST_EXCEPTION { FP::Path->new_from_string("/..")->xclean_dotdot->string }
-  'can\'t take \'..\' of root directory';
-TEST_EXCEPTION { FP::Path->new_from_string("/../..")->xclean_dotdot->string }
-  'can\'t take \'..\' of root directory';
 
 
 _END_

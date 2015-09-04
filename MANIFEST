@@ -116,6 +116,7 @@ lib/FP/Memoizing.pm
 lib/FP/Ops.pm
 lib/FP/OrderedCollection.pm
 lib/FP/Path.pm
+lib/FP/Path/t.pm
 lib/FP/Predicates.pm
 lib/FP/Pure.pm
 lib/FP/PureArray.pm
