@@ -128,8 +128,13 @@ use utf8;
 
 
 # Lazy values, classes:
-#use FP::Stream;
+use FP::Stream;
+use FP::List;
+use FP::Lazy;
 
-# TODO
+TEST {equals "a", lazy { chr 65+32 } } 1;
+TEST {equals stream (1,2), stream (1,2)} 1;
+TEST {equals stream (1,2), lazy { cons 1, stream (2)}} 1;
+TEST {equals stream (1,2), cons 1, stream (2)} 1;
 
 1

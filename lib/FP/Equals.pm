@@ -104,6 +104,7 @@ our $primitive_equals=
 
 
 use Scalar::Util qw(refaddr);
+use FP::Lazy;
 
 sub pointer_eq2 ($$) {
     refaddr($_[0]) == refaddr($_[1])
@@ -113,8 +114,10 @@ sub equals2 ($$) {
     if (!defined $_[0]) {
 	defined $_[1] ? undef : 1
     } else {
-	if (length (my $a= ref $_[0])) {
-	    if (length (my $b= ref $_[1])) {
+	my $a= force ($_[0]);
+	my $b= force ($_[1]);
+	if (length (my $ar= ref $a)) {
+	    if (length (my $br= ref $b)) {
 		# First check for pointer equality, or rather
 		# equivalence since it can be overloaded. XX Do we
 		# want to forgo the overloading (would it need to use
@@ -125,14 +128,14 @@ sub equals2 ($$) {
 		# a way for *fast* pointer comparison, unless we're
 		# really using something else (again, XS code?) for
 		# that instead.
-		#$_[0] == $_[1]
-		&pointer_eq2 (@_) or
+		#$a == $b
+		&pointer_eq2 ($a, $b) or
 		  do {
-		      if ($a eq $b) {
-			  if (my $cmp= $$primitive_equals{$a}) {
+		      if ($ar eq $br) {
+			  if (my $cmp= $$primitive_equals{$ar}) {
 			      &$cmp (@_)
 			  } else {
-			      $_[0]->equals ($_[1])
+			      $a->equals ($b)
 			  }
 		      } else {
 			  undef
@@ -142,12 +145,12 @@ sub equals2 ($$) {
 		undef
 	    }
 	} else {
-	    defined $_[1] ?
+	    defined $b ?
 
-	      (length (ref $_[1]) ? undef
+	      (length (ref $b) ? undef
 	       : (
 		  # make sure it's the same kind of non-reference values:
-		  ref (\ ($_[0])) eq ref (\ ($_[1])) ?
+		  ref (\$a) eq ref (\$b) ?
 		  # XX number comparison could optimize the case where both
 		  # values don't have string representations, compare using
 		  # == then.
@@ -157,7 +160,7 @@ sub equals2 ($$) {
 		  # arguments also has a string representation) compare
 		  # both as string and as number?
 
-		  $_[0] eq $_[1]
+		  $a eq $b
 		 : undef))
 
 		: undef
