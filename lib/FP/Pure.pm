@@ -27,6 +27,9 @@ ordinary programs), i.e. are persistent (1).
 
 (1) as in https://en.wikipedia.org/wiki/Persistent_data_structure
 
+More precisely, those objects that don't have methods that when called
+make other methods non-functions.
+
 =cut
 
 
