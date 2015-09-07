@@ -116,7 +116,8 @@ except when it's impossible for the outside world to detect
 (e.g. using a hash key to hold a cached result is fine as long as you
 also override all the functional setters for fields that are used for
 the calculation of the cached value to clean the cache (TODO: provide
-option to turn of generation of setters, and/or provide hook).)
+option to turn off generation of setters, and/or provide hook (for
+cloning?)).)
 
 =head1 IDEAS
 
