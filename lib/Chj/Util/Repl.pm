@@ -284,7 +284,7 @@ sub eval_code {
     my $use_method_signatures=
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
-      $Function::Parameters::VERSION ? "use Function::Parameters" : "";
+      $Function::Parameters::VERSION ? "use Function::Parameters ':strict'" : "";
     &WithRepl_eval ("$aliascode; (); ".
 		    "no strict 'vars'; $use_warnings; ".
 		    "$use_method_signatures; $use_functional_parameters_; ".
