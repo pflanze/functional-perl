@@ -624,8 +624,7 @@ sub run {
 	    my ($pager_with_options)= @_;
 	    sub {
 		my ($v)=@_;
-		my $pager= &$choosepager ($pager_with_options);
-		&$pager ($v)
+		&$choosepager ($pager_with_options)->($v);
 	    }
 	};
 
