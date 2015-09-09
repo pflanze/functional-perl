@@ -89,6 +89,9 @@ The project is not ready for production yet for the following reasons:
   %foo`, could be made usable with functions the way they are with
   `foreach`.
 
+* various parts (filesystem accesses etc.) probably won't work on
+  Microsoft Windows yet
+
 Please play with the examples and try to write some of your own, read
 the docs and tell us what's badly explained, and if you've got
 something that might be useful to add to the examples directory, it
