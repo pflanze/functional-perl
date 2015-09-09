@@ -92,7 +92,7 @@ sub current_user_frame ($) {
 		    die "skip value goes beyond the end of the stack";
 		}
 	    }
-	    return Chj::Util::Repl::StackFrame->new(undef, @v);
+	    return Chj::Repl::StackFrame->new(undef, @v);
 	}
     }
     die "???"
@@ -123,14 +123,14 @@ sub have_eval_since_frame ($) {
     }
 
     do {
-	my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
+	my $f= Chj::Repl::StackFrame->new(undef, @v);
 	if ($f->equal ($startframe)) {
 	    warn "reached startframe, thus return false"
 	      if $debug;
 	    return ''
 	} elsif ($f->subroutine eq "(eval)") {
 	    if ((@v)= caller $i++) {
-		my $f= Chj::Util::Repl::StackFrame->new(undef, @v);
+		my $f= Chj::Repl::StackFrame->new(undef, @v);
 		my $sub= $f->subroutine;
 		if ($sub =~ /::WithRepl_eval\z/) {
 		    warn "(ignore eval since it's from a WithRepl_eval)"

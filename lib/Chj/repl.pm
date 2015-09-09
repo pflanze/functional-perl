@@ -21,11 +21,11 @@ Chj::repl - read-eval-print loop
 
 =head1 DESCRIPTION
 
-For a simple parameterless start of `Chj::Util::Repl`.
+For a simple parameterless start of `Chj::Repl`.
 
 =head1 SEE ALSO
 
-L<Chj::Util::Repl>
+L<Chj::Repl>
 
 =cut
 
@@ -37,7 +37,7 @@ package Chj::repl;
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
-use Chj::Util::Repl;
+use Chj::Repl;
 
 sub maybe_tty {
     my $path= "/dev/tty";
@@ -51,7 +51,7 @@ sub maybe_tty {
 
 sub repl {
     my ($maybe_skip, $maybe_tty)=@_;
-    my $r= new Chj::Util::Repl;
+    my $r= new Chj::Repl;
 
     # Since `Term::Readline::Gnu`'s `OUT` method does not actually
     # return the filehandle that the readline library is using,

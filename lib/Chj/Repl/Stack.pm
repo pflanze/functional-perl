@@ -9,11 +9,11 @@
 
 =head1 NAME
 
-Chj::Util::Repl::Stack
+Chj::Repl::Stack
 
 =head1 SYNOPSIS
 
- my $stack= Chj::Util::Repl::Stack->get($numbers_of_levels_to_skip);
+ my $stack= Chj::Repl::Stack->get($numbers_of_levels_to_skip);
  $stack->package($frameno)
  $stack->
 
@@ -24,7 +24,7 @@ I'm pretty sure this is re-inventing some wheel..
 =cut
 
 
-package Chj::Util::Repl::Stack;
+package Chj::Repl::Stack;
 
 use strict; use warnings FATAL => 'uninitialized';
 
@@ -34,7 +34,7 @@ our @fields; BEGIN { @fields= qw(args
 				 hinthash) }
 
 {
-    package Chj::Util::Repl::StackFrame;
+    package Chj::Repl::StackFrame;
     use Chj::TerseDumper;
     use FP::Div "Chomp";
     use Chj::singlequote qw(singlequote_many with_maxlen);
@@ -166,7 +166,7 @@ sub get {
 	# XX how to handle this?: "@DB::args might have
 	# information from the previous time "caller" was
 	# called" (perlfunc on 'caller')
-	push @frames, Chj::Util::Repl::StackFrame->new
+	push @frames, Chj::Repl::StackFrame->new
 	  ($subargs, @vals);
 	$skip++;
     }

@@ -137,8 +137,8 @@ if (@files) {
 }
 
 else {
-    require Chj::Util::Repl;
-    my $repl= new Chj::Util::Repl;
+    require Chj::Repl;
+    my $repl= new Chj::Repl;
     $repl->set_historypath($opt_H ? undef : $HISTFILE);
     $repl->set_maxhistlen($MAXHISTLEN);
     $repl->set_package($myname);

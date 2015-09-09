@@ -9,13 +9,13 @@
 
 =head1 NAME
 
-Chj::Util::Repl - read-eval-print loop
+Chj::Repl - read-eval-print loop
 
 =head1 SYNOPSIS
 
  # repl($histfilepath,$package);
  # no, make it different.
- my $repl= new Chj::Util::Repl;
+ my $repl= new Chj::Repl;
  $repl->set_prompt("foo> ");
  # ^ if left undefined, "$package$perhapslevel> " is used
  $repl->set_historypath("somefile"); # default is ~/.perl-repl_history
@@ -87,7 +87,7 @@ Completion:
 =cut
 
 
-package Chj::Util::Repl;
+package Chj::Repl;
 
 use strict;
 
@@ -132,7 +132,7 @@ sub levels_to_user {
 	    $wantarray, $evaltext, $is_require, $hints, $bitmask, $hinthash)=
 		caller($n);
 	return $n
-	    if ($package ne 'Chj::Util::Repl'
+	    if ($package ne 'Chj::Repl'
 		and
 		$package ne 'Chj::repl');
 
@@ -186,8 +186,8 @@ sub splitpackage {
 
 my $PACKAGE= qr/\w+(?:::\w+)*/;
 
-use Chj::Util::Repl::corefuncs();
-our @builtins= Chj::Util::Repl::corefuncs;
+use Chj::Repl::corefuncs();
+our @builtins= Chj::Repl::corefuncs;
 
 
 sub __signalhandler { die "SIGINT\n" }
@@ -276,7 +276,7 @@ sub eval_code {
 		  my $barename= substr $varname, 1;
 		  ('local our '.$varname.';'
 		   .'*'.$barename
-		   .' = $$Chj::Util::Repl::eval_lexicals{'
+		   .' = $$Chj::Repl::eval_lexicals{'
 		   .singlequote($_)
 		   .'};')
 	      }
@@ -293,7 +293,7 @@ sub eval_code {
 }
 
 
-use Chj::Util::Repl::Stack;
+use Chj::Repl::Stack;
 
 our $repl_level; # maybe number of repl layers above
 
@@ -303,7 +303,7 @@ sub run {
     my ($maybe_skip)=@_;
 
     my $skip= $maybe_skip // 0;
-    my $stack= Chj::Util::Repl::Stack->get ($skip + 1);
+    my $stack= Chj::Repl::Stack->get ($skip + 1);
 
     local $repl_level= ($repl_level // -1) + 1;
 

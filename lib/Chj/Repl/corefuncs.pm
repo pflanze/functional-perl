@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Chj::Util::Repl::corefuncs
+Chj::Repl::corefuncs
 
 =head1 SYNOPSIS
 
@@ -20,7 +20,7 @@ Returns a list of all perl CORE functions
 =cut
 
 
-package Chj::Util::Repl::corefuncs;
+package Chj::Repl::corefuncs;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(corefuncs);
 
@@ -128,6 +128,6 @@ END
     };
 }
 
-*Chj::Util::Repl::corefuncs= \&corefuncs;
+*Chj::Repl::corefuncs= \&corefuncs;
 
 1
