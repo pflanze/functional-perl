@@ -143,6 +143,19 @@ sub levels_to_user {
 }
 
 
+# COPY from Chj/xhome.pm, just don't want to depend on File::HomeDir
+# or something until it's clear which one to use (and how to write
+# files portably...)
+sub xeffectiveuserhome () {
+    my $uid= $>;
+    my ($name,$passwd,$_uid,$gid,
+	$quota,$comment,$gcos,$dir,$shell,$expire)
+      = getpwuid $uid
+	or die "unknown user for uid $uid";
+    $dir
+}
+# /COPY
+
 use Class::Array -fields=>
   -publica=> (
 	      'Historypath', #undef=none, but a default is set
@@ -163,8 +176,9 @@ use Class::Array -fields=>
 
 sub new {
     my $class=shift;
-    my$self= $class->SUPER::new;
-    $$self[Historypath]= "$ENV{HOME}/.perl-repl_history" if $ENV{HOME};
+    my $self= $class->SUPER::new;
+    $$self[Historypath]= xeffectiveuserhome."/.perl-repl_history";
+    # ^ XX is this always ok over $ENV{HOME} ?
     $$self[MaxHistLen]= 100;
     $$self[DoCatchINT]=1;
     $$self[DoRepeatWhenEmpty]=1;
