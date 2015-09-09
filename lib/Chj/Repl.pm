@@ -84,6 +84,8 @@ Completion:
  - % and * make completion stop working unless you put a space after those sigils. (@ and & work as they should)
  - keep the last 10 or so completion lists, and use those in the -> case if the var's type could not be determined.
 
+:V breaks view of :e and similar (shows CODE..)
+
 =cut
 
 
