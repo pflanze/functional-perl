@@ -75,8 +75,8 @@ L<Chj::IO::File>, L<Chj::xsysopen>, L<Chj::xopendir>
 package Chj::xopen;
 @ISA='Exporter';
 require Exporter;
-@EXPORT= qw(xopen);
-@EXPORT_OK= qw(xopen_read xopen_write xopen_append xopen_update
+@EXPORT= qw(xopen xopen_read);
+@EXPORT_OK= qw(xopen_write xopen_append xopen_update
 	       perhaps_open_read perhaps_xopen_read
 	       devnull devzero
 	       glob_to_fh
