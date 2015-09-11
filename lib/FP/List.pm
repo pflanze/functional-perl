@@ -89,6 +89,9 @@ package FP::List;
 	      list_ref
 	      list_perhaps_one
 	      list_sort
+	      list_drop
+	      list_take
+	      list_slice
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -660,6 +663,68 @@ sub list_for_each ($ $ ) {
 TEST_STDOUT {
     list(1,3)->for_each (*xprintln)
 } "1\n3\n";
+
+
+
+# tons of slightly adapted COPIES from FP::Stream. XX finally find a
+# solution for this
+
+sub list_drop ($ $);
+sub list_drop ($ $) {
+    my ($s, $n)=@_;
+    while ($n > 0) {
+	$s= force $s;
+	die "list too short" if is_null $s;
+	$s= cdr $s;
+	$n--
+    }
+    $s
+}
+
+*FP::List::List::drop= *list_drop;
+
+
+sub list_take ($ $);
+sub list_take ($ $) {
+    my ($s, $n)=@_;
+	if ($n > 0) {
+	    $s= force $s;
+	    is_null $s ?
+	      $s
+		: cons(car $s, list_take( cdr $s, $n - 1));
+	} else {
+	    null
+	}
+}
+
+*FP::List::List::take= *list_take;
+
+
+sub list_slice ($ $);
+sub list_slice ($ $) {
+    my ($start,$end)=@_;
+    $end= force $end;
+    my $rec; $rec= sub {
+	my ($s)=@_;
+	my $rec=$rec;
+	    $s= force $s;
+	    if (is_null $s) {
+		$s # null
+	    } else {
+		if ($s eq $end) {
+		    null
+		} else {
+		    cons car($s), &$rec(cdr $s)
+		}
+	    }
+    };
+    @_=($start); goto &{Weakened $rec};
+}
+
+*FP::List::List::slice= *list_slice;
+# maybe call it `cut_at` instead?
+
+# /COPIES
 
 
 sub string_to_list ($;$) {
