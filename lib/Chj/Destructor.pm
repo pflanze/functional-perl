@@ -47,7 +47,7 @@ use strict; use warnings FATAL => 'uninitialized';
     use FP::Struct [[*is_procedure, "thunk"]];
     sub DESTROY {
 	my ($self)=@_;
-	local ($@,$!,$?);
+	local ($@,$!,$?,$^E,$.);
 	$self->thunk->()
     }
     _END_
