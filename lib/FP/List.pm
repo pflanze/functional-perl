@@ -92,6 +92,8 @@ package FP::List;
 	      list_drop
 	      list_take
 	      list_slice
+	      circularlist
+	      weaklycircularlist
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -489,6 +491,68 @@ sub list {
     }
     $res
 }
+
+
+
+# These violate the principle of a purely functional data
+# structure. Are they ok since they are constructors (the outside
+# world will never see mutation)? (Note that streams can be cyclic
+# already without mutating the cons cells, by way of using a recursive
+# binding (mutating the variable that holds it, "my $s; $s= cons 1,
+# lazy { $s };").)
+
+# WARNING: results of this function won't be deallocated
+# automatically. You have to break the reference cycle explicitely!
+sub circularlist {
+    my $l= list (@_);
+    my $last= $l->drop($#_);
+    $$last[1]=$l;
+    $l
+}
+
+# And the result of this function will open up (interrupt the cycle)
+# as soon as you let go of the front element.
+
+use Scalar::Util "weaken";
+
+sub weaklycircularlist {
+    my $l= list (@_);
+    my $last= $l->drop($#_);
+    $$last[1]=$l;
+    weaken ($$last[1]);
+    $l
+}
+
+use Chj::Destructor;
+
+TEST {
+    my $z=0;
+    my $v= do {
+	my $l= circularlist "a","b",Destructor{$z++},"d";
+	$l->ref (5)
+    };
+    [ $z, $v ]
+} [ 0, "b"]; # leaking the test list!
+
+TEST {
+    my $z=0;
+    my $v= do {
+	my $l= weaklycircularlist "a","b",Destructor{$z++},"d";
+	$l->ref (5)
+    };
+    [ $z, $v ]
+} [ 1, "b"]; # no leak.
+
+TEST_EXCEPTION {
+    my $z=0;
+    my $v= do {
+	my $l= weaklycircularlist "a","b",Destructor{$z++},"d";
+	$l= $l->rest;
+	$l->ref (4)
+    };
+    [ $z, $v ]
+} 'improper list'; # nice message at least, thanks to undef != null
+
 
 use FP::Predicates qw(either is_natural complement);
 
