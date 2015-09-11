@@ -25,6 +25,11 @@ Chj::Destructor
 
 Util to help debug or test memory deallocation.
 
+=head1 SEE ALSO
+
+End.pm, but that one does not type-check the destructor argument
+early, nor does it localize error variables in its DESTROY method.
+
 =cut
 
 
@@ -42,6 +47,7 @@ use strict; use warnings FATAL => 'uninitialized';
     use FP::Struct [[*is_procedure, "thunk"]];
     sub DESTROY {
 	my ($self)=@_;
+	local ($@,$!,$?);
 	$self->thunk->()
     }
     _END_
