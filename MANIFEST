@@ -57,6 +57,7 @@ lib/Chj/BinHexOctDec.pm
 lib/Chj/BuiltinTypePredicates.pm
 lib/Chj/CPAN/ModulePODUrl.pm
 lib/Chj/Class/methodnames.pm
+lib/Chj/Destructor.pm
 lib/Chj/IO/Command.pm
 lib/Chj/IO/CommandCommon.pm
 lib/Chj/IO/Dir.pm
