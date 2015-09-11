@@ -111,59 +111,86 @@ sub pointer_eq2 ($$) {
 }
 
 sub equals2 ($$) {
-    if (!defined $_[0]) {
-	defined $_[1] ? undef : 1
+    my ($a,$b)=@_;
+    if (!defined $a) {
+	if (!defined $b) {
+	    1
+	} else {
+	    if (length ref $b) {
+		if (is_promise $b) {
+		    @_=($a, force ($b)); goto \&equals2;
+		} else {
+		    undef
+		}
+	    } else {
+		undef
+	    }
+	}
     } else {
-	my $a= force ($_[0]);
-	my $b= force ($_[1]);
-	if (length (my $ar= ref $a)) {
-	    if (length (my $br= ref $b)) {
-		# First check for pointer equality, or rather
-		# equivalence since it can be overloaded. XX Do we
-		# want to forgo the overloading (would it need to use
-		# XS code?) or should it explicitely be part of the
-		# mix? XXX If we want to use it, then why not request
-		# classes to consistently overload == instead of
-		# providing an `equals` method? But then we're missing
-		# a way for *fast* pointer comparison, unless we're
-		# really using something else (again, XS code?) for
-		# that instead.
-		#$a == $b
-		&pointer_eq2 ($a, $b) or
-		  do {
-		      if ($ar eq $br) {
-			  if (my $cmp= $$primitive_equals{$ar}) {
-			      &$cmp (@_)
-			  } else {
-			      $a->equals ($b)
-			  }
-		      } else {
-			  undef
-		      }
-		  }
+	# $a is defined
+	if (!defined $b) {
+	    if (length ref $a) {
+		if (is_promise $a) {
+		    @_=(force($a), $b); goto \&equals2;
+		} else {
+		    undef
+		}
 	    } else {
 		undef
 	    }
 	} else {
-	    defined $b ?
+	    # both are defined
+	    if (length (my $ar= ref $a)) {
+		if (length (my $br= ref $b)) {
+		    pointer_eq2 ($a, $b) or
+		      do {
+			  if (is_promise $a or is_promise $b) {
+			      @_=(force ($a), force ($b)); goto \&equals2;
+			  } elsif ($ar eq $br) {
+			      if (my $cmp= $$primitive_equals{$ar}) {
+				  &$cmp (@_)
+			      } else {
+				  $a->equals ($b)
+			      }
+			  } else {
+			      undef
+			  }
+		      };
+		} else {
+		    # $b is not a reference ($a is)
+		    if (is_promise $a) {
+			@_=(force ($a), $b); goto \&equals2;
+		    } else {
+			undef
+		    }
+		}
+	    } else {
+		# $a is not a reference
+		if (length ref $b) {
+		    if (is_promise $b) {
+			@_=($a, force($b)); goto \&equals2;
+		    } else {
+			undef
+		    }
+		} else {
+		    # $b is not a reference either
+		    # make sure it's the same kind of non-reference values:
+		    if (ref (\$a) eq ref (\$b)) {
+			# XX number comparison could optimize the case where both
+			# values don't have string representations, compare using
+			# == then.
 
-	      (length (ref $b) ? undef
-	       : (
-		  # make sure it's the same kind of non-reference values:
-		  ref (\$a) eq ref (\$b) ?
-		  # XX number comparison could optimize the case where both
-		  # values don't have string representations, compare using
-		  # == then.
+			# XXX Also, on a slightly independent note, and not just
+			# an optimization: in the other case (any of the
+			# arguments also has a string representation) compare
+			# both as string and as number?
 
-		  # XXX Also, on a slightly independent note, and not just
-		  # an optimization: in the other case (any of the
-		  # arguments also has a string representation) compare
-		  # both as string and as number?
-
-		  $a eq $b
-		 : undef))
-
-		: undef
+			$a eq $b
+		    } else {
+			undef
+		    }
+		}
+	    }
 	}
     }
 }
