@@ -137,4 +137,13 @@ TEST {equals stream (1,2), stream (1,2)} 1;
 TEST {equals stream (1,2), lazy { cons 1, stream (2)}} 1;
 TEST {equals stream (1,2), cons 1, stream (2)} 1;
 
+# does it force identical promises?
+
+my ($a,$b,$sideeffect);
+TEST { $a= lazy { $sideeffect++; 33*3 };
+       $b= $a;
+       equals $a, $b
+   } 1;
+TEST { $sideeffect } undef;
+
 1
