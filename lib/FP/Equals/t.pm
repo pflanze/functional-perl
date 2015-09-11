@@ -137,6 +137,20 @@ TEST {equals stream (1,2), stream (1,2)} 1;
 TEST {equals stream (1,2), lazy { cons 1, stream (2)}} 1;
 TEST {equals stream (1,2), cons 1, stream (2)} 1;
 
+# only one of the arguments lazy:
+
+TEST { equals lazy { 2+1 }, 1+2 } 1;
+TEST { equals 1+2, lazy { 2+1 } } 1;
+
+TEST { equals lazy { [2+1] }, [lazy { 1+2 }] } 1;
+TEST { equals lazy { [2+1] }, [lazy { 1+3 }] } '';
+
+TEST { equals lazy { 2+1 }, [1+2] } undef;
+TEST { equals lazy { [2+1] }, 1+2 } undef;
+# and swapped arguments (shouldn't do this manually):
+TEST { equals [1+2], lazy { 2+1 } } undef;
+TEST { equals 1+2, lazy { [2+1] } } undef;
+
 # does it force identical promises?
 
 my ($a,$b,$sideeffect);
