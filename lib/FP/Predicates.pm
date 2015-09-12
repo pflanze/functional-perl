@@ -83,7 +83,10 @@ package FP::Predicates;
 	      greater_equal
 
 	      maybe
+	      is_defined
+	      is_true
 	      true
+	      is_false
 	      false
 	      complement
 	      either
@@ -313,6 +316,21 @@ sub maybe ($) {
     }
 }
 
+
+# (this would also be a candidate for FP::Ops)
+sub is_defined ($) {
+    defined $_[0]
+}
+
+sub is_true ($) {
+    !!$_[0]
+}
+
+# (this would also be a candidate as 'not' with a different name for
+# FP::Ops)
+sub is_false ($) {
+    !$_[0]
+}
 
 sub true {
     1
