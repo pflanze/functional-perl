@@ -262,6 +262,7 @@ sub perhaps_open {
     my $proto=shift;
     my $self= ref $proto ? $proto : $proto->new;
     my $rv;
+    $!= undef;
     if (@_==1) {
 	$rv= open $self->fh,$_[0];
     } elsif (@_>=2) {
@@ -310,6 +311,7 @@ sub xsysopen {
     my $proto=shift;
     my $self= ref $proto ? $proto : $proto->new;
     my $rv;
+    $!= undef;
     if (@_==2) {
 	$rv= sysopen $self->fh,$_[0],$_[1];
     } elsif (@_==3) {
