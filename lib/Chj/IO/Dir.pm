@@ -39,6 +39,7 @@ sub path {
 sub xopendir {
     my $class=shift;
     my $hdl= gensym;
+    $!= undef;
     if (opendir $hdl,$_[0]) {
 	bless $hdl, $class;
 	$metadata{pack "I",$hdl}=[1, $_[0]];
@@ -53,6 +54,7 @@ sub xopendir {
 sub opendir {
     my $class=shift;
     my $hdl= gensym;
+    $!= undef;
     if (opendir $hdl,$_[0]) {
 	bless $hdl, $class;
 	$metadata{pack "I",$hdl}=[1, $_[0]];
@@ -65,6 +67,7 @@ sub opendir {
 
 sub perhaps_opendir {
     my $class=shift;
+    $!= undef;
     if (defined (my $fh= $class->opendir(@_))) {
 	$fh
     } else {
@@ -94,12 +97,13 @@ sub new {
 
 sub read {
     my $self=shift;
+    $!= undef;
     readdir $self
 }
 
 sub xread {
     my $self=shift;
-    $!=0;
+    $!= undef;
     # ^ Needed, CORE::readdir will not set it to 0. Thus maybe it will
     # not even set any error? Hm, well, at least on end of dir it sets
     # it to Bad file descriptor.
@@ -124,6 +128,7 @@ sub xread {
 
 sub nread { # ignore . and .. entries
     my $self=shift;
+    $!= undef;
     if (wantarray) {
 	grep { $_ ne '.' and $_ ne '..' } readdir $self
     } else {
@@ -136,6 +141,7 @@ sub nread { # ignore . and .. entries
 
 sub xnread {
     my $self=shift;
+    $!= undef;
     if (wantarray) {
 	my $res= [ grep { $_ ne '.' and $_ ne '..' } readdir $self ];
 	@$res
@@ -149,6 +155,7 @@ sub xnread {
 
 sub telldir {
     my $self=shift;
+    $!= undef;
     CORE::telldir $self
 }
 
@@ -156,6 +163,7 @@ sub seekdir {
     my $self=shift;
     @_==1 or croak "seekdir: expecting 1 argument";
     my($pos)=@_;
+    $!= undef;
     CORE::seekdir $self,$pos
 }
 
@@ -163,17 +171,20 @@ sub xseekdir {
     my $self=shift;
     @_==1 or croak "xseekdir: expecting 1 argument";
     my($pos)=@_;
+    $!= undef;
     CORE::seekdir $self,$pos or croak "xseekdir (UNTESTED): $!";##
 }
 
 sub xrewind {
     my $self=shift;
+    $!= undef;
     CORE::seekdir $self,0 or croak "xrewind (UNTESTED): $!";##
 }
 
 sub xclose {
     my $self=shift;
     #(maybe check metadata is_open first? not really useful)
+    $!= undef;
     closedir $self or croak "xclose: $!";
     $metadata{pack "I",$self}[0]=0
 }
