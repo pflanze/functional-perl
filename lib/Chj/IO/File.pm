@@ -269,7 +269,7 @@ sub perhaps_open {
     } else {
 	croak "xopen @_: wrong number of arguments";
     }
-    $rv or do {
+    $rv // do {
 	$Chj::IO::ERRSTR=$!; $Chj::IO::ERRNO=$!+0;
 	return ()
     };
@@ -317,7 +317,7 @@ sub xsysopen {
     } else {
 	croak "xsysopen @_: wrong number of arguments";
     }
-    $rv or do{
+    $rv // do{
 	$Chj::IO::ERRSTR=$!; $Chj::IO::ERRNO=$!+0;
 	croak ("xsysopen "
 	       . _quote($_[0])
@@ -340,7 +340,7 @@ sub sysopen {
     } else {
 	croak "sysopen @_: wrong number of arguments";
     }
-    $rv or return undef;
+    $rv // return undef;
     $self->set_opened_path(1,$_[0]);
     $self
 }
@@ -1016,7 +1016,7 @@ sub xdup { # (return objects)
       or croak "xdup: filehandle of ".($self->quotedname)." is undefined (maybe it's closed?)";
     require POSIX;
     my $fd= POSIX::dup($myfileno)
-      or croak "xdup ".$self->quotedname." (fd $myfileno): $!";
+      // croak "xdup ".$self->quotedname." (fd $myfileno): $!";
     # turn an fd into a perl filehandle:
     #  IO::Handle has:            if ($io->fdopen(CORE::fileno(STDIN),"r")) {
     #  which works like:     open($io, _open_mode_string($mode) . '&' . $fd)
