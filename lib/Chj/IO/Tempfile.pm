@@ -218,6 +218,7 @@ sub xreplace_or_withmode {
 	defined $euid
 	  or croak "xreplace_or_withmode: ?? can't stat own file '$path': $!";
 	if ($euid == 0) {
+	    $!= undef;
 	    chown $uid,$gid, $path
 	      or croak "xreplace_or_withmode: chown '$path': $!";
 	} else {
@@ -226,6 +227,7 @@ sub xreplace_or_withmode {
 		  "of '$path' to $uid since we are not root";
 		$mode &= 0777; # see below
 	    }
+	    $!= undef;
 	    chown $euid,$gid, $path
 	      or do {
 		  carp "xreplace_or_withmode: warning: could not set group ".
@@ -242,6 +244,7 @@ sub xreplace_or_withmode {
 		# assuming stat object
 		$mode= $orwithmode->permissions;
 		if ($> == 0) {
+		    $!= undef;
 		    chown $orwithmode->uid, $orwithmode->gid, $path
 		      or croak "xreplace_or_withmode: chown '$path': $!";
 		}
@@ -260,6 +263,7 @@ sub xreplace_or_withmode {
 	      " and no default mode given, stat '$targetpath': $!";
 	}
     }
+    $!= undef;
     chmod $mode,$path
       or croak "xreplace_or_withmode: chmod '$path': $!";
     $self->xrename($targetpath);
