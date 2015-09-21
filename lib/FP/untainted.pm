@@ -16,6 +16,9 @@ FP::untainted - functional untainting
  use FP::untainted;
  exec untainted($ENV{CMD}); # doesn't change the taint flag on $ENV{CMD}
 
+ use FP::untainted 'is_untainted';
+ # complement of Scalar::Util's 'tainted'
+
 =head1 DESCRIPTION
 
 L<Taint::Util> offers `untaint`, but it changes its argument. This
@@ -30,7 +33,7 @@ Should this module stay? Vote your opinion if you like.
 package FP::untainted;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(untainted);
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(is_untainted);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -38,6 +41,12 @@ use strict; use warnings FATAL => 'uninitialized';
 sub untainted ($) {
     $_[0]=~ /(.*)/s or die "??";
     $1
+}
+
+use Scalar::Util 'tainted';
+
+sub is_untainted ($) {
+    not tainted $_[0]
 }
 
 1
