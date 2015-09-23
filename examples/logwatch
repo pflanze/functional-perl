@@ -109,6 +109,7 @@ sub forked (&) {
 
 # /lib
 
+use Scalar::Util qw(weaken);
 use Sys::Hostname qw(hostname);
 use Chj::xopen;
 use Chj::IO::Command;
@@ -174,6 +175,7 @@ fun xtmpfile_noautoclean () {
 }
 
 fun processlines_ ($lines, $out, $maybe_reporterpid) {
+    weaken $_[0];
     my ($line,$rest)= $lines->first_and_rest;
     warn "line='$line', maybe_reporterpid=".singlequote($maybe_reporterpid)
       if $verbose;
@@ -207,6 +209,7 @@ fun processlines_ ($lines, $out, $maybe_reporterpid) {
 }
 
 fun processlines ($lines) {
+    weaken $_[0];
     processlines_ ($lines, xtmpfile_noautoclean, undef)
 }
 
