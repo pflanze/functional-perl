@@ -48,8 +48,8 @@ sub xtmpfile {
     #           and a random number and should return the path to use
     my $genpath= do{
 	my $gen_base= sub {
-	    my $n=$0;
-	    $n=~tr/\//-/;
+	    my ($n)= $0=~ m{(.*[^.]{2,}.*)}; # at least 2 non-"." characters
+	    $n=~ tr/\//-/;
 	    "/tmp/$n"
 	};
 	my $mk_basepath_n= sub {
