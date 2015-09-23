@@ -22,6 +22,8 @@ examples/diff_to_html
 examples/fibs
 examples/find-maildirs
 examples/gen-csv
+examples/logwatch
+examples/logwatch_exampleconfig.pl
 examples/predicates
 examples/primes
 examples/skip
