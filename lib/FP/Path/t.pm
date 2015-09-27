@@ -54,6 +54,11 @@ TEST { $p->xclean_dotdot->equals($p) } '';
 TEST { $p->xclean_dotdot->equals($p->xclean_dotdot) } 1;
 
 
+TEST { FP::Path->new_from_string ("a/.././b/C")->add
+  (FP::Path->new_from_string("../d/./../e"), 0)->string }
+  'a/../b/C/../d/../e'; # 'add' does an implicit clean; should it be
+                        # implemented differently?
+
 TEST { (new_from_string FP::Path "hello//world/you")->string }
   "hello/world/you";
 TEST { (new_from_string FP::Path "/hello//world/you")->string }
