@@ -73,7 +73,7 @@ sub import {
        }
       };
     my $exports=
-      ((!@_ or (@_==1 and $_[0] eq ":all")) ?
+      ((@_==1 and $_[0] eq ":all") ?
        $exportdecl
        :
        +{
