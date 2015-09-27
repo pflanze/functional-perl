@@ -30,6 +30,16 @@ Chj::constructorexporter
  use Bar "foo"; # this exports a different "foo"!
  foo("def") # calls Bar->new("def")
 
+ # to import both (avoiding conflict):
+ use Foo qw(foo);
+ use Bar qw(foo -prefix bar_); # imports 'bar_foo'
+ # The position of the -prefix argument and its value within the
+ # import list is irrelevant.
+
+ # Note that the exported constructor functions cannot be reached by
+ # full qualification: in this example Foo::foo is undefined (or it
+ # might instead be an unrelated method definition)!
+
 
 =head1 DESCRIPTION
 
@@ -59,6 +69,22 @@ sub constructorexporter {
     my %exportdecl= @_;
     sub {
 	my $class=shift;
+
+	my ($all)= grep { $_ eq ":all" } @_;
+	my @rest= grep { $_ ne ":all" } @_;
+
+	my $prefix="";
+	my @names;
+	for (my $i=0; $i < @rest; $i++) {
+	    my $v= $rest[$i];
+	    if ($v eq "-prefix") {
+		$i++;
+		$prefix= $rest[$i];
+	    } else {
+		push @names, $v
+	    }
+	}
+
 	my $package= caller;
 
 	my $exportdecl= +{map {
@@ -68,19 +94,21 @@ sub constructorexporter {
 		 $class->$methodname (@_)
 	     })
 	} keys %exportdecl};
+
 	my $exports=
-	  ((@_==1 and $_[0] eq ":all") ?
+	  ($all ?
 	   $exportdecl
 	   :
 	   +{
 	     map {
 		 $_=>
 		   $$exportdecl{$_} // die "$_ not exported by $class"
-	       } @_
+	       } @names
 	    });
+
 	for my $name (keys %$exports) {
 	    no strict 'refs';
-	    *{$package."::".$name}= $$exports{$name}
+	    *{$package."::".$prefix.$name}= $$exports{$name}
 	}
     }
 }
