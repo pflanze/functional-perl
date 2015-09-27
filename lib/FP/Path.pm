@@ -13,13 +13,26 @@ FP::Path
 
 =head1 SYNOPSIS
 
+ use FP::Path;
+ my $p= FP::Path->new_from_string ("a/../b/C")->add
+  (FP::Path->new_from_string("../d/../e"), 0);
+ $p->string # 'a/../b/C/../d/../e'
+ $p->xclean_dotdot->string # 'b/e'
+ $p->xclean_dotdot->equals($p) # ''
+ $p->xclean_dotdot->equals($p->xclean_dotdot) # 1
+
 =head1 DESCRIPTION
 
-Not really sure why I'm creating something from scratch here?
+Not really sure why I'm creating something from scratch here? It might
+be cleaner:
 
 This doesn't do I/O (access the file system, ask the system for the
 hostname, etc.), and it doesn't resolve ".." unless when told to
 (`perhaps_clean_dotdot` method).
+
+=head1 SEE ALSO
+
+L<FP::Path::t> for the test suite
 
 =cut
 
