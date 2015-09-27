@@ -126,7 +126,7 @@ sub string {
 
 # remove "." entries: (leave ".." in, because these cannot be resolved
 # without reading the file system or knowing the usage)
-sub clean {
+sub clean_dot {
     my $s=shift;
     my $rseg= $s->rsegments;
     $s->rsegments_set ($rseg->filter(sub { not ($_[0] eq ".") }))
@@ -146,7 +146,7 @@ sub clean {
 }
 
 # XX is only valid to be applied to paths that have already been
-# `clean`ed !
+# `clean_dot`ed !
 sub perhaps_clean_dotdot {
     my $s=shift;
     # XX this might actually be more efficient when working on the reverse
@@ -178,7 +178,7 @@ sub perhaps_clean_dotdot {
 
 
 # XX is only valid to be applied to paths that have already been
-# `clean`ed !
+# `clean_dot`ed !
 sub xclean_dotdot {
     my $s=shift;
     if (my ($v)= $s->perhaps_clean_dotdot) {
@@ -209,7 +209,7 @@ sub add {
 	$b
     } else {
 	my $c= $a->rsegments_set ($b->rsegments->append($a->rsegments))
-	  ->clean;
+	  ->clean_dot;
 	$is_url ? $c->xclean_dotdot : $c
     }
 }

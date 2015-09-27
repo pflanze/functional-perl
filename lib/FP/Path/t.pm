@@ -56,7 +56,7 @@ TEST { $p->xclean_dotdot->equals($p->xclean_dotdot) } 1;
 
 TEST { FP::Path->new_from_string ("a/.././b/C")->add
   (FP::Path->new_from_string("../d/./../e"), 0)->string }
-  'a/../b/C/../d/../e'; # 'add' does an implicit clean; should it be
+  'a/../b/C/../d/../e'; # 'add' does an implicit clean_dot; should it be
                         # implemented differently?
 
 TEST { (new_from_string FP::Path "hello//world/you")->string }
@@ -71,31 +71,31 @@ TEST { (new_from_string FP::Path ".")->string }
   ".";
 TEST { (new_from_string FP::Path "./")->string }
   "./";
-TEST { (new_from_string FP::Path "./")->clean->string }
+TEST { (new_from_string FP::Path "./")->clean_dot->string }
   "./";
 TEST { (new_from_string FP::Path "./..")->string }
   "./..";
-TEST { (new_from_string FP::Path "./..")->clean->string }
+TEST { (new_from_string FP::Path "./..")->clean_dot->string }
   "..";
 
-TEST { (new_from_string FP::Path "./foo/../bar/.//baz/.")->clean->string }
+TEST { (new_from_string FP::Path "./foo/../bar/.//baz/.")->clean_dot->string }
   "foo/../bar/baz/";
-TEST { (new_from_string FP::Path "")->clean->string }
+TEST { (new_from_string FP::Path "")->clean_dot->string }
   # XX should this be an error?
   '.';
 
 TEST { (new_from_string FP::Path ".")->string }
   ".";
-TEST { (new_from_string FP::Path ".")->clean->string }
+TEST { (new_from_string FP::Path ".")->clean_dot->string }
   './';
 
 TEST { (new_from_string FP::Path "/")->string }
   "/";
-TEST { (new_from_string FP::Path "/")->clean->string }
+TEST { (new_from_string FP::Path "/")->clean_dot->string }
   "/";
-TEST { (new_from_string FP::Path "/.")->clean->string }
+TEST { (new_from_string FP::Path "/.")->clean_dot->string }
   "/";
-TEST { (new_from_string FP::Path "/./")->clean->string }
+TEST { (new_from_string FP::Path "/./")->clean_dot->string }
   "/";
 TEST { (new_from_string FP::Path "/./")->string }
   "/./";
@@ -110,26 +110,26 @@ TEST { (new_from_string FP::Path "../baz")->contains_dotdot }
   "1";
 TEST { (new_from_string FP::Path "baz/..")->contains_dotdot }
   "1";
-TEST { (new_from_string FP::Path "baz/..")->clean->contains_dotdot }
+TEST { (new_from_string FP::Path "baz/..")->clean_dot->contains_dotdot }
   "1";
 
-TEST_EXCEPTION { FP::Path->new_from_string(".")->clean->dirname }
+TEST_EXCEPTION { FP::Path->new_from_string(".")->clean_dot->dirname }
   q{can't take dirname of empty path};
-TEST { FP::Path->new_from_string("foo")->clean->dirname->string }
+TEST { FP::Path->new_from_string("foo")->clean_dot->dirname->string }
   '.';
-TEST { FP::Path->new_from_string("foo/bar")->clean->dirname->string }
+TEST { FP::Path->new_from_string("foo/bar")->clean_dot->dirname->string }
   'foo';
 TEST_EXCEPTION { FP::Path->new_from_string("")->dirname }
   q{can't take dirname of empty path};
 
-TEST { FP::Path->new_from_string(".")->clean->has_endslash }
+TEST { FP::Path->new_from_string(".")->clean_dot->has_endslash }
   1;
-TEST { FP::Path->new_from_string(".")->clean->string }
+TEST { FP::Path->new_from_string(".")->clean_dot->string }
   './';
 #ok
-TEST { FP::Path->new_from_string("")->clean->has_endslash }
+TEST { FP::Path->new_from_string("")->clean_dot->has_endslash }
   0;
-TEST { FP::Path->new_from_string("")->clean->string }
+TEST { FP::Path->new_from_string("")->clean_dot->string }
   '.';
 #h
 
@@ -172,7 +172,7 @@ TEST { my $p= FP::Path->new_from_string("/foo");
 
 sub t_str_clean ($) {
     my ($a)=@_;
-    FP::Path->new_from_string($a)->clean->xclean_dotdot;
+    FP::Path->new_from_string($a)->clean_dot->xclean_dotdot;
 }
 
 sub t_equals_clean ($$) {
