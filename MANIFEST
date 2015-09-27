@@ -83,6 +83,7 @@ lib/Chj/Unix/Signal.pm
 lib/Chj/Unix/exitcode.pm
 lib/Chj/WithRepl.pm
 lib/Chj/chompspace.pm
+lib/Chj/constructorexporter.pm
 lib/Chj/noTEST.pm
 lib/Chj/pp.pm
 lib/Chj/repl.pm

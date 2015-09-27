@@ -51,6 +51,7 @@ use strict;
 
 use FP::List ":all";
 use FP::Equals ();
+use Chj::constructorexporter;
 
 use FP::Struct
   [
@@ -61,29 +62,8 @@ use FP::Struct
    'is_absolute', # bool
   ];
 
+*import= constructorexporter new_from_string=> "path";
 
-sub import {
-    my $class=shift;
-    my $package= caller;
-    my $exportdecl=
-      {
-       path=> sub ($) {
-	   @_==1 or die "wrong number of arguments";
-	   $class->new_from_string (@_)
-       }
-      };
-    my $exports=
-      ((@_==1 and $_[0] eq ":all") ?
-       $exportdecl
-       :
-       +{
-	 map { $_=> $$exportdecl{$_} // die "$_ not exported by $class" } @_
-	});
-    for my $name (keys %$exports) {
-	no strict 'refs';
-	*{$package."::".$name}= $$exports{$name}
-    }
-}
 
 sub new_from_string {
     my $cl=shift;
