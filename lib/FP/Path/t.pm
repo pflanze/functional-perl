@@ -211,5 +211,28 @@ TEST_EXCEPTION { FP::Path->new_from_string("/../..")->xclean_dotdot->string }
   'can\'t take \'..\' of root directory';
 
 
+# - is `is_absolute` attribute necessary? Isn't starting with ""
+# enough? If it is necessary, then why/when?
+
+# XX
+
+
+# - does cleaning a path that ends in /. leve it with has_endslash
+# set?
+
+sub path ($) { FP::Path->new_from_string (@_) } # wow finally
+
+TEST { path ("foo/.") -> has_endslash } '';
+TEST { path ("foo/.") -> xclean -> has_endslash } 1;
+TEST { path ("/.") -> has_endslash } '';
+TEST { path ("/.") -> xclean -> has_endslash } 1;
+
+TEST { path ("foo/..") -> has_endslash } '';
+TEST { path ("foo/..") -> xclean -> has_endslash } ''; # XX hm
+
+TEST { path ("foo/bar/..") -> has_endslash } '';
+TEST { path ("foo/bar/..") -> xclean -> has_endslash } ''; # XX hm, is this a bug?
+
+
 
 1
