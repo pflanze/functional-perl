@@ -30,6 +30,12 @@ This doesn't do I/O (access the file system, ask the system for the
 hostname, etc.), and it doesn't resolve ".." unless when told to
 (`perhaps_clean_dotdot` method).
 
+=head1 TODO
+
+Port / merge with
+https://github.com/pflanze/chj-schemelib/blob/master/cj-posixpath.scm
+?
+
 =head1 SEE ALSO
 
 L<FP::Path::t> for the test suite
