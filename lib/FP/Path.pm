@@ -36,6 +36,8 @@ Port / merge with
 https://github.com/pflanze/chj-schemelib/blob/master/cj-posixpath.scm
 ?
 
+Provide `string_to_path` constructor function?
+
 =head1 SEE ALSO
 
 L<FP::Path::t> for the test suite
