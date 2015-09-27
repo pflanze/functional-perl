@@ -49,9 +49,9 @@ TEST{ FP::Path->new_from_string("a/b/C")
 my $p= FP::Path->new_from_string ("a/../b/C")->add
   (FP::Path->new_from_string("../d/../e"), 0);
 TEST { $p->string } 'a/../b/C/../d/../e';
-TEST { $p->xclean_dotdot->string } 'b/e';
-TEST { $p->xclean_dotdot->equals($p) } '';
-TEST { $p->xclean_dotdot->equals($p->xclean_dotdot) } 1;
+TEST { $p->xclean->string } 'b/e';
+TEST { $p->xclean->equals($p) } '';
+TEST { $p->xclean->equals($p->xclean) } 1;
 
 
 TEST { FP::Path->new_from_string ("a/.././b/C")->add

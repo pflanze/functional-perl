@@ -17,9 +17,9 @@ FP::Path
  my $p= FP::Path->new_from_string ("a/../b/C")->add
   (FP::Path->new_from_string("../d/../e"), 0);
  $p->string # 'a/../b/C/../d/../e'
- $p->xclean_dotdot->string # 'b/e'
- $p->xclean_dotdot->equals($p) # ''
- $p->xclean_dotdot->equals($p->xclean_dotdot) # 1
+ $p->xclean->string # 'b/e'
+ $p->xclean->equals($p) # ''
+ $p->xclean->equals($p->xclean) # 1
 
 =head1 DESCRIPTION
 
@@ -28,7 +28,7 @@ be cleaner:
 
 This doesn't do I/O (access the file system, ask the system for the
 hostname, etc.), and it doesn't resolve ".." unless when told to
-(`perhaps_clean_dotdot` method).
+(`perhaps_clean_dotdot` and derived methods (incl. `xclean` etc.)).
 
 =head1 TODO
 
@@ -187,6 +187,18 @@ sub xclean_dotdot {
 	die "can't take '..' of root directory"
     }
 }
+
+
+sub perhaps_clean {
+    my $s=shift;
+    $s->clean_dot->perhaps_clean_dotdot
+}
+
+sub xclean {
+    my $s=shift;
+    $s->clean_dot->xclean_dotdot
+}
+
 
 sub add_segment { # functionally. hm.
     my $s=shift;
