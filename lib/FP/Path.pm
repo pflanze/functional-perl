@@ -21,6 +21,10 @@ FP::Path
  $p->xclean->equals($p) # ''
  $p->xclean->equals($p->xclean) # 1
 
+ # or use the (evil?) constructor function export feature:
+ use FP::Path "path";
+ path("a/../b/C")->xclean->string # "b/C"
+
 =head1 DESCRIPTION
 
 Not really sure why I'm creating something from scratch here? It might
