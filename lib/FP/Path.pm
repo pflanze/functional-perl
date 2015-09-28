@@ -240,7 +240,7 @@ sub dirname {
     is_null $$s{rsegments}
       and die "can't take dirname of empty path";
     $s->rsegments_update(*cdr)
-      ->has_endslash_set(0);
+      ->has_endslash_set(1);
 }
 
 sub to_relative {

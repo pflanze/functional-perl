@@ -116,9 +116,11 @@ TEST { (path "baz/..")->clean_dot->contains_dotdot }
 TEST_EXCEPTION { path(".")->clean_dot->dirname }
   q{can't take dirname of empty path};
 TEST { path("foo")->clean_dot->dirname->string }
-  '.';
+  './';
 TEST { path("foo/bar")->clean_dot->dirname->string }
-  'foo';
+  'foo/';
+TEST { path("/bar")->clean_dot->dirname->string }
+  '/';
 TEST_EXCEPTION { path("")->dirname }
   q{can't take dirname of empty path};
 
