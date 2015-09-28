@@ -39,6 +39,7 @@ package FP::Array;
 	      array_ref
 	      array_xref
 	      array_length
+	      array_is_null
 	      array_set
 	      array_update
 	      array_push
@@ -109,6 +110,11 @@ TEST_EXCEPTION { array_xref [5], -1 } "index out of bounds";
 sub array_length ($) {
     scalar @{$_[0]}
 }
+
+sub array_is_null ($) {
+    @{$_[0]}==0
+}
+
 
 # functional updates
 
