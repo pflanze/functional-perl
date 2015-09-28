@@ -59,10 +59,11 @@ package FP::List;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
 	   list_of  is_null_or_pair_of null_or_pair_of
-	   car cdr first rest unsafe_cons unsafe_car unsafe_cdr
+	   car cdr first rest
 	   car_and_cdr first_and_rest
 	   list);
-@EXPORT_OK=qw(string_to_list list_length list_reverse list_reverse_with_tail
+@EXPORT_OK=qw(unsafe_cons unsafe_car unsafe_cdr
+	      string_to_list list_length list_reverse list_reverse_with_tail
 	      list_to_string list_to_array rlist_to_array
 	      list_to_values rlist_to_values
 	      write_sexpr
