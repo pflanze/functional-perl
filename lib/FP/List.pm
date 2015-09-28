@@ -71,7 +71,7 @@ package FP::List;
 	      list_strings_join list_strings_join_reverse
 	      list_filter list_map list_mapn
 	      list_fold list_fold_right list_to_perlstring
-	      unfold
+	      unfold unfold_right
 	      list_pair_fold_right
 	      list_drop_last list_drop_while list_rtake_while list_take_while
 	      list_append
@@ -1142,6 +1142,9 @@ TEST_STDOUT { list(5,6,9)->pair_fold_right (*cons, null)->write_sexpr }
 # tail-gen: optional function to map the last seed value, the value
 #           `null` is taken otherwise
 
+# For more documentation, see
+# http://srfi.schemers.org/srfi-1/srfi-1.html#FoldUnfoldMap
+
 sub unfold ($$$$;$);
 sub unfold ($$$$;$) {
     @_==4 or @_==5 or die "wrong number of arguments";
@@ -1153,6 +1156,28 @@ sub unfold ($$$$;$) {
 
 TEST { unfold (*is_zero, *inc, *dec, 5)->array } [6, 5, 4, 3, 2];
 TEST { unfold (*is_zero, *inc, *dec, 5, *list)->array } [6, 5, 4, 3, 2, 0];
+
+
+# unfold-right p f g seed [tail] -> list
+
+sub unfold_right ($$$$;$);
+sub unfold_right ($$$$;$) {
+    @_==4 or @_==5 or die "wrong number of arguments";
+    my ($p, $f, $g, $seed, $maybe_tail)= @_;
+    my $tail= @_==5 ? $maybe_tail : null;
+  LP: {
+	if (&$p ($seed)) {
+	    $tail
+	} else {
+	    ($seed,$tail)= (&$g ($seed),
+			    cons (&$f ($seed), $tail));
+	    redo LP;
+	}
+    }
+}
+
+TEST { unfold_right (*is_zero, *inc, *dec, 5)->array } [2, 3, 4, 5, 6];
+TEST { unfold_right (*is_zero, *inc, *dec, 5, list 99)->array } [2, 3, 4, 5, 6, 99];
 
 
 
