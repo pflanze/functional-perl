@@ -70,6 +70,7 @@ package FP::List;
 	      list_strings_join list_strings_join_reverse
 	      list_filter list_map list_mapn
 	      list_fold list_fold_right list_to_perlstring
+	      list_pair_fold_right
 	      drop_last drop_while rtake_while take_while
 	      list_append
 	      list_zip2
@@ -1100,6 +1101,30 @@ sub FP::List::List::fold_right {
 
 TEST { list(1,2,3)->map(sub{$_[0]+1})->fold_right(sub{$_[0]+$_[1]},0) }
   9;
+
+
+# same as fold_right but passes the whole list remainder instead of
+# only the car to the function
+sub list_pair_fold_right ($$$);
+sub list_pair_fold_right ($$$) {
+    @_==3 or die "wrong number of arguments";
+    my ($fn,$start,$l)=@_;
+    if (is_pair $l) {
+	no warnings 'recursion';
+	my $rest= list_pair_fold_right ($fn,$start,cdr $l);
+	&$fn ($l, $rest)
+    } elsif (is_null $l) {
+	$start
+    } else {
+	die "improper list"
+    }
+}
+
+*FP::List::List::pair_fold_right= rot3left *list_pair_fold_right;
+
+TEST_STDOUT { list(5,6,9)->pair_fold_right (*cons, null)->write_sexpr }
+  '(("5" "6" "9") ("6" "9") ("9"))';
+
 
 sub list_append ($ $) {
     @_==2 or die "wrong number of arguments";
