@@ -73,13 +73,10 @@ sub new_from_string {
     @_==2 or die "wrong number of arguments";
     my ($class, $str)=@_;
     my @p= split m{/+}, $str;
-    # We want a split that drops superfluous empty strings at the end,
-    # but not the start ('/' case). This is not it (and passing -1 to
-    # split isn't it either), so we need to handle this case manually:
-    @p= ('') if (!@p and $str=~ m{^/+$}s);
+    shift @p if (@p and $p[0] eq "");
     $class->new(array_to_list_reverse(\@p),
-	     scalar $str=~ m{/$}s,
-	     scalar $str=~ m{^/}s)
+		scalar $str=~ m{/$}s,
+		scalar $str=~ m{^/}s)
 }
 
 sub equals {
@@ -99,38 +96,18 @@ sub segments {
     $s->rsegments->reverse
 }
 
-sub string_without_endslash {
-    my $s=shift;
-    $s->rsegments->strings_join_reverse("/")
-}
-
 sub string {
     my $s=shift;
-    my $str= $s->string_without_endslash;
-    if ($s->has_endslash) {
-	if (length $str) {
-	    $str."/"
-	} else {
-	    if ($s->is_absolute) {
-		"/"
-	    } else {
-		# force using ".", XX hmm but yes no other way
-		"./"
-	    }
-	}
-    } else {
-	if (length $str) {
-	    $str
-	} else {
-	    # PS. if I would split ..,1, then I could do away with
-	    # this test (and also some others), right?
-	    if ($s->is_absolute) {
-		"/"
-	    } else {
-		"."
-	    }
-	}
-    }
+    my $rs= $s->rsegments;
+
+    # force "." for empty relative paths:
+    my $rs1= is_null ($rs) && not($s->is_absolute) ? list(".") : $rs;
+
+    # add end slash
+    my $ss= ($s->has_endslash ? $rs1->cons("") : $rs1)->reverse;
+
+    # add start slash
+    ($s->is_absolute ? $ss->cons("") : $ss)->strings_join("/")
 }
 
 # remove "." entries: (leave ".." in, because these cannot be resolved
@@ -247,10 +224,8 @@ sub to_relative {
     my $s=shift;
     die "is already relative"
       unless $s->is_absolute;
-    $s->rsegments_update(*drop_last)
-      # keep has_endslash, # XX hm always? what about the dropping of first entry?
-      # not absolute
-      ->is_absolute_set(0);
+    # keep has_endslash, # XX hm always? what about the dropping of first entry?
+    $s->is_absolute_set(0);
 }
 
 sub contains_dotdot {
