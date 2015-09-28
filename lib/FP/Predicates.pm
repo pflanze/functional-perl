@@ -81,6 +81,7 @@ package FP::Predicates;
 	      greater_than
 	      less_equal
 	      greater_equal
+	      is_zero
 
 	      maybe
 	      is_defined
@@ -194,6 +195,10 @@ sub greater_equal ($) {
     sub ($) {
 	$_[0] >= $x
     }
+}
+
+sub is_zero ($) {
+    $_[0] == 0
 }
 
 
