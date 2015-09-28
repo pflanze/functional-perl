@@ -106,7 +106,8 @@ use Chj::xperlfunc qw(xprint xprintln);
 use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use FP::Optional qw(perhaps_to_maybe);
 use Chj::TEST;
-use FP::Predicates 'is_natural0';
+use FP::Predicates qw(is_natural0 either is_natural complement is_even);
+
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
 #(Chj::xIOUtil triggers it)
 
@@ -556,8 +557,6 @@ TEST_EXCEPTION {
     [ $z, $v ]
 } 'improper list'; # nice message at least, thanks to undef != null
 
-
-use FP::Predicates qw(either is_natural complement);
 
 sub delayed (&) {
     my ($thunk)=@_;
@@ -1384,7 +1383,6 @@ sub list_perhaps_find_tail ($$) {
 *FP::List::List::perhaps_find_tail= flip \&list_perhaps_find_tail;
 
 TEST {
-    require FP::Predicates; import FP::Predicates "is_even";
     list(3,1,37,-8,-5,0,0)->perhaps_find_tail (*is_even)->array }
   [-8,-5,0,0];
 TEST { [list(3,1,37,-5)->perhaps_find_tail (*is_even)] }
