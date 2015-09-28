@@ -72,7 +72,7 @@ package FP::List;
 	      list_filter list_map list_mapn
 	      list_fold list_fold_right list_to_perlstring
 	      list_pair_fold_right
-	      drop_last drop_while rtake_while take_while
+	      list_drop_last list_drop_while list_rtake_while list_take_while
 	      list_append
 	      list_zip2
 	      list_alist
@@ -1166,19 +1166,19 @@ TEST{ list_to_perlstring string_to_list  "Hello's" }
 *FP::List::List::perlstring= *list_to_perlstring;
 
 
-# XX where did the list_ prefix go? See also drop_while. Also, name?
-sub drop_last ($) {
+sub list_drop_last ($);
+sub list_drop_last ($) {
     my ($l)=@_;
     if (is_null ($l)) {
 	die "drop_last: got empty list"
 	# XX could make use of OO for the distinction instead
     } else {
 	my ($a,$r)= $l->first_and_rest;
-	is_null ($r) ? $r : cons($a, drop_last $r)
+	is_null ($r) ? $r : cons($a, list_drop_last $r)
     }
 }
 
-*FP::List::List::drop_last= *drop_last;
+*FP::List::List::drop_last= *list_drop_last;
 
 TEST { list (3,4,5)->drop_last->array }
   [3,4];
@@ -1186,7 +1186,7 @@ TEST_EXCEPTION { list ()->drop_last->array }
   "drop_last: got empty list";
 
 
-sub drop_while ($ $) {
+sub list_drop_while ($ $) {
     my ($pred,$l)=@_;
     while (!is_null $l and &$pred(car $l)) {
 	$l=cdr $l;
@@ -1194,14 +1194,14 @@ sub drop_while ($ $) {
     $l
 }
 
-TEST { list_to_string drop_while (sub{$_[0] ne 'X'},
-			       string_to_list "Hello World") }
+TEST { list_to_string list_drop_while (sub{$_[0] ne 'X'},
+				       string_to_list "Hello World") }
   "";
-TEST { list_to_string drop_while (sub{$_[0] ne 'o'},
-			       string_to_list "Hello World") }
+TEST { list_to_string list_drop_while (sub{$_[0] ne 'o'},
+				       string_to_list "Hello World") }
   "o World";
 
-*FP::List::List::drop_while= flip \&drop_while;
+*FP::List::List::drop_while= flip \&list_drop_while;
 
 TEST { string_to_list("Hello World")
 	 ->drop_while(sub{$_[0] ne 'o'})
@@ -1222,44 +1222,44 @@ sub rtake_while_ ($ $) {
 
 *FP::List::List::rtake_while_= flip \&rtake_while_;
 
-sub rtake_while ($ $) {
+sub list_rtake_while ($ $) {
     my ($pred,$l)=@_;
     my ($res,$rest)= rtake_while_ ($pred,$l);
     wantarray ? ($res,$rest) : $res
 }
 
-*FP::List::List::rtake_while= flip \&rtake_while;
+*FP::List::List::rtake_while= flip \&list_rtake_while;
 
-TEST{ list_to_string list_reverse (rtake_while \&char_is_alphanumeric,
-				string_to_list "Hello World") }
+TEST{ list_to_string list_reverse (list_rtake_while \&char_is_alphanumeric,
+				   string_to_list "Hello World") }
   'Hello';
 
 sub take_while_ ($ $) {
     my ($pred,$l)=@_;
-    my ($rres,$rest)= rtake_while ($pred,$l);
+    my ($rres,$rest)= list_rtake_while ($pred,$l);
     (list_reverse $rres,
      $rest)
 }
 
 *FP::List::List::take_while_= flip \&take_while_;
 
-sub take_while ($ $) {
+sub list_take_while ($ $) {
     my ($pred,$l)=@_;
     my ($res,$rest)= take_while_ ($pred,$l);
     wantarray ? ($res,$rest) : $res
 }
 
-*FP::List::List::take_while= flip \&take_while;
+*FP::List::List::take_while= flip \&list_take_while;
 
-TEST { list_to_string take_while (sub{$_[0] ne 'o'},
-			       string_to_list "Hello World") }
+TEST { list_to_string list_take_while (sub{$_[0] ne 'o'},
+				       string_to_list "Hello World") }
   "Hell";
-TEST { list_to_string take_while (sub{$_[0] eq 'H'},
-			       string_to_list "Hello World") }
+TEST { list_to_string list_take_while (sub{$_[0] eq 'H'},
+				       string_to_list "Hello World") }
   "H";
-TEST { list_to_string take_while (sub{1}, string_to_list "Hello World") }
+TEST { list_to_string list_take_while (sub{1}, string_to_list "Hello World") }
   "Hello World";
-TEST { list_to_string take_while (sub{0}, string_to_list "Hello World") }
+TEST { list_to_string list_take_while (sub{0}, string_to_list "Hello World") }
   "";
 
 
