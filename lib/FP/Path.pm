@@ -70,14 +70,14 @@ use FP::Struct
 
 
 sub new_from_string {
-    my $cl=shift;
-    my ($str)=@_;
+    @_==2 or die "wrong number of arguments";
+    my ($class, $str)=@_;
     my @p= split m{/+}, $str;
     # We want a split that drops superfluous empty strings at the end,
     # but not the start ('/' case). This is not it (and passing -1 to
     # split isn't it either), so we need to handle this case manually:
     @p= ('') if (!@p and $str=~ m{^/+$}s);
-    $cl->new(array_to_list_reverse(\@p),
+    $class->new(array_to_list_reverse(\@p),
 	     scalar $str=~ m{/$}s,
 	     scalar $str=~ m{^/}s)
 }
