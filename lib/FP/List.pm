@@ -71,6 +71,7 @@ package FP::List;
 	      list_strings_join list_strings_join_reverse
 	      list_filter list_map list_mapn
 	      list_fold list_fold_right list_to_perlstring
+	      unfold
 	      list_pair_fold_right
 	      list_drop_last list_drop_while list_rtake_while list_take_while
 	      list_append
@@ -106,7 +107,8 @@ use Chj::xperlfunc qw(xprint xprintln);
 use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use FP::Optional qw(perhaps_to_maybe);
 use Chj::TEST;
-use FP::Predicates qw(is_natural0 either is_natural complement is_even);
+use FP::Predicates qw(is_natural0 either is_natural complement is_even is_zero);
+use FP::Div qw(inc dec);
 
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
 #(Chj::xIOUtil triggers it)
@@ -1124,6 +1126,34 @@ sub list_pair_fold_right ($$$) {
 
 TEST_STDOUT { list(5,6,9)->pair_fold_right (*cons, null)->write_sexpr }
   '(("5" "6" "9") ("6" "9") ("9"))';
+
+
+# no list_ prefix? It doesn't consume lists. Although, still FP::List
+# specific. But there's no way to shorten it by way of method
+# calling. For FP::Stream, call it stream_unfold, similarly for other
+# *'special'* kinds of lists?
+
+# unfold p f g seed [tail-gen] -> list
+
+# p: predicate function, wenn true for seed stops production;
+# f: function to produce output value from seed;
+# g: function to produce the next seed value;
+# seed: the initial seed value;
+# tail-gen: optional function to map the last seed value, the value
+#           `null` is taken otherwise
+
+sub unfold ($$$$;$);
+sub unfold ($$$$;$) {
+    @_==4 or @_==5 or die "wrong number of arguments";
+    my ($p, $f, $g, $seed, $maybe_tail_gen)= @_;
+    &$p ($seed) ?
+      (defined $maybe_tail_gen ? &$maybe_tail_gen ($seed) : null)
+	: cons (&$f ($seed), unfold ($p, $f, $g, &$g($seed), $maybe_tail_gen));
+}
+
+TEST { unfold (*is_zero, *inc, *dec, 5)->array } [6, 5, 4, 3, 2];
+TEST { unfold (*is_zero, *inc, *dec, 5, *list)->array } [6, 5, 4, 3, 2, 0];
+
 
 
 sub list_append ($ $) {
