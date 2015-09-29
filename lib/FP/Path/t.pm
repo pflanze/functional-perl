@@ -323,12 +323,6 @@ TEST_EXCEPTION { path("/../..")->xclean_dotdot->string }
   'can\'t take \'..\' of root directory';
 
 
-# - is `is_absolute` attribute necessary? Isn't starting with ""
-# enough? If it is necessary, then why/when?
-
-# XX
-
-
 # - does cleaning a path that ends in /. leve it with has_endslash
 # set?
 
