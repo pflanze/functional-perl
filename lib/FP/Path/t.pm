@@ -322,6 +322,12 @@ TEST_EXCEPTION { path("/..")->xclean_dotdot->string }
 TEST_EXCEPTION { path("/../..")->xclean_dotdot->string }
   'can\'t take \'..\' of root directory';
 
+TEST_EXCEPTION {path("../foo")->xclean->string }
+  "can't take '..' of root directory";
+# should .. be allowed at the beginning? But then all of the above are
+# ok, too, just translate into a number of ../ at the beginning. ->
+# XX See scm libs re chroot / leaving root.
+
 
 # - does cleaning a path that ends in /. leve it with has_endslash
 # set?
