@@ -227,7 +227,17 @@ TEST { path_split_first_segment ".", 1 }
 
 
 use FP::List qw(unfold);
-use FP::Array qw(array_is_null);
+use FP::Array qw(array_is_null array_map);
+use FP::Ops qw(the_method);
+
+sub tupleify ($) {
+    my ($f)=@_;
+    sub {
+	@_==1 or die "wrong number of arguments";
+	[ &$f (@{$_[0]}) ]
+    }
+}
+
 
 sub all_splits {
     my ($str, $clean)= @_;
@@ -237,14 +247,9 @@ sub all_splits {
     unfold (# ending predicate
 	    *array_is_null,
 	    # mapping function
-	    sub {
-		[map { $_->string } @{$_[0]} ]
-	    },
+	    sub { array_map the_method ("string"), $_[0] },
 	    # stepping function
-	    sub {
-		my ($p0,$p1)= @{$_[0]};
-		[ $p0->perhaps_resplit_next_segment ($p1) ]
-	    },
+	    tupleify the_method ("perhaps_resplit_next_segment"),
 	    # seed value
 	    [ $p0->perhaps_split_first_segment ])
       ->array
