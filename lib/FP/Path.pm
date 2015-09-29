@@ -262,10 +262,11 @@ sub perhaps_resplit_next_segment {
     my $ss= $p1->segments;
     if (is_pair $ss) {
 	my $class= ref ($p0);
+	my $remainder= $ss->rest->reverse;
 	my $q0= $class->new ($p0->rsegments->cons ($ss->first),
-			     1,
+			     is_null($remainder) ? $p1->has_endslash : 1,
 			     $p1->is_absolute);
-	my $q1= $class->new ($ss->rest->reverse,
+	my $q1= $class->new ($remainder,
 			     $p1->has_endslash,
 			     '');
 	($q0,$q1)

@@ -257,18 +257,27 @@ sub all_splits {
 
 TEST { all_splits "/foo/bar" }
   [[ '/foo/', 'bar' ],
-   [ 'foo/bar/', '.']];
+   [ 'foo/bar', '.']];
 TEST { all_splits "/foo/./bar" }
   [[ '/foo/', './bar' ],
    [ 'foo/./', 'bar' ],
-   [ 'foo/./bar/', '.']];
+   [ 'foo/./bar', '.']];
 
-# XX this assumes that the source path is always a dir. That's
-# probably wrong! How should it be handled instead, return just 1
-# value in the last case? Nah that would be bad for the
-# iteration. is_dot method to check for that case? But should the left
-# part be a non-dir and still have the right part, to accomodte for
-# adding both together "properly" (in some cases)?
+# Note that the end cases above have a left part that does *not* have
+# an end slash (it inherited the setting from the right part). Is this
+# ok? The right side in this case is rather fake; and XX re-appending
+# might fail in some algorithms! But what else would be better?
+
+# It's unambiguous when the right hand argument has_end_slash==1:
+
+TEST { all_splits "/foo/bar/" }
+  [[ '/foo/', 'bar/' ],
+   [ 'foo/bar/', './']];
+TEST { all_splits "/foo/./bar/" }
+  [[ '/foo/', './bar/' ],
+   [ 'foo/./', 'bar/' ],
+   [ 'foo/./bar/', './']];
+
 
 
 # XX rules-based testing rules?:
