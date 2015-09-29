@@ -209,7 +209,7 @@ TEST { path_split_first_segment "/foo/bar/" }
 TEST { path_split_first_segment "/foo/" }
   ["/foo/", "./"];
 TEST { path_split_first_segment "/foo" }
-  ["/foo/", "."];
+  ["/foo", "."];
 TEST { path_split_first_segment "/" }
   "unsplittable";
 TEST { path_split_first_segment "./foo/bar" }
@@ -219,9 +219,12 @@ TEST { path_split_first_segment "foo/bar" }
 TEST { path_split_first_segment "foo/" }
   ["foo/", "./"];
 TEST { path_split_first_segment "foo" }
-  ["foo/", "."];
+  ["foo", "."];
+# (BTW isn't it stupid that ./ and . do both exist? Ok, some kinds of
+# paths might treat "." as non-directory filename? But then it would
+# fail anyway. XX)
 TEST { path_split_first_segment "." }
-  ["./", "."]; # odd of course, but that's what you get for not cleaning?
+  [".", "."]; # odd of course, but that's what you get for not cleaning?
 TEST { path_split_first_segment ".", 1 }
   "unsplittable";
 
@@ -263,7 +266,7 @@ TEST { all_splits "/foo/./bar" }
    [ 'foo/./', 'bar' ],
    [ 'foo/./bar', '.']];
 TEST { all_splits "/foo" }
-  [[ '/foo', './']];
+  [[ '/foo', '.']];
 
 # Note that the end cases above have a left part that does *not* have
 # an end slash (it inherited the setting from the right part). Is this

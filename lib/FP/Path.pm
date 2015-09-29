@@ -244,10 +244,11 @@ sub perhaps_split_first_segment {
     my $ss= $p->segments;
     if (is_pair $ss) {
 	my $class= ref ($p);
+	my $remainder= $ss->rest->reverse;
 	my $p0= $class->new (list($ss->first),
-			     1,
+			     is_null($remainder) ? $p->has_endslash : 1,
 			     $p->is_absolute);
-	my $p1= $class->new ($ss->rest->reverse,
+	my $p1= $class->new ($remainder,
 			     $p->has_endslash,
 			     '');
 	($p0,$p1)
