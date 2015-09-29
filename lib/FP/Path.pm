@@ -58,7 +58,7 @@ use FP::Equals ();
 use Chj::constructorexporter;
 use FP::Predicates qw(is_string);
 
-sub perhaps_not_segment ($) {
+sub perhaps_segment_error ($) {
     my ($segment)=@_;
     return "segments must be strings"
       unless is_string $segment;
@@ -69,10 +69,10 @@ sub perhaps_not_segment ($) {
     ()
 }
 
-sub is_segment ($) { not perhaps_not_segment $_[0] }
+sub is_segment ($) { not perhaps_segment_error $_[0] }
 
 sub check_segment ($) {
-    if (my ($e)= perhaps_not_segment $_[0]) {
+    if (my ($e)= perhaps_segment_error $_[0]) {
 	die $e
     }
 }
