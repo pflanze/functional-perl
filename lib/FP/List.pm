@@ -62,7 +62,8 @@ package FP::List;
 	   car cdr first rest
 	   car_and_cdr first_and_rest
 	   list);
-@EXPORT_OK=qw(unsafe_cons unsafe_car unsafe_cdr
+@EXPORT_OK=qw(improper_list
+	      unsafe_cons unsafe_car unsafe_cdr
 	      string_to_list list_length list_reverse list_reverse_with_tail
 	      list_to_string list_to_array rlist_to_array
 	      list_to_values rlist_to_values
@@ -200,11 +201,26 @@ use FP::Div qw(inc dec);
 	 FP::Equals::equals($a->cdr, $b->cdr))
     }
 
-    # for FP::Show:
     sub FP_Show_show {
 	my ($s,$show)=@_;
-	# XX handle improper lists?
-	"list(".$s->map($show)->strings_join(", ").")"
+
+	# If there were no improper lists, this would do:
+	#  "list(".$s->map($show)->strings_join(", ").")"
+	
+	my @v;
+	my $v;
+      LP: {
+	    ($v,$s)= $s->first_and_rest;
+	    push @v, &$show($v);
+	    if (FP::List::is_pair ($s)) {
+		redo LP;
+	    } elsif (FP::List::is_null ($s)) {
+		"list(".join(", ",@v).")"
+	    } else {
+		push @v, &$show($s);
+		"improper_list(".join(", ",@v).")"
+	    }
+	}
     }
 }
 
@@ -505,6 +521,17 @@ sub list_ref ($ $) {
 
 sub list {
     my $res= null;
+    for (my $i= $#_; $i>=0; $i--) {
+	$res= cons ($_[$i],$res);
+    }
+    $res
+}
+
+# Like 'list' but terminates the chain with the last argument instead
+# of a 'null'. This shouldn't be used in normal circumstances. It's
+# mainly here to make the output of FP_Show_show valid code.
+sub improper_list {
+    my $res= pop;
     for (my $i= $#_; $i>=0; $i--) {
 	$res= cons ($_[$i],$res);
     }
