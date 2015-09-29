@@ -152,6 +152,18 @@ TEST { equal (path("/"),
   1;
 
 
+# invalid segments:
+
+use FP::List;
+
+TEST_EXCEPTION { path("/foo")->add_segment("") }
+  "segments cannot be the empty string";
+TEST_EXCEPTION { path("/foo")->add_segment("bar/") }
+  'segment contains slash: \'bar/\'';
+TEST_EXCEPTION { FP::Path->new(list("/foo"), 1, 1)->string }
+  'segment contains slash: \'/foo\'';
+
+
 # equals:
 
 sub t_equals ($$) {

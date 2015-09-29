@@ -56,6 +56,26 @@ use strict;
 use FP::List ":all";
 use FP::Equals ();
 use Chj::constructorexporter;
+use FP::Predicates qw(is_string);
+
+sub perhaps_not_segment ($) {
+    my ($segment)=@_;
+    return "segments must be strings"
+      unless is_string $segment;
+    return "segments cannot be the empty string"
+      unless length $segment;
+    return "segment contains slash: '$segment'"
+      if $segment=~ m{/};
+    ()
+}
+
+sub is_segment ($) { not perhaps_not_segment $_[0] }
+
+sub check_segment ($) {
+    if (my ($e)= perhaps_not_segment $_[0]) {
+	die $e
+    }
+}
 
 use FP::Struct
   [
@@ -99,6 +119,13 @@ sub segments {
 sub string {
     my $s=shift;
     my $rs= $s->rsegments;
+
+    # check that no invalid segments have creeped in (by way of using
+    # the "lowlevel" accessors like segments_set, or the new or new_
+    # constructors directly; adding a type check to the segments field
+    # would solve this, but is less efficient as it would have to walk
+    # the list on every change instead of only stringification):
+    $rs->for_each (*check_segment);
 
     # force "." for empty relative paths:
     my $rs1= is_null ($rs) && not($s->is_absolute) ? list(".") : $rs;
@@ -189,8 +216,7 @@ sub xclean {
 sub add_segment { # functionally. hm.
     my $s=shift;
     my ($segment)=@_;
-    die "segment contains slash: '$segment'"
-      if $segment=~ m{/};
+    check_segment $segment;
     $s->rsegments_update
       (sub {
 	   cons $segment, $_[0]
