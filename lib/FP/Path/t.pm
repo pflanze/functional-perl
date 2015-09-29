@@ -262,6 +262,8 @@ TEST { all_splits "/foo/./bar" }
   [[ '/foo/', './bar' ],
    [ 'foo/./', 'bar' ],
    [ 'foo/./bar', '.']];
+TEST { all_splits "/foo" }
+  [[ '/foo', './']];
 
 # Note that the end cases above have a left part that does *not* have
 # an end slash (it inherited the setting from the right part). Is this
@@ -277,6 +279,8 @@ TEST { all_splits "/foo/./bar/" }
   [[ '/foo/', './bar/' ],
    [ 'foo/./', 'bar/' ],
    [ 'foo/./bar/', './']];
+TEST { all_splits "/foo/" }
+  [[ '/foo/', './']];
 
 
 
