@@ -158,7 +158,7 @@ sub clean_dot {
 	 });
 }
 
-# XX is only valid to be applied to paths that have already been
+# This is only valid to be applied to paths that have already been
 # `clean_dot`ed !
 sub perhaps_clean_dotdot {
     my $s=shift;
@@ -184,7 +184,7 @@ sub perhaps_clean_dotdot {
 # (should have those functions without the Path wrapper? Maybe, maybe not.)
 
 
-# XX is only valid to be applied to paths that have already been
+# This is only valid to be applied to paths that have already been
 # `clean_dot`ed !
 sub xclean_dotdot {
     my $s=shift;
