@@ -46,6 +46,8 @@ sub package_keys {
     ]
 }
 
+my @slotnames= qw(SCALAR HASH ARRAY IO);
+
 sub package_delete {
     my ($package,$keys)=@_;
     #warn "package_delete '$package'";
@@ -57,7 +59,11 @@ sub package_delete {
 	# check val to be equal so that it will work with Chj::ruse
         if ($val2 and $val == $val2) {
 	    #warn "deleting ${package}::$key ($val)";
+	    my @v= map { *{"${package}::$key"}{$_} } @slotnames;
 	    delete ${$package."::"}{$key};
+	    for (@v) {
+		*{"${package}::$key"}= $_ if defined $_
+	    }
 	}
     }
 }
