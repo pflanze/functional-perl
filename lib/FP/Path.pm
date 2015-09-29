@@ -153,7 +153,7 @@ sub clean_dot {
 	     if (is_null $rseg) {
 		 0
 	     } else {
-		 $rseg->car  eq "."
+		 $rseg->first eq "."
 	     }
 	 });
 }
@@ -242,7 +242,7 @@ sub dirname {
     my $s=shift;
     is_null $$s{rsegments}
       and die "can't take dirname of empty path";
-    $s->rsegments_update(*cdr)
+    $s->rsegments_update(*rest)
       ->has_endslash_set(1);
 }
 
