@@ -63,6 +63,10 @@ entered into the repl returns, those will go away, hence in case the
 closure was stored elsewhere, it will now refer to variables with
 different values (perhaps empty).
 
+XXX: actually there's a solution waiting to be implemented: build a
+closure and set its environment using `PadWalker`'s `set_closed_over`.
+
+
 =item TODO
 
  - 'A::Class-> ' method completion
