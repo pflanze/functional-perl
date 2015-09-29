@@ -56,7 +56,7 @@ use strict;
 use FP::List ":all";
 use FP::Equals ();
 use Chj::constructorexporter;
-use FP::Predicates qw(is_string);
+use FP::Predicates qw(is_string is_boolean);
 
 sub perhaps_segment_error ($) {
     my ($segment)=@_;
@@ -77,13 +77,31 @@ sub check_segment ($) {
     }
 }
 
+# Toggle typing, off for speed (checking FP::List costs O(length);
+# better use FP::StrictList if really interested in strict typing!)
+sub use_costly_typing () { 1 }
+our $use_costly_typing= use_costly_typing; # for access from FP::Path::t
+sub typed ($$) {
+    my ($pred,$name)=@_;
+    if (use_costly_typing) {
+	[$pred,$name]
+    } else {
+	$name
+    }
+}
+
+
 use FP::Struct
   [
-   'rsegments', # reverse FP::List::List of str not containing slashes
-   'has_endslash', # bool, whether the path is forcibly specifying a
-                   # dir by using a slash at the end (forcing a dir by
-                   # ending in "." isn't setting this flag)
-   'is_absolute', # bool
+   typed(list_of (*is_segment),
+	 'rsegments'), # reversed list
+   typed(*is_boolean,
+	 'has_endslash'), # whether the path is forcibly specifying a
+                          # dir by using a slash at the end (forcing a
+                          # dir by ending in "." isn't setting this
+                          # flag)
+   typed(*is_boolean,
+	 'is_absolute'), # bool
   ];
 
 *import= constructorexporter new_from_string=> "path";
