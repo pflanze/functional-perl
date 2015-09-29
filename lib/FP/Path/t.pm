@@ -260,11 +260,11 @@ sub all_splits {
 
 TEST { all_splits "/foo/bar" }
   [[ '/foo/', 'bar' ],
-   [ 'foo/bar', '.']];
+   [ '/foo/bar', '.']];
 TEST { all_splits "/foo/./bar" }
   [[ '/foo/', './bar' ],
-   [ 'foo/./', 'bar' ],
-   [ 'foo/./bar', '.']];
+   [ '/foo/./', 'bar' ],
+   [ '/foo/./bar', '.']];
 TEST { all_splits "/foo" }
   [[ '/foo', '.']];
 
@@ -277,11 +277,11 @@ TEST { all_splits "/foo" }
 
 TEST { all_splits "/foo/bar/" }
   [[ '/foo/', 'bar/' ],
-   [ 'foo/bar/', './']];
+   [ '/foo/bar/', './']];
 TEST { all_splits "/foo/./bar/" }
   [[ '/foo/', './bar/' ],
-   [ 'foo/./', 'bar/' ],
-   [ 'foo/./bar/', './']];
+   [ '/foo/./', 'bar/' ],
+   [ '/foo/./bar/', './']];
 TEST { all_splits "/foo/" }
   [[ '/foo/', './']];
 

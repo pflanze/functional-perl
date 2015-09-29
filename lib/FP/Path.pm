@@ -253,7 +253,7 @@ sub perhaps_resplit_next_segment {
 	my $remainder= $ss->rest->reverse;
 	($class->new ($p0->rsegments->cons ($ss->first),
 		      is_null($remainder) ? $p1->has_endslash : 1,
-		      $p1->is_absolute),
+		      $p0->is_absolute),
 	 $class->new ($remainder,
 		      $p1->has_endslash,
 		      ''))
