@@ -168,18 +168,9 @@ sub perhaps_clean_dotdot {
     for my $seg ($s->rsegments->reverse_values) {
 	if ($seg eq "..") {
 	    if (@s) {
-		my $v= pop @s;
-		# XXX why was there no check here before?
-		if (! length $v and ! @s) {
-		    return ()
-		}
+		pop @s;
 	    } else {
-#XXX why was it this way, and what should it be?
-#		if ($s->is_absolute) {
-#		    push @s, "..";
-#		} else {
-		    return ()
-#		}
+		return ()
 	    }
 	} else {
 	    push @s, $seg
