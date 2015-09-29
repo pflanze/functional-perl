@@ -263,6 +263,12 @@ TEST { all_splits "/foo/./bar" }
    [ 'foo/./', 'bar' ],
    [ 'foo/./bar/', '.']];
 
+# XX this assumes that the source path is always a dir. That's
+# probably wrong! How should it be handled instead, return just 1
+# value in the last case? Nah that would be bad for the
+# iteration. is_dot method to check for that case? But should the left
+# part be a non-dir and still have the right part, to accomodte for
+# adding both together "properly" (in some cases)?
 
 
 # XX rules-based testing rules?:
