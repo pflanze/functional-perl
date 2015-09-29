@@ -18,7 +18,7 @@ FP::Show - turn any object to a string for debugging purposes
 
  my $l= list 100-1, "bottles";
  die "not what we wanted: ".show ($l);
-   # -> dies with 'not what we wanted: list(99, "bottles")'
+   # -> dies with "not what we wanted: list(99, 'bottles')"
 
 =head1 DESCRIPTION
 
