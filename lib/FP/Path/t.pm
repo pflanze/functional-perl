@@ -196,9 +196,9 @@ sub t_equals_clean ($$) {
 
 TEST { t_equals_clean "/foo", "/foo" } 1;
 TEST { t_equals_clean "/foo", "foo" } '';
-TEST { t_equals_clean "/foo/bar/..", "/foo" } 1;
-# hmm, because "/" has_endslash true (necessarily??), we get:
-TEST { t_equals_clean "/foo/..", "/" } '';
+TEST { t_equals_clean "/foo/bar/..", "/foo" } '';
+TEST { t_equals_clean "/foo/bar/..", "/foo/" } 1;
+TEST { t_equals_clean "/foo/..", "/" } 1;
 
 
 
@@ -338,10 +338,10 @@ TEST { path ("/.") -> has_endslash } '';
 TEST { path ("/.") -> xclean -> has_endslash } 1;
 
 TEST { path ("foo/..") -> has_endslash } '';
-TEST { path ("foo/..") -> xclean -> has_endslash } ''; # XX hm
+TEST { path ("foo/..") -> xclean -> has_endslash } 1;
 
 TEST { path ("foo/bar/..") -> has_endslash } '';
-TEST { path ("foo/bar/..") -> xclean -> has_endslash } ''; # XX hm, is this a bug?
+TEST { path ("foo/bar/..") -> xclean -> has_endslash } 1;
 
 
 

@@ -164,8 +164,10 @@ sub perhaps_clean_dotdot {
     my $s=shift;
     # XX this might actually be more efficient when working on the reverse
     # order? But leaving old imperative algorithm for now.
+    my $rs= $s->rsegments;
+    my $ends_in_dotdot= is_pair ($rs) && $rs->first eq "..";
     my @s;
-    for my $seg ($s->rsegments->reverse_values) {
+    for my $seg ($rs->reverse_values) {
 	if ($seg eq "..") {
 	    if (@s) {
 		pop @s;
@@ -176,7 +178,8 @@ sub perhaps_clean_dotdot {
 	    push @s, $seg
 	}
     }
-    $s->rsegments_set (array_to_list_reverse \@s)
+    my $s1= $s->rsegments_set (array_to_list_reverse \@s);
+    $ends_in_dotdot ? $s1->has_endslash_set(1) : $s1
 }
 # (should have those functions without the Path wrapper? Maybe, maybe not.)
 
