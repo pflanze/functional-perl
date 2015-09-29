@@ -189,6 +189,77 @@ TEST { t_equals_clean "/foo/bar/..", "/foo" } 1;
 TEST { t_equals_clean "/foo/..", "/" } '';
 
 
+
+# split and resplit:
+
+sub path_split_first_segment {
+    my ($str, $clean)= @_;
+    my $p= path $str;
+    if (my @v = ($clean ? $p->xclean : $p)->perhaps_split_first_segment) {
+	[map {$_->string} @v]
+    } else {
+	"unsplittable"
+    }
+}
+
+TEST { path_split_first_segment "/foo/bar" }
+  ["/foo/", "bar"];
+TEST { path_split_first_segment "/foo/bar/" }
+  ["/foo/", "bar/"];
+TEST { path_split_first_segment "/foo/" }
+  ["/foo/", "./"];
+TEST { path_split_first_segment "/foo" }
+  ["/foo/", "."];
+TEST { path_split_first_segment "/" }
+  "unsplittable";
+TEST { path_split_first_segment "./foo/bar" }
+  ["./", "foo/bar"]; # ok? what you get for not cleaning.
+TEST { path_split_first_segment "foo/bar" }
+  ["foo/", "bar"];
+TEST { path_split_first_segment "foo/" }
+  ["foo/", "./"];
+TEST { path_split_first_segment "foo" }
+  ["foo/", "."];
+TEST { path_split_first_segment "." }
+  ["./", "."]; # odd of course, but that's what you get for not cleaning?
+TEST { path_split_first_segment ".", 1 }
+  "unsplittable";
+
+
+use FP::List qw(unfold);
+use FP::Array qw(array_is_null);
+
+sub all_splits {
+    my ($str, $clean)= @_;
+    my $p= path $str;
+    my $p0= ($clean ? $p->xclean : $p);
+
+    unfold (# ending predicate
+	    *array_is_null,
+	    # mapping function
+	    sub {
+		[map { $_->string } @{$_[0]} ]
+	    },
+	    # stepping function
+	    sub {
+		my ($p0,$p1)= @{$_[0]};
+		[ $p0->perhaps_resplit_next_segment ($p1) ]
+	    },
+	    # seed value
+	    [ $p0->perhaps_split_first_segment ])
+      ->array
+}
+
+TEST { all_splits "/foo/bar" }
+  [[ '/foo/', 'bar' ],
+   [ 'foo/bar/', '.']];
+TEST { all_splits "/foo/./bar" }
+  [[ '/foo/', './bar' ],
+   [ 'foo/./', 'bar' ],
+   [ 'foo/./bar/', '.']];
+
+
+
 # XX rules-based testing rules?:
 
 # - if a path is absolute, the cleaned path is always absolute, too?
