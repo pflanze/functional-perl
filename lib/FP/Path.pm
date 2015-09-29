@@ -236,25 +236,29 @@ sub contains_dotdot {
 
 # These are used as helpers for Chj::Path::Filesystem's touched_paths
 
+# split a path into two parts, one with the first segment and one with
+# the rest
 sub perhaps_split_first_segment {
     @_==1 or die "wrong number of arguments";
     my ($p)= @_;
     perhaps_resplit_next_segment ($p->rsegments_set(null), $p)
 }
 
-# XX the reversing makes this O(n). Use a better list representation.
-
+# re-split two paths so that the first gains another segment from the
+# second
 sub perhaps_resplit_next_segment {
     @_==2 or die "wrong number of arguments";
     my ($p0,$p1)= @_;
+    # XX the reversing makes this O(n). Use a better list
+    # representation.
     my $ss= $p1->segments;
     if (is_pair $ss) {
 	my $class= ref ($p0);
-	my $remainder= $ss->rest->reverse;
-	($class->new ($p0->rsegments->cons ($ss->first),
-		      is_null($remainder) ? $p1->has_endslash : 1,
+	my ($first,$rest)= $ss->first_and_rest;
+	($class->new ($p0->rsegments->cons ($first),
+		      is_null($rest) ? $p1->has_endslash : 1,
 		      $p0->is_absolute),
-	 $class->new ($remainder,
+	 $class->new ($rest->reverse,
 		      $p1->has_endslash,
 		      ''))
     } else {
