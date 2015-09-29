@@ -236,26 +236,13 @@ sub contains_dotdot {
 
 # These are used as helpers for Chj::Path::Filesystem's touched_paths
 
-# XX the reversing makes these O(n). Use a better list representation.
-
 sub perhaps_split_first_segment {
     @_==1 or die "wrong number of arguments";
     my ($p)= @_;
-    my $ss= $p->segments;
-    if (is_pair $ss) {
-	my $class= ref ($p);
-	my $remainder= $ss->rest->reverse;
-	my $p0= $class->new (list($ss->first),
-			     is_null($remainder) ? $p->has_endslash : 1,
-			     $p->is_absolute);
-	my $p1= $class->new ($remainder,
-			     $p->has_endslash,
-			     '');
-	($p0,$p1)
-    } else {
-	()
-    }
+    perhaps_resplit_next_segment ($p->rsegments_set(null), $p)
 }
+
+# XX the reversing makes this O(n). Use a better list representation.
 
 sub perhaps_resplit_next_segment {
     @_==2 or die "wrong number of arguments";
@@ -264,13 +251,12 @@ sub perhaps_resplit_next_segment {
     if (is_pair $ss) {
 	my $class= ref ($p0);
 	my $remainder= $ss->rest->reverse;
-	my $q0= $class->new ($p0->rsegments->cons ($ss->first),
-			     is_null($remainder) ? $p1->has_endslash : 1,
-			     $p1->is_absolute);
-	my $q1= $class->new ($remainder,
-			     $p1->has_endslash,
-			     '');
-	($q0,$q1)
+	($class->new ($p0->rsegments->cons ($ss->first),
+		      is_null($remainder) ? $p1->has_endslash : 1,
+		      $p1->is_absolute),
+	 $class->new ($remainder,
+		      $p1->has_endslash,
+		      ''))
     } else {
 	()
     }
