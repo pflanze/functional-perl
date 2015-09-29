@@ -33,8 +33,8 @@ as the first argument: `cut_method($obj,"foo",@args)` returns a
 function that does a "foo" method call on $obj, passing @args and then
 whatever additional arguments the function receives.
 
-Also, `operator_2("foo")` returns a function that uses "foo" as
-operator between 2 arguments. `operator_1("foo")` returns a function
+Also, `binary_operator("foo")` returns a function that uses "foo" as
+operator between 2 arguments. `unary_operator("foo")` returns a function
 that uses "foo" as operator before its single argument. CAREFUL: make
 sure the given strings are secured, as there is no safety check!
 
@@ -55,8 +55,8 @@ package FP::Ops;
 		 number_cmp
 		 the_method
 		 cut_method
-		 operator_2
-		 operator_1
+		 binary_operator
+		 unary_operator
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -127,28 +127,28 @@ sub cut_method {
     }
 }
 
-sub operator_2 ($) {
+sub binary_operator ($) {
     @_==1 or die "need 1 argument";
     my ($code)=@_;
     eval 'sub ($$) { @_==2 or die "need 2 arguments"; $_[0] '.$code.' $_[1] }'
-      || die "operator_2: '$code': $@";
+      || die "binary_operator: '$code': $@";
     # XX security?
 }
 
-sub operator_1 ($) {
+sub unary_operator ($) {
     @_==1 or die "need 1 argument";
     my ($code)=@_;
     eval 'sub ($) { @_==1 or die "need 1 argument"; '.$code.' $_[0] }'
-      || die "operator_1: '$code': $@";
+      || die "unary_operator: '$code': $@";
     # XX security?
 }
 
-TEST { my $lt= operator_2 "lt";
+TEST { my $lt= binary_operator "lt";
        [map { &$lt (@$_) }
 	([2,4], [4,2], [3,3], ["abc","bbc"], ["ab","ab"], ["bbc", "abc"])] }
   [1,'','', 1, '', ''];
 
-TEST { my $neg= operator_1 "-";
+TEST { my $neg= unary_operator "-";
        [map { &$neg ($_) }
 	(3, -2.5, 0)] }
   [-3, 2.5, 0];

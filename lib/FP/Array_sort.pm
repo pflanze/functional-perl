@@ -60,7 +60,7 @@ package FP::Array_sort;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use FP::Ops qw(string_cmp number_cmp operator_2);
+use FP::Ops qw(string_cmp number_cmp binary_operator);
 use Chj::TEST;
 
 sub array_sort ($;$) {
@@ -97,7 +97,7 @@ sub cmp_complement ($) {
     }
 }
 
-TEST { my $f= cmp_complement operator_2 "cmp";
+TEST { my $f= cmp_complement binary_operator "cmp";
        [map { &$f(@$_) }
 	([2,4], [4,2], [3,3], ["abc","bbc"], ["ab","ab"], ["bbc", "abc"])] }
   [1, -1, 0, 1, 0, -1];
