@@ -141,6 +141,12 @@ use FP::Div qw(inc dec);
 	my ($a,$b)=@_;
 	FP::List::is_null($b)
     }
+
+    # for FP::Show:
+    sub FP_Show_show {
+	my ($s,$show)=@_;
+	"null"
+    }
 }
 
 {
@@ -192,6 +198,13 @@ use FP::Div qw(inc dec);
 	 FP::Equals::equals($a->car, $b->car)
 	 and
 	 FP::Equals::equals($a->cdr, $b->cdr))
+    }
+
+    # for FP::Show:
+    sub FP_Show_show {
+	my ($s,$show)=@_;
+	# XX handle improper lists?
+	"list(".$s->map($show)->strings_join(", ").")"
     }
 }
 
