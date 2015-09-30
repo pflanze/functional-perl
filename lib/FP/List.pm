@@ -63,6 +63,7 @@ package FP::List;
 	   car_and_cdr first_and_rest
 	   list);
 @EXPORT_OK=qw(improper_list
+	      is_pair_noforce is_null_noforce
 	      unsafe_cons unsafe_car unsafe_cdr
 	      string_to_list list_length list_reverse list_reverse_with_tail
 	      list_to_string list_to_array rlist_to_array
@@ -103,7 +104,7 @@ package FP::List;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use FP::Lazy;
+use FP::Lazy; use FP::Lazy qw(force_noeval);
 use Chj::xperlfunc qw(xprint xprintln);
 use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use FP::Optional qw(perhaps_to_maybe);
@@ -204,7 +205,7 @@ use FP::Div qw(inc dec);
     sub FP_Show_show {
 	my ($s,$show)=@_;
 
-	# If there were no improper lists, this would do:
+	# If there were no improper or lazy lists, this would do:
 	#  "list(".$s->map($show)->strings_join(", ").")"
 	
 	my @v;
@@ -212,9 +213,10 @@ use FP::Div qw(inc dec);
       LP: {
 	    ($v,$s)= $s->first_and_rest;
 	    push @v, &$show($v);
-	    if (FP::List::is_pair ($s)) {
+	    $s= FP::List::force_noeval ($s);
+	    if (FP::List::is_pair_noforce ($s)) {
 		redo LP;
-	    } elsif (FP::List::is_null ($s)) {
+	    } elsif (FP::List::is_null_noforce ($s)) {
 		"list(".join(", ",@v).")"
 	    } else {
 		push @v, &$show($s);
@@ -275,6 +277,14 @@ sub is_pair ($) {
 	: '';
 }
 
+sub is_pair_noforce ($) {
+    my ($v)=@_;
+    my $r= ref $v;
+    length $r ?
+      UNIVERSAL::isa($v, "FP::List::Pair")
+	  : '';
+}
+
 sub is_pair_of ($$) {
     my ($p0,$p1)=@_;
     sub {
@@ -307,6 +317,14 @@ sub is_null ($) {
        # XX evil: inlined `is_promise`
        UNIVERSAL::isa($v, "FP::Lazy::Promise") && is_null (force $v))
 	: '';
+}
+
+sub is_null_noforce ($) {
+    my ($v)=@_;
+    my $r= ref $v;
+    length $r ?
+      UNIVERSAL::isa($v, "FP::List::Null")
+	  : '';
 }
 
 

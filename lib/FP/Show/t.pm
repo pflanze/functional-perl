@@ -28,6 +28,7 @@ use Chj::TEST;
 
 use FP::Show; # exports 'show'
 use FP::List ":all";
+use FP::Stream ":all";
 
 TEST_EXCEPTION {
     my $l= list 100-1, "bottles";
@@ -43,5 +44,16 @@ TEST { show improper_list (list (1,3), 2) }
 
 TEST { show improper_list ([1,3], {foo=> list("bar",sub{"f"})}) }
   'improper_list([1, 3], +{foo => list(\'bar\', sub { "DUMMY" })})';
+
+my $s;
+TEST {
+    $s= stream_iota->take(10);
+    show $s
+} 'lazy { "DUMMY" }';
+
+TEST {
+    $s->rest->rest;
+    show $s
+} 'improper_list(0, 1, lazy { "DUMMY" })';
 
 1
