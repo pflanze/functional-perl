@@ -52,7 +52,9 @@ error: $@>" in that case.
 package Chj::singlequote;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(singlequote);
-@EXPORT_OK=qw(singlequote_sh singlequote_many many with_maxlen);
+@EXPORT_OK=qw(singlequote_sh singlequote_many many with_maxlen
+	      possibly_singlequote_sh singlequote_sh_many
+	    );
 # importing 'many' is probably not a good idea (depreciated)
 %EXPORT_TAGS=(all=>[@EXPORT, @EXPORT_OK]);
 
@@ -65,6 +67,8 @@ sub with_maxlen ($&) {
     &{$_[1]}()
 }
 
+
+# Perl style:
 
 sub singlequote($ ;$ ) {
     my ($str,$alternative)=@_;
@@ -82,18 +86,7 @@ sub singlequote($ ;$ ) {
 	defined($alternative)? $alternative:"undef"
     }
 }
-sub singlequote_sh($ ;$ ) {
-    my ($str,$alternative)=@_;
-    if (defined $str) {
-	$str=~ s/\'/'\\\''/sg;
-	"'$str'"
-    } else {
-	defined($alternative)? $alternative:"undef"
-    }
-}
-
 *Chj::singlequote= \&singlequote;
-*Chj::singlequote_sh= \&singlequote_sh;
 
 sub many {
     my @strs= map {
@@ -114,5 +107,33 @@ sub many {
 }
 *singlequote_many= \&many;
 
+
+# Shell (Bash) style:
+
+sub singlequote_sh($ ;$ ) {
+    my ($str,$alternative)=@_;
+    if (defined $str) {
+	$str=~ s/\'/'\\\''/sg;
+	"'$str'"
+    } else {
+	defined($alternative)? $alternative:"undef"
+    }
+}
+*Chj::singlequote_sh= \&singlequote_sh;
+
+# don't quote bare words or simply formatted paths that don't need to
+# be quoted
+sub possibly_singlequote_sh ($) {
+    my ($str)=@_;
+    if ($str=~ m{^[\w/.-]+\z}) {
+	$str
+    } else {
+	singlequote_sh $str
+    }
+}
+
+sub singlequote_sh_many {
+    join " ", map { possibly_singlequote_sh $_ } @_
+}
 
 1
