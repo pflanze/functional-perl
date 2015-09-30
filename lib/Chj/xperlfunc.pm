@@ -1205,7 +1205,7 @@ sub xlink_p ($ $ ) {
     package Chj::xperlfunc::Getpwnam;
     use Class::Array -fields=>-publica=>
       qw(name passwd uid gid quota comment gcos dir shell expire);
-    sub maybe_get {
+    sub perhaps_get {
 	my $class=shift;
 	my ($user)=@_;
 	my $s= bless [ getpwnam ($user) ], $class;
@@ -1220,11 +1220,11 @@ sub xlink_p ($ $ ) {
 sub xgetpwnam ( $ ) {
     my ($user)=@_;
     if (wantarray) {
-	my @f= Chj::xperlfunc::Getpwnam->maybe_get($user);
+	my @f= Chj::xperlfunc::Getpwnam->perhaps_get($user);
 	@f or croak "xgetpwnam: '$user' not in passwd file";
 	@f
     } else {
-	Chj::xperlfunc::Getpwnam->maybe_get($user)
+	Chj::xperlfunc::Getpwnam->perhaps_get($user)
 	    or croak "xgetpwnam: '$user' not in passwd file";
     }
 }
@@ -1233,7 +1233,7 @@ sub xgetpwnam ( $ ) {
     package Chj::xperlfunc::Getgrnam;
     use Class::Array -fields=>-publica=>
       qw(name passwd gid members);
-    sub maybe_get {
+    sub perhaps_get {
 	my $class=shift;
 	my ($user)=@_;
 	my $s= bless [ getgrnam ($user) ], $class;
@@ -1248,11 +1248,11 @@ sub xgetpwnam ( $ ) {
 sub xgetgrnam ( $ ) {
     my ($group)=@_;
     if (wantarray) {
-	my @f= Chj::xperlfunc::Getgrnam->maybe_get($group);
+	my @f= Chj::xperlfunc::Getgrnam->perhaps_get($group);
 	@f or croak "xgetgrnam: '$group' not in group file";
 	@f
     } else {
-	Chj::xperlfunc::Getgrnam->maybe_get($group)
+	Chj::xperlfunc::Getgrnam->perhaps_get($group)
 	    or croak "xgetgrnam: '$group' not in group file";
     }
 }
