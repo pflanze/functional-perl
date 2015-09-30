@@ -234,6 +234,7 @@ require Exporter;
 	      xmkdir_p
 	      xlink_p
 	      xgetpwnam
+	      xgetgrnam
 	      caching_getpwnam
 	      caching_getgrnam
 	      xprint
@@ -1209,7 +1210,7 @@ sub xlink_p ($ $ ) {
 	my ($user)=@_;
 	my $s= bless [ getpwnam ($user) ], $class;
 	if (@$s) {
-	    $s
+	    wantarray ? @$s : $s
 	} else {
 	    return
 	}
@@ -1218,8 +1219,42 @@ sub xlink_p ($ $ ) {
 }
 sub xgetpwnam ( $ ) {
     my ($user)=@_;
-    Chj::xperlfunc::Getpwnam->maybe_get($user)
-	or croak "xgetpwnam '$user' not in passwd file";
+    if (wantarray) {
+	my @f= Chj::xperlfunc::Getpwnam->maybe_get($user);
+	@f or croak "xgetpwnam: '$user' not in passwd file";
+	@f
+    } else {
+	Chj::xperlfunc::Getpwnam->maybe_get($user)
+	    or croak "xgetpwnam: '$user' not in passwd file";
+    }
+}
+
+{
+    package Chj::xperlfunc::Getgrnam;
+    use Class::Array -fields=>-publica=>
+      qw(name passwd gid members);
+    sub maybe_get {
+	my $class=shift;
+	my ($user)=@_;
+	my $s= bless [ getgrnam ($user) ], $class;
+	if (@$s) {
+	    wantarray ? @$s : $s
+	} else {
+	    return
+	}
+    }
+    end Class::Array;
+}
+sub xgetgrnam ( $ ) {
+    my ($group)=@_;
+    if (wantarray) {
+	my @f= Chj::xperlfunc::Getgrnam->maybe_get($group);
+	@f or croak "xgetgrnam: '$group' not in group file";
+	@f
+    } else {
+	Chj::xperlfunc::Getgrnam->maybe_get($group)
+	    or croak "xgetgrnam: '$group' not in group file";
+    }
 }
 
 
