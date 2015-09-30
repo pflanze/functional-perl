@@ -129,11 +129,14 @@ L<FP::TransparentLazy>
 package FP::Lazy;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(lazy lazyLight force FORCE is_promise);
-@EXPORT_OK=qw(delay);
+@EXPORT_OK=qw(delay force_noeval);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+# A promise is an array with two fields:
+# index 0: thunk when unevaluated, undef once evaluated
+# index 1: value once evaluated
 
 sub lazy (&) {
     bless [$_[0],undef], "FP::Lazy::Promise"
@@ -181,6 +184,25 @@ sub force ($;$) {
     }
 }
 
+# just remove promise wrapper, don't actually force its evaluation
+sub force_noeval ($) {
+    my ($s)=@_;
+    if (length (my $r= ref $s)) {
+	if (UNIVERSAL::isa ($s, "FP::Lazy::Promise")) {
+	    if ($$s[0]) {
+		$s
+	    } else {
+		$$s[1]
+	    }
+	} else {
+	    $s
+	}
+    } else {
+	$s
+    }
+}
+
+
 sub FORCE {
     for (@_) {
 	$_ = force $_
@@ -218,11 +240,27 @@ sub FORCE {
 	    die "no method '$methodname' found for object: $v";
 	}
     }
+
+    sub FP_Show_show {
+	my ($s,$show)=@_;
+	# do not force unforced promises
+	if ($$s[0]) {
+	    'lazy { "DUMMY" }'
+	} else {
+	    &$show($$s[1])
+	}
+    }
 }
 
 {
     package FP::Lazy::PromiseLight;
     our @ISA= qw(FP::Lazy::Promise);
+
+    sub FP_Show_show {
+	my ($s,$show)=@_;
+	# do not force unforced promises
+	'lazyLight { "DUMMY" }'
+    }
 }
 
 use Chj::TEST;
