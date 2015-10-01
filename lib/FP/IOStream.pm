@@ -79,10 +79,13 @@ sub _perhaps_opendir_stream ($) {
 
 sub _perhaps_opendir_stream_sorted ($$) {
     my ($path,$cmp)=@_;
-    my $d= xopendir $path;
-    my $items= array_sort [$d->xnread], $cmp;
-    $d->xclose;
-    array_to_stream $items
+    if (my ($d)= perhaps_opendir $path) {
+	my $items= array_sort [$d->xnread], $cmp;
+	$d->xclose;
+	array_to_stream $items
+    } else {
+	()
+    }
 }
 
 sub perhaps_opendir_stream ($;$) {
