@@ -741,10 +741,10 @@ TEST {
   bless [1,9,16], "FP::PureArray";
 
 
-sub stream_sort ($$) {
-    @_==2 or die "wrong number of arguments";
-    my ($l,$cmp)= @_;
-    stream_to_purearray ($l)->sort ($cmp)
+sub stream_sort ($;$) {
+    @_==1 or @_==2 or die "wrong number of arguments";
+    my ($l,$maybe_cmp)= @_;
+    stream_to_purearray ($l)->sort ($maybe_cmp)
 }
 
 *FP::List::List::stream_sort= *stream_sort;
@@ -756,9 +756,12 @@ TEST { require FP::Ops;
 TEST { ref (stream (5,3,8,4)->sort (\&FP::Ops::number_cmp)) }
   'FP::PureArray'; # XX ok? Need to `->stream` if a stream is needed
 
-TEST { stream (5,3,8,4)->sort (\&FP::Ops::number_cmp)->stream->car }
+TEST { stream (5,3,10,8,4)->sort (\&FP::Ops::number_cmp)->stream->car }
   3;
 # but then PureArray has `first`, too, if that's all you need.
+
+TEST { stream (5,3,10,8,4)->sort->stream->car }
+  10; # the default is string sort
 
 
 # add a lazy merge sort instead/in addition?

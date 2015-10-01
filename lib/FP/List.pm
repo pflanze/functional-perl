@@ -646,10 +646,10 @@ TEST {
   bless [1,9,16], "FP::PureArray";
 
 
-sub list_sort ($$) {
-    @_==2 or die "wrong number of arguments";
-    my ($l,$cmp)= @_;
-    list_to_purearray ($l)->sort ($cmp)
+sub list_sort ($;$) {
+    @_==1 or @_==2 or die "wrong number of arguments";
+    my ($l,$maybe_cmp)= @_;
+    list_to_purearray ($l)->sort ($maybe_cmp)
 }
 
 *FP::List::List::sort= *list_sort;

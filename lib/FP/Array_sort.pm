@@ -63,14 +63,19 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use FP::Ops qw(string_cmp number_cmp operator_2);
 use Chj::TEST;
 
-sub array_sort ($ $) {
-    @_==2 or die "expecting 2 arguments";
-    my ($in,$cmp)=@_;
-    [
-     sort {
-	 &$cmp($a,$b)
-     } @$in
-    ]
+sub array_sort ($;$) {
+    @_==1 or @_==2 or die "wrong number of arguments";
+    my ($in,$maybe_cmp)=@_;
+    (defined $maybe_cmp ?
+     [
+      sort {
+	  &$maybe_cmp($a,$b)
+      } @$in
+     ]
+     :
+     [
+      sort @$in
+     ])
 }
 
 sub on ($ $) {
