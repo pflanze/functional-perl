@@ -133,12 +133,12 @@ lib/FP/Trampoline.pm
 lib/FP/TransparentLazy.pm
 lib/FP/Trie.pm
 lib/FP/Trie/t.pm
+lib/FP/Untainted.pm
 lib/FP/Values.pm
 lib/FP/Weak.pm
 lib/FP/Weak/t.pm
 lib/FP/fix.pm
 lib/FP/uncurry.pm
-lib/FP/untainted.pm
 lib/FP/url_.pm
 lib/HTTP/Daemon.pm
 lib/PXML.pm

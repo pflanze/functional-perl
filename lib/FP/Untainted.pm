@@ -9,14 +9,14 @@
 
 =head1 NAME
 
-FP::untainted - functional untainting
+FP::Untainted - functional untainting
 
 =head1 SYNOPSIS
 
- use FP::untainted;
+ use FP::Untainted;
  exec untainted($ENV{CMD}); # doesn't change the taint flag on $ENV{CMD}
 
- use FP::untainted 'is_untainted';
+ use FP::Untainted 'is_untainted';
  # complement of Scalar::Util's 'tainted'
 
 =head1 DESCRIPTION
@@ -30,7 +30,7 @@ Should this module stay? Vote your opinion if you like.
 =cut
 
 
-package FP::untainted;
+package FP::Untainted;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(untainted);
 @EXPORT_OK=qw(is_untainted);

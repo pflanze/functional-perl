@@ -33,7 +33,7 @@ our ($mydir, $myname); BEGIN {
 }
 use lib "$mydir/../lib";
 
-use FP::untainted;
+use FP::Untainted;
 # trust PATH
 $ENV{PATH}= untainted $ENV{PATH};
 
