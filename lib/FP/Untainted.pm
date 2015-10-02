@@ -16,7 +16,15 @@ FP::Untainted - functional untainting
  use FP::Untainted;
  exec untainted($ENV{CMD}); # doesn't change the taint flag on $ENV{CMD}
 
- use FP::Untainted 'is_untainted';
+ use FP::Untainted qw(untainted_with);
+ exec untainted_with($ENV{CMD}, qr/^\w+$/s); # dito
+ # NOTE that the ^ and $ anchors are essential if you want to make
+ # sure the whole string matches!
+
+ # or, (but this doesn't force the /s flag)
+ exec untainted_with($ENV{CMD}, '^\w+$');
+
+ use FP::Untainted qw(is_untainted);
  # complement of Scalar::Util's 'tainted'
 
 =head1 DESCRIPTION
@@ -33,15 +41,35 @@ Should this module stay? Vote your opinion if you like.
 package FP::Untainted;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(untainted);
-@EXPORT_OK=qw(is_untainted);
+@EXPORT_OK=qw(untainted_with is_untainted);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
+
+use Chj::TEST;
 
 sub untainted ($) {
     $_[0]=~ /(.*)/s or die "??";
     $1
 }
+
+sub untainted_with ($$) {
+    my ($v, $re)= @_;
+    $v=~ /($re)/
+      or die "untainted_with: does not match regex $re: '$v'";
+    $1
+}
+
+TEST { untainted_with "Foo", qr/\w+/s } "Foo";
+TEST { untainted_with "Foo ", qr/\w+/s } "Foo";
+TEST_EXCEPTION { untainted_with "Foo ", qr/^\w+$/s }
+  'untainted_with: does not match regex (?^s:^\\w+$): \'Foo \'';
+
+TEST { untainted_with "Foo", '\w+' } "Foo";
+TEST { untainted_with "Foo ", '\w+' } "Foo";
+TEST_EXCEPTION { untainted_with "Foo ", '^\w+$' } # /s missing.
+  'untainted_with: does not match regex ^\\w+$: \'Foo \'';
+
 
 use Scalar::Util 'tainted';
 
