@@ -228,7 +228,7 @@ sub optionally ($;$) {
     my $pos= $maybe_pos // 0;
     sub {
 	if (defined $_[$pos]) {
-	    goto $f
+	    goto &$f
 	} else {
 	    # pass on the undef value
 	    undef
@@ -241,7 +241,7 @@ sub poptionally ($) {
     my ($f)=@_;
     sub {
 	if (@_) {
-	    goto $f
+	    goto &$f
 	} else {
 	    # pass on the empty list
 	    ()
