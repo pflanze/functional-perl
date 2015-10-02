@@ -198,6 +198,8 @@ usually type check in the array case either!).
   argument misalignment in function calls that have function calls as
   subexpressions.
 
+  See `FP::Optional` for more on this.
+
 * Since handling arrays and hashes by reference is the normal way of
   working functionally (see
   [[howto#References_and_mutation,_"variables"_versus_"bindings"]] for
