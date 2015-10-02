@@ -25,4 +25,5 @@ This list of doubtful names is not exhaustive.
   reserved for a new implementation on top of `Moose` or something?
 - should `null` always be used, including instead of `empty_trie`
   etc. (i.e. rename those to `null_trie` etc.)?
+- `poptionally` in `FP::Optional`
 
