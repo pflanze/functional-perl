@@ -102,8 +102,8 @@ use strict; use warnings FATAL => 'uninitialized';
     package FP::Trie::BareLevel;
 
     use FP::Hash ':all';
-    use FP::Combinators qw(perhaps_to_maybe perhaps_to_x
-			   perhaps_to_or perhaps_to_exists);
+    use FP::Optional qw(perhaps_to_maybe perhaps_to_x
+			perhaps_to_or perhaps_to_exists);
     use FP::Lazy;
     use FP::List;
     use FP::Stream;

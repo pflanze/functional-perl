@@ -117,6 +117,7 @@ lib/FP/Lazy.pm
 lib/FP/List.pm
 lib/FP/Memoizing.pm
 lib/FP/Ops.pm
+lib/FP/Optional.pm
 lib/FP/OrderedCollection.pm
 lib/FP/Path.pm
 lib/FP/Path/t.pm

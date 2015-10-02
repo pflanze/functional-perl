@@ -101,7 +101,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
 use Chj::xperlfunc qw(xprint xprintln);
-use FP::Combinators qw(flip flip2_3 rot3right rot3left perhaps_to_maybe);
+use FP::Combinators qw(flip flip2_3 rot3right rot3left);
+use FP::Optional qw(perhaps_to_maybe);
 use Chj::TEST;
 use FP::Predicates 'is_natural0';
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)

@@ -27,6 +27,10 @@ FP::Combinators - function combinators
 
     https://en.wikipedia.org/wiki/Combinator
 
+=head1 SEE ALSO
+
+L<FP::Optional>
+
 =cut
 
 
@@ -34,8 +38,7 @@ package FP::Combinators;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(compose compose_scalar maybe_compose compose_1side
-	      flip flip2_3 rot3right rot3left
-	      perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists);
+	      flip flip2_3 rot3right rot3left);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -159,54 +162,6 @@ sub rot3left ($) {
 	@_=($_[1], $_[2], $_[0]); goto &$f
     }
 }
-
-
-sub perhaps_to_maybe ($) {
-    my ($f)= @_;
-    sub {
-	if (my ($v)= &$f (@_)) {
-	    $v
-	} else {
-	    undef
-	}
-    }
-}
-
-sub perhaps_to_x ($$) {
-    my ($f, $exception)= @_;
-    sub {
-	if (my ($v)= &$f (@_)) {
-	    $v
-	} else {
-	    die $exception
-	}
-    }
-}
-
-sub perhaps_to_or ($) {
-    my ($f)= @_;
-    sub {
-	@_==3 or die "wrong number of arguments";
-	my ($t,$k,$other)=@_;
-	if (my ($v)= &$f ($t, $k)) {
-	    $v
-	} else {
-	    $other
-	}
-    }
-}
-
-sub perhaps_to_exists ($) {
-    my ($f)= @_;
-    sub {
-	if (my ($_v)= &$f (@_)) {
-	    1
-	} else {
-	    ''
-	}
-    }
-}
-
 
 
 1
