@@ -21,10 +21,6 @@ run by test suite
 
 
 package FP::Path::t;
-#@ISA="Exporter"; require Exporter;
-#@EXPORT=qw();
-#@EXPORT_OK=qw();
-#%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
 
