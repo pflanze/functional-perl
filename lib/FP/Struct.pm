@@ -135,6 +135,7 @@ package FP::Struct;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::NamespaceClean;
+use FP::Show qw(show);
 
 sub require_package {
     my ($package)=@_;
@@ -183,12 +184,6 @@ sub field_maybe_predicate_and_name ($) {
 sub field_has_predicate ($) {
     my ($s)=@_;
     ref $s
-}
-
-
-sub Show ($) {
-    my ($v)=@_;
-    defined $v ? (ref $v ? $v : ($v=~ s/'/\\'/sg, "'$v'")) : "undef"
 }
 
 
@@ -241,7 +236,7 @@ sub import {
 	for (@$allfields_i_with_predicate) {
 	    my ($pred,$name,$i)=@$_;
 	    &$pred ($_[$i])
-	      or die "unacceptable value for field '$name': ".Show($_[$i]);
+	      or die "unacceptable value for field '$name': ".show($_[$i]);
 	}
 	my %s;
 	for (my $i=0; $i< @_; $i++) {
@@ -278,7 +273,7 @@ sub import {
 	for (@$allfields_with_predicate) {
 	    my ($pred,$name)=@$_;
 	    &$pred ($$s{$name})
-	      or die "unacceptable value for field '$name': ".Show($$s{$name});
+	      or die "unacceptable value for field '$name': ".show($$s{$name});
 	}
 	bless $s, $class
     };
@@ -315,7 +310,7 @@ sub import {
 		   my $v=shift;
 		   &$maybe_predicate($v)
 		     or die "unacceptable value for field '$name': "
-		       .Show($v);
+		       .show($v);
 		   my $new= +{%$s};
 		   $$new{$name}= $v;
 		   bless $new, ref $s
@@ -338,7 +333,7 @@ sub import {
 		   my $v= &$fn ($s->{$name});
 		   &$maybe_predicate($v)
 		     or die "unacceptable value for field '$name': "
-		       .Show($v);
+		       .show($v);
 		   my $new= +{%$s};
 		   $$new{$name}= $v;
 		   bless $new, ref $s
