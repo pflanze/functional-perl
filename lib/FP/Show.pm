@@ -51,6 +51,12 @@ want.
 - should `show` try to never use multiple lines, or to do
   pretty-printing?
 
+- should constructor names be fully qualified? Any other idea to avoid
+  this verbosity but still be unambiguous?
+
+- make it good enough to be used by Chj::repl by default for the
+  printing.
+
 =cut
 
 
