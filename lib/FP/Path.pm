@@ -79,7 +79,7 @@ sub check_segment ($) {
 
 # Toggle typing, off for speed (checking FP::List costs O(length);
 # better use FP::StrictList if really interested in strict typing!)
-sub use_costly_typing () { 1 }
+sub use_costly_typing () { 0 }
 our $use_costly_typing= use_costly_typing; # for access from FP::Path::t
 sub typed ($$) {
     my ($pred,$name)=@_;
