@@ -103,6 +103,7 @@ use FP::Combinators qw(flip flip2_3 rot3right rot3left);
 use Chj::TEST;
 use FP::Weak;
 use FP::Predicates 'is_natural0';
+use FP::Show;
 
 sub stream_iota {
     my ($maybe_start, $maybe_n)= @_;
@@ -624,7 +625,7 @@ sub stream_drop_while ($ $) {
 sub stream_ref ($ $) {
     my ($s, $i)=@_;
     weaken $_[0];
-    is_natural0 $i or die "invalid index: '$i'";
+    is_natural0 $i or die "invalid index: ".show($i);
     my $orig_i= $i;
   LP: {
 	$s= force $s;
@@ -666,7 +667,7 @@ sub t_ref {
     }
       [ "a",
 	"b",
-	"invalid index: '-1'",
+	"invalid index: -1",
 	"invalid index: '0.1'",
 	"requested element 2 of $liststream of length 2",
 	"x",

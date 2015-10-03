@@ -32,6 +32,7 @@ use Chj::xperlfunc qw(dirname basename);
 use Htmlgen::PathUtil qw(path_path0_append);
 use FP::Div qw(identity);
 use Htmlgen::default_config;
+use FP::Show;
 
 our $t= __PACKAGE__->new_(is_indexpath0=> $$default_config{is_indexpath0},
 			  downcaps=> 1);
@@ -93,7 +94,7 @@ method possibly_suffix_md_to_html ($path,$for_title=0) {
 method xsuffix_md_to_html ($path0,$for_title) {
     $self->if_suffix_md_to_html($path0, $for_title,
 		      *identity,
-		      sub{die "file does not end in .md: '$path0'"})
+		      sub{die "file does not end in .md: ".show($path0)})
 }
 
 TEST{ $t->possibly_suffix_md_to_html ("foo") } "foo";

@@ -57,6 +57,7 @@ use FP::List ":all";
 use FP::Equals ();
 use Chj::constructorexporter;
 use FP::Predicates qw(is_string is_boolean);
+use FP::Show;
 
 sub perhaps_segment_error ($) {
     my ($segment)=@_;
@@ -64,7 +65,7 @@ sub perhaps_segment_error ($) {
       unless is_string $segment;
     return "segments cannot be the empty string"
       unless length $segment;
-    return "segment contains slash: '$segment'"
+    return "segment contains slash: ".show($segment)
       if $segment=~ m{/};
     ()
 }

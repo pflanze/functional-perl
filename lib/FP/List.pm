@@ -111,6 +111,7 @@ use FP::Optional qw(perhaps_to_maybe);
 use Chj::TEST;
 use FP::Predicates qw(is_natural0 either is_natural complement is_even is_zero);
 use FP::Div qw(inc dec);
+use FP::Show;
 
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
 #(Chj::xIOUtil triggers it)
@@ -514,7 +515,7 @@ TEST_EXCEPTION{ [ list ()->xone ] } "expected 1 value, got none";
 # XX adapted copy from Stream.pm
 sub list_ref ($ $) {
     my ($s, $i)=@_;
-    is_natural0 $i or die "invalid index: '$i'";
+    is_natural0 $i or die "invalid index: ".show($i);
     my $orig_i= $i;
   LP: {
 	$s= force $s;
@@ -987,7 +988,7 @@ sub _write_sexpr ($ $ $) {
 	    # normal perl things; should have a show method already
 	    # for this? whatever.
 	    if (ref $l) {
-		die "don't know how to write_sexpr this: '$l'";
+		die "don't know how to write_sexpr this: ".show($l);
 	    } else {
 		# assume string; there's nothing else left.
 		$l=~ s/"/\\"/sg;

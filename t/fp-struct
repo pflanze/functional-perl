@@ -26,7 +26,7 @@ use Chj::Backtrace;
 
 is new Foo ("Tim")->name, "Tim";
 is do { eval { new Foo ("Tim", 0) } || do { my $e= $@; $e=~ s/ at .*//s; $e } },
-  "unacceptable value for field 'animals': '0'";
+  "unacceptable value for field 'animals': 0";
 is new Foo (undef, ["Struppi"])->animals->[0], "Struppi";
 is new_ Foo (animals=> ["Struppi"])->animals->[0], "Struppi";
 

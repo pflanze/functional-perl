@@ -52,7 +52,7 @@ sub test {
 	$f->can("is_age")
     } undef;
     TEST_EXCEPTION { $f= $class->new ("Maria", 1300) }
-      'unacceptable value for field \'age\': \'1300\'';
+      'unacceptable value for field \'age\': 1300';
     TEST_EXCEPTION { $f= $class->new ("Maria", 104.5) }
       'unacceptable value for field \'age\': \'104.5\'';
 }

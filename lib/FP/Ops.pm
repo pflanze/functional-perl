@@ -62,6 +62,7 @@ package FP::Ops;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
+use FP::Show;
 
 sub add {
     my $t=shift;
@@ -131,7 +132,7 @@ sub binary_operator ($) {
     @_==1 or die "need 1 argument";
     my ($code)=@_;
     eval 'sub ($$) { @_==2 or die "need 2 arguments"; $_[0] '.$code.' $_[1] }'
-      || die "binary_operator: '$code': $@";
+      || die "binary_operator: ".show($code).": $@";
     # XX security?
 }
 
@@ -139,7 +140,7 @@ sub unary_operator ($) {
     @_==1 or die "need 1 argument";
     my ($code)=@_;
     eval 'sub ($) { @_==1 or die "need 1 argument"; '.$code.' $_[0] }'
-      || die "unary_operator: '$code': $@";
+      || die "unary_operator: ".show($code).": $@";
     # XX security?
 }
 

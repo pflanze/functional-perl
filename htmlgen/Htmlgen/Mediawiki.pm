@@ -33,6 +33,7 @@ use Sub::Call::Tail;
 use Chj::chompspace;
 use Chj::TEST ":all";
 use PXML::XHTML ":all";
+use FP::Show;
 
 # and for text display we need to *decode* URIs..
 # COPY from chj-bin's `urldecode`
@@ -161,7 +162,7 @@ fun mediawiki_expand ($str) {
 		$text)
 	} else {
 	    # XX location?...
-	    die "more than 2 parts in a wiki style link: '$cont'";
+	    die "more than 2 parts in a wiki style link: ".show($cont);
 	}
     }
 

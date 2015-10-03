@@ -173,6 +173,7 @@ use Sub::Call::Tail;
     use Htmlgen::UriUtil qw(URI_is_internal);
     use Chj::xperlfunc qw(dirname);
     use Htmlgen::PathUtil qw(path_add path_diff);
+    use FP::Show;
 
     use FP::Struct []=> "Htmlgen::PXMLMapper";
 
@@ -236,7 +237,7 @@ use Sub::Call::Tail;
 			my $p0= path_add(dirname ($selfpath0), $path);
 			$p0=~ s|^\./||;#hack. grr y
 			unless ($self->maybe_have_path0->($p0)) {
-			    warn "link target does not exist: '$p0' ".
+			    warn "link target does not exist: ".show($p0).
 			      "('$path' from '$selfpath0', link '$href')";
 			    #use Chj::repl;repl;
 			}

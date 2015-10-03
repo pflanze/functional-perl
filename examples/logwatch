@@ -115,13 +115,14 @@ use Chj::xopen;
 use Chj::IO::Command;
 use Chj::xpipe;
 use Chj::singlequote;
+use FP::Show;
 #use Chj::Trapl; # or Chj::Backtrace
 #use Chj::repl;
 
 
 fun safe_for_mail ($str) {
     $str=~ /^([^\r\n\t]*)\z/s ? $1
-      : die "not safe for mail: '$str'";
+      : die "not safe for mail: ".show($str);
     # (should really escape instead, but don't want to make it
     # complex)
 }
