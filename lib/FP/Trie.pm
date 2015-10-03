@@ -303,7 +303,7 @@ use strict; use warnings FATAL => 'uninitialized';
 	cons(list($t->perhaps_value),
 	     list(map {
 		      list($_, $$sublevels{$_}->sexpr)
-		  } sort CORE::keys %$sublevels))
+		  } sort (CORE::keys %$sublevels)))
     }
 
     _END_
