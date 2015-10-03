@@ -104,6 +104,12 @@ use base 'FP::Sequence';
 # de-import array from FP::Array to avoid redefinition warning
 BEGIN {undef *array }
 
+# for FP::Show
+sub FP_Show_show {
+    my ($s,$show)=@_;
+    "purearray(".join(", ", @{array_map($show,$s)}).")"
+}
+
 sub array {
     @_==1 or die "wrong number of arguments";
     my $s=shift;
