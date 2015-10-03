@@ -88,7 +88,7 @@ sub _launch {
 		my @newcmd= ("/usr/bin/env");
 		my $env= $maybe_env;
 		for my $k (keys %$env) {
-		    die "invalid env key starting with '-': '$k'"
+		    die "invalid env key starting with '-': ".singlequote_sh($k)
 		      if $k=~ /^-/;
 		    push @newcmd, "$k=$$env{$k}";
 		}
