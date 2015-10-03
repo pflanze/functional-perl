@@ -82,7 +82,7 @@ lazy input.
 
 Note that this dispatch mechanism is only run for the first pair of
 the list; afterwards, the code stays in either `list_map` or
-`stream_map`. This means that prepending a value to a stream makes
+`stream_map`(*). This means that prepending a value to a stream makes
 the non-lazy map implementation be used:
 
     cons (0, array_to_stream [1,3,4])->map (*inc)
@@ -94,6 +94,10 @@ yourself to force the lazy variant:
     cons (0, array_to_stream [1,3,4])->stream_map (*inc)
 
 returns a stream.
+
+(*) Question: should the dispatch really happen for each cell? Then
+the eager part of a mixed list/stream would still be mapped eagerly,
+and the lazy part lazily. (TODO: measure the overhead.)
 
 NOTE: providing both functions and methods makes things more
 complicated. The reason it was done so far is rather accidental, as
