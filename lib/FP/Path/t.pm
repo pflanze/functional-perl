@@ -162,7 +162,7 @@ TEST_EXCEPTION { path("/foo")->add_segment("bar/") }
   'segment contains slash: \'bar/\'';
 TEST_EXCEPTION { FP::Path->new(list("/foo"), 1, 1)->string }
   ($FP::Path::use_costly_typing ?
-   'unacceptable value for field \'rsegments\': FP::List::Pair=ARRAY(0x9fa7c8c)'
+   'unacceptable value for field \'rsegments\': list(\'/foo\')'
    : 'segment contains slash: \'/foo\'');
 
 
