@@ -63,7 +63,10 @@ to quote the result:
    # which isn't very informative
 
 Embedding pointer values in the output also means that it can't be
-used directly/reliably for automatic testing.
+used for automatic testing. (Even with a future implementation of
+cut-offs, values returned by `show` will be good enough when what one
+needs to do is compare against a short representation. Also, likely we
+would implement the cut-off value as an optional parameter.)
 
 
 =head1 TODO
