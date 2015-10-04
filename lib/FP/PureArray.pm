@@ -36,7 +36,7 @@ package FP::PureArray;
 
 #@ISA="Exporter"; require Exporter; see hack below
 
-@EXPORT=qw(purearray array_to_purearray unsafe_array_to_purearray);
+@EXPORT=qw(is_purearray purearray array_to_purearray unsafe_array_to_purearray);
 # or optional export only?
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -72,6 +72,10 @@ sub blessing_snd ($) {
 }
 
 use Chj::NamespaceCleanAbove;
+
+sub is_purearray ($) {
+    length ref ($_[0]) and UNIVERSAL::isa($_[0], "FP::PureArray")
+}
 
 sub purearray {
     bless [@_], "FP::PureArray"
