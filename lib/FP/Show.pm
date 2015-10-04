@@ -57,6 +57,11 @@ want.
 - make it good enough to be used by Chj::repl by default for the
   printing.
 
+
+=head1 SEE ALSO
+
+L<FP::Equals>
+
 =cut
 
 

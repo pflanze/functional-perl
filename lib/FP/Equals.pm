@@ -45,6 +45,8 @@ the equals function returns undef in this case.
 
 L<FP::Equal> for a non-class controlled alternative
 
+L<FP::Show>
+
 =cut
 
 
