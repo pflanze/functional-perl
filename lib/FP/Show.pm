@@ -9,16 +9,24 @@
 
 =head1 NAME
 
-FP::Show - turn any object to a string for debugging purposes
+FP::Show - give (nice) code representation for debugging purposes
 
 =head1 SYNOPSIS
 
  use FP::Show; # exports 'show'
  use FP::List;
 
- my $l= list 100-1, "bottles";
- die "not what we wanted: ".show ($l);
-   # -> dies with "not what we wanted: list(99, 'bottles')"
+ sub foo {
+     my ($l)=@_;
+     die "not what we wanted: ".show ($l)
+       unless ref ($l) eq "ARRAY";
+ }
+
+ foo list 100-1, "bottles";
+   # -> dies with: not what we wanted: list(99, 'bottles')
+ foo "list(99, 'bottles')" ;
+   # -> dies with: not what we wanted: 'list(99, \'bottles\')'
+
 
 =head1 DESCRIPTION
 
@@ -29,6 +37,34 @@ contained values, and that must return the string representation.
 Data::Dumper *does* have a similar feature, $Data::Dumper::Freezer,
 but it needs the object to be mutated, which is not what one will
 want.
+
+Why not use string overloading instead? Because '""' overloading is
+returning 'plain' strings, not perl code (or so it seems, is there any
+spec that defines exactly what it means?) Code couldn't know whether
+to quote the result:
+
+ sub foo2 {
+     my ($l)=@_;
+     die "not what we wanted: $l"
+       unless ref ($l) eq "ARRAY";
+ }
+
+ foo2 list 100-1, "bottles";
+   # would die with: not what we wanted: list(99, 'bottles')
+ foo2 "list(99, 'bottles')" ;
+   # would die with: not what we wanted: list(99, 'bottles')
+ # so how would you tell which value foo2 really got in each case,
+ # just from looking at the message?
+
+ # also:
+ foo2 +{a=> 1, b=>10};
+   # would die with something like:
+   #   not what we wanted: HASH(0xEADBEEF)
+   # which isn't very informative
+
+Embedding pointer values in the output also means that it can't be
+used directly/reliably for automatic testing.
+
 
 =head1 TODO
 
