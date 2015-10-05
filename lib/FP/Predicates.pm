@@ -55,6 +55,7 @@ package FP::Predicates;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
 	      is_pure
+	      is_pure_object
 	      is_pure_class
 	      is_string
 	      is_nonnullstring
@@ -103,12 +104,18 @@ use Chj::BuiltinTypePredicates 'is_filehandle';
 # ^ should probably move more lowlevel predicates there
 
 
+# XX check for read-only flags?
+
+# is_pure returns true for non-references, going with the assumption
+# that the caller created a copy of those anyway, in which case there
+# is no reason for fear from mutations from scopes before it got
+# control of the value:
 sub is_pure ($) {
-    # XX also treat numbers (or booleans, hum) as pure? But then by
-    # way of references and string appending they can be mutated into
-    # modified strings. (Hm, what about immutable SVs? Even new
-    # types?)
-    # XX check for read-only flags?
+    length (ref $_[0]) ? UNIVERSAL::isa ($_[0], "FP::Pure")
+      : 1
+}
+
+sub is_pure_object ($) {
     length ref $_[0] and UNIVERSAL::isa ($_[0], "FP::Pure")
 }
 

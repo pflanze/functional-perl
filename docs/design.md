@@ -263,7 +263,8 @@ of purity (in the future).
 ### Use `FP::Pure` as base class for (in principle) immutable objects
 
 And let `is_pure` from `FP::Predicates` return true for all immutable
-data types (even if they are not blessed references)? (Todo, in flux.)
+data types (even if they are not blessed references.) 
+(`is_pure_object` will only return true for actual objects.)
 
 The idea is to be able to assert easily that an algorithm can rely on
 some piece of data not changing.
