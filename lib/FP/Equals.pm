@@ -14,9 +14,11 @@ FP::Equals - generic equality comparison
 =head1 SYNOPSIS
 
  use FP::Equals;
- equals [1, [2, 3]], [1, [1+1, 3]]; # -> 1
- equals [1, [2, 3]], [1, [1+2, 3]]; # -> ''
- equals [1, [2, 3]], [1, [[], 3]]; # -> undef: "not the same type"
+ use FP::List;
+ use FP::Div qw(inc);
+ equals [1, list(2, 3)], [1, list(1, 2)->map(*inc)]; # -> 1
+ equals [1, list(2, 3)], [1, list(1, 2)]; # -> ''
+ equals [1, list(2, 3)], [1, list([], 3)]; # -> undef: "not the same type"
 
 =head1 DESCRIPTION
 

@@ -49,9 +49,11 @@ sub tequals {
 }
 
 # from the synopsis
-TEST{ equals [1, [2, 3]], [1, [1+1, 3]] } 1;
-TEST{ equals [1, [2, 3]], [1, [1+2, 3]] } '';
-TEST{ equals [1, [2, 3]], [1, [[], 3]] } undef;
+use FP::List;
+use FP::Div qw(inc);
+TEST{ equals [1, list(2, 3)], [1, list(1, 2)->map(*inc)] } 1;
+TEST{ equals [1, list(2, 3)], [1, list(1, 2)] } '';
+TEST{ equals [1, list(2, 3)], [1, list([], 3)] } undef;
 
 # 'systematic':
 TEST{equals undef, undef} 1;
@@ -150,7 +152,6 @@ use utf8;
 
 # Lazy values, classes:
 use FP::Stream;
-use FP::List;
 use FP::Lazy;
 
 TEST {tequals "a", lazy { chr 65+32 } } 1;
