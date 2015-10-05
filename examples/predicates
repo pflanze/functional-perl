@@ -63,17 +63,34 @@ test "Bar";
 
 use FP::Predicates;
 use FP::List;
+use FP::PureArray;
+
+TEST { is_pure 11 }
+  1;
+
+TEST { my $x= 11; $x++; is_pure $x }
+  1;
+
+TEST { my $x= 11; $x++; is_pure_object $x }
+  0;
 
 TEST { is_pure cons 1,2 }
+  1;
+
+TEST { is_pure_object cons 1,2 }
   1;
 
 TEST { is_pure [ 1,2 ] }
   '';
 
+TEST { is_pure purearray 1, 2 }
+  1;
+
 use FP::Lazy;
 
 TEST { is_pure lazy { cons 1,2 } }
-  ''; # or should it force it?
+  ''; # or should it force it? XX or (wildly) assume that lazy
+      # expressions are always returning pure values?
 
 
 use FP::OrderedCollection; # based on FP::Struct
