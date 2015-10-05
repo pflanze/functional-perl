@@ -33,7 +33,10 @@ use FP::Struct
   [[\&is_array, "array"],
    [\&is_hash, "hash"]];
 
-sub new_from_array {
+
+# Unsafe: assumes that the given array is never mutated after
+# constructing the OrderedCollection
+sub unsafe_new_from_array {
     my $cl=shift;
     @_==1 or die "wrong number of arguments";
     my ($a)=@_;
@@ -44,9 +47,16 @@ sub new_from_array {
     $cl->new ($a,\%h)
 }
 
+sub new_from_array {
+    my $cl=shift;
+    @_==1 or die "wrong number of arguments";
+    my ($a)=@_;
+    $cl->unsafe_new_from_array ([@$a])
+}
+
 sub new_from_values {
     my $cl=shift;
-    $cl->new_from_array([@_])
+    $cl->unsafe_new_from_array([@_])
 }
 
 sub contains {

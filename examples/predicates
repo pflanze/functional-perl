@@ -95,9 +95,14 @@ TEST { is_pure lazy { cons 1,2 } }
 
 use FP::OrderedCollection; # based on FP::Struct
 
-TEST { is_pure ( FP::OrderedCollection->new_from_array([1,2]) ) }
-  1; # (XX this assumes that the array passed in is not mutated by the
-     # caller!)
+my $a=[1,2];
+
+TEST { is_pure( FP::OrderedCollection->unsafe_new_from_array($a) ) }
+  1; # this assumes that the array passed in is not mutated by the
+     # caller!
+
+TEST { is_pure( FP::OrderedCollection->new_from_array($a) ) }
+  1; # this copies the array, hence is always safe
 
 
 perhaps_run_tests "main" or repl;
