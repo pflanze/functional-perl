@@ -140,6 +140,9 @@ use FP::Show;
 	0
     }
 
+    sub maybe_first { undef }
+    sub perhaps_first { () }
+
     sub equals {
 	my ($a,$b)=@_;
 	FP::List::is_null($b)
@@ -168,6 +171,9 @@ use FP::Show;
 	$_[0][0]
     }
     *first=*car;
+
+    *maybe_first= *first;
+    *perhaps_first= *first;
 
     sub cdr {
 	$_[0][1]
@@ -403,6 +409,10 @@ sub car ($) {
 }
 
 sub first ($); *first=*car;
+
+# XX add maybe_first and perhaps_first wrappers here? Shouldn't this
+# be more structured/automatic, finally.
+
 
 sub cdr ($) {
     my ($v)=@_;
