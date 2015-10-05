@@ -109,6 +109,10 @@ functional-perl repository; also see the 'history' and 'edit' links at
 the top, the latter of which allows you to edit the page on Github
 without having to check it out).
 
+I'm using it already in personal projects; where breakage due to
+changes is inacceptable, I add functional-perl as a Git submodule to
+the project using it (accessing it directly, without installation.)
+
 The project is currently led by [Christian
 Jaeger](http://leafpair.com/contact). Feel free to send me private
 mail if you prefer. I'm also on the `#london.pm` and
