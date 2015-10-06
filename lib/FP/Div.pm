@@ -24,6 +24,7 @@ package FP::Div;
 @EXPORT=qw();
 @EXPORT_OK=qw(inc dec square
 	      identity
+	      min max
 	      Chomp
 	      );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -53,6 +54,23 @@ sub square ($) {
     @_==1 or die "wrong number of arguments";
     $_[0] * $_[0]
 }
+
+sub min {
+    my $x=shift;
+    for (@_) {
+	$x= $_ if $_ < $x
+    }
+    $x
+}
+
+sub max {
+    my $x=shift;
+    for (@_) {
+	$x= $_ if $_ > $x
+    }
+    $x
+}
+
 
 # is there any better idea than ucfirst to distinguish from the
 # builtin? `fchomp` ?

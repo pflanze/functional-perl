@@ -819,22 +819,8 @@ sub mk_caching_getANYid {
     }
 }
 
-# XX forever, should find a permanent place for these
-sub min {
-    my $x=shift;
-    for (@_) {
-	$x= $_ if $_ < $x
-    }
-    $x
-}
-
-sub max {
-    my $x=shift;
-    for (@_) {
-	$x= $_ if $_ > $x
-    }
-    $x
-}
+use FP::Div qw(min max); # min just for the backwards-compatible
+                         # re-export
 
 {
     package Chj::xperlfunc::mtimed;
