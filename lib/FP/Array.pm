@@ -74,7 +74,7 @@ package FP::Array;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::TEST;
-use Chj::xperlfunc qw(min max);
+use FP::Div qw(min);
 use FP::Ops 'add';
 
 sub array {

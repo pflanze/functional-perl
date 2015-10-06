@@ -78,7 +78,7 @@ TEST { translate ' &$then
   '@_=($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
                : $path0); goto &$then';
 
-use Chj::xperlfunc 'min';
+use FP::Div 'min';
 
 sub min_maybe {
     min grep { defined $_ } @_

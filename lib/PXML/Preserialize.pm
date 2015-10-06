@@ -166,7 +166,7 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use PXML::Serialize qw(pxml_print_fragment_fast attribute_escape);
 use PXML qw(pxmlbody pxmlflush);
-use Chj::xperlfunc qw(max);
+use FP::Div qw(max);
 
 # passes $fn $nargs arguments that it will use during serialization to
 # cut apart the serialized representation.
