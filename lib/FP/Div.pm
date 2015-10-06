@@ -24,7 +24,7 @@ package FP::Div;
 @EXPORT=qw();
 @EXPORT_OK=qw(inc dec square
 	      identity
-	      min max
+	      min max minmax
 	      Chomp
 	      );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -70,6 +70,17 @@ sub max {
     }
     $x
 }
+
+sub minmax {
+    my $min=shift;
+    my $max=$min;
+    for (@_) {
+	$min= $_ if $_ < $min;
+	$max= $_ if $_ > $max;
+    }
+    ($min,$max)
+}
+
 
 
 # is there any better idea than ucfirst to distinguish from the
