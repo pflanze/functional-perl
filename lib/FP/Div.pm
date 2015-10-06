@@ -35,24 +35,29 @@ use Chj::TEST;
 # `identity_scalar`? :
 
 sub identity ($) {
+    @_==1 or die "wrong number of arguments";
     $_[0]
 }
 
 sub inc ($) {
+    @_==1 or die "wrong number of arguments";
     $_[0] + 1
 }
 
 sub dec ($) {
+    @_==1 or die "wrong number of arguments";
     $_[0] - 1
 }
 
 sub square ($) {
+    @_==1 or die "wrong number of arguments";
     $_[0] * $_[0]
 }
 
 # is there any better idea than ucfirst to distinguish from the
 # builtin? `fchomp` ?
 sub Chomp ($) {
+    @_==1 or die "wrong number of arguments";
     my ($str)=@_;
     chomp $str;
     $str
