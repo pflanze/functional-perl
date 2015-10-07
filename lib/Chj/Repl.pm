@@ -809,6 +809,7 @@ sub run {
 					 &$view_with_port
 					   (sub {
 						my ($o)=@_;
+						local $Data::Dumper::Sortkeys= 1;
 						local $Data::Dumper::Terse= 1;
 						for my $key (sort keys %$lexicals) {
 						    if ($key=~ /^\$/) {
@@ -912,6 +913,7 @@ sub run {
 
 			       # actually do the formatting job:
 			       require Data::Dumper;
+			       local $Data::Dumper::Sortkeys= 1;
 			       scalar Data::Dumper::Dumper(@_);
 			       # don't forget the scalar here. *Sigh*.
 			   }
