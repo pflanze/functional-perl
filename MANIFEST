@@ -93,6 +93,7 @@ lib/Chj/singlequote/t.pm
 lib/Chj/time_this.pm
 lib/Chj/xIO.pm
 lib/Chj/xIOUtil.pm
+lib/Chj/xhome.pm
 lib/Chj/xopen.pm
 lib/Chj/xopendir.pm
 lib/Chj/xoutpipe.pm
