@@ -55,7 +55,9 @@ sub usage {
 exit @_;
 }
 
-my $HISTFILE= "$ENV{HOME}/.${myname}_history";
+use Chj::xhome qw(xsafehome);
+
+my $HISTFILE= xsafehome."/.${myname}_history";
 my $MAXHISTLEN= 100;
 
 my @files;
