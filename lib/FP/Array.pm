@@ -56,6 +56,7 @@ package FP::Array;
 	      array_map
 	      array_map_with_i
 	      array_map_with_islast
+	      array_to_hash_map
 	      array_filter
 	      array_zip
 	      array_fold
@@ -257,6 +258,29 @@ sub array_map_with_islast {
 
 TEST{ array_map_with_islast sub { $_[0] }, [1,2,20] }
   [ '','',1 ];
+
+
+sub array_to_hash_map {
+    @_>1 or die "wrong number of arguments";
+    my $fn=shift;
+    my $len= min (map { scalar @$_ } @_);
+    my %res;
+    for (my $i=0; $i<$len; $i++) {
+	my @v= &$fn (map { $$_[$i] } @_);
+	@v==2 or die "wrong number of return values: ".show (\@v);
+	$res{$v[0]}= $v[1];
+    }
+    \%res
+}
+
+TEST { array_to_hash_map(sub { my($x,$a)=@_; $a=> $x*$x },
+			 [2,3,4,5],
+			 ["a","b","c"]) }
+  +{
+    'a' => 4,
+    'b' => 9,
+    'c' => 16
+   };
 
 
 sub array_filter ($$) {
