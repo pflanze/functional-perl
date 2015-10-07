@@ -19,6 +19,9 @@ Chj::Repl - read-eval-print loop
  $repl->set_prompt("foo> ");
  # ^ if left undefined, "$package$perhapslevel> " is used
  $repl->set_historypath("somefile"); # default is ~/.perl-repl_history
+ $repl->set_env_PATH ($safe_PATH); # default in taint mode is
+   # '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+   # $ENV{PATH} otherwise.
  $repl->run;
  # or $repl->run($skip)  to skip $skip levels
 
@@ -176,6 +179,7 @@ use Class::Array -fields=>
               'Mode_viewer', # char
 	      'Maybe_input', # fh
 	      'Maybe_output', # fh
+	      'Env_PATH', # maybe string
 	     );
 
 sub new {
@@ -191,6 +195,9 @@ sub new {
     $$self[Mode_context]= 'l';
     $$self[Mode_formatter]= 'd';
     $$self[Mode_viewer]= 'a';
+    $$self[Env_PATH]=
+      '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+	if ${^TAINT};
     $self
 }
 
@@ -598,6 +605,8 @@ sub run {
 			   my $out= fh_to_fh ($OUTPUT);
 			   $out->xdup2(1);
 			   $out->xdup2(2);
+			   $ENV{PATH}= $self->env_PATH
+			     if defined $self->env_PATH;
 			   xexec $pagercmd, @options
 		       });
 		    &$printto ($o);
