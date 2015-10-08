@@ -55,6 +55,7 @@ package FP::Ops;
 		 number_cmp
 		 the_method
 		 cut_method
+		 applying
 		 binary_operator
 		 unary_operator
 	    );
@@ -125,6 +126,15 @@ sub cut_method {
     my ($object,$method,@args)=@_;
     sub {
 	$object->$method(@args,@_)
+    }
+}
+
+sub applying {
+    my @v=@_;
+    sub ($) {
+	@_==1 or die "wrong number of arguments";
+	my ($f)=@_;
+	@_=@v; goto &$f
     }
 }
 
