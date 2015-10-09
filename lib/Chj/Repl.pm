@@ -581,7 +581,7 @@ sub run {
 
 		my $pagercmd= $maybe_pager // $self->pager;
 
-		WithRepl_eval {
+		eval {
 		    # XX this now means that no options
 		    # can be passed in $ENV{PAGER} !
 		    # (stupid Perl btw). Ok hard code
@@ -602,7 +602,7 @@ sub run {
 		    1
 		} || do {
 		    my $e= $@;
-		    unless ($e=~ /broken pipe/) {
+		    unless ($e=~ /broken pipe/i) {
 			print $ERROR "error piping to pager ".
 			  "$pagercmd: $e\n"
 			    or die $!;
