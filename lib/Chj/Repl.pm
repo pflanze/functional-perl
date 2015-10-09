@@ -899,6 +899,7 @@ sub run {
 			       )
 			   },
 			   d=> sub {
+			       my @v=@_;
 			       # save values by side effect; UGLY? Fits
 			       # here just because we only want to set in
 			       # :d mode
@@ -913,9 +914,15 @@ sub run {
 
 			       # actually do the formatting job:
 			       require Data::Dumper;
-			       local $Data::Dumper::Sortkeys= 1;
-			       scalar Data::Dumper::Dumper(@_);
-			       # don't forget the scalar here. *Sigh*.
+			       my $res;
+			       WithRepl_eval {
+				   local $Data::Dumper::Sortkeys= 1;
+				   $res= Data::Dumper::Dumper(@v);
+				   1
+			       } || do {
+				   warn "Data::Dumper: $@";
+			       };
+			       $res
 			   }
 			  },
 			 $self->mode_formatter);
