@@ -161,7 +161,7 @@ GetOptions("verbose"=> \$verbose,
 
 if ($opt_repl) {
     require Chj::repl;
-    Chj::repl::repl();
+    Chj::repl();
     exit 0
 }
 
