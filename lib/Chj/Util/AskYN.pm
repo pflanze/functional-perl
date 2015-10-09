@@ -43,11 +43,12 @@ use strict;
 
 sub maybe_askyn {
     my ($prompt)=@_;
+    local $|=1;
   ASK:{
 	if (defined $prompt) {
-	    local $|=1;
 	    print $prompt;
 	}
+	print " ";
 	my $ans=<STDIN>;
 	if (defined $ans) {
 	    if ($ans=~ /^n(?:o|ein|ada|on)?$/i) {
@@ -55,6 +56,8 @@ sub maybe_askyn {
 	    } elsif ($ans=~ /^(?:ja|yes|j|y|oui)$/i){
 		1
 	    } else {
+		print "Please answer with yes or no or their initials, ".
+		  "or the same in french or german.\n";
 		redo ASK;
 	    }
 	} else {
