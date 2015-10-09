@@ -133,12 +133,9 @@ if (@files) {
 }
 
 else {
-    require Chj::Repl;
-    my $repl= new Chj::Repl;
-    $repl->set_historypath($opt_H ? undef : $HISTFILE);
-    $repl->set_maxhistlen($MAXHISTLEN);
-    $repl->set_package($myname);
-    eval "package $myname; use Data::Dumper;";
-    $repl->run;
+    require Chj::repl;
+    Chj::repl(historypath=> ($opt_H ? undef : $HISTFILE),
+	      maxhistlen=> $MAXHISTLEN,
+	      package=> $myname);
 }
 
