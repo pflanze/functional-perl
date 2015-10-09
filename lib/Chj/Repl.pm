@@ -130,6 +130,8 @@ use Chj::xperlfunc qw(xexec);
 use Chj::xopen qw(fh_to_fh);
 use POSIX;
 use Chj::xhome qw(xeffectiveuserhome);
+use Chj::Util::AskYN qw(maybe_askyn);
+
 
 sub xone_nonwhitespace {
     my ($str)=@_;
@@ -322,7 +324,7 @@ use Chj::Repl::Stack;
 our $repl_level; # maybe number of repl layers above
 
 # TODO: split this monstrosity into pieces.
-sub run {
+sub _run {
     my $self=shift;
     my ($maybe_skip)=@_;
 
@@ -1006,6 +1008,21 @@ sub run {
 	for (@$current_history){
 	    chomp;
 	    $term->addhistory($_);
+	}
+    }
+}
+
+sub run {
+    my $self=shift;
+    my ($maybe_skip)=@_;
+    my $skip= $maybe_skip//0;
+    WithRepl_eval {
+	$self->_run ($skip+4);
+	1
+    } || do {
+	warn "Repl internal error: $@";
+	if (maybe_askyn "Re-enter the repl (otherwise continue the program)?") {
+	    @_=($self, $maybe_skip); goto &run;
 	}
     }
 }
