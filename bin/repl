@@ -40,17 +40,21 @@ sub usage {
   none given.
 
   Interactive mode tricks:
-  - enter alone re-evaluates last entry. No need to push cursor up for that:)
-  - you can use \$variables (there's no strict vars in scope), or define
-    subroutines, whatever...:)
+  - uses readline (read up on its features)
+  - entering nothing re-evaluates the last entry
+  - 'strict vars' is not active, so there's no need to declare new
+    globals with 'our'
+  - global variables and subroutines stay around, lexical ('my')
+    varibles don't
   - you can refer to '\$VAR1' etc. to get the correspondin result from the
-    previous entry (as long as you're using the default ':d' display mode)
+    previous evaluation (as long as you're using the default ':d'
+    display mode)
   - enter ':?' to get a list of special commands and mode switches
 
   Options:
   -t               trap exceptions in a repl, too
-  -H|--no-history  Do not save history to file.
-                   (It is still being read in on startup.)
+  -H|--no-history  do not save history to file (it is still read on
+                   startup.)
 ";
 exit @_;
 }
