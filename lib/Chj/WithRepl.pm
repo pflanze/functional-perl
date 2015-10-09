@@ -24,7 +24,13 @@ Chj::WithRepl
                     # below)
 
  WithRepl_eval ...; # like `eval` but transparent for WithRepl
-                    # handlers
+                    # handlers (takes an optional package argument, by
+                    # default the caller's package is used)
+
+ my ($v,$e,$is_error)= WithRepl_eval_e("code",$maybe_package);
+                    # unlike WithRepl_eval and eval, this safely
+                    # returns the result of the given code, or $e==$@
+                    # and $is_error==1 in case of an exception/error.
 
  pop_withrepl; # restore the handler that was pushed last.
 
@@ -49,7 +55,7 @@ package Chj::WithRepl;
 
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(withrepl push_withrepl pop_withrepl);
-@EXPORT_OK=qw(WithRepl_eval);
+@EXPORT_OK=qw(WithRepl_eval WithRepl_eval_e);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -68,6 +74,20 @@ sub WithRepl_eval (&;$) {
     }
 }
 
+sub WithRepl_eval_e (&;$) {
+    my ($arg, $maybe_package)=@_;
+    if (ref $arg) {
+	die "WithRepl_eval_e only supports string eval";
+    } else {
+	my $package= $maybe_package // caller;
+	my $res;
+	if (eval "package $package; \$res= do { $arg }; 1") {
+	    ($res, $@, '')
+	} else {
+	    (undef, $@, 1)
+	}
+    }
+}
 
 use Chj::repl;
 use Chj::TEST;
@@ -132,7 +152,7 @@ sub have_eval_since_frame ($) {
 	    if ((@v)= caller $i++) {
 		my $f= Chj::Repl::StackFrame->new(undef, @v);
 		my $sub= $f->subroutine;
-		if ($sub =~ /::WithRepl_eval\z/) {
+		if ($sub =~ /::WithRepl_eval(?:_e)?\z/) {
 		    warn "(ignore eval since it's from a WithRepl_eval)"
 		      if $debug;
 		} elsif ($sub =~ /::BEGIN\z/) {
