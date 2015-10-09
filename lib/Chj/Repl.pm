@@ -13,8 +13,6 @@ Chj::Repl - read-eval-print loop
 
 =head1 SYNOPSIS
 
- # repl($histfilepath,$package);
- # no, make it different.
  my $repl= new Chj::Repl;
  $repl->set_prompt("foo> ");
  # ^ if left undefined, "$package$perhapslevel> " is used
@@ -54,7 +52,7 @@ This does not turn on the Perl debugger, hence programs are not slowed
 down.
 
 
-=item CAVEAT
+=head1 CAVEAT
 
 Lexical variables are currently made accessible in the scope of the
 repl by way of a hack: what the code entered in the repl sees, are not
@@ -70,28 +68,39 @@ XXX: actually there's a solution waiting to be implemented: build a
 closure and set its environment using `PadWalker`'s `set_closed_over`.
 
 
-=item TODO
+=head1 TODO
 
  - 'A::Class-> ' method completion
  - maybe '$ans->[1]->' method completion
  - fix problem with exception display w/o :l mode
- - with :v, already the output during computation should go to less, right? or introduce :V maybe?
- - fix '$Foo ->bar<tab>' completion where $Foo just actually contains the classname (or even an object) at runtime ehr parsetime already.
+ - with :v, already the output during computation should go to less,
+   right? or introduce :V maybe?
+ - fix '$Foo ->bar<tab>' completion where $Foo just actually contains
+   the classname (or even an object) at runtime ehr parsetime already.
 
-=item IDEAS
+=head1 IDEAS
 
  - maybe handle ->SUPER:: completion?
- - differ between emptylistofcompletions (no &subs for example) (empty list) and no sigil there so dunno-how-to-complete (undef?, exception?, ??).
+ - differ between emptylistofcompletions (no &subs for example) (empty
+   list) and no sigil there so dunno-how-to-complete (undef?,
+   exception?, ??).
 
-=item BUGS
+=head1 BUGS
 
 Completion:
 
- - $ does not filter out scalars only, since perl is not able to do so :/
- - % and * make completion stop working unless you put a space after those sigils. (@ and & work as they should)
- - keep the last 10 or so completion lists, and use those in the -> case if the var's type could not be determined.
+ - $ does not filter out scalars only, since perl is not able to do so
+ - % and * make completion stop working unless you put a space after
+   those sigils. (@ and & work as they should)
+ - keep the last 10 or so completion lists, and use those in the ->
+   case if the var's type could not be determined.
 
 :V breaks view of :e and similar (shows CODE..)
+
+
+=head1 SEE ALSO
+
+L<Chj::repl>: easy wrapper
 
 =cut
 
