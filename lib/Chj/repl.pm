@@ -17,7 +17,18 @@ Chj::repl - read-eval-print loop
  repl;
  # -or-
  use Chj::repl();
- Chj::repl;
+ Chj::repl();
+
+ # pass parameters (any fields of the Chj::Repl class):
+ repl (skip=> 3, # skip 3 caller frames (when the repl call is nested
+                 # within something you dont't want the user to see)
+       tty=> $fh, # otherwise repl tries to open /dev/tty, or if that fails,
+                  # uses readline defaults (which is somewhat broken?)
+       # also, any fields of the Chj::Repl class are possible:
+       maxHistLen=> 100, prompt=> "foo>", package=> "Foo::Bar",
+       historypath=> ".foo_history", pager=> "more"
+       # etc.
+      );
 
 =head1 DESCRIPTION
 
@@ -25,7 +36,7 @@ For a simple parameterless start of `Chj::Repl`.
 
 =head1 SEE ALSO
 
-L<Chj::Repl>
+L<Chj::Repl>: the class implementing this
 
 =cut
 
@@ -50,8 +61,17 @@ sub maybe_tty {
 }
 
 sub repl {
-    my ($maybe_skip, $maybe_tty)=@_;
+    @_ % 2 and die "expecting even number of arguments";
+    my %args= @_;
+    my $maybe_skip= delete $args{skip};
+    my $maybe_tty= delete $args{tty};
+
     my $r= new Chj::Repl;
+
+    for (keys %args) {
+	my $m= "set_$_";
+	$r->$m($args{$_});
+    }
 
     # Since `Term::Readline::Gnu`'s `OUT` method does not actually
     # return the filehandle that the readline library is using,
