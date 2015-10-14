@@ -206,7 +206,7 @@ sub handler_for ($$) {
 	    print STDERR "Exception: $e";
 	    # then what to do upon exiting it? return the value of the repl?
 	    # Ehr, XX repl needs new feature, a "quit this context with this value".
-	    repl(1)
+	    repl(skip=> 1)
 	}
     }
 }
