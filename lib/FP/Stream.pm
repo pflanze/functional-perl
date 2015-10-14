@@ -188,7 +188,7 @@ sub stream_fold ($$$) {
     $start
 }
 
-*FP::List::List::stream_fold= rot3left \&stream_fold;
+*FP::List::List::stream_fold= rot3left *stream_fold;
 
 TEST{ stream_fold sub { $_[0] + $_[1] }, 5, stream_iota (10,2) }
   5+10+11;
@@ -246,7 +246,7 @@ sub stream_map ($ $) {
     }
 }
 
-*FP::List::List::stream_map= flip \&stream_map;
+*FP::List::List::stream_map= flip *stream_map;
 
 sub stream_map_with_tail ($ $ $);
 sub stream_map_with_tail ($ $ $) {
@@ -259,7 +259,7 @@ sub stream_map_with_tail ($ $ $) {
     }
 }
 
-*FP::List::List::stream_map_with_tail= flip2_3 \&stream_map_with_tail;
+*FP::List::List::stream_map_with_tail= flip2_3 *stream_map_with_tail;
 
 
 # 2-ary (possibly slightly faster) version of stream_zip
@@ -308,7 +308,7 @@ sub stream_zip_with {
     }
 }
 
-*FP::List::List::stream_zip_with= flip2_3 \&stream_zip_with;
+*FP::List::List::stream_zip_with= flip2_3 *stream_zip_with;
 
 
 sub stream_filter ($ $);
@@ -325,7 +325,7 @@ sub stream_filter ($ $) {
     }
 }
 
-*FP::List::List::stream_filter= flip \&stream_filter;
+*FP::List::List::stream_filter= flip *stream_filter;
 
 
 # http://hackage.haskell.org/package/base-4.7.0.2/docs/Prelude.html#v:foldr1
@@ -349,7 +349,7 @@ sub stream_foldr1 ($ $) {
     }
 }
 
-*FP::List::List::stream_foldr1= flip \&stream_foldr1;
+*FP::List::List::stream_foldr1= flip *stream_foldr1;
 
 
 sub stream_fold_right ($ $ $);
@@ -368,7 +368,7 @@ sub stream_fold_right ($ $ $) {
     }
 }
 
-*FP::List::List::stream_fold_right= rot3left \&stream_fold_right;
+*FP::List::List::stream_fold_right= rot3left *stream_fold_right;
 
 
 sub make_stream__fold_right {
@@ -444,7 +444,7 @@ sub stream__subarray_fold_right_reverse ($$$$$) {
 
 sub array_to_stream ($;$) {
     my ($a,$maybe_tail)=@_;
-    stream__array_fold_right (\&cons, $maybe_tail//null, $a)
+    stream__array_fold_right (*cons, $maybe_tail//null, $a)
 }
 
 sub stream {
@@ -454,19 +454,19 @@ sub stream {
 sub subarray_to_stream ($$;$$) {
     my ($a, $start, $maybe_end, $maybe_tail)=@_;
     stream__subarray_fold_right
-      (\&cons, $maybe_tail//null, $a, $start, $maybe_end)
+      (*cons, $maybe_tail//null, $a, $start, $maybe_end)
 }
 
 sub subarray_to_stream_reverse ($$;$$) {
     my ($a, $start, $maybe_end, $maybe_tail)=@_;
     stream__subarray_fold_right_reverse
-      (\&cons, $maybe_tail//null, $a, $start, $maybe_end)
+      (*cons, $maybe_tail//null, $a, $start, $maybe_end)
 }
 
 
 sub string_to_stream ($;$) {
     my ($str,$maybe_tail)=@_;
-    stream__string_fold_right (\&cons, $maybe_tail//null, $str)
+    stream__string_fold_right (*cons, $maybe_tail//null, $str)
 }
 
 sub stream_to_string ($) {
@@ -513,7 +513,7 @@ sub stream_for_each ($ $ ) {
     }
 }
 
-*FP::List::List::stream_for_each= flip \&stream_for_each;
+*FP::List::List::stream_for_each= flip *stream_for_each;
 
 
 sub stream_drop ($ $);
@@ -570,7 +570,7 @@ sub stream_take_while ($ $) {
     }
 }
 
-*FP::List::List::stream_take_while= flip \&stream_take_while;
+*FP::List::List::stream_take_while= flip *stream_take_while;
 
 
 sub stream_slice ($ $);
@@ -619,7 +619,7 @@ sub stream_drop_while ($ $) {
     }
 }
 
-*FP::List::List::stream_drop_while= flip \&stream_drop_while;
+*FP::List::List::stream_drop_while= flip *stream_drop_while;
 
 
 sub stream_ref ($ $) {
@@ -751,13 +751,13 @@ sub stream_sort ($;$) {
 *FP::List::List::stream_sort= *stream_sort;
 
 TEST { require FP::Ops;
-       stream (5,3,8,4)->sort (\&FP::Ops::number_cmp)->array }
+       stream (5,3,8,4)->sort (*FP::Ops::number_cmp)->array }
   [3,4,5,8];
 
-TEST { ref (stream (5,3,8,4)->sort (\&FP::Ops::number_cmp)) }
+TEST { ref (stream (5,3,8,4)->sort (*FP::Ops::number_cmp)) }
   'FP::PureArray'; # XX ok? Need to `->stream` if a stream is needed
 
-TEST { stream (5,3,10,8,4)->sort (\&FP::Ops::number_cmp)->stream->car }
+TEST { stream (5,3,10,8,4)->sort (*FP::Ops::number_cmp)->stream->car }
   3;
 # but then PureArray has `first`, too, if that's all you need.
 
@@ -794,7 +794,7 @@ sub stream_any ($ $) {
     }
 }
 
-*FP::List::List::stream_any= flip \&stream_any;
+*FP::List::List::stream_any= flip *stream_any;
 
 
 # (meant as a debugging tool: turn stream to string)
@@ -833,7 +833,7 @@ sub stream_state_fold_right {
     }
 }
 
-*FP::List::List::stream_state_fold_right= rot3left \&stream_state_fold_right;
+*FP::List::List::stream_state_fold_right= rot3left *stream_state_fold_right;
 
 
 TEST{ stream_state_fold_right
@@ -910,7 +910,7 @@ sub stream_mixed_fold_right {
     @_=($fn, $state, stream_mixed_flatten $v); goto \&stream_fold_right
 }
 
-*FP::List::List::stream_mixed_fold_right= rot3left \&stream_mixed_fold_right;
+*FP::List::List::stream_mixed_fold_right= rot3left *stream_mixed_fold_right;
 
 sub stream_mixed_state_fold_right {
     @_==3 or die "wrong number of arguments";
@@ -919,7 +919,7 @@ sub stream_mixed_state_fold_right {
     @_=($fn, $statefn, stream_mixed_flatten $v);goto \&stream_state_fold_right
 }
 
-*FP::List::List::stream_mixed_state_fold_right= rot3left \&stream_mixed_state_fold_right;
+*FP::List::List::stream_mixed_state_fold_right= rot3left *stream_mixed_state_fold_right;
 
 
 # ----- Tests ----------------------------------------------------------
