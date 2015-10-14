@@ -610,7 +610,7 @@ sub xreadline0_chop {
 	} $self->xreadline
     } else {
 	my $str= $self->xreadline;
-	chop $str;
+	chop $str if defined $str;
 	$str
     }
 }
