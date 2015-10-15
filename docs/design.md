@@ -121,40 +121,62 @@ and still use short names. (Perhaps look at Clojure as an example?)
 
 ### Use of `*foo` vs `\&foo`
 
-Both work for passing a subroutine as a value. A benchmark did not
-reveal a significant difference in performance. For its simplicity in
-writing and looks, the first option is preferred in documentation and
-examples; but it should not be forgotten that this really passes a
-glob, which can contain values of all the identifier namespaces that
-perl has (subroutines, IO handles, scalars, arrays, hashes). Also, the
-values are retrieved on demand in this case, which means that when a
-subroutine is redefined between the taking of the glob and calling it,
-the new definition will be used, whereas with `\&` there is no such
-indirection and thus the redefinition of the subroutine is not
-reflected in the reference. Also, explicit checks for CODE refs will
-fail wenn passing a glob; we could make `is_procedure` more lenient by
-accepting globs if they contain a value in the CODE slot (todo?), but
-builtin perl checks would still be wrong (e.g. passing `*foo` where an
-array reference is expected will silently access the `@foo` package
-variable, even if it was never declared (empty in this case)).
+Both of these work for passing a subroutine as a value, with the
+following differences:
 
-Worse: globs fail when called using `goto` without using a `&` prefix. E.g. this fails:
+The code reference (`\&foo`):
 
-    my $x = *inc;
-    goto $x;
+ - is the same type of data as what the expression `sub { .. }`
+   returns, and hence what's most often teached.
 
-whereas this works:
+ - clearly only ever represents a subroutine, whereas `*foo` is
+   ambiguous and can point to any type: the named package entries for
+   subroutines, IO handles, scalars, arrays, hashes, plus any other
+   kind of object by way of scalars.
 
-    my $x = *inc;
-    goto &$x;
+ - serialization to bytes is problematic (can only be done using
+   complex modules and only for a limited range of Perl code, and
+   includes serializing the whole code of the subroutine)
 
-(`Sub::Call::Tail`'s `tail` seems to be using that latter form. Still
-there may be libraries out there that don't do so. Todo: check?)
+ - can be used as a value in lexical variables as arguments to goto
+   even without using a `&` prefix, as in `my $f=\&foo; goto $f`
 
-For these reasons, the core modules never use globs (but they don't
-usually type check in the array case either!).
+The glob (`*foo`):
 
-(Todo: should we create a module that turns `*foo` into `\&foo`?)
+ - looks arguably visually cleaner, and may be easier to type
+
+ - later redefinitions to the subroutine it points to are being
+   reflected (as it points to the subroutine indirectly by name)
+
+ - can be serialized easily (as it's just a *name*)
+
+ - nicer for debugging, as one can directly see the subroutine package
+   and name, not just an anonymous code ref
+
+ - this code fails: `my $f=*foo; goto $f`. But this still works:
+   `my $f=*foo; goto &$f`. (`Sub::Call::Tail`'s `tail` is fine.)
+
+ - there are no builtin perl checks for the wrong type, i.e. passing
+   `*foo` where an array reference is expected will silently access
+   the `@foo` package variable, even if it was never declared (empty
+   in this case), while passing `\&foo` would have the interpreter
+   point out the error.
+
+Quick benchmarking of subroutine calls of the two variants did not
+detect a performance difference. For its benefits, this project has
+decided to prefer the glob both in documentation and in cases where
+the value is only handled by code maintained by the project. In cases
+where it returns subroutines to users, at this time it prefers code
+refs to avoid potential confusion and breakage. In any case, all code
+provided by this project is able to handle globs where subroutines (or
+any kind of callables, including overloaded objects) are expected.
+
+Todo: should `is_procedure` be made more lenient by accepting globs if
+they contain a value in the CODE slot, i.e. change its meaning to
+"*can* represent a subroutine"? But should it then return true for any
+other callable (overloaded object) as well? (How can the latter be
+implemented, by way of thecking for a '(&' method?)
+
 
 ### Naming conventions
 
