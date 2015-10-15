@@ -126,11 +126,14 @@ sub compose_1side ($$) {
 
 
 use Carp;
+use Chj::Repl::Stack;
 
 sub flip ($) {
     my ($f)=@_;
+    my $ctx= Chj::Repl::Stack->get(1)->backtrace;
     sub {
 	@_==2 or croak "expecting 2 arguments";
+	$ctx ; #force it to be captured
 	@_=($_[1], $_[0]); goto &$f
     }
 }
