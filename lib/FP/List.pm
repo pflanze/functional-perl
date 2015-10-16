@@ -106,7 +106,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy; use FP::Lazy qw(force_noeval);
 use Chj::xperlfunc qw(xprint xprintln);
-use FP::Combinators qw(flip flip2_3 rot3right rot3left);
+use FP::Combinators qw(flip flip2of3 rot3right rot3left);
 use FP::Optional qw(perhaps_to_maybe);
 use Chj::TEST;
 use FP::Predicates qw(is_natural0 either is_natural complement is_even is_zero);

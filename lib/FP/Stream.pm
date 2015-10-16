@@ -99,7 +99,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
 use FP::List ":all";
-use FP::Combinators qw(flip flip2_3 rot3right rot3left);
+use FP::Combinators qw(flip flip2of3 rot3right rot3left);
 use Chj::TEST;
 use FP::Weak;
 use FP::Predicates 'is_natural0';
@@ -259,7 +259,7 @@ sub stream_map_with_tail ($ $ $) {
     }
 }
 
-*FP::List::List::stream_map_with_tail= flip2_3 *stream_map_with_tail;
+*FP::List::List::stream_map_with_tail= flip2of3 *stream_map_with_tail;
 
 
 # 2-ary (possibly slightly faster) version of stream_zip
@@ -308,7 +308,7 @@ sub stream_zip_with {
     }
 }
 
-*FP::List::List::stream_zip_with= flip2_3 *stream_zip_with;
+*FP::List::List::stream_zip_with= flip2of3 *stream_zip_with;
 
 
 sub stream_filter ($ $);

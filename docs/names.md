@@ -26,5 +26,5 @@ This list of doubtful names is not exhaustive.
 - should `null` always be used, including instead of `empty_trie`
   etc. (i.e. rename those to `null_trie` etc.)?
 - `poptionally` in `FP::Optional`
-- `flip2_3` (and perhaps `rot3right` and `rot3left`)
+- `flip2of3`, `rot3right`, `rot3left` in `FP::Combinators`
 

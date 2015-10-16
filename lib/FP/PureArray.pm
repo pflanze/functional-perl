@@ -47,7 +47,7 @@ use Chj::TEST;
 
 use FP::Array ":all";
 use FP::Array_sort "array_sort";
-use FP::Combinators qw (flip flip2_3 rot3right rot3left);
+use FP::Combinators qw (flip flip2of3 rot3right rot3left);
 use FP::Div 'inc';
 use FP::Predicates 'is_pure';
 

@@ -82,7 +82,7 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use FP::List;
 use Chj::TEST;
-use FP::Combinators qw(flip2_3 flip);
+use FP::Combinators qw(flip2of3 flip);
 
 {
     package FP::StrictList::Null;
@@ -226,7 +226,7 @@ sub strictlist_reverse__map_with_length_with_tail ($$$);
   make_reverse__map_with_length_with_tail(\&cons);
 
 *FP::StrictList::List::reverse__map_with_length_with_tail=
-  flip2_3 \&strictlist_reverse__map_with_length_with_tail;
+  flip2of3 \&strictlist_reverse__map_with_length_with_tail;
 
 TEST {
     my $l= strictlist (qw(a b c))

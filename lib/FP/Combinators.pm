@@ -38,7 +38,7 @@ package FP::Combinators;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(compose compose_scalar maybe_compose compose_1side
-	      flip flip2_3 rot3right rot3left);
+	      flip flip2of3 rot3right rot3left);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
@@ -139,7 +139,7 @@ TEST { flip (sub { $_[0] / $_[1] })->(2,3) }
   3/2;
 
 # same as flip but pass a 3rd argument unchanged (flip 2 in 3)
-sub flip2_3 ($) {
+sub flip2of3 ($) {
     my ($f)=@_;
     sub {
 	@_==3 or croak "expecting 3 arguments";
