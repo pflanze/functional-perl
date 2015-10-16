@@ -247,6 +247,14 @@ sub FORCE {
 	}
     }
 
+    # should really have a maybe_ prefix, but since it's for debugging
+    # purposes only (and in that case also likely always returns a
+    # value) and we like short names for that, leave it at this, ok?
+    sub bt {
+	my $s=shift;
+	$$s[2]
+    }
+
     sub FP_Show_show {
 	my ($s,$show)=@_;
 	# do not force unforced promises
