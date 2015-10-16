@@ -51,6 +51,10 @@ to turn this off.)
 This does not turn on the Perl debugger, hence programs are not slowed
 down.
 
+=head1 FEATURES
+
+Read the help text that is displayed by entering ":h" or ",h" in the
+repl.
 
 =head1 CAVEAT
 
@@ -269,6 +273,10 @@ $d d  show dump (default)
 $V V  no pager
 $v v  pipe to pager ($$self[Pager])
 $a a  pipe to 'less --quit-if-one-screen --no-init' (default)
+
+Other features:
+  \$Chj::Repl::args  is an array holding the arguments of the last subroutine call
+                     that led to the currently selected frame
 };
 }
 
@@ -320,6 +328,7 @@ sub eval_code {
 use Chj::Repl::Stack;
 
 our $repl_level; # maybe number of repl layers above
+our $args; # see '$Chj::Repl::args' in help text
 
 # TODO: split this monstrosity into pieces.
 sub run {
@@ -710,7 +719,7 @@ sub run {
       READ: {
 	    while ( defined (my $input = &$myreadline) ) {
 		if (length $input) {
-		    my ($cmd,$args)=
+		    my ($cmd,$rest)=
 		      $input=~ /^ *[:,] *([?+-]|[a-zA-Z]+|\d+)(.*)/s ?
 			($1,$2)
 			  :(undef,$input);
@@ -719,7 +728,7 @@ sub run {
 
 			if ($cmd=~ /^\d+\z/) {
 			    # hacky way to allow ":5" etc. as ":f 5"
-			    $args= "$cmd $args";
+			    $rest= "$cmd $rest";
 			    $cmd= "f";
 			}
 
@@ -728,25 +737,25 @@ sub run {
 
 			    my $set_package= sub {
 				# (no package parsing, trust user)
-				$$self[Package]= xone_nonwhitespace($args);
-				$args=""; # XX HACK
+				$$self[Package]= xone_nonwhitespace($rest);
+				$rest=""; # XX HACK
 			    };
 
 			    my $help= sub { $self->print_help ($OUTPUT) };
 
 			    my $bt= sub {
 				my ($maybe_frameno)=
-				  $args=~ /^\s*(\d+)?\s*\z/
+				  $rest=~ /^\s*(\d+)?\s*\z/
 				    or die "expecting digits or no argument, got '$cmd'";
 				print $OUTPUT $stack->backtrace ($maybe_frameno
 								 // $frameno);
-				$args=""; # XX HACK; also, really
+				$rest=""; # XX HACK; also, really
                                           # silently drop stuff?
 			    };
 
 			    my $chooseframe= sub {
 				my ($maybe_frameno)= @_;
-				$args= ""; # still the hack, right?
+				$rest= ""; # still the hack, right?
 				if (defined $maybe_frameno) {
 				    if ($maybe_frameno <= $stack->max_frameno) {
 					$frameno= $maybe_frameno
@@ -771,7 +780,7 @@ sub run {
 
 			    my $select_frame= sub {
 				my ($maybe_frameno)=
-				  $args=~ /^\s*(\d+)?\s*\z/
+				  $rest=~ /^\s*(\d+)?\s*\z/
 				    or die "expecting frame number, ".
 				      "an integer, or nothing, got '$cmd'";
 				&$chooseframe ($maybe_frameno)
@@ -805,9 +814,9 @@ sub run {
 				     use Data::Dumper;
 				     # XX clean up: don't want i in the regex
 				     my ($maybe_frameno)=
-					 $args=~ /^i?\s*(\d+)?\s*\z/
+					 $rest=~ /^i?\s*(\d+)?\s*\z/
 					 or die "expecting digits or no argument, got '$cmd'";
-				     $args=""; # can't s/// above when expecting value
+				     $rest=""; # can't s/// above when expecting value
 				     my $lexicals= eval {
 					 PadWalker::peek_my
 					     ($levels + $skip - 1 +
@@ -884,13 +893,13 @@ sub run {
 			   1=> sub {
 			       my $vals=
 				 [ scalar $self->eval_code
-				   ($args, $get_package, &$real_frameno) ];
+				   ($rest, $get_package, &$real_frameno()) ];
 			       ($vals, $@)
 			   },
 			   l=> sub {
 			       my $vals=
 				 [ $self->eval_code
-				   ($args, $get_package, &$real_frameno) ];
+				   ($rest, $get_package, &$real_frameno()) ];
 			       ($vals, $@)
 			   },
 			  },
@@ -937,7 +946,15 @@ sub run {
 			 $self->mode_formatter);
 
 		    $evaluator= sub {
-			my ($results,$error)= &$eval;
+			my ($results,$error)= do {
+			    # make it possible for the code entered in
+			    # the repl to access the arguments in the
+			    # last call leading to this position by
+			    # accessing $Chj::Repl::args :
+			    local $args =
+			      $stack->frame (&$real_frameno())->args;
+			    &$eval
+			};
 
 			&$view_string(do {
 			    if (ref $error or $error) {
