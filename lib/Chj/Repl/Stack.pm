@@ -173,6 +173,13 @@ sub get {
     $class->new(\@frames);
 }
 
+sub frame {
+    my $s=shift;
+    @_==1 or die "wrong number of arguments";
+    my ($i)=@_;
+    $s->frames->[$i]
+}
+
 sub num_frames {
     my $s=shift;
     scalar @{$s->frames}
