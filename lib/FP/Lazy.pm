@@ -134,12 +134,18 @@ package FP::Lazy;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+our $debug= $ENV{DEBUG_FP_LAZY} ? 1 : '';
+
 # A promise is an array with two fields:
 # index 0: thunk when unevaluated, undef once evaluated
 # index 1: value once evaluated
+# index 2: backtrace if $debug is true
 
 sub lazy (&) {
-    bless [$_[0],undef], "FP::Lazy::Promise"
+    bless [$_[0],
+	   undef,
+	   $debug && Chj::Repl::Stack->get(1)->backtrace
+	  ], "FP::Lazy::Promise"
 }
 
 # not providing for caching (1-time-only evaluation)
