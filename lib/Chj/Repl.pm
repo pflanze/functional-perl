@@ -303,53 +303,9 @@ sub eval_code {
 }
 
 
-use Chj::Repl::Stack;
-
-our $repl_level; # maybe number of repl layers above
-our $args; # see '$Chj::Repl::args' in help text
-
-# TODO: split this monstrosity into pieces.
-sub run {
-    my $self=shift;
-    my ($maybe_skip)=@_;
-
-    my $skip= $maybe_skip // 0;
-    my $stack= Chj::Repl::Stack->get ($skip + 1);
-
-    local $repl_level= ($repl_level // -1) + 1;
-
-    my $frameno= 0;
-
-    my $get_package= sub {
-	# (What is $$self[Package] for? Can set the prompt
-	# independently. Security feature or just overengineering?
-	# Ok, remember the ":p" setting; but why not use a lexical
-	# within `run`? Ok how long-lived are the repl objects, same
-	# duration? Then hm is the only reason for the object to be
-	# able to set up things explicitely first? Thus is it ok after
-	# all?)
-	my $r= $$self[Package] || $stack->package($frameno);
-	$r
-    };
-
-    my $oldsigint= $SIG{INT};
-    # It seems this is the only way to make signal handlers work in
-    # both perl 5.6 and 5.8:
-    sigaction SIGINT,
-      new POSIX::SigAction __PACKAGE__.'::__signalhandler'
-	or die "Error setting SIGALRM handler: $!\n";
-
-    require Term::ReadLine;
-    # only start one readline instance, do not nest (otherwise seem to
-    # lead to segfaults). okay?.
-    local our $term = $term || new Term::ReadLine 'Repl';
-    # This means that the history from nested repls will also show up
-    # in the history of the parent repl. Not saved, but within the
-    # readline instance. (Correct?)
-    # XX: idea: add nesting level to history filename?
-
-    my $attribs= $term->Attribs;
-    local $attribs->{attempted_completion_function}= sub {
+sub _completion_function {
+    my ($attribs,$get_package)=@_;
+    sub {
 	my ($text, $line, $start, $end) = @_;
 	my $part= substr($line,0,$end);
 
@@ -550,7 +506,57 @@ sub run {
 	    $attribs->{completion_append_character}=" ";
 	    return ()
 	}
+    }
+}
+
+use Chj::Repl::Stack;
+
+our $repl_level; # maybe number of repl layers above
+our $args; # see '$Chj::Repl::args' in help text
+
+# TODO: split this monstrosity into pieces.
+sub run {
+    my $self=shift;
+    my ($maybe_skip)=@_;
+
+    my $skip= $maybe_skip // 0;
+    my $stack= Chj::Repl::Stack->get ($skip + 1);
+
+    local $repl_level= ($repl_level // -1) + 1;
+
+    my $frameno= 0;
+
+    my $get_package= sub {
+	# (What is $$self[Package] for? Can set the prompt
+	# independently. Security feature or just overengineering?
+	# Ok, remember the ":p" setting; but why not use a lexical
+	# within `run`? Ok how long-lived are the repl objects, same
+	# duration? Then hm is the only reason for the object to be
+	# able to set up things explicitely first? Thus is it ok after
+	# all?)
+	my $r= $$self[Package] || $stack->package($frameno);
+	$r
     };
+
+    my $oldsigint= $SIG{INT};
+    # It seems this is the only way to make signal handlers work in
+    # both perl 5.6 and 5.8:
+    sigaction SIGINT,
+      new POSIX::SigAction __PACKAGE__.'::__signalhandler'
+	or die "Error setting SIGALRM handler: $!\n";
+
+    require Term::ReadLine;
+    # only start one readline instance, do not nest (otherwise seem to
+    # lead to segfaults). okay?.
+    local our $term = $term || new Term::ReadLine 'Repl';
+    # This means that the history from nested repls will also show up
+    # in the history of the parent repl. Not saved, but within the
+    # readline instance. (Correct?)
+    # XX: idea: add nesting level to history filename?
+
+    my $attribs= $term->Attribs;
+    local $attribs->{attempted_completion_function}=
+      _completion_function ($attribs,$get_package);
 
     my ($INPUT, $OUTPUT, $ERROR)= do {
 	my ($maybe_in, $maybe_out)=
