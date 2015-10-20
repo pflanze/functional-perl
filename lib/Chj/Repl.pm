@@ -279,7 +279,7 @@ sub eval_code {
     } // do {
 	$@=~ /Not nested deeply enough/ or die $@;
 	# this happens when running the repl when not in a subroutine,
-	# right.?. XXXhmm but should this not  i mean   s   CALLED FORM B bin/repl so .
+	# right?
 	undef
     };
 
