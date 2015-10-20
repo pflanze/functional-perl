@@ -538,6 +538,17 @@ sub run {
 	$r
     };
 
+    my $get_lexicals= sub {
+	my ($maybe_frameno)=@_;
+	my $levels= levels_to_user;
+	require PadWalker;
+	eval {
+	    PadWalker::peek_my
+		($levels + $skip - 1 +
+		 ($maybe_frameno // $frameno));
+	}; # XXX check exceptions
+    };
+
     my $oldsigint= $SIG{INT};
     # It seems this is the only way to make signal handlers work in
     # both perl 5.6 and 5.8:
@@ -793,21 +804,13 @@ sub run {
 				 v=> sub { $$self[Mode_viewer]="v" },
 				 a=> sub { $$self[Mode_viewer]="a" },
 				 e=> sub {
-				     my $levels= levels_to_user;
-				     require PadWalker;
 				     use Data::Dumper;
 				     # XX clean up: don't want i in the regex
 				     my ($maybe_frameno)=
 					 $rest=~ /^i?\s*(\d+)?\s*\z/
 					 or die "expecting digits or no argument, got '$cmd'";
 				     $rest=""; # can't s/// above when expecting value
-				     my $lexicals= eval {
-					 PadWalker::peek_my
-					     ($levels + $skip - 1 +
-					      ($maybe_frameno // $frameno));
-				     }; # XXX check exceptions
-
-				     if (defined $lexicals) {
+				     if (defined (my $lexicals= &$get_lexicals($maybe_frameno))) {
 					 &$view_with_port
 					   (sub {
 						my ($o)=@_;
