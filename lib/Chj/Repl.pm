@@ -56,22 +56,6 @@ down.
 Read the help text that is displayed by entering ":h" or ",h" in the
 repl.
 
-=head1 CAVEAT
-
-Lexical variables are currently made accessible in the scope of the
-repl by way of a hack: what the code entered in the repl sees, are not
-directly its surrounded lexicals, but local'ized package variables of
-the same name aliased to them. This means that mutations to the
-variables are updated in the original scope, but closures entered in
-the repl will actually see the package variables, and once the code
-entered into the repl returns, those will go away, hence in case the
-closure was stored elsewhere, it will now refer to variables with
-different values (perhaps empty).
-
-XXX: actually there's a solution waiting to be implemented: build a
-closure and set its environment using `PadWalker`'s `set_closed_over`.
-
-
 =head1 TODO
 
  - 'A::Class-> ' method completion
@@ -283,7 +267,6 @@ Other features:
 
 our $use_warnings= q{use warnings; use warnings FATAL => 'uninitialized';};
 
-our $eval_lexicals;
 use Chj::singlequote 'singlequote';
 sub eval_code {
     my $_self= shift;
@@ -291,37 +274,32 @@ sub eval_code {
     my ($code, $in_package, $in_frameno)=@_;
     my $levels= levels_to_user;
     require PadWalker;
-    local $eval_lexicals= eval {
+    my $maybe_lexicals= eval {
 	PadWalker::peek_my($levels + $in_frameno);
-    } || do {
+    } // do {
 	$@=~ /Not nested deeply enough/ or die $@;
 	# this happens when running the repl when not in a subroutine,
 	# right.?. XXXhmm but should this not  i mean   s   CALLED FORM B bin/repl so .
-	{}
+	undef
     };
-	
-    my $aliascode=
-	join ("",
-	      map {
-		  my $varname= $_;
-		  my $sigil= substr $varname, 0, 1;
-		  my $barename= substr $varname, 1;
-		  ('local our '.$varname.';'
-		   .'*'.$barename
-		   .' = $$Chj::Repl::eval_lexicals{'
-		   .singlequote($_)
-		   .'};')
-	      }
-	      keys %$eval_lexicals);
+
     my $use_method_signatures=
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
       $Function::Parameters::VERSION ? "use Function::Parameters ':strict'" : "";
-    &WithRepl_eval ("$aliascode; (); ".
-		    "no strict 'vars'; $use_warnings; ".
-		    "$use_method_signatures; $use_functional_parameters_; ".
-		    $code,
-		    &$in_package())
+    my $thunk= &WithRepl_eval
+      ((defined $maybe_lexicals ?
+	'my ('.join(", ", sort keys %$maybe_lexicals).'); ' : '') .
+       'sub {'.
+       "no strict 'vars'; $use_warnings; ".
+       "$use_method_signatures; $use_functional_parameters_; ".
+       $code.
+       '}',
+       &$in_package())
+	// return;
+    PadWalker::set_closed_over ($thunk, $maybe_lexicals)
+	if defined $maybe_lexicals;
+    WithRepl_eval { &$thunk() }
 }
 
 
