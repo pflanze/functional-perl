@@ -287,9 +287,10 @@ sub eval_code {
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
       $Function::Parameters::VERSION ? "use Function::Parameters ':strict'" : "";
+    my @v= sort keys %$maybe_lexicals
+      if defined $maybe_lexicals;
     my $thunk= &WithRepl_eval
-      ((defined $maybe_lexicals ?
-	'my ('.join(", ", sort keys %$maybe_lexicals).'); ' : '') .
+      ((@v ? 'my ('.join(", ", @v).'); ' : '') .
        'sub {'.
        "no strict 'vars'; $use_warnings; ".
        "$use_method_signatures; $use_functional_parameters_; ".
