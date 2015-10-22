@@ -260,7 +260,7 @@ $a a  pipe to 'less --quit-if-one-screen --no-init' (default)
 
 Other features:
   \$Chj::Repl::args  is an array holding the arguments of the last subroutine call
-                     that led to the currently selected frame
+                    that led to the currently selected frame
 };
 }
 
