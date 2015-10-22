@@ -478,10 +478,12 @@ sub _completion_function {
 		   length($upperpackage) ?
 		   () :
 		   ($symbols_for_package->($package),
-		    ($globentry ? () : @builtins))
-		  );
+		    ($globentry ? () : @builtins),
+		    # and lexicals:
+		    map { /^\Q$sigil\E(.*)/s ? $1 : () } sort keys %$lexicals
+		   ));
 
-		#print $OUTPUT Data::Dumper::Dumper(\@a);
+		#print Data::Dumper::Dumper(\@a);
 
 		# Now, if it ends in ::, or even generally, care about
 		# it not appending space on completion:
