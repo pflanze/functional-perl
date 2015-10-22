@@ -229,7 +229,6 @@ If a command line starts with a ':' or ',', then the remainder of the
 line is interpreted as follows:
 
   package \$package    use \$package as new compilation package
-  p \$package          currently alias to :package
   DIGITS              shorthand for 'f n', see below
   -                   same as 'f n' where n is the current frameno - 1
   +                   same as 'f n' where n is the current frameno + 1
@@ -251,8 +250,9 @@ previously used mode (indicated on the left):
 $L 1  use scalar context
 $l l  use list context (default)
   formatter:
-$s s  show stringification
-$d d  show dump (default)
+$s p  print stringification
+$s s  show from FP::Show
+$d d  Data::Dumper (default)
   viewer:
 $V V  no pager
 $v v  pipe to pager ($$self[Pager])
@@ -810,9 +810,9 @@ sub run {
 						    $frameno + 1 : undef)
 				 },
 				 package=> $set_package,
-				 p=> $set_package,
 				 1=> sub { $$self[Mode_context]="1" },
 				 l=> sub { $$self[Mode_context]="l" },
+				 p=> sub { $$self[Mode_formatter]="p" },
 				 s=> sub { $$self[Mode_formatter]="s" },
 				 d=> sub { $$self[Mode_formatter]="d" },
 				 V=> sub { $$self[Mode_viewer]="V" },
@@ -909,10 +909,22 @@ sub run {
 			  },
 			 $self->mode_context);
 
+		    my $possibly_save_values= sub {
+			# save values by side effect
+			if ($$self[DoKeepResultsInVARX]) {
+			    no strict 'refs';
+			    for my $i (0..@_-1) {
+				my $varname= &$get_package()."::VAR".($i+1);
+				no strict 'refs';
+				$$varname= $_[$i];
+			    }
+			}
+		    };
+
 		    my $format_vals=
 		      xchoose_from
 			(+{
-			   s=> sub {
+			   p=> sub {
 			       (
 				join "",
 				map {
@@ -920,19 +932,25 @@ sub run {
 				} @_
 			       )
 			   },
+			   s=> sub {
+			       &$possibly_save_values(@_);
+
+			       require FP::Show;
+			       my $z=1;
+			       (
+				join "",
+				map {
+				    my $VARX= $$self[DoKeepResultsInVARX] ?
+				      '$VAR'.$z++.' = ' : '';
+				    $VARX . FP::Show::show($_). "\n"
+				} @_
+			       )
+			   },
 			   d=> sub {
-			       my @v=@_;
-			       # save values by side effect; UGLY? Fits
-			       # here just because we only want to set in
-			       # :d mode
-			       if ($$self[DoKeepResultsInVARX]) {
-				   no strict 'refs';
-				   for my $i (0..@_-1) {
-				       my $varname= &$get_package()."::VAR".($i+1);
-				       no strict 'refs';
-				       $$varname= $_[$i];
-				   }
-			       }
+			       my @v= @_; # to survive into
+                                          # WithRepl_eval below
+
+			       &$possibly_save_values(@v);
 
 			       # actually do the formatting job:
 			       require Data::Dumper;
