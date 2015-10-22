@@ -433,7 +433,7 @@ sub _completion_function {
 		# if upperpackage is empty, it might also be a
 		# non-fully qualified, i.e. local, partial identifier.
 		
-		my $validsigil=
+		my $globentry=
 		  ($sigil and
 		   +{
 		     '$'=>'SCALAR',
@@ -449,7 +449,7 @@ sub _completion_function {
 		     # what we want.
 		     '&'=>'CODE'
 		    }->{$sigil});
-		#print $ERROR "<$validsigil>";
+		#print $ERROR "<$globentry>";
 
 		my $symbols_for_package= sub {
 		    my ($package)=@_;
@@ -457,15 +457,15 @@ sub _completion_function {
 			# only show 'usable' ones.
 			/^\w+(?:::)?\z/
 		    } do {
-			if ($validsigil) {
-			    #print $ERROR ".$validsigil.";
+			if ($globentry) {
+			    #print $ERROR ".$globentry.";
 			    grep {
 				(/::\z/
 				 # either it's a namespace which we
 				 # want to see regardless of type, or:
 				 # type exists
 				 or
-				 *{ $package."::".$_ }{$validsigil})
+				 *{ $package."::".$_ }{$globentry})
 			    } keys %{ $package."::" }
 			} else {
 			    keys %{ $package."::" }
@@ -478,7 +478,7 @@ sub _completion_function {
 		   length($upperpackage) ?
 		   () :
 		   ($symbols_for_package->($package),
-		    ($validsigil ? () : @builtins))
+		    ($globentry ? () : @builtins))
 		  );
 
 		#print $OUTPUT Data::Dumper::Dumper(\@a);
