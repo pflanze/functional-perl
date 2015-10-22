@@ -310,7 +310,7 @@ sub eval_code {
 
 
 sub _completion_function {
-    my ($attribs,$get_package)=@_;
+    my ($attribs, $package, $lexicals)=@_;
     sub {
 	my ($text, $line, $start, $end) = @_;
 	my $part= substr($line,0,$end);
@@ -328,10 +328,18 @@ sub _completion_function {
 		if (my $val=
 		    (
 		     # try to get the value, or at least the package.
-		     $ { &$get_package()."::".$varnam }
 
-		     or
 		     do {
+			 if (my $ref= $$lexicals{'$'.$varnam}) {
+			     $$ref
+			 } else {
+			     undef
+			 }
+		     }
+
+		     or $ { $package."::".$varnam }
+
+		     or do {
 			 # (if I could run code side-effect free... or
 			 # compile-only and disassemble....)  Try to
 			 # parse the perl myself
@@ -469,7 +477,7 @@ sub _completion_function {
 
 		   length($upperpackage) ?
 		   () :
-		   ($symbols_for_package->(&$get_package),
+		   ($symbols_for_package->($package),
 		    ($validsigil ? () : @builtins))
 		  );
 
@@ -561,8 +569,6 @@ sub run {
     # XX: idea: add nesting level to history filename?
 
     my $attribs= $term->Attribs;
-    local $attribs->{attempted_completion_function}=
-      _completion_function ($attribs,$get_package);
 
     my ($INPUT, $OUTPUT, $ERROR)= do {
 	my ($maybe_in, $maybe_out)=
@@ -707,7 +713,15 @@ sub run {
 	# for repetitions:
 	my $evaluator= sub { }; # noop
       READ: {
-	    while ( defined (my $input = &$myreadline) ) {
+	    while (1) {
+
+		local $attribs->{attempted_completion_function}=
+		  _completion_function ($attribs,
+					&$get_package,
+					maybe_get_lexicals($skip + $frameno)||{});
+
+		my $input = &$myreadline // last;
+
 		if (length $input) {
 		    my ($cmd,$rest)=
 		      $input=~ /^ *[:,] *([?+-]|[a-zA-Z]+|\d+)(.*)/s ?
