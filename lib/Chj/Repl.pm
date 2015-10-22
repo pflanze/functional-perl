@@ -320,8 +320,12 @@ sub _completion_function {
 
 	my @matches= do {
 	    # arrow completion:
-	    if (my ($pre,$varnam,$brace,$alreadywritten)=
-		$part=~ /(.*)\$(\w+)\s*->\s*([{\[]\s*)?(\w*)\z/s) {
+	    my ($pre,$varnam,$brace,$alreadywritten);
+	    if (($pre,$varnam,$brace,$alreadywritten)=
+		$part=~ /(.*)\$(\w+)\s*->\s*([{\[]\s*)?(\w*)\z/s
+		or
+		($pre,$varnam,$brace,$alreadywritten)=
+		$part=~ /(.*\$)\$(\w+)\s+([{\[]\s*)?(\w*)\z/s) {
 		# need to know the class of that thing
 		no strict 'refs';
 		my $r;
