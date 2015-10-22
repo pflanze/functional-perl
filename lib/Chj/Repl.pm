@@ -265,6 +265,20 @@ Other features:
 }
 
 
+sub maybe_get_lexicals {
+    my ($frameno)=@_;
+    require PadWalker;
+    my $levels= levels_to_user;
+    eval {
+	PadWalker::peek_my($levels + $frameno);
+    } // do {
+	$@=~ /Not nested deeply enough/i ? undef : die $@;
+	# this happens when running the repl when not in a subroutine,
+	# right?
+    }
+}
+
+
 our $use_warnings= q{use warnings; use warnings FATAL => 'uninitialized';};
 
 use Chj::singlequote 'singlequote';
@@ -272,17 +286,8 @@ sub eval_code {
     my $_self= shift;
     @_==3 or die "wrong number of arguments";
     my ($code, $in_package, $in_frameno)=@_;
-    my $levels= levels_to_user;
-    require PadWalker;
-    my $maybe_lexicals= eval {
-	PadWalker::peek_my($levels + $in_frameno);
-    } // do {
-	$@=~ /Not nested deeply enough/ or die $@;
-	# this happens when running the repl when not in a subroutine,
-	# right?
-	undef
-    };
 
+    my $maybe_lexicals= maybe_get_lexicals ($in_frameno);
     my $use_method_signatures=
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
@@ -537,17 +542,6 @@ sub run {
 	# all?)
 	my $r= $$self[Package] || $stack->package($frameno);
 	$r
-    };
-
-    my $get_lexicals= sub {
-	my ($maybe_frameno)=@_;
-	my $levels= levels_to_user;
-	require PadWalker;
-	eval {
-	    PadWalker::peek_my
-		($levels + $skip - 1 +
-		 ($maybe_frameno // $frameno));
-	}; # XXX check exceptions
     };
 
     my $oldsigint= $SIG{INT};
@@ -811,7 +805,9 @@ sub run {
 					 $rest=~ /^i?\s*(\d+)?\s*\z/
 					 or die "expecting digits or no argument, got '$cmd'";
 				     $rest=""; # can't s/// above when expecting value
-				     if (defined (my $lexicals= &$get_lexicals($maybe_frameno))) {
+				     if (defined
+					 (my $lexicals= maybe_get_lexicals
+					  ($skip - 1 + ($maybe_frameno // $frameno)))) {
 					 &$view_with_port
 					   (sub {
 						my ($o)=@_;
