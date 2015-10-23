@@ -232,6 +232,8 @@ sub FORCE {
 	$methodname =~ s/.*:://;
 	# To be able to select special implementations for lazy
 	# inputs, select a method with `stream_` prefix if present.
+	# (No need to check whether $v is a reference, as the same
+	# code is valid for class names.)
 	my $method=
 	  ($methodname=~ /^stream_/ ? UNIVERSAL::can($v, $methodname)
 	   : UNIVERSAL::can($v, "stream_$methodname")

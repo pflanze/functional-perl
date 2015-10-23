@@ -980,6 +980,9 @@ sub run {
 
 			&$view_string(do {
 			    if (ref $error or $error) {
+				# XX todo: only do can in the case of
+				# ref; but, remove this code anyway,
+				# use FP::Show now?
 				my $err= (UNIVERSAL::can($error,"plain") ?
 					  # e.g. EiD style wrapped "normal" exceptions
 					  # have this method for formatting as
