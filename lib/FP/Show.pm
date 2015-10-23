@@ -159,7 +159,7 @@ our $primitive_show=
 
 sub show ($) {
     my ($v)=@_;
-    if (my $m= UNIVERSAL::can ($v, "FP_Show_show")) {
+    if (ref($v) and my $m= UNIVERSAL::can ($v, "FP_Show_show")) {
 	&$m ($v,*show)
     } elsif ($m= $$primitive_show{ref $v}) {
 	&$m ($v,*show)
