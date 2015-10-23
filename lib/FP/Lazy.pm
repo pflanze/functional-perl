@@ -227,8 +227,8 @@ sub FORCE {
     }
     our $AUTOLOAD; # needs to be declared even though magical
     sub AUTOLOAD {
-	my $v= force ($_[0]);
 	my $methodname= $AUTOLOAD;
+	my $v= force ($_[0]);
 	$methodname =~ s/.*:://;
 	# To be able to select special implementations for lazy
 	# inputs, select a method with `stream_` prefix if present.
