@@ -170,7 +170,7 @@ sub force ($;$) {
 		redo LP;
 	    } elsif (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::Promise")) {
 		if (my $thunk= $$perhaps_promise[0]) {
-		    my $v= &$thunk;
+		    my $v= &$thunk();
 		    unless ($nocache) {
 			$$perhaps_promise[1]= $v;
 			$$perhaps_promise[0]= undef;

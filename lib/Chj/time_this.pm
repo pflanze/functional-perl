@@ -62,7 +62,7 @@ sub time_this (&;@) {
     my $a= [times];
     my @res;
     for (1..$n) {
-	@res= $wantarray ? &$thunk : scalar &$thunk;
+	@res= $wantarray ? &$thunk() : scalar &$thunk();
     }
     my $b= [times];
 

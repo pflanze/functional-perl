@@ -37,7 +37,7 @@ sub capture_stdout_ {
     {
 	# XX threadsafe or not?
 	local *STDOUT= $out;
-	&$thunk; # dropping results
+	&$thunk(); # dropping results
     }
     close $out
       or die $!;

@@ -649,7 +649,7 @@ sub stream_ref ($ $) {
 
 sub exn (&) {
     my ($thunk)=@_;
-    eval { &$thunk; '' } // do { $@=~/(.*?) at/; $1 }
+    eval { &$thunk(); '' } // do { $@=~/(.*?) at/; $1 }
 }
 
 sub t_ref {
