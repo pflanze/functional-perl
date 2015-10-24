@@ -326,7 +326,7 @@ sub xxsystem {
     (system @_)>=0
       or croak "xxsystem: could not start command '$_[0]': $!";
     $?==0
-      or croak "xxsystem: process terminated with ".exitcode($?);
+      or croak "xxsystem: process '$_[0]' terminated with ".exitcode($?);
 }
 
 sub xsystem_safe {
