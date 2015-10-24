@@ -56,4 +56,7 @@ TEST {
     show $s
 } 'improper_list(0, 1, lazy { "DUMMY" })';
 
+TEST { show *STDERR{IO} }
+  "bless(IO(2), 'IO::File')";
+
 1

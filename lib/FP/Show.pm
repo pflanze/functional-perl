@@ -153,9 +153,23 @@ our $primitive_show=
 	my ($v,$show)=@_;
 	# XX something better?
 	terseDumper($v)
-    }
+    },
+    # Don't really have any sensible serialization for these either,
+    # but at least prevent them from hitting Data::Dumper which issues
+    # warnings and returns invalid syntax in XS mode and gives plain
+    # exceptions in useperl mode:
+    IO=> sub {
+	my ($v,$show)=@_;
+	my $fileno= fileno($v) // "UNKNOWN";
+	"IO($fileno)"
+    },
+    LVALUE=> sub {
+	my ($v,$show)=@_;
+	"LVALUE(UNKNOWN)"
+    },
    };
 
+use Scalar::Util qw(reftype);
 
 sub show ($) {
     my ($v)=@_;
@@ -163,6 +177,9 @@ sub show ($) {
 	&$m ($v,*show)
     } elsif ($m= $$primitive_show{ref $v}) {
 	&$m ($v,*show)
+    } elsif ($m= $$primitive_show{reftype $v}) {
+	# blessed basic type
+	"bless(" . &$m($v,*show) . ", " . show(ref($v)) . ")"
     } else {
 	terseDumper($v)
     }
