@@ -201,6 +201,8 @@ my $PACKAGE= qr/\w+(?:::\w+)*/;
 use Chj::Repl::corefuncs();
 our @builtins= Chj::Repl::corefuncs;
 
+# whether to use Data::Dumper in perl mode
+our $Dumper_Useperl= 0;
 
 sub __signalhandler { die "SIGINT\n" }
 
@@ -833,6 +835,7 @@ sub run {
 						my ($o)=@_;
 						local $Data::Dumper::Sortkeys= 1;
 						local $Data::Dumper::Terse= 1;
+						local $Data::Dumper::Useperl= $Dumper_Useperl;
 						for my $key (sort keys %$lexicals) {
 						    if ($key=~ /^\$/) {
 							$o->xprint
@@ -957,6 +960,7 @@ sub run {
 			       my $res;
 			       WithRepl_eval {
 				   local $Data::Dumper::Sortkeys= 1;
+				   local $Data::Dumper::Useperl= $Dumper_Useperl;
 				   $res= Data::Dumper::Dumper(@v);
 				   1
 			       } || do {
