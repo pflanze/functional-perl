@@ -173,13 +173,17 @@ use Scalar::Util qw(reftype);
 
 sub show ($) {
     my ($v)=@_;
-    if (ref($v) and my $m= UNIVERSAL::can ($v, "FP_Show_show")) {
-	&$m ($v,*show)
-    } elsif ($m= $$primitive_show{ref $v}) {
-	&$m ($v,*show)
-    } elsif ($m= $$primitive_show{reftype $v}) {
-	# blessed basic type
-	"bless(" . &$m($v,*show) . ", " . show(ref($v)) . ")"
+    if (length ref($v)) {
+	if (my $m= UNIVERSAL::can ($v, "FP_Show_show")) {
+	    &$m ($v,*show)
+	} elsif ($m= $$primitive_show{ref $v}) {
+	    &$m ($v,*show)
+	} elsif ($m= $$primitive_show{reftype $v}) {
+	    # blessed basic type
+	    "bless(" . &$m($v,*show) . ", " . show(ref($v)) . ")"
+	} else {
+	    terseDumper($v)
+	}
     } else {
 	terseDumper($v)
     }
