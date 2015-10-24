@@ -20,6 +20,9 @@ Chj::xperlfunc
 
 =head1 DESCRIPTION
 
+Wrappers around core functions that throw exceptions on errors. Plus
+some simple utilities, exported optionally (explicitely or as part of
+the ":all" tag.)
 
 =head1 FUNCTIONS
 
