@@ -550,7 +550,7 @@ sub lstat_possiblyhires {
 sub xstat {
     my @r;
     @_<=1 or croak "xstat: too many arguments";
-    @r= stat_possiblyhires(@_);
+    @r= stat_possiblyhires(@_ ? @_ : $_);
     @r or croak (@_ ? "xstat: '@_': $!" : "xstat: '$_': $!");
     if (wantarray) {
 	@r
