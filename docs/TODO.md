@@ -8,6 +8,28 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 <with_toc>
 
+## Get rid of unnecessary home-grown code
+
+These may better be replaced by more widely used code, roughly in the
+order of most likely replacement.
+
+- `Chj::xperlfunc`: maybe `use autodie`, although I'm somewhat wary of
+  the fact that this way it's not directly visible anymore whether a
+  call dies or not. Also, there are various utilities like xspawn,
+  xxsystem etc. that need replacing, too.
+
+- Chj::xopen*, Chj::xtmpfile, Chj::xpipe, Chj::IO::*
+
+- should `Chj::TEST` stay or be made a lexical extension of other test
+  modules?
+
+- migrate `FP::Struct` functionality as Moose extensions or something?
+
+- merge Chj::Repl with other repls/debuggers? Also,
+  Chj::{Trapl,WithRepl,Backtrace}.
+
+- maybe FP::Path is not general or useful enough to keep
+
 ## Licensing
 
 - should I move the licensing statements from the top of the files
