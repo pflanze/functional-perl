@@ -34,7 +34,7 @@ Useful as predicates for FP::Struct field definitions.
 
 These are simple functions expecting one value and returning a
 boolean. They are composable with `maybe`, `complement`, `either`,
-`all_of`/`both`, which are combinator functions.
+`all_of`/`both`.
 
 This is a functional approach to achieve the same aim as
 `Moose::Util::TypeConstraints`, which basically uses a syntactical
@@ -44,9 +44,9 @@ is that (currently) there's no way to get a nice message string from
 them to say why a match fails. Perhaps it would be possible to do so
 using more introspection? (That would be nice because message
 generation would be fully automatic and hence consistent.) Or,
-alternatively, modifying the predicate and combinator functions to
-compose messages themselves when they fail (still mostly automatic),
-e.g. using message objects that are false.
+alternatively, modifying the functions to compose messages themselves
+when they fail (still mostly automatic), e.g. using message objects
+that are false.
 
 =cut
 
@@ -169,9 +169,8 @@ TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
   ['','',1,1,1];
 
 
-# no `is_` prefix as those are not the final predicates (they are not
-# combinators either, as they take a number; well, they are curried
-# forms of < and > etc.)
+# no `is_` prefix as those are not the final predicates (they are
+# curried forms of < and > etc.):
 
 # names? (number versus string comparison) (wish Perl hat generics
 # for those instead..)
