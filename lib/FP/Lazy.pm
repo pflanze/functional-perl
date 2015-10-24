@@ -77,6 +77,11 @@ the saved value.
  is_promise $x # returns true iff $x holds a promise
 
 
+=head1 NOTE
+
+The thunk (code body) of a promise is always evaluated in scalar
+context, even if it is being forced in list or void context.
+
 =head1 NAMING
 
 The name `lazy` for the delaying form was chosen because it seems what
