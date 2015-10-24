@@ -512,18 +512,38 @@ our $time_hires=0;
 sub stat_possiblyhires {
     if ($time_hires) {
 	require Time::HiRes; # (that's not slow, right?)
-	Time::HiRes::stat(@_ ? @_ : $_)
+	if (@_) {
+	    @_==1 or die "wrong number of arguments";
+	    Time::HiRes::stat($_[0])
+	} else {
+	    Time::HiRes::stat($_)
+	}
     } else {
-	stat(@_ ? @_ : $_)
+	if (@_) {
+	    @_==1 or die "wrong number of arguments";
+	    stat($_[0])
+	} else {
+	    stat($_)
+	}
     }
 }
 
 sub lstat_possiblyhires {
     if ($time_hires) {
 	require Chj::Linux::HiRes;
-	Chj::Linux::HiRes::lstat(@_ ? @_ : $_)
+	if (@_) {
+	    @_==1 or die "wrong number of arguments";
+	    Chj::Linux::HiRes::lstat($_[0])
+	} else {
+	    Chj::Linux::HiRes::lstat($_)
+	}
     } else {
-	lstat(@_ ? @_ : $_)
+	if (@_) {
+	    @_==1 or die "wrong number of arguments";
+	    lstat($_[0])
+	} else {
+	    lstat($_)
+	}
     }
 }
 
