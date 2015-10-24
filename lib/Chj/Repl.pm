@@ -973,8 +973,8 @@ sub run {
 			    # the repl to access the arguments in the
 			    # last call leading to this position by
 			    # accessing $Chj::Repl::args :
-			    local $args =
-			      $stack->frame (&$real_frameno())->args;
+			    my $maybe_frame= $stack->frame (&$real_frameno());
+			    local $args = $maybe_frame ? $maybe_frame->args : "TOP";
 			    &$eval
 			};
 
