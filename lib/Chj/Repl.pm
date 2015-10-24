@@ -58,16 +58,17 @@ repl.
 
 =head1 TODO
 
+ - make $VARX available lexically (don't leave around garbage in
+   globals)
  - 'A::Class-> ' method completion
+ - for '$Foo ->bar<tab>' completion, if $Foo contains a valid class
+   name, use it
  - maybe '$ans->[1]->' method completion
- - fix problem with exception display w/o :l mode
- - with :v, already the output during computation should go to less,
-   right? or introduce :V maybe?
- - fix '$Foo ->bar<tab>' completion where $Foo just actually contains
-   the classname (or even an object) at runtime ehr parsetime already.
 
 =head1 IDEAS
 
+ - should stdout and stderr of the evaluation context go to the pager,
+   too?
  - maybe handle ->SUPER:: completion?
  - differ between emptylistofcompletions (no &subs for example) (empty
    list) and no sigil there so dunno-how-to-complete (undef?,
