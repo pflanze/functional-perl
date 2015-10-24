@@ -321,6 +321,7 @@ sub is_sequence ($) {
 
 
 sub maybe ($) {
+    @_==1 or die "wrong number of arguments";
     my ($pred)=@_;
     sub ($) {
 	my ($v)=@_;
@@ -341,6 +342,7 @@ sub is_true ($) {
 # (this would also be a candidate as 'not' with a different name for
 # FP::Ops)
 sub is_false ($) {
+    @_==1 or die "wrong number of arguments";
     !$_[0]
 }
 
@@ -353,6 +355,7 @@ sub false {
 }
 
 sub complement ($) {
+    @_==1 or die "wrong number of arguments";
     my ($f)=@_;
     sub {
 	! &$f(@_)
