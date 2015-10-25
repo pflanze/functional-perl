@@ -264,6 +264,9 @@ Other features:
 
 sub formatter {
     my $self=shift;
+    my ($terse)=@_; # true for :e viewing
+    my $mode= $self->mode_formatter;
+    $mode= "d" if ($terse and $mode eq "p");
     xchoose_from
       (+{
          p=> sub {
@@ -280,8 +283,9 @@ sub formatter {
              (
 	      join "",
 	      map {
-		  my $VARX= $$self[DoKeepResultsInVARX] ?
-		    '$VAR'.$z++.' = ' : '';
+		  my $VARX= ($$self[DoKeepResultsInVARX] and not $terse) ?
+		    '$VAR'.$z++.' = '
+		      : '';
 		  $VARX . FP::Show::show($_). "\n"
 	      } @_
              )
@@ -294,6 +298,7 @@ sub formatter {
              my $res;
              WithRepl_eval {
 		 local $Data::Dumper::Sortkeys= 1;
+		 local $Data::Dumper::Terse= $terse;
 		 local $Data::Dumper::Useperl= $Dumper_Useperl;
 		 $res= Data::Dumper::Dumper(@v);
 		 1
@@ -303,7 +308,7 @@ sub formatter {
              $res
          }
         },
-       $self->mode_formatter);
+       $mode);
 }
 
 sub viewers {
@@ -894,18 +899,16 @@ sub run {
 					 &$view_with_port
 					   (sub {
 						my ($o)=@_;
-						local $Data::Dumper::Sortkeys= 1;
-						local $Data::Dumper::Terse= 1;
-						local $Data::Dumper::Useperl= $Dumper_Useperl;
+						my $format= $self->formatter(1);
 						for my $key (sort keys %$lexicals) {
 						    if ($key=~ /^\$/) {
 							$o->xprint
-							  ("$key = ".Dumper
-							   (${$$lexicals{$key}}));
+							  ("$key = ".
+							   &$format(${$$lexicals{$key}}));
 						    } else {
 							$o->xprint
 							  ("\\$key = ".
-							   Dumper($$lexicals{$key}));
+							   &$format($$lexicals{$key}));
 						    }
 						}
 					    });
