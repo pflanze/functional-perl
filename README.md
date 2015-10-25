@@ -222,10 +222,10 @@ get an introduction in person.
 
 * to run the test suite: `Test::Requires`
 
-* to run all the tests (otherwise some are skipped):
-  `BSD::Resource`, `Method::Signatures`, `Function::Parameters`,
-  `Sub::Call::Tail`, `Text::CSV`, `URI`. Some of these are also
-  necessary to run `htmlgen/gen` (or `website/gen` to build the
+* to run all the tests (otherwise some are skipped): `BSD::Resource`,
+  `Method::Signatures`, `Function::Parameters`, `Sub::Call::Tail`,
+  `Text::CSV`, `URI`, `Text::Markdown`, `Clone`. Some of these are
+  also necessary to run `htmlgen/gen` (or `website/gen` to build the
   website), see [Htmlgen](htmlgen/README.md) for details.
 
 * to use `bin/repl` or the repl in the intro and examples scripts
