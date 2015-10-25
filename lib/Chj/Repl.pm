@@ -113,6 +113,8 @@ use Chj::xperlfunc qw(xexec);
 use Chj::xopen qw(fh_to_fh);
 use POSIX;
 use Chj::xhome qw(xeffectiveuserhome);
+use Chj::singlequote 'singlequote';
+use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
 
 sub xone_nonwhitespace {
@@ -403,9 +405,6 @@ sub maybe_get_lexicals {
 
 
 our $use_warnings= q{use warnings; use warnings FATAL => 'uninitialized';};
-
-use Chj::singlequote 'singlequote';
-use FP::HashSet qw(hashset_union);
 
 sub eval_code {
     my $_self= shift;
