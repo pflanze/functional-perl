@@ -113,17 +113,13 @@ use Chj::xperlfunc qw(xexec);
 use Chj::xopen qw(fh_to_fh);
 use POSIX;
 use Chj::xhome qw(xeffectiveuserhome);
+use FP::Hash qw(hash_xref);
 
 sub xone_nonwhitespace {
     my ($str)=@_;
     $str=~ /^\s*(\S+)\s*\z/s
 	or die "exactly one non-quoted argument must be given";
     $1
-}
-
-sub xchoose_from ($$) {
-    my ($h,$key)=@_;
-    exists $$h{$key} ? $$h{$key} : die "unknown key '$key'";
 }
 
 
@@ -267,7 +263,7 @@ sub formatter {
     my ($terse)=@_; # true for :e viewing
     my $mode= $self->mode_formatter;
     $mode= "d" if ($terse and $mode eq "p");
-    xchoose_from
+    hash_xref
       (+{
          p=> sub {
              (
@@ -366,7 +362,7 @@ sub viewers {
 
     my $choosepager= sub {
 	my ($pager_with_options)= @_;
-	xchoose_from
+	hash_xref
 	  (+{
 	     V=> sub {
 		 print $OUTPUT $_[0]
@@ -959,7 +955,7 @@ sub run {
 		    # build up evaluator
 		    my $real_frameno= sub { $skip + $frameno };
 		    my $eval=
-			xchoose_from
+			hash_xref
 			(+{
 			   1=> sub {
 			       my $vals=
