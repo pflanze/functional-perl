@@ -42,11 +42,9 @@ If the 'KeepResultIn' field is set to a string, the scalar with the
 given mae is set to either an array holding all the result values (in
 :l mode) or the result value (in :1 mode).
 
-By default, in :d mode, $VAR1 etc. (as shown by the Data::Dumper, but
-directly, i.e. preserving references and code refs) are set as
-well. (NOTE: this will retain memory for higher-numbered VAR's that
-are not overwritten by subsequent runs! Set ->doKeepResultsInVARX(0)
-to turn this off.)
+By default, in the :d and :s modes the results of a calculation are
+carried over to the next entry in $VAR1 etc. as shown by the display
+of the result. Those are lexical variables.
 
 This does not turn on the Perl debugger, hence programs are not slowed
 down.
@@ -58,8 +56,6 @@ repl.
 
 =head1 TODO
 
- - make $VARX available lexically (don't leave around garbage in
-   globals)
  - 'A::Class-> ' method completion
  - for '$Foo ->bar<tab>' completion, if $Foo contains a valid class
    name, use it
@@ -285,12 +281,29 @@ sub maybe_get_lexicals {
 our $use_warnings= q{use warnings; use warnings FATAL => 'uninitialized';};
 
 use Chj::singlequote 'singlequote';
+use FP::HashSet qw(hashset_union);
+
 sub eval_code {
     my $_self= shift;
-    @_==3 or die "wrong number of arguments";
-    my ($code, $in_package, $in_frameno)=@_;
+    @_==4 or die "wrong number of arguments";
+    my ($code, $in_package, $in_frameno, $maybe_kept_results)=@_;
 
     my $maybe_lexicals= maybe_get_lexicals ($in_frameno);
+
+    # merge with previous results, if any
+    my $maybe_kept_results_hash= sub {
+	return unless $maybe_kept_results;
+	my %r;
+	for (my $i=0; $i<@$maybe_kept_results; $i++) {
+	    $r{'$VAR'.($i+1)}= \ ($$maybe_kept_results[$i]);
+	}
+	\%r
+    };
+    $maybe_lexicals=
+      ($maybe_lexicals && $maybe_kept_results) ?
+	hashset_union ($maybe_lexicals, &$maybe_kept_results_hash)
+	  : ($maybe_lexicals // &$maybe_kept_results_hash);
+
     my $use_method_signatures=
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
@@ -721,6 +734,7 @@ sub run {
 
 	# for repetitions:
 	my $evaluator= sub { }; # noop
+	my $maybe_kept_results;
       READ: {
 	    while (1) {
 
@@ -901,29 +915,19 @@ sub run {
 			   1=> sub {
 			       my $vals=
 				 [ scalar $self->eval_code
-				   ($rest, $get_package, &$real_frameno()) ];
+				   ($rest, $get_package, &$real_frameno(),
+				    $maybe_kept_results) ];
 			       ($vals, $@)
 			   },
 			   l=> sub {
 			       my $vals=
 				 [ $self->eval_code
-				   ($rest, $get_package, &$real_frameno()) ];
+				   ($rest, $get_package, &$real_frameno(),
+				    $maybe_kept_results) ];
 			       ($vals, $@)
 			   },
 			  },
 			 $self->mode_context);
-
-		    my $possibly_save_values= sub {
-			# save values by side effect
-			if ($$self[DoKeepResultsInVARX]) {
-			    no strict 'refs';
-			    for my $i (0..@_-1) {
-				my $varname= &$get_package()."::VAR".($i+1);
-				no strict 'refs';
-				$$varname= $_[$i];
-			    }
-			}
-		    };
 
 		    my $format_vals=
 		      xchoose_from
@@ -937,8 +941,6 @@ sub run {
 			       )
 			   },
 			   s=> sub {
-			       &$possibly_save_values(@_);
-
 			       require FP::Show;
 			       my $z=1;
 			       (
@@ -954,9 +956,6 @@ sub run {
 			       my @v= @_; # to survive into
                                           # WithRepl_eval below
 
-			       &$possibly_save_values(@v);
-
-			       # actually do the formatting job:
 			       require Data::Dumper;
 			       my $res;
 			       WithRepl_eval {
@@ -1007,6 +1006,8 @@ sub run {
 				&$format_vals(@$results)
 			    }
 			});
+			$maybe_kept_results= $results
+			  if $$self[DoKeepResultsInVARX];
 		    };
 
 		    &$evaluator;
