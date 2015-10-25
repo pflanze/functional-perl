@@ -48,8 +48,6 @@ use PXML qw(pxmlbody);
 my $res= '<a href="http://foo"><b>Foo</b>Bar</a>';
 TEST{ &$link_normal("http://foo", [B("Foo"), "Bar"])->string } $res;
 
-# XXX: these two tests are known to fail on perl v5.21.11-27-g57e8809
-# Why?
 TEST{ &$link_fast("http://foo", [B("Foo"), "Bar"])->string } $res;
 TEST{ &$link_fast2("http://foo", [B("Foo"), "Bar"])->string } $res;
 

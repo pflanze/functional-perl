@@ -124,7 +124,8 @@ use strict; use warnings FATAL => 'uninitialized';
 {
     package PXML::Preserialize::Serialized;
     sub new {
-	bless \($_[1]), $_[0];
+	my ($class,$str)=@_;
+	bless \($str), $class
     }
     sub pxml_serialized_body_string {
 	my $s=shift;
