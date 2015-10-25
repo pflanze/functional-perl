@@ -180,7 +180,7 @@ sub show ($) {
 	    &$m ($v,*show)
 	} elsif ($m= $$primitive_show{reftype $v}) {
 	    # blessed basic type
-	    "bless(" . &$m($v,*show) . ", " . show(ref($v)) . ")"
+	    "bless(" . &$m($v,*show) . ", " . &show(ref($v)) . ")"
 	} else {
 	    terseDumper($v)
 	}
