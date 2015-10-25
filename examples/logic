@@ -45,11 +45,6 @@ use Chj::repl;
 use FP::Hash ":all";
 use FP::Show;
 
-# XX lib
-fun hash2_set ($h,$k0,$k1,$v) {
-    hash_update $h, $k0, fun($h1) { hash_set $h1, $k1, $v }
-}
-
 
 {
     package examples_logic::Predicate;

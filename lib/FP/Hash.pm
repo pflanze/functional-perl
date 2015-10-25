@@ -55,7 +55,9 @@ package FP::Hash;
 	   hash_delete hash_update hash_diff
 	   hash_length
 	   subhash
-	   hashes_keys $empty_hash);
+	   hashes_keys $empty_hash
+	   hash2_set
+	 );
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -251,6 +253,13 @@ use FP::HashSet;
 
 sub hashes_keys {
     keys %{array_to_hashset( [map { keys %$_ } @_] )}
+}
+
+
+# set leafs in 2-level hash structure:
+sub hash2_set ($$$$) {
+    my ($h,$k0,$k1,$v)=@_;
+    hash_update $h, $k0, sub { my ($h1)=@_; hash_set $h1, $k1, $v }
 }
 
 
