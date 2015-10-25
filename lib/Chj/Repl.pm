@@ -181,7 +181,7 @@ sub new {
     $self
 }
 
-my $settings_version= "v0";
+my $settings_version= "v1";
 my $settings_fields=
   [
    # these should remain caller dependent:
@@ -223,7 +223,7 @@ sub possibly_restore_settings {
 		    $self->$method($v[$i]);
 		}
 	    } else {
-		warn "note: not reading settings of older version from '$path'";
+		warn "note: not reading settings of other version from '$path'";
 	    }
 	}
     }
