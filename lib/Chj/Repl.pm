@@ -306,6 +306,86 @@ sub formatter {
        $self->mode_formatter);
 }
 
+sub viewers {
+    my $self=shift;
+    my ($OUTPUT,$ERROR)=@_;
+    my $port_pager_with_options= sub {
+	my ($maybe_pager, @options)=@_;
+	sub {
+	    my ($printto)=@_;
+
+	    local $SIG{PIPE}="IGNORE";
+
+	    my $pagercmd= $maybe_pager // $self->pager;
+
+	    eval {
+		# XX this now means that no options
+		# can be passed in $ENV{PAGER} !
+		# (stupid Perl btw). Ok hard code
+		# 'less' instead perhaps!
+		my $o= Chj::xoutpipe
+		  (sub {
+		       # set stdout and stderr in case they are
+		       # redirected (stdin is the pipe)
+		       my $out= fh_to_fh ($OUTPUT);
+		       $out->xdup2(1);
+		       $out->xdup2(2);
+		       $ENV{PATH}= $self->env_PATH
+			 if defined $self->env_PATH;
+		       xexec $pagercmd, @options
+		   });
+		&$printto ($o);
+		$o->xfinish;
+		1
+	    } || do {
+		my $e= $@;
+		unless ($e=~ /broken pipe/i) {
+		    print $ERROR "error piping to pager ".
+		      "$pagercmd: $e\n"
+			or die $!;
+		}
+	    };
+	}
+    };
+
+    my $string_pager_with_options= sub {
+	my $port_pager= &$port_pager_with_options (@_);
+	sub {
+	    my ($v)=@_;
+	    &$port_pager (sub {
+			      my ($o)=@_;
+			      $o->xprint($v);
+			  });
+	}
+    };
+
+    my $choosepager= sub {
+	my ($pager_with_options)= @_;
+	xchoose_from
+	  (+{
+	     V=> sub {
+		 print $OUTPUT $_[0]
+		   or die "print: $!";
+	     },
+	     v=> &$pager_with_options(),
+	     a=> &$pager_with_options
+	     (qw(less --quit-if-one-screen --no-init)),
+	    },
+	   $self->mode_viewer);
+    };
+
+    my $pager= sub {
+	my ($pager_with_options)= @_;
+	sub {
+	    my ($v)=@_;
+	    &$choosepager ($pager_with_options)->($v);
+	}
+    };
+
+    (&$pager ($port_pager_with_options),
+     &$pager ($string_pager_with_options))
+}
+
 
 sub maybe_get_lexicals {
     my ($frameno)=@_;
@@ -650,84 +730,7 @@ sub run {
 	  "frame number must be between 0..$max\n";
     };
 
-    my ($view_with_port, $view_string)= do {
-	my $port_pager_with_options= sub {
-	    my ($maybe_pager, @options)=@_;
-	    sub {
-		my ($printto)=@_;
-
-		local $SIG{PIPE}="IGNORE";
-
-		my $pagercmd= $maybe_pager // $self->pager;
-
-		eval {
-		    # XX this now means that no options
-		    # can be passed in $ENV{PAGER} !
-		    # (stupid Perl btw). Ok hard code
-		    # 'less' instead perhaps!
-		    my $o= Chj::xoutpipe
-		      (sub {
-			   # set stdout and stderr in case they are
-			   # redirected (stdin is the pipe)
-			   my $out= fh_to_fh ($OUTPUT);
-			   $out->xdup2(1);
-			   $out->xdup2(2);
-			   $ENV{PATH}= $self->env_PATH
-			     if defined $self->env_PATH;
-			   xexec $pagercmd, @options
-		       });
-		    &$printto ($o);
-		    $o->xfinish;
-		    1
-		} || do {
-		    my $e= $@;
-		    unless ($e=~ /broken pipe/i) {
-			print $ERROR "error piping to pager ".
-			  "$pagercmd: $e\n"
-			    or die $!;
-		    }
-		};
-	    }
-	};
-
-	my $string_pager_with_options= sub {
-	    my $port_pager= &$port_pager_with_options (@_);
-	    sub {
-		my ($v)=@_;
-		&$port_pager (sub {
-				  my ($o)=@_;
-				  $o->xprint($v);
-			      });
-	    }
-	};
-
-	my $choosepager= sub {
-	    my ($pager_with_options)= @_;
-	    xchoose_from
-	      (+{
-		 V=> sub {
-		     print $OUTPUT $_[0]
-		       or die "print: $!";
-		 },
-		 v=> &$pager_with_options(),
-		 a=> &$pager_with_options
-		 (qw(less --quit-if-one-screen --no-init)),
-		},
-	       $self->mode_viewer);
-	};
-
-	my $pager= sub {
-	    my ($pager_with_options)= @_;
-	    sub {
-		my ($v)=@_;
-		&$choosepager ($pager_with_options)->($v);
-	    }
-	};
-
-	(&$pager ($port_pager_with_options),
-	 &$pager ($string_pager_with_options))
-    };
-
+    my ($view_with_port, $view_string)= $self->viewers ($OUTPUT,$ERROR);
 
     {
 	my @history;
