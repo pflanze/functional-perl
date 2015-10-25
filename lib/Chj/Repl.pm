@@ -110,7 +110,7 @@ use Chj::Class::methodnames;
 use Chj::xoutpipe();
 use Chj::xtmpfile;
 use Chj::xperlfunc qw(xexec);
-use Chj::xopen qw(fh_to_fh);
+use Chj::xopen qw(fh_to_fh perhaps_xopen_read);
 use POSIX;
 use Chj::xhome qw(xeffectiveuserhome);
 use Chj::singlequote 'singlequote';
@@ -143,7 +143,8 @@ sub levels_to_user {
 
 use Class::Array -fields=>
   -publica=> (
-	      'Historypath', #undef=none, but a default is set
+	      'Historypath', # undef=none, but a default is set
+	      'Settingspath', # undef=none, but a default is set
 	      'MaxHistLen',
 	      'Prompt', # undef= build fresh one from package&level
 	      'Package', # undef= use caller's package
@@ -163,8 +164,9 @@ use Class::Array -fields=>
 sub new {
     my $class=shift;
     my $self= $class->SUPER::new;
+    # XX is xeffectiveuserhome always ok over $ENV{HOME} ?
     $$self[Historypath]= xeffectiveuserhome."/.perl-repl_history";
-    # ^ XX is this always ok over $ENV{HOME} ?
+    $$self[Settingspath]= xeffectiveuserhome."/.perl-repl_settings";
     $$self[MaxHistLen]= 100;
     $$self[DoCatchINT]=1;
     $$self[DoRepeatWhenEmpty]=1;
@@ -177,6 +179,62 @@ sub new {
       '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 	if ${^TAINT};
     $self
+}
+
+my $settings_version= "v0";
+my $settings_fields=
+  [
+   # these should remain caller dependent:
+   #maxHistLen
+   #doCatchINT
+   #doRepeatWhenEmpty
+   #keepResultIn
+   #doKeepResultsInVARX
+   #pager
+   qw(mode_context
+      mode_formatter
+      mode_viewer)
+   ];
+
+sub possibly_save_settings {
+    my $self=shift;
+    if (my $path= $self->settingspath) {
+	my $f= xtmpfile $path;
+	$f->xprint (join("\0",
+			 $settings_version,
+			 map {
+			     $self->$_
+			 }
+			 @$settings_fields));
+	$f->xclose;
+	$f->xputback(0600);
+    }
+}
+
+sub possibly_restore_settings {
+    my $self=shift;
+    if (my $path= $self->settingspath) {
+	if (my ($f)= perhaps_xopen_read ($path)) {
+	    my @v= split /\0/, $f->xcontent;
+	    $f->xclose;
+	    if (shift (@v) eq $settings_version) {
+		for (my $i=0; $i< @$settings_fields; $i++) {
+		    my $method= "set_".$$settings_fields[$i];
+		    $self->$method($v[$i]);
+		}
+	    } else {
+		warn "note: not reading settings of older version from '$path'";
+	    }
+	}
+    }
+}
+
+sub saving ($$) {
+    my ($self,$proc)=@_;
+    sub {
+	&$proc(@_);
+	$self->possibly_save_settings;
+    }
 }
 
 # (move to some lib?)
@@ -873,14 +931,14 @@ sub run {
 						    $frameno + 1 : undef)
 				 },
 				 package=> $set_package,
-				 1=> sub { $$self[Mode_context]="1" },
-				 l=> sub { $$self[Mode_context]="l" },
-				 p=> sub { $$self[Mode_formatter]="p" },
-				 s=> sub { $$self[Mode_formatter]="s" },
-				 d=> sub { $$self[Mode_formatter]="d" },
-				 V=> sub { $$self[Mode_viewer]="V" },
-				 v=> sub { $$self[Mode_viewer]="v" },
-				 a=> sub { $$self[Mode_viewer]="a" },
+				 1=> saving ($self, sub { $$self[Mode_context]="1" }),
+				 l=> saving ($self, sub { $$self[Mode_context]="l" }),
+				 p=> saving ($self, sub { $$self[Mode_formatter]="p" }),
+				 s=> saving ($self, sub { $$self[Mode_formatter]="s" }),
+				 d=> saving ($self, sub { $$self[Mode_formatter]="d" }),
+				 V=> saving ($self, sub { $$self[Mode_viewer]="V" }),
+				 v=> saving ($self, sub { $$self[Mode_viewer]="v" }),
+				 a=> saving ($self, sub { $$self[Mode_viewer]="a" }),
 				 e=> sub {
 				     use Data::Dumper;
 				     # XX clean up: don't want i in the regex

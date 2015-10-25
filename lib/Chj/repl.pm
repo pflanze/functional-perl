@@ -68,6 +68,8 @@ sub repl {
 
     my $r= new Chj::Repl;
 
+    $r->possibly_restore_settings;
+
     for (keys %args) {
 	my $m= "set_$_";
 	$r->$m($args{$_});
