@@ -25,11 +25,9 @@ Chj::Repl - read-eval-print loop
 
 =head1 DESCRIPTION
 
-Enters an interactive read-eval-print loop.
-Term::ReadLine with history is active.
-The loop can be exited by typing ctl-d.
-Entering the empty string re-evaluates the last entry.
-Some autocompletion exists.
+Enters an interactive read-eval-print loop.  Term::ReadLine with
+history is active.  The loop can be exited by typing ctl-d.  Entering
+nothing re-evaluates the last entry.  Some autocompletion exists.
 
 When the entered line starts with ':' or ',' (both characters are
 equivalent), then it is interpreted as containing special commands or
