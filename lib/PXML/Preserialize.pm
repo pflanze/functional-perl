@@ -139,7 +139,7 @@ use strict; use warnings FATAL => 'uninitialized';
 
     # Prevent erroneous usage:
     use overload ('""'=> 'err',
-		  '0'=> 'err',
+		  '0+'=> 'err',
 		  #'+'=> 'err',
 		  fallback=> 1 # necessary not to have to provide + etc.
 		 );
