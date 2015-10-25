@@ -262,6 +262,51 @@ Other features:
 }
 
 
+sub formatter {
+    my $self=shift;
+    xchoose_from
+      (+{
+         p=> sub {
+             (
+	      join "",
+	      map {
+		  (defined $_ ? $_ : 'undef'). "\n"
+	      } @_
+             )
+         },
+         s=> sub {
+             require FP::Show;
+             my $z=1;
+             (
+	      join "",
+	      map {
+		  my $VARX= $$self[DoKeepResultsInVARX] ?
+		    '$VAR'.$z++.' = ' : '';
+		  $VARX . FP::Show::show($_). "\n"
+	      } @_
+             )
+         },
+         d=> sub {
+             my @v= @_; # to survive into
+	     # WithRepl_eval below
+
+             require Data::Dumper;
+             my $res;
+             WithRepl_eval {
+		 local $Data::Dumper::Sortkeys= 1;
+		 local $Data::Dumper::Useperl= $Dumper_Useperl;
+		 $res= Data::Dumper::Dumper(@v);
+		 1
+             } || do {
+		 warn "Data::Dumper: $@";
+             };
+             $res
+         }
+        },
+       $self->mode_formatter);
+}
+
+
 sub maybe_get_lexicals {
     my ($frameno)=@_;
     require PadWalker;
@@ -927,47 +972,7 @@ sub run {
 			  },
 			 $self->mode_context);
 
-		    my $format_vals=
-		      xchoose_from
-			(+{
-			   p=> sub {
-			       (
-				join "",
-				map {
-				    (defined $_ ? $_ : 'undef'). "\n"
-				} @_
-			       )
-			   },
-			   s=> sub {
-			       require FP::Show;
-			       my $z=1;
-			       (
-				join "",
-				map {
-				    my $VARX= $$self[DoKeepResultsInVARX] ?
-				      '$VAR'.$z++.' = ' : '';
-				    $VARX . FP::Show::show($_). "\n"
-				} @_
-			       )
-			   },
-			   d=> sub {
-			       my @v= @_; # to survive into
-                                          # WithRepl_eval below
-
-			       require Data::Dumper;
-			       my $res;
-			       WithRepl_eval {
-				   local $Data::Dumper::Sortkeys= 1;
-				   local $Data::Dumper::Useperl= $Dumper_Useperl;
-				   $res= Data::Dumper::Dumper(@v);
-				   1
-			       } || do {
-				   warn "Data::Dumper: $@";
-			       };
-			       $res
-			   }
-			  },
-			 $self->mode_formatter);
+		    my $format_vals= $self->formatter;
 
 		    $evaluator= sub {
 			my ($results,$error)= do {
