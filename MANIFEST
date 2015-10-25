@@ -171,6 +171,7 @@ t/csv_to_xml.expected
 t/csvstreams
 t/dbi
 t/examples-fibs
+t/examples-logic
 t/examples-primes
 t/fp-struct
 t/functional_XML-t-div

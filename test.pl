@@ -27,6 +27,7 @@ our @t=
 	trampoline-fix
 	examples-fibs
 	examples-primes
+	examples-logic
 	predicates
 	dbi
 	skip-internal

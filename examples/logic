@@ -44,6 +44,7 @@ use Chj::Trapl; # or Chj::Backtrace
 use Chj::repl;
 use FP::Hash ":all";
 use FP::Show;
+use FP::Array_sort ":all";
 
 
 {
@@ -293,7 +294,7 @@ fun search {
     stream_iota->take(2**16)->map(*buildmatrix)->filter(*checks)
 }
 
-#if (0) {
+if ($ENV{RUN_SLOW_TESTS}) {
     my $results;
     TEST {
 	$results= search ->array;
@@ -303,8 +304,6 @@ fun search {
     TEST { array_length array_filter fun($v){ equals $v, $onesolution }, $results }
       1;
 
-use FP::Array_sort ":all";
-
     my $sorted;
     TEST {
 	$sorted= array_sort $results, on *matrix_numrelations, *number_cmp;
@@ -312,7 +311,7 @@ use FP::Array_sort ":all";
 	 matrix_numrelations ($$sorted[-1])]
     } [7,8];
 
-#}
+}
 
 
-repl;
+perhaps_run_tests "main" or repl;
