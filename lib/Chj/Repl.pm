@@ -750,8 +750,8 @@ sub run {
 		}
 	    }
 	}
-	# do not add input to history automatically (-> allows me to
-	# do it myself):
+	# do not add input to history automatically (which allows me
+	# to do it myself):
 	$term->MinLine(undef);
 
 	my $myreadline= sub {
