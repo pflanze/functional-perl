@@ -11,7 +11,8 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 ## Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
-order of most likely replacement.
+order of most likely replacement (those replaced most easily or
+usefully listed first).
 
 - `Chj::xperlfunc`: maybe `use autodie`, although I'm somewhat wary of
   the fact that this way it's not directly visible anymore whether a
@@ -26,7 +27,8 @@ order of most likely replacement.
 - migrate `FP::Struct` functionality as Moose extensions or something?
 
 - merge Chj::Repl with other repls/debuggers? Also,
-  Chj::{Trapl,WithRepl,Backtrace}.
+  Chj::{Trapl,WithRepl,Backtrace}. They are still fertile grounds for
+  experimentation, though, thus shouldn't merge things too soon.
 
 - maybe FP::Path is not general or useful enough to keep
 
