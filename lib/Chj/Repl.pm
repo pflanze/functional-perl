@@ -272,6 +272,7 @@ sub print_help {
     };
     my $L= &$selection(context=> '1');
     my $l= &$selection(context=> 'l');
+    my $p= &$selection(formatter=> 'p');
     my $s= &$selection(formatter=> 's');
     my $d= &$selection(formatter=> 'd');
     my $V= &$selection(viewer=> 'V');
@@ -303,7 +304,7 @@ previously used mode (indicated on the left):
 $L 1  use scalar context
 $l l  use list context (default)
   formatter:
-$s p  print stringification
+$p p  print stringification
 $s s  show from FP::Show
 $d d  Data::Dumper (default)
   viewer:
