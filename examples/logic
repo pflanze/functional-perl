@@ -4,6 +4,14 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
+
+# This was written while working through the online course material
+# "Introduction to Logic" at Stanford University
+
+# http://logic.stanford.edu/intrologic/
+# http://logic.stanford.edu/intrologic/chapters/chapter_01.html
+
+
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
@@ -14,21 +22,6 @@ our ($mydir, $myname); BEGIN {
     ($mydir, $myname)=($1,$2);
 }
 use lib "$mydir/../lib";
-
-
-sub usage {
-    print "usage: $myname ...
-";
-    exit 1;
-}
-
-use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   ) or exit 1;
-usage if @ARGV;
-
 
 use Function::Parameters qw(:strict);
 #use Sub::Call::Tail;
