@@ -53,6 +53,7 @@ Create and dissect sequences using pure functions. Lazily.
 package FP::Stream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
+	      is_null
 	      Keep
 	      Weakened
 	      stream_iota
@@ -92,7 +93,9 @@ package FP::Stream;
 	      stream_any
 	      stream_show
 	 );
-@EXPORT_OK=qw(F weaken);
+@EXPORT_OK=qw(F weaken
+	      cons car cdr first rest
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';

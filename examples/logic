@@ -28,7 +28,6 @@ use Function::Parameters qw(:strict);
 use FP::Array ":all";
 use FP::Predicates qw(complement);
 use FP::Stream ":all"; # incl. F
-use FP::List; # XXX why is is_null not exported from FP::Stream?
 use FP::Ops ":all";
 use Chj::TEST ":all";
 use FP::Equals;
