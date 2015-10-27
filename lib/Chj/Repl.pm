@@ -347,7 +347,7 @@ $L 1  use scalar context
 $l l  use list context (default)
   formatter:
 $p p  print stringification
-$s s  show from FP::Show
+$s s  show from FP::Show (experimental, does not show data sharing)
 $d d  Data::Dumper (default)
   viewer:
 $V V  no pager
