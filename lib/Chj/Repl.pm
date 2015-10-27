@@ -313,8 +313,10 @@ $v v  pipe to pager ($$self[Pager])
 $a a  pipe to 'less --quit-if-one-screen --no-init' (default)
 
 Other features:
-  \$Chj::Repl::args  is an array holding the arguments of the last subroutine call
-                    that led to the currently selected frame
+  \$Chj::Repl::args   is an array holding the arguments of the last subroutine call
+                     that led to the currently selected frame
+  \$Chj::Repl::argsn  is an array holding the arguments of the subroutine call
+                     that *leaves* the currently selected frame
 };
 }
 
@@ -731,6 +733,7 @@ use Chj::Repl::Stack;
 
 our $repl_level; # maybe number of repl layers above
 our $args; # see '$Chj::Repl::args' in help text
+our $argsn; # see '$Chj::Repl::argsn' in help text
 
 # TODO: split this monstrosity into pieces.
 sub run {
@@ -1040,8 +1043,17 @@ sub run {
 			    # the repl to access the arguments in the
 			    # last call leading to this position by
 			    # accessing $Chj::Repl::args :
-			    my $maybe_frame= $stack->frame (&$real_frameno());
-			    local $args = $maybe_frame ? $maybe_frame->args : "TOP";
+			    my $getframe= sub {
+				my ($i)=@_;
+				if (defined (my $frame= $stack->frame
+					     (&$real_frameno() + $i))) {
+				    $frame->args
+				} else {
+				    "TOP"
+				}
+			    };
+			    local $argsn = &$getframe(0);
+			    local $args = &$getframe(1);
 			    &$eval
 			};
 
