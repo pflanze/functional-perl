@@ -25,7 +25,7 @@ Chj::repl - read-eval-print loop
        tty=> $fh, # otherwise repl tries to open /dev/tty, or if that fails,
                   # uses readline defaults (which is somewhat broken?)
        # also, any fields of the Chj::Repl class are possible:
-       maxHistLen=> 100, maybe_prompt=> "foo>", package=> "Foo::Bar",
+       maxHistLen=> 100, maybe_prompt=> "foo>", maybe_package=> "Foo::Bar",
        maybe_historypath=> ".foo_history", pager=> "more"
        # etc.
       );

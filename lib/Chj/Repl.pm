@@ -147,7 +147,7 @@ use Class::Array -fields=>
 	      'Maybe_settingspath', # undef=none, but a default is set
 	      'MaxHistLen',
 	      'Maybe_prompt', # undef= build fresh one from package&level
-	      'Package', # undef= use caller's package
+	      'Maybe_package', # undef= use caller's package
 	      'DoCatchINT',
 	      'DoRepeatWhenEmpty',
 	      'KeepResultIn',
@@ -748,14 +748,14 @@ sub run {
     my $frameno= 0;
 
     my $get_package= sub {
-	# (What is $$self[Package] for? Can set the maybe_prompt
+	# (What is $$self[Maybe_package] for? Can set the maybe_prompt
 	# independently. Security feature or just overengineering?
 	# Ok, remember the ":p" setting; but why not use a lexical
 	# within `run`? Ok how long-lived are the repl objects, same
 	# duration? Then hm is the only reason for the object to be
 	# able to set up things explicitely first? Thus is it ok after
 	# all?)
-	my $r= $$self[Package] || $stack->package($frameno);
+	my $r= $$self[Maybe_package] || $stack->package($frameno);
 	$r
     };
 
@@ -872,7 +872,7 @@ sub run {
 
 			    my $set_package= sub {
 				# (no package parsing, trust user)
-				$$self[Package]= xone_nonwhitespace($rest);
+				$$self[Maybe_package]= xone_nonwhitespace($rest);
 				$rest=""; # XX HACK
 			    };
 
@@ -903,7 +903,7 @@ sub run {
 				# unset any explicit package as
 				# we want to use the one of the
 				# current frame
-				undef $$self[Package]; # even without frameno? mess
+				undef $$self[Maybe_package]; # even without frameno? mess
 
 				# Show the context: (XX same
 				# issue as with :e with overly
