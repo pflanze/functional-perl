@@ -54,6 +54,24 @@ use strict; use warnings FATAL => 'uninitialized';
 
 use PadWalker qw(peek_my);
 
+our $maybe_peek_my= sub {
+    my ($skip)=@_;
+    my $res;
+    if (eval {
+	$res= peek_my ($skip);
+	1
+    }) {
+	$res
+    } else {
+	my $e= $@;
+	if ($e=~ /^Not nested deeply enough/i) {
+	    undef
+	} else {
+	    die $e
+	}
+    }
+};
+
 use FP::Struct [], "Chj::Repl::Stack";
 
 # XX ugly, modified COPY from Chj::Repl::Stack
@@ -68,7 +86,7 @@ sub get {
 	# information from the previous time "caller" was
 	# called" (perlfunc on 'caller')
 	push @frames, Chj::Repl::StackPlusFrame->new
-	  ($subargs, @vals, PadWalker::peek_my($skip));
+	  ($subargs, @vals, &$maybe_peek_my($skip+2));
 	$skip++;
     }
     $class->new(\@frames);
