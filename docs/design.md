@@ -264,6 +264,15 @@ implemented, by way of thecking for a '(&' method?)
   the field name, then the operation), and hints that it's different
   from imperative code.)
 
+* Procedures and methods which are not safe, i.e. can lead to delayed
+  failures instead of reporting an exception right away or lead to
+  other violations of the intended behaviour, are prefixed with (or
+  contain the string) "unsafe_". This allows to find their usage
+  easily using grep or similar. Examples are functions that access
+  array or hash fields in their arguments without verifying their
+  type, or constructors that reuse a mutable data structure passed as
+  argument and return it as ostensibly pure object.
+
 
 ## Purity
 
