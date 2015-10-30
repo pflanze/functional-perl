@@ -74,6 +74,7 @@ lib/Chj/NamespaceCleanAbove.pm
 lib/Chj/Package/OfPath.pm
 lib/Chj/Repl.pm
 lib/Chj/Repl/Stack.pm
+lib/Chj/Repl/StackPlus.pm
 lib/Chj/Repl/corefuncs.pm
 lib/Chj/Serialize.pm
 lib/Chj/TEST.pm

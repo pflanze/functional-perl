@@ -14,12 +14,25 @@ Chj::Repl::Stack
 =head1 SYNOPSIS
 
  my $stack= Chj::Repl::Stack->get($numbers_of_levels_to_skip);
+ my $f= $stack->frame($frameno);
+ $f->package
+ $f->args
+ ...
+ # or:
  $stack->package($frameno)
- $stack->
+ $stack->args($frameno)
+ ...
+
+ # the whole thing as string:
+ $stack->backtrace
 
 =head1 DESCRIPTION
 
 I'm pretty sure this is re-inventing some wheel..
+
+=head1 SEE ALSO
+
+L<Chj::Repl::StackPlus>
 
 =cut
 
