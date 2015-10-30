@@ -158,7 +158,7 @@ use Class::Array -fields=>
               'Mode_viewer', # char
 	      'Maybe_input', # fh
 	      'Maybe_output', # fh
-	      'Env_PATH', # maybe string
+	      'Maybe_env_PATH', # maybe string
 	     );
 
 sub new {
@@ -175,7 +175,7 @@ sub new {
     $$self[Mode_context]= 'l';
     $$self[Mode_formatter]= 'd';
     $$self[Mode_viewer]= 'a';
-    $$self[Env_PATH]=
+    $$self[Maybe_env_PATH]=
       '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 	if ${^TAINT};
     $self
@@ -394,8 +394,8 @@ sub viewers {
 		       my $out= fh_to_fh ($OUTPUT);
 		       $out->xdup2(1);
 		       $out->xdup2(2);
-		       $ENV{PATH}= $self->env_PATH
-			 if defined $self->env_PATH;
+		       $ENV{PATH}= $self->maybe_env_PATH
+			 if defined $self->maybe_env_PATH;
 		       xexec $pagercmd, @options
 		   });
 		&$printto ($o);
