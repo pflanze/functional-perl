@@ -153,6 +153,18 @@ our $make_frame_accessor= sub {
     }
 };
 
+our $make_perhaps_frame_accessor= sub {
+    my ($method)= @_;
+    sub {
+	my $s=shift;
+	my ($frameno)=@_;
+	my $nf= $s->num_frames;
+	($frameno < $nf
+	 ? ($s->frames->[$frameno]->$method)
+	 : ())
+    }
+};
+
 
 use FP::Struct ["frames"];
 
@@ -193,6 +205,7 @@ sub max_frameno {
 for (@fields, "desc") {
     no strict 'refs';
     *{$_}= &$make_frame_accessor ($_);
+    *{"perhaps_$_"}= &$make_perhaps_frame_accessor ($_);
 }
 
 sub backtrace {
