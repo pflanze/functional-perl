@@ -70,17 +70,17 @@ sub repl {
 
     $r->possibly_restore_settings;
 
-    for (keys %args) {
-	my $m= "set_$_";
-	$r->$m($args{$_});
-    }
-
     # Since `Term::Readline::Gnu`'s `OUT` method does not actually
     # return the filehandle that the readline library is using,
     # instead get the tty ourselves and set it explicitely. Stupid.
     if (defined (my $still_maybe_tty= $maybe_tty // maybe_tty)) {
 	$r->set_maybe_input ($still_maybe_tty);
 	$r->set_maybe_output ($still_maybe_tty);
+    }
+
+    for (keys %args) {
+	my $m= "set_$_";
+	$r->$m($args{$_});
     }
 
     #$r->run ($maybe_skip);
