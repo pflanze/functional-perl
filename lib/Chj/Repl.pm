@@ -144,7 +144,7 @@ sub levels_to_user {
 use Class::Array -fields=>
   -publica=> (
 	      'Historypath', # undef=none, but a default is set
-	      'Settingspath', # undef=none, but a default is set
+	      'Maybe_settingspath', # undef=none, but a default is set
 	      'MaxHistLen',
 	      'Prompt', # undef= build fresh one from package&level
 	      'Package', # undef= use caller's package
@@ -166,7 +166,7 @@ sub new {
     my $self= $class->SUPER::new;
     # XX is xeffectiveuserhome always ok over $ENV{HOME} ?
     $$self[Historypath]= xeffectiveuserhome."/.perl-repl_history";
-    $$self[Settingspath]= xeffectiveuserhome."/.perl-repl_settings";
+    $$self[Maybe_settingspath]= xeffectiveuserhome."/.perl-repl_settings";
     $$self[MaxHistLen]= 100;
     $$self[DoCatchINT]=1;
     $$self[DoRepeatWhenEmpty]=1;
@@ -198,7 +198,7 @@ my $settings_fields=
 
 sub possibly_save_settings {
     my $self=shift;
-    if (my $path= $self->settingspath) {
+    if (my $path= $self->maybe_settingspath) {
 	my $f= xtmpfile $path;
 	$f->xprint (join("\0",
 			 $settings_version,
@@ -213,7 +213,7 @@ sub possibly_save_settings {
 
 sub possibly_restore_settings {
     my $self=shift;
-    if (my $path= $self->settingspath) {
+    if (my $path= $self->maybe_settingspath) {
 	if (my ($f)= perhaps_xopen_read ($path)) {
 	    my @v= split /\0/, $f->xcontent;
 	    $f->xclose;

@@ -68,9 +68,9 @@ sub repl {
 
     my $r= new Chj::Repl;
 
-    if (exists $args{settingspath}) {
-	my $settingspath= delete $args{settingspath};
-	$r->settingspath($settingspath);
+    if (exists $args{maybe_settingspath}) {
+	my $maybe_settingspath= delete $args{maybe_settingspath};
+	$r->maybe_settingspath($maybe_settingspath);
     }
 
     $r->possibly_restore_settings;
