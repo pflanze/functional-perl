@@ -1135,15 +1135,10 @@ sub run {
 
 
 end Class::Array;
+
 # for backwards compatibility:
 *set_maxhistlen= *set_maxHistLen{CODE};
 *set_docatchint= *set_doCatchINT{CODE};
 *set_dorepeatwhenempty= *set_doRepeatWhenEmpty{CODE};
 *set_keepresultin= *set_keepResultIn{CODE};
 
-
-__END__
-todo:
-- Some::Package-><tab><tab>
-- Data::Dump::Streamer einbau
-- $hash->{<tab>
