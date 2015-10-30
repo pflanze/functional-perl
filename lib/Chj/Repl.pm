@@ -36,7 +36,7 @@ the comma like ',?', from now on whenever the text days ':' you can
 also use the comma) to get a help text including the currently active
 settings.
 
-If the 'KeepResultIn' field is set to a string, the scalar with the
+If the 'Maybe_keepResultIn' field is set to a string, the scalar with the
 given mae is set to either an array holding all the result values (in
 :l mode) or the result value (in :1 mode).
 
@@ -150,7 +150,7 @@ use Class::Array -fields=>
 	      'Maybe_package', # undef= use caller's package
 	      'DoCatchINT',
 	      'DoRepeatWhenEmpty',
-	      'KeepResultIn',
+	      'Maybe_keepResultIn',
 	      'DoKeepResultsInVARX',
 	      'Pager',
               'Mode_context', # char
@@ -188,7 +188,7 @@ my $settings_fields=
    #maxHistLen
    #doCatchINT
    #doRepeatWhenEmpty
-   #keepResultIn
+   #maybe_keepResultIn
    #doKeepResultsInVARX
    #pager
    qw(mode_context
@@ -1071,7 +1071,7 @@ sub run {
 				chomp $err;
 				$err."\n"; # no prefix? no safe way to differentiate.
 			    } else {
-				if (my $varname= $$self[KeepResultIn]) {
+				if (my $varname= $$self[Maybe_keepResultIn]) {
 				    $varname= &$get_package()."::$varname"
 				      unless $varname=~ /::/;
 				    no strict 'refs';
