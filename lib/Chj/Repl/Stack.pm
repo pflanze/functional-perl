@@ -141,7 +141,7 @@ our @fields; BEGIN { @fields= qw(args
 }
 
 
-sub make_frame_accessor {
+our $make_frame_accessor= sub {
     my ($method)= @_;
     sub {
 	my $s=shift;
@@ -151,7 +151,7 @@ sub make_frame_accessor {
 	  or die "frame number must be between 0..".($nf-1).", got: $frameno";
 	$s->frames->[$frameno]->$method
     }
-}
+};
 
 
 use FP::Struct ["frames"];
@@ -192,7 +192,7 @@ sub max_frameno {
 
 for (@fields, "desc") {
     no strict 'refs';
-    *{$_}= make_frame_accessor $_;
+    *{$_}= &$make_frame_accessor ($_);
 }
 
 sub backtrace {
