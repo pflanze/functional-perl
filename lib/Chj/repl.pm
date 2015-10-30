@@ -26,7 +26,7 @@ Chj::repl - read-eval-print loop
                   # uses readline defaults (which is somewhat broken?)
        # also, any fields of the Chj::Repl class are possible:
        maxHistLen=> 100, prompt=> "foo>", package=> "Foo::Bar",
-       historypath=> ".foo_history", pager=> "more"
+       maybe_historypath=> ".foo_history", pager=> "more"
        # etc.
       );
 

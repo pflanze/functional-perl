@@ -134,7 +134,7 @@ if (@files) {
 
 else {
     require Chj::repl;
-    Chj::repl(historypath=> ($opt_H ? undef : $HISTFILE),
+    Chj::repl(maybe_historypath=> ($opt_H ? undef : $HISTFILE),
 	      maxhistlen=> $MAXHISTLEN,
 	      package=> $myname);
 }

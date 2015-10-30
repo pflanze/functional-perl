@@ -143,7 +143,7 @@ sub levels_to_user {
 
 use Class::Array -fields=>
   -publica=> (
-	      'Historypath', # undef=none, but a default is set
+	      'Maybe_historypath', # undef=none, but a default is set
 	      'Maybe_settingspath', # undef=none, but a default is set
 	      'MaxHistLen',
 	      'Prompt', # undef= build fresh one from package&level
@@ -165,7 +165,7 @@ sub new {
     my $class=shift;
     my $self= $class->SUPER::new;
     # XX is xeffectiveuserhome always ok over $ENV{HOME} ?
-    $$self[Historypath]= xeffectiveuserhome."/.perl-repl_history";
+    $$self[Maybe_historypath]= xeffectiveuserhome."/.perl-repl_history";
     $$self[Maybe_settingspath]= xeffectiveuserhome."/.perl-repl_settings";
     $$self[MaxHistLen]= 100;
     $$self[DoCatchINT]=1;
@@ -799,11 +799,11 @@ sub run {
 	local $current_history= \@history;
 	# ^ this is what nested repl's will use to restore the history
 	# in the $term object
-	if (defined $$self[Historypath]) {
+	if (defined $$self[Maybe_historypath]) {
 	    # clean history of C based object before we re-add the
 	    # saved one:
 	    $term->clear_history;
-	    if (open my $hist, "<", $$self[Historypath]){
+	    if (open my $hist, "<", $$self[Maybe_historypath]){
 		@history= <$hist>;
 		close $hist;
 		for (@history){
@@ -1106,9 +1106,9 @@ sub run {
 	    }
 	}
 	print $OUTPUT "\n";
-	if (defined $$self[Historypath]) {
+	if (defined $$self[Maybe_historypath]) {
 	    eval {
-		my $f= xtmpfile $$self[Historypath];
+		my $f= xtmpfile $$self[Maybe_historypath];
 		$f->xprint("$_\n") for @history;
 		$f->xclose;
 		$f->xputback(0600);
