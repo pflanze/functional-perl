@@ -42,11 +42,11 @@ package Chj::Util::AskYN;
 use strict;
 
 sub maybe_askyn {
-    my ($prompt)=@_;
+    my ($maybe_prompt)=@_;
     local $|=1;
   ASK:{
-	if (defined $prompt) {
-	    print $prompt;
+	if (defined $maybe_prompt) {
+	    print $maybe_prompt;
 	}
 	print " ";
 	my $ans=<STDIN>;
