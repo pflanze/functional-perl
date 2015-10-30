@@ -203,7 +203,8 @@ sub handler_for ($$) {
 		return
 	    }
 	} else {
-	    print STDERR "Exception: $e";
+	    my $err= $Chj::Repl::maybe_output // *STDERR{IO};
+	    print $err "Exception: $e";
 	    # then what to do upon exiting it? return the value of the repl?
 	    # Ehr, XX repl needs new feature, a "quit this context with this value".
 	    repl(skip=> 1)
