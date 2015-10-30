@@ -68,6 +68,11 @@ sub repl {
 
     my $r= new Chj::Repl;
 
+    if (exists $args{settingspath}) {
+	my $settingspath= delete $args{settingspath};
+	$r->settingspath($settingspath);
+    }
+
     $r->possibly_restore_settings;
 
     # Since `Term::Readline::Gnu`'s `OUT` method does not actually
