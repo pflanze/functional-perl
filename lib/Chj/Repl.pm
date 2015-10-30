@@ -146,7 +146,7 @@ use Class::Array -fields=>
 	      'Maybe_historypath', # undef=none, but a default is set
 	      'Maybe_settingspath', # undef=none, but a default is set
 	      'MaxHistLen',
-	      'Prompt', # undef= build fresh one from package&level
+	      'Maybe_prompt', # undef= build fresh one from package&level
 	      'Package', # undef= use caller's package
 	      'DoCatchINT',
 	      'DoRepeatWhenEmpty',
@@ -748,7 +748,7 @@ sub run {
     my $frameno= 0;
 
     my $get_package= sub {
-	# (What is $$self[Package] for? Can set the prompt
+	# (What is $$self[Package] for? Can set the maybe_prompt
 	# independently. Security feature or just overengineering?
 	# Ok, remember the ":p" setting; but why not use a lexical
 	# within `run`? Ok how long-lived are the repl objects, same
@@ -822,7 +822,7 @@ sub run {
 	      eval {
 		  $line=
 		      $term->readline
-		      ($$self[Prompt] //
+		      ($$self[Maybe_prompt] //
 		       &$get_package()
 		       .($repl_level ? " $repl_level":"")
 		       .($frameno ? "/$frameno" : "")
