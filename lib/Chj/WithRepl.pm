@@ -90,6 +90,7 @@ sub WithRepl_eval_e (&;$) {
 }
 
 use Chj::repl;
+use Chj::Repl::Stack;
 use Chj::TEST;
 
 
