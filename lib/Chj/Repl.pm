@@ -116,6 +116,19 @@ use Chj::xhome qw(xeffectiveuserhome);
 use Chj::singlequote 'singlequote';
 use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
+use Chj::Repl::Stack;
+use FP::Lazy;
+
+sub maybe_tty {
+    my $path= "/dev/tty";
+    if (open my $fh, "+>", $path) {
+	$fh
+    } else {
+	warn "opening '$path': $!";
+	undef
+    }
+}
+
 
 sub xone_nonwhitespace {
     my ($str)=@_;
@@ -729,7 +742,8 @@ sub _completion_function {
     }
 }
 
-use Chj::Repl::Stack;
+our ($maybe_input, $maybe_output); # dynamic parametrization of
+                                   # filehandles
 
 our $repl_level; # maybe number of repl layers above
 our $args; # see '$Chj::Repl::args' in help text
@@ -778,13 +792,17 @@ sub run {
     my $attribs= $term->Attribs;
 
     my ($INPUT, $OUTPUT, $ERROR)= do {
-	my ($maybe_in, $maybe_out)=
-	  ($self->maybe_input,$self->maybe_output);
-	my $in= $maybe_in // $term->IN // *STDIN;
-	my $out= $maybe_out // $term->OUT // *STDOUT;
+	my $tty= lazy { maybe_tty };
+	my $in= $self->maybe_input // $maybe_input // force($tty)
+	  // $term->IN // *STDIN;
+	my $out= $self->maybe_output // $maybe_output // force($tty)
+	  // $term->OUT // *STDOUT;
 	$term->newTTY ($in,$out);
 	($in,$out,$out)
     };
+    # carry over input/output to subshells:
+    local $maybe_input= $INPUT;
+    local $maybe_output= $OUTPUT;
 
     my $printerror_frameno= sub {
 	my $max = $stack->max_frameno;

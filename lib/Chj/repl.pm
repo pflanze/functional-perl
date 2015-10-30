@@ -44,21 +44,11 @@ L<Chj::Repl>: the class implementing this
 package Chj::repl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(repl);
-@EXPORT_OK=qw(maybe_tty);
+@EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict;
 use Chj::Repl;
-
-sub maybe_tty {
-    my $path= "/dev/tty";
-    if (open my $fh, "+>", $path) {
-	$fh
-    } else {
-	warn "opening '$path': $!";
-	undef
-    }
-}
 
 sub repl {
     @_ % 2 and die "expecting even number of arguments";
@@ -74,14 +64,6 @@ sub repl {
     }
 
     $r->possibly_restore_settings;
-
-    # Since `Term::Readline::Gnu`'s `OUT` method does not actually
-    # return the filehandle that the readline library is using,
-    # instead get the tty ourselves and set it explicitely. Stupid.
-    if (defined (my $still_maybe_tty= $maybe_tty // maybe_tty)) {
-	$r->set_maybe_input ($still_maybe_tty);
-	$r->set_maybe_output ($still_maybe_tty);
-    }
 
     for (keys %args) {
 	my $m= "set_$_";
