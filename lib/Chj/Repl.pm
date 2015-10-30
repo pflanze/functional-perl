@@ -116,7 +116,7 @@ use Chj::xhome qw(xeffectiveuserhome);
 use Chj::singlequote 'singlequote';
 use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
-use Chj::Repl::Stack;
+use Chj::Repl::StackPlus;
 use FP::Lazy;
 
 sub maybe_tty {
@@ -464,28 +464,12 @@ sub viewers {
 }
 
 
-sub maybe_get_lexicals {
-    my ($frameno)=@_;
-    require PadWalker;
-    my $levels= levels_to_user;
-    eval {
-	PadWalker::peek_my($levels + $frameno);
-    } // do {
-	$@=~ /Not nested deeply enough/i ? undef : die $@;
-	# this happens when running the repl when not in a subroutine,
-	# right?
-    }
-}
-
-
 our $use_warnings= q{use warnings; use warnings FATAL => 'uninitialized';};
 
 sub eval_code {
     my $_self= shift;
     @_==4 or die "wrong number of arguments";
-    my ($code, $in_package, $in_frameno, $maybe_kept_results)=@_;
-
-    my $maybe_lexicals= maybe_get_lexicals ($in_frameno);
+    my ($code, $in_package, $maybe_lexicals, $maybe_kept_results)=@_;
 
     # merge with previous results, if any
     my $maybe_kept_results_hash= sub {
@@ -755,7 +739,7 @@ sub run {
     my ($maybe_skip)=@_;
 
     my $skip= $maybe_skip // 0;
-    my $stack= Chj::Repl::Stack->get ($skip + 1);
+    my $stack= Chj::Repl::StackPlus->get ($skip + 1);
 
     local $repl_level= ($repl_level // -1) + 1;
 
@@ -806,8 +790,8 @@ sub run {
 
     my $printerror_frameno= sub {
 	my $max = $stack->max_frameno;
-	print $ERROR
-	  "frame number must be between 0..$max\n";
+	print $ERROR "frame number must be between 0..$max",
+	  (@_ ? ", got @_" : ()), "\n";
     };
 
     my ($view_with_port, $view_string)= $self->viewers ($OUTPUT,$ERROR);
@@ -867,7 +851,7 @@ sub run {
 		local $attribs->{attempted_completion_function}=
 		  _completion_function ($attribs,
 					&$get_package,
-					maybe_get_lexicals($skip + $frameno)||{});
+					$stack->perhaps_lexicals($frameno) // {});
 
 		my $input = &$myreadline // last;
 
@@ -913,7 +897,7 @@ sub run {
 				    if ($maybe_frameno <= $stack->max_frameno) {
 					$frameno= $maybe_frameno
 				    } else {
-					&$printerror_frameno ();
+					&$printerror_frameno ($maybe_frameno);
 					return;
 				    }
 				}
@@ -968,9 +952,9 @@ sub run {
 					 $rest=~ /^i?\s*(\d+)?\s*\z/
 					 or die "expecting digits or no argument, got '$cmd'";
 				     $rest=""; # can't s/// above when expecting value
-				     if (defined
-					 (my $lexicals= maybe_get_lexicals
-					  ($skip - 1 + ($maybe_frameno // $frameno)))) {
+				     my $fno= $maybe_frameno // $frameno;
+				     if (my ($lexicals)=
+					 $stack->perhaps_lexicals($fno)) {
 					 &$view_with_port
 					   (sub {
 						my ($o)=@_;
@@ -988,7 +972,7 @@ sub run {
 						}
 					    });
 				     } else {
-					 &$printerror_frameno ();
+					 &$printerror_frameno ($fno);
 				     }
 				 },
 				 f=> $select_frame,
@@ -1032,23 +1016,21 @@ sub run {
 		    }
 
 		    # build up evaluator
-		    my $real_frameno= sub { $skip + $frameno };
+		    my $eval_= sub {
+			$self->eval_code
+			  ($rest,
+			   $get_package,
+			   $stack->perhaps_lexicals($frameno) // {},
+			   $maybe_kept_results);
+		    };
 		    my $eval=
 			hash_xref
 			(+{
 			   1=> sub {
-			       my $vals=
-				 [ scalar $self->eval_code
-				   ($rest, $get_package, &$real_frameno(),
-				    $maybe_kept_results) ];
-			       ($vals, $@)
+			       ([ scalar &$eval_ ], $@)
 			   },
 			   l=> sub {
-			       my $vals=
-				 [ $self->eval_code
-				   ($rest, $get_package, &$real_frameno(),
-				    $maybe_kept_results) ];
-			       ($vals, $@)
+			       ([ &$eval_ ], $@)
 			   },
 			  },
 			 $self->mode_context);
@@ -1064,7 +1046,7 @@ sub run {
 			    my $getframe= sub {
 				my ($i)=@_;
 				if (defined (my $frame= $stack->frame
-					     (&$real_frameno() + $i))) {
+					     ($frameno + $i))) {
 				    $frame->args
 				} else {
 				    "TOP"
