@@ -207,8 +207,9 @@ use FP::Show;
 	(FP::List::is_pair($b)
 	 and
 	 FP::Equals::equals($a->car, $b->car)
-	 and
-	 FP::Equals::equals($a->cdr, $b->cdr))
+	 and do {
+	     @_=($a->cdr, $b->cdr); goto \&FP::Equals::equals
+	 })
     }
 
     sub FP_Show_show {
