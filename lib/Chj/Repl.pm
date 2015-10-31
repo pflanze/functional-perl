@@ -735,8 +735,7 @@ our $argsn; # see '$Chj::Repl::argsn' in help text
 
 # TODO: split this monstrosity into pieces.
 sub run {
-    my $self=shift;
-    my ($maybe_skip)=@_;
+    my ($self, $maybe_skip)=@_;
 
     my $skip= $maybe_skip // 0;
     my $stack= Chj::Repl::StackPlus->get ($skip + 1);
