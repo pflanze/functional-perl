@@ -1,6 +1,6 @@
 package HTTP::Daemon;
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use vars qw($VERSION @ISA $PROTO $DEBUG);
 
 $VERSION = "6.01";
