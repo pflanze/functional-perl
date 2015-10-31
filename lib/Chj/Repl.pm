@@ -153,8 +153,18 @@ sub levels_to_user {
     }
 }
 
-our $maybe_historypath= xeffectiveuserhome."/.perl-repl_history";
-our $maybe_settingspath= xeffectiveuserhome."/.perl-repl_settings";
+my $HOME=xeffectiveuserhome;
+our $maybe_historypath= "$HOME/.perl-repl_history";
+our $maybe_settingspath= "$HOME/.perl-repl_settings";
+our $maxHistLen= 100;
+our $doCatchINT= 1;
+our $doRepeatWhenEmpty= 1; 
+our $doKeepResultsInVARX= 1;
+our $pager= $ENV{PAGER} || "less";
+our $mode_context= 'l';
+our $mode_formatter= 'd';
+our $mode_viewer= 'a';
+our $maybe_env_path= '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
 
 use Class::Array -fields=>
   -publica=> (
@@ -179,19 +189,17 @@ use Class::Array -fields=>
 sub new {
     my $class=shift;
     my $self= $class->SUPER::new;
-    # XX is xeffectiveuserhome always ok over $ENV{HOME} ?
     $$self[Maybe_historypath]= $maybe_historypath;
     $$self[Maybe_settingspath]= $maybe_settingspath;
-    $$self[MaxHistLen]= 100;
-    $$self[DoCatchINT]=1;
-    $$self[DoRepeatWhenEmpty]=1;
-    $$self[DoKeepResultsInVARX]= 1;
-    $$self[Pager]= $ENV{PAGER} || "less";
-    $$self[Mode_context]= 'l';
-    $$self[Mode_formatter]= 'd';
-    $$self[Mode_viewer]= 'a';
-    $$self[Maybe_env_PATH]=
-      '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+    $$self[MaxHistLen]= $maxHistLen;
+    $$self[DoCatchINT]= $doCatchINT;
+    $$self[DoRepeatWhenEmpty]= $doRepeatWhenEmpty;
+    $$self[DoKeepResultsInVARX]= $doKeepResultsInVARX;
+    $$self[Pager]= $pager;
+    $$self[Mode_context]= $mode_context;
+    $$self[Mode_formatter]= $mode_formatter;
+    $$self[Mode_viewer]= $mode_viewer;
+    $$self[Maybe_env_PATH]= $maybe_env_path
 	if ${^TAINT};
     $self
 }
