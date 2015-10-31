@@ -1,0 +1,214 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+our $len= 672;
+require "meta/test.pl";
+
+use Test::More;
+use lib "./lib";
+use Chj::repl;
+use Chj::Trapl;
+use Chj::xpipe;
+use Chj::xperlfunc;
+
+sub clean ($) {
+    my ($s)=@_;
+
+    $s=~ s/^\s*//s;
+    $s=~ s/main>\s*$//s;
+
+    my $id= do {
+	my %id;
+	my $counter=0;
+	sub {
+	    my ($str)=@_;
+	    $id{$str} //= $counter++
+	}
+    };
+
+    $s=~ s/\(eval (\d+)\)/'(eval ' . &$id ("eval $1") . ')'/sge;
+    $s=~ s/\bline (\d+)\b/'line ' . &$id ("line $1")/sge;
+    $s=~ s/(\w+)\((0x[0-9a-f]+)\)/"$1(0x" . &$id ("$1 $2") . ')'/sge;
+    $s
+}
+
+#repl; exit;
+
+sub t {
+    my ($input,$output,$maybe_filter)=@_;
+
+    $input=~ s/^\s+//s;
+    $input=~ s/\s+$//s;
+
+    my ($inr,$inw)= xpipe;
+    my ($outr,$outw)= xpipe;
+    if (xfork) {
+	$inr->xclose; $outw->xclose;
+
+	$inw->xprintln($input);
+	$inw->xclose;
+	my $out= $outr->xcontent;
+	wait;
+	@_=(
+	    clean($maybe_filter ? do {
+		local $_= $out;
+		&$maybe_filter;
+		$_
+	    } : $out),
+	    clean($output));
+	goto \&is;
+    } else {
+	$outr->xclose; $inw->xclose;
+
+	delete $ENV{TERM};
+	delete $ENV{COLORTERM};
+
+	repl (maybe_input=> $inr,
+	      maybe_output=> $outw,
+	      maybe_settingspath=> undef,
+	      mode_formatter=> 's',
+	     );
+
+	exit 0;
+    }
+}
+
+
+# :e
+t ',e',
+  q{
+main> ,e
+$input = ',e'
+$inr = bless(bless( \*Symbol::GEN0, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')
+$inw = bless(bless( \*Symbol::GEN1, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')
+$maybe_filter = sub { "DUMMY" }
+$output = 'DUMMY'
+$outr = bless(bless( \*Symbol::GEN2, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')
+$outw = bless(bless( \*Symbol::GEN3, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')
+},
+  sub { s/(\$output = ').*('\s*\$outr)/${1}DUMMY$2/s };
+
+
+# :e with lexicals from multiple scopes
+t '
+do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
+,e',
+  '
+main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
+Exception: fun at (eval 132) line 1.
+main 1> ,e
+$x = 99
+$z = undef
+main 1> 
+fun at (eval 132) line 1.
+';
+
+
+# Backtrace
+t '
+do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
+,b',
+  q+
+main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
+Exception: fun at (eval 0) line 1.
+main 1> ,b
+0	Chj::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
+1	main::__ANON__('99') called at (eval 0) line 1
+2	main::__ANON__() called at lib/Chj/Repl.pm line 2
+3	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 3
+4	(eval)() called at lib/Chj/Repl.pm line 3
+5	Chj::Repl::WithRepl_eval('CODE(0x11)') called at lib/Chj/Repl.pm line 4
+6	Chj::Repl::eval_code('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 5
+7	Chj::Repl::__ANON__('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 6
+8	Chj::Repl::__ANON__('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 7
+9	Chj::Repl::__ANON__('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 8
+10	Chj::Repl::run(undef, undef) called at t/repl line 9
+11	main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl line 10
+main 1> 
+fun at (eval 0) line 1.
++;
+
+
+# argsn; args would contain the argument for t, thus recursive def
+# (quine?..)
+t '
+$Chj::Repl::argsn
+',
+  q+
+main> $Chj::Repl::argsn
+$VAR1 = [undef, undef]
++;
+
+
+
+
+# The various scope positions (argsn, args, :0, :e, $x):
+
+# (A) from subrepl
+t '
+do {my $z=123; sub { my ($x)=@_; repl }}->(99)
+$Chj::Repl::argsn
+$Chj::Repl::args
+,0
+,e
+$x
+',
+  q+
+main> do {my $z=123; sub { my ($x)=@_; repl }}->(99)
+main 1> $Chj::Repl::argsn
+$VAR1 = [undef, undef]
+main 1> $Chj::Repl::args
+$VAR1 = [99]
+main 1> ,0
+Chj::Repl::run(
+  undef,
+  undef
+) called at (eval 0) line 1
+main 1> ,e
+$x = 99
+$z = undef
+main 1> $x
+$VAR1 = 99
+main 1> 
+$VAR1 = ''
++;
+
+
+# (B) from Trapl
+t '
+do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
+$Chj::Repl::argsn
+$Chj::Repl::args
+,0
+,e
+$x
+',
+  q+
+main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
+Exception: fun at (eval 0) line 1.
+main 1> $Chj::Repl::argsn
+$VAR1 = ['fun at (eval 0) line 1.
+']
+main 1> $Chj::Repl::args
+$VAR1 = [99]
+main 1> ,0
+Chj::WithRepl::__ANON__(
+  'fun at (eval 0) line 1.
+  '
+) called at (eval 0) line 1
+main 1> ,e
+$x = 99
+$z = undef
+main 1> $x
+$VAR1 = 99
+main 1> 
+fun at (eval 0) line 1.
++;
+
+
+done_testing;

@@ -192,6 +192,7 @@ t/perl/weaken-coderef-alternative-fix
 t/perl/weaken-coderef-alternative-local
 t/perl/weaken-coderef-simplified
 t/predicates
+t/repl
 t/require_and_run_tests
 t/skip
 t/skip-internal

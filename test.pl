@@ -17,6 +17,7 @@ our @t=
 	require_and_run_tests
 	fp-struct
 	universal-isa
+	repl
 	testlazy
 	testlazy10
 	functional_XML-test
