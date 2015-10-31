@@ -16,6 +16,8 @@ use Chj::Trapl;
 use Chj::xpipe;
 use Chj::xperlfunc;
 use Chj::xperlfunc qw(xlaunch);
+use Chj::xhome qw(xeffectiveuserhome);
+my $HOME= xeffectiveuserhome;
 
 sub clean ($) {
     my ($s)=@_;
@@ -93,6 +95,10 @@ sub t {
     }
 }
 
+my $filterHOME= sub {
+    s,$HOME,<HOME>,sg
+};
+
 
 # :e
 t ',e',
@@ -157,7 +163,8 @@ $Chj::Repl::argsn
   q+
 main> $Chj::Repl::argsn
 $VAR1 = [undef, undef]
-+;
++,
+  $filterHOME;
 
 
 
@@ -191,7 +198,8 @@ main 1> $x
 $VAR1 = 99
 main 1> 
 $VAR1 = ''
-+;
++,
+  $filterHOME;
 
 
 # (B) from Trapl
@@ -223,7 +231,8 @@ main 1> $x
 $VAR1 = 99
 main 1> 
 fun at (eval 0) line 1.
-+;
++,
+  $filterHOME;
 
 
 done_testing;
