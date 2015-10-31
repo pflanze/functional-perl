@@ -153,6 +153,8 @@ sub levels_to_user {
     }
 }
 
+our $maybe_historypath= xeffectiveuserhome."/.perl-repl_history";
+our $maybe_settingspath= xeffectiveuserhome."/.perl-repl_settings";
 
 use Class::Array -fields=>
   -publica=> (
@@ -178,8 +180,8 @@ sub new {
     my $class=shift;
     my $self= $class->SUPER::new;
     # XX is xeffectiveuserhome always ok over $ENV{HOME} ?
-    $$self[Maybe_historypath]= xeffectiveuserhome."/.perl-repl_history";
-    $$self[Maybe_settingspath]= xeffectiveuserhome."/.perl-repl_settings";
+    $$self[Maybe_historypath]= $maybe_historypath;
+    $$self[Maybe_settingspath]= $maybe_settingspath;
     $$self[MaxHistLen]= 100;
     $$self[DoCatchINT]=1;
     $$self[DoRepeatWhenEmpty]=1;
