@@ -23,7 +23,7 @@ package Chj::chompspace;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(chompspace);
 #@EXPORT_OK=qw();
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub chompspace($) {
     my ($str)=@_;

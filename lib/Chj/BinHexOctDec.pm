@@ -38,7 +38,7 @@ bug?)
 
 package Chj::BinHexOctDec;
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub bin {
     my $this=shift;

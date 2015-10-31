@@ -20,7 +20,7 @@ package Class::Array;
 
 $VERSION = '0.10pre1';
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 
 #use constant DEBUG=>0;

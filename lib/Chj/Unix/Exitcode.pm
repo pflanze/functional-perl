@@ -21,7 +21,7 @@ Chj::Unix::Exitcode
 
 package Chj::Unix::Exitcode;
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::Unix::Signal;
 

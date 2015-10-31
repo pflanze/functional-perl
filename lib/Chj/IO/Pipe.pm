@@ -23,7 +23,7 @@ Inherits from Chj::IO::File.
 package Chj::IO::Pipe;
 @ISA= "Chj::IO::File";
 require Chj::IO::File;
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub quotedname {
     "pipe"

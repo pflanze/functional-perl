@@ -39,7 +39,7 @@ package Chj::Util::AskYN;
 @ISA="Exporter"; require Exporter;
 @EXPORT= qw(maybe_askyn);
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub maybe_askyn {
     my ($maybe_prompt)=@_;

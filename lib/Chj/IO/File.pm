@@ -136,7 +136,7 @@ L<Chj::xopen>, L<Chj::IO::SysFile>, L<Chj::xsysopen>
 
 package Chj::IO::File;
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 our @ISA=("IO");
 sub import { };

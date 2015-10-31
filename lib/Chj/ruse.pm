@@ -59,7 +59,7 @@ being defined again.
 
 package Chj::ruse;
 require Exporter;
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 our $DEBUG=0; # -1 = more than normal-silent. 0 = no debugging. 1,2,3= debugging levels.
 

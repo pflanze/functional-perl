@@ -20,7 +20,7 @@ Add backtrace to all string based exceptions (those thrown by die
 
 
 package Chj::Backtrace;
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 
 # Carp::longmess 'usually' inserts a needless repetition

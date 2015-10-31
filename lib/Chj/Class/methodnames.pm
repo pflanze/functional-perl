@@ -35,7 +35,7 @@ package Chj::Class::methodnames;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(methodnames);
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
 our $stop={};

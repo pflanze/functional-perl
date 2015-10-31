@@ -25,7 +25,7 @@ Common superclass ('mixin'?) for Chj::IO::Command and Chj::IO::CommandBidirectio
 
 package Chj::IO::CommandCommon;
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::xperlfunc;
 use Chj::xpipe;

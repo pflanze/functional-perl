@@ -25,7 +25,7 @@ package Chj::Unix::exitcode;
 @EXPORT_OK=qw(exitcode);
 %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::Unix::Exitcode;
 

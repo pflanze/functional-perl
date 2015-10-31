@@ -58,7 +58,7 @@ package Chj::singlequote;
 # importing 'many' is probably not a good idea (depreciated)
 %EXPORT_TAGS=(all=>[@EXPORT, @EXPORT_OK]);
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 our $maybe_maxlen;
 

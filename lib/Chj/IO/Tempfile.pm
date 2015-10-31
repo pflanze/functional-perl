@@ -25,7 +25,7 @@ it's temp file.
 
 package Chj::IO::Tempfile;
 use base "Chj::IO::File";
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Fcntl;
 use Carp;
 use POSIX qw(EEXIST EINTR ENOENT);

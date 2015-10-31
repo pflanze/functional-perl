@@ -51,7 +51,7 @@ L<FP::Path::t> for the test suite
 
 package FP::Path;
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::List ":all";
 use FP::Equals ();

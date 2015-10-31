@@ -90,7 +90,7 @@ L<Chj::repl>: easy wrapper
 
 package Chj::Repl;
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # Copy from Chj::WithRepl, to prevent circular dependency.  This has
 # to be at the top before any lexicals are defined! so that lexicals

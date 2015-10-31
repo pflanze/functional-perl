@@ -48,7 +48,7 @@ package Chj::xhome;
 	      xsafehome);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub xHOME () {
     defined (my $home=$ENV{HOME})

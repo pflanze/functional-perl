@@ -23,7 +23,7 @@ package Chj::xtmpfile;
 @ISA='Exporter';
 require Exporter;
 @EXPORT= qw(xtmpfile);
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::IO::Tempfile;
 

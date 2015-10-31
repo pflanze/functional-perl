@@ -28,7 +28,7 @@ package Chj::Package::OfPath;
 	      package_of_path_or_package
 	     );
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Cwd 'abs_path';
 use Chj::singlequote;
 

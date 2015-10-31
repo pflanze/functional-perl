@@ -24,7 +24,7 @@ package Chj::Repl::corefuncs;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(corefuncs);
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 {
     # for some reason I can't seem to find out how to get at that otherwise.
