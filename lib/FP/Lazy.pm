@@ -118,6 +118,9 @@ Provide safe promises for these situations? (But that would mean that
 they need to be implemented in C as Perl does not offer the features
 to implement them safely, correct?)
 
+FP_Show_show: instead of "DUMMY", show file/line of the thunk's
+definition?
+
 =head1 SEE ALSO
 
 https://en.wikipedia.org/wiki/Futures_and_promises
