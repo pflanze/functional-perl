@@ -138,21 +138,6 @@ sub xone_nonwhitespace {
 }
 
 
-sub levels_to_user {
-    my $n=1;
-    while(1) {
-	my ($package, $filename, $line, $subroutine, $hasargs,
-	    $wantarray, $evaltext, $is_require, $hints, $bitmask, $hinthash)=
-		caller($n);
-	return $n
-	    if ($package ne 'Chj::Repl'
-		and
-		$package ne 'Chj::repl');
-
-	$n++;
-    }
-}
-
 my $HOME=xeffectiveuserhome;
 our $maybe_historypath= "$HOME/.perl-repl_history";
 our $maybe_settingspath= "$HOME/.perl-repl_settings";
