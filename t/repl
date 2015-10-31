@@ -197,14 +197,14 @@ $x
   q+
 main> do {my $z=123; sub { my ($x)=@_; repl }}->(99)
 main 1> $Chj::Repl::argsn
-$VAR1 = [bless(['<HOME>/.perl-repl_history', '<HOME>/.perl-repl_settings', 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a'], 'Chj::Repl'), undef]
+$VAR1 = [bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a'], 'Chj::Repl'), undef]
 main 1> $Chj::Repl::args
 $VAR1 = [99]
 main 1> ,0
 Chj::Repl::run(
   bless( [
            '<HOME>/.perl-repl_history',
-           '<HOME>/.perl-repl_settings',
+           undef,
            100,
            undef,
            undef,
