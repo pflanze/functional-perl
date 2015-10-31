@@ -146,6 +146,8 @@ use FP::Show;
     sub equals {
 	my ($a,$b)=@_;
 	FP::List::is_null($b)
+	    # XX well, this is, *currently*, guaranteed by FP::Equals,
+	    # thus always 1
     }
 
     # for FP::Show:
