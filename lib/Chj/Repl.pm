@@ -774,8 +774,8 @@ sub run {
 	or die "Error setting SIGALRM handler: $!\n";
 
     require Term::ReadLine;
-    # only start one readline instance, do not nest (otherwise seem to
-    # lead to segfaults). okay?.
+    # only start one readline instance, do not nest (doing otherwise
+    # seems to lead to segfaults). okay?.
     local our $term = $term || new Term::ReadLine 'Repl';
     # This means that the history from nested repls will also show up
     # in the history of the parent repl. Not saved, but within the
