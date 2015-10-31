@@ -37,6 +37,7 @@ sub clean ($) {
     $s=~ s/\(eval (\d+)\)/'(eval ' . &$id ("eval $1") . ')'/sge;
     $s=~ s/\bline (\d+)\b/'line ' . &$id ("line $1")/sge;
     $s=~ s/(\w+)\((0x[0-9a-f]+)\)/"$1(0x" . &$id ("$1 $2") . ')'/sge;
+    $s=~ s/(\*\w+::GEN)(\d+)/$1 . &$id("SymbolGEN $2")/sge;
     $s
 }
 
