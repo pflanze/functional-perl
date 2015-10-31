@@ -83,8 +83,8 @@ sub t {
     } else {
 	$outr->xclose; $inw->xclose;
 
-	delete $ENV{TERM};
-	delete $ENV{COLORTERM};
+	$ENV{TERM}="";
+	$ENV{COLORTERM}="";
 
 	local $Chj::Repl::maybe_settingspath= undef;
 	local $Chj::Repl::mode_formatter= 's';
