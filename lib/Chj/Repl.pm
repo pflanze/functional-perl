@@ -1140,5 +1140,5 @@ end Class::Array;
 *set_maxhistlen= *set_maxHistLen{CODE};
 *set_docatchint= *set_doCatchINT{CODE};
 *set_dorepeatwhenempty= *set_doRepeatWhenEmpty{CODE};
-*set_keepresultin= *set_keepResultIn{CODE};
+*set_maybe_keepresultin= *set_maybe_keepResultIn{CODE};
 
