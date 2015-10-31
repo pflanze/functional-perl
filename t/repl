@@ -86,9 +86,9 @@ sub t {
 	delete $ENV{TERM};
 	delete $ENV{COLORTERM};
 
+	local $Chj::Repl::maybe_settingspath= undef;
 	repl (maybe_input=> $inr,
 	      maybe_output=> $outw,
-	      maybe_settingspath=> undef,
 	      mode_formatter=> 's',
 	     );
 
