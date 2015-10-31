@@ -54,6 +54,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use PadWalker qw(peek_my);
 
+# TODO/XXX: see comments in commit 'StackPlus: don't die in peek_my
+# (HACK)'; this should be replaced with something clean /
+# investigated.
 our $maybe_peek_my= sub {
     my ($skip)=@_;
     my $res;
