@@ -1026,10 +1026,10 @@ sub run {
 			hash_xref
 			(+{
 			   1=> sub {
-			       ([ scalar &$eval_ ], $@)
+			       ([ scalar &$eval_() ], $@)
 			   },
 			   l=> sub {
-			       ([ &$eval_ ], $@)
+			       ([ &$eval_() ], $@)
 			   },
 			  },
 			 $self->mode_context);
@@ -1053,7 +1053,7 @@ sub run {
 			    };
 			    local $argsn = &$getframe(0);
 			    local $args = &$getframe(1);
-			    &$eval
+			    &$eval()
 			};
 
 			&$view_string(do {
@@ -1084,10 +1084,10 @@ sub run {
 			  if $$self[DoKeepResultsInVARX];
 		    };
 
-		    &$evaluator;
+		    &$evaluator();
 
 		} elsif ($$self[DoRepeatWhenEmpty]) {
-		    &$evaluator;
+		    &$evaluator();
 		} else {
 		    next;
 		}
