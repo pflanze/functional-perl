@@ -41,7 +41,7 @@ sub clean ($) {
 #repl; exit;
 
 sub t {
-    my ($input,$output,$maybe_filter)=@_;
+    my ($input,$output,@filters)=@_;
 
     $input=~ s/^\s+//s;
     $input=~ s/\s+$//s;
@@ -54,13 +54,14 @@ sub t {
 	$inw->xprintln($input);
 	$inw->xclose;
 	my $out= $outr->xcontent;
+	for my $filter (@filters) {
+	    local $_=$out;
+	    &$filter();
+	    $out=$_;
+	}
 	wait;
 	@_=(
-	    clean($maybe_filter ? do {
-		local $_= $out;
-		&$maybe_filter;
-		$_
-	    } : $out),
+	    clean($out),
 	    clean($output));
 	if ($ENV{SHOWDIFF} and $_[0] ne $_[1]) {
 	    my ($package, $filename, $line)= caller;
