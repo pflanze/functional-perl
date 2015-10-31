@@ -105,15 +105,17 @@ my $filterHOME= sub {
 t ',e',
   q{
 main> ,e
+$HOME = '<HOME>'
 $input = ',e'
 $inr = bless(bless( \*Symbol::GEN0, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')
 $inw = bless(bless( \*Symbol::GEN1, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')
-$maybe_filter = sub { "DUMMY" }
 $output = 'DUMMY'
 $outr = bless(bless( \*Symbol::GEN2, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')
 $outw = bless(bless( \*Symbol::GEN3, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')
+\@filters = [sub { "DUMMY" }, sub { "DUMMY" }]
 },
-  sub { s/(\$output = ').*('\s*\$outr)/${1}DUMMY$2/s };
+  sub { s/(\$output = ').*('\s*\$outr)/${1}DUMMY$2/s },
+  $filterHOME;
 
 
 # :e with lexicals from multiple scopes
@@ -145,11 +147,11 @@ main 1> ,b
 3	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 3
 4	(eval)() called at lib/Chj/Repl.pm line 3
 5	Chj::Repl::WithRepl_eval('CODE(0x11)') called at lib/Chj/Repl.pm line 4
-6	Chj::Repl::eval_code('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 5
-7	Chj::Repl::__ANON__('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 6
-8	Chj::Repl::__ANON__('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 7
-9	Chj::Repl::__ANON__('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 8
-10	Chj::Repl::run(undef, undef) called at t/repl line 9
+6	Chj::Repl::eval_code('Chj::Repl=ARRAY(0x12111)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef) called at lib/Chj/Repl.pm line 5
+7	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 6
+8	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 7
+9	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 8
+10	Chj::Repl::run('Chj::Repl=ARRAY(0x12111)', undef) called at t/repl line 9
 11	main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl line 10
 main 1> 
 fun at (eval 0) line 1.
@@ -163,7 +165,7 @@ $Chj::Repl::argsn
 ',
   q+
 main> $Chj::Repl::argsn
-$VAR1 = [undef, undef]
+$VAR1 = [bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a', bless(bless( \*Symbol::GEN14, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe'), bless(bless( \*Symbol::GEN17, 'Chj::IO::Pipe' ), 'Chj::IO::Pipe')], 'Chj::Repl'), undef]
 +,
   $filterHOME;
 
@@ -184,12 +186,26 @@ $x
   q+
 main> do {my $z=123; sub { my ($x)=@_; repl }}->(99)
 main 1> $Chj::Repl::argsn
-$VAR1 = [undef, undef]
+$VAR1 = [bless(['<HOME>/.perl-repl_history', '<HOME>/.perl-repl_settings', 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a'], 'Chj::Repl'), undef]
 main 1> $Chj::Repl::args
 $VAR1 = [99]
 main 1> ,0
 Chj::Repl::run(
-  undef,
+  bless( [
+           '<HOME>/.perl-repl_history',
+           '<HOME>/.perl-repl_settings',
+           100,
+           undef,
+           undef,
+           1,
+           1,
+           undef,
+           1,
+           'less',
+           'l',
+           's',
+           'a'
+         ], 'Chj::Repl' ),
   undef
 ) called at (eval 0) line 1
 main 1> ,e
