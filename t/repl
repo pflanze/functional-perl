@@ -101,6 +101,17 @@ my $filterHOME= sub {
 };
 
 
+# ========================================================================
+# The actual tests.
+
+# To analyze test failures, install 'tkdiff' and run:
+#
+#  SHOWDIFF=1 t/repl
+
+# When adding new tests, make sure to pass any special filters
+# where necessary (the arguments to `t` after the first two).
+
+
 # :e
 t ',e',
   q{
