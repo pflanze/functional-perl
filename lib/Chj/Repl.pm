@@ -164,6 +164,7 @@ our $pager= $ENV{PAGER} || "less";
 our $mode_context= 'l';
 our $mode_formatter= 'd';
 our $mode_viewer= 'a';
+our $mode_lexical_persistence= 'X';
 our $maybe_env_path= '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
 
 use Class::Array -fields=>
@@ -181,6 +182,7 @@ use Class::Array -fields=>
               'Mode_context', # char
               'Mode_formatter', # char
               'Mode_viewer', # char
+	      'Mode_lexical_persistence', # char
 	      'Maybe_input', # fh
 	      'Maybe_output', # fh
 	      'Maybe_env_PATH', # maybe string
@@ -199,12 +201,22 @@ sub new {
     $$self[Mode_context]= $mode_context;
     $$self[Mode_formatter]= $mode_formatter;
     $$self[Mode_viewer]= $mode_viewer;
+    $$self[Mode_lexical_persistence]= $mode_lexical_persistence;
     $$self[Maybe_env_PATH]= $maybe_env_path
 	if ${^TAINT};
     $self
 }
 
-my $settings_version= "v1";
+sub use_lexical_persistence {
+    my $self=shift;
+    hash_xref(+{m=>1, M=>1, x=>0, X=>0}, $self->mode_lexical_persistence)
+}
+sub use_strict_vars {
+    my $self=shift;
+    hash_xref(+{m=>1, M=>0, x=>1, X=>0}, $self->mode_lexical_persistence)
+}
+
+my $settings_version= "v2";
 my $settings_fields=
   [
    # these should remain caller dependent:
@@ -216,7 +228,8 @@ my $settings_fields=
    #pager
    qw(mode_context
       mode_formatter
-      mode_viewer)
+      mode_viewer
+      mode_lexical_persistence)
    ];
 
 sub possibly_save_settings {
@@ -301,6 +314,10 @@ sub print_help {
     my $V= &$selection(viewer=> 'V');
     my $v= &$selection(viewer=> 'v');
     my $a= &$selection(viewer=> 'a');
+    my $m= &$selection(lexical_persistence=> 'm');
+    my $M= &$selection(lexical_persistence=> 'M');
+    my $x= &$selection(lexical_persistence=> 'x');
+    my $X= &$selection(lexical_persistence=> 'X');
     print $out qq{Repl help:
 If a command line starts with a ':' or ',', then the remainder of the
 line is interpreted as follows:
@@ -315,6 +332,8 @@ line is interpreted as follows:
 
 CMD is one of:
    e [n]  print lexical environment at level n (default: 0)
+           Note: currently this does *not* show the lexicals that were
+           persisted when enabling m or M mode.
    b|bt   print back trace
    f [n]  move to stack frame number n (at start: 0)
            without n, shows the current frame again
@@ -334,6 +353,17 @@ $d d  Data::Dumper (default)
 $V V  no pager
 $v v  pipe to pager ($$self[Pager])
 $a a  pipe to 'less --quit-if-one-screen --no-init' (default)
+  lexical persistence:
+   (Persisting lexicals means to carry over variables introduced with
+   "my" into subsequent entries in the same repl. It prevents their
+   values from being deallocated until new values are assigned or a
+   new lexical with the same name is introduced. Currently these
+   lexicals are carried over even when moving to another frame or
+   package.)
+$m m  persist lexicals, use strict 'vars'
+$M M  persist lexicals, no strict 'vars'
+$x x  do not persist lexicals, use strict 'vars'
+$X X  do not persist lexicals, no strict 'vars' (default)
 
 Other features:
   \$Chj::Repl::args   is an array holding the arguments of the last subroutine call
@@ -477,9 +507,10 @@ sub viewers {
 our $use_warnings= q{use warnings; use warnings FATAL => 'uninitialized';};
 
 sub eval_code {
-    my $_self= shift;
-    @_==4 or die "wrong number of arguments";
-    my ($code, $in_package, $maybe_lexicals, $maybe_kept_results)=@_;
+    my $self= shift;
+    @_==5 or die "wrong number of arguments";
+    my ($code, $in_package, $maybe_lexicals, $maybe_kept_results,
+	$maybe_lexical_persistence)=@_;
 
     # merge with previous results, if any
     my $maybe_kept_results_hash= sub {
@@ -501,10 +532,14 @@ sub eval_code {
       $Function::Parameters::VERSION ? "use Function::Parameters ':strict'" : "";
     my @v= sort keys %$maybe_lexicals
       if defined $maybe_lexicals;
+    push @v, sort keys %{$maybe_lexical_persistence->get_context("_")}
+      if defined $maybe_lexical_persistence;
     my $thunk= &WithRepl_eval
-      ((@v ? 'my ('.join(", ", @v).'); ' : '') .
+      ("use strict; ".
+       (@v ? 'my ('.join(", ", @v).'); ' : '') .
        'sub {'.
-       "no strict 'vars'; $use_warnings; ".
+       ($self->use_strict_vars ? "" : "no strict 'vars'; ").
+       "$use_warnings; ".
        "$use_method_signatures; $use_functional_parameters_; ".
        $code.
        '}',
@@ -512,7 +547,11 @@ sub eval_code {
 	// return;
     PadWalker::set_closed_over ($thunk, $maybe_lexicals)
 	if defined $maybe_lexicals;
-    WithRepl_eval { &$thunk() }
+    if (my $lp= $maybe_lexical_persistence) {
+	$lp->call($thunk)
+    } else {
+	WithRepl_eval { &$thunk() }
+    }
 }
 
 
@@ -853,7 +892,22 @@ sub run {
 
 	# for repetitions:
 	my $evaluator= sub { }; # noop
+
 	my $maybe_kept_results;
+
+	my $maybe_lexical_persistence;
+	my $try_enable_lexical_persistence= sub {
+	    eval {
+		require Lexical::Persistence;
+		$maybe_lexical_persistence= Lexical::Persistence->new;
+		1
+	    } || do {
+		print $ERROR "Could not enable lexical persistence: $@";
+		0
+	    }
+	};
+	&$try_enable_lexical_persistence() if $self->use_lexical_persistence;
+
       READ: {
 	    while (1) {
 
@@ -954,6 +1008,22 @@ sub run {
 				 V=> saving ($self, sub { $$self[Mode_viewer]="V" }),
 				 v=> saving ($self, sub { $$self[Mode_viewer]="v" }),
 				 a=> saving ($self, sub { $$self[Mode_viewer]="a" }),
+				 m=> saving ($self, sub {
+						 &$try_enable_lexical_persistence() and
+						   $$self[Mode_lexical_persistence]= "m"
+					       }),
+				 M=> saving ($self, sub {
+						 &$try_enable_lexical_persistence() and
+						   $$self[Mode_lexical_persistence]= "M"
+					       }),
+				 x=> saving ($self, sub {
+						 undef $maybe_lexical_persistence;
+						 $$self[Mode_lexical_persistence]= "x"
+					       }),
+				 X=> saving ($self, sub {
+						 undef $maybe_lexical_persistence;
+						 $$self[Mode_lexical_persistence]= "X"
+					       }),
 				 e=> sub {
 				     use Data::Dumper;
 				     # XX clean up: don't want i in the regex
@@ -1025,24 +1095,26 @@ sub run {
 		    }
 
 		    # build up evaluator
-		    my $eval_= sub {
-			$self->eval_code
-			  ($rest,
-			   $get_package,
-			   $stack->perhaps_lexicals($frameno) // {},
-			   $maybe_kept_results);
-		    };
-		    my $eval=
+		    my $eval= do {
+			my $eval_= sub {
+			    $self->eval_code
+			      ($rest,
+			       $get_package,
+			       $stack->perhaps_lexicals($frameno) // {},
+			       $maybe_kept_results,
+			       $maybe_lexical_persistence);
+			};
 			hash_xref
-			(+{
-			   1=> sub {
-			       ([ scalar &$eval_() ], $@)
-			   },
-			   l=> sub {
-			       ([ &$eval_() ], $@)
-			   },
-			  },
-			 $self->mode_context);
+			  (+{
+			     1=> sub {
+				 ([ scalar &$eval_() ], $@)
+			     },
+			     l=> sub {
+				 ([ &$eval_() ], $@)
+			     },
+			    },
+			   $self->mode_context);
+		    };
 
 		    my $format_vals= $self->formatter;
 
