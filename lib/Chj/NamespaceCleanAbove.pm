@@ -33,7 +33,7 @@ L<Chj::NamespaceClean>
 
 package Chj::NamespaceCleanAbove;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::NamespaceClean;
 

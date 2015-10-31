@@ -49,7 +49,7 @@ package FP::TransparentLazy;
 @EXPORT_OK=qw(delay);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub lazy (&) {
     bless [$_[0],undef], "FP::TransparentLazy::Promise"

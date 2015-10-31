@@ -23,7 +23,7 @@ the PXML representing a page in htmlgen.
 
 package Htmlgen::PXMLMapper;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 

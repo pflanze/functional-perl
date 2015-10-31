@@ -22,7 +22,7 @@ PXML::Serialize::t -- tests for PXML::Serialize
 
 package PXML::Serialize::t;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use PXML::Serialize qw(pxml_print_fragment_fast);

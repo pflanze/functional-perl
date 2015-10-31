@@ -34,7 +34,7 @@ package Chj::CPAN::ModulePODUrl;
 @EXPORT_OK=qw(if_get);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use LWP::UserAgent;
 

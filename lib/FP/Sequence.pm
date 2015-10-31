@@ -49,7 +49,7 @@ moved here, etc.
 
 package FP::Sequence;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use base 'FP::Pure';
 

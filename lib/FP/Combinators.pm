@@ -41,7 +41,7 @@ package FP::Combinators;
 	      flip flip2of3 rot3right rot3left);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 

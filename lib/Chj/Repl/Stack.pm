@@ -39,7 +39,7 @@ L<Chj::Repl::StackPlus>
 
 package Chj::Repl::Stack;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 our @fields; BEGIN { @fields= qw(args
 				 package filename line subroutine hasargs

@@ -21,7 +21,7 @@ FP::Git::Repository
 
 package FP::Git::Repository;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Predicates ":all";
 use Chj::IO::Command;

@@ -22,7 +22,7 @@ PXML::Preserialize::t -- tests for PXML::Preserialize
 
 package PXML::Preserialize::t;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use PXML qw(pxmlbody);

@@ -23,7 +23,7 @@ or similar, index instead of README etc.) mapper.
 
 package Htmlgen::PathTranslate;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 use Chj::TEST;

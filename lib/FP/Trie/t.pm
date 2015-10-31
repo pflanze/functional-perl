@@ -22,7 +22,7 @@ run by test suite
 
 package FP::Trie::t;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Trie;
 use FP::List qw(string_to_list);

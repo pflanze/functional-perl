@@ -35,7 +35,7 @@ make other methods non-functions.
 
 package FP::Pure;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
 1

@@ -22,7 +22,7 @@ run by test suite
 
 package FP::Path::t;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use FP::Path "path";

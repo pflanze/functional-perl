@@ -1,4 +1,4 @@
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use PXML::XHTML ":all";
 
 my $homeurl= "http://functional-perl.org";

@@ -23,7 +23,7 @@ Chj::singlequote::t -- tests for Chj::singlequote
 
 package Chj::singlequote::t;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::singlequote ":all";
 use Chj::TEST;

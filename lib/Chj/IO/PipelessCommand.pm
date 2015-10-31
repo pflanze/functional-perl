@@ -32,7 +32,7 @@ Chj::IO::PipelessCommand
 
 package Chj::IO::PipelessCommand;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use base qw(
 	    Chj::IO::CommandCommon

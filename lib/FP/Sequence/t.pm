@@ -23,7 +23,7 @@ FP::Sequence::t -- tests for FP::Sequence
 
 package FP::Sequence::t;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
  use FP::Predicates "is_sequence"; # since we can't have it in
                                    # FP::Sequence

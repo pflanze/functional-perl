@@ -22,7 +22,7 @@ run by test suite
 
 package FP::Equals::t;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Equals;
 use Chj::TEST;

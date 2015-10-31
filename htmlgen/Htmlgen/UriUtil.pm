@@ -25,7 +25,7 @@ package Htmlgen::UriUtil;
 @EXPORT_OK=qw(uri_add URI_is_internal);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 

@@ -23,7 +23,7 @@ FP::Weak::t - tests for FP::Weak
 
 package FP::Weak::t;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Weak ":all";
 use Chj::TEST;

@@ -31,7 +31,7 @@ This is a L<Htmlgen::PXMLMapper>
 
 package Htmlgen::Toc;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 

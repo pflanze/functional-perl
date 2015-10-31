@@ -44,7 +44,7 @@ package FP::Untainted;
 @EXPORT_OK=qw(untainted_with is_untainted);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 

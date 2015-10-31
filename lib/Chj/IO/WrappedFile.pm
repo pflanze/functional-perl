@@ -32,7 +32,7 @@ kinds of Perl filehandles.
 
 package Chj::IO::WrappedFile;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use base 'Chj::IO::File';
 

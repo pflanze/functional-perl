@@ -166,7 +166,7 @@ package FP::Optional;
 	      optionally poptionally);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
 # Functions to change the kind of optionals API:

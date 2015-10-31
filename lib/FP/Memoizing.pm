@@ -37,7 +37,7 @@ package FP::Memoizing;
 @EXPORT_OK=qw(memoizing_to_dir);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use Storable qw(nfreeze nstore_fd fd_retrieve);

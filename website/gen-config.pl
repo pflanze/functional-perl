@@ -1,4 +1,4 @@
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use utf8;
 
 use Function::Parameters qw(:strict);

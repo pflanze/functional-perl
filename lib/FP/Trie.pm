@@ -80,7 +80,7 @@ package FP::Trie;
 @EXPORT_OK=qw($empty_trie); # ok?
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
 {

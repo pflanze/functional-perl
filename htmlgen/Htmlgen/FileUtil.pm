@@ -25,7 +25,7 @@ package Htmlgen::FileUtil;
 @EXPORT_OK=qw(existingpath_or create_parent_dirs);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 

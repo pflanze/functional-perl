@@ -38,7 +38,7 @@ package PXML;
 @EXPORT_OK=qw(pxmlbody pxmlflush is_pxmlflush);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use PXML::Element;
 

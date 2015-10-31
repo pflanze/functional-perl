@@ -30,7 +30,7 @@ L<Chj::Repl::Stack>, L<PadWalker>
 
 package Chj::Repl::StackPlus;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 {
     package Chj::Repl::StackPlusFrame;

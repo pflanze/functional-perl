@@ -58,7 +58,7 @@ L<DBI>, L<FP::Stream>
 
 package FP::DBI;
 
-use strict; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use DBI;
 use Chj::TEST;
