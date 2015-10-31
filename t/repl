@@ -15,6 +15,7 @@ use Chj::repl;
 use Chj::Trapl;
 use Chj::xpipe;
 use Chj::xperlfunc;
+use Chj::xperlfunc qw(xlaunch);
 
 sub clean ($) {
     my ($s)=@_;
@@ -61,6 +62,19 @@ sub t {
 		$_
 	    } : $out),
 	    clean($output));
+	if ($ENV{SHOWDIFF} and $_[0] ne $_[1]) {
+	    my ($package, $filename, $line)= caller;
+	    require Chj::xtmpfile; import Chj::xtmpfile;
+	    my @p=
+	      map {
+		  my $t= xtmpfile(".t-repl-$line-");
+		  $t->xprint($_[$_]);
+		  $t->xclose;
+		  $t->autoclean(0);
+		  $t->path
+	      } 0,1;
+	    xlaunch "tkdiff", @p;
+	}
 	goto \&is;
     } else {
 	$outr->xclose; $inw->xclose;
