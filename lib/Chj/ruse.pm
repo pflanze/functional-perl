@@ -76,6 +76,7 @@ sub new_import {
 }
 
 {
+    no warnings "redefine";
     local $^W= ($DEBUG>0);
     *Exporter::import= \&new_import;
 }
