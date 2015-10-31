@@ -548,7 +548,7 @@ sub eval_code {
     PadWalker::set_closed_over ($thunk, $maybe_lexicals)
 	if defined $maybe_lexicals;
     if (my $lp= $maybe_lexical_persistence) {
-	$lp->call($thunk)
+	WithRepl_eval { $lp->call($thunk) }
     } else {
 	WithRepl_eval { &$thunk() }
     }
