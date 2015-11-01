@@ -149,6 +149,15 @@ optimized).
 
 =back
 
+=head1 IDEAS
+
+Implement a binary operator (perhaps named `%%` or `otherwise`), that
+evaluates the left-hand side in list context, and returns the
+right-hand side if the result is the empty list, or the last element
+of the list otherwise.  (Zefram says one could implement such an
+operator, using cv_set_call_checker() and generating a custom op based
+on OP_DOR.) Example code: `pass($foo->perhaps_name %% $myname)`.
+
 =head1 SEE ALSO
 
 `maybe` in L<FP::Predicates>
