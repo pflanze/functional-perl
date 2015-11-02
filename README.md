@@ -250,10 +250,10 @@ locally, thus no installation is necessary. All modules are in the
 that's needed.
 
 The normal `perl Makefile.PL; make test && make install` process
-should work as well, but it hasn't been tested well and the repository
-is probably going to be split into or will produce several separate
-CPAN packages in the future, thus don't rely on the installation
-process working the way it is right now.
+should work as well. The repository is probably going to be split into
+or will produce several separate CPAN packages in the future, thus
+don't rely on the installation process working the way it is right
+now.
 
 
 </with_toc>
