@@ -51,37 +51,47 @@ discussion about this.
 
 ## Status: experimental
 
-The project is not ready for production yet for the following reasons:
+There are several reasons that this project should be considered
+experimental at this time:
+
+* some problems in the perl interpreter (leading to memory retention
+  issues) when using this style have only been fixed recently, and
+  some more exotic ones are still waiting to be examined.
+
+* the author of the current code in this project has taken many
+  liberties to reimplement functionality that exists elsewhere on CPAN
+  already, partly out of interest in figuring out the best way to do
+  things on base principles, partly because of a lack of knowledge of
+  the latest trents in the Perl world (he programmed primarily in
+  Scheme for the last 8 years). For example to provide for objects
+  with purely functional updates, he chose to write the class
+  generator `FP::Struct` and based its type checking approach on
+  predicate functions instead of trying to extend Moose or one of its
+  alternatives: it was easy to do, nicely small and clean, and allowed
+  to play with the approach. But there's no need that this stays, work
+  or suggestions on how to move to an approach using Moose or
+  something else are very welcome. Similarly, the `Chj::IO::`
+  infrastructure should most probably be removed and the missing bits
+  added to existing commonly used modules.
 
 * the namespaces are not fixed yet (in particular, everything in
   `Chj::` should probably be renamed); also, the interfaces should be
   treated as alpha: this is freshly released and very much open to
-  input. Some modules may be replaced with other more widely used ones
-  in the interest of staying with the common base (in particular, the
-  `Chj::IO::` infrastructure should likely be deprecated and the
-  interesting bits reimplemented.) For these reasons, the modules have
-  not been packaged and released on CPAN yet.
-
-* the documentation is untested, and introductionary materials
-  unfinished; this, together with a number of complications in Perl,
-  may be asking too much from a Perl programmer who doesn't have
-  previous functional programming experience, unless he or she is
-  really patient (please tell, I'll try to help).
-
-* some problems in the perl interpreter (leading to memory
-  retention issues) when using this style have only been fixed
-  recently, and some more exotic ones are still waiting to be fixed
+  input. For these reasons, the modules have not been packaged and
+  released on CPAN yet.
 
 * some of the complications when writing functional code (as described
   in the [[howto]]) might be solvable through modules or core
   interpreter changes. That would make some code easier to write and
   look at. (See [[ideas]].) This may then also change where explicit
   indication about memory retention are still expected (possibly
-  backwards incompatibly.)
+  even in backwards incompatible ways.)
 
-* there are also various ways in which to explore performance
-  improvements (read-only guarantees and caching, sequences, PXML
-  compile time preserialization, implement code inlining, ...)
+There are also *many* ways to improve the code base:
+
+* various ways in which to explore performance improvements (read-only
+  guarantees and caching, sequences, PXML compile time
+  preserialization, implement code inlining, ...)
 
 * there are possible improvements to be worked on with regards to
   binding it better into 'normal' Perl. For example, Perl's lazy
@@ -97,25 +107,23 @@ the docs and tell us what's badly explained, and if you've got
 something that might be useful to add to the examples directory, it
 would be cool if you offer it. If the test suite fails or you found a
 bug, please tell us on the [[mailing_list]], or if you prefer submit
-an issue on Github. You can clone or fork the
-[repository](https://github.com/pflanze/functional-perl/) and submit
-your changes to Github or the [[mailing_list]]. Documentation
-improvements are very welcome, as are general hints and ideas where to
-take the project or simply whether you liked it or what you liked and
-what you didn't. If you'd like something to be different, now is the
-best time to tell. Also, please point out errors in the use of the
-english language (all normal pages on the website are part of the
-functional-perl repository; also see the 'history' and 'edit' links at
-the top, the latter of which allows you to edit the page on Github
-without having to check it out).
+an issue on Github. Documentation improvements are very welcome, as
+are general hints and ideas where to take the project or simply
+whether you liked it or what you liked and what you didn't. If you'd
+like something to be different, now is the best time to tell. 
+
+(Also, please point out errors in the use of the english language. All
+normal pages on the website are part of the functional-perl
+repository; you could also use the 'history' and 'edit' links at the
+top.)
 
 I'm using it already in personal projects; where breakage due to
-changes is inacceptable, I add functional-perl as a Git submodule to
-the project using it (accessing it directly, without installation.)
+changes is unacceptable, I currently add functional-perl as a Git
+submodule to the project using it and `use lib` it from the actual
+project.
 
 The project is currently led by [Christian
-Jaeger](http://leafpair.com/contact). Feel free to send me private
-mail if you prefer. I'm also on the `#london.pm` and
+Jaeger](http://leafpair.com/contact). I'm also on the `#london.pm` and
 `#functional-perl` IRC channels on irc.perl.org as "pflanze".
 
 
