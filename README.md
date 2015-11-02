@@ -246,7 +246,7 @@ get an introduction in person.
 
 The bundled scripts modify the library load path to find the files
 locally, thus no installation is necessary. All modules are in the
-`lib/` directory, `use lib "path/to/functional-perl/lib";` is all
+`lib/` directory, `export PERL5LIB=path/to/functional-perl/lib` is all
 that's needed.
 
 The normal `perl Makefile.PL; make test && make install` process
