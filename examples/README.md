@@ -29,7 +29,7 @@ Copy [`template`](template) to create your own script.
 
 ## See also
 
-* [Htmlgen](htmlgen/README.md), the script that generates this
+* [Htmlgen](../htmlgen/README.md), the script that generates this
   website.
 
 * For a real program using these modules, see
