@@ -7,9 +7,13 @@ properly formatted versions of these documents.
 
 ## Mailing list
 
-There's a mailing list at functional-perl-list@functional-perl.org.
+Send user and development questions and bug reports to the public
+mailing list at
+[functional-perl-list@functional-perl.org](mailto:functional-perl-list@functional-perl.org). A
+subscription is not needed to post. Messages that are considered by
+the spam filter to look somewhat spammy are moderated.
 
-To subscribe, send an (empty) email to
+To subscribe to the list, send an (empty) email to
 [functional-perl-list-subscribe@functional-perl.org](mailto:functional-perl-list-subscribe@functional-perl.org). To
 unsubscribe, do the same to the address
 [functional-perl-list-unsubscribe@functional-perl.org](mailto:functional-perl-list-unsubscribe@functional-perl.org)
