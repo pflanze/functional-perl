@@ -70,7 +70,7 @@ package FP::List;
 	      write_sexpr
 	      array_to_list array_to_list_reverse mixed_flatten
 	      list_strings_join list_strings_join_reverse
-	      list_filter list_map list_mapn
+	      list_filter list_map list_mapn list_map_with_islast
 	      list_fold list_fold_right list_to_perlstring
 	      unfold unfold_right
 	      list_pair_fold_right
@@ -1144,6 +1144,34 @@ sub FP::List::List::map {
     my $fn=shift;
     @_ ? list_mapn ($fn, $l, @_) : list_map ($fn, $l)
 }
+
+
+sub list_map_with_islast {
+    @_>1 or die "wrong number of arguments";
+    my $fn=shift;
+    my @rest= map { is_null $_ ? return null : rest $_ } @_;
+    my $is_last='';
+    # return *number* of ending streams, ok? XX this is unlike
+    # array_map_with_islast
+    for (@rest) { $is_last++ if is_null $_ }
+    cons(&$fn ($is_last,
+	       map { $_->first } @_),
+	 list_map_with_islast ($fn, @rest))
+}
+
+sub FP::List::List::map_with_islast {
+    my ($l0, $fn, @l)= @_;
+    list_map_with_islast($fn,$l0,@l)
+}
+
+TEST { list(1,2,20)->map_with_islast(sub { $_[0] })->array }
+  [ '','',1 ];
+
+TEST { list(1,2,20)->map_with_islast(sub { [@_] },
+				     list "b","c")->array }
+  [ ['', 1, "b"], [1, 2, "c"] ];
+
+
 
 
 # left fold, sometimes called `foldl` or `reduce`
