@@ -49,8 +49,7 @@ combine easily into composed names like `caddr`. This library offers
 `car` and `cdr` as aliases to `first` and `rest`.
 
 Some languages call the accessory `head` and `tail`, but `tail` would
-conflict with `Sub::Call::Tail`, hence those are not used here (except
-in the `head_and_tail` function, an alias to `first_and_rest`.)
+conflict with `Sub::Call::Tail`, hence those are not used here.
 
 =cut
 
@@ -185,7 +184,6 @@ use FP::Show;
     sub car_and_cdr {
 	@{$_[0]}
     }
-    *head_and_tail= *car_and_cdr;
     *first_and_rest= *car_and_cdr;
 
     sub cddr { $_[0]->cdr->cdr }
