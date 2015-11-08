@@ -44,6 +44,14 @@ remind users not to mutate)).
 XX This is a work in progress. More base implementations should be
 moved here, etc.
 
+Also, methods that are only implemented here are inconsistent in that
+they can't be imported as functions from any module. Should we really
+move functions over as plain wrappers across method calls
+(only?). Although perhaps it's fair to (only) have those functions
+importable under a type specific name that have type specific
+implementations.
+
+
 =cut
 
 
@@ -52,8 +60,20 @@ package FP::Sequence;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use base 'FP::Pure';
+require FP::List; # "use"ing it would create a circular dependency
 
 use Chj::NamespaceCleanAbove;
+
+sub flatten {
+    @_==1 or @_==2 or die "wrong number of arguments";
+    my ($self, $perhaps_tail)=@_;
+    $self->fold_right
+      (sub {
+	   my ($v, $rest)=@_;
+	   $v->append($rest)
+       },
+       @_==2 ? $perhaps_tail : FP::List::null());
+}
 
 
 _END_

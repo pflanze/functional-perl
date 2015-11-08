@@ -25,6 +25,8 @@ package FP::Sequence::t;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+# from SYNOPSIS:
+
  use FP::Predicates "is_sequence"; # since we can't have it in
                                    # FP::Sequence
  use FP::PureArray;
@@ -47,5 +49,21 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
         )->map(*is_sequence)->array }
   [ 1,1,1,1,1,'','','' ];
 
+
+# more tests:
+
+use FP::List ":all";
+
+TEST {
+    list(list(3), list(4,5), list(6))->flatten
+} list(3, 4, 5, 6);
+
+TEST {
+    list(list(6))->flatten(list 9)
+} list(6, 9);
+
+TEST {
+    list(list(6))->flatten(undef)
+} improper_list(6, undef); # OK?
 
 1
