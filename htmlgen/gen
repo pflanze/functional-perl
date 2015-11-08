@@ -298,17 +298,14 @@ fun get_filesinfo () {
 
 # Navigation:
 
-# currently only show the toplevel of the nav hierarchy (pages listed
-# in lower levels in the hierarchy are *not* shown at all)
-our $nav_toplevel= array_map *array_first, $config->{nav};
-
 our $page_is_in_lower_hierarchy=
   hashset_to_predicate
   array_to_hashset
   mixed_flatten (array_map (*array_rest, $config->{nav}))->array;
 
-# still also show pages that are missing in the nav declaration; thus,
-# use the nav declaration to *order* the pages instead:
+# In the toplevel of the nav hierarchy, still also show pages that are
+# missing in the nav declaration; thus, use the nav declaration to
+# *order* the pages instead:
 our $path0_to_sortkey= do {
     my $sortprio= do {
 	my $i=1;
@@ -317,7 +314,7 @@ our $path0_to_sortkey= do {
 	      my $file= $_;
 	      $file.= ".md" unless /\.\w{1,7}\z/;
 	      $file=> sprintf('-%04d', $i++)
-	  } @$nav_toplevel
+	  } @{array_map *array_first, $config->{nav}}
 	 }
     };
     fun ($path0) {
