@@ -147,13 +147,35 @@ our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 {
     package PXML::PXHTML;
     our @ISA= "PXML::Element";
+
     # serialize to HTML5 compatible representation:
     sub require_printing_nonvoid_elements_nonselfreferential  {
 	1
     }
+
     use PXML::HTML5 '$html5_void_element_h';
+
     sub void_element_h {
 	$html5_void_element_h
+    }
+
+    use FP::Show ();
+    # This "should" be moved to PXML::Element except that we only know
+    # in the HTML case how to map back tag names to constructors (XX
+    # is it actually safe here?). (Would have to store what mapping
+    # functions were created under which function names for which tag
+    # names, and which packages they were exported to.) XXX at least
+    # move to common base class of XHTML and HTML5.
+    sub FP_Show_show {
+	my ($s,$show)=@_;
+	my $a= $s->maybe_attributes;
+	my $b= $s->body;
+	(uc($s->name)."(".
+	 join(", ",
+	      defined $a ? &$show($a) : (),
+	      ref($b) eq "ARRAY" ? join(", ",map { &$show($_) } @$b)
+	      : &$show($b)).
+	 ")")
     }
 }
 
