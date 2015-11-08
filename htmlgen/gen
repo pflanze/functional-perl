@@ -359,6 +359,32 @@ fun path0_to_bugtype ($path0) {
 }
 
 
+fun build_nav ($nonbugfiles, $path0) {
+    UL({class=> "menu"},
+       array_map_with_islast
+       (
+	fun ($is_last,$file0) {
+	    my $filetitle= path0_to_title $file0;
+	    LI({class=> ($is_last ? "menu_last"
+			 : "menu")},
+	       ($file0 eq $path0 ?
+		SPAN({class=> "menu_selected"},
+		     $filetitle)
+		: A ({class=> "menu",
+		      href=>
+		      File::Spec->abs2rel
+		      ($pathtranslate->xsuffix_md_to_html($file0,0),
+		       dirname($path0))},
+		     $filetitle)),
+	       " ")
+	},
+	array_sort
+	(array_filter(complement($page_is_in_lower_hierarchy),
+		      array_map (\&path0, $nonbugfiles)),
+	 on $path0_to_sortkey, \&string_cmp)))
+}
+
+
 
 
 # group $files, to process them in an order that satisfies dependency
@@ -540,28 +566,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 		   scalar $config->{head}->($path0)),
 	    BODY(
 		 $config->{header}->($path0),
-		 UL({class=> "menu"},
-		    array_map_with_islast
-		    (
-		     fun ($is_last,$file0) {
-			 my $filetitle= path0_to_title $file0;
-			 LI({class=> ($is_last ? "menu_last"
-				      : "menu")},
-			    ($file0 eq $path0 ?
-			     SPAN({class=> "menu_selected"},
-				  $filetitle)
-			     : A ({class=> "menu",
-				   href=>
-				   File::Spec->abs2rel
-				   ($pathtranslate->xsuffix_md_to_html($file0,0),
-				    dirname($path0))},
-				  $filetitle)),
-			    " ")
-		     },
-		     array_sort
-		     (array_filter(complement($page_is_in_lower_hierarchy),
-				   array_map (\&path0, $genfilestate->nonbugfiles)),
-		      on $path0_to_sortkey, \&string_cmp))),
+		 build_nav($genfilestate->nonbugfiles, $path),
 		 $config->{belownav}->($path0),
 		 $h1,
 		 process_body ($body, $pxml_name_to_mapper,
