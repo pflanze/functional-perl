@@ -258,6 +258,8 @@ sub array_map_with_islast {
 
 TEST{ array_map_with_islast sub { $_[0] }, [1,2,20] }
   [ '','',1 ];
+TEST{ array_map_with_islast sub { [@_] }, [1,2,20], ["b","c"] }
+  [ ['', 1, "b"], [1, 2, "c"] ];
 
 
 sub array_to_hash_map {
