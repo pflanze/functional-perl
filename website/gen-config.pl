@@ -80,7 +80,11 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
    ["docs/ideas.md"],
    ["docs/TODO.md"],
    ["docs/names.md"],
+   ["docs/HACKING.md"],
    ["COPYING.md", ["licenses/artistic_license_2.0.md"]],
+   ["docs/links.md"],
+   ["docs/contact.md"],
+   ["docs/mailing_list.md"],
   ],
   belownav=> fun ($path0) {
       # HTML between navigation and page content.
