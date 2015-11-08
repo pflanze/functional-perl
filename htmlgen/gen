@@ -302,11 +302,10 @@ fun get_filesinfo () {
 # in lower levels in the hierarchy are *not* shown at all)
 our $nav_toplevel= array_map *array_first, $config->{nav};
 
-# all pages in lower hierarchies:
-our $pages_in_lower_hierarchies=
-  mixed_flatten (array_map (*array_rest, $config->{nav}))->array;
 our $page_is_in_lower_hierarchy=
-  hashset_to_predicate array_to_hashset $pages_in_lower_hierarchies;
+  hashset_to_predicate
+  array_to_hashset
+  mixed_flatten (array_map (*array_rest, $config->{nav}))->array;
 
 # still also show pages that are missing in the nav declaration; thus,
 # use the nav declaration to *order* the pages instead:
