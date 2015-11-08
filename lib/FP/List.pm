@@ -59,7 +59,7 @@ package FP::List;
 @EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
 	   list_of  is_null_or_pair_of null_or_pair_of
 	   car cdr first rest
-	   car_and_cdr first_and_rest
+	   car_and_cdr first_and_rest perhaps_first_and_rest
 	   list);
 @EXPORT_OK=qw(improper_list
 	      is_pair_noforce is_null_noforce
@@ -141,6 +141,7 @@ use FP::Show;
 
     sub maybe_first { undef }
     sub perhaps_first { () }
+    sub perhaps_first_and_rest { () }
 
     sub equals {
 	my ($a,$b)=@_;
@@ -185,6 +186,7 @@ use FP::Show;
 	@{$_[0]}
     }
     *first_and_rest= *car_and_cdr;
+    *perhaps_first_and_rest= *car_and_cdr;
 
     sub cddr { $_[0]->cdr->cdr }
     sub cdddr { $_[0]->cdr->cdr->cdr }
@@ -466,8 +468,7 @@ TEST { list(1,list(4,7,9),5)->c_r("addad") }
 
 sub car_and_cdr ($) {
     my ($v)=@_;
-    my $r= ref $v;
-    if (length $r and UNIVERSAL::isa($v, "FP::List::Pair")) {
+    if (length ref $v and UNIVERSAL::isa($v, "FP::List::Pair")) {
 	@{$_[0]}
     } elsif (is_promise $v) {
 	@_=force $v; goto \&car_and_cdr;
@@ -477,6 +478,30 @@ sub car_and_cdr ($) {
 }
 
 sub first_and_rest($); *first_and_rest= *car_and_cdr;
+
+sub perhaps_first_and_rest ($) {
+    my ($v)=@_;
+    if (length ref $v) {
+	if (UNIVERSAL::isa($v, "FP::List::Pair")) {
+	    @{$_[0]}
+	} elsif (is_promise $v) {
+	    @_=force $v; goto \&perhaps_first_and_rest;
+	} elsif (UNIVERSAL::isa($v, "FP::List::Null")) {
+	    ()
+	} else {
+	    not_a_pair $v
+	}
+    } else {
+	not_a_pair $v;
+    }
+}
+
+TEST { [ cons(1,2)->perhaps_first_and_rest ] } [1,2];
+TEST { [ null->perhaps_first_and_rest ] } [];
+TEST { [ perhaps_first_and_rest cons(1,2) ] } [1,2];
+TEST { [ perhaps_first_and_rest null ] } [];
+TEST_EXCEPTION { [ perhaps_first_and_rest "FP::List::Null" ] }
+  "not a pair: 'FP::List::Null'\n"; # and XX actually not a null either.
 
 
 sub list_perhaps_one ($) {
