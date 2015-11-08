@@ -171,7 +171,7 @@ sub empty {
 *map= blessing flip \&array_map;
 *map_with_i= blessing flip \&array_map_with_i;
 *map_with_islast= blessing flip \&array_map_with_islast;
-*filter= blessing \&array_filter;
+*filter= blessing flip \&array_filter;
 *zip= blessing \&array_zip;
 *fold= rot3left \&array_fold;
 *join= blessing \&array_join;
@@ -290,6 +290,9 @@ TEST {
     $empty->set (1,5)
 }
   bless [undef, 5], 'FP::PureArray::_Test';
+
+TEST { purearray (1,2,3)->set(2,"a") } purearray(1, 2, 'a');
+TEST { purearray (1,2,7,3,6)->filter(sub { $_[0] > 5 }) } purearray (7,6);
 
 
 _END_
