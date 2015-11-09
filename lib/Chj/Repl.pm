@@ -67,6 +67,7 @@ repl.
  - differ between emptylistofcompletions (no &subs for example) (empty
    list) and no sigil there so dunno-how-to-complete (undef?,
    exception?, ??).
+ - make package lexicals accessible when entering a package with :p
 
 =head1 BUGS
 
