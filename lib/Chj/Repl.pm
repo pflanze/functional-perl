@@ -960,7 +960,7 @@ sub run {
 				# long data (need viewer, but
 				# don't really want to, so should
 				# really use shortener)
-				print $OUTPUT $stack->desc($frameno),"\n";
+				print $OUTPUT $stack->desc($frameno, $self->mode_formatter),"\n";
 			    };
 
 			    my $select_frame= sub {

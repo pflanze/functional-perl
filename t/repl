@@ -202,22 +202,7 @@ main 1> $Chj::Repl::args
 $VAR1 = [99]
 main 1> ,0
 Chj::Repl::run(
-  bless( [
-           '<HOME>/.perl-repl_history',
-           undef,
-           100,
-           undef,
-           undef,
-           1,
-           1,
-           undef,
-           1,
-           'less',
-           'l',
-           's',
-           'a',
-           'X'
-         ], 'Chj::Repl' ),
+  bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a', 'X'], 'Chj::Repl'),
   undef
 ) called at (eval 0) line 1
 main 1> ,e

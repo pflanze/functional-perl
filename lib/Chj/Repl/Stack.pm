@@ -51,21 +51,30 @@ our @fields; BEGIN { @fields= qw(args
     use Chj::TerseDumper;
     use FP::Div "Chomp";
     use Chj::singlequote qw(singlequote_many with_maxlen);
+    use FP::Show;
 
     use FP::Struct [@fields];
 
     sub args_text {
 	my $s=shift;
-	my ($indent)=@_;
+	my ($indent, $mode)=@_;
 	my $args= $s->args;
 	my $str= join ",\n", map {
-	    # XX reinvention forever, too: how to *shorten*-dump a
-	    # value? Data::Dumper does not seem to support it?
-	    local $Data::Dumper::Maxdepth= 1;
-	    # ^ ok helps a bit sometimes. XX But will now be
-	    # confusing, as there's no way to know references from
-	    # (accidentally) stringified references
-	    Chomp (TerseDumper($_))
+	    if ($mode eq "d") {
+		# XX reinvention forever, too: how to *shorten*-dump a
+		# value? Data::Dumper does not seem to support it?
+		local $Data::Dumper::Maxdepth= 1;
+		# ^ ok helps a bit sometimes. XX But will now be
+		# confusing, as there's no way to know references from
+		# (accidentally) stringified references
+		Chomp (TerseDumper($_))
+	    } elsif ($mode eq "s") {
+		show($_)
+	    } elsif ($mode eq "p") {
+		"$_"
+	    } else {
+		die "unknown mode '$mode'";
+	    }
 	} @$args;
 	$str= "\n$str" if @$args;
 	$str=~ s/\n/\n$indent/g; # XX there's also $Data::Dumper::Pad
@@ -73,9 +82,9 @@ our @fields; BEGIN { @fields= qw(args
     }
 
     sub desc {
-	my $s=shift;
+	my ($s,$mode)=@_;
 	($s->subroutine."("
-	 .$s->args_text("  ")
+	 .$s->args_text("  ", $mode)
 	 ."\n) called at ".$s->filename." line ".$s->line)
     }
 
@@ -158,11 +167,11 @@ our $make_frame_accessor= sub {
     my ($method)= @_;
     sub {
 	my $s=shift;
-	my ($frameno)=@_;
+	my ($frameno,@rest)=@_;
 	my $nf= $s->num_frames;
 	$frameno < $nf
 	  or die "frame number must be between 0..".($nf-1).", got: $frameno";
-	$s->frames->[$frameno]->$method
+	$s->frames->[$frameno]->$method(@rest)
     }
 };
 
@@ -170,10 +179,10 @@ our $make_perhaps_frame_accessor= sub {
     my ($method)= @_;
     sub {
 	my $s=shift;
-	my ($frameno)=@_;
+	my ($frameno,@rest)=@_;
 	my $nf= $s->num_frames;
 	($frameno < $nf
-	 ? ($s->frames->[$frameno]->$method)
+	 ? ($s->frames->[$frameno]->$method(@rest))
 	 : ())
     }
 };
