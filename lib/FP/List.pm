@@ -78,6 +78,7 @@ package FP::List;
 	      list_append
 	      list_zip2
 	      list_alist
+	      list_last
 	      list_every list_all list_any list_none
 	      list_perhaps_find_tail list_perhaps_find
 	      list_find_tail list_find
@@ -1438,6 +1439,31 @@ TEST { list_to_string list_take_while (sub{1}, string_to_list "Hello World") }
   "Hello World";
 TEST { list_to_string list_take_while (sub{0}, string_to_list "Hello World") }
   "";
+
+
+sub list_last ($) {
+    my ($v)=@_;
+  LIST_LAST: {
+	my ($a,$r)= $v->first_and_rest;
+	if (is_null $r) {
+	    $a
+	} else {
+	    $v= $r;
+	    redo LIST_LAST;
+	}
+    }
+}
+
+*FP::List::List::last= \&list_last;
+
+TEST { list(qw(a b c))->last } 'c';
+TEST { list(qw(a))->last } 'a';
+TEST_EXCEPTION { list(qw())->last }
+  q{Can't locate object method "first_and_rest" via package "FP::List::Null"};
+
+# XX add stream_last to Stream.pm (only change as usual: deallocate head)
+
+# XX: add list_last_pair (see SRFI 1)
 
 
 sub list_every ($$) {
