@@ -49,8 +49,8 @@ down.
 
 =head1 FEATURES
 
-Read the help text that is displayed by entering ":h" or ",h" in the
-repl.
+Read the help text that is displayed by entering ":h", ",h", ":?" or
+",?" in the repl.
 
 =head1 TODO
 
