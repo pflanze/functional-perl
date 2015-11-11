@@ -21,12 +21,15 @@ This is an example of the kind of code we want to make possible:
 
     use PXML::Tags qw(myexample protocol-version records record a b c d);
 
-    # create a data structure describing an XML document, partially lazily
+    print RECORD(A("hi"),B("there"))->string; 
+    # prints: <record><a>hi</a><b>there</b></record>
+
+    # Now create a bigger document, with its inner parts built from
+    # external inputs:
     MYEXAMPLE
       (PROTOCOL_VERSION ("0.123"),
        RECORDS
-       (# read lazy list of rows from CSV file
-        csv_file_to_rows($inpath, {eol=> "\n", sep_char=> ";"})
+       (csv_file_to_rows($inpath, {eol=> "\n", sep_char=> ";"})
         # skip the header row
         ->rest
         # map rows to XML elements
@@ -36,6 +39,12 @@ This is an example of the kind of code we want to make possible:
               })))
       # print data structure to disk, forcing its evaluation as needed
       ->xmlfile($outpath);
+
+    # Note that the above document is built lazily: `csv_file_to_rows`
+    # returns a *lazy* list of rows, which means the rows will only be
+    # read from disk once `xmlfile` runs and requests each
+    # XML-formatted row in turn while it prints the document as a
+    # string to the out file.
 
 See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
 complete script, and the [examples](examples/README.md) page for more.
