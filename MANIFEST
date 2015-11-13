@@ -8,10 +8,12 @@ bin/repl
 bin/repl+
 docs/HACKING.md
 docs/TODO.md
+docs/contact.md
 docs/design.md
 docs/howto.md
 docs/ideas.md
 docs/links.md
+docs/mailing_list.md
 docs/names.md
 examples/README.md
 examples/csv_to_xml
