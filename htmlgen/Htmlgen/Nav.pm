@@ -36,6 +36,7 @@ use Function::Parameters qw(:strict);
     use FP::Ops qw(the_method);
     use FP::List;
     use FP::fix;
+    use FP::Equals qw(equals);
 
     use FP::Struct [[list_of(instance_of "Htmlgen::Nav::Entry"),
 		     "subentries"]];
@@ -52,21 +53,42 @@ use Function::Parameters qw(:strict);
     # nav_bar_level0.
 
     method nav_bar_levels ($viewed_at_item, $upitems) {
-	fix(fun ($rec,  $nav, $upitems) {
+	fix(fun ($rec,
+		 $nav, $downitems, $upitem) {
 		# only show subnavs until the given location
 		# ($viewed_at_item), and then one more (to go down)?
-		if (my ($item,$rest)= $upitems->perhaps_first_and_rest) {
+		if (my ($item,$rest)= $downitems->perhaps_first_and_rest) {
 		    my $entries= $nav->subentries;
 		    my $active= $entries->filter
 		      (sub { $_[0] eq $item })
 			->xone;
 
 		    cons ($self->nav_bar->($entries, $item, $viewed_at_item),
-			  &$rec ($active, $rest))
+			  &$rec ($active, $rest, $item))
 		} else {
-		    null
+		    # the lowest level of the navigation stack: if the
+		    # current item ($upitem, should also be the
+		    # $viewed_at_item) has subentries, then show that
+		    # (immediate) level as the last one. XX: this
+		    # would better be shown in a different way; use
+		    # (CSS based) mouse over submenu popups
+		    # (advantage: show them on ~all the other items,
+		    # too)?
+		    if (is_pair(my $es=$upitem->subentries)) {
+			equals ($upitem, $viewed_at_item)
+			  or die "bug?";
+			# hack: passing $upitem as the item here (*no*
+			# item should be marked as selected, this
+			# fulfills the purpose)
+			cons($self->nav_bar->($es, $upitem, $viewed_at_item),
+			     null)
+		    } else {
+			null
+		    }
 		}
-	    })->($self, $upitems->reverse)
+	    })->($self, $upitems->reverse, undef)
+	      # an empty upitems list would be at odds with the given
+	      # undef $upitem, but that doesn't happen.
     }
 
     _END_
