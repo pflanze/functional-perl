@@ -144,7 +144,7 @@ use FP::Show;
     sub perhaps_first { () }
     sub perhaps_first_and_rest { () }
 
-    sub equals {
+    sub FP_Equals_equals {
 	my ($a,$b)=@_;
 	FP::List::is_null($b)
 	    # XX well, this is, *currently*, guaranteed by FP::Equals,
@@ -203,7 +203,7 @@ use FP::Show;
     # Use AUTOLOAD to autogenerate instead? But be careful about the
     # overhead of the then necessary DESTROY method.
 
-    sub equals {
+    sub FP_Equals_equals {
 	my ($a,$b)=@_;
 	(FP::List::is_pair($b)
 	 and

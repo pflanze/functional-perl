@@ -58,6 +58,7 @@ use FP::Equals ();
 use Chj::constructorexporter;
 use FP::Predicates qw(is_string is_boolean);
 use FP::Show;
+use FP::Equals;
 
 sub perhaps_segment_error ($) {
     my ($segment)=@_;
@@ -118,16 +119,16 @@ sub new_from_string {
 		scalar $str=~ m{^/}s)
 }
 
-sub equals {
+sub FP_Equals_equals {
     @_==2 or die "wrong number of arguments";
     my ($a,$b)=@_;
     # no need to compare is_absolute, since it is being distinguished
     # anyway? Or better be safe than sorry?
-    (FP::Equals::equals (!!$a->is_absolute, !!$b->is_absolute)
+    (equals (!!$a->is_absolute, !!$b->is_absolute)
      and
-     FP::Equals::equals (!!$a->has_endslash, !!$b->has_endslash)
+     equals (!!$a->has_endslash, !!$b->has_endslash)
      and
-     FP::Equals::equals ($a->rsegments, $b->rsegments))
+     equals ($a->rsegments, $b->rsegments))
 }
 
 sub segments {

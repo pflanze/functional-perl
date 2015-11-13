@@ -25,14 +25,14 @@ FP::Equals - generic equality comparison
 Deep, generic (but class controlled) structure equality comparison.
 
 Non-objects are hard coded in this module. Objects are expected to
-have an `equals` method that is able to take an argument of the same
-class as the object to compare (if it doesn't have such an object, it
-simply can't be compared using this module).
+have an `FP_Equals_equals` method that is able to take an argument of
+the same class as the object to compare (if it doesn't have such an
+object, it simply can't be compared using this module).
 
 This does *name based* type comparison: structurally equivalent
 objects do not count as equal if they do not have the same class (or
-more general, reference name), the equals method is not even called;
-the equals function returns undef in this case.
+more general, reference name), the `FP_Equals_equals` method is not
+even called; the equals function returns undef in this case.
 
 =head1 TODO
 
@@ -154,7 +154,7 @@ sub equals2 ($$) {
 			      if (my $cmp= $$primitive_equals{$ar}) {
 				  &$cmp (@_)
 			      } else {
-				  $a->equals ($b)
+				  $a->FP_Equals_equals ($b)
 			      }
 			  } else {
 			      undef

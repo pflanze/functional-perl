@@ -79,13 +79,14 @@ would implement the cut-off value as an optional parameter.)
 
 - should the 'FP_Show_show' methods simply be called 'show'? Or
   '(show' and provide help for their installation like overload.pm?
-  (Gain consistency with FP::Equals.) Although, there is a reason not
-  to do that: unlike `equals`, the `show` method would not be usable
-  directly, as it follows a private API. Offer a mix-in that *does*
-  offer a `show` method that works without giving further arguments?
-  But then, like with equals, it's not safe in the general case where
-  the object argument might not be an object or have the method. Users
-  should really import and use the show and equals functions.
+  Although, there is a reason not to do that: the `show` method would
+  not be usable directly, as it follows a private API.
+
+  Offer a mix-in that *does* offer a `show` method that works without
+  giving further arguments?  But then, like with equals, it's not safe
+  in the general case where the object argument might not be an object
+  or have the method. Users should really import and use the show and
+  equals functions.
 
 - should `show` try to never use multiple lines, or to do
   pretty-printing?

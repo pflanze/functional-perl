@@ -46,8 +46,8 @@ my $p= path ("a/../b/C")->add
   (path("../d/../e"), 0);
 TEST { $p->string } 'a/../b/C/../d/../e';
 TEST { $p->xclean->string } 'b/e';
-TEST { $p->xclean->equals($p) } '';
-TEST { $p->xclean->equals($p->xclean) } 1;
+TEST { equals($p->xclean, $p) } '';
+TEST { equals($p->xclean, $p->xclean) } 1;
 
 
 TEST { path ("a/.././b/C")->add

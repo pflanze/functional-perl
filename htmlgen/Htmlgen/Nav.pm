@@ -184,7 +184,7 @@ use Function::Parameters qw(:strict);
 	 ")")
     }
 
-    method equals ($v) {
+    method FP_Equals_equals ($v) {
 	($self->path0 eq $v->path0
 	 and
 	 equals($self->subentries, $v->subentries))
