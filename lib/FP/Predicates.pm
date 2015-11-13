@@ -94,7 +94,9 @@ package FP::Predicates;
 	      either
 	      all_of both
 	 );
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(
+		 is_coderef
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -237,9 +239,31 @@ sub is_array ($) {
     defined $_[0] and ref ($_[0]) eq "ARRAY"
 }
 
-sub is_procedure ($) {
+
+# Usually you should prefer `is_procedure` (see below) over this, as
+# we like to pass globs as subroutine place holders, too.
+
+sub is_coderef ($) {
     defined $_[0] and ref ($_[0]) eq "CODE"
 }
+
+# Should this be called `is_subroutine` or `is_sub` instead, to cater
+# for the traditional naming in Perl? But then Perl itself is
+# inconsistent, too, calling those code refs, which matches the
+# is_coderef naming above.
+
+sub is_procedure ($) {
+    defined $_[0] and
+      (ref ($_[0]) eq "CODE"
+       or
+       (ref \($_[0]) eq "GLOB" ? *{$_[0]}{CODE} ? 1 : '' : ''))
+	# XX: also check for objects that overload '&'?
+}
+
+TEST { is_procedure [] } '';
+TEST { is_procedure \&is_procedure } 1;
+TEST { is_procedure *is_procedure } 1;
+TEST { is_procedure *fifu } '';
 
 
 my $classpart_re= qr/\w+/;

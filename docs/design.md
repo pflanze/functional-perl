@@ -171,11 +171,11 @@ refs to avoid potential confusion and breakage. In any case, all code
 provided by this project is able to handle globs where subroutines (or
 any kind of callables, including overloaded objects) are expected.
 
-Todo: should `is_procedure` be made more lenient by accepting globs if
-they contain a value in the CODE slot, i.e. change its meaning to
-"*can* represent a subroutine"? But should it then return true for any
-other callable (overloaded object) as well? (How can the latter be
-implemented, by way of thecking for a '(&' method?)
+`FP::Predicate`'s `is_procedure` accepts globs if they contain a value
+in the CODE slot, i.e. it adapts its meaning to "*can* represent a
+subroutine". (But Todo: should it return true for any other callable
+(overloaded object) as well? (How can the latter be implemented, by
+way of checking for a '(&' method?))
 
 
 ### Naming conventions
