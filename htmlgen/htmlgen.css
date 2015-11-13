@@ -22,6 +22,9 @@ li.menu_last {
 .menu_selected {
   font-weight: bold;
 }
+.menu_open {
+  font-style: italic;
+}
 
 a {
   text-decoration: none;

@@ -33,6 +33,7 @@ use Htmlgen::PathUtil qw(path_path0_append);
 use FP::Div qw(identity);
 use Htmlgen::default_config;
 use FP::Show;
+use FP::Predicates 'false';
 
 our $t= __PACKAGE__->new_(is_indexpath0=> $$default_config{is_indexpath0},
 			  downcaps=> 1);
@@ -47,7 +48,13 @@ fun is_allcaps ($str) {
     not $str=~ /[a-z]/
 }
 
+fun _path0_to_title_mod ($str) {
+    $str=~ s/_/ /sg;
+    ucfirst $str
+}
 
+
+# ------------------------------------------------------------------
 
 use FP::Struct [[*is_procedure, "is_indexpath0"],
 		[*is_boolean, "downcaps"],
@@ -100,6 +107,41 @@ method xsuffix_md_to_html ($path0,$for_title) {
 TEST{ $t->possibly_suffix_md_to_html ("foo") } "foo";
 TEST{ $t->possibly_suffix_md_to_html ("foo.md") } "foo.xhtml";
 TEST_EXCEPTION{ $t->xsuffix_md_to_html ("foo", 0) } "file does not end in .md: 'foo'";
+
+
+
+
+method path0_to_title ($path0) {
+    my $dn= dirname($path0);
+    if ($dn ne "." and $$self{is_indexpath0}->($path0)) {
+	_path0_to_title_mod
+	  basename ( $self->xsuffix_md_to_html($dn.".md",1), ".xhtml");
+    } else {
+	_path0_to_title_mod
+	  basename( $self->xsuffix_md_to_html ($path0,1),".xhtml");
+    }
+}
+
+TEST{$t->path0_to_title ("README.md")} 'Readme';
+TEST{$t->path0_to_title ("bugs/wishlist/listserv/index.md")} 'Listserv';
+TEST{$t->path0_to_title ("bugs/wishlist/listserv/README.md")} 'Listserv';
+TEST{$t->path0_to_title ("bugs/wishlist/listserv/other.md")} 'Other';
+
+TEST{
+    $t->is_indexpath0_set(*false)->path0_to_title
+      ("bugs/wishlist/listserv/README.md")
+}
+  'Readme';
+TEST{$t->path0_to_title ("bugs/wishlist/line_wrapping_in_pre-MIME_mails.md")}
+  # even with lcfirst
+  'Line wrapping in pre-MIME mails';
+
+
+method path0_to_bugtype ($path0) {
+    $path0=~ m|\bbugs/([^/]+)/| or die "no match, '$path0'";
+    ucfirst $1
+}
+
 
 
 _END_

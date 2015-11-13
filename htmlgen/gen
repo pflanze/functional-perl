@@ -67,6 +67,7 @@ our ($configpath, $inbase, $outbase)= @ARGV;
 our $user_config= require $configpath;
 
 use Chj::Backtrace;
+use Chj::Trapl;#
 use Hash::Util 'lock_hash';
 use Chj::xperlfunc qw(basename dirname);
 use Chj::xIOUtil qw(xgetfile_utf8 xcopyfile);
@@ -78,7 +79,7 @@ use File::Spec;
 use FP::Array_sort;
 use FP::Ops qw(string_cmp number_cmp the_method cut_method);
 use Chj::TEST ":all";
-use FP::List qw(is_pair mixed_flatten);
+use FP::List qw(is_pair list);
 use PXML::Util ":all";
 use FP::Hash ":all";
 use PXML::Tags qw(with_toc);
@@ -298,92 +299,38 @@ fun get_filesinfo () {
 
 # Navigation:
 
-our $page_is_in_lower_hierarchy=
-  hashset_to_predicate
-  array_to_hashset
-  mixed_flatten (array_map (*array_rest, $config->{nav}))->array;
+use FP::PureArray;
+use FP::Equals qw(equals);
 
-# In the toplevel of the nav hierarchy, still also show pages that are
-# missing in the nav declaration; thus, use the nav declaration to
-# *order* the pages instead:
-our $path0_to_sortkey= do {
-    my $sortprio= do {
-	my $i=1;
-	+{
-	  map {
-	      my $file= $_;
-	      $file.= ".md" unless /\.\w{1,7}\z/;
-	      $file=> sprintf('-%04d', $i++)
-	  } @{array_map *array_first, $config->{nav}}
-	 }
-    };
-    fun ($path0) {
-	$$sortprio{$path0} || $path0
-    }
-};
-
-fun _path0_to_title_mod ($str) {
-    $str=~ s/_/ /sg;
-    ucfirst $str
-}
-
-fun path0_to_title ($path0) {
-    my $dn= dirname($path0);
-    if ($dn ne "." and $$config{is_indexpath0}->($path0)) {
-	_path0_to_title_mod
-	  basename ( $pathtranslate->xsuffix_md_to_html($dn.".md",1), ".xhtml");
-    } else {
-	_path0_to_title_mod
-	  basename( $pathtranslate->xsuffix_md_to_html ($path0,1),".xhtml");
-    }
-}
-
-TEST{path0_to_title "README.md"} 'Readme';
-TEST{path0_to_title "bugs/wishlist/listserv/index.md"} 'Listserv';
-TEST{path0_to_title "bugs/wishlist/listserv/README.md"} 'Listserv';
-TEST{path0_to_title "bugs/wishlist/listserv/other.md"} 'Other';
-use FP::Predicates 'false';
-TEST{
-    local $config= +{is_indexpath0=> *false};
-    path0_to_title "bugs/wishlist/listserv/README.md"
-}
-  'Readme';
-TEST{path0_to_title "bugs/wishlist/line_wrapping_in_pre-MIME_mails.md"}
-  # even with lcfirst
-  'Line wrapping in pre-MIME mails';
-
-
-fun path0_to_bugtype ($path0) {
-    $path0=~ m|\bbugs/([^/]+)/| or die "no match, '$path0'";
-    ucfirst $1
-}
-
-
-fun build_nav ($nonbugfiles, $path0) {
+fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
     UL({class=> "menu"},
-       array_map_with_islast
+       $items_in_level->map_with_islast
        (
-	fun ($is_last,$file0) {
-	    my $filetitle= path0_to_title $file0;
-	    LI({class=> ($is_last ? "menu_last"
-			 : "menu")},
-	       ($file0 eq $path0 ?
+	fun ($is_last, $item) {
+	    my $filetitle= $pathtranslate->path0_to_title($item->path0);
+	    my $is_viewed= equals($item, $viewed_at_item);
+	    my $is_open= equals($item, $item_selected);
+
+	    LI({class=> ($is_last ? "menu_last" : "menu")},
+	       ($is_viewed ?
 		SPAN({class=> "menu_selected"},
 		     $filetitle)
-		: A ({class=> "menu",
+		: A ({class=> ($is_open ? "menu_open" : "menu"),
 		      href=>
 		      File::Spec->abs2rel
-		      ($pathtranslate->xsuffix_md_to_html($file0,0),
-		       dirname($path0))},
+		      ($pathtranslate->xsuffix_md_to_html($item->path0,0),
+		       dirname($viewed_at_item->path0))},
 		     $filetitle)),
 	       " ")
-	},
-	array_sort
-	(array_filter(complement($page_is_in_lower_hierarchy),
-		      array_map (\&path0, $nonbugfiles)),
-	 on $path0_to_sortkey, \&string_cmp)))
+	}))
 }
 
+# For access from main:: by the code in the configuration file:
+use Htmlgen::Nav qw(_nav entry);
+
+sub nav {
+    _nav (list(@_), \&nav_bar)
+}
 
 
 
@@ -421,8 +368,8 @@ fun groupkey ($path) {
 fun get_genfilestate ($filesinfo) {
     my $groupedfiles= array_to_hash_group_by $filesinfo->files, \&groupkey;
 
-    my $nonbugfiles= [@{$$groupedfiles{normal}},
-		      @{$$groupedfiles{buglist}||[]}];
+    my $nonbugfiles= purearray( @{$$groupedfiles{normal}},
+				@{$$groupedfiles{buglist}||[]} );
 
     my $costranges={};
     # path0 -> costrange-string; filled when processing non-buglist groups
@@ -449,7 +396,7 @@ fun genfile ($path,$groupname,$genfilestate) {
     my $outpath= path0_to_outpath($path0);
     mkdir dirname( $outpath);
 
-    my $filetitle= path0_to_title $path0;
+    my $filetitle= $pathtranslate->path0_to_title($path0);
 
     my $str= xgetfile_utf8 "$inbase/$path";
 
@@ -506,7 +453,8 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     my $mediawikitoken= rand; # not fork safe!
     my ($h1,$body,$mediawikitable)=
-      markdownplus_parse ($str, lazy{ path0_to_title ($path0)},
+      markdownplus_parse ($str, lazy{ $pathtranslate->path0_to_title
+					($path0) },
 			  $mediawikitoken);
 
     my $maybe_buglist= $groupname eq "buglist" && do {
@@ -516,7 +464,7 @@ fun genfile ($path,$groupname,$genfilestate) {
 	     (
 	      fun ($path) {
 		  my $path0= path0 $path;
-		  my $title= path0_to_title $path0;
+		  my $title= $pathtranslate->path0_to_title($path0);
 		  [$title,$path0,$genfilestate->costrange($path0)]
 	      },
 	      $genfilestate->groupedfiles->{bugs}),
@@ -528,9 +476,10 @@ fun genfile ($path,$groupname,$genfilestate) {
 	   THEAD (TH ("Type"), TH ("Title"),TH ("Cost range (USD)")),
 	   map {
 	       my ($title,$p0,$costrange)= @$_;
-	       my $relurl= File::Spec->abs2rel($pathtranslate->xsuffix_md_to_html($p0,0),
-					       basename ($path0));
-	       TR (TD (path0_to_bugtype $p0),
+	       my $relurl= File::Spec->abs2rel
+		 ($pathtranslate->xsuffix_md_to_html($p0,0),
+		  basename ($path0));
+	       TR (TD ($pathtranslate->path0_to_bugtype($p0)),
 		   TD (A({href=>$relurl},$title)),
 		   TD ({align=>"center"},$costrange))
 	   } @$bugs
@@ -551,13 +500,21 @@ fun genfile ($path,$groupname,$genfilestate) {
 			   },
 			   perhaps_filename_to_path0=>
 			   fun ($filename) {
-			       $filesinfo->perhaps_filename_to_path0($filename)
+			       $filesinfo->perhaps_filename_to_path0
+				 ($filename)
 			   },
 			   map_code_body=>
 			   hash_maybe_ref ($config, "map_code_body"),
 			   pathtranslate=>
 			   $pathtranslate,
 			  );
+
+    my $nav= $$config{nav};
+    my $nav_index= $nav->index;
+    # ^ this could be cached across all documents (but measurements
+    # haves shown it to be insignificant)
+    my $nav_upitems=  $nav_index->path0_to_upitems($path0);
+    my $nav_self= $nav_upitems->first;
 
     my $html=
       HTML (
@@ -566,7 +523,27 @@ fun genfile ($path,$groupname,$genfilestate) {
 		   scalar $config->{head}->($path0)),
 	    BODY(
 		 $config->{header}->($path0),
-		 build_nav($genfilestate->nonbugfiles, $path),
+
+		 (1 ?
+		  # make the top nav level contain all unknown pages
+		  # (and don't include pages declared in the nav that
+		  # don't exist)
+		  (
+		   $nav->nav_bar_level0
+		   ($genfilestate->nonbugfiles->map
+		    (fun($p0) {$nav_index->path0_to_item($p0)}),
+		    $nav_upitems->last,
+		    $nav_upitems->first),
+
+		   $nav->nav_bar_levels
+		   ($nav_self, $nav_upitems)
+		   ->rest
+		  )
+		  :
+		  # strictly follow the navigation declaration
+		  $nav->nav_bar_levels ($nav_self, $nav_upitems)
+		 ),
+
 		 $config->{belownav}->($path0),
 		 $h1,
 		 process_body ($body, $pxml_name_to_mapper,

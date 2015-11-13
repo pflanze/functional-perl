@@ -44,6 +44,7 @@ htmlgen/Htmlgen/Htmlparse.pm
 htmlgen/Htmlgen/Linking.pm
 htmlgen/Htmlgen/MarkdownPlus.pm
 htmlgen/Htmlgen/Mediawiki.pm
+htmlgen/Htmlgen/Nav.pm
 htmlgen/Htmlgen/PXMLMapper.pm
 htmlgen/Htmlgen/PathTranslate.pm
 htmlgen/Htmlgen/PathUtil.pm
