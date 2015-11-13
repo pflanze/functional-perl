@@ -19,6 +19,13 @@ unsubscribe, do the same to the address
 [functional-perl-list-unsubscribe@functional-perl.org](mailto:functional-perl-list-unsubscribe@functional-perl.org)
 instead.
 
+Gmail often first puts mails from this server to its spam folder (in
+spite of this server using the same IP for many years, is on no
+blacklists, uses DKIM and SPF and takes care never to send or bounce a
+spam). Please check your spam folder and teach Gmail that those mails
+are not spam. Hopefully this will improve deliverability for everyone
+over time. If it doesn't then I'll take the next steps.
+
 ## IRC
 
 Christian (pflanze) is always logged onto `#functional-perl` on
