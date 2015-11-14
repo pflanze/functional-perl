@@ -1,0 +1,193 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+use Function::Parameters qw(:strict);
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: $myname file.pdf outdir
+
+   Convert a pdf file to SVG images (by way of `pdf2svg`) and a set of
+   html pages embedding them.
+";
+    exit 1;
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage unless @ARGV==2;
+
+my ($infile,$outdir)= @ARGV;
+
+use FP::IOStream qw(xopendir_pathstream);
+use FP::Stream qw(Keep);
+use Chj::xperlfunc qw(xstat xxsystem xunlink basename dirname);
+use FP::Combinators qw(compose_scalar);
+use FP::Ops qw(the_method number_cmp);
+use PXML::XHTML ':all';
+use PXML::Serialize; # for the `htmlfile` method
+use FP::Array_sort qw(on);
+use Chj::xIOUtil qw(xputfile_utf8);
+
+if ($ENV{DEBUG}) {
+    require Chj::Trapl; # includes Chj::repl
+} else {
+    require Chj::Backtrace; import Chj::Backtrace;
+    # XX should Backtrace be activated by load, not import?
+}
+
+
+fun regex_match ($re) {
+    fun ($str) {
+	$str=~ /$re/
+    }
+}
+
+fun regex_substitute ($re,$sub) {
+    fun ($str) {
+	$str=~ s/$re/&$sub()/e;
+	$str
+    }
+}
+
+sub note {
+    print STDERR "$myname: ",@_,"\n";
+}
+
+fun css_link ($src) {
+    LINK ({rel=> "stylesheet",
+	   href=> $src,
+	   type=> "text/css"})
+}
+
+
+# svgfile and html paths
+
+our $svgfile_template= 'page-%02d.svg';
+our $svgpath_re= qr{(^|.*/)page-(\d+)\.svg$}s;
+*svgpath_to_htmlpath= regex_substitute($svgpath_re, sub{"$1/page-$2.html"});
+*svgpath_to_pageno= regex_substitute($svgpath_re, sub{$2+0});
+
+our $css_src= "$myname.css";
+
+
+# CSS contents
+
+my $css_code= '
+ul.menu {
+  border: 1px solid #000;
+  background-color: #eee;
+  padding: 5px;
+  list-style: none;
+  padding-left: 0.5em;
+}
+li.menu {
+  border-right: 1px solid #000;
+  list-style: none;
+  padding-left: 0.5em;
+  padding-right: 0.3em;
+  display: inline;
+}
+li.menu_last {
+  list-style: none;
+  padding-left: 0.5em;
+  padding-right: 0.3em;
+  display: inline;
+}
+';
+
+
+fun svgpaths ($dir) {
+    xopendir_pathstream ($dir)
+      ->filter (regex_match $svgpath_re)
+	->sort(on *svgpath_to_pageno, *number_cmp)
+}
+
+
+# file conversion
+
+fun possibly_pdf2svg ($infile,$outdir) {
+    my $outfiles= svgpaths($outdir);
+    my $t_in= sub{ xstat($infile)->mtime };
+    my $t_oldest= sub {
+	Keep($outfiles)->map(compose_scalar the_method("mtime"), *xstat)->min
+    };
+
+    if ($outfiles->is_null or &$t_in >= &$t_oldest) {
+	$outfiles->for_each(*xunlink);
+	xxsystem "pdf2svg", $infile, "$outdir/$svgfile_template", 'all';
+	1
+    } else {
+	0
+    }
+}
+
+fun generate_html ($title, $outdir) {
+    my $svgpaths= svgpaths($outdir);
+
+    my $nav= fun ($for_svgpath) {
+	UL({class=> "menu"},
+	   Keep($svgpaths)->map_with_islast
+	   (fun ($is_last, $svgpath) {
+	       my $pageno= svgpath_to_pageno($svgpath);
+
+	       LI({class=> ($is_last ? "menu_last" : "menu")},
+		  ($svgpath eq $for_svgpath ?
+		   SPAN({class=> "menu_selected"}, $pageno)
+		   : A({href=> basename svgpath_to_htmlpath ($svgpath)},
+		       $pageno)))
+	   }))
+    };
+
+    Keep($svgpaths)->for_each
+      (fun ($svgpath) {
+	  my $TR_TD_nav= sub { TR TD {align=> "center"}, &$nav($svgpath) };
+
+	  HTML({lang=>'en'}, # well
+	       HEAD (TITLE ("$title - page ".svgpath_to_pageno($svgpath)),
+		     css_link($css_src)),
+	       BODY (TABLE({width=> "100%",
+			    border=> 0},
+			   &$TR_TD_nav,
+			   TR(TD(IMG +{src=> basename($svgpath),
+				       width=> "100%"})),
+			   &$TR_TD_nav)))
+
+	    ->htmlfile(svgpath_to_htmlpath($svgpath));
+      });
+
+    symlink basename(svgpath_to_htmlpath($svgpaths->first)),
+      "$outdir/index.html"
+	or note "could not add symlink at $outdir/index.html: $!";
+
+    xputfile_utf8 "$outdir/$css_src", $css_code;
+}
+
+fun pdf_to_html ($infile,$outdir) {
+    mkdir $outdir;
+
+    possibly_pdf2svg ($infile,$outdir)
+      or note "svg files are up to date";
+
+    generate_html (basename($infile), $outdir);
+}
+
+
+$ENV{DEBUG} ? Chj::repl() : pdf_to_html ($infile,$outdir);
+
