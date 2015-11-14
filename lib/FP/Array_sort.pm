@@ -54,7 +54,7 @@ L<FP::Ops>, L<FP::Combinators>
 
 package FP::Array_sort;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(array_sort on cmp_complement);
+@EXPORT=qw(array_sort on on_maybe cmp_complement);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -87,6 +87,13 @@ sub on ($ $) {
 	&$cmp(&$select($a), &$select($b))
     }
 }
+
+sub on_maybe ($$) {
+    @_==2 or die "expecting 2 arguments";
+    my ($maybe_select, $cmp)=@_;
+    defined $maybe_select ? on($maybe_select, $cmp) : $cmp
+}
+
 
 # see also `complement` from FP::Predicates
 sub cmp_complement ($) {
