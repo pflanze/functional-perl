@@ -148,6 +148,14 @@ sub empty {
     $empties{$cl} ||= bless [], $cl
 }
 
+sub is_null {
+    @_==1 or die "wrong number of arguments";
+    not @{$_[0]}
+}
+# Do *not* provide `is_pair`, though, since this is not a pair based
+# data structure? Or is the `is_null` already evil because of this and
+# should be named `is_empty`?
+
 
 *fst= \&array_fst;
 *first= \&array_fst;
