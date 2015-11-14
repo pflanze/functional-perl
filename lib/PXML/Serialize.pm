@@ -232,7 +232,7 @@ sub _pxml_print_fragment_fast {
 			      is_null(force(stream_mixed_flatten ($body)));
 			    $selfreferential = $isempty;
 			    warn "html5 compatible serialization requested "
-			      ."but got void element '$v' that is not empty"
+			      ."but got void element '$n' that is not empty"
 				if not $isempty;
 			}
 		    } else {
