@@ -53,6 +53,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # more tests:
 
 use FP::List ":all";
+use FP::Ops qw(the_method);
+use FP::Array qw(array_first);
+
 
 TEST {
     list(list(3), list(4,5), list(6))->flatten
@@ -65,5 +68,17 @@ TEST {
 TEST {
     list(list(6))->flatten(undef)
 } improper_list(6, undef); # OK?
+
+TEST { list(3,4,5)->max } 5;
+TEST { list(3,4,5,-1)->min } -1;
+TEST { purearray(3,-2,5)->min } -2;
+TEST { [stream(3,4,5,-1)->minmax] } [-1,5];
+
+TEST { [list([3, "a"],
+	     [4, "b"],
+	     [5, "c"],
+	     [-1, "d"])->minmax(*array_first)] }
+  [[-1, "d"], [5, "c"]];
+
 
 1

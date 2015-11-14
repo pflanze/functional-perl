@@ -61,8 +61,13 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use base 'FP::Pure';
 require FP::List; # "use"ing it would create a circular dependency
+use FP::Array_sort qw(on_maybe);
 
 use Chj::NamespaceCleanAbove;
+
+# XXX these don't weaken the caller arguments, thus will leak for
+# streams. How to solve this (and not copy-paste-adapt the methods
+# manually) without fixing perl?
 
 sub flatten {
     @_==1 or @_==2 or die "wrong number of arguments";
@@ -73,6 +78,58 @@ sub flatten {
 	   $v->append($rest)
        },
        @_==2 ? $perhaps_tail : FP::List::null());
+}
+
+
+# XX better name?
+sub extreme {
+    @_==2 or die "wrong number of arguments";
+    my ($self, $cmp)=@_;
+    # XXX: fold_right is good for FP::Stream streaming. left fold will
+    # be better for FP::List. How? Add fold_left for explicit left
+    # folding and make fold chose the preferred solution for
+    # order-irrelevant folding?
+    $self->rest->fold
+      (sub {
+	   my ($v, $res)=@_;
+	   &$cmp($v, $res) ? $v : $res
+       },
+       $self->first);
+}
+
+sub min {
+    @_==1 or @_==2 or die "wrong number of arguments";
+    my ($self, $maybe_extract)=@_;
+    $self->extreme(on_maybe $maybe_extract, sub { $_[0] < $_[1] })
+}
+
+sub max {
+    @_==1 or @_==2 or die "wrong number of arguments";
+    my ($self, $maybe_extract)=@_;
+    $self->extreme(on_maybe $maybe_extract, sub { $_[0] > $_[1] })
+}
+
+sub minmax {
+    @_==1 or @_==2 or die "wrong number of arguments";
+    my ($self, $maybe_extract)=@_;
+    # XXX same comment as in `extreme`
+    @{$self->rest->fold
+	(defined $maybe_extract ?
+	 sub {
+	     my ($v, $res)=@_;
+	     my ($min,$max)= @$res;
+	     my $v_ = &$maybe_extract($v);
+	     [ $v_ < &$maybe_extract($min) ? $v : $min,
+	       $v_ > &$maybe_extract($max) ? $v : $max ]
+	 }
+	 :
+	 sub {
+	     my ($v, $res)=@_;
+	     my ($min,$max)= @$res;
+	     [ $v < $min ? $v : $min,
+	       $v > $max ? $v : $max ]
+	 },
+	 [$self->first, $self->first])}
 }
 
 
