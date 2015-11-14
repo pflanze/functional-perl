@@ -16,7 +16,13 @@ Some examples showing the possibilities using [functional-perl](../README.md).
 * [`diff_to_html`](diff_to_html) hows how to generate (X)HTML.
 
 * [`skip`](skip) shows how to implement a sliding window (look-ahead) as a
-  pure function (that can easily be tested) and then uses it for IO
+  pure function (that can easily be tested) and then uses it for I/O
+
+* [`pdf-to-html`](pdf-to-html) is a practical, small and rather clean
+  example reading directories and generating HTML. It also shows
+  how to wrap non-functional Perl builtins (regex matching) in pure
+  functions.
+
 
 These are really just test suites, but perhaps still instructive:
 
