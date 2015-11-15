@@ -229,7 +229,7 @@ sub _pxml_print_fragment_fast {
 			    $selfreferential=1;
 			} else {
 			    my $isempty=  # slow path
-			      is_null(force(stream_mixed_flatten ($body)));
+			      is_null(stream_mixed_flatten ($body));
 			    $selfreferential = $isempty;
 			    warn "html5 compatible serialization requested "
 			      ."but got void element '$n' that is not empty"
@@ -352,8 +352,8 @@ sub pxml_print_fragment_fast ($ $ ) {
 	if (UNIVERSAL::isa($v, "PXML::XHTML")) {
 	    @_=($v); goto &$with_first_element;
 	} else {
-	    my $s= force(stream_filter *is_pxml_element,
-			 stream_mixed_flatten ($v));
+	    my $s= force(stream_mixed_flatten ($v)
+			 ->filter(*is_pxml_element));
 	    if (is_null $s) {
 		goto &$no_element
 	    } else {
