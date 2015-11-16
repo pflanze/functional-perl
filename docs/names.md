@@ -28,3 +28,16 @@ This list of doubtful names is not exhaustive.
 - `poptionally` in `FP::Optional`
 - `flip2of3`, `rot3right`, `rot3left` in `FP::Combinators`
 
+Also:
+
+- should the 'x' prefix often used in procedure/function names to
+  signify exceptions on errors be dropped, since we're using `maybe_`
+  or `perhaps_` if it's not signaling exceptions? E.g. Clojure uses
+  `lineseq` and implies exceptions: should we use such "nice and
+  short" names, too? This one looks a bit too short, `file_lines` may
+  be more like it. And imply exceptions? Or is it still worthwhile to
+  remind that there are cases in rather normal execution that throw
+  exceptions? (Also, xopen etc. are special since there the x is
+  necessary to differentiate from the x-less builtin of the same
+  name.)
+
