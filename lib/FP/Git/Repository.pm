@@ -131,13 +131,14 @@ sub perhaps_author_date {
     }
 }
 
-sub xauthor_date {
+sub author_date {
     my $self=shift;
     if (my ($d)= $self->perhaps_author_date (@_)) {
 	$d
     } else {
-	die "can't get author date (not committed) for: "
-	  .singlequote_many(@_);
+	warn "Note: can't get author date for (file not committed): "
+	  .singlequote_many(@_).".\n";
+	()
     }
 }
 
