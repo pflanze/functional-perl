@@ -5,6 +5,7 @@
 # with this file.
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+#use Function::Parameters qw(:strict);
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
