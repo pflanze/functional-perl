@@ -44,6 +44,8 @@ sub usage {
   -t               trap exceptions in a repl, too
   -H|--no-history  do not save history to file (it is still read on
                    startup.)
+  -M module        use the given module (namespace or path)
+  -m module        same as -M but don't complain about failures
 ";
 exit @_;
 }
@@ -56,6 +58,7 @@ my $MAXHISTLEN= 100;
 my @files;
 my $opt_H;
 my @opt_M;
+my @opt_m;
 my $opt_t;
 for (my $i=0; $i<=$#ARGV; $i++) {
     local $_=$ARGV[$i];
@@ -76,6 +79,14 @@ for (my $i=0; $i<=$#ARGV; $i++) {
 	    defined $arg or usage "missing argument to -M";
 	    push @opt_M,$arg;
 	}
+    } elsif (/^-m(.*)/) {
+	if ($1) {
+	    push @opt_m,$1;
+	} else {
+	    my $arg= $ARGV[++$i];
+	    defined $arg or usage "missing argument to -m";
+	    push @opt_m,$arg;
+	}
     } elsif (/^-/) {
 	warn "Unknown option '$_'\n";
 	usage(1)
@@ -90,37 +101,43 @@ eval {
 };
 warn $@ if $@;
 
+use Chj::Package::OfPath qw(package_of_path_or_package);
 use Chj::WithRepl qw(push_withrepl WithRepl_eval WithRepl_eval_e);
 
 push_withrepl (0)
   if $opt_t;
 
-if (@opt_M) {
-    require 'Chj/Package/OfPath.pm';
-    Chj::Package::OfPath->import('package_of_path_or_package');
 
+sub moduleoption_to_code ($) {
+    my ($a)=@_;
+    $a=~ s/([^=]+)//s
+      or die "invalid -M option '$_'";
+    my $path_or_package= $1;
+    my $p= package_of_path_or_package($path_or_package);
+    "use ".do {
+	if ($a=~ s/^=//s) {
+	    $p." ".join(", ",map{"'$_'"} split /,/,$a)
+	} else {
+	    $p
+	}
+    }
+}
+
+
+if (@opt_M) {
     my $code=
       join(";",
-	   map { "use $_" }
-	   map {
-	       my $a=$_;
-	       $a=~ s/([^=]+)//s
-		 or die "invalid -M option '$_'";
-	       my $path_or_package= $1;
-	       my $p= package_of_path_or_package($path_or_package);
-	       if ($a=~ s/^=//s) {
-		   $p." ".join(", ",map{"'$_'"} split /,/,$a)
-	       } else {
-		   $p
-	       }
-	   }
-	   @opt_M
-	  );
+	   map { moduleoption_to_code $_ }
+	   @opt_M);
 
     &WithRepl_eval ("package $myname; "
 		    .$code
 		    ."; 1")
       or die $@;
+}
+
+for my $path_or_package (@opt_m) {
+    eval moduleoption_to_code $path_or_package;
 }
 
 

@@ -20,7 +20,7 @@ $repl \
  -M FP::Predicates=:all \
  -M Chj::TerseDumper \
  -M Function::Parameters=:strict \
- -M Sub::Call::Tail \
+ -m Sub::Call::Tail \
  -M FP::IOStream=:all \
  -M FP::Array_sort \
  -M FP::Ops=:all \
