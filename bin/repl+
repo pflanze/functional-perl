@@ -19,7 +19,8 @@ $repl \
  -M FP::Stream=:all \
  -M FP::Predicates=:all \
  -M Chj::TerseDumper \
- -M Function::Parameters=:strict \
+ -m Method::Signatures \
+ -m Function::Parameters=:strict \
  -m Sub::Call::Tail \
  -M FP::IOStream=:all \
  -M FP::Array_sort \
