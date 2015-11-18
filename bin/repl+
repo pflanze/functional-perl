@@ -19,7 +19,6 @@ $repl \
  -M FP::Stream=:all \
  -M FP::Predicates=:all \
  -M Chj::TerseDumper \
- -M Method::Signatures \
  -M Function::Parameters=:strict \
  -M Sub::Call::Tail \
  -M FP::IOStream=:all \
