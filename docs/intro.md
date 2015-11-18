@@ -21,6 +21,11 @@ prints its result. The better ones come with debugging features, like
 being able to inspect the context (stack) from where they were
 called. Functional perl is no exception on either account.
 
+(NOTE: the author of the functional-perl repl didn't know about the
+`reply` repl and maybe others when finishing the work on this; he
+originally started Chj::repl more than a decade ago. It would probably
+be best to merge the efforts: TODO.)
+
 There are three ways to run the functional-perl REPL:
 
  - Run it from somewhere in your program by using `use Chj::repl;` and
