@@ -27,6 +27,7 @@ examples/gen-csv
 examples/logic
 examples/logwatch
 examples/logwatch_exampleconfig.pl
+examples/pdf-to-html
 examples/predicates
 examples/primes
 examples/skip
