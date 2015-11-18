@@ -38,6 +38,4 @@ $repl \
  -M FP::Combinators=:all \
  -M FP::Ops=:all \
  -M Chj::TEST=:all \
- -M Text::CSV_XS \
- -M FP::DBI \
  "$@"
