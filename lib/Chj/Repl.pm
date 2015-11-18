@@ -384,7 +384,7 @@ sub formatter {
 		  my $VARX= ($$self[DoKeepResultsInVARX] and not $terse) ?
 		    '$VAR'.$z++.' = '
 		      : '';
-		  $VARX . FP::Show::show($_). "\n"
+		  $VARX . FP::Show::show($_). ";\n"
 	      } @_
              )
          },
