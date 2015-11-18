@@ -516,6 +516,8 @@ sub eval_code {
       $Method::Signatures::VERSION ? "use Method::Signatures" : "";
     my $use_functional_parameters_=
       $Function::Parameters::VERSION ? "use Function::Parameters ':strict'" : "";
+    my $use_tail=
+      $Sub::Call::Tail::VERSION ? "use Sub::Call::Tail" : "";
     my @v= sort keys %$maybe_lexicals
       if defined $maybe_lexicals;
     push @v, sort keys %{$maybe_lexical_persistence->get_context("_")}
@@ -526,7 +528,7 @@ sub eval_code {
        'sub {'.
        ($self->use_strict_vars ? "" : "no strict 'vars'; ").
        "$use_warnings; ".
-       "$use_method_signatures; $use_functional_parameters_; ".
+       "$use_method_signatures; $use_functional_parameters_; $use_tail; ".
        $code.
        '}',
        &$in_package())
