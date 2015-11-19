@@ -205,6 +205,14 @@ TEST { require FP::Lazy;
        is_strictlist (FP::Lazy::lazy{cons 1, strictnull}) }
   1;
 
+# heh, can cheat it this way:
+TEST { is_strictlist (cons 0, FP::Lazy::lazy {cons 1, cons 2, strictnull }) }
+  '';
+# interesting, +-luck:
+TEST { require FP::List;
+       FP::List::is_list (cons 0, FP::Lazy::lazy {cons 1, cons 2, strictnull }) }
+  1;
+
 use FP::Equal 'equal';
 
 TEST {
