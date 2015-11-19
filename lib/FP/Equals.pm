@@ -32,7 +32,10 @@ object, it simply can't be compared using this module).
 This does *name based* type comparison: structurally equivalent
 objects do not count as equal if they do not have the same class (or
 more general, reference name), the `FP_Equals_equals` method is not
-even called; the equals function returns undef in this case.
+even called; the equals function returns undef in this case. This
+might be subject to change: certain pairs of types will be fine to
+compare; let the classes provide a method that checks whether a type
+is ok to compare?
 
 =head1 TODO
 
