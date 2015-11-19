@@ -175,9 +175,7 @@ TEST {
 sub is_strictlist ($) {
     my ($v)=@_;
     if (length (my $r= ref $v)) {
-	UNIVERSAL::isa($v, "FP::StrictList::Pair")
-	    or
-	UNIVERSAL::isa($v, "FP::StrictList::Null")
+	UNIVERSAL::isa($v, "FP::StrictList::List")
 	    or
         # XX evil: inlined `is_promise`
         UNIVERSAL::isa($v, "FP::Lazy::Promise")
