@@ -99,6 +99,12 @@ use FP::Combinators qw(flip2of3 flip);
 	bless [$_[0], $s, 1], $s->pair_namespace
     }
 
+    # simply inherit FP_Equals_equals
+
+    sub FP_Show_show {
+	my ($s,$show)=@_;
+	"strictnull"
+    }
 }
 
 {
@@ -117,6 +123,15 @@ use FP::Combinators qw(flip2of3 flip);
 
     sub length {
 	$_[0][2]
+    }
+
+    # simply inherit FP_Equals_equals
+
+    sub FP_Show_show {
+	my ($s,$show)=@_;
+	("strictlist(".
+	 $s->map($show)->strings_join(", ").
+	 ")")
     }
 }
 
@@ -137,6 +152,10 @@ TEST { strictnull->cons(8)->length }
   1;
 TEST { strictnull->cons(1)->cons(9)->length }
   2;
+
+TEST { require FP::Show;
+       FP::Show::show (cons 1, cons 2, strictnull) }
+  "strictlist(1, 2)";
 
 sub strictlist {
     my $res= strictnull;
