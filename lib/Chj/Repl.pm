@@ -518,26 +518,37 @@ sub eval_code {
       $Function::Parameters::VERSION ? "use Function::Parameters ':strict'" : "";
     my $use_tail=
       $Sub::Call::Tail::VERSION ? "use Sub::Call::Tail" : "";
-    my @v= sort keys %$maybe_lexicals
-      if defined $maybe_lexicals;
-    push @v, sort keys %{$maybe_lexical_persistence->get_context("_")}
-      if defined $maybe_lexical_persistence;
-    my $thunk= &WithRepl_eval
-      ("use strict; ".
-       (@v ? 'my ('.join(", ", @v).'); ' : '') .
-       'sub {'.
+
+    my $prelude=
+      "package ".&$in_package().";".
+      "use strict; ".
        ($self->use_strict_vars ? "" : "no strict 'vars'; ").
        "$use_warnings; ".
-       "$use_method_signatures; $use_functional_parameters_; $use_tail; ".
-       $code.
-       '}',
-       &$in_package())
-	// return;
-    PadWalker::set_closed_over ($thunk, $maybe_lexicals)
-	if defined $maybe_lexicals;
+       "$use_method_signatures; $use_functional_parameters_; $use_tail; ";
+
     if (my $lp= $maybe_lexical_persistence) {
-	WithRepl_eval { $lp->call($thunk) }
+	my $allcode=
+	  $prelude.
+	  $code;
+	if (defined $maybe_lexicals) {
+	    $lp->lexicals(hashset_union($lp->lexicals, $maybe_lexicals))
+	}
+	my $context= wantarray ? "list" : "scalar";
+	$lp->context($context);
+	WithRepl_eval { $lp->eval($allcode) }
     } else {
+	my @v= sort keys %$maybe_lexicals
+	  if defined $maybe_lexicals;
+	my $allcode=
+	  $prelude.
+	  (@v ? 'my ('.join(", ", @v).'); ' : '') .
+	  'sub {'.
+	      $code.
+	  '}';
+	my $thunk= &WithRepl_eval($allcode)
+	  // return;
+	PadWalker::set_closed_over ($thunk, $maybe_lexicals)
+	    if defined $maybe_lexicals;
 	WithRepl_eval { &$thunk() }
     }
 }
@@ -886,8 +897,10 @@ sub run {
 	my $maybe_lexical_persistence;
 	my $try_enable_lexical_persistence= sub {
 	    eval {
-		require Lexical::Persistence;
-		$maybe_lexical_persistence= Lexical::Persistence->new;
+		require Eval::WithLexicals;
+		$maybe_lexical_persistence= Eval::WithLexicals->new;
+		eval { require strictures } or
+		  $maybe_lexical_persistence->prelude("");
 		1
 	    } || do {
 		print $ERROR "Could not enable lexical persistence: $@";
