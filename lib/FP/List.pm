@@ -57,7 +57,7 @@ conflict with `Sub::Call::Tail`, hence those are not used here.
 package FP::List;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
-	   list_of  is_null_or_pair_of null_or_pair_of
+	   list_of  is_null_or_pair_of null_or_pair_of is_list
 	   car cdr first rest
 	   car_and_cdr first_and_rest perhaps_first_and_rest
 	   list);
@@ -339,10 +339,6 @@ sub is_null_noforce ($) {
 }
 
 
-# If in the future FP::List::Pair restricts cdr's to
-# `is_pair_or_null`, then the latter could be renamed to `is_list` --
-# but see FP::StrictList which does this instead now
-
 sub is_pair_or_null ($);
 sub is_pair_or_null ($) {
     my ($v)=@_;
@@ -391,6 +387,26 @@ TEST { require FP::Array;
 	     cons (null,cons(1,1)), cons (cons (1,1),cons(1,1))]) }
   [1, '', '', '',
    1, ''];
+
+
+sub is_list ($) {
+    my ($v)=@_;
+    FORCE $v;
+    (is_null $v ? 1
+     :
+     (is_pair $v ?
+      do {
+	  @_=unsafe_cdr $v;
+	  goto \&is_list;
+      }
+      : ''))
+}
+
+TEST { is_list cons 1, cons 2, null } 1;
+TEST { is_list cons 1, cons 2, 3 } '';
+TEST { require FP::Lazy;
+       is_list cons 1, FP::Lazy::lazy { cons 2, null } } 1;
+TEST { is_list cons 1, FP::Lazy::lazy { cons 2, 3 } } '';
 
 
 use Chj::TerseDumper;
