@@ -178,6 +178,12 @@ sub is_strictlist ($) {
 	UNIVERSAL::isa($v, "FP::StrictList::Pair")
 	    or
 	UNIVERSAL::isa($v, "FP::StrictList::Null")
+	    or
+        # XX evil: inlined `is_promise`
+        UNIVERSAL::isa($v, "FP::Lazy::Promise")
+	    && &is_strictlist (force $v)
+	    or
+        ''
     } else {
 	''
     }
@@ -196,6 +202,10 @@ TEST {
     is_strictlist (list (4,5)->map (sub{$_[0]+1}))
 }
   '';
+
+TEST { require FP::Lazy;
+       is_strictlist (FP::Lazy::lazy{cons 1, strictnull}) }
+  1;
 
 use FP::Equal 'equal';
 
