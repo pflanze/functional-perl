@@ -91,11 +91,15 @@ use Sub::Call::Tail;
 
 
     # things that *do* exist as modules on CPAN but which we do not want
-    # to link since those are a different thing.
+    # to link since those are a different thing. ("CPAN-exception")
     our $ignore_module_name=
       +{map {$_=>1}
 	qw(map tail grep fold car cdr first rest head join primes test
-	   all)};
+	   all list),
+	# these are not currently finding anything on CPAN, but let's
+	# add them for future safety:
+	qw(force length shift F strictlist cons inverse)
+       };
     # XX most of those would simply go to local scripts and functions if
     # these were checked for.
     $$ignore_module_name{"X"x3}=1; # avoid tripping search for to-do tags
