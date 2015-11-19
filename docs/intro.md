@@ -274,7 +274,8 @@ saving the history (todo)). Now you can type the nicer:
     $VAR1 = list(9, 16, 25);
 
 Another module that might make life better in the repl is
-`Lexical::Persistence`. If you install it and then enter
+`Eval::WithLexicals` (a former version of the code used
+`Lexical::Persistence`). If you install it and then enter
 
     repl> :m
 
@@ -285,8 +286,10 @@ then it will carry over lexical variables from one entry to the next:
     repl> $x
     $VAR1 = 10;
 
-This also enables `use strict "vars"` (if you don't want that, enter
-`:M` instead).
+This also enables `use strict "vars"` as well as
+`Eval::WithLexicals`'s default prelude (`use strictures`) if
+`strictures` is installed.  If you don't want the former, enter `:M`
+instead (TODO: check that this is working).
 
 
 ## Fresh lexicals and closures
