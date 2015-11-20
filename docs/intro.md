@@ -1010,9 +1010,99 @@ program, once you leave the repl to let it continue:
 And we're back in the toplevel repl.
 
 
+## Local functions and recursion
+
+While there's no strict need for it, it's often useful to define
+subroutines within another subroutine. The benefits are: keeping the
+definition closer to its use, and the ability to access lexicals local
+to the outer subroutine (without having to pass them as
+arguments). The fundamental disadvantage is that a local subroutine
+can't be reused from elsewhere (directly), and it can't be tested
+(directly). But there's also a catch with it in Perl that we'll see
+shortly.
+
+Let's adapt the example from "Writing a list-generating function":
+
+    (.. existing imports...)
+    use Chj::xperlfunc qw(xprintln);
+    use FP::TransparentLazy;
+
+    fun hello ($start, $end) {
+        my $inverse= fun ($x) { lazy { 1 / $x } };
+
+        my $ourlist; $ourlist= fun ($i) {
+            $i < $end ? null
+              : cons &$inverse($i), &$ourlist($i-1)
+        };
+
+        &$ourlist($start)->for_each(*xprintln);
+    }
+
+Note that this first declares `$ourlist`, then assigns it; this is so
+that the expression that generates the value to be held by the
+variable can see the variable, too (so that the function can call
+itself). As always, assignments to a variable after introducing it is
+dangerous: here it creates a cycle from the internal data structure
+representing the subroutine to itself, preventing perl from
+deallocating `$ourlist` after exiting the `hello` subroutine. One
+solution is to add
+
+    use FP::Weak;
+
+to the imports and change the last line of `hello` into:
+
+        Weakened($ourlist)->($start)->for_each(*xprintln);
+
+Another solution, and the one preferred by the author of this text, is
+to use `fix`, the fixpoint combinator, which is a function that takes
+a function as its argument and returns a different function that when
+called calls the original function with itself as the first
+argument. That was a mouthful, let's see how it looks:
+
+    use FP::fix;
+
+    fun hello ($start, $end) {
+        my $inverse= fun ($x) { lazy { 1 / $x } };
+
+        my $ourlist= fix fun ($self, $i) {
+            $i < $end ? null
+              : cons &$inverse($i), &$self($i-1)
+        };
+
+        &$ourlist($start)->for_each(*xprintln);
+    }
+
+When `$ourlist` is called, it calls the nameless function that is the
+argument to `fix`, and passes it `$ourlist` (or an equivalent thereof)
+and `$start`; our function can then call "itself" through `$self` and
+still only needs to pass the "real" argument (the new value for
+`$i`). In real world use you would usually rename `$self` to
+`$ourlist`, too; they are given different names here just for
+illustration.
+
+Do you think that's hard to understand or use? I suggest you play with
+it a bit and see whether it grows on you. BTW, a nice property of fix
+is that the outer `$ourlist` variable can actually avoided in cases
+such as this one--the result from fix can be called immediately:
+
+        fix (fun ($self, $i) {
+            $i < $end ? null
+              : cons &$inverse($i), &$self($i-1)
+        })
+          ->($start)->for_each(*xprintln);
+
+Another idea for a syntactical improvement implemented via a module
+would be a recursive variant of `my`, i.e. one where the expression to
+the right sees the variable directly, and then applies the `fix` or
+weakening transparently, but, like the other ideas mentioned above,
+this will take some effort and may only be feasible if there is enough
+interest (and hence some form of at least moral support).
+
+
 ## TODO
 
-* `fix`
+* combinators?
 * testing
+* OO
 
 </with_toc>
