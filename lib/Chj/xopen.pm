@@ -85,6 +85,7 @@ require Exporter;
 	       input_fd_to_fh
 	       output_fd_to_fh
 	       fh_to_fh
+	       possibly_fh_to_fh
 	      );
 %EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
 
@@ -143,6 +144,15 @@ sub fh_to_fh ($) {
     my ($fh)=@_;
     require Chj::IO::WrappedFile;
     Chj::IO::WrappedFile->new($fh)
+}
+
+sub possibly_fh_to_fh ($) {
+    my ($fh)=@_;
+    if (length ref $fh and UNIVERSAL::isa($fh, "Chj::IO::File")) {
+	$fh
+    } else {
+	fh_to_fh $fh
+    }
 }
 
 
