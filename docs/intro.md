@@ -926,6 +926,90 @@ frame for it". (It might be useful to try to write a perl module that
 automatically does the tail call recognition in its scope.)
 
 
+## The REPL revisited
+
+Our examples are starting to grow big enough that they don't fit in
+one line anymore. Let's start a file. Quit the repl, then:
+
+    $ cp examples/{template,introexample}
+    $ $EDITOR examples/introexample 
+
+You'll want to un-comment the "use Function::Parameters" line, and
+remove the commented "add your own code" part, and put the following
+there:
+
+    fun hello ($n) {
+        repl;
+        print "$n worlds\n";
+    }
+
+Now, when you run it:
+
+$ examples/introexample 
+main> 
+
+you get to a repl prompt, this time showing "main" as the
+namespace. This comes from the "repl" call at the end of the script
+(that you left in if you followed the instructions above closely). You
+can now call the `hello` sub from there:
+
+    main> hello 5
+    main 1> 
+
+Now you're at the sub-repl, indicated by the level "1". This time it's
+not because of an exception but because you called the repl
+explicitely. Test this:
+
+    main 1> hello 7
+    main 2> 
+
+and you're at a sub-sub-repl now. Press ctl-d to exit that one, you get:
+
+    7 worlds
+    $VAR1 = 1;
+    main 1> 
+
+and you are at the first sub-repl again. Remember, this is the one
+from the call to `hello 5`. The repl offers a few tools that can be
+useful here. To see a backtrace, enter `:b` (or `,b`, comma and colon
+are equivalent):
+
+    main 1> :b
+    0        Chj::Repl::run('Chj::Repl=ARRAY(0x920b5f8)', undef) called at examples/introexample line 46
+    1        main::hello('5') called at (eval 114) line 1
+    ...
+
+The stack also holds frames from the internal processing by the repl,
+which is a tad ugly, but kinda unavoidable, stripped here
+("..."). From the above you can see that hello 5 was called from eval
+(part of the processing by the original repl), then a sub-repl was
+called at line 46 of the example file.
+
+Another useful tool is to inspect the lexical environment at the
+current, or any other call frame. Enter `:e`, without a number it
+shows the environment at the location of the current call.
+
+    main 1> :e
+    $n = 5;
+
+Sure enough. Those lexicals are available from code you enter:
+
+    main 1> $n+1
+    $VAR1 = 6;
+
+You can also modify them. The change is reflected in the calling
+program, once you leave the repl to let it continue:
+
+    main 1> $n=42
+    $VAR1 = 42;
+    main 1> (ctl-d)
+    42 worlds
+    $VAR1 = 1;
+    main> 
+
+And we're back in the toplevel repl.
+
+
 ## TODO
 
 * `fix`
