@@ -11,7 +11,13 @@ programs that this project offers. (The files in the
 [intro/](../intro/) directory are more on the fundamental side, also
 they are a bit older and possibly could use some updating (todo).)
 
+This may be going a bit slow for some people, and too fast for
+others. If you find it difficult to follow, please tell, either on the
+[[mailing_list]], or join [the IRC channel](//mailing_list.md).
+
+
 <with_toc>
+
 
 ## Starting up: the REPL
 
@@ -292,112 +298,11 @@ This also enables `use strict "vars"` as well as
 instead (TODO: check that this is working).
 
 
-## Fresh lexicals and closures
-
-Let's disable lexical persistence for a moment and try some closures:
-
-    repl> :X
-    repl> $a=10; $f1= sub { $a }
-    $VAR1 = sub { "DUMMY" };
-    repl> $a=11; $f2= sub { $a }
-    $VAR1 = sub { "DUMMY" };
-    repl> &$f1()
-    $VAR1 = 11;
-
-The two subroutines are referring to the same instance of a variable,
-and setting that variable to a new value also changes what the first
-subroutine sees. This, just like with the mutation of a shared array,
-is not functional. (As an implementation detail of perl, these don't
-even really capture the variable, i.e. these subroutines are not
-closures.)
-
-Enabling lexical persistence again:
-
-    repl> :m
-    repl> my $a=10; my $f1= sub { $a }
-    $VAR1 = sub { "DUMMY" };
-    repl> $a=11; my $f2= sub { $a }
-    $VAR1 = sub { "DUMMY" };
-    repl> &$f1()
-    $VAR1 = 11;
-
-Ah, we still assigned a new value to the old *instance* of `$a`! Still
-not functional (even though in this case we *are* really creating
-closures as per the perl implementation regime). Another attempt:
-
-    repl> my $a=10; my $f1= sub { $a }
-    $VAR1 = sub { "DUMMY" };
-    repl> my $a=11; my $f2= sub { $a }
-    $VAR1 = sub { "DUMMY" };
-    repl> &$f1()
-    $VAR1 = 11;
-
-Oh, actually there's something fishy going on, with
-`Lexical::Persistence`? TODO.
-
-Let's do it again this way:
-
-    repl> my $f1= do { my $a=10; sub { $a } }
-    $VAR1 = sub { "DUMMY" };
-    repl> my $f2= do { my $a=11; sub { $a } }
-    $VAR1 = sub { "DUMMY" };
-    repl> &$f1()
-    $VAR1 = 11;
-
-still no. Let's disable Lexical::Persistence.
-
-    repl> :X
-    repl> $f1= do { my $a=10; sub { $a } }
-    $VAR1 = sub { "DUMMY" };
-    repl> $f2= do { my $a=11; sub { $a } }
-    $VAR1 = sub { "DUMMY" };
-    repl> &$f1()
-    $VAR1 = 10;
-
-Yeah, now it works as it should.
-
-Sorry about that, I hope you still got the idea: the safe and
-functional way is to use fresh instances of lexical variables,
-initializing them to a value and then leave them alone (not mutate
-them).
-
-
-    repl> :m
-    repl> my ($f1,$f2)= (do { my $a=10; sub { $a } }, do { my $a=11; sub { $a } })
-    $VAR1 = sub { "DUMMY" };
-    $VAR2 = sub { "DUMMY" };
-    repl> &$f1
-    $VAR1 = 11;
-    repl> &$f2
-    $VAR1 = 11;
-
-hmmm. but yes, really:
-
-    repl> :X
-    repl> ($f1,$f2)= (do { my $a=10; sub { $a } }, do { my $a=11; sub { $a } })
-    $VAR1 = sub { "DUMMY" };
-    $VAR2 = sub { "DUMMY" };
-    repl> &$f1
-    $VAR1 = 10;
-    repl> &$f2
-    $VAR1 = 11;
-
-    repl> :m
-    repl> our ($f1,$f2)= (do { my $a=10; sub { $a } }, do { my $a=11; sub { $a } })
-    $VAR1 = sub { "DUMMY" };
-    $VAR2 = sub { "DUMMY" };
-    repl> our $f1; &$f1
-    $VAR1 = 11;
-
-    repl> $Lexical::Persistence::VERSION 
-    $VAR1 = '1.020';
-
-
 ## More about cons
 
 `cons` is a function that tries to call the cons *method* on its
 second argument, and failing that, builds an `FP::List::Pair`. This
-means that these are equivalent:
+means that these expressions are equivalent:
 
     repl> cons 2, cons 3, null
     $VAR1 = list(2, 3);
@@ -413,7 +318,7 @@ non-lists as their rest value: those are called "improper lists".
 `FP::List` is the only sequence data structure that allows this. We'll
 see later (streams) why this is important.
 
-(TODO: "function" is ambiguous: do I mean "purely functional
+(Todo: "function" is ambiguous: do I mean "purely functional
 callable", or do I mean "non-method subroutine"? Those are
 orthogonal. Find better terminology.)
 
@@ -450,6 +355,7 @@ unlike in the `FP::List` case where determining the length involves
 walking the whole list. Usually those points don't matter, but
 sometimes they do. The disadvantage of strictlists is that they can't
 be evaluated lazily, a topic we'll look into in the next section.
+
 
 ## Lazy evaluation
 
@@ -563,10 +469,10 @@ evaluated:
                      undef,
                      ''
                    ], 'FP::Lazy::Promise' );
-    repl> force our $v
+    repl> force $v
     evaluating at (eval 152) line 1.
     $VAR1 = '0.25';
-    repl> our $v
+    repl> $v
     $VAR1 = bless( [
                      undef,
                      '0.25',
@@ -579,12 +485,12 @@ gone, and instead the result is stored in its second field. This is to
 enforce that the lazy term is at most evaluated once. As you can see,
 there's no "evaluating" warning when forcing it again:
 
-    repl> force our $v
+    repl> force $v
     $VAR1 = '0.25';
 
 Let's switch back to the `:s` view mode:
 
-    repl> :s our $v
+    repl> :s $v
     $VAR1 = '0.25';
 
 It shows evaluated promises as their value directly. This is useful
@@ -596,7 +502,7 @@ when dealing with bigger, lazily evaluated data structures.
 There's a function `F` which returns a deep copy of its argument with
 all the promises forced:
 
-    repl> F our $l
+    repl> F $l
     Exception: Illegal division by zero at (eval 137) line 1.
     repl 1> 
 
@@ -604,13 +510,13 @@ Yes, it will fail here; but we can still see how far it went, since
 the promises in the original data structure are the same that are
 being forced:
 
-    repl> our $l
+    repl> $l
     $VAR1 = list('0.333333333333333', '0.5', '1', lazy { "DUMMY" }, lazy { "DUMMY" });
 
 For an example of using `F` that finishes, let's skip (drop) past the
 element of the list that gives the error:
 
-    repl> our $l->drop(4)
+    repl> $l->drop(4)
     $VAR1 = list(lazy { "DUMMY" });
     repl> F $VAR1
     $VAR1 = list('-1');
@@ -649,13 +555,13 @@ Well, we need a termination condition.
     repl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), ourlist($i-1) : null }
     repl> our $l= ourlist 3
     $VAR1 = list(lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" });
-    repl> F our $l->drop(4)
+    repl> F $l->drop(4)
     $VAR1 = list('-1');
-    repl> F our $l
+    repl> F $l
     Exception: Illegal division by zero at (eval 136) line 1.
     repl 1> (ctl-d)
     Illegal division by zero at (eval 136) line 1.
-    repl> our $l
+    repl> $l
     $VAR1 = list('0.333333333333333', '0.5', '1', lazy { "DUMMY" }, '-1');
 
 There we are.
@@ -680,9 +586,9 @@ The 'improper_list' here is really just a single cons cell (pair)
 holding lazy terms both in its value and rest slots, as we were asking
 for. Is it correct?
 
-    repl> our $l->first->force
+    repl> $l->first->force
     $VAR1 = '0.333333333333333';
-    repl> our $l->rest->force
+    repl> $l->rest->force
     $VAR1 = improper_list(lazy { "DUMMY" }, lazy { "DUMMY" });
 
 The rest element, when forced, is again a cell holding lazy terms, of
@@ -695,13 +601,13 @@ Let's apply `F` to the whole thing: as mentioned above, it will force
 all promises on its way, regardless whether they are in value or rest
 slots:
 
-    repl> F our $l
+    repl> F $l
     Exception: Illegal division by zero at (eval 136) line 1.
     repl 1> 
     Illegal division by zero at (eval 136) line 1.
-    repl> F our $l->drop(4)
+    repl> F $l->drop(4)
     $VAR1 = list('-1');
-    repl> our $l
+    repl> $l
     $VAR1 = list('0.333333333333333', '0.5', '1', lazy { "DUMMY" }, '-1');
 
 We're getting the same thing as before--unsurprisingly, since all we
@@ -736,7 +642,7 @@ But we have "invented" a new data structure here: lazy linked lists,
 or functional streams as they are also called. The functional-perl
 project provides functions/methods to work with these, too:
 
-    repl> our $l->drop(10)
+    repl> $l->drop(10)
     Exception: Illegal division by zero at (eval 136) line 1.
 
 Ok, to be able to skip over that, we'd have to go back to our second
@@ -745,7 +651,7 @@ location:
 
     repl> our $l= ourlist -1
     $VAR1 = improper_list('-1', lazy { "DUMMY" });
-    repl> our $l->take(10)
+    repl> $l->take(10)
     $VAR1 = list('-1', '-0.5', '-0.333333333333333', '-0.25', '-0.2', '-0.166666666666667', '-0.142857142857143', '-0.125', '-0.111111111111111', '-0.1');
 
 Note that `take` worked eagerly here. This is because the cell that it
@@ -763,7 +669,7 @@ since recursing into ourlist will again return a lazy term):
     Subroutine ourlist redefined at (eval 145) line 1.
     repl> our $l= ourlist -1
     $VAR1 = lazy { "DUMMY" };
-    repl> our $l->take(10)
+    repl> $l->take(10)
     $VAR1 = lazy { "DUMMY" };
 
 Now the direct result of ourlist is lazy, too, and the take method
@@ -867,9 +773,9 @@ You can prevent this manually by protecting `$l` using the `Keep` function:
 
     repl> our $l= fh_to_chunks xopen_read("/dev/urandom"), 10
     $VAR1 = lazy { "DUMMY" };
-    repl> Keep(our $l)->drop(1000)->first
+    repl> Keep($l)->drop(1000)->first
     $VAR1 = '<94> )&m^C<8C>ESC<AB>A';
-    repl> Keep(our $l)->drop(1000)->first
+    repl> Keep($l)->drop(1000)->first
     $VAR1 = '<94> )&m^C<8C>ESC<AB>A';
 
 There is hope that we might find a better way to deal with this
@@ -877,10 +783,152 @@ There is hope that we might find a better way to deal with this
 promises here!
 
 
+## Fresh lexicals and closures
+
+Let's get a better understanding of functions, and first try the
+following:
+
+    repl> our ($f1,$f2)= do { our $a= 10; my $f1= sub { $a }; $a=11; my $f2= sub { $a }; ($f1,$f2) }
+    $VAR1 = sub { "DUMMY" };
+    $VAR2 = sub { "DUMMY" };
+    repl> &$f1
+    $VAR1 = 11;
+    repl> &$f2
+    $VAR1 = 11;
+
+The two subroutines are both referring to the same instance of a
+variable, and setting that variable to a new value also changes what
+the first subroutine sees.
+
+In this case, the reference to the variable is implemented by perl by
+simply embedding the variable name in the code: the "our" variables
+are package globals which only exist once with the same (fully
+qualified) name in the whole program, hence it's enough to store that
+name in the program code itself (i.e. only once over the program
+lifetime).
+
+Let's try a lexical variable instead (`my $a`):
+
+    repl> our ($f1,$f2)= do { my $a= 10; my $f1= sub { $a }; $a=11; my $f2= sub { $a }; ($f1,$f2) }
+    $VAR1 = sub { "DUMMY" };
+    $VAR2 = sub { "DUMMY" };
+    repl> &$f1
+    $VAR1 = 11;
+
+Still the same result: the two subroutines are still referring to the
+same instance of a variable. Since `$a` only lives lexically in the do
+block though, the subroutines now need to store a pointer reference to
+it (the way this is implemented is by storing both a pointer to the
+compiled code, and a pointer to the variable together in the CODE ref
+data structure).
+
+Now let's use a fresh lexical variable for the second value (11)
+instead:
+
+    repl> our ($f1,$f2)= do { my $a= 10; my $f1= sub { $a }; { my $a=11; my $f2= sub { $a }; ($f1,$f2) }}
+    $VAR1 = sub { "DUMMY" };
+    $VAR2 = sub { "DUMMY" };
+    repl> &$f1
+    $VAR1 = 10;
+    repl> &$f2
+    $VAR1 = 11;
+
+This way we didn't change what `$f1`, including its indirect
+references, refers to. Thus `$f1` remained a pure function here: it
+follows the rule that pure functions *only* depend on the values they
+receive as their arguments, and don't do *anything* visibly to the
+rest of the program other than giving a result value. Just as with the
+lists above, this is a good property to have, as it makes a value (be
+it a function, or another value like a list) reliable. A pure function
+or purely functional value does not carry a risk of giving different
+behaviour at different times.
+
+So, in conclusion, the safe and purely functional way is to only ever
+use fresh variable instances, i.e. initialize them when introduced and
+never modifying them afterwards. You might find this odd, a variable
+is supposed to vary, no? But notice that each function call (even of
+the same function) opens a new scope, and the variables introduced in
+it are hence fresh instances every time it is called:
+
+    repl> fun f ($x) { fun ($y) { [$x,$y] }}
+    repl> our $f1= f(12); our $f2= f(14); &$f1("f1")
+    $VAR1 = [12, 'f1'];
+    repl> &$f2("f2")
+    $VAR1 = [14, 'f2'];
+
+You can see that a new instance of `$x` is introduced for every call
+to `f`.
+
+You may be thinking that there's no way around mutating variables:
+loops can't introduce new variable instances on every loop iteration:
+you'd have to put the variable declaration inside the loop and then it
+would lose its value across the loop iteration. Well--it's true that
+you can't do that with the loop syntax that Perl offers (`for`,
+`while`). But you are not forced to use those. Iteration just means to
+process work step by step, i.e.  do a step of work, check whether the
+work is finished, and if it isn't, get the next piece of work and
+start over. You can easily formulate this with a function that takes
+the relevant pieces of information (remainder of the work, accumulated
+result), checks to see if the work is done and if it isn't, calls
+itself with the remainder and new result.
+
+    repl> fun build ($i,$l) { if ($i > 0) { build($i-1, cons fun () { $i }, $l) } else { $l }}
+    repl> build(3, null)
+    $VAR1 = list(sub { "DUMMY" }, sub { "DUMMY" }, sub { "DUMMY" });
+
+This uses a new instance of `$i` in each iteration, as you can see
+from this:
+
+    repl> $VAR1->map(fun ($v) { &$v() })
+    $VAR1 = list(1, 2, 3);
+
+There's one potential problem with this, though, which is that perl
+allocates a new frame on the call stack for every nested call to
+`build`, which means it needs memory proportional to the number of
+iterations. But perl also offers a solution for this:
+
+    repl> fun build ($i,$l) { if ($i > 0) { @_=($i-1, cons fun () { $i }, $l); goto &build } else { $l }}
+
+Sorry for the one-line formatting here, our examples are starting to
+get a big long for the repl, here is the same with line breaks:
+
+    fun build ($i,$l) {
+        if ($i > 0) {
+            @_=($i-1, cons fun () { $i }, $l); 
+            goto &build
+        } else {
+            $l 
+        }
+    }
+
+That still looks pretty ugly, though. But there's also a solution for
+*that*: if you install `Sub::Call::Tail` (`repl+` automatically loads
+it on start), then you can instead simply prepend the `tail` keyword
+to the recursive function call to achieve the same:
+
+    repl> fun build ($i,$l) { if ($i > 0) { tail build($i-1, cons fun () { $i }, $l) } else { $l }}
+
+i.e.
+
+    fun build ($i,$l) {
+        if ($i > 0) {
+            tail build($i-1, cons fun () { $i }, $l)
+        } else {
+            $l 
+        }
+    }
+
+
+What `tail` (or the written-out `goto` variant above) means is "this
+function call is the last operation in the current program flow of
+this function (it is in tail position); don't allocate a new stack
+frame for it". (It might be useful to try to write a perl module that
+automatically does the tail call recognition in its scope.)
+
+
 ## TODO
 
 * `fix`
-* iteration / TCO
 * testing
 
 </with_toc>
