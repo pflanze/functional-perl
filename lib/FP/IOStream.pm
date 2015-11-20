@@ -190,13 +190,13 @@ sub fh_to_lines ($) {
 
 sub fh_to_chunks ($$) {
     my ($fh,$bufsiz)= @_;
-    fh_to_stream ($fh,
-	       sub {
-		   my $buf;
-		   my $n= $fh->xsysread($buf, $bufsiz);
-		   $n == 0 ? undef : $buf
-	       },
-	       the_method("xclose"));
+    fh_to_stream (possibly_fh_to_fh($fh),
+		  sub {
+		      my $buf;
+		      my $n= $fh->xsysread($buf, $bufsiz);
+		      $n == 0 ? undef : $buf
+		  },
+		  the_method("xclose"));
 }
 
 
