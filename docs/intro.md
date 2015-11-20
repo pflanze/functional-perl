@@ -3,7 +3,7 @@ properly formatted versions of these documents.
 
 ---
 
-# Introduction to using the functional perl modules
+# Introduction to using the functional-perl modules
 
 Unlike the other documentation materials (as listed in [[README]]),
 this tries to give a nice introduction to using the modules and
@@ -803,7 +803,7 @@ this approach a while ago for its unsafety, and instead now provides
 alternatives that can't break the guarantees that its type system
 gives.)
 
-Example (Clojure calls xfile_lines `lineseq`): 
+Example:
 
     repl> system("echo 'Hello\nWorld.\n' > ourtestfile.txt")
     $VAR1 = 0;
@@ -817,7 +817,9 @@ Example (Clojure calls xfile_lines `lineseq`):
 
 At this point it might still not have read the second line from the
 file; saying "might" since probably Perl buffers the input file in
-bigger blocks. Anyway, you could do:
+bigger blocks. But in any case, you could do something like the
+following without making the perl try to read infinitely much into
+process memory:
 
     repl> our $l= fh_to_chunks xopen_read("/dev/zero"), 10
     $VAR1 = lazy { "DUMMY" };
@@ -828,6 +830,11 @@ bigger blocks. Anyway, you could do:
 
 (Or replace /dev/zero with /dev/urandom.)
 
+For more examples using lazy evaluation and streams, see
+`FP::IOStream`, `FP::Text::CSV`, `FP::DBI`,
+[functional_XML](../functional_XML/README.md) and the [example
+scripts](../examples/).
+
 The nice thing of this is that you can stop writing for or while loops
 now, and you can build up a processing chain similar to how you can
 write pipelines in the shell. You can write a function that takes a
@@ -837,11 +844,6 @@ functions into one which you can then group together with other
 grouped-up ones. Just like you can write shell scripts that use a
 pipeline and then pipe up those scripts themselves as if they were
 "atoms".
-
-For more examples using lazy evaluation and streams, see
-`FP::IOStream`, `FP::Text::CSV`, `FP::DBI`,
-[functional_XML](../functional_XML/README.md) and the [example
-scripts](../examples/).
 
 There's a catch, though, currently: unlike programming language
 implementations that have been written explicitely to deal with the
