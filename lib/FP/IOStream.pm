@@ -42,6 +42,7 @@ package FP::IOStream;
 	      xopendir_stream
 	      xopendir_pathstream
 	      xfile_lines
+	      fh_to_lines
 	      fh_to_chunks
 	      timestream);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -149,10 +150,12 @@ sub fh_to_stream ($$$) {
 # Chj::xopen functions:
 
 use Chj::xopen qw(
-	      xopen_read
-	      xopen_write
-	      xopen_append
-	      xopen_update);
+		     xopen_read
+		     xopen_write
+		     xopen_append
+		     xopen_update
+		     possibly_fh_to_fh
+		);
 
 sub make_open_stream {
     my ($open,$read,$maybe_close)=@_;
@@ -169,6 +172,15 @@ sub xfile_lines ($);
   make_open_stream(\&xopen_read,
 		   the_method ("xreadline"));
 
+
+# Clojure calls this line-seq
+#  (http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/line-seq)
+sub fh_to_lines ($) {
+    my ($fh)=@_;
+    fh_to_stream (possibly_fh_to_fh($fh),
+		  the_method ("xreadline"),
+		  the_method ("xclose"))
+}
 
 
 # read filehandle in chunks, although the chunk size, even of the
