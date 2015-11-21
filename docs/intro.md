@@ -1218,8 +1218,116 @@ You can even use it without leaving the repl :)
     $VAR1 = 0;
 
 
-## TODO
+## Objects
 
-* OO, incl the_method
+Function versus method dispatch and functional purity are orthogonal
+concepts: purely functional programming does not preclude using object
+methods (i.e. dynamic dispatch); it only precludes those from doing
+observable side effects (including to the object itself).
+
+Perl does not offer pattern matching natively (but there is CPAN!),
+which is a popular way to do runtime dispatch in functional
+programming languages. Instead, it makes sense to continue using
+objects and method dispatch, but adapt the style to be purely
+functional as far as feasible.
+
+Like we can have a list data structure that allows modification by
+calculating a new list and leaving the old unharmed, we can do the
+same with objects. Since most classes have few fields, it seems to
+make most sense to continue using hashtables to store them, but make
+flat copies (clones) of the object before modifying them.
+
+The functional-perl project provides a class generator, `FP::Struct`,
+that creates object setters from the given field definitions which do
+this cloning approach underneath. This module is probably the most
+experimental and perhaps contentious part discussed so far. Why not
+extend `Moose` (or `Moo`?) to do the same? This author simply felt
+like experimenting with a new, rather simple approach would allow to
+try out things faster and might give new ideas. He also likes some of
+the advantages of the taken approach: passing field definitions as
+array allows to build up the array programmatically easily. And using
+optional predicate functions to check types looked like a simple and
+good match.
+
+Update the examples/introexample script with the following:
+
+    {
+        package Shape;
+        use FP::Struct [];
+        _END_
+    }
+
+    {
+        package Point;
+
+        # for illustration, we don't check types here
+        use FP::Struct ["x","y"],
+          "Shape";
+
+        _END_ # defines accessors that have not been defined explicitely
+    }
+
+    {
+        package Square;
+
+        # Let's type-check here.
+        # Subroutines imported here will be cleaned away by _END_
+        use FP::Predicates qw(instance_of);
+
+        use FP::Struct [[instance_of("Point"), "topleft"],
+                    [instance_of("Point"), "bottomright"]],
+          "Shape";
+
+        method area () {
+            ($self->bottomright->x - $self->topleft->x)
+              *
+            ($self->bottomright->y - $self->topleft->y)
+        }
+
+        _END_
+    }
+
+    use FP::Ops ":all"; # imports `the_method`
+
+Then run it and try:
+
+    main> our $s1= Square->new(Point->new(2,3), Point->new(5,4));
+    $VAR1 = bless(+{topleft => bless(+{y => 3, x => 2}, 'Point'), bottomright => bless(+{y => 4, x => 5}, 'Point')}, 'Square');
+    main> our $s2= $s1->bottomright_update(fun($p) { $p->y_set(10) })
+    $VAR1 = bless(+{topleft => bless(+{y => 3, x => 2}, 'Point'), bottomright => bless(+{y => 10, x => 5}, 'Point')}, 'Square');
+    main> list($s1,$s2)->map(the_method "area")
+    $VAR1 = list(3, 21);
+
+As you can see, we have created `$s2` without mutating `$s1`.
+
+The `the_method` function "turns" a method call into a function
+call. Just like we would say `*area` if it were an imported function,
+we say `the_method "area"` to indicate that this method name should be
+called on the given value.
+
+If you'd like to get nicer pretty-printing, simply add:
+
+        method FP_Show_show ($show) {
+            "Point(".&$show($self->x).", ".&$show($self->y).")"
+        }
+
+to the Point package and
+
+        method FP_Show_show ($show) {
+            "Square(".&$show($self->topleft).", ".&$show($self->bottomright).")"
+        }
+
+to the Square package, then:
+
+    main> our $s1= Square->new(Point->new(2,3), Point->new(5,4));
+    $VAR1 = Square(Point(2, 3), Point(5, 4));
+    main> our $s2= $s1->bottomright_update(the_method "y_set", 10)
+    $VAR1 = Square(Point(2, 3), Point(5, 10));
+
+Although, now you've basically made the promise that there are
+`Square` and `Point` functions, but those don't exist unless you add
+write them yourself. The author of `FP::Struct` is pondering adding
+semi-automatic creating of such constructor functions.
+
 
 </with_toc>
