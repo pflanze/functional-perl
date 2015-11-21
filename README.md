@@ -57,6 +57,9 @@ exposed to, side effects; see
 [[howto#Pure_functions_versus_I/O_and_other_side-effects]] for a
 discussion about this.
 
+If you'd just like to see a practical introduction, read the
+[[intro]].
+
 
 ## Status: experimental
 
