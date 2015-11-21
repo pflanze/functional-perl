@@ -96,44 +96,17 @@ experimental at this time:
   indication about memory retention are still expected (possibly
   even in backwards incompatible ways.)
 
-There are also *many* ways to improve the code base:
-
-* various ways in which to explore performance improvements (read-only
-  guarantees and caching, sequences, PXML compile time
-  preserialization, implement code inlining, ...)
-
-* there are possible improvements to be worked on with regards to
-  binding it better into 'normal' Perl. For example, Perl's lazy
-  operations on sequences created with the `..` operator, or `keys
-  %foo`, could be made usable with functions the way they are with
-  `foreach`.
-
 * various parts (filesystem accesses etc.) probably won't work on
   Microsoft Windows yet
 
-Please play with the examples and try to write some of your own, read
-the docs and tell us what's badly explained, and if you've got
-something that might be useful to add to the examples directory, it
-would be cool if you offer it. If the test suite fails or you found a
-bug, please tell us on the [[mailing_list]], or if you prefer submit
-an issue on Github. Documentation improvements are very welcome, as
-are general hints and ideas where to take the project or simply
-whether you liked it or what you liked and what you didn't. If you'd
-like something to be different, now is the best time to tell. 
+The plan is to accept compatibility-breaking changes until February
+2016, then make a stable release in April 2016. If you'd like to get a
+maintained and versioned release earlier, please say so.
 
-(Also, please point out errors in the use of the english language. All
-normal pages on the website are part of the functional-perl
-repository; you could also use the 'history' and 'edit' links at the
-top.)
-
-I'm using it already in personal projects; where breakage due to
-changes is unacceptable, I currently add functional-perl as a Git
-submodule to the project using it and `use lib` it from the actual
-project.
-
-The project is currently led by [Christian
-Jaeger](http://leafpair.com/contact). I'm also on the `#london.pm` and
-`#functional-perl` IRC channels on irc.perl.org as "pflanze".
+[I](//contact.md)'m using it already in personal projects; where
+breakage due to changes is unacceptable, I currently add
+functional-perl as a Git submodule to the project using it and `use
+lib` it from the actual project.
 
 
 ## Parts
