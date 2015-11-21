@@ -224,7 +224,7 @@ get an introduction in person.
 
 * to use `bin/repl` or the repl in the intro and examples scripts
   interactively, `Term::ReadLine::Gnu` and `PadWalker` (and optionally
-  `Lexical::Persistence` if you want to use the :m/:M modes.)
+  `Eval::WithLexicals` if you want to use the :m/:M modes.)
 
 * to run the test suite: `Test::Requires`
 
