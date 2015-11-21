@@ -1183,9 +1183,43 @@ i.e. `compose *inverse, *add` is equivalent to:
     repl> *add_then_invert= fun ($x,$y) { inverse (add $x, $y) }
 
 
+## Testing
+
+One of the nice benefits of pure functions and methods, and the
+associated programming style that favours to write small functions
+(since they can be more easily reused) is that those are easily
+testable. This can of course be done using any testing module (like
+`Test::More`). The functional-perl project also provides a module,
+`Chj::TEST`, that obviates the need to put tests into separate files:
+the tests can be added right after a function declaration, which is a
+bit easier to write, and may help document the code (both can be read
+together). Unlike `is` from `Test::More` which in principle is
+symmetric in the treatment of the gotten and expected values, its
+`TEST` procedure expects a code block as its first argument, plus the
+expected result as the second. The code block is not evaluated when
+the `TEST` form is evaluated, but stored away and only run when
+`Chj::TEST`'s `run_tests` procedure is run. Concerns about using up
+process memory to store tests that will usually not be run before the
+process exits seem largely unfounded (RAM usage grew by a few percents
+at most in the heaviest tested modules (todo: find tests again?)), but
+`Chj::TEST` can also be instructed to drop the tests right away by
+setting the TEST env variable to 0 or ''.
+
+You can even use it without leaving the repl :)
+
+    repl> fun inverse ($x) { lazy { 1 / $x } }
+    repl> TEST { F inverse 2 } 0.5;
+    $VAR1 = 1;
+    repl> run_tests "repl"
+    === running tests in package 'repl'
+    running test 1..ok
+    ===
+    => 1 success(es), 0 failure(s)
+    $VAR1 = 0;
+
+
 ## TODO
 
-* testing
 * OO, incl the_method
 
 </with_toc>
