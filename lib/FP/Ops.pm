@@ -113,6 +113,7 @@ sub number_cmp ($ $) {
 }
 
 sub the_method {
+    @_ or die "wrong number of arguments";
     my ($method,@args)=@_;
     sub {
 	my $self=shift;
@@ -123,6 +124,7 @@ sub the_method {
 }
 
 sub cut_method {
+    @_>=2 or die "wrong number of arguments";
     my ($object,$method,@args)=@_;
     sub {
 	$object->$method(@args,@_)
