@@ -160,13 +160,14 @@ sub stream_step_range {
     (@_>= 1 and @_ <= 3) or die "wrong number of arguments";
     my ($step, $maybe_start, $maybe_end)=@_;
     my $start= $maybe_start // 0;
+    my $inverse = $step < 0;
     if (defined $maybe_end) {
 	my $end = $maybe_end;
 	my $rec; $rec= sub {
 	    my ($i)=@_;
 	    my $rec=$rec;
 	    lazy {
-		if ($i <= $end) {
+		if ($inverse ? $i >= $end : $i <= $end) {
 		    cons ($i, &$rec($i + $step))
 		} else {
 		    null
@@ -192,6 +193,8 @@ TEST { stream_step_range (2, 3, 6)->array }
   [3, 5];
 TEST { stream_step_range (2, 3, 7)->array }
   [3, 5, 7];
+TEST { stream_step_range (-1, 3, 1)->array }
+  [3, 2, 1];
 
 
 sub stream_length ($) {
