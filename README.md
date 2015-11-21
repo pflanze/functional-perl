@@ -222,6 +222,10 @@ get an introduction in person.
 
 ## Dependencies
 
+* to use `bin/repl` or the repl in the intro and examples scripts
+  interactively, `Term::ReadLine::Gnu` and `PadWalker` (and optionally
+  `Lexical::Persistence` if you want to use the :m/:M modes.)
+
 * to run the test suite: `Test::Requires`
 
 * to run all the tests (otherwise some are skipped): `BSD::Resource`,
@@ -229,10 +233,6 @@ get an introduction in person.
   `Text::CSV`, `URI`, `Text::Markdown`, `Clone`. Some of these are
   also necessary to run `htmlgen/gen` (or `website/gen` to build the
   website), see [Htmlgen](htmlgen/README.md) for details.
-
-* to use `bin/repl` or the repl in the intro and examples scripts
-  interactively, `Term::ReadLine::Gnu` and `PadWalker` (and optionally
-  `Lexical::Persistence` if you want to use the :m/:M modes.)
 
 (Todo: should all of the above be listed in PREREQ_PM in Makefile.PL?)
 
