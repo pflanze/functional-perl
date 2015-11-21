@@ -180,6 +180,15 @@ order, but if you can't follow the presentation, skip to the intro,
 likewise if you're bored skip ahead to the examples and the
 howto/design documents.
 
+* [__Introduction to using the functional-perl modules__](//intro.md)
+
+    [This](//intro.md) is the latest documentation addition (thus has
+    the best chance of being up to date), and is aiming to give a
+    pretty comprehensive overview that doesn't require you to read the
+    other docs first. Some of the info here is duplicated (in more
+    detail) in the other documents. If this is too long, take a look
+    at the presentation below or the example scripts.
+
 * __Presentation__
 
     [These](http://functional-perl.org/london.pm-talk/) are the slides of
@@ -187,7 +196,7 @@ howto/design documents.
     may not be saying enough for understanding. (Todo: add text of
     speach somehow?)
 
-* __Intro__
+* __Intro directory__
 
     The [intro](intro/) directory contains scripts introducing the
     concepts, including the basics of functional programming (work in

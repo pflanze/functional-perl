@@ -71,8 +71,8 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
   },
   nav=>
   nav(entry("README.md",
-	    entry("docs/howto.md"),
 	    entry("docs/intro.md"),
+	    entry("docs/howto.md"),
 	    entry("docs/design.md"),
 	    entry("examples/README.md")),
       entry("functional_XML/README.md",
