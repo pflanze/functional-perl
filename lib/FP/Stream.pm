@@ -57,6 +57,8 @@ package FP::Stream;
 	      Keep
 	      Weakened
 	      stream_iota
+	      stream_range
+	      stream_step_range
 	      stream_length
 	      stream_append
 	      stream_map
@@ -137,6 +139,59 @@ sub stream_iota {
 	@_=($start); goto &{Weakened $rec};
     }
 }
+
+
+# Like perl's `..`
+sub stream_range {
+    @_ <= 2 or die "wrong number of arguments";
+    my ($maybe_start, $maybe_end)=@_;
+    my $start= $maybe_start // 0;
+    stream_iota ($start, defined $maybe_end ? $maybe_end + 1 - $start : undef);
+}
+
+TEST { stream_range (2, 4)->array }
+  [2, 3, 4];
+TEST { stream_range (2, 2)->array }
+  [2];
+TEST { stream_range (2, 1)->array }
+  [];
+
+sub stream_step_range {
+    (@_>= 1 and @_ <= 3) or die "wrong number of arguments";
+    my ($step, $maybe_start, $maybe_end)=@_;
+    my $start= $maybe_start // 0;
+    if (defined $maybe_end) {
+	my $end = $maybe_end;
+	my $rec; $rec= sub {
+	    my ($i)=@_;
+	    my $rec=$rec;
+	    lazy {
+		if ($i <= $end) {
+		    cons ($i, &$rec($i + $step))
+		} else {
+		    null
+		}
+	    }
+	};
+	@_=($start); goto &{Weakened $rec};
+    } else {
+	my $rec; $rec= sub {
+	    my ($i)=@_;
+	    my $rec=$rec;
+	    lazy {
+		cons ($i, &$rec($i + $step))
+	    }
+	};
+	@_=($start); goto &{Weakened $rec};
+    }
+}
+
+TEST { stream_step_range (-1)->take(4)->array }
+  [0, -1, -2, -3];
+TEST { stream_step_range (2, 3, 6)->array }
+  [3, 5];
+TEST { stream_step_range (2, 3, 7)->array }
+  [3, 5, 7];
 
 
 sub stream_length ($) {
