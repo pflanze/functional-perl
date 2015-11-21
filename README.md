@@ -240,12 +240,15 @@ get an introduction in person.
 ## Installation
 
     git clone https://github.com/pflanze/functional-perl.git
+    cd functional-perl
 
     # to get the latest release, which is $FP_COMMITS_DIFFERENCE behind master:
     git checkout -b $FP_VERSION_UNDERSCORES $FP_VERSION
 
     # to verify the same against MitM attacks:
+    gpg --recv-key 04EDB072
     git tag -v $FP_VERSION
+    # You'll find various pages in search engines with my fingerprint
 
 The bundled scripts modify the library load path to find the files
 locally, thus no installation is necessary. All modules are in the
