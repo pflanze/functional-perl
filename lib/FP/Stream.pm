@@ -109,8 +109,9 @@ use FP::Predicates 'is_natural0';
 use FP::Show;
 
 sub stream_iota {
+    @_ <= 2 or die "wrong number of arguments";
     my ($maybe_start, $maybe_n)= @_;
-    my $start= $maybe_start || 0;
+    my $start= $maybe_start // 0;
     if (defined $maybe_n) {
 	my $end = $start + $maybe_n;
 	my $rec; $rec= sub {
@@ -136,8 +137,6 @@ sub stream_iota {
 	@_=($start); goto &{Weakened $rec};
     }
 }
-
-*FP::List::List::stream_iota= *stream_iota;
 
 
 sub stream_length ($) {
