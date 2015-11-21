@@ -127,6 +127,11 @@ sub compose_1side ($$) {
 
 use Carp;
 
+# XX should flip work like the curried versions (e.g. in Haskell),
+# i.e. not care about remaining arguments and simply flip the first
+# two? That would save the need for flip2of3 etc., but it would also
+# be less helpful for error-checking.
+
 sub flip ($) {
     my ($f)=@_;
     sub {

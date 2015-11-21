@@ -19,7 +19,7 @@ This list of doubtful names is not exhaustive.
 - `compose_1side`
 - `pxml_map_elements_exhaustively`
 - should `stream_iota` be renamed or have different arguments? Compare
-  with APL etc.
+  with APL etc. Also `stream_range`, `stream_step_range`.
 - `Chj::WithRepl`, `WithRepl_eval`, `Chj::Trapl`
 - `FP::Struct`: rename to `FP::Class` or should that name remain
   reserved for a new implementation on top of `Moose` or something?

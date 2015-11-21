@@ -1099,10 +1099,93 @@ this will take some effort and may only be feasible if there is enough
 interest (and hence some form of at least moral support).
 
 
+## More on functions
+
+Pure functions (and methods) are good blocks for modular programming,
+i.e. they are a good approach to make small reusable pieces that
+combine easily: their simple API makes them easily
+understandable. Their reliability (no side effects, hence no
+surprises) makes them easily reusable. It helps being aware of a few
+functional "patterns" for good reusability:
+
+### Higher-order functions
+
+Those are functions that take other functions as an argument. Examples
+are many sequence processing functions (or methods), like some of
+those which we have already seen: `map`, `fold`, `fold_right`,
+`filter`. The function they take as an argument may be one that
+handles a single value, and they "augment" it to work on all values in
+a sequence. Or the function argument may change the way that the
+higher-order function works.
+
+In 'Writing a list-generating function' we have written a function
+`ourlist` that builds a list while calling `inverse` on every `$i` it
+goes through. Let's turn that into a reusable function by making it
+higher-order:
+
+    repl> fun inverse ($x) { lazy { 1 / $x } }
+    repl> fun ourlist ($f, $from, $to) { $from >= $to ? cons &$f($from), ourlist($f, $from - 1, $to) : null }
+    repl> F ourlist (*inverse, 4, 1)
+    $VAR1 = list('0.25', '0.333333333333333', '0.5', '1');
+
+It would now better be renamed, perhaps to something like
+`downwards_iota_map`. But we could also split up the function into
+downwards_iota and map parts if we're using lazy evaluation, then we
+could use those separately. In fact both are already available in
+functional-perl:
+
+    repl> F stream_step_range(-1, 4, 1)->map(*inverse)
+    $VAR1 = list('0.25', '0.333333333333333', '0.5', '1');
+
+(The naming of these more exotic functions like `stream_step_range` is
+still open to changes: hints about how other languages/libraries name
+those are very welcome.)
+
+A secial kind of higher-order functions is combinators.
+
+### Combinators
+
+> *A combinator is a higher-order function that uses only function
+> application and earlier defined combinators to define a result from
+> its arguments.*
+> ([Wikipedia](https://en.wikipedia.org/wiki/Combinator))
+
+There are already a number of such functions defined in
+`FP::Combinators`. The two most commonly used ones are `flip`, which
+takes a function expecting 2 arguments and returns a function
+expecting them in reverse order, and `compose`, which takes two (or
+more) functions, and returns a function that calls each original
+function in turn (from the right to left):
+
+    repl> *div= fun($x,$y) { $x / $y }; *rdiv= flip *div
+    Subroutine repl::div redefined at (eval 136) line 1.
+    $VAR1 = *repl::rdiv;
+    repl> div 1,2
+    $VAR1 = '0.5';
+    repl> rdiv 2,1
+    $VAR1 = '0.5';
+
+The "subroutine redefined" warning above is because `div` was already
+defined (equivalently) in `FP::Ops`. This module provides subroutine
+wrappers around Perl operators, so that they can be easily passed as
+arguments to other functions like `flip` or the `map` methods.
+
+    repl> fun inverse ($x) { lazy { 1 / $x } }
+    repl> *add_then_invert= compose *inverse, *add
+    $VAR1 = *repl::add_then_invert;
+    repl> add_then_invert 1,2
+    $VAR1 = lazy { "DUMMY" };
+    repl> F $VAR1
+    $VAR1 = '0.333333333333333';
+
+i.e. `compose *inverse, *add` is equivalent to:
+
+    repl> *add_then_invert= fun ($x,$y) { inverse (add $x, $y) }
+
+
 ## TODO
 
-* combinators?
 * testing
-* OO
+* OO, incl the_method
 
 </with_toc>
