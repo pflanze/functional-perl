@@ -312,20 +312,50 @@ means that these expressions are equivalent:
 but the cons *function* can also be used to build pairs holding
 non-lists as their rest value: those are called "improper lists".
 
+<small>(Todo: "function" is ambiguous: do I mean "purely functional
+callable", or do I mean "non-method subroutine"? Those are
+orthogonal. Find better terminology.)</small>
+
     repl> cons 2, 3
     $VAR1 = improper_list(2, 3);
+    repl> cons 1, cons 2, 3
+    $VAR1 = improper_list(1, 2, 3);
 
-`FP::List` is the only sequence data structure that allows this. We'll
-see later (streams) why this is important.
+The `improper_list` function creates such a linked list that contains
+its last argument directly as the rest value in the last cell. If
+you're still unsure what this means, try turning to `:d` mode to see
+the list's cells:
 
-(Todo: "function" is ambiguous: do I mean "purely functional
-callable", or do I mean "non-method subroutine"? Those are
-orthogonal. Find better terminology.)
+    repl> :d improper_list(1, 2, 3)
+    $VAR1 = bless( [
+                     1,
+                     bless( [
+                              2,
+                              3
+                            ], 'FP::List::Pair' )
+                   ], 'FP::List::Pair' );
+
+versus
+
+    repl> :d list(1, 2, 3)
+    $VAR1 = bless( [
+                     1,
+                     bless( [
+                              2,
+                              bless( [
+                                       3,
+                                       bless( [], 'FP::List::Null' )
+                                     ], 'FP::List::Pair' )
+                            ], 'FP::List::Pair' )
+                   ], 'FP::List::Pair' );
+
+`FP::List` is our only sequence data structure that allows this. We'll
+see later (streams) why it is a feature and not a bug.
 
 The functional-perl project provides other sequence data structures,
-too. Here's one:
+too. Here's one (turning `:s` back on):
 
-    repl> cons 1, cons 2, strictnull
+    repl> :s cons 1, cons 2, strictnull
     $VAR1 = strictlist(1, 2);
     repl> is_strictlist $VAR1
     $VAR1 = 1;
@@ -584,7 +614,9 @@ Well, let's simply try:
 
 The 'improper_list' here is really just a single cons cell (pair)
 holding lazy terms both in its value and rest slots, as we were asking
-for. Is it correct?
+for. 
+
+Will it evaluate to the correct values?
 
     repl> $l->first->force
     $VAR1 = '0.333333333333333';
