@@ -52,6 +52,7 @@ our %dependencies=
    'Htmlgen::FileUtil'=> ['Function::Parameters' ],
    'Htmlgen::default_config'=> ['Function::Parameters' ],
    'Htmlgen::Cost'=> ['Function::Parameters' ],
+   'Htmlgen::Nav'=> ['Function::Parameters'],
    'HTTP::Daemon'=> ['HTTP::Request'],
   );
 
