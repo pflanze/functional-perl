@@ -1364,7 +1364,9 @@ to the Square package, then:
 Although, now you've basically made the promise that there are
 `Square` and `Point` functions, but those don't exist unless you add
 write them yourself. The author of `FP::Struct` is pondering adding
-semi-automatic creating of such constructor functions.
+semi-automatic creation of such constructor functions (probably
+together with automatic creation or mix-in of a default `FP_Show_show`
+method.)
 
 
 </with_toc>
