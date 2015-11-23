@@ -9,6 +9,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 our $len= 672;
 require "meta/test.pl";
 
+use Test::Requires 'PadWalker';
 use Test::More;
 use lib "./lib";
 use Chj::repl;
