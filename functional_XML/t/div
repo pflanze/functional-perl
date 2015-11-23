@@ -14,7 +14,9 @@ BEGIN {
 use lib "$mydir/../../lib";
 
 use Chj::TEST ":all";
-use Chj::TEST use=>'PadWalker';
+use Chj::TEST
+  use=>'PadWalker',
+  use=> 'Term::ReadLine::Gnu';
 use PXML::XHTML ":all";
 use PXML::Serialize "pxml_print_fragment_fast";
 use FP::Lazy;

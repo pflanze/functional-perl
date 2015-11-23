@@ -17,7 +17,8 @@ use lib "$mydir/../lib";
 
 
 use Chj::TEST
-  use=> 'PadWalker';
+  use=> 'PadWalker',
+  use=> 'Term::ReadLine::Gnu';
 use Chj::Backtrace;
 use Chj::repl;
 

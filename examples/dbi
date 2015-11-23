@@ -17,6 +17,7 @@ use lib "$mydir/../lib";
 
 use Chj::TEST
   use=> 'PadWalker',
+  use=> 'Term::ReadLine::Gnu',
   use=> "DBD::CSV",
   use=> "FP::DBI"; # 'DBI' really, indirectly
 use PXML::XHTML ":all";
