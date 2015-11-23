@@ -1332,10 +1332,15 @@ Then run it and try:
 
 As you can see, we have created `$s2` without mutating `$s1`.
 
-The `the_method` function "turns" a method call into a function
-call. Just like we would say `*area` if it were an imported function,
-we say `the_method "area"` to indicate that this method name should be
-called on the given value.
+The `..update` method passes the old value to the given function and
+substitutes it for what the function returns. The `..set` methods use
+the given value directly. Those methods are generated automatically by
+FP::Struct.
+
+The `the_method` function "turns" a method call into a function call:
+just like we would say `*area` if it were an imported function, we say
+`the_method "area"` to indicate that this method name should be called
+on the value that is passed by map as the (first and only) argument.
 
 If you'd like to get nicer pretty-printing, simply add:
 
