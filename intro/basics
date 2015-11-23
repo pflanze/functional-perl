@@ -41,8 +41,7 @@ use lib "$mydir/../lib";
 
 # specify dependency when running through test suite
 use Chj::TEST
-  use=> 'PadWalker',
-  use=> 'Term::ReadLine::Gnu';
+  use=> 'Chj::Repl::Dependencies';
 
 # for development/debugging
 #use Chj::ruse; # get the 'ruse' procedure which will reload modules;

@@ -16,8 +16,7 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 use Chj::TEST
-  use=> 'PadWalker',
-  use=> 'Term::ReadLine::Gnu',
+  use=> 'Chj::Repl::Dependencies',
   use=> "DBD::CSV",
   use=> "FP::DBI"; # 'DBI' really, indirectly
 use PXML::XHTML ":all";
