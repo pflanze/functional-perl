@@ -39,6 +39,9 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 
+# specify dependency when running through test suite
+use Chj::TEST use=> 'PadWalker';
+
 # for development/debugging
 #use Chj::ruse; # get the 'ruse' procedure which will reload modules;
                 # since we're putting the meat of the program into the

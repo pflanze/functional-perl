@@ -15,13 +15,15 @@ our ($mydir, $myname); BEGIN {
 }
 use lib "$mydir/../lib";
 
-use Chj::Backtrace;
-use Chj::repl;
 use Chj::TEST
+  use=> 'PadWalker',
   use=> "DBD::CSV",
   use=> "FP::DBI"; # 'DBI' really, indirectly
 use PXML::XHTML ":all";
 use FP::Weak;
+
+use Chj::Backtrace;
+use Chj::repl;
 
 
 our $db= FP::DBI->connect ("dbi:CSV:");

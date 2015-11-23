@@ -16,7 +16,8 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 
-use Chj::TEST;
+use Chj::TEST
+  use=> 'PadWalker';
 use Chj::Backtrace;
 use Chj::repl;
 

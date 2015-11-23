@@ -16,12 +16,14 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 
-use Chj::Backtrace;
-use Chj::repl;
 
 # gracefully fail when run as a test and Method::Signatures is not
 # available
-use Chj::TEST use=> 'Method::Signatures';
+use Chj::TEST
+  use=> 'PadWalker',
+  use=> 'Method::Signatures';
+use Chj::Backtrace;
+use Chj::repl;
 use FP::List ":all";
 use FP::Ops ":all";
 use FP::Lazy ":all";

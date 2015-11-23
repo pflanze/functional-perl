@@ -16,15 +16,14 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 
-use Chj::Backtrace;
-use Chj::repl;
-
-use Chj::TEST;
+use Chj::TEST use=> "PadWalker";
 use FP::List ":all";
 use FP::Ops ":all";
 use FP::Lazy ":all";
 use FP::Stream ":all";
 
+use Chj::Backtrace;
+use Chj::repl;
 
 # fibs :: [Integer]
 # fibs = 1:1:zipWith (+) fibs (tail fibs)
