@@ -61,6 +61,8 @@ our %dependencies=
 	 Chj::Serialize
 	 Chj::Trapl
 	 Chj::WithRepl
+	 Chj::repl
+	 FP::Trie::t
     ),
   );
 
