@@ -54,6 +54,14 @@ our %dependencies=
    'Htmlgen::Cost'=> ['Function::Parameters' ],
    'Htmlgen::Nav'=> ['Function::Parameters'],
    'HTTP::Daemon'=> ['HTTP::Request'],
+   map { $_ => ['PadWalker'] }
+   qw(
+	 Chj::Repl
+	 Chj::Repl::StackPlus
+	 Chj::Serialize
+	 Chj::Trapl
+	 Chj::WithRepl
+    ),
   );
 
 
