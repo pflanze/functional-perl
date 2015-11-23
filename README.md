@@ -49,15 +49,20 @@ This is an example of the kind of code we want to make possible:
 See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
 complete script, and the [examples](examples/README.md) page for more.
 
-Note that the above example merely shows the use of (lazy)
-sequences. But functional programming is the paradigm that was used to
-implement them. The example actually isn't strictly purely functional,
-as it reads from and writes to files, which makes it carry out, or be
-exposed to, side effects; see
-[[howto#Pure_functions_versus_I/O_and_other_side-effects]] for a
-discussion about this.
+The above example shows the use of functions as "template system", and
+lazy sequences. They are also internally implemented using the
+functional paradigm.
 
-If you'd just like to see a practical introduction, read the
+Note that the example assumes that steps have been taken so that the
+CSV file doesn't change until the serialization step has completed,
+otherwise functional purity is broken; functional-perl, like in most
+functional languages (Scheme, Clojure, lazy streams on Perl 6, ..)
+that don't take type guarantees to the extreme (e.g. Haskell), the
+responsibility to ensure this assumption is left to the programmer
+(see [[howto#Pure_functions_versus_I/O_and_other_side-effects]] for
+more details about this).
+
+If you'd like to see a practical step-by-step introduction, read the
 [[intro]].
 
 
