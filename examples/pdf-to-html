@@ -27,21 +27,24 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
+my $verbose=0;
+my $opt_single;
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
+	   "single-page"=> \$opt_single,
 	   ) or exit 1;
 usage unless @ARGV==2;
 
 my ($infile,$outdir)= @ARGV;
 
 use FP::IOStream qw(xopendir_pathstream);
+use FP::List qw(list cons);
 use FP::Stream qw(Keep);
 use Chj::xperlfunc qw(xstat xxsystem xunlink basename dirname);
 use FP::Combinators qw(compose_scalar);
 use FP::Ops qw(the_method number_cmp);
 use PXML::XHTML ':all';
-use PXML::Serialize; # for the `htmlfile` method
+use PXML::Serialize qw(puthtmlfile);
 use FP::Array_sort qw(on);
 use Chj::xIOUtil qw(xputfile_utf8);
 
@@ -67,7 +70,7 @@ fun regex_substitute ($re,$sub) {
 }
 
 sub note {
-    print STDERR "$myname: ",@_,"\n";
+    print STDERR "$myname: note: ",@_,"\n";
 }
 
 fun css_link ($src) {
@@ -117,12 +120,28 @@ fun svgpaths ($dir) {
     xopendir_pathstream ($dir)
       ->filter (regex_match $svgpath_re)
 	->sort(on *svgpath_to_pageno, *number_cmp)
+	  # XX: HACK: since our libraries are not consistent enough
+	  # (there's no "cons" method on PureArray, also, when to do
+	  # lazy? Ok just prefix stream_ then? Also missing), we do:
+	  ->stream
 }
 
 
+# ------------------------------------------------------------------
 # file conversion
 
-fun possibly_pdf2svg ($infile,$outdir) {
+fun possibly_symlink ($old,$new) {
+    symlink $old, $new
+      or note "could not add symlink at $outdir/index.html: $!";
+}
+
+# wrapper just because Perl's core ops can't be passed by *
+fun possibly_unlink ($path) {
+    unlink $path
+}
+
+# convert pdf to svg unless already done
+fun possibly_do_pdf2svg ($infile,$outdir) {
     my $outfiles= svgpaths($outdir);
     my $t_in= sub{ xstat($infile)->mtime };
     my $t_oldest= sub {
@@ -138,56 +157,116 @@ fun possibly_pdf2svg ($infile,$outdir) {
     }
 }
 
-fun generate_html ($title, $outdir) {
-    my $svgpaths= svgpaths($outdir);
 
-    my $nav= fun ($for_svgpath) {
-	UL({class=> "menu"},
-	   Keep($svgpaths)->map_with_islast
-	   (fun ($is_last, $svgpath) {
-	       my $pageno= svgpath_to_pageno($svgpath);
+fun navigation_html ($svgpaths, $for_svgpath, $opt_single) {
 
-	       LI({class=> ($is_last ? "menu_last" : "menu")},
-		  ($svgpath eq $for_svgpath ?
-		   SPAN({class=> "menu_selected"}, $pageno)
-		   : A({href=> basename svgpath_to_htmlpath ($svgpath)},
-		       $pageno)))
-	   }))
+    my $ul=
+      UL({class=> "menu"},
+	 $svgpaths->map_with_islast
+	 (fun ($is_last, $svgpath) {
+	     my $pageno= svgpath_to_pageno($svgpath);
+
+	     my $href= $opt_single ? "#p$pageno" :
+	       basename svgpath_to_htmlpath ($svgpath);
+
+	     LI({class=> ($is_last ? "menu_last" : "menu")},
+		($svgpath eq $for_svgpath ?
+		 SPAN({class=> "menu_selected"}, $pageno)
+		 : A({href=> $href},
+		     $pageno)))
+	 }));
+
+    $opt_single ?
+      A({name=> "p".svgpath_to_pageno($for_svgpath)},
+	$ul)
+      : $ul
+}
+
+
+# pure function that returns the actions to be taken (this allows us
+# to inspect them before their execution, for debugging or testing):
+
+fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
+    # Will need to protect $svgpaths with `Keep` here since we're
+    # using it multiple times
+
+    # the html fragment for one page from the pdf
+    my $page_htmlfragment= fun ($for_svgpath) {
+	# sub needed to work around destruction of document by
+	# weakening done in serializer (ugly, really replace all
+	# weakening and Keep stuff with a fixed perl?)
+	my $TR_TD_nav=
+	  sub { TR
+		  TD {align=> "center"},
+		    navigation_html($svgpaths, $for_svgpath, $opt_single) };
+	[
+	 &$TR_TD_nav,
+	 TR(TD(IMG +{src=> basename($for_svgpath),
+		     width=> "100%"})),
+	 $opt_single ? () : &$TR_TD_nav
+	]
     };
 
-    Keep($svgpaths)->for_each
-      (fun ($svgpath) {
-	  my $TR_TD_nav= sub { TR TD {align=> "center"}, &$nav($svgpath) };
+    my $html= fun ($title, $body) {
+	HTML({lang=>'en'}, # XX should not assume 'en' (use HTML5)
+	     HEAD (TITLE ($title),
+		   css_link($css_src)),
+	     BODY (TABLE({width=> "100%",
+			  border=> 0},
+			 $body)))
+    };
 
-	  HTML({lang=>'en'}, # well
-	       HEAD (TITLE ("$title - page ".svgpath_to_pageno($svgpath)),
-		     css_link($css_src)),
-	       BODY (TABLE({width=> "100%",
-			    border=> 0},
-			   &$TR_TD_nav,
-			   TR(TD(IMG +{src=> basename($svgpath),
-				       width=> "100%"})),
-			   &$TR_TD_nav)))
+    cons([ *xputfile_utf8, "$outdir/$css_src", $css_code ],
 
-	    ->htmlfile(svgpath_to_htmlpath($svgpath));
-      });
-
-    symlink basename(svgpath_to_htmlpath($svgpaths->first)),
-      "$outdir/index.html"
-	or note "could not add symlink at $outdir/index.html: $!";
-
-    xputfile_utf8 "$outdir/$css_src", $css_code;
+	 $opt_single ?
+	 # all PDF pages in a single HTML page
+	 list([*possibly_unlink,
+	       "$outdir/index.html"],
+	      [
+	       *puthtmlfile,
+	       "$outdir/index.html",
+	       &$html($title,
+		      Keep($svgpaths)->map($page_htmlfragment)->join(TR TD HR))
+	      ])
+	 :
+	 # one HTML page per PDF page
+	 cons([
+	       *possibly_symlink,
+	       basename(svgpath_to_htmlpath($svgpaths->first)),
+	       "$outdir/index.html"
+	      ],
+	      Keep($svgpaths)->map
+	      (fun ($svgpath) {
+		  [
+		   *puthtmlfile,
+		   svgpath_to_htmlpath($svgpath),
+		   &$html("$title - page ".svgpath_to_pageno($svgpath),
+			  &$page_htmlfragment($svgpath)),
+		  ]
+	      })))
 }
 
-fun pdf_to_html ($infile,$outdir) {
+
+fun svgpaths_to_html_actions () {
+    _svgpaths_to_html_actions(svgpaths($outdir),
+			      basename($infile),
+			      $outdir)
+}
+
+fun pdf_to_html () {
     mkdir $outdir;
 
-    possibly_pdf2svg ($infile,$outdir)
+    possibly_do_pdf2svg ($infile,$outdir)
       or note "svg files are up to date";
 
-    generate_html (basename($infile), $outdir);
+    svgpaths_to_html_actions->for_each
+      (fun ($action) {
+	  my ($proc, @args)= @$action;
+	  &$proc(@args)
+      });
 }
 
 
-$ENV{DEBUG} ? Chj::repl() : pdf_to_html ($infile,$outdir);
+
+$ENV{DEBUG} ? Chj::repl() : pdf_to_html ();
 
