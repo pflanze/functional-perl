@@ -191,7 +191,7 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
     # using it multiple times
 
     # the html fragment for one page from the pdf
-    my $page_htmlfragment= fun ($for_svgpath) {
+    my $page_htmlfragment= fun ($is_last, $for_svgpath) {
 	# sub needed to work around destruction of document by
 	# weakening done in serializer (ugly, really replace all
 	# weakening and Keep stuff with a fixed perl?)
@@ -203,7 +203,7 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 	 &$TR_TD_nav,
 	 TR(TD(IMG +{src=> basename($for_svgpath),
 		     width=> "100%"})),
-	 $opt_single ? () : &$TR_TD_nav
+	 $opt_single ? ($is_last ? (TR TD HR) : ()) : &$TR_TD_nav
 	]
     };
 
@@ -226,7 +226,7 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 	       *puthtmlfile,
 	       "$outdir/index.html",
 	       &$html($title,
-		      Keep($svgpaths)->map($page_htmlfragment)->join(TR TD HR))
+		      Keep($svgpaths)->map_with_islast($page_htmlfragment))
 	      ])
 	 :
 	 # one HTML page per PDF page
@@ -241,7 +241,7 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 		   *puthtmlfile,
 		   svgpath_to_htmlpath($svgpath),
 		   &$html("$title - page ".svgpath_to_pageno($svgpath),
-			  &$page_htmlfragment($svgpath)),
+			  &$page_htmlfragment(0, $svgpath)),
 		  ]
 	      })))
 }
