@@ -55,7 +55,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use FP::List ":all";
 use FP::Ops qw(the_method);
 use FP::Array qw(array_first);
-
+use FP::Stream qw(:all);
 
 TEST {
     list(list(3), list(4,5), list(6))->flatten
@@ -79,6 +79,16 @@ TEST { [list([3, "a"],
 	     [5, "c"],
 	     [-1, "d"])->minmax(*array_first)] }
   [[-1, "d"], [5, "c"]];
+
+
+TEST { F list(qw())->join("-") }
+  null;
+TEST { F list(qw(a))->join("-") }
+  list('a');
+TEST { F list(qw(a b))->join("-") }
+  list('a', '-', 'b');
+TEST { F list(qw(a b c))->join("-") }
+  list('a', '-', 'b', '-', 'c');
 
 
 1

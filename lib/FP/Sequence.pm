@@ -62,6 +62,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use base 'FP::Pure';
 require FP::List; # "use"ing it would create a circular dependency
 use FP::Array_sort qw(on_maybe);
+use FP::Lazy;
 
 use Chj::NamespaceCleanAbove;
 
@@ -79,6 +80,33 @@ sub flatten {
        },
        @_==2 ? $perhaps_tail : FP::List::null());
 }
+
+# XXX and on top of that, these return a lazy result even if the input
+# isn't; related to the above issue. Find solution for both.
+
+# unlike strings_join which returns a single string, this builds a new
+# sequence with the given value between all elements of the original
+# sequence
+
+# (XX only works computationally efficient for *some* sequences;
+# introduce an FP::IterativeSequence or so and move it there?)
+sub join {
+    @_==2 or die "wrong number of arguments";
+    my ($self, $value)=@_;
+    # (should we recurse locally like most sequence functions? Or is
+    # it actually a good idea to call the method on the rest (for
+    # improper_listS, but once we introduce a `cons` method on
+    # PureArray etc. that won't happen anymore?)?)
+    lazy {
+	$self->is_null ? $self :
+	  do {
+	      my ($v,$rest)= $self->first_and_rest;
+	      $rest->is_null ? $self
+		: FP::List::cons ($v, FP::List::cons ($value, $rest->join($value)))
+	  }
+    }
+}
+
 
 
 # XX better name?
