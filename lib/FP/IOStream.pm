@@ -13,11 +13,11 @@ FP::IOStream
 
 =head1 SYNOPSIS
 
- use FP::IOStream ':all'; # xopendir_stream, xdirectory_paths
+ use FP::IOStream ':all'; # xdirectory_items, xdirectory_paths
  use FP::Stream; # stream_map
  use FP::List ':all'; # first
  my $paths= stream_map sub { my ($item)= @_; "$base/$item" },
-                       xopendir_stream $base;
+                       xdirectory_items $base;
  # which is the same as: my $paths= xdirectory_paths $base;
  my $firstpath= first $paths;
  # ...
@@ -39,7 +39,7 @@ package FP::IOStream;
 @EXPORT_OK=qw(fh_to_stream
 	      perhaps_opendir_stream
 	      perhaps_opendir_pathstream
-	      xopendir_stream
+	      xdirectory_items
 	      xdirectory_paths
 	      xfile_lines
 	      fh_to_lines
@@ -111,12 +111,12 @@ sub perhaps_opendir_pathstream ($;$) {
     }
 }
 
-sub xopendir_stream ($;$) {
+sub xdirectory_items ($;$) {
     my ($path,$maybe_cmp)=@_;
     if (my ($s)= perhaps_opendir_stream ($path, $maybe_cmp)) {
 	$s
     } else {
-	croak "xopendir_stream(".singlequote_many(@_)."): $!";
+	croak "xdirectory_items(".singlequote_many(@_)."): $!";
     }
 }
 
