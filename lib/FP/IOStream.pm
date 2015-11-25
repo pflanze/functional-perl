@@ -13,12 +13,12 @@ FP::IOStream
 
 =head1 SYNOPSIS
 
- use FP::IOStream ':all'; # xopendir_stream, xopendir_pathstream
+ use FP::IOStream ':all'; # xopendir_stream, xdirectory_paths
  use FP::Stream; # stream_map
  use FP::List ':all'; # first
  my $paths= stream_map sub { my ($item)= @_; "$base/$item" },
                        xopendir_stream $base;
- # which is the same as: my $paths= xopendir_pathstream $base;
+ # which is the same as: my $paths= xdirectory_paths $base;
  my $firstpath= first $paths;
  # ...
 
@@ -40,7 +40,7 @@ package FP::IOStream;
 	      perhaps_opendir_stream
 	      perhaps_opendir_pathstream
 	      xopendir_stream
-	      xopendir_pathstream
+	      xdirectory_paths
 	      xfile_lines
 	      fh_to_lines
 	      fh_to_chunks
@@ -120,12 +120,12 @@ sub xopendir_stream ($;$) {
     }
 }
 
-sub xopendir_pathstream ($;$) {
+sub xdirectory_paths ($;$) {
     my ($path,$maybe_cmp)=@_;
     if (my ($s)= perhaps_opendir_pathstream ($path, $maybe_cmp)) {
 	$s
     } else {
-	croak "xopendir_pathstream(".singlequote_many(@_)."): $!";
+	croak "xdirectory_paths(".singlequote_many(@_)."): $!";
     }
 }
 

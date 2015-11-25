@@ -37,7 +37,7 @@ usage unless @ARGV==2;
 
 my ($infile,$outdir)= @ARGV;
 
-use FP::IOStream qw(xopendir_pathstream);
+use FP::IOStream qw(xdirectory_paths);
 use FP::List qw(list cons);
 use FP::Stream qw(Keep);
 use Chj::xperlfunc qw(xstat xxsystem xunlink basename dirname);
@@ -117,7 +117,7 @@ li.menu_last {
 
 
 fun svgpaths ($dir) {
-    xopendir_pathstream ($dir)
+    xdirectory_paths ($dir)
       ->filter (regex_match $svgpath_re)
 	->sort(on *svgpath_to_pageno, *number_cmp)
 	  # XX: HACK: since our libraries are not consistent enough
