@@ -52,7 +52,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use FP::Lazy;
 use Chj::xopendir qw(perhaps_opendir);
 use FP::List ':all';
-use FP::Stream 'stream_map', 'array_to_stream', 'Weakened';
+use FP::Stream 'stream_map', 'Weakened';
+use FP::PureArray qw(unsafe_array_to_purearray);
 use FP::Array_sort;
 use FP::Ops 'the_method';
 use Carp;
@@ -83,7 +84,7 @@ sub _perhaps_opendir_stream_sorted ($$) {
     if (my ($d)= perhaps_opendir $path) {
 	my $items= array_sort [$d->xnread], $cmp;
 	$d->xclose;
-	array_to_stream $items
+	unsafe_array_to_purearray $items
     } else {
 	()
     }
