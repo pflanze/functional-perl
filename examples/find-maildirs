@@ -35,7 +35,7 @@ usage unless @ARGV==1;
 
 my ($rootdir)=@ARGV;
 
-use FP::IOStream qw(perhaps_opendir_pathstream);
+use FP::IOStream qw(perhaps_directory_paths);
 use FP::Stream qw(stream_fold_right);
 use FP::List qw(list cons null);
 use Chj::xperlfunc qw(xlstat xprintln);
@@ -119,7 +119,7 @@ fun find_below ($path, $pred) {
 
 	   fun ($fold_path, $fold_dirpath,
 		$path, $rest) {
-	       if (my ($s)= perhaps_opendir_pathstream ($path)) {
+	       if (my ($s)= perhaps_directory_paths ($path)) {
 		   stream_fold_right ($fold_path, $rest, $s)
 	       } else {
 		   cons (find_maildirs::Failure->new($path, "$!"), $rest)
