@@ -25,7 +25,11 @@ FP::List - singly linked (purely functional) lists
 
  # etc.
 
- # currently work like lisp pairs, no enforcement of sequences:
+ # The `cons` function checks whether its second argument is an object
+ # with a `cons` method, if so, it invokes it, otherwise it creates an
+ # FP::List::Pair object holding both values (there's also a `pair`
+ # function that doesn't check for a method and always directly
+ # creates the pair)
  cons ("a","b")->rest # "b"
  cons ("a","b")->cdr  # "b"
  list (5,6,7)->caddr # 7
@@ -61,7 +65,7 @@ package FP::List;
 	   car cdr first rest
 	   car_and_cdr first_and_rest perhaps_first_and_rest
 	   list);
-@EXPORT_OK=qw(improper_list
+@EXPORT_OK=qw(pair improper_list
 	      is_pair_noforce is_null_noforce
 	      unsafe_cons unsafe_car unsafe_cdr
 	      string_to_list list_length list_reverse list_reverse_with_tail
@@ -253,6 +257,11 @@ sub cons ($$) {
     } else {
 	bless [@_], "FP::List::Pair";
     }
+}
+
+sub pair ($$) {
+    @_==2 or die "wrong number of arguments";
+    bless [@_], "FP::List::Pair";
 }
 
 
