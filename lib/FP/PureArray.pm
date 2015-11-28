@@ -157,6 +157,8 @@ sub is_null {
 # should be named `is_empty`?
 
 
+*cons= flip \&FP::List::pair;
+*rest= blessing \&array_rest;
 *fst= \&array_fst;
 *first= \&array_fst;
 *snd= \&array_snd;
@@ -187,7 +189,6 @@ sub is_null {
 *every= flip \&array_every;
 *any= flip \&array_any;
 *sum= \&array_sum;
-*rest= blessing \&array_rest;
 *hash_group_by= \&array_to_hash_group_by;
 
 *sort= blessing \&array_sort;

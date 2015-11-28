@@ -91,4 +91,31 @@ TEST { F list(qw(a b c))->join("-") }
   list('a', '-', 'b', '-', 'c');
 
 
+sub is_pair_purearray ($) {
+    my ($v)=@_;
+    [ is_pair $v, is_purearray $v ]
+}
+
+# consing onto a purearray just builds an improper list:
+my $a;
+TEST { $a= cons 0, purearray (1,2,3);
+       is_pair_purearray($a) }
+  [1, ''];
+TEST { is_pair_purearray($a->rest) }
+  ['', 1];
+
+# but purearrays also have a cons method that does the same:
+my $b;
+TEST { $b= purearray (4,5)->cons(3);
+       is_pair_purearray ($b) }
+  [1, '' ];
+TEST { is_pair_purearray($b->rest) }
+  ['', 1 ];
+
+# XX oh, what about the length? Etc.
+#TEST { $a->length }
+#  4;
+#TEST { $b->ref(2) }
+#  5;
+
 1
