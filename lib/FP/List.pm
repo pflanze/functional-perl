@@ -420,11 +420,10 @@ TEST { require FP::Lazy;
 TEST { is_list cons 1, FP::Lazy::lazy { cons 2, 3 } } '';
 
 
-use Chj::TerseDumper;
 use Carp;
 sub not_a_pair ($) {
     my ($v)= @_;
-    croak "not a pair: ".TerseDumper($v);
+    croak "not a pair: ".show($v);
 }
 
 sub car ($) {
@@ -460,8 +459,8 @@ sub cdr ($) {
 TEST { is_pair cons(2,3) } 1;
 TEST { is_pair "FP::List::Pair" } '';
 TEST { car cons(2,3) } 2;
-TEST_EXCEPTION { car "FP::List::Pair" } "not a pair: 'FP::List::Pair'\n";  #why the \n?
-TEST_EXCEPTION { cdr "FP::List::Pair" } "not a pair: 'FP::List::Pair'\n";  #why the \n?
+TEST_EXCEPTION { car "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
+TEST_EXCEPTION { cdr "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
 
 
 sub rest ($); *rest= *cdr;
@@ -529,7 +528,7 @@ TEST { [ null->perhaps_first_and_rest ] } [];
 TEST { [ perhaps_first_and_rest cons(1,2) ] } [1,2];
 TEST { [ perhaps_first_and_rest null ] } [];
 TEST_EXCEPTION { [ perhaps_first_and_rest "FP::List::Null" ] }
-  "not a pair: 'FP::List::Null'\n"; # and XX actually not a null either.
+  "not a pair: 'FP::List::Null'"; # and XX actually not a null either.
 
 
 sub list_perhaps_one ($) {
