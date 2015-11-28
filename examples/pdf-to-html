@@ -120,10 +120,6 @@ fun svgpaths ($dir) {
     xdirectory_paths ($dir)
       ->filter (regex_match $svgpath_re)
 	->sort(on *svgpath_to_pageno, *number_cmp)
-	  # XX: HACK: since our libraries are not consistent enough
-	  # (there's no "cons" method on PureArray, also, when to do
-	  # lazy? Ok just prefix stream_ then? Also missing), we do:
-	  ->stream
 }
 
 
@@ -187,8 +183,8 @@ fun navigation_html ($svgpaths, $for_svgpath, $opt_single) {
 # to inspect them before their execution, for debugging or testing):
 
 fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
-    # Will need to protect $svgpaths with `Keep` here since we're
-    # using it multiple times
+    # (No need to protect $svgpaths with `Keep` here since it's a
+    # purearray because of the sorting)
 
     # the html fragment for one page from the pdf
     my $page_htmlfragment= fun ($is_last, $for_svgpath) {
@@ -226,7 +222,7 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 	       *puthtmlfile,
 	       "$outdir/index.html",
 	       &$html($title,
-		      Keep($svgpaths)->map_with_islast($page_htmlfragment))
+		      $svgpaths->map_with_islast($page_htmlfragment))
 	      ])
 	 :
 	 # one HTML page per PDF page
@@ -235,7 +231,7 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 	       basename(svgpath_to_htmlpath($svgpaths->first)),
 	       "$outdir/index.html"
 	      ],
-	      Keep($svgpaths)->map
+	      $svgpaths->map
 	      (fun ($svgpath) {
 		  [
 		   *puthtmlfile,
