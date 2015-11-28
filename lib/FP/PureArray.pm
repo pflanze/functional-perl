@@ -166,6 +166,10 @@ sub is_null {
 *ref= \&array_ref;
 *FP_Sequence_ref=*ref;
 *length= \&array_length;
+sub FP_Sequence_length {
+    my ($self,$prefixlen)=@_;
+    $prefixlen + $self->length
+}
 *set= blessing \&array_set;
 *update= blessing \&array_update;
 *push= blessing \&array_push;

@@ -113,8 +113,8 @@ TEST { is_pair_purearray($b->rest) }
   ['', 1 ];
 
 # improper-list-but-sequence ops:
-#TEST { $a->length }
-#  4;
+TEST { $a->length }
+  4;
 TEST { $b->ref(2) }
   5;
 

@@ -711,15 +711,30 @@ TEST { list_of (\&is_natural) -> (list 1,2," 3") } 0;
 TEST { list_of (\&is_natural) -> (1) } 0;
 
 
-sub list_length ($) {
-    my ($l)=@_;
-    my $len=0;
-    while (!is_null $l) {
-	$len++;
-	$l= cdr $l;
+sub make_length {
+    my ($is_stream)=@_;
+    my $liststream= $is_stream ? "stream" : "list";
+    sub ($) {
+	my ($l)=@_;
+	weaken $_[0] if $is_stream;
+	my $len=0;
+	$l= force $l;
+	while (!is_null $l) {
+	    if (is_pair $l) {
+		$len++;
+		$l= force unsafe_cdr $l;
+	    } elsif (my $m= UNIVERSAL::can($l,"FP_Sequence_length")) {
+		@_=($l,$len); goto $m
+	    } else {
+		die "improper $liststream"
+	    }
+	}
+	$len
     }
-    $len
 }
+
+sub list_length ($);
+*list_length= make_length(0);
 
 *FP::List::Pair::length= *list_length;
 # method on Pair not List, since we defined a length method for Null

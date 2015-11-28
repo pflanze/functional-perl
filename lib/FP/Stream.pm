@@ -197,17 +197,8 @@ TEST { stream_step_range (-1, 3, 1)->array }
   [3, 2, 1];
 
 
-sub stream_length ($) {
-    my ($l)=@_;
-    weaken $_[0];
-    my $len=0;
-    $l= force $l;
-    while (!is_null $l) {
-	$len++;
-	$l= force cdr $l;
-    }
-    $len
-}
+sub stream_length ($);
+*stream_length= FP::List::make_length(0);
 
 *FP::List::List::stream_length= *stream_length;
 
