@@ -553,7 +553,7 @@ TEST{ [ list ()->perhaps_one ] } [];
 
 sub list_xone ($) {
     my ($s)=@_;
-    FORCE $s; # make work for stre
+    FORCE $s; # make work for streams
     if (is_pair ($s)) {
 	my ($a,$r)= first_and_rest $s;
 	if (is_null $r) {
