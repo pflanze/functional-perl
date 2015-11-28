@@ -682,30 +682,10 @@ sub stream_drop_while ($ $) {
 *FP::List::List::stream_drop_while= flip *stream_drop_while;
 
 
-sub stream_ref ($ $) {
-    my ($s, $i)=@_;
-    weaken $_[0];
-    is_natural0 $i or die "invalid index: ".show($i);
-    my $orig_i= $i;
-  LP: {
-	$s= force $s;
-	if (is_pair $s) {
-	    if ($i <= 0) {
-		unsafe_car $s
-	    } else {
-		$s= unsafe_cdr $s;
-		$i--;
-		redo LP;
-	    }
-	} else {
-	    die (is_null $s ?
-		 "requested element $orig_i of stream of length ".($orig_i-$i)
-		 : "improper stream")
-	}
-    }
-}
-
+sub stream_ref ($$);
+*stream_ref= FP::List::make_ref (1);
 *FP::List::List::stream_ref= *stream_ref;
+
 
 sub exn (&) {
     my ($thunk)=@_;

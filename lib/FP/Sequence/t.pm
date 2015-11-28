@@ -112,10 +112,10 @@ TEST { $b= purearray (4,5)->cons(3);
 TEST { is_pair_purearray($b->rest) }
   ['', 1 ];
 
-# XX oh, what about the length? Etc.
+# improper-list-but-sequence ops:
 #TEST { $a->length }
 #  4;
-#TEST { $b->ref(2) }
-#  5;
+TEST { $b->ref(2) }
+  5;
 
 1

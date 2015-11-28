@@ -164,6 +164,7 @@ sub is_null {
 *snd= \&array_snd;
 *second= \&array_second;
 *ref= \&array_ref;
+*FP_Sequence_ref=*ref;
 *length= \&array_length;
 *set= blessing \&array_set;
 *update= blessing \&array_update;

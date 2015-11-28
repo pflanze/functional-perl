@@ -116,6 +116,8 @@ use Chj::TEST;
 use FP::Predicates qw(is_natural0 either is_natural complement is_even is_zero);
 use FP::Div qw(inc dec);
 use FP::Show;
+use Scalar::Util "weaken";
+
 
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
 #(Chj::xIOUtil triggers it)
@@ -574,29 +576,37 @@ TEST_EXCEPTION{ [ list ()->xone ] } "expected 1 value, got none";
 
 
 
-# XX adapted copy from Stream.pm
-sub list_ref ($ $) {
-    my ($s, $i)=@_;
-    is_natural0 $i or die "invalid index: ".show($i);
-    my $orig_i= $i;
-  LP: {
-	$s= force $s;
-	if (is_pair $s) {
-	    if ($i <= 0) {
-		unsafe_car $s
+sub make_ref {
+    my ($is_stream)=@_;
+    my $liststream= $is_stream ? "stream" : "list";
+    sub ($ $) {
+	my ($s, $i)=@_;
+	weaken $_[0] if $is_stream;
+	is_natural0 $i or die "invalid index: ".show($i);
+	my $orig_i= $i;
+      LP: {
+	    $s= force $s;
+	    if (is_pair $s) {
+		if ($i <= 0) {
+		    unsafe_car $s
+		} else {
+		    $s= unsafe_cdr $s;
+		    $i--;
+		    redo LP;
+		}
+	    } elsif (is_null $s) {
+		die "requested element $orig_i of $liststream of length ".($orig_i-$i)
+	    } elsif (my $m= UNIVERSAL::can($s,"FP_Sequence_ref")) {
+		@_=($s,$i); goto $m
 	    } else {
-		$s= unsafe_cdr $s;
-		$i--;
-		redo LP;
+		die "improper $liststream"
 	    }
-	} else {
-	    die (is_null $s ?
-		 "requested element $orig_i of list of length ".($orig_i-$i)
-		 : "improper list")
 	}
     }
 }
 
+sub list_ref ($$);
+*list_ref= make_ref (0);
 *FP::List::List::ref= *list_ref;
 
 
@@ -639,8 +649,6 @@ sub circularlist {
 
 # And the result of this function will open up (interrupt the cycle)
 # as soon as you let go of the front element.
-
-use Scalar::Util "weaken";
 
 sub weaklycircularlist {
     my $l= list (@_);
