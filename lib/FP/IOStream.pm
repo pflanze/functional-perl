@@ -37,7 +37,7 @@ package FP::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(fh_to_stream
-	      perhaps_opendir_stream
+	      perhaps_directory_items
 	      perhaps_opendir_pathstream
 	      xdirectory_items
 	      xdirectory_paths
@@ -90,7 +90,7 @@ sub _perhaps_opendir_stream_sorted ($$) {
     }
 }
 
-sub perhaps_opendir_stream ($;$) {
+sub perhaps_directory_items ($;$) {
     my ($path,$maybe_cmp)=@_;
     if ($maybe_cmp) {
 	_perhaps_opendir_stream_sorted $path,$maybe_cmp;
@@ -102,7 +102,7 @@ sub perhaps_opendir_stream ($;$) {
 sub perhaps_opendir_pathstream ($;$) {
     my ($base,$maybe_cmp)=@_;
     $base.= "/" unless $base=~ /\/\z/;
-    if (my ($s)= perhaps_opendir_stream $base,$maybe_cmp) {
+    if (my ($s)= perhaps_directory_items $base,$maybe_cmp) {
 	stream_map sub {
 	    my ($item)= @_;
 	    "$base$item"
@@ -114,7 +114,7 @@ sub perhaps_opendir_pathstream ($;$) {
 
 sub xdirectory_items ($;$) {
     my ($path,$maybe_cmp)=@_;
-    if (my ($s)= perhaps_opendir_stream ($path, $maybe_cmp)) {
+    if (my ($s)= perhaps_directory_items ($path, $maybe_cmp)) {
 	$s
     } else {
 	croak "xdirectory_items(".singlequote_many(@_)."): $!";
