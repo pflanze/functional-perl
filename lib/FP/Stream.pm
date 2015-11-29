@@ -551,18 +551,8 @@ TEST { stream (1,2,3)->strings_join("-") }
   "1-2-3";
 
 
-sub stream_for_each ($ $ ) {
-    my ($proc, $s)=@_;
-    weaken $_[1];
-  LP: {
-	$s= force $s;
-	if (!is_null $s) {
-	    &$proc(car $s);
-	    $s= cdr $s;
-	    redo LP;
-	}
-    }
-}
+sub stream_for_each ($ $ );
+*stream_for_each= FP::List::make_for_each(1);
 
 *FP::List::List::stream_for_each= flip *stream_for_each;
 

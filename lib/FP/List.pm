@@ -855,19 +855,31 @@ TEST { [ list(3,4,5)->reverse_values ] }
   [5,4,3];
 
 
-# (modified copy from FP::Stream, as always.. (todo))
-sub list_for_each ($ $ ) {
-    my ($proc, $s)=@_;
-  LP: {
-	$s= force $s; # still leave that in for the case of
-                      # heterogenous lazyness?
-	if (!is_null $s) {
-	    &$proc(car $s);
-	    $s= cdr $s;
-	    redo LP;
+sub make_for_each {
+    my ($is_stream)=@_;
+    my $liststream= $is_stream ? "stream" : "list";
+    sub ($ $ ) {
+	my ($proc, $s)=@_;
+	weaken $_[1] if $is_stream;
+      LP: {
+	    $s= force $s;
+	    if (is_pair $s) {
+		&$proc(car $s);
+		$s= cdr $s;
+		redo LP;
+	    } elsif (is_null $s) {
+		# drop out
+	    } elsif (my $m= UNIVERSAL::can($s,"for_each")) {
+		@_=($s,$proc); goto $m
+	    } else {
+		die "improper $liststream"
+	    }
 	}
     }
 }
+
+sub list_for_each ($ $ );
+*list_for_each= make_for_each(1);
 
 *FP::List::List::for_each= flip \&list_for_each;
 
