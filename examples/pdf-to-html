@@ -18,10 +18,13 @@ use lib "$mydir/../lib";
 
 
 sub usage {
-    print "usage: $myname file.pdf outdir
+    print "usage: $myname file.pdf [file2.pdf ..]
 
    Convert a pdf file to SVG images (by way of `pdf2svg`) and a set of
    html pages embedding them.
+
+   Options:
+    --outdir   default: file path with .pdf suffix stripped
 ";
     exit 1;
 }
@@ -29,13 +32,13 @@ sub usage {
 use Getopt::Long;
 my $verbose=0;
 my $opt_single;
+my $opt_outdir;
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
 	   "single-page"=> \$opt_single,
-	   ) or exit 1;
-usage unless @ARGV==2;
-
-my ($infile,$outdir)= @ARGV;
+	   "outdir=s"=> \$opt_outdir,
+	  ) or exit 1;
+usage unless @ARGV;
 
 use FP::IOStream qw(xdirectory_paths);
 use FP::List qw(list cons);
@@ -122,7 +125,7 @@ fun svgpaths ($dir) {
 
 fun possibly_symlink ($old,$new) {
     symlink $old, $new
-      or note "could not add symlink at $outdir/index.html: $!";
+      or note "could not add symlink at '$new': $!";
 }
 
 # wrapper just because Perl's core ops can't be passed by *
@@ -237,19 +240,22 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 }
 
 
-fun svgpaths_to_html_actions () {
+fun svgpaths_to_html_actions ($infile,$outdir) {
     _svgpaths_to_html_actions(svgpaths($outdir),
 			      basename($infile),
 			      $outdir)
 }
 
-fun pdf_to_html () {
+fun pdf_to_html ($infile) {
+    my $outdir= $opt_outdir
+      // dirname ($infile) . "/" . basename ($infile, ".pdf");
+
     mkdir $outdir;
 
     possibly_do_pdf2svg ($infile,$outdir)
       or note "svg files are up to date";
 
-    svgpaths_to_html_actions->for_each
+    svgpaths_to_html_actions ($infile,$outdir)->for_each
       (fun ($action) {
 	  my ($proc, @args)= @$action;
 	  &$proc(@args)
@@ -258,5 +264,5 @@ fun pdf_to_html () {
 
 
 
-$ENV{DEBUG} ? Chj::repl() : pdf_to_html ();
+$ENV{DEBUG} ? Chj::repl() : do { pdf_to_html ($_) for @ARGV };
 
