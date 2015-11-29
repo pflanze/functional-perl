@@ -24,6 +24,8 @@ sub usage {
    html pages embedding them.
 
    Options:
+    --single   create a single html page with all pages (default: one
+               page per html file)
     --outdir   default: file path with .pdf suffix stripped
 ";
     exit 1;
