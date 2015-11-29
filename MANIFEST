@@ -60,6 +60,7 @@ htmlgen/htmlgen.css
 intro/basics
 intro/more_tailcalls
 intro/tailcalls
+lib/Chj/AutoTrapl.pm
 lib/Chj/Backtrace.pm
 lib/Chj/BinHexOctDec.pm
 lib/Chj/BuiltinTypePredicates.pm

@@ -47,13 +47,7 @@ use PXML::XHTML ':all';
 use PXML::Serialize qw(puthtmlfile);
 use FP::Array_sort qw(on);
 use Chj::xIOUtil qw(xputfile_utf8);
-
-if ($ENV{DEBUG}) {
-    require Chj::Trapl; # includes Chj::repl
-} else {
-    require Chj::Backtrace; import Chj::Backtrace;
-    # XX should Backtrace be activated by load, not import?
-}
+use Chj::AutoTrapl;
 
 
 fun regex_match ($re) {

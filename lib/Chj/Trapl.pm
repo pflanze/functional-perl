@@ -26,12 +26,14 @@ NOTE: the name is not set in stone yet, also, perhaps it should be
 
 =head1 SEE ALSO
 
-L<Chj::WithRepl>
+L<Chj::WithRepl>, L<Chj::AutoTrapl>
 
 =cut
 
 
 package Chj::Trapl;
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::WithRepl;
 
