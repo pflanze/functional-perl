@@ -190,8 +190,8 @@ sub _xlinkrename {
     my $toname= $1; $tobase.="/" if length $tobase;
     for(1..4) {
 	my $tmppath= "$tobase.$toname.".rand(10000);
-	if (link $from,$tmppath) {
-	    if (rename $tmppath,$to) {
+	if (link $from, $tmppath) {
+	    if (rename $tmppath, $to) {
 		return;
 	    } else {
 		croak "_xlinkrename: rename ".Chj::singlequote($tmppath).
@@ -275,7 +275,7 @@ sub xreplace_or_withmode {
 	}
     }
     $!= undef;
-    chmod $mode,$path
+    chmod $mode, $path
       or croak "xreplace_or_withmode: chmod ".
 	Chj::singlequote($path).": $!";
     $self->xrename($targetpath);
