@@ -212,6 +212,8 @@ sub _xlinkrename {
 }
 
 
+our $warn_all_failures= 1;
+
 sub xreplace_or_withmode {
     my $self=shift;
     my ($targetpath,$orwithmode)=@_;
@@ -233,14 +235,17 @@ sub xreplace_or_withmode {
 	} else {
 	    if ($uid != $euid) {
 		carp "xreplace_or_withmode: warning: cannot set owner of ".
-		  Chj::singlequote($path)." to $uid since we are not root";
+		  Chj::singlequote($path)." to $uid since we are not root"
+		      if $warn_all_failures;
 		$mode &= 0777; # see below
 	    }
 	    $!= undef;
 	    chown $euid,$gid, $path
 	      or do {
+		  # only a warning, ok?
 		  carp "xreplace_or_withmode: warning: could not set group of ".
-		    Chj::singlequote($path)." to $gid: $!"; # only a warning, ok?
+		    Chj::singlequote($path)." to $gid: $!"
+			if $warn_all_failures;
 		  $mode &= 0777; # mask off setuid and such stuff. correct?
 	      };
 	}
@@ -250,7 +255,8 @@ sub xreplace_or_withmode {
 	    _xlinkrename $targetpath, "$targetpath~"; # make configurable?
 	    1
 	} || do {
-	    warn "xreplace_or_withmode: warning: could not make backup file: $@";
+	    warn "xreplace_or_withmode: warning: could not make backup file: $@"
+	      if $warn_all_failures;
 	}
     } else {
 	if (defined $orwithmode) {
