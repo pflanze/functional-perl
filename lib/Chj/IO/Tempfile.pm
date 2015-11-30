@@ -188,7 +188,7 @@ sub _xlinkrename {
     my $tobase=$to; $tobase=~ s{/?([^/]+)\z}{}
       or croak "_xlinkrename: missing to parameter";
     my $toname= $1; $tobase.="/" if length $tobase;
-    for(1..4) {
+    for (1..10) {
 	my $tmppath= "$tobase.$toname.".rand(10000);
 	if (link $from, $tmppath) {
 	    if (rename $tmppath, $to) {
