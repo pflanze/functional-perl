@@ -246,7 +246,12 @@ sub xreplace_or_withmode {
 	}
 	# keep backup:
 	# we need it atomic, thus link. but a 'replacing link'.
-	_xlinkrename $targetpath, "$targetpath~"; # make configurable?
+	eval {
+	    _xlinkrename $targetpath, "$targetpath~"; # make configurable?
+	    1
+	} || do {
+	    warn "xreplace_or_withmode: warning: could not make backup file: $@";
+	}
     } else {
 	if (defined $orwithmode) {
 	    if (ref $orwithmode) {
