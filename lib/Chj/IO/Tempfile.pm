@@ -29,6 +29,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Fcntl;
 use Carp;
 use POSIX qw(EEXIST EINTR ENOENT);
+use Chj::singlequote ();
 
 our $MAXTRIES=10;
 our $DEFAULT_AUTOCLEAN=1; # 0=never unlink automatically, 1= unlink on
@@ -91,8 +92,8 @@ sub xtmpfile {
 	    $self= $proto->xsysopen($path, O_EXCL|O_CREAT|O_RDWR,$mode);
 	    if ($autoclean==2) {
 		unlink $path
-		  or croak "xtmpfile: could not unlink '$path' that ".
-		    "we created moments ago ???: $!";
+		  or croak "xtmpfile: could not unlink ".Chj::singlequote($path).
+		    " that we created moments ago ???: $!";
 		undef $path;
 	    }
 	    $metadata{pack"I",$self}=[&$genpath(""),$autoclean];
@@ -104,12 +105,14 @@ sub xtmpfile {
 		    redo TRY;
 		} else {
 		    croak "xtmpfile: too many attempts to create a ".
-		      "tempfile, last attempt was '$last_path'";
+		      "tempfile, last attempt was ".
+			Chj::singlequote($last_path);
 		}
 	    } elsif ($Chj::IO::ERRNO== ENOENT and $mkdircb) {
 		if ($called_mkdircb) {
 		    croak "xtmpfile: got ENOENT but mkdir-callback has ".
-		      "already been called, for attempt '$last_path'";
+		      "already been called, for attempt ".
+			Chj::singlequote($last_path);
 		} else {
 		    #&$mkdircb;
 		    $mkdircb->(&$genpath(""));
@@ -118,7 +121,8 @@ sub xtmpfile {
 		}
 	    } else {
 		croak
-		  "xtmpfile: could not create tempfile at '$last_path': $@";
+		  "xtmpfile: could not create tempfile at ".
+		    Chj::singlequote($last_path).": $@";
 	    }
 	}
     }
@@ -190,18 +194,21 @@ sub _xlinkrename {
 	    if (rename $tmppath,$to) {
 		return;
 	    } else {
-		croak "_xlinkrename: rename $tmppath,$to: $!";
+		croak "_xlinkrename: rename ".Chj::singlequote($tmppath).
+		  ", ".Chj::singlequote($to).": $!";
 	    }
 	} else {
 	    if ($! == EEXIST) {
 		next;
 	    } else {
-		croak "_xlinkrename: link $from,$tmppath: $!";
+		croak "_xlinkrename: link ".Chj::singlequote($from).
+		  ", ".Chj::singlequote($tmppath).": $!";
 	    }
 	}
     }
-    croak "_xlinkrename: too many tries to make a link from '$from' ".
-      "to a random name around '$to': $!";
+    croak "_xlinkrename: too many tries to make a link from ".
+      Chj::singlequote($from)." to a random name around ".
+	  Chj::singlequote($to).": $!";
 }
 
 
@@ -216,22 +223,24 @@ sub xreplace_or_withmode {
     if (($uid,$gid,$mode)=(stat $targetpath)[4,5,2]) {
 	my $euid= (stat $path)[4]; # better than $> because of peculiarities
 	defined $euid
-	  or croak "xreplace_or_withmode: ?? can't stat own file '$path': $!";
+	  or croak "xreplace_or_withmode: ?? can't stat own file ".
+	    Chj::singlequote($path).": $!";
 	if ($euid == 0) {
 	    $!= undef;
 	    chown $uid,$gid, $path
-	      or croak "xreplace_or_withmode: chown '$path': $!";
+	      or croak "xreplace_or_withmode: chown ".
+		Chj::singlequote($path).": $!";
 	} else {
 	    if ($uid != $euid) {
-		carp "xreplace_or_withmode: warning: cannot set owner ".
-		  "of '$path' to $uid since we are not root";
+		carp "xreplace_or_withmode: warning: cannot set owner of ".
+		  Chj::singlequote($path)." to $uid since we are not root";
 		$mode &= 0777; # see below
 	    }
 	    $!= undef;
 	    chown $euid,$gid, $path
 	      or do {
-		  carp "xreplace_or_withmode: warning: could not set group ".
-		    "of '$path' to $gid: $!"; # only a warning, ok?
+		  carp "xreplace_or_withmode: warning: could not set group of ".
+		    Chj::singlequote($path)." to $gid: $!"; # only a warning, ok?
 		  $mode &= 0777; # mask off setuid and such stuff. correct?
 	      };
 	}
@@ -246,7 +255,8 @@ sub xreplace_or_withmode {
 		if ($> == 0) {
 		    $!= undef;
 		    chown $orwithmode->uid, $orwithmode->gid, $path
-		      or croak "xreplace_or_withmode: chown '$path': $!";
+		      or croak "xreplace_or_withmode: chown ".
+			Chj::singlequote($path).": $!";
 		}
 	    } else {
 		if ($orwithmode=~ /^0/) {
@@ -260,12 +270,14 @@ sub xreplace_or_withmode {
 	    }
 	} else {
 	    croak "xreplace_or_withmode: error getting target permissions".
-	      " and no default mode given, stat '$targetpath': $!";
+	      " and no default mode given, stat ".
+		Chj::singlequote($targetpath).": $!";
 	}
     }
     $!= undef;
     chmod $mode,$path
-      or croak "xreplace_or_withmode: chmod '$path': $!";
+      or croak "xreplace_or_withmode: chmod ".
+	Chj::singlequote($path).": $!";
     $self->xrename($targetpath);
 }
 
