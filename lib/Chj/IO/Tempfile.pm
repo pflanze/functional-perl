@@ -206,7 +206,7 @@ sub _xlinkrename {
 	    }
 	}
     }
-    croak "_xlinkrename: too many tries to make a link from ".
+    croak "_xlinkrename: too many attempts to make a link from ".
       Chj::singlequote($from)." to a random name around ".
 	  Chj::singlequote($to).": $!";
 }
