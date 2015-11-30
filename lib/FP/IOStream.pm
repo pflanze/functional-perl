@@ -44,7 +44,10 @@ package FP::IOStream;
 	      xfile_lines
 	      fh_to_lines
 	      fh_to_chunks
-	      timestream);
+	      timestream
+	      xstream_print
+	      xstream_to_file
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -52,12 +55,21 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use FP::Lazy;
 use Chj::xopendir qw(perhaps_opendir);
 use FP::List ':all';
-use FP::Stream 'stream_map', 'Weakened';
+use FP::Stream qw(stream_map weaken Weakened);
 use FP::PureArray qw(unsafe_array_to_purearray);
 use FP::Array_sort;
 use FP::Ops 'the_method';
 use Carp;
 use Chj::singlequote ":all";
+use Chj::xopen qw(
+		     xopen_read
+		     xopen_write
+		     xopen_append
+		     xopen_update
+		     possibly_fh_to_fh
+		     glob_to_fh
+		);
+use Chj::xtmpfile qw(xtmpfile);
 
 sub _perhaps_opendir_stream ($) {
     my ($path)=@_;
@@ -150,14 +162,6 @@ sub fh_to_stream ($$$) {
 # And (all?, no, can't proxy 'xopen' for both in and out) some of the
 # Chj::xopen functions:
 
-use Chj::xopen qw(
-		     xopen_read
-		     xopen_write
-		     xopen_append
-		     xopen_update
-		     possibly_fh_to_fh
-		);
-
 sub make_open_stream {
     my ($open,$read,$maybe_close)=@_;
     my $close= $maybe_close // the_method ("xclose");
@@ -216,6 +220,29 @@ sub timestream (;$) {
 	}
     };
     Weakened ($lp)->();
+}
+
+
+sub xstream_print ($;$) {
+    @_==2 or @_==1 or die "wrong number of arguments";
+    my ($s,$maybe_fh)=@_;
+    my $fh= $maybe_fh // glob_to_fh *STDOUT;
+    weaken $_[0];
+    $s->for_each
+      (sub {
+	   print $fh $_[0]
+	     or die "xstream_print: writing to $fh: $!";
+       });
+}
+
+sub xstream_to_file ($$;$) {
+    @_==2 or @_==3 or die "wrong number of arguments";
+    my ($s,$path,$maybe_mode)=@_;
+    my $out= xtmpfile $path;
+    weaken $_[0];
+    xstream_print ($s,$out);
+    $out->xclose;
+    $out->xputback ($maybe_mode);
 }
 
 
