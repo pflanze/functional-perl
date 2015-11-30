@@ -58,6 +58,8 @@ package FP::Ops;
 		 applying
 		 binary_operator
 		 unary_operator
+		 regex_match
+		 regex_substitute
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -165,6 +167,28 @@ TEST { my $neg= unary_operator "-";
        [map { &$neg ($_) }
 	(3, -2.5, 0)] }
   [-3, 2.5, 0];
+
+
+sub regex_match ($) {
+    @_==1 or die "wrong number of arguments";
+    my ($re)= @_;
+    sub {
+	@_==1 or die "wrong number of arguments";
+	my ($str)=@_;
+	$str=~ /$re/
+    }
+}
+
+sub regex_substitute {
+    @_==2 or die "wrong number of arguments";
+    my ($re,$sub)=@_;
+    sub {
+	@_==1 or die "wrong number of arguments";
+	my ($str)=@_;
+	$str=~ s/$re/&$sub()/e;
+	$str
+    }
+}
 
 
 1

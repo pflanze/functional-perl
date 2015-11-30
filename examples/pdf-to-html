@@ -47,26 +47,13 @@ use FP::List qw(list cons);
 use FP::Stream qw(Keep);
 use Chj::xperlfunc qw(xstat xxsystem xunlink basename dirname);
 use FP::Combinators qw(compose_scalar);
-use FP::Ops qw(the_method number_cmp);
+use FP::Ops qw(the_method number_cmp regex_match regex_substitute);
 use PXML::XHTML ':all';
 use PXML::Serialize qw(puthtmlfile);
 use FP::Array_sort qw(on);
 use Chj::xIOUtil qw(xputfile_utf8);
 use Chj::AutoTrapl;
 
-
-fun regex_match ($re) {
-    fun ($str) {
-	$str=~ /$re/
-    }
-}
-
-fun regex_substitute ($re,$sub) {
-    fun ($str) {
-	$str=~ s/$re/&$sub()/e;
-	$str
-    }
-}
 
 sub note {
     print STDERR "$myname: note: ",@_,"\n";
