@@ -1738,13 +1738,16 @@ sub mixed_flatten ($;$$) {
     }
 }
 
-*FP::List::List::mixed_flatten= flip \&mixed_flatten;
+*FP::List::List::mixed_flatten= \&mixed_flatten;
 
 TEST{ list_to_array mixed_flatten [1,2,3] }
   [1,2,3];
 TEST{ list_to_array mixed_flatten [1,2,[3,4]] }
   [1,2,3,4];
 TEST{ list_to_array mixed_flatten [1,cons(2, [ string_to_list "ab" ,4])] }
+  [1,2,'a','b',4];
+TEST{ list(1,cons(2, [ string_to_list "ab" ,4]))
+	->mixed_flatten->array }
   [1,2,'a','b',4];
 TEST{ list_to_string mixed_flatten [string_to_list "abc",
 				 string_to_list "def",
