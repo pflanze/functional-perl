@@ -47,6 +47,7 @@ package FP::IOStream;
 	      timestream
 	      xstream_print
 	      xstream_to_file
+	      xfile_replace_lines
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -243,6 +244,15 @@ sub xstream_to_file ($$;$) {
     xstream_print ($s,$out);
     $out->xclose;
     $out->xputback ($maybe_mode);
+}
+
+
+# read and write back a file, passing its lines as a stream to the
+# given function; written to temp file that's renamed into place upon
+# successful completion.
+sub xfile_replace_lines ($$) {
+    my ($path,$fn)=@_;
+    xstream_to_file &$fn(xfile_lines $path), $path;
 }
 
 
