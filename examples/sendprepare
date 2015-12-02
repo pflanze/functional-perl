@@ -47,6 +47,11 @@ use FP::Predicates qw(complement either);
 local $Chj::IO::Tempfile::warn_all_failures= 0;
 
 
+sub strings_any_regex {
+    join ("|", map { quotemeta $_ } @_)
+}
+
+
 # This ad-hoc mail "parser" unsafely assumes that the headers we're
 # interested in consist of one line only
 
@@ -63,12 +68,13 @@ fun fixlines ($orig) {
 
     my $cleaned_head= $head->filter
       (complement
-       either
-       regex_match (qr/^Return-Path:/i),
-       regex_match (qr/^BCC:/i),
-       regex_match (qr/^X-K9mail-Identity:/i),
-       regex_match (qr/^User-Agent:/i),
-       regex_match (qr/^Date:/i));
+       regex_match ("^".
+		    strings_any_regex (qw(Return-Path
+					  BCC
+					  X-K9mail-Identity
+					  User-Agent
+					  Date)).
+		    ":"));
 
     (cons "Return-Path: <$fromaddr>\n",
      cons "BCC: $fromwhole\n",
