@@ -79,6 +79,7 @@ package FP::List;
 	      unfold unfold_right
 	      list_pair_fold_right
 	      list_drop_last list_drop_while list_rtake_while list_take_while
+	      list_rtake_while_and_rest list_take_while_and_rest
 	      list_append
 	      list_zip2
 	      list_alist
@@ -1446,7 +1447,7 @@ TEST { string_to_list("Hello World")
   "o World";
 
 
-sub rtake_while_ ($ $) {
+sub list_rtake_while_and_rest ($ $) {
     my ($pred,$l)=@_;
     my $res= $l->null;
     my $c;
@@ -1457,11 +1458,11 @@ sub rtake_while_ ($ $) {
     ($res,$l)
 }
 
-*FP::List::List::rtake_while_= flip \&rtake_while_;
+*FP::List::List::rtake_while_and_rest= flip \&list_rtake_while_and_rest;
 
 sub list_rtake_while ($ $) {
     my ($pred,$l)=@_;
-    my ($res,$rest)= rtake_while_ ($pred,$l);
+    my ($res,$rest)= list_rtake_while_and_rest ($pred,$l);
     wantarray ? ($res,$rest) : $res
 }
 
@@ -1471,18 +1472,18 @@ TEST{ list_to_string list_reverse (list_rtake_while \&char_is_alphanumeric,
 				   string_to_list "Hello World") }
   'Hello';
 
-sub take_while_ ($ $) {
+sub list_take_while_and_rest ($ $) {
     my ($pred,$l)=@_;
     my ($rres,$rest)= list_rtake_while ($pred,$l);
     (list_reverse $rres,
      $rest)
 }
 
-*FP::List::List::take_while_= flip \&take_while_;
+*FP::List::List::take_while_and_rest= flip \&list_take_while_and_rest;
 
 sub list_take_while ($ $) {
     my ($pred,$l)=@_;
-    my ($res,$rest)= take_while_ ($pred,$l);
+    my ($res,$rest)= list_take_while_and_rest ($pred,$l);
     wantarray ? ($res,$rest) : $res
 }
 
