@@ -64,6 +64,7 @@ package FP::Stream;
 	      stream_map
 	      stream_map_with_tail
 	      stream_filter
+	      stream_filter_with_tail
 	      stream_fold
 	      stream_foldr1
 	      stream_fold_right
@@ -383,6 +384,24 @@ sub stream_filter ($ $) {
 }
 
 *FP::List::List::stream_filter= flip *stream_filter;
+
+
+# almost-COPY of stream_filter
+sub stream_filter_with_tail ($$$);
+sub stream_filter_with_tail ($$$) {
+    my ($fn,$l,$tail)=@_;
+    weaken $_[1];
+    lazy {
+	$l= force $l;
+	is_null $l ? $tail : do {
+	    my $a= car $l;
+	    my $r= stream_filter_with_tail ($fn, cdr $l, $tail);
+	    &$fn($a) ? cons($a, $r) : $r
+	}
+    }
+}
+
+*FP::List::List::stream_filter_with_tail= flip2of3 *stream_filter_with_tail;
 
 
 # http://hackage.haskell.org/package/base-4.7.0.2/docs/Prelude.html#v:foldr1
