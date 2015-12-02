@@ -66,6 +66,7 @@ package FP::List;
 	   car_and_cdr first_and_rest perhaps_first_and_rest
 	   list);
 @EXPORT_OK=qw(pair improper_list
+	      first_set first_update
 	      is_pair_noforce is_null_noforce
 	      unsafe_cons unsafe_car unsafe_cdr
 	      string_to_list list_length list_reverse list_reverse_with_tail
@@ -184,6 +185,9 @@ use Scalar::Util "weaken";
 
     *maybe_first= *first;
     *perhaps_first= *first;
+
+    *first_set= *FP::List::first_set;
+    *first_update= *FP::List::first_update;
 
     sub cdr {
 	$_[0][1]
@@ -444,6 +448,22 @@ sub first ($); *first=*car;
 # XX add maybe_first and perhaps_first wrappers here? Shouldn't this
 # be more structured/automatic, finally.
 
+
+sub first_set ($$) {
+    my ($p, $v)=@_;
+    cons ($v, $p->rest)
+}
+
+TEST { cons (3,4)->first_set("a") } bless ["a",4], 'FP::List::Pair';
+
+
+sub first_update ($$) {
+    my ($p, $fn)=@_;
+    my ($v, $r)= $p->first_and_rest;
+    cons (&$fn($v), $r)
+}
+
+TEST { cons (3,4)->first_update(sub{$_[0]*2}) } bless [6,4], 'FP::List::Pair';
 
 sub cdr ($) {
     my ($v)=@_;
