@@ -374,7 +374,7 @@ sub stream_filter ($ $) {
     weaken $_[1];
     lazy {
 	$l= force $l;
-	is_null $l ? null : do {
+	is_null $l ? $l : do {
 	    my $a= car $l;
 	    my $r= stream_filter ($fn,cdr $l);
 	    &$fn($a) ? cons($a, $r) : $r
