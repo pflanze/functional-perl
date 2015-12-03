@@ -116,10 +116,10 @@ sub perhaps_directory_paths ($;$) {
     my ($base,$maybe_cmp)=@_;
     $base.= "/" unless $base=~ /\/\z/;
     if (my ($s)= perhaps_directory_items $base,$maybe_cmp) {
-	stream_map sub {
+	$s->map(sub {
 	    my ($item)= @_;
 	    "$base$item"
-	}, $s
+	})
     } else {
 	()
     }
