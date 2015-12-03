@@ -41,7 +41,7 @@ package FP::IOStream;
 	      perhaps_directory_paths
 	      xdirectory_items
 	      xdirectory_paths
-	      xfile_lines
+	      xfile_lines xfile_lines0 xfile_lines0chop xfile_lines_chomp
 	      fh_to_lines
 	      fh_to_chunks
 	      timestream
@@ -177,6 +177,21 @@ sub xfile_lines ($);
 *xfile_lines=
   make_open_stream(\&xopen_read,
 		   the_method ("xreadline"));
+
+sub xfile_lines0 ($);
+*xfile_lines0=
+  make_open_stream(\&xopen_read,
+		   the_method ("xreadline0"));
+
+sub xfile_lines0chop ($);
+*xfile_lines0chop=
+  make_open_stream(\&xopen_read,
+		   the_method ("xreadline0chop"));
+
+sub xfile_lines_chomp ($);
+*xfile_lines_chomp=
+  make_open_stream(\&xopen_read,
+		   the_method ("xreadline_chomp"));
 
 
 # Clojure calls this line-seq
