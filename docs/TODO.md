@@ -57,6 +57,9 @@ usefully listed first).
 
   - tests for `Chj::TEST` itself
 
+  - systematic testing of mixed FP::List / FP::PureArray
+    etc. sequences. (etc.)
+
 
 ## Other people's code
 
