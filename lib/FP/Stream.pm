@@ -198,9 +198,15 @@ TEST { stream_step_range (-1, 3, 1)->array }
 
 
 sub stream_length ($);
-*stream_length= FP::List::make_length(0);
+*stream_length= FP::List::make_length(1);
 
 *FP::List::List::stream_length= *stream_length;
+
+TEST {
+    my $s= stream_iota->take(10);
+    my $l= $s->length;
+    [$l, $s]
+} [10, undef];
 
 
 # left fold, sometimes called `foldl` or `reduce`.
