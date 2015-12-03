@@ -117,9 +117,6 @@ usefully listed first).
   - those not using lazy internally: implement the List variants using
     Keep and the stream variants.
 
-- add `join` method for all sequences by finally starting sequences
-  base class.
-
 - what to do about data types that have both a class and some
   functions, like `is_sequence`, that now lives in `FP::Predicates`,
   and might be moved elsewhere in the future, breaking code importing
