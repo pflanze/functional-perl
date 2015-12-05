@@ -111,7 +111,7 @@ function, which pairs up its two arguments:
                    ], 'FP::List::Pair' );
 
 Now these `Data::Dumper` style printouts don't look very nice, you'll
-agree. The repl can do better, just tell it so with a repl (meta)
+agree. The repl can do better, just tell it so with a repl meta
 command:
 
     repl> :s
@@ -123,12 +123,12 @@ comma `,` instead of the colon if you prefer. The repl remembers these
 settings across repl runs (they are stored in ~/.perl-repl_settings).
 
 So, yes, `cons 3, null` is equivalent to `cons 3, list()` which is
-equivalent to `list(3)`, and the :s representation uses perl code to
-construct the given result using existing constructor functions. (How
-the repl knows which perl function to show is by way of a
-`FP_Show_show` method on the object in question, which is called
+equivalent to `list(3)`, and the :s representation shows perl code
+that would construct the given result using existing constructor
+functions. (How the repl knows which perl function to show is by way
+of a `FP_Show_show` method on the object in question, which is called
 through the `show` function in the `FP::Show` module. The indirection
-through the `show` function (versus calling the method directly) is
+through the `show` function (versus calling the method directly) is so
 that `show` also works on inputs that are not objects or don't have an
 `FP_Show_show` method.)
 
@@ -141,7 +141,7 @@ with a broad set of useful methods, for example:
     $VAR1 = list(3);
 
 You may be asking why `filter` is not called `grep`; the answer is
-that filter is the commonly used name for this in functional
+that "filter" is the commonly used name for this in functional
 programming languages.
 
 Here's a function/method that does not have a pendant as a Perl
@@ -562,8 +562,8 @@ write it yourself. Let's go through that process by creating the list
 from the above section ('Lazy evaluation') programmatically. (This is
 a somewhat bad example as this would be better achieved by combining a
 series building function and map, but let's not worry about doing
-things the high-level way too much when we don't know how to build the
-lower levels.)
+things the high-level way too much while we don't know yet how to
+build the lower levels.)
 
 Let's also see how we can do this without doing a single mutation (all
 variables are only ever assigned a single time, when they are
@@ -602,7 +602,9 @@ There we are.
 In the two sections above we have seen a list holding unevaluated
 terms (promises). So, each list pair (cons cell) held a lazy
 (unevaluated) term in its value slot, and an eagerly evaluated term in
-its rest slot.
+its rest slot (the rest of the list). (The list data structure,
+i.e. the list cells excluding the actual values held in the list, is
+also called the "spine".)
 
 What if we made the rest slot contain a lazily evaluated term as well?
 Well, let's simply try:
