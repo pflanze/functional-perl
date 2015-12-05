@@ -153,7 +153,22 @@ builtin, but is common to functional programming:
 Fold takes a subroutine and an initial value, then for each value in
 the sequence calls the subroutine, passing it the value from the list
 and the initial value, then uses the result of the subroutine instead
-of the initial value for the next iteration.
+of the initial value for the next iteration. I.e. our examples adds up
+all the values in the list.
+
+Note how we create an anonymous subroutine to simply use the `+`
+operator. We can't pass `+` directly, Perl prohibits that. To ease
+this pain, Perl's operators are wrapped as functions (subroutines) in
+`FP::Ops`, which is imported by `bin/repl+` already. The subroutine
+wrapping `+` is called `add`. 
+
+    repl> add(1,2)
+    $VAR1 = 3;
+
+Thus we can write the following, equivalent to what we had above:
+
+    repl> list(2,3,4)->fold(*add, 0)
+    $VAR1 = 9;
 
 What if you would use `cons` instead of `+`? 
 
