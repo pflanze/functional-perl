@@ -162,7 +162,7 @@ use Scalar::Util "weaken";
     # for FP::Show:
     sub FP_Show_show {
 	my ($s,$show)=@_;
-	"null"
+	"list()"
     }
 }
 
