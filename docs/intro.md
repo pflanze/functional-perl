@@ -308,9 +308,10 @@ functional-perl yet.)
 
 ## More REPL features
 
-The repl automatically makes their special syntax available if one of
-these modules is loaded, and [bin/repl+](../bin/repl+) automatically
-tries to load them if present on the system: `Function::Parameters`,
+If one of the following modules, which modify the Perl syntax, is
+loaded, then the repl automatically makes them available to the
+entered code.  Also, [bin/repl+](../bin/repl+) automatically tries to
+load them if present on the system: `Function::Parameters`,
 `Method::Signatures`, `Sub::Call::Tail`. Since Function::Parameters
 simplifies writing functions a lot and works better in some ways than
 Method::Signatures, we're going to use it from now on. If you don't
@@ -321,7 +322,7 @@ saving the history (todo)). Now you can type the nicer:
     repl> list(3,4,5)->map(fun($x){ $x*$x })
     $VAR1 = list(9, 16, 25);
 
-Another module that might make life better in the repl is
+Another module which might make life better in the repl is
 `Eval::WithLexicals` (a former version of the code used
 `Lexical::Persistence`). If you install it and then enter
 
