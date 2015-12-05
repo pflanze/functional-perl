@@ -191,17 +191,35 @@ the following is getting rid of it:
     repl> list(2,3,4)->fold(*cons, null)
     $VAR1 = list(4, 3, 2);
 
-As you can see, this paired up (prepended) the value 2 with the empty
-list, then prepended 3 to that, then prepended 4 to that. The result
-comes in reverse order.
+As you can see, this prepended the value 2 to the empty list, then
+prepended 3 to that, then prepended 4 to that. The result comes in
+reverse order, i.e. this is an implementation of the list reversing
+function (which is available as the method `reverse` already).
 
-If that's not what you need, there's also `fold_right`, which reverses
-the order of the call chain:
+For the case when you need to process a list so that the original
+ordering is preserved there's also `fold_right`, which reverses the
+order of the call chain (it begins at the right of the list,
+i.e. calling `cons(4, null)` first):
 
     repl> list(2,3,4)->fold_right(*cons, null)
     $VAR1 = list(2, 3, 4);
 
-i.e. this simply copies the list, which is pretty pointless of course.
+i.e. this simply copies the list, which is actually pointless: lists
+are a purely functional data structure, i.e. they do not offer a way
+to mutate parts destructively (unless if going evil and forgoing
+object accessors, which is discouraged), hence this possible use of
+copying is irrelevant. Of course there are other operations where the
+ordering is relevant, for example division (`/` is wrapped as `div` by
+`FP::Ops`):
+
+    repl> list(10,20)->fold(*div, 1)
+    $VAR1 = '2';
+    repl> list(10,20)->fold_right(*div, 1)
+    $VAR1 = '0.5';
+
+(For another easy to try example, experiment with the `array` function
+from `FP::Array`, which is a wrapper for `[@_]`. It too is already
+imported by `repl+`.)
 
 You can get the first element of a list using the `first` method, and
 the rest of the list using the `rest` method. There's also a combined
