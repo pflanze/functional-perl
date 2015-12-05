@@ -265,14 +265,15 @@ Now to drop the first element, you could use shift, but:
     repl> $a
     $VAR1 = [4, 5];
 
-`shift` is not a (pure) function, but a procedure: a pure function
-does not "harm" its arguments, instead the only effect it has on the
-world visible to your program is returning a value. `shift` violates
-this principle (thus the name "procedure" which indicates that it does
-achieve things by way of side effects) and hence $a, which points to
-the same in-memory data structure, is also modified. You'd have to
-first create a full copy of the array so that when you modify it with
-shift the original stays unmodified:
+`shift` is not a (pure) function, but what would be called a
+procedure: a pure function does not "harm" its arguments, instead the
+only effect it has on the world visible to your program is returning a
+value. `shift` violates this principle (thus the naming "procedure"
+which indicates that it does achieve things by proceeding through a
+recipe of issuing side effects) and hence $a, which points to the same
+in-memory data structure, is also modified. You'd have to first create
+a full copy of the array so that when you modify it with shift the
+original stays unmodified:
 
     repl> $a= [3,4,5]
     $VAR1 = [3, 4, 5];
@@ -284,7 +285,8 @@ shift the original stays unmodified:
     $VAR1 = [3, 4, 5];
 
 This works, and it can be hidden in pure functions, in fact
-functional-perl provides them already:
+functional-perl provides them already (part of `FP::Array` and
+imported by `repl+`):
 
     repl> $a= [3,4,5]
     $VAR1 = [3, 4, 5];
