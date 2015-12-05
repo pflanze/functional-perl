@@ -157,15 +157,25 @@ of the initial value for the next iteration. I.e. our examples adds up
 all the values in the list.
 
 Note how we create an anonymous subroutine to simply use the `+`
-operator. We can't pass `+` directly, Perl prohibits that. To ease
-this pain, Perl's operators are wrapped as functions (subroutines) in
-`FP::Ops`, which is imported by `bin/repl+` already. The subroutine
-wrapping `+` is called `add`. 
+operator. We can't pass `+` directly, Perl does not have a way to pass
+an operator as a subroutine (CODE ref) directly. To ease this pain,
+Perl's operators are wrapped as functions (subroutines) in `FP::Ops`,
+which is imported by `bin/repl+` already. The subroutine wrapping `+`
+is called `add`.
 
     repl> add(1,2)
     $VAR1 = 3;
 
 Thus we can write the following, equivalent to what we had above:
+
+    repl> list(2,3,4)->fold(\&add, 0)
+    $VAR1 = 9;
+
+Or we can pass the glob entry instead of taking a reference--this is
+simpler to type and looks better, in our opinion, and when the
+subroutine is redefined the glob will call the new definition, which
+is usually what you want, thus we're going to use this style from now
+on:
 
     repl> list(2,3,4)->fold(*add, 0)
     $VAR1 = 9;
@@ -175,26 +185,23 @@ What if you would use `cons` instead of `+`?
     repl> list(2,3,4)->fold(sub { cons $_[0], $_[1] }, null)
     $VAR1 = list(4, 3, 2);
 
-As you can see, it paired up (prepended) the value 2 with (to) the
-empty list, then prepended 3 to that, then prepended 4 to that. The
-result comes in reverse order. If that's not what you need, there's
-also `fold_right`:
-
-    repl> list(2,3,4)->fold_right(sub { cons $_[0], $_[1] }, null)
-    $VAR1 = list(2, 3, 4);
-
-Maybe you've already thought that writing the sub { } here is
-pointless: all it does is pass on its arguments unmodified to
-cons. Eliminating it:
-
-    repl> list(2,3,4)->fold(\&cons, null)
-    $VAR1 = list(4, 3, 2);
-
-or you could also just pass the glob entry instead, which is a
-character less to type and looks nicer:
+The anonymous subroutine wrapper here is truly unnecessary, of course,
+the following is getting rid of it:
 
     repl> list(2,3,4)->fold(*cons, null)
     $VAR1 = list(4, 3, 2);
+
+As you can see, this paired up (prepended) the value 2 with the empty
+list, then prepended 3 to that, then prepended 4 to that. The result
+comes in reverse order.
+
+If that's not what you need, there's also `fold_right`, which reverses
+the order of the call chain:
+
+    repl> list(2,3,4)->fold_right(*cons, null)
+    $VAR1 = list(2, 3, 4);
+
+i.e. this simply copies the list, which is pretty pointless of course.
 
 You can get the first element of a list using the `first` method, and
 the rest of the list using the `rest` method. There's also a combined
