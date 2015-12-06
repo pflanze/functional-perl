@@ -507,9 +507,8 @@ to force terms transparently:
 
 The `159389673` value comes from adding 1 to the pointer address. Perl
 can be pretty dangerous (this is a more general problem, thus it's not
-being addressed here (by overloading to an
-exception)). `FP::Lazy::Promise` objects need to be forced
-explicitely:
+being addressed here e.g. by overloading to an
+exception). `FP::Lazy::Promise` objects need to be forced explicitely:
 
     repl> lazy { 1 / 2 }->force + 1
     $VAR1 = '1.5';
