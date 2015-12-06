@@ -81,10 +81,10 @@ In that case, you can return to the parent repl by pressing ctl-d.
 ## Lists the functional way
 
 One of the most basic features of functional programming are singly
-linked lists. Those can be extended in a purely functional way,
-i.e. without changing existing list references. Lists can be created
-using the `list` function from `FP::List`, which is preloaded in
-repl+:
+linked lists. Those can be extended and shrunk in a purely functional
+way, i.e. without changing existing list references. Lists can be
+created using the `list` function from `FP::List`, which is preloaded
+in repl+:
 
     repl> list()
     $VAR1 = bless( [], 'FP::List::Null' );
