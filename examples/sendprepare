@@ -47,7 +47,7 @@ use FP::Predicates qw(complement either);
 local $Chj::IO::Tempfile::warn_all_failures= 0;
 
 
-sub strings_any_regex {
+sub regex_from_strings {
     join ("|", map { quotemeta $_ } @_)
 }
 
@@ -71,11 +71,11 @@ fun fixlines ($orig) {
      $head->filter_with_tail
      (complement
       (regex_match ("^".
-		    strings_any_regex (qw(Return-Path
-					  BCC
-					  X-K9mail-Identity
-					  User-Agent
-					  Date)).
+		    regex_from_strings (qw(Return-Path
+					   BCC
+					   X-K9mail-Identity
+					   User-Agent
+					   Date)).
 		    ":")),
       $rest))
 }
