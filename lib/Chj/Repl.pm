@@ -543,7 +543,7 @@ sub eval_code {
 	  $prelude.
 	  (@v ? 'my ('.join(", ", @v).'); ' : '') .
 	  'sub {'.
-	      $code.
+	      $code."\n".
 	  '}';
 	my $thunk= &WithRepl_eval($allcode)
 	  // return;

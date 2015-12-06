@@ -113,6 +113,14 @@ my $filterHOME= sub {
 # where necessary (the arguments to `t` after the first two).
 
 
+# comments (XX: handle =pod etc., too?)
+t '3 # 4',
+  q{
+main> 3 # 4
+$VAR1 = 3;
+};
+
+
 # :e
 t ',e',
   q{
