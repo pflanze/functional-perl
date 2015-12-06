@@ -370,19 +370,7 @@ sub stream_zip_with {
 
 
 sub stream_filter ($ $);
-sub stream_filter ($ $) {
-    my ($fn,$l)=@_;
-    weaken $_[1];
-    lazy {
-	$l= force $l;
-	is_null $l ? $l : do {
-	    my $a= car $l;
-	    my $r= stream_filter ($fn,cdr $l);
-	    &$fn($a) ? cons($a, $r) : $r
-	}
-    }
-}
-
+*stream_filter= FP::List::make_filter(1);
 *FP::List::List::stream_filter= flip *stream_filter;
 
 

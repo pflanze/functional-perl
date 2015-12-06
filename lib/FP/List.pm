@@ -119,6 +119,7 @@ use FP::Predicates qw(is_natural0 either is_natural complement is_even is_zero);
 use FP::Div qw(inc dec);
 use FP::Show;
 use Scalar::Util "weaken";
+use FP::Weak qw(Weakened);
 
 
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
@@ -1171,20 +1172,25 @@ TEST_STDOUT { list (a=> 10, b=>20)->alist->write_sexpr }
   '(("a" . "10") ("b" . "20"))';
 
 
-# (mostly-copy from Stream.pm as always)
-sub list_filter ($ $);
-sub list_filter ($ $) {
-    my ($fn,$l)=@_;
-    #weaken $_[1];
-    #lazy {
-	$l= force $l;
-	is_null $l ? null : do {
-	    my $a= car $l;
-	    my $r= list_filter ($fn,cdr $l);
-	    &$fn($a) ? cons($a, $r) : $r
-	}
-    #}
+sub make_filter {
+    my ($is_stream)=@_;
+    my $filter; $filter= sub ($$) {
+	my ($fn,$l)=@_;
+	weaken $_[1] if $is_stream;
+	lazy_if {
+	    $l= force $l;
+	    is_null $l ? $l : do {
+		my ($a,$r)= $l->first_and_rest;
+		my $r2= &$filter ($fn, $r);
+		&$fn($a) ? cons($a, $r2) : $r2
+	    }
+	} $is_stream;
+    };
+    Weakened($filter)
 }
+
+sub list_filter ($ $);
+*list_filter= make_filter (0);
 
 *FP::List::List::filter= flip \&list_filter;
 
