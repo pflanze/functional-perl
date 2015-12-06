@@ -36,7 +36,6 @@ GetOptions("verbose"=> \$verbose,
 
 #use Chj::Trapl; use Chj::repl;
 use FP::List;
-use FP::Weak qw(Keep);
 use FP::IOStream qw(xfile_replace_lines);
 use FP::Ops qw(regex_match);
 use FP::Predicates qw(complement either);
@@ -56,11 +55,10 @@ sub regex_from_strings {
 # interested in consist of one line only
 
 fun fixlines ($orig) {
-    my $head= Keep($orig)->take_while (complement regex_match qr/^\n\z/s);
-    my $rest= $orig->drop(Keep($head)->length);
-    # ^ XX add a `take_while_and_rest` to get both at the same time?
+    my ($head,$rest)= $orig->
+      take_while_and_rest (complement regex_match qr/^\n\z/s);
 
-    my $from= Keep($head)->filter (regex_match qr/^From:/)->xone;
+    my $from= $head->filter (regex_match qr/^From:/)->xone;
     my ($fromaddr)= $from=~ m@<([^<>]+)>@s
       or die "missing from address in '$from'";
     my ($fromwhole)= $from=~ m@.?: *([^\n]*)@s
