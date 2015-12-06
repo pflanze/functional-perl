@@ -448,7 +448,8 @@ behaviour:
 
 Of course, `inverse` fails. But note that the result of `inverse` is
 not even used in this case. If Perl would evaluate the `inverse 0`
-expression lazily, there would be no failure.
+expression lazily, there would be no failure. This can be changed by
+using `lazy` from `FP::TransparentLazy` (`repl+` loads it already):
 
     repl> or_square 2, lazy { inverse 0 }
     $VAR1 = 2;
@@ -470,12 +471,12 @@ Alternatively we could redefine inverse to evaluate its body lazily:
     repl 1> 
 
 This is usually better since the knowledge about the need for lazy
-evaluation is kept locally here, and the `lazy` keyword has to be used
-only once instead of at every call site.
+evaluation is kept locally, near the expression in question, and the
+`lazy` keyword has to be used only once instead of at every call site.
 
 Lazy terms are represented by a data structure we'll call a *promise*,
 since that's what Scheme and some other languages have called them way
-before JavaScript came and started using the term for something rather
+before JavaScript started using the term for something rather
 different. The `:s` pretty-printing in the repl shows them like this:
 
     repl> inverse 2
