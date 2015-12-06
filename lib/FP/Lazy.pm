@@ -53,6 +53,12 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
  }
  moo ("you")->force  # returns " you"
 
+ # runtime conditional lazyness:
+ lazy_if { 1 / 0 }, 1  # returns a promise
+
+ lazy_if { 1 / 0 }, 0  # immediate division by zero exception (still pays
+                       # the overhead of two subroutine calls, though)
+
 
 =head1 DESCRIPTION
 
@@ -136,7 +142,7 @@ L<FP::TransparentLazy>
 
 package FP::Lazy;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(lazy lazyLight force FORCE is_promise);
+@EXPORT=qw(lazy lazy_if lazyLight force FORCE is_promise);
 @EXPORT_OK=qw(delay force_noeval);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -154,6 +160,19 @@ sub lazy (&) {
 	   undef,
 	   $debug && Chj::Repl::Stack->get(1)->backtrace
 	  ], "FP::Lazy::Promise"
+      }
+
+sub lazy_if (&$) {
+    ($_[1] ?
+     bless ([$_[0],
+	     undef,
+	     $debug && Chj::Repl::Stack->get(1)->backtrace
+	    ], "FP::Lazy::Promise")
+     : do {
+	 my ($thunk)=@_;
+	 @_=();
+	 goto $thunk;
+     })
 }
 
 # not providing for caching (1-time-only evaluation)
