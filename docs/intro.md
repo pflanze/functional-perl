@@ -432,11 +432,13 @@ be evaluated lazily, a topic we'll look into in the next section.
 ## Lazy evaluation
 
 Perl, like most traditional programming languages, is evaluating
-exressions and statements eagerly: a statement occurring before a
-semicolon is evaluated before the statement after it, and expressions
-in argument position of a subroutine or method call are evaluated
-before the statements in the subroutine are evaluated. This means for
-example that we get this behaviour:
+exressions and statements eagerly: an expression used to set a
+variable is evaluated before assigning its result to a variable and
+the variable assignment happens before the code continues after its
+trailing semicolon, and expressions in argument position of a
+subroutine or method call are evaluated before the statements in the
+subroutine are evaluated. This means for example that we get this
+behaviour:
 
     repl> fun inverse ($x) { 1 / $x }
     repl> fun or_square ($x,$y) { $x || $y * $y }
