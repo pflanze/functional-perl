@@ -11,9 +11,8 @@ programs that this project offers. (The files in the
 [intro/](../intro/) directory are more on the fundamental side, also
 they are a bit older and possibly could use some updating (todo).)
 
-This may be going a bit slow for some people, and too fast for
-others. If you find it difficult to follow, please tell, either on the
-[[mailing_list]], or join [the IRC channel](//mailing_list.md).
+If you've got questions, please tell, either on the [[mailing_list]],
+or join [the IRC channel](//mailing_list.md).
 
 
 <with_toc>
