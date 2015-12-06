@@ -373,22 +373,8 @@ sub stream_filter ($ $);
 *stream_filter= FP::List::make_filter(1);
 *FP::List::List::stream_filter= flip *stream_filter;
 
-
-# almost-COPY of stream_filter
 sub stream_filter_with_tail ($$$);
-sub stream_filter_with_tail ($$$) {
-    my ($fn,$l,$tail)=@_;
-    weaken $_[1];
-    lazy {
-	$l= force $l;
-	is_null $l ? $tail : do {
-	    my $a= car $l;
-	    my $r= stream_filter_with_tail ($fn, cdr $l, $tail);
-	    &$fn($a) ? cons($a, $r) : $r
-	}
-    }
-}
-
+*stream_filter_with_tail= FP::List::make_filter_with_tail(1);
 *FP::List::List::stream_filter_with_tail= flip2of3 *stream_filter_with_tail;
 
 

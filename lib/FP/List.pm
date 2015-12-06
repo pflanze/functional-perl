@@ -1195,6 +1195,29 @@ sub list_filter ($ $);
 *FP::List::List::filter= flip \&list_filter;
 
 
+# almost-COPY of filter
+sub make_filter_with_tail {
+    my ($is_stream)=@_;
+    my $filter_with_tail; $filter_with_tail= sub ($$$) {
+	my ($fn,$l,$tail)=@_;
+	weaken $_[1] if $is_stream;
+	lazy_if {
+	    $l= force $l;
+	    is_null $l ? $tail : do {
+		my $a= car $l;
+		my $r= &$filter_with_tail ($fn, cdr $l, $tail);
+		&$fn($a) ? cons($a, $r) : $r
+	    }
+	} $is_stream;
+    };
+    Weakened($filter_with_tail)
+}
+
+sub list_filter_with_tail ($$$);
+*list_filter_with_tail= make_filter_with_tail(0);
+*FP::List::List::filter_with_tail= flip2of3 *list_filter_with_tail;
+
+
 sub list_map ($ $);
 sub list_map ($ $) {
     my ($fn,$l)=@_;
