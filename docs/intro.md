@@ -1346,7 +1346,7 @@ Update the examples/introexample script with the following:
     }
 
     {
-        package Square;
+        package Rectangle;
 
         # Let's type-check here.
         # Subroutines imported here will be cleaned away by _END_
@@ -1369,10 +1369,10 @@ Update the examples/introexample script with the following:
 
 Then run it and try:
 
-    main> our $s1= Square->new(Point->new(2,3), Point->new(5,4));
-    $VAR1 = bless(+{topleft => bless(+{y => 3, x => 2}, 'Point'), bottomright => bless(+{y => 4, x => 5}, 'Point')}, 'Square');
+    main> our $s1= Rectangle->new(Point->new(2,3), Point->new(5,4));
+    $VAR1 = bless(+{topleft => bless(+{y => 3, x => 2}, 'Point'), bottomright => bless(+{y => 4, x => 5}, 'Point')}, 'Rectangle');
     main> our $s2= $s1->bottomright_update(fun($p) { $p->y_set(10) })
-    $VAR1 = bless(+{topleft => bless(+{y => 3, x => 2}, 'Point'), bottomright => bless(+{y => 10, x => 5}, 'Point')}, 'Square');
+    $VAR1 = bless(+{topleft => bless(+{y => 3, x => 2}, 'Point'), bottomright => bless(+{y => 10, x => 5}, 'Point')}, 'Rectangle');
     main> list($s1,$s2)->map(the_method "area")
     $VAR1 = list(3, 21);
 
@@ -1397,18 +1397,18 @@ If you'd like to get nicer pretty-printing, simply add:
 to the Point package and
 
         method FP_Show_show ($show) {
-            "Square(".&$show($self->topleft).", ".&$show($self->bottomright).")"
+            "Rectangle(".&$show($self->topleft).", ".&$show($self->bottomright).")"
         }
 
-to the Square package, then:
+to the Rectangle package, then:
 
-    main> our $s1= Square->new(Point->new(2,3), Point->new(5,4));
-    $VAR1 = Square(Point(2, 3), Point(5, 4));
+    main> our $s1= Rectangle->new(Point->new(2,3), Point->new(5,4));
+    $VAR1 = Rectangle(Point(2, 3), Point(5, 4));
     main> our $s2= $s1->bottomright_update(the_method "y_set", 10)
-    $VAR1 = Square(Point(2, 3), Point(5, 10));
+    $VAR1 = Rectangle(Point(2, 3), Point(5, 10));
 
 Although, now you've basically made the promise that there are
-`Square` and `Point` functions, but those don't exist unless you add
+`Rectangle` and `Point` functions, but those don't exist unless you add
 write them yourself. The author of `FP::Struct` is pondering adding
 semi-automatic creation of such constructor functions (probably
 together with automatic creation or mix-in of a default `FP_Show_show`
