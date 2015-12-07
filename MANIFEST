@@ -140,6 +140,7 @@ lib/FP/PureArray.pm
 lib/FP/Sequence.pm
 lib/FP/Sequence/t.pm
 lib/FP/Show.pm
+lib/FP/Show/Base/FP_Struct.pm
 lib/FP/Show/t.pm
 lib/FP/Stream.pm
 lib/FP/StrictList.pm
