@@ -1407,12 +1407,11 @@ to the Rectangle package, then:
     main> our $s2= $s1->bottomright_update(the_method "y_set", 10)
     $VAR1 = Rectangle(Point(2, 3), Point(5, 10));
 
-Although, now you've basically made the promise that there are
-`Rectangle` and `Point` functions, but those don't exist unless you
-write them yourself. The author of `FP::Struct` is pondering adding
-semi-automatic creation of such constructor functions (probably
-together with automatic creation or mix-in of a default `FP_Show_show`
-method.)
+To get the constructor functions that these implicate to exist:
 
+    main> import Point::constructors; import Rectangle::constructors; 
+    $VAR1 = '';
+    main> Rectangle(Point(2, 3), Point(5, 4))
+    $VAR1 = Rectangle(Point(2, 3), Point(5, 4));
 
 </with_toc>
