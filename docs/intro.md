@@ -1407,7 +1407,7 @@ to the Rectangle package, then:
     main> our $s2= $s1->bottomright_update(the_method "y_set", 10)
     $VAR1 = Rectangle(Point(2, 3), Point(5, 10));
 
-To get the constructor functions that these implicate to exist:
+To get the constructor functions whose existence these implicate:
 
     main> import Point::constructors; import Rectangle::constructors; 
     $VAR1 = '';
