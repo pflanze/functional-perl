@@ -260,7 +260,7 @@ sub import {
     };
     # XX bah, almost copy-paste, because want to avoid sub call
     # overhead (inlining please finally?):
-    *{"${package}::f::${package_lastpart}"}= my $constructor= sub {
+    *{"${package}::c::${package_lastpart}"}= my $constructor= sub {
 	@_ <= @$allfields
 	  or croak "too many arguments to ${package}::new";
 	for (@$allfields_i_with_predicate) {
@@ -284,7 +284,7 @@ sub import {
 	$class->unsafe_new__(+{@_})
     };
     # XX mostly-copy-pasting again (like above):
-    *{"${package}::f::${package_lastpart}_"}= my $constructor_= sub {
+    *{"${package}::c::${package_lastpart}_"}= my $constructor_= sub {
 	$package->unsafe_new__(+{@_})
     };
 
