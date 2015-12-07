@@ -20,8 +20,9 @@ use Chj::Backtrace;
 
  use FP::Struct Foo=>
          ["name",
-          [maybe (\&is_array), "animals"]] # => ["Baz"]
-  ;
+          [maybe (\&is_array), "animals"]]
+       # => "Baz", "Buzz" # optional superclasses
+            ;
 
 is new Foo ("Tim")->name, "Tim";
 is do { eval { new Foo ("Tim", 0) } || do { my $e= $@; $e=~ s/ at .*//s; $e } },
@@ -59,10 +60,14 @@ is new_ Foo (animals=> ["Struppi"])->animals->[0], "Struppi";
  }
 
  my $bar= new Bar ("Franz", ["Barney"], "some aa", 1,2);
+ # same thing, but with sub instead of method call interface:
+ my $baz= Bar::c::Bar ("Franz", ["Barney"], "some aa", 1,2);
 
 is $bar-> div, 1/2;
+is $baz-> div, 1/2;
 
 is new_ Bar (a=>1,b=>2)-> div, 1/2;
+is Bar::c::Bar_ (a=>1, b=>2)->div, 1/2;
 is new__ Bar ({a=>1,b=>2})-> div, 1/2;
 is unsafe_new__ Bar ({a=>1,b=>2})-> div, 1/2;
 

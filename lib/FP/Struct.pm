@@ -17,7 +17,8 @@ FP::Struct - classes for functional perl
 
  use FP::Struct Foo=>
          ["name",
-          [maybe (\&is_array), "animals"]] # => "Baz"
+          [maybe (\&is_array), "animals"]]
+       # => "Baz", "Buzz" # optional superclasses
             ;
 
  # creates a constructor new that takes positional arguments and
@@ -66,9 +67,9 @@ FP::Struct - classes for functional perl
          # make sense?)
  }
 
- my $bar= new Bar ("Franz", ["Barney"], 1,2);
+ my $bar= new Bar ("Franz", ["Barney"], "some aa", 1,2);
  # same thing, but with sub instead of method call interface:
- my $baz= Bar::c::Bar "Franz", ["Barney"], 1,2;
+ my $baz= Bar::c::Bar ("Franz", ["Barney"], "some aa", 1,2);
 
  $bar-> div # => 1/2
 
