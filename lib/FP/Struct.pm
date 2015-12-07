@@ -68,10 +68,13 @@ FP::Struct - classes for functional perl
  }
 
  my $bar= new Bar ("Franz", ["Barney"], 1,2);
+ # same thing, but with sub instead of method call interface:
+ my $baz= new::Bar "Franz", ["Barney"], 1,2;
 
  $bar-> div # => 1/2
 
  new_ Bar (a=>1,b=>2)-> div # => 1/2
+ new::Bar_ (a=>1, b=>2)->div # dito
  new__ Bar ({a=>1,b=>2})-> div # => 1/2
  unsafe_new__ Bar ({a=>1,b=>2})-> div # => 1/2
  # NOTE: unsafe_new__ returns the argument hash after checking and
@@ -96,6 +99,10 @@ arguments, `new_` which takes name=> value pairs, `new__` which takes
 a hash with name=> value pairs as a single argument, and
 `unsafe_new__` which does the same as `new__` but reuses the given
 hash (unsafe if the latter is modified later on).
+
+Also creates constructor functions (i.e. subroutine instead of method
+calling interface) `new::Foo::Bar()` for positional and
+`new::Foo::Bar_()` for named arguments for package Foo::Bar.
 
 _END_ does namespace cleaning: any sub that was defined before the use
 FP::Struct call is removed by the _END_ call (those that are not the
@@ -125,14 +132,6 @@ also override all the functional setters for fields that are used for
 the calculation of the cached value to clean the cache (TODO: provide
 option to turn off generation of setters, and/or provide hook (for
 cloning?)).)
-
-=head1 IDEAS
-
-- Option to have it generate constructor wrapper functions
-  automatically in a specified package, like:
-
-      sub Foo { Chj::Foo->new (@_) }
-      sub Foo_ { Chj::Foo->new_ (@_) }
 
 =cut
 
@@ -251,6 +250,23 @@ sub import {
 	}
 	bless \%s, $class
     };
+    # XX bah, almost copy-paste, because want to avoid sub call
+    # overhead (inlining please finally?):
+    *{"new::${package}"}= sub {
+	@_ <= @$allfields
+	  or croak "too many arguments to ${package}::new";
+	for (@$allfields_i_with_predicate) {
+	    my ($pred,$name,$i)=@$_;
+	    &$pred ($_[$i])
+	      or die "unacceptable value for field '$name': ".show($_[$i]);
+	}
+	my %s;
+	for (my $i=0; $i< @_; $i++) {
+	    $s{ $$allfields_name[$i] }= $_[$i];
+	}
+	bless \%s, $package
+    };
+
 
     # constructor with keyword/value parameters:
     my $allfields_h= +{ map { field_name($_)=> undef } @$allfields };
@@ -258,6 +274,10 @@ sub import {
     *{"${package}::new_"}= sub {
 	my $class=shift;
 	$class->unsafe_new__(+{@_})
+    };
+    # XX mostly-copy-pasting again (like above):
+    *{"new::${package}_"}= sub {
+	$package->unsafe_new__(+{@_})
     };
 
     # constructor with hash parameter:
