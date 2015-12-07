@@ -1414,4 +1414,15 @@ To get the constructor functions whose existence these implicate:
     main> Rectangle(Point(2, 3), Point(5, 4))
     $VAR1 = Rectangle(Point(2, 3), Point(5, 4));
 
+Instead of adding the `FP_Show_show` methods, you could also have just
+added `FP::Show::Base::FP_Struct` as a base class:
+
+    {
+        package Shape;
+        use FP::Struct [], 'FP::Show::Base::FP_Struct';
+        _END_
+    }
+
+Sorry for telling you about this late. ;)
+
 </with_toc>
