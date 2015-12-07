@@ -19,7 +19,6 @@ FP::Struct - classes for functional perl
          ["name",
           [maybe (\&is_array), "animals"]] # => "Baz"
             ;
- Foo::_END_;
 
  # creates a constructor new that takes positional arguments and
  # copies them to a hash with the keys "name" and "animals". Also,
@@ -199,12 +198,14 @@ sub field_has_predicate ($) {
 sub import {
     my $_importpackage= shift;
     return unless @_;
-    my ($package, $fields, @perhaps_isa);
+    my ($package, $is_expandedvariant, $fields, @perhaps_isa);
     if (ref $_[0]) {
 	($fields, @perhaps_isa)= @_;
 	$package= caller;
+	$is_expandedvariant= 1;
     } else {
 	($package, $fields, @perhaps_isa)= @_;
+	$is_expandedvariant= 0;
     }
     my @isa= (@perhaps_isa==1 and ref($perhaps_isa[0])) ?
       $perhaps_isa[0]
@@ -397,6 +398,12 @@ sub import {
 	package_delete $package, $nonmethods;
 	&$end;
     };
+
+    unless ($is_expandedvariant) {
+	# Not expecting the user to write methods, finalize
+	# immediately.
+	&$end()
+    }
 
     *{"${package}::__Struct__fields"}= $fields;
 }

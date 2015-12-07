@@ -22,7 +22,6 @@ use Chj::Backtrace;
          ["name",
           [maybe (\&is_array), "animals"]] # => ["Baz"]
   ;
- Foo::_END_;
 
 is new Foo ("Tim")->name, "Tim";
 is do { eval { new Foo ("Tim", 0) } || do { my $e= $@; $e=~ s/ at .*//s; $e } },
