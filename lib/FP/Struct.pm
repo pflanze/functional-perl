@@ -102,7 +102,10 @@ hash (unsafe if the latter is modified later on).
 
 Also creates constructor functions (i.e. subroutine instead of method
 calling interface) `new::Foo::Bar()` for positional and
-`new::Foo::Bar_()` for named arguments for package Foo::Bar.
+`new::Foo::Bar_()` for named arguments for package Foo::Bar. These can
+also be imported using (without arguments, imports both):
+
+    import Foo::Bar::constructors qw(Bar Bar_);
 
 _END_ does namespace cleaning: any sub that was defined before the use
 FP::Struct call is removed by the _END_ call (those that are not the
@@ -304,6 +307,17 @@ sub import {
 	}
 	bless $s, $class
     };
+
+    # constructor exports:
+    my @package_parts= split /::/, $package;
+    my $package_lastpart= $package_parts[-1];
+    *{"${package}::constructors::${package_lastpart}"}= *{"new::${package}"};
+    *{"${package}::constructors::${package_lastpart}_"}= *{"new::${package}_"};
+    *{"${package}::constructors::ISA"}= ["Exporter"];
+    my $exports= [$package_lastpart, "${package_lastpart}_"];
+    *{"${package}::constructors::EXPORT"}= $exports;
+    *{"${package}::constructors::EXPORT_OK"}= [];
+    *{"${package}::constructors::EXPORT_TAGS"}= +{all=> $exports};
 
     my $end= sub {
 	#warn "_END_ called for package '$package'";
