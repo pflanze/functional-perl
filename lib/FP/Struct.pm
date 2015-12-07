@@ -68,12 +68,12 @@ FP::Struct - classes for functional perl
 
  my $bar= new Bar ("Franz", ["Barney"], 1,2);
  # same thing, but with sub instead of method call interface:
- my $baz= new::Bar "Franz", ["Barney"], 1,2;
+ my $baz= Bar::c::Bar "Franz", ["Barney"], 1,2;
 
  $bar-> div # => 1/2
 
  new_ Bar (a=>1,b=>2)-> div # => 1/2
- new::Bar_ (a=>1, b=>2)->div # dito
+ Bar::c::Bar_ (a=>1, b=>2)->div # dito
  new__ Bar ({a=>1,b=>2})-> div # => 1/2
  unsafe_new__ Bar ({a=>1,b=>2})-> div # => 1/2
  # NOTE: unsafe_new__ returns the argument hash after checking and
@@ -100,9 +100,10 @@ a hash with name=> value pairs as a single argument, and
 hash (unsafe if the latter is modified later on).
 
 Also creates constructor functions (i.e. subroutine instead of method
-calling interface) `new::Foo::Bar()` for positional and
-`new::Foo::Bar_()` for named arguments for package Foo::Bar. These can
-also be imported using (without arguments, imports both):
+calling interface) `Foo::Bar::c::Bar()` for positional and
+`Foo::Bar::c::Bar_()` for named arguments for package Foo::Bar. These
+are also in `Foo::Bar::constructors::` and can be imported using
+(without arguments, it imports both):
 
     import Foo::Bar::constructors qw(Bar Bar_);
 
@@ -227,6 +228,9 @@ sub import {
     # accessors/constructors
     my $nonmethods= package_keys $package;
 
+    my @package_parts= split /::/, $package;
+    my $package_lastpart= $package_parts[-1];
+
     # constructor with positional parameters:
     my $allfields_i_with_predicate= do {
 	my $i=-1;
@@ -256,7 +260,7 @@ sub import {
     };
     # XX bah, almost copy-paste, because want to avoid sub call
     # overhead (inlining please finally?):
-    *{"new::${package}"}= sub {
+    *{"${package}::f::${package_lastpart}"}= my $constructor= sub {
 	@_ <= @$allfields
 	  or croak "too many arguments to ${package}::new";
 	for (@$allfields_i_with_predicate) {
@@ -280,7 +284,7 @@ sub import {
 	$class->unsafe_new__(+{@_})
     };
     # XX mostly-copy-pasting again (like above):
-    *{"new::${package}_"}= sub {
+    *{"${package}::f::${package_lastpart}_"}= my $constructor_= sub {
 	$package->unsafe_new__(+{@_})
     };
 
@@ -310,10 +314,8 @@ sub import {
     };
 
     # constructor exports:
-    my @package_parts= split /::/, $package;
-    my $package_lastpart= $package_parts[-1];
-    *{"${package}::constructors::${package_lastpart}"}= *{"new::${package}"};
-    *{"${package}::constructors::${package_lastpart}_"}= *{"new::${package}_"};
+    *{"${package}::constructors::${package_lastpart}"}= $constructor;
+    *{"${package}::constructors::${package_lastpart}_"}= $constructor_;
     *{"${package}::constructors::ISA"}= ["Exporter"];
     my $exports= [$package_lastpart, "${package_lastpart}_"];
     *{"${package}::constructors::EXPORT"}= $exports;
