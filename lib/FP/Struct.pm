@@ -91,6 +91,12 @@ object so as to leave the original unharmed), take predicate functions
 (not magic strings) for dynamic type checking, simpler than
 Class::Struct.
 
+Also creates constructor methods: `new` that takes positional
+arguments, `new_` which takes name=> value pairs, `new__` which takes
+a hash with name=> value pairs as a single argument, and
+`unsafe_new__` which does the same as `new__` but reuses the given
+hash (unsafe if the latter is modified later on).
+
 _END_ does namespace cleaning: any sub that was defined before the use
 FP::Struct call is removed by the _END_ call (those that are not the
 same sub ref anymore, i.e. have been redefined, are left
