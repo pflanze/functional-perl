@@ -34,7 +34,8 @@ FP::Struct - classes for functional perl
  new_ Foo (animals=> ["Struppi"])->animals->[0] # "Struppi"
 
 
- # alternative: define the struct from within the package:
+ # Usually preferred alternative: define the struct from within the
+ # package:
 
  # a mixin package, if this weren't defined at the time of 'use
  # FP::Struct' below, it would try to load Hum.pm
