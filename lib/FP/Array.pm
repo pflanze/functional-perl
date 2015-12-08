@@ -50,6 +50,7 @@ package FP::Array;
 	      array_append
               array_reverse
 	      array_xone
+	      array_perhaps_one
 	      array_hashing_uniq
 	      array_zip2
 	      array_for_each
@@ -185,6 +186,15 @@ sub array_xone ($) {
     my ($a)=@_;
     @$a==1 or croak "expecting 1 element, got ".@$a;
     $$a[0]
+}
+
+sub array_perhaps_one ($) {
+    my ($a)=@_;
+    if (@$a==1) {
+	$$a[0]
+    } else {
+	()
+    }
 }
 
 sub array_hashing_uniq ($;$ ) {

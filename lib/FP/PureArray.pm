@@ -180,6 +180,7 @@ sub FP_Sequence_length {
 *append= blessing \&array_append;
 *reverse= blessing \&array_reverse;
 *xone= \&array_xone;
+*perhaps_one= \&array_perhaps_one;
 *hashing_uniq= blessing \&array_hashing_uniq;
 *zip2= blessing \&array_zip2;
 *for_each= flip \&array_for_each;
