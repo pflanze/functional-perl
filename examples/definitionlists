@@ -1,0 +1,236 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+use Function::Parameters qw(:strict);
+#use Sub::Call::Tail;
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: $myname inputfile.txt output.xhtml
+
+  Turn markdown kind of list syntax into something that htmldoc will
+  show right.
+
+";
+    exit 1;
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage unless @ARGV==2;
+
+my ($infile,$outfile)= @ARGV;
+
+use FP::Predicates qw(is_string);
+use FP::List qw(mixed_flatten);
+use FP::PureArray;
+use Chj::TEST ":all";
+use Chj::xIOUtil qw(xgetfile_utf8 xputfile_utf8);
+use PXML::XHTML ":all";
+use PXML::Serialize qw(puthtmlfile);
+use PXML qw(is_pxml_element); # XX: why does it not complain when
+                              # trying to import from PXML::Element?
+use FP::Ops qw(the_method);
+
+#debug
+use FP::Ops ":all"; #qw(the_method);
+use FP::Combinators ":all";
+use Chj::ruse;
+use Chj::Trapl;
+use Chj::repl;
+
+
+use FP::Struct 'definitionlists::Match'=> ["value"],
+  'FP::Show::Base::FP_Struct';
+use FP::Struct 'definitionlists::NonMatch'=> ["value"],
+  'FP::Show::Base::FP_Struct';
+use FP::Struct 'definitionlists::Link'=> ["txt", "url"],
+  'FP::Show::Base::FP_Struct';
+import definitionlists::Link::constructors;
+import definitionlists::Match::constructors;
+import definitionlists::NonMatch::constructors;
+
+
+
+fun parselinks ($str, $processmatch=*Link, $processnonmatch=*NonMatch) {
+    my $pos=0;
+    my @res;
+    while ($str=~ /\[([^\[\]]+)\]\(([^()]+)\)/sgc) {
+	my $len= length($1)+length($2)+4;
+	my $pos1= pos($str);
+	my $pos0= $pos1-$len;
+	if ($pos < $pos0) {
+	    push @res, &$processnonmatch(substr($str, $pos, $pos0-$pos));
+	}
+	push @res, &$processmatch($1,$2); # aheh difference
+	$pos= $pos1;
+    }
+    my $pos1= length($str); #end.
+    my $lenremainder= $pos1-$pos;
+    if ($lenremainder) {
+	push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
+    }
+    unsafe_array_to_purearray \@res
+}
+
+TEST {
+    parselinks "foo"
+} purearray(NonMatch('foo'));
+
+TEST {
+    parselinks "[fun](World)"
+} purearray(Link('fun', 'World'));
+
+TEST {
+    parselinks "a [fun](World) world"
+} purearray(NonMatch("a "), Link('fun', 'World'), NonMatch(" world"));
+
+
+fun parse ($str, $processmatch, $processnonmatch) {
+    my $pos=0;
+    my @res;
+    while ($str=~ /(?:\n|\G)\* (.*?)\n([^ \n]|\z)/sgc) {
+	my $len= length($1);
+	my $pos1= pos($str);
+	my $pos0= $pos1-$len-4; #why 4 not 2 ???
+	if ($pos < $pos0) {
+	    push @res, &$processnonmatch(substr($str, $pos, $pos0-$pos));
+	}
+	push @res, &$processmatch($1);
+	$pos=$pos1 - length($2);
+	pos($str)=$pos;
+    }
+    my $pos1= length($str); #end.
+    my $lenremainder= $pos1-$pos;
+    if ($lenremainder) {
+	push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
+    }
+    unsafe_array_to_purearray \@res
+}
+
+
+fun translate_paragraphs ($str) {
+    purearray map { P $_ } split /\n\n/, $str
+}
+
+# XX move this somewhere
+*is_empty_string= *PXML::Serialize::is_empty_string;
+
+fun pxml_body_is_empty ($e) {
+    my $l= mixed_flatten($e->body);
+    $l->every(fun($v){
+	is_string $v ? $v=~ /^\s*$/s : 0
+    })
+}
+
+TEST{ pxml_body_is_empty P(" ",["1"]) } '';
+TEST{ pxml_body_is_empty P(" ",[" "]) } 1;
+
+fun pxml_de_paragraphy ($e) {
+    if ($e->name eq "p") {
+	if (pxml_body_is_empty $e) {
+	    BR # HACK.
+	} else {
+	    $e->body
+	}
+    } else {
+	$e
+    }
+}
+
+fun de_paragraphy ($v) {
+    if (is_pxml_element $v) {
+	pxml_de_paragraphy $v
+    } elsif (my ($v0)= $v->perhaps_one) {
+	de_paragraphy($v0)
+    } else {
+	$v->map(*de_paragraphy)
+    }
+}
+
+
+fun translate_links ($str) {
+    my $l= parselinks
+      ($str,
+       fun ($txt,$url) {
+	   A {href=> $url}, $txt
+       },
+       fun ($str) {
+	   translate_paragraphs($str)
+       }
+      );
+    $l->map(*de_paragraphy)
+}
+
+fun translate_listitem ($str) {
+    my ($first, $rest)= $str=~ /^(.*?)\n\n(.*)/s
+      or die "invalid listitem '$str'";
+    my $ff= translate_links($first)->xone;
+    [
+     # can't use chr(8226) or even $nbsp because htmldoc doesn't
+     # support UTF-8
+     DT(P "*", " ", $ff),
+     DD(translate_links($rest))
+    ]
+}
+
+
+
+method definitionlists::Match::translate () {
+    translate_listitem ($self->value)
+}
+method definitionlists::NonMatch::translate () {
+    translate_paragraphs ($self->value)
+}
+
+
+# XX move to lib
+fun type_eq ($a,$b) {
+    #XX simplified; not merged yet, right?
+    ref($a) eq ref($b)
+}
+
+fun translate ($str) {
+    my $parsed= parse ($str,
+		       *definitionlists::Match::c::Match,
+		       *definitionlists::NonMatch::c::NonMatch);
+    my $grouped= $parsed->list->group(*type_eq)->map(the_method "reverse");
+    my $body= $grouped->map(fun ($l) {
+	my $t= $l->map(the_method "translate");
+	if ($l->first->isa("definitionlists::Match")) {
+	    DL $t
+	} else {
+	    $t
+	}
+    });
+
+    HTML(HEAD(TITLE($infile),
+	      # Hack to try to get htmldoc to interpret content as
+	      # UTF-8, but doesn't work
+	      META ({'http-equiv'=>"Content-Type",
+		     content=> "text/html;charset=UTF-8"})),
+	 BODY($body))
+}
+
+#repl;exit;
+
+my $in= xgetfile_utf8 $infile;
+
+puthtmlfile($outfile, translate($in));
+
