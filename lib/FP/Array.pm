@@ -67,6 +67,7 @@ package FP::Array;
 	      array_any
 	      array_sum
 	      array_first
+	      array_second
 	      array_rest
 	      array_to_hash_group_by
 	    );
@@ -411,6 +412,7 @@ sub array_sum ($) {
 }
 
 *array_first= *array_fst;
+*array_second= *array_snd;
 
 sub array_rest ($) {
     my ($a)= @_;
