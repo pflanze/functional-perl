@@ -103,6 +103,7 @@ package FP::List;
 	      list_drop
 	      list_take
 	      list_slice
+	      list_group
 	      circularlist
 	      weaklycircularlist
 	    );
@@ -1738,6 +1739,62 @@ TEST { list(3,1,37,-8,-5,0,0)->find_tail (*is_even)->array }
   [-8,-5,0,0];
 TEST { [list(3,1,37,-5)->find_tail (*is_even)] }
   [undef];
+
+
+# Grouping
+
+sub make_group {
+    my ($is_stream)=@_;
+    my $group= sub ($$;$) {
+	my ($equals,$s,$maybe_tail)=@_;
+	weaken $_[1] if $is_stream;
+	lazy_if {
+	    FORCE $s;
+	    if (is_null $s) {
+		$maybe_tail // null
+	    } else {
+		my ($a,$r)= $s->first_and_rest;
+		my $rec; $rec= sub {
+		    my ($prev,$s)=@_;
+		    lazy_if {
+			my $s= $s;
+			my $group= cons $prev, null;
+		      LP: {
+			    FORCE $s;
+			    if (is_null $s) {
+				cons $group, ($maybe_tail // null)
+			    } else {
+				my ($a, $r)= $s->first_and_rest;
+				if (&$equals($prev, $a)) {
+				    $s= $r;
+				    $group= cons $a, $group;
+				    redo LP;
+				} else {
+				    cons $group, &$rec($a, $r)
+				}
+			    }
+			}
+		    } $is_stream;
+		};
+		# TCO?
+		Weakened($rec)->($a, $r)
+	    }
+	} $is_stream
+    }
+}
+
+sub list_group ($$;$);
+*list_group= make_group(0);
+sub FP::List::List::group {
+    @_>= 2 and @_<= 3 or die "wrong number of arguments";
+    my ($self,$equals,$maybe_tail)=@_;
+    list_group($equals,$self,$maybe_tail)
+}
+
+TEST {
+    list(3,4,4,5,6,8,5,5)->group(*FP::Ops::number_eq)
+} list(list(3), list(4, 4), list(5), list(6), list(8), list(5, 5));
+
 
 
 # Turn a mix of (nested) arrays and lists into a flat list.

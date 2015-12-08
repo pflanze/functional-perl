@@ -90,6 +90,7 @@ package FP::Stream;
 	      stream_zip_with
 	      stream_to_array
 	      stream_sort
+	      stream_group
 	      stream_mixed_flatten
 	      stream_mixed_fold_right
 	      stream_mixed_state_fold_right
@@ -786,6 +787,17 @@ TEST { stream (5,3,10,8,4)->sort->stream->car }
 
 
 # add a lazy merge sort instead/in addition?
+
+
+sub stream_group ($$;$);
+*stream_group= FP::List::make_group(1);
+sub FP::List::List::stream_group {
+    @_>= 2 and @_<= 3 or die "wrong number of arguments";
+    my ($self,$equals,$maybe_tail)=@_;
+    weaken $_[0];
+    stream_group($equals,$self,$maybe_tail)
+}
+
 
 
 sub stream_mixed_flatten ($;$$) {

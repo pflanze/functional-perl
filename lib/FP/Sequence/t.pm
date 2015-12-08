@@ -53,8 +53,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # more tests:
 
 use FP::List ":all";
-use FP::Ops qw(the_method);
-use FP::Array qw(array_first);
+use FP::Ops qw(the_method number_eq);
+use FP::Array_sort qw(on); # XX should really be in another place.
+use FP::Array qw(array_first array_second);
 use FP::Stream qw(:all);
 
 TEST {
@@ -117,5 +118,22 @@ TEST { $a->length }
   4;
 TEST { $b->ref(2) }
   5;
+
+
+# XX add more intersting tests
+TEST {
+    my $s= purearray(3,4,4,5,6,8,5,5)->map_with_i(*array)->stream;
+    my $r= $s->group(on *array_second, *number_eq)->array;
+    [$s, $r]
+} [undef,
+   [list([0,3]),
+    list([2,4],
+	 [1,4]),
+    list([3,5]),
+    list([4,6]),
+    list([5,8]),
+    list([7,5],
+	 [6,5])]];
+
 
 1
