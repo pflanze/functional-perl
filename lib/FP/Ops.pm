@@ -52,7 +52,20 @@ package FP::Ops;
 		 mod
 		 expt
 		 string_cmp
+		 string_eq
+		 string_eq
+		 string_ne
+		 string_lt
+		 string_le
+		 string_gt
+		 string_ge
 		 number_cmp
+		 number_eq
+		 number_ne
+		 number_lt
+		 number_le
+		 number_gt
+		 number_ge
 		 the_method
 		 cut_method
 		 applying
@@ -110,8 +123,46 @@ sub string_cmp ($ $) {
     $_[0] cmp $_[1]
 }
 
+sub string_eq ($ $) {
+    $_[0] eq $_[1]
+}
+sub string_ne ($ $) {
+    $_[0] ne $_[1]
+}
+sub string_lt ($ $) {
+    $_[0] lt $_[1]
+}
+sub string_le ($ $) {
+    $_[0] le $_[1]
+}
+sub string_gt ($ $) {
+    $_[0] gt $_[1]
+}
+sub string_ge ($ $) {
+    $_[0] ge $_[1]
+}
+
 sub number_cmp ($ $) {
     $_[0] <=> $_[1]
+}
+
+sub number_eq ($ $) {
+    $_[0] == $_[1]
+}
+sub number_ne ($ $) {
+    $_[0] != $_[1]
+}
+sub number_lt ($ $) {
+    $_[0] < $_[1]
+}
+sub number_le ($ $) {
+    $_[0] <= $_[1]
+}
+sub number_gt ($ $) {
+    $_[0] > $_[1]
+}
+sub number_ge ($ $) {
+    $_[0] >= $_[1]
 }
 
 sub the_method {
