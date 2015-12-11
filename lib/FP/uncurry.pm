@@ -30,7 +30,7 @@ FP::uncurry
 Sometimes it's easier to write code in a curried fashion. Often users
 still expect to receive an uncurried ("normal") version of the
 function. `uncurry_1_1 $fn` returns a function that expects 2
-arguments, passes one to $fn and then the other one to the function
+arguments, passes the first to $fn and then the second to the function
 that $fn returns. Other variants behave similarly: the appendix tells
 how many arguments each function level expects; the added numbers
 determine how many arguments the resulting function expects.
