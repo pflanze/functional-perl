@@ -1379,7 +1379,7 @@ Then run it and try:
 As you can see, we have created `$s2` without mutating `$s1`.
 
 The `..update` method passes the old value to the given function and
-substitutes it for what the function returns. The `..set` methods use
+replaces it with what the function returns. The `..set` methods use
 the given value directly. Those methods are generated automatically by
 FP::Struct.
 
