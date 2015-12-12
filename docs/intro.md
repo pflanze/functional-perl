@@ -1232,8 +1232,10 @@ There are already a number of such functions defined in
 `FP::Combinators`. The two most commonly used ones are `flip`, which
 takes a function expecting 2 arguments and returns a function
 expecting them in reverse order, and `compose`, which takes two (or
-more) functions, and returns a function that calls each original
-function in turn (from the right to left):
+more) functions, and returns a function that nests them (i.e. calls
+each original function in turn (from the right to left) on the
+original arguments, or the result(s) from the previous call). See how
+flip behaves:
 
     repl> *div= fun($x,$y) { $x / $y }; *rdiv= flip *div
     Subroutine repl::div redefined at (eval 136) line 1.
@@ -1258,7 +1260,7 @@ arguments to other functions like `flip` or the `map` methods.
 
 i.e. `compose *inverse, *add` is equivalent to:
 
-    repl> *add_then_invert= fun ($x,$y) { inverse (add $x, $y) }
+    fun ($x,$y) { inverse (add $x, $y) }
 
 
 ## Testing
