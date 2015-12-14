@@ -61,13 +61,28 @@ sub fibs {
 # don't protect here (we do not use a Keep() wrapper).
 
 # Here's a variant that relies on self-referencing the subroutine (a
-# package variable) instead of mutating a lexical variable (otherwise
-# it works identically):
+# package variable) instead of mutating a lexical variable:
 
 sub fibs2 {
     cons 1, cons 1, lazy { my $fibs= fibs2 ();
 			   stream_zip_with *add, $fibs, rest $fibs };
 }
+
+# But it's less efficient: it recalculates parts multiple times, as
+# can be seen with CPU timings, or with the number of times that it
+# calls *add; you can check for the latter by replacing *add with
+# *addc and look at $addc before and after the calculation:
+
+my $addc=0;
+sub addc {
+    $addc++;
+    $_[0]+$_[1]
+}
+
+TEST { $addc=0; local *add=*addc; [fibs->ref(80), $addc] }
+  ['37889062373143906', 79];
+TEST { $addc=0; local *add=*addc; [fibs2->ref(80), $addc] }
+  ['37889062373143906', 3160]; # 3160 == 79*80/2
 
 
 
@@ -97,7 +112,8 @@ TEST { fibs2->ref(30) }
 # ------------------------------------------------------------------
 
 # Alright, so there are not only the stupidly slow naive recursive and
-# the above widespread O(n) algorithm, but also better ones:
+# the above widespread O(n) algorithm (as well as the fibs2 variant
+# which is inbetween), but also better ones:
 
 # http://www.nayuki.io/page/fast-fibonacci-algorithms
 
