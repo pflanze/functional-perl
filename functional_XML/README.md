@@ -60,7 +60,7 @@ When generating HTML, `CGI`'s tag functions seem similar, what are
 the differences?
 
  - PXML::XHTML chooses upper-case constructor names to reduce the
-   chances for conflicts; for example using "tr" for <TR></TR>
+   chances for conflicts; for example using "tr" for `<TR></TR>`
    conflicts with the tr builtin Perl operator.
 
  - `CGI`'s creators return strings, whereas PXML::XHTML returns
