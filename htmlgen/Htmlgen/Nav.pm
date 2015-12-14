@@ -28,6 +28,22 @@ package Htmlgen::Nav;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 
+
+# Constructors
+
+fun _nav ($items, $nav_bar) {
+    my $nav= Htmlgen::Nav::TopEntry->new($items, $nav_bar, undef);
+    $nav->index_set(nav_index ($nav))
+}
+
+fun entry ($path0,@subentries) {
+    Htmlgen::Nav::RealEntry->new_(path0=> $path0,
+				  subentries=> list(@subentries));
+}
+
+
+# Classes
+
 {
     package Htmlgen::Nav::Entry;
     use FP::Predicates ":all";
@@ -204,17 +220,16 @@ use FP::fix;
 {
     package Htmlgen::Nav::Index;
     use FP::List qw(null);
-    use Htmlgen::Nav qw(entry);
 
     use FP::Struct ["p0_to_upitems", "p0_to_item"];
 
     method path0_to_upitems ($p0) {
 	# now includes the $p0 item itself
-	$self->p0_to_upitems->{$p0} // entry($p0)  # not null
+	$self->p0_to_upitems->{$p0} // Htmlgen::Nav::entry($p0)  # not null
     }
 
     method path0_to_item ($p0) {
-	$self->p0_to_item->{$p0} // entry($p0)
+	$self->p0_to_item->{$p0} // Htmlgen::Nav::entry($p0)
     }
     _END_
 }
@@ -235,21 +250,6 @@ fun nav_index ($nav) {
     &$index_level ($nav, null);
     Htmlgen::Nav::Index->new(\%p0_to_upitems, \%p0_to_item);
 }
-
-
-
-# Constructors
-
-fun _nav ($items, $nav_bar) {
-    my $nav= Htmlgen::Nav::TopEntry->new($items, $nav_bar, undef);
-    $nav->index_set(nav_index $nav)
-}
-
-fun entry ($path0,@subentries) {
-    Htmlgen::Nav::RealEntry->new_(path0=> $path0,
-				  subentries=> list(@subentries));
-}
-
 
 
 1
