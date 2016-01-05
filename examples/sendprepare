@@ -54,15 +54,24 @@ sub regex_from_strings {
 # This ad-hoc mail "parser" unsafely assumes that the headers we're
 # interested in consist of one line only
 
+fun xheader ($head, $name) {
+    $head->filter (regex_match qr/^\Q$name:/)->xone
+}
+
 fun fixlines ($orig) {
     my ($head,$rest)= $orig->
       take_while_and_rest (complement regex_match qr/^\n\z/s);
 
-    my $from= $head->filter (regex_match qr/^From:/)->xone;
+    my $from= xheader $head, "From";
     my ($fromaddr)= $from=~ m@<([^<>]+)>@s
       or die "missing from address in '$from'";
     my ($fromwhole)= $from=~ m@.?: *([^\n]*)@s
       or die "?";
+    my ($fromdomain)= $fromaddr=~ m{\@(.*)}s
+      or die "?";
+    my $messageid= xheader $head, "Message-ID";
+    my ($messageid_uuid)= $messageid=~ m{([^<>@]+)\@}s
+      or die "no match in messageid '$messageid'";
 
     (cons "Return-Path: <$fromaddr>\n",
      cons "BCC: $fromwhole\n",
@@ -73,8 +82,10 @@ fun fixlines ($orig) {
 					   BCC
 					   X-K9mail-Identity
 					   User-Agent
-					   Date)).
+					   Date
+					   Message-ID)).
 		    ":")),
+      cons "Message-ID: <$messageid_uuid\@$fromdomain>\n",
       $rest))
 }
 
