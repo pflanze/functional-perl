@@ -99,6 +99,8 @@ package FP::Stream;
 	 );
 @EXPORT_OK=qw(F weaken
 	      cons car cdr first rest
+	      stream_cartesian_product
+	      stream_cartesian_product_2
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -952,6 +954,80 @@ sub stream_mixed_state_fold_right {
 }
 
 *FP::List::List::stream_mixed_state_fold_right= rot3left *stream_mixed_state_fold_right;
+
+
+# 'cross product'
+
+sub stream_cartesian_product_2 {
+    @_==2 or die "wrong number of arguments";
+    my ($a, $orig_b)=@_;
+    my $rec; $rec= sub {
+	my ($a,$b)=@_;
+	lazy {
+	    if (is_null $a) {
+		null
+	    } elsif (is_null $b) {
+		&$rec (cdr $a, $orig_b);
+	    } else {
+		cons (cons (car $a, car $b),
+		      &$rec ($a, cdr $b))
+	    }
+	}
+    };
+    Weakened($rec)->($a, $orig_b)
+}
+
+*FP::List::List::stream_cartesian_product_2= *stream_cartesian_product_2;
+
+TEST { F stream_cartesian_product_2 list("A","B"), list(list(1),list(2)) }
+  list(list('A', 1), list('A', 2), list('B', 1), list('B', 2));
+
+TEST{ F stream_cartesian_product_2 list("E","F"),
+	stream_cartesian_product_2 list("C","D"),
+	  list (list ("A"), list ("B")) }
+  list(list("E","C","A"), list("E","C","B"), list("E","D","A"),
+       list("E","D","B"), list("F","C","A"), list("F","C","B"),
+       list("F","D","A"), list("F","D","B"));
+
+sub stream_cartesian_product {
+    if (!@_) {
+	die "stream_cartesian_product: need at least 1 argument"
+    } elsif (@_==1) {
+	stream_map *list, $_[0]
+    } else {
+	my ($first, @rest)= @_;
+	stream_cartesian_product_2 ($first,
+				    stream_cartesian_product (@rest))
+    }
+}
+
+*FP::List::List::stream_cartesian_product= *stream_cartesian_product;
+
+TEST_STDOUT {
+    write_sexpr
+      stream_cartesian_product list("A","B"), list("C","D"), list("E","F")
+  }
+  '(("A" "C" "E") ("A" "C" "F") ("A" "D" "E") ("A" "D" "F") ("B" "C" "E")'.
+  ' ("B" "C" "F") ("B" "D" "E") ("B" "D" "F"))';
+TEST_STDOUT {
+    write_sexpr
+      stream_cartesian_product list("A","B"), list("C","D"), list("E")
+  }
+  '(("A" "C" "E") ("A" "D" "E") ("B" "C" "E") ("B" "D" "E"))';
+TEST_STDOUT {
+    write_sexpr
+      stream_cartesian_product list("A","B"), list("C","D")
+  }
+  '(("A" "C") ("A" "D") ("B" "C") ("B" "D"))';
+
+TEST_STDOUT {
+    write_sexpr
+      stream_cartesian_product list("A","B")
+  }
+  '(("A") ("B"))';
+
+TEST{ F stream(1,2)->cartesian_product(list 3,4) }
+  list(list(1, 3), list(1, 4), list(2, 3), list(2, 4));
 
 
 # ----- Tests ----------------------------------------------------------
