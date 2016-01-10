@@ -961,6 +961,7 @@ sub stream_mixed_state_fold_right {
 sub stream_cartesian_product_2 {
     @_==2 or die "wrong number of arguments";
     my ($a, $orig_b)=@_;
+    weaken $_[0]; weaken $_[1];
     my $rec; $rec= sub {
 	my ($a,$b)=@_;
 	lazy {
@@ -990,14 +991,16 @@ TEST{ F stream_cartesian_product_2 list("E","F"),
        list("F","D","A"), list("F","D","B"));
 
 sub stream_cartesian_product {
-    if (!@_) {
+    my @v=@_;
+    weaken $_ for @_;
+    if (!@v) {
 	die "stream_cartesian_product: need at least 1 argument"
-    } elsif (@_==1) {
-	stream_map *list, $_[0]
+    } elsif (@v==1) {
+	stream_map *list, $v[0]
     } else {
-	my ($first, @rest)= @_;
+	my $first= shift @v;
 	stream_cartesian_product_2 ($first,
-				    stream_cartesian_product (@rest))
+				    stream_cartesian_product (@v))
     }
 }
 
