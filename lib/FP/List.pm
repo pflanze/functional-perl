@@ -770,13 +770,15 @@ TEST { list (4,5)->length } 2;
 sub list_to_string ($) {
     my ($l)=@_;
     my $len= list_length $l;
+    # preallocation for the case where $l consists only of single
+    # characters (otherwise will extend dynamically):
     my $res= " "x$len;
     my $i=0;
     while (!is_null $l) {
 	my $c= car $l;
 	substr($res,$i,1)= $c;
 	$l= cdr $l;
-	$i++;
+	$i+= length($c);
     }
     $res
 }
@@ -785,7 +787,9 @@ sub list_to_string ($) {
 
 TEST { null->string } "";
 TEST { cons("a",null)->string } "a";
-
+TEST{ list("Ha","ll","o")->string } "Hallo";
+TEST{ list("","","o")->string } 'o';
+TEST{ list("a","","o")->string } 'ao';
 
 sub list_to_array ($) {
     my ($l)=@_;

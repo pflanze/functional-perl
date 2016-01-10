@@ -535,6 +535,8 @@ sub stream_to_string ($) {
 
 *FP::List::List::stream_string= *stream_to_string;
 
+TEST{ stream("Ha","ll","o")->string } "Hallo";
+
 sub stream_strings_join ($$) {
     @_==2 or die "wrong number of arguments";
     my ($l,$val)=@_;
