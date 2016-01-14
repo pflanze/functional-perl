@@ -53,8 +53,10 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
   +{
    },
   title=> fun ($filetitle) {
-      $filetitle eq "Readme" ? "functional-perl.org" :
-	($filetitle, " - functional-perl.org")
+      ($filetitle eq "Readme" ?
+       "Functional programming on Perl"
+       : $filetitle,
+       " - functional-perl.org")
   },
   head=> fun ($path0) {
       # HTML to add to the <head> section
