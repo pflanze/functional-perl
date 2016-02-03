@@ -96,15 +96,9 @@ use Chj::NamespaceCleanAbove;
 	    my $lp; $lp= sub {
 		my $lp=$lp; #keep strong reference
 		lazy {
-		    # XXX: some bug leads to both values being undef
-		    # now [when using SQLite] (it's not the Weakened)
-		    if (defined $id and defined $$s{fp__dbi__id}) {
-			$$s{fp__dbi__id} == $id
-			  or die ("stream was interrupted by another execute".
-				  " or stream request");
-		    } else {
-			#warn "undef value hu";
-		    }
+		    $$s{fp__dbi__id} == $id
+		      or die ("stream was interrupted by another execute".
+			      " or stream request");
 		    if (my $v= $s->$method) {
 			cons ($maybe_mapfn ? &$maybe_mapfn($v) : $v, &$lp);
 		    } else {
