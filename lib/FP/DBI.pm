@@ -92,11 +92,11 @@ use Chj::NamespaceCleanAbove;
 	my ($method, $maybe_mapfn)=@_;
 	sub {
 	    my $s=shift;
-	    my $id= ++$$s{fp__dbi__id};
+	    my $id= ++$$s{private_fp__dbi__id};
 	    my $lp; $lp= sub {
 		my $lp=$lp; #keep strong reference
 		lazy {
-		    $$s{fp__dbi__id} == $id
+		    $$s{private_fp__dbi__id} == $id
 		      or die ("stream was interrupted by another execute".
 			      " or stream request");
 		    if (my $v= $s->$method) {
@@ -115,7 +115,7 @@ use Chj::NamespaceCleanAbove;
 
     sub execute {
 	my $s=shift;
-	$$s{fp__dbi__id}++;
+	$$s{private_fp__dbi__id}++;
 	$s->SUPER::execute (@_)
     }
 
