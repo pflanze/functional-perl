@@ -178,7 +178,7 @@ sub GIVES (&) {
 }
 
 use FP::Equal;
-use Data::Dumper;
+use FP::Show;
 
 sub eval_test ($$) {
     my ($t,$stat)=@_;
@@ -193,12 +193,12 @@ sub eval_test ($$) {
 	print "ok\n";
 	$$stat{success}++
     } else {
-	my $gotstr= Dumper $got;
-	my $resstr= Dumper $res;
+	my $gotstr= show $got;
+	my $resstr= show $res;
 
 	print "FAIL at $filename line $line:\n";
-	print "       got: $gotstr";
-	print "  expected: $resstr";
+	print "       got: $gotstr\n";
+	print "  expected: $resstr\n";
 	$$stat{fail}++
     }
 }
