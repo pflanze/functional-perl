@@ -177,6 +177,8 @@ sub FP_Sequence_length {
 *shift= blessing_snd \&array_shift;
 *unshift= blessing \&array_unshift;
 *sub= blessing \&array_sub;
+*take= blessing \&array_take;
+*drop= blessing \&array_drop;
 *append= blessing \&array_append;
 *reverse= blessing \&array_reverse;
 *xone= \&array_xone;

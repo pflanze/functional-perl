@@ -47,6 +47,8 @@ package FP::Array;
 	      array_shift
 	      array_unshift
 	      array_sub
+	      array_take
+	      array_drop
 	      array_append
               array_reverse
 	      array_xone
@@ -169,6 +171,17 @@ sub array_sub {
     my ($a,$from,$to)=@_; # incl $from, excl $to
     bless [@$a[$from..$to-1]], ref $a
 }
+
+sub array_take ($$) {
+    my ($a,$n)= @_;
+    array_sub $a, 0, $n
+}
+
+sub array_drop ($$) {
+    my ($a,$n)= @_;
+    array_sub $a, $n, array_length $a
+}
+
 
 
 # various
