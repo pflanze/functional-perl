@@ -1419,11 +1419,20 @@ TEST { unfold_right (*is_zero, *inc, *dec, 5, list 99)->array } [2, 3, 4, 5, 6, 
 
 
 
-sub list_append ($ $) {
-    @_==2 or die "wrong number of arguments";
-    my ($l1,$l2)=@_;
-    list_fold_right (\&cons, $l2, $l1)
+sub list_append {
+    my $l= @_ ? shift : null;
+    while (@_) {
+	my $l2= shift;
+	$l= list_fold_right (\&cons, $l2, $l)
+    }
+    $l
 }
+
+TEST {
+    list_append list(1,2,3),list("a","b"), list(4,5)
+} list(1, 2, 3, 'a', 'b', 4, 5);
+
+TEST { list_append } list();
 
 TEST{ list_to_array  list_append (array_to_list (["a","b"]),
 			       array_to_list([1,2])) }
