@@ -313,4 +313,10 @@ TEST { purearray (1,2,3)->set(2,"a") } purearray(1, 2, 'a');
 TEST { purearray (1,2,7,3,6)->filter(sub { $_[0] > 5 }) } purearray (7,6);
 
 
+TEST { purearray(3,4)->append(purearray (5,6),purearray (7)) }
+  purearray 3,4,5,6,7;
+TEST { purearray(3,4)->append(FP::List::list (5,6),purearray (7)) }
+  purearray 3,4,5,6,7;
+
+
 _END_
