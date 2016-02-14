@@ -62,7 +62,7 @@ required to hold the test code and results.
 package Chj::TEST;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
-@EXPORT_OK=qw(run_tests run_tests_);
+@EXPORT_OK=qw(run_tests run_tests_ no_tests);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -130,9 +130,13 @@ our $num_by_package={};
 
 our $dropped_tests=0;
 
+sub no_tests () {
+    exists $ENV{TEST} and !$ENV{TEST}
+}
+
 sub _TEST {
     my ($proc,$res)=@_;
-    if (exists $ENV{TEST} and !$ENV{TEST}) {
+    if (no_tests) {
 	$dropped_tests++;
     } else {
 	my ($package, $filename, $line) = caller(1);
