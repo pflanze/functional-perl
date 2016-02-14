@@ -161,4 +161,12 @@ sub minmax {
 }
 
 
+sub subsection {
+    @_==3 or die "wrong number of arguments";
+    my ($self, $i0, $i1)=@_;
+    # XXX same comment as in `extreme`
+    $self->drop($i0)->take($i1 - $i0)
+}
+
+
 _END_
