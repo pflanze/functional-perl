@@ -163,6 +163,7 @@ sub is_null {
 *first= \&array_fst;
 *snd= \&array_snd;
 *second= \&array_second;
+*last= \&array_last;
 *ref= \&array_ref;
 *FP_Sequence_ref=*ref;
 *length= \&array_length;
