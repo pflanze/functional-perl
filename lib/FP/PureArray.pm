@@ -156,6 +156,10 @@ sub is_null {
 # data structure? Or is the `is_null` already evil because of this and
 # should be named `is_empty`?
 
+sub values {
+    @{$_[0]}
+}
+
 
 *cons= flip \&FP::List::pair;
 *rest= blessing \&array_rest;
