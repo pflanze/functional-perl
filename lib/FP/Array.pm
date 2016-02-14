@@ -188,7 +188,17 @@ sub array_drop ($$) {
 # various
 
 sub array_append {
-    [ map { @$_ } @_ ]
+    [ map {
+	# @$_ nope, that's totally unsafe, will open up array-based
+	# objects, like for example cons cells...
+
+	# evil inlined `is_array`
+	if (defined $_[0] and ref ($_[0]) eq "ARRAY") {
+	    @$_
+	} else {
+	    $_->values
+	}
+    } @_ ]
 }
 
 sub array_reverse ($) {
