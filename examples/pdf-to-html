@@ -140,7 +140,7 @@ fun possibly_do_pdf2svg ($infile,$outdir) {
 }
 
 
-fun navigation_html ($svgpaths, $for_svgpath, $opt_single) {
+fun navigation_html ($svgpaths, $for_svgpath, $is_single) {
 
     my $ul=
       UL({class=> "menu"},
@@ -148,7 +148,7 @@ fun navigation_html ($svgpaths, $for_svgpath, $opt_single) {
 	 (fun ($is_last, $svgpath) {
 	     my $pageno= svgpath_to_pageno($svgpath);
 
-	     my $href= $opt_single ? "#p$pageno" :
+	     my $href= $is_single ? "#p$pageno" :
 	       basename svgpath_to_htmlpath ($svgpath);
 
 	     LI({class=> ($is_last ? "menu_last" : "menu")},
@@ -158,7 +158,7 @@ fun navigation_html ($svgpaths, $for_svgpath, $opt_single) {
 		     $pageno)))
 	 }));
 
-    $opt_single ?
+    $is_single ?
       A({name=> "p".svgpath_to_pageno($for_svgpath)},
 	$ul)
       : $ul
