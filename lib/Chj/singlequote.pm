@@ -54,6 +54,7 @@ package Chj::singlequote;
 @EXPORT=qw(singlequote);
 @EXPORT_OK=qw(singlequote_sh singlequote_many many with_maxlen
 	      possibly_singlequote_sh singlequote_sh_many
+	      quote_javascript
 	    );
 # importing 'many' is probably not a good idea (depreciated)
 %EXPORT_TAGS=(all=>[@EXPORT, @EXPORT_OK]);
@@ -134,6 +135,26 @@ sub possibly_singlequote_sh ($) {
 
 sub singlequote_sh_many {
     join " ", map { possibly_singlequote_sh $_ } @_
+}
+
+
+sub quote_javascript ($) {
+    my ($str)=@_;
+    #require JSON::MaybeXS;
+    #JSON->new->allow_nonref(1)->encode($str)
+
+    # this doesn't turn special characters into backslash sequences
+    #$str=~ s|\\|\\\\|sg;
+    #$str=~ s|\"|\\\"|sg;
+    #'"'.$str.'"'
+
+    # <mst> if you're obsessed with avoiding dependencies, just use
+    #       JSON::PP directly and suck up the terrible performance
+    require JSON::PP;
+    JSON::PP->new->allow_nonref(1)->encode($str)
+
+    # <mst> note that JSON::MaybeXS is trivial and fatpacks fine
+    # <mst> intentionally
 }
 
 1
