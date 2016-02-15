@@ -73,6 +73,7 @@ package FP::Ops;
 		 unary_operator
 		 regex_match
 		 regex_substitute
+		 regex_xsubstitute
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -237,6 +238,18 @@ sub regex_substitute {
 	@_==1 or die "wrong number of arguments";
 	my ($str)=@_;
 	$str=~ s/$re/&$sub()/e;
+	$str
+    }
+}
+
+sub regex_xsubstitute {
+    @_==2 or die "wrong number of arguments";
+    my ($re,$sub)=@_;
+    sub {
+	@_==1 or die "wrong number of arguments";
+	my ($str)=@_;
+	$str=~ s/$re/&$sub()/e
+	  or die "no match";
 	$str
     }
 }
