@@ -55,6 +55,7 @@ use Chj::xIOUtil qw(xputfile_utf8);
 use Chj::AutoTrapl;
 use Chj::TEST ":all";
 use FP::Div qw(min max);
+use Chj::singlequote qw(quote_javascript);
 
 sub note {
     print STDERR "$myname: note: ",@_,"\n";
@@ -141,8 +142,8 @@ fun possibly_do_pdf2svg ($infile,$outdir) {
 }
 
 
-# shorten down the navigation to only the pages around the current one
-# plus first and last if necessary
+# shorten the navigation to only the pages around the current one plus
+# first and last if necessary
 
 fun possibly_shortened ($l,
 			$selected_i,
@@ -236,6 +237,92 @@ TEST{ possibly_shortened($l, 7, 5, $lu,$lu) }
   list('a', undef, qw(c d e f g h));
 
 
+fun paging_js_fragment ($keycode, $svgpath) {
+    my $htmlpath= svgpath_to_htmlpath($svgpath);
+    # HACK: make path correctly locally relative, and avoid having to
+    # add parent-taking code to the js:
+    $htmlpath=~ s|.*/|/../|s;
+    my $quotedpath= quote_javascript($htmlpath);
+    "
+            case $keycode:
+                window.location.pathname= window.location.pathname + $quotedpath;
+                break;"
+}
+
+fun paging_js ($svgpaths, $maybe_i) {
+    if (defined $maybe_i) {
+	my $len= $svgpaths->length;
+	my $i= $maybe_i;
+	my $prev_js= $i == 0 ? ""
+	  : paging_js_fragment(37, $svgpaths->ref($i-1));
+	my $next_js= $i == ($len-1) ? ""
+	  : paging_js_fragment(39, $svgpaths->ref($i+1));
+	SCRIPT({language=> "JavaScript", type=> "text/javascript"},
+	       '
+function actUp(evt) {
+    evt = (evt) ? evt : ((event) ? event : null);
+    if (evt) {
+        switch (evt.keyCode) {'.
+               $prev_js.
+               $next_js.'
+        }
+    }
+}
+document.onkeyup = actUp;
+')
+    } else {
+	undef # XX: add anchor based js in this case?
+    }
+}
+
+TEST{ paging_js(list(map {"page-$_.svg"} 0..3), 3) }
+  SCRIPT(+{language => 'JavaScript', type => 'text/javascript'}, '
+function actUp(evt) {
+    evt = (evt) ? evt : ((event) ? event : null);
+    if (evt) {
+        switch (evt.keyCode) {
+            case 37:
+                window.location.pathname= window.location.pathname + "/../page-2.html";
+                break;
+        }
+    }
+}
+document.onkeyup = actUp;
+');
+
+TEST{ paging_js(list(map {"page-$_.svg"} 0..3), 2) }
+  SCRIPT(+{language => 'JavaScript', type => 'text/javascript'}, '
+function actUp(evt) {
+    evt = (evt) ? evt : ((event) ? event : null);
+    if (evt) {
+        switch (evt.keyCode) {
+            case 37:
+                window.location.pathname= window.location.pathname + "/../page-1.html";
+                break;
+            case 39:
+                window.location.pathname= window.location.pathname + "/../page-3.html";
+                break;
+        }
+    }
+}
+document.onkeyup = actUp;
+');
+
+TEST{ paging_js(list(map {"page-$_.svg"} 0..3), 0) }
+  SCRIPT(+{language => 'JavaScript', type => 'text/javascript'}, '
+function actUp(evt) {
+    evt = (evt) ? evt : ((event) ? event : null);
+    if (evt) {
+        switch (evt.keyCode) {
+            case 39:
+                window.location.pathname= window.location.pathname + "/../page-1.html";
+                break;
+        }
+    }
+}
+document.onkeyup = actUp;
+');
+
 our $nav_window_sidelen= 12;
 
 my $insert= list(undef);
@@ -307,10 +394,11 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 	]
     };
 
-    my $html= fun ($title, $body) {
+    my $html= fun ($title, $body, $maybe_for_svgpath) {
 	HTML({lang=>'en'}, # XX should not assume 'en' (use HTML5)
 	     HEAD (TITLE ($title),
-		   css_link($css_src)),
+		   css_link($css_src),
+		   paging_js ($svgpaths, $maybe_for_svgpath)),
 	     BODY (TABLE({width=> "100%",
 			  border=> 0},
 			 $body)))
@@ -326,7 +414,8 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 	       *puthtmlfile,
 	       "$outdir/index.html",
 	       &$html($title,
-		      $svgpaths->map_with_islast($page_htmlfragment))
+		      $svgpaths->map_with_islast($page_htmlfragment),
+		      undef)
 	      ])
 	 :
 	 # one HTML page per PDF page
@@ -335,13 +424,14 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
 	       basename(svgpath_to_htmlpath($svgpaths->first)),
 	       "$outdir/index.html"
 	      ],
-	      $svgpaths->map
-	      (fun ($svgpath) {
+	      $svgpaths->map_with_i
+	      (fun ($i, $svgpath) {
 		  [
 		   *puthtmlfile,
 		   svgpath_to_htmlpath($svgpath),
 		   &$html("$title - page ".svgpath_to_pageno($svgpath),
-			  &$page_htmlfragment(0, $svgpath)),
+			  &$page_htmlfragment(0, $svgpath),
+			  $i),
 		  ]
 	      })))
 }
