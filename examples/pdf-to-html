@@ -47,7 +47,7 @@ use FP::List qw(list cons list_append);
 use FP::Stream qw(Keep);
 use Chj::xperlfunc qw(xstat xxsystem xunlink basename dirname);
 use FP::Combinators qw(compose_scalar);
-use FP::Ops qw(the_method number_cmp regex_match regex_substitute);
+use FP::Ops qw(the_method number_cmp regex_match regex_xsubstitute);
 use PXML::XHTML ':all';
 use PXML::Serialize qw(puthtmlfile);
 use FP::Array_sort qw(on);
@@ -71,8 +71,8 @@ fun css_link ($src) {
 
 our $svgfile_template= 'page-%02d.svg';
 our $svgpath_re= qr{(^|.*/)page-(\d+)\.svg$}s;
-*svgpath_to_htmlpath= regex_substitute($svgpath_re, sub{"$1/page-$2.html"});
-*svgpath_to_pageno= regex_substitute($svgpath_re, sub{$2+0});
+*svgpath_to_htmlpath= regex_xsubstitute($svgpath_re, sub{"$1/page-$2.html"});
+*svgpath_to_pageno= regex_xsubstitute($svgpath_re, sub{$2+0});
 
 our $css_src= "$myname.css";
 
