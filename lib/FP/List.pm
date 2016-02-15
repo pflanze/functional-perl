@@ -130,6 +130,12 @@ use FP::Weak qw(Weakened);
     package FP::List::List;
     use base "FP::Sequence";
     *null= \&FP::List::null;
+
+    # return this sequence as a list, i.e. identity
+    sub list {
+	@_==1 or die "wrong number of arguments";
+	$_[0]
+    }
 }
 
 {
