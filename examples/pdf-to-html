@@ -323,7 +323,7 @@ function actUp(evt) {
 document.onkeyup = actUp;
 ');
 
-our $nav_window_sidelen= 12;
+our $nav_window_sidelen= 10;
 
 my $insert= list(undef);
 
