@@ -108,7 +108,7 @@ L<FP::Equals>
 package FP::Show;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(show);
-@EXPORT_OK=qw();
+@EXPORT_OK=qw(show_many);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use Chj::TerseDumper qw(terseDumper);
@@ -188,6 +188,11 @@ sub show ($) {
     } else {
 	terseDumper($v)
     }
+}
+
+
+sub show_many {
+    join(", ", map { show $_ } @_)
 }
 
 
