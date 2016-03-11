@@ -445,7 +445,7 @@ fun svgpaths_to_html_actions ($infile,$outdir) {
 
 fun pdf_to_html ($infile) {
     my $outdir= $opt_outdir
-      // dirname ($infile) . "/" . basename ($infile, ".pdf");
+      // dirname ($infile) . "/" . basename ($infile, ".pdf", 1);
 
     mkdir $outdir;
 
