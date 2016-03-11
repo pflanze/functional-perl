@@ -160,7 +160,7 @@ a previous target. All the same it does the replace atomically.
 Does work with both filehandles and integer strings. Croaks if it's
 neither or there's an error.
 
-=item basename $pathstring [,$suffix]
+=item basename $pathstring [,$suffix(es) [,$insensitive]]
 
 Same as the shell util of the same name, except that it croaks in a
 few cases (when an empty string is given, or when the given suffix
@@ -1115,9 +1115,10 @@ sub xsysread ( $ $ $ ; $ ) {
 # ^- ok this is silly (is it?) since I've got Chj::IO::File. But that
 # latter one is not yet complete, I'm debugging xreadline atm.
 
+use FP::Show qw(show_many);
 
-sub basename ($ ; $ ) {
-    my ($path,$maybe_suffix)=@_;
+sub basename ($;$$) {
+    my ($path, $maybe_suffixS, $insensitive)=@_;
     my $copy= $path;
     $copy=~ s|.*/||s;
     my $res= do {
@@ -1133,14 +1134,28 @@ sub basename ($ ; $ ) {
 		"/"  # or die? no.
 	    }
 	} else {
-	    croak "basename(".singlequote_many(@_)
-	      ."): cannot get basename from empty string";
+	    croak "basename(".show_many(@_)."): ".
+	      "cannot get basename from empty string";
 	}
     }};
-    if (defined $maybe_suffix and length $maybe_suffix) {
-	$res=~ s/\Q$maybe_suffix\E\z//
-	  or croak "basename (".singlequote_many(@_)
-	    ."): suffix does not match '$res'";
+    if (defined $maybe_suffixS) {
+	if (ref($maybe_suffixS)) {
+	  TRY: {
+		for my $suffix (@$maybe_suffixS) {
+		    ($insensitive ?
+		     $res=~ s/\Q$suffix\E\z//i
+		     : $res=~ s/\Q$suffix\E\z//)
+		      and last TRY;
+		}
+		croak "basename(".show_many(@_)."): ".
+		  "no suffix matches";
+	    }
+	} else {
+	    ($insensitive ? $res=~ s/\Q$maybe_suffixS\E\z//i
+	      : $res=~ s/\Q$maybe_suffixS\E\z//)
+	      or croak "basename(".show_many(@_)."): ".
+		"suffix does not match";
+	}
     }
     $res
 }
