@@ -32,6 +32,8 @@ properly formatted versions of these documents.
   (pdf)](http://www.oreilly.com/programming/free/files/functional-programming-python.pdf)
   ([HN](https://news.ycombinator.com/item?id=9941748))
 
+* [PyFunctional](http://pedrorodriguez.io/PyFunctional/)
+
 * [Functional programming in C++](http://gamasutra.com/view/news/169296/Indepth_Functional_programming_in_C.php) ([John Carmack](https://en.wikipedia.org/wiki/John_Carmack)) ([alternative link](https://web.archive.org/web/20130819160454/http://www.altdevblogaday.com/2012/04/26/functional-programming-in-c/))
 
 * [Lua Functional](https://github.com/rtsisyk/luafun)
