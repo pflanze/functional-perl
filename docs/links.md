@@ -41,6 +41,8 @@ properly formatted versions of these documents.
    [HN](https://news.ycombinator.com/item?id=6770698))
   (also, [functional-lua](https://github.com/jhoonb/functional-lua))
 
+* [The FSet Functional Collections Libraries (Common Lisp)](https://common-lisp.net/project/fset/Site/index.html) ([Github](https://github.com/slburson/fset))
+
 
 ## Functional programming in various contexts
 
