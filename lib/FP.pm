@@ -33,6 +33,6 @@ package FP;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our $VERSION= "0.662";
+our $VERSION= "0.664";
 
 1
