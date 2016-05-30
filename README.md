@@ -163,24 +163,23 @@ howto/design documents.
 
 * [__Introduction to using the functional-perl modules__](//intro.md)
 
-    [This](//intro.md) is the latest documentation addition (thus has
-    the best chance of being up to date), and is aiming to give a
-    pretty comprehensive overview which doesn't require you to read the
-    other docs first. Some of the info here is duplicated (in more
-    detail) in the other documents. If this is too long, take a look
-    at the presentation below or the example scripts.
+    This is the latest documentation addition (thus has the best
+    chance of being up to date), and is aiming to give a pretty
+    comprehensive overview which doesn't require you to read the other
+    docs first. Some of the info here is duplicated (in more detail)
+    in the other documents. If this is too long, take a look at the
+    presentation below or the example scripts.
 
-* __Presentation__
+* [__Presentation__](http://functional-perl.org/london.pm-talk/)
 
-    [These](http://functional-perl.org/london.pm-talk/) are the slides of
-    an introductory presentation, but there's no recording and the slides
-    may not be saying enough for understanding. (Todo: add text of
-    speach somehow?)
+    These are the slides of an introductory presentation, but there's
+    no recording and the slides may not be saying enough for
+    understanding. (Todo: add text of speach somehow?)
 
-* __Intro directory__
+* [__Intro directory__](intro/)
 
-    The [intro](intro/) directory contains scripts introducing the
-    concepts, including the basics of functional programming (work in
+    The `intro` directory contains scripts introducing the concepts,
+    including the basics of functional programming (work in
     progress). The scripts are meant to be viewed in this order:
 
     1. [basics](intro/basics)
@@ -189,11 +188,11 @@ howto/design documents.
 
     This doesn't go very far yet (todo: add more).
 
-* __Examples__
+* [__Examples__](examples/README.md)
 
-    The [examples](examples/README.md) directory contains scripts showing
-    off the possibilities. You will probably not understand everything
-    just from looking at these, but they will give an impression.
+    The `examples` directory contains scripts showing off the
+    possibilities. You will probably not understand everything just
+    from looking at these, but they will give an impression.
 
 * __Our howto and design documents__
 
