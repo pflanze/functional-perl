@@ -165,7 +165,7 @@ howto/design documents.
 
     [This](//intro.md) is the latest documentation addition (thus has
     the best chance of being up to date), and is aiming to give a
-    pretty comprehensive overview that doesn't require you to read the
+    pretty comprehensive overview which doesn't require you to read the
     other docs first. Some of the info here is duplicated (in more
     detail) in the other documents. If this is too long, take a look
     at the presentation below or the example scripts.
