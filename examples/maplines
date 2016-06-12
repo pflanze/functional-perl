@@ -19,14 +19,20 @@ use lib "$mydir/../lib";
 
 
 sub usage {
+    print "error: @_\n"
+      if @_;
     print "usage: $myname mappingsfile.pl
 
   Read mail addresses from stdin, map using the mapping function
-  returned as the last value from mappingsfile.pl
+  returned in the 'map' field of the hashtable returned as the last
+  value from mappingsfile.pl
 
   Options:
     --sort-result   sort according to result value from the
-                    mapping function
+                    mapping function, using the function in the 'cmp'
+                    field of the configuration hashtable as the
+                    comparison function (default: case sensitive
+                    string search).
 ";
     exit 1;
 }
@@ -49,7 +55,11 @@ use Chj::TEST;
 
 #use Chj::Trapl; # or Chj::Backtrace
 
-my $mapfn= require $mappingfile;
+my $config= require $mappingfile;
+ref($config) eq "HASH"
+  or usage "invalid mappingfile, does not return a hash ref";
+
+my ($mapfn, $cmp)= @$config{"map","cmp"};
 
 my $in= glob_to_fh(*STDIN);
 my $out= glob_to_fh(*STDOUT);
@@ -65,7 +75,7 @@ my $mapped= $lines->map
 
 my $result= do {
     my $l= $mapped->filter(unary_operator 'defined');
-    $opt_sort_result ? $l->sort : $l
+    $opt_sort_result ? $l->sort($cmp) : $l
 };
 
 $result->for_each (cut_method $out, "xprintln");
