@@ -1,0 +1,75 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+#use Function::Parameters qw(:strict);
+#use Sub::Call::Tail;
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+sub usage {
+    print "usage: $myname mappingsfile.pl
+
+  Read mail addresses from stdin, map using the mapping function
+  returned as the last value from mappingsfile.pl
+
+  Options:
+    --sort-result   sort according to result value from the
+                    mapping function
+";
+    exit 1;
+}
+
+use Getopt::Long;
+our $verbose=0;
+my $opt_sort_result;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   "sort-result"=> \$opt_sort_result,
+	   ) or exit 1;
+usage unless @ARGV==1;
+
+my ($mappingfile)=@ARGV;
+
+use FP::IOStream ":all";
+use Chj::xopen qw(glob_to_fh);
+use FP::Ops qw(cut_method unary_operator);
+use Chj::TEST;
+
+#use Chj::Trapl; # or Chj::Backtrace
+
+my $mapfn= require $mappingfile;
+
+my $in= glob_to_fh(*STDIN);
+my $out= glob_to_fh(*STDOUT);
+
+my $lines= fh_to_lines $in;
+
+my $mapped= $lines->map
+  (sub {
+       my ($line)=@_;
+       chomp $line;
+       &$mapfn($line)
+   });
+
+my $result= do {
+    my $l= $mapped->filter(unary_operator 'defined');
+    $opt_sort_result ? $l->sort : $l
+};
+
+$result->for_each (cut_method $out, "xprintln");
+
+$out->xclose;
+
+#use Chj::repl; repl;
