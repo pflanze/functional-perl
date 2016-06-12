@@ -59,6 +59,10 @@ package FP::Ops;
 		 string_le
 		 string_gt
 		 string_ge
+		 string_lc
+		 string_uc
+		 string_lcfirst
+		 string_ucfirst
 		 number_cmp
 		 number_eq
 		 number_ne
@@ -141,6 +145,19 @@ sub string_gt ($ $) {
 }
 sub string_ge ($ $) {
     $_[0] ge $_[1]
+}
+
+sub string_lc ($) {
+    lc $_[0]
+}
+sub string_uc ($) {
+    uc $_[0]
+}
+sub string_lcfirst ($) {
+    lcfirst $_[0]
+}
+sub string_ucfirst ($) {
+    ucfirst $_[0]
 }
 
 sub number_cmp ($ $) {
