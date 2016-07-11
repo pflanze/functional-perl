@@ -1796,7 +1796,8 @@ sub make_group {
 		    } $is_stream;
 		};
 		# TCO?
-		Weakened($rec)->($a, $r)
+		##XXX disable for v5.20.2 (Debian), wtf   Weakened
+		($rec)->($a, $r)
 	    }
 	} $is_stream
     }
