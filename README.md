@@ -234,9 +234,9 @@ get an introduction in person.
 
 * to run all the tests (otherwise some are skipped): in addition to
   the above, `BSD::Resource`, `Method::Signatures`,
-  `Function::Parameters`, `Sub::Call::Tail`, `Text::CSV`, `URI`,
-  `Text::Markdown`, `Clone`. Some of these are also necessary to run
-  `htmlgen/gen` (or `website/gen` to build the website), see
+  `Function::Parameters`, `Sub::Call::Tail`, `Text::CSV`, `DBD::CSV`,
+  `URI`, `Text::Markdown`, `Clone`. Some of these are also necessary
+  to run `htmlgen/gen` (or `website/gen` to build the website), see
   [Htmlgen](htmlgen/README.md) for details.
 
 (Todo: should all of the above be listed in PREREQ_PM in Makefile.PL?)
