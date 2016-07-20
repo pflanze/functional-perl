@@ -253,7 +253,9 @@ get an introduction in person.
     # to verify the same against MitM attacks:
     gpg --recv-key 04EDB072
     git tag -v $FP_VERSION
-    # You'll find various pages in search engines with my fingerprint
+    # You'll find various pages in search engines with my fingerprint,
+    # or you may find a trust chain through one of the signatures on my
+    # older key 1FE692DA, that this one is signed with.
 
 The bundled scripts modify the library load path to find the files
 locally, thus no installation is necessary. All modules are in the
