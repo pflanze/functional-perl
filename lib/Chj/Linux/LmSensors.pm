@@ -24,6 +24,10 @@ package Chj::Linux::LmSensors;
 @EXPORT=qw();
 @EXPORT_OK=qw(sensors_get
 	      Selector
+	      Value
+	      ValueNA
+	      ValueGroup
+	      Measurement
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
