@@ -22,13 +22,28 @@ Chj::Linux::LmSensors
 package Chj::Linux::LmSensors;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(sensors_get);
+@EXPORT_OK=qw(sensors_get
+	      Selector
+	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use utf8;
 use Chj::TEST;
+
+
+{
+    package Chj::Linux::LmSensors::Selector;
+    use FP::Predicates qw(is_string);
+
+    use FP::Struct [
+		    [*is_string, 'groupname'],
+		    [*is_string, 'sensorname'],
+		   ], 'FP::Show::Base::FP_Struct';
+    _END_
+}
+
 
 
 {
@@ -62,6 +77,7 @@ use Chj::TEST;
 
 {
     package Chj::Linux::LmSensors::ValueGroup;
+
     use FP::Struct [
 		    'name', # string
 		    'values', # list of ::Value
@@ -71,13 +87,30 @@ use Chj::TEST;
 
 {
     package Chj::Linux::LmSensors::Measurement;
+
+    sub by {
+	my ($method,$str)=@_;
+	sub {
+	    my ($v)=@_;
+	    $v->$method eq $str
+	}
+    };
+
     use FP::Struct [
 		    'time', # unixtime value, ok?
 		    'groups', # list of ::ValueGroup
 		   ], 'FP::Show::Base::FP_Struct';
+
+    sub select {
+	my ($self, $selector)=@_;
+	$self->groups->filter(by "name", $selector->groupname)->xone
+	  ->values->filter(by "name", $selector->sensorname)->xone
+    }
+
     _END_
 }
 
+import Chj::Linux::LmSensors::Selector::constructors;
 import Chj::Linux::LmSensors::Value::constructors;
 import Chj::Linux::LmSensors::ValueNA::constructors;
 import Chj::Linux::LmSensors::ValueGroup::constructors;
@@ -111,6 +144,9 @@ TEST {
   Value('fan1', '3770', 'RPM', '');
 
 
+
+use FP::PureArray qw(purearray unsafe_array_to_purearray);
+
 sub parse_measurement {
     my ($str,$time)=@_;
     my @groups= map {
@@ -126,11 +162,11 @@ sub parse_measurement {
 	}
 	  split /\n/, $groupvalues;
 
-	ValueGroup($groupname, \@values)
+	ValueGroup($groupname, unsafe_array_to_purearray \@values)
     }
       split /\n\n/, $str;
 
-    Measurement($time, \@groups)
+    Measurement($time, unsafe_array_to_purearray \@groups)
 }
 
 
@@ -179,22 +215,27 @@ temp16:           N/A
 
 ';
 
+my $m;
 TEST {
-    parse_measurement($s, 1234567)
+    $m= parse_measurement($s, 1234567)
 }
   Measurement(1234567,
-	      [ValueGroup('acpitz-virtual-0',
-			  [Value('temp1', '+40.0', '°C',
+	      purearray
+	      (ValueGroup('acpitz-virtual-0',
+			  purearray
+			  (Value('temp1', '+40.0', '°C',
 				 '(crit = +127.0°C)'),
 			   Value('temp2', '+38.0', '°C',
-				 '(crit = +104.0°C)')]),
+				 '(crit = +104.0°C)'))),
 	       ValueGroup('coretemp-isa-0000',
-			  [Value('Core 0', '+35.0', '°C',
+			  purearray
+			  (Value('Core 0', '+35.0', '°C',
 				 '(high = +105.0°C, crit = +105.0°C)'),
 			   Value('Core 1', '+37.0', '°C',
-				 '(high = +105.0°C, crit = +105.0°C)')]),
+				 '(high = +105.0°C, crit = +105.0°C)'))),
 	       ValueGroup('thinkpad-isa-0000',
-			  [Value('fan1', '3770', 'RPM', ''),
+			  purearray
+			  (Value('fan1', '3770', 'RPM', ''),
 			   Value('temp1', '+40.0', '°C', ''),
 			   Value('temp2', '+53.0', '°C', ''),
 			   ValueNA('temp3'),
@@ -210,6 +251,13 @@ TEST {
 			   ValueNA('temp13'),
 			   ValueNA('temp14'),
 			   ValueNA('temp15'),
-			   ValueNA('temp16')])]);
+			   ValueNA('temp16')))));
+
+TEST {
+    $m->select(Selector ('coretemp-isa-0000', 'Core 1'))
+}
+  Value('Core 1', '+37.0', '°C',
+	'(high = +105.0°C, crit = +105.0°C)');
+
 
 1
