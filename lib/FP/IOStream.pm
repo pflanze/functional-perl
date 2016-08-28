@@ -36,7 +36,8 @@ careful.)
 package FP::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(fh_to_stream
+@EXPORT_OK=qw(maybeIO_to_stream
+	      fh_to_stream
 	      perhaps_directory_items
 	      perhaps_directory_paths
 	      xdirectory_items
@@ -71,6 +72,30 @@ use Chj::xopen qw(
 		     glob_to_fh
 		);
 use Chj::xtmpfile qw(xtmpfile);
+
+
+# XX use this for the definitions further below instead of re-coding
+# it each time?
+sub maybeIO_to_stream {
+    my ($maybeIO, $maybe_close)=@_;
+    my $next; $next= sub {
+	my $next=$next;
+	lazy {
+	    if (defined (my $v= &$maybeIO())) {
+		cons ($v, &$next)
+	    } else {
+		if (defined $maybe_close) {
+		    &$maybe_close()
+		}
+		null
+	    }
+	}
+    };
+    &{Weakened $next}
+}
+
+
+
 
 sub _perhaps_opendir_stream ($) {
     my ($path)=@_;
