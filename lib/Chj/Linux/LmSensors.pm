@@ -67,6 +67,15 @@ use Chj::TEST;
 		   ],
 		     'Chj::Linux::LmSensors::ValueBase',
 		       'FP::Show::Base::FP_Struct';
+
+    sub maybe_value {
+	shift->value
+    }
+
+    sub value_or {
+	shift->value
+    }
+
     _END_
 }
 
@@ -76,6 +85,15 @@ use Chj::TEST;
 		   ],
 		     'Chj::Linux::LmSensors::ValueBase',
 		       'FP::Show::Base::FP_Struct';
+
+    sub maybe_value {
+	undef
+    }
+
+    sub value_or {
+	$_[1]
+    }
+
     _END_
 }
 
@@ -105,6 +123,7 @@ use Chj::TEST;
 		    'groups', # list of ::ValueGroup
 		   ], 'FP::Show::Base::FP_Struct';
 
+    # "expecting 1 element, got 0" meaning the field doesn't exist.
     sub select {
 	my ($self, $selector)=@_;
 	$self->groups->filter(by "name", $selector->groupname)->xone
@@ -259,10 +278,14 @@ TEST {
 			   ValueNA('temp16')))));
 
 TEST {
-    $m->select(Selector ('coretemp-isa-0000', 'Core 1'))
-}
-  Value('Core 1', '+37.0', '°C',
-	'(high = +105.0°C, crit = +105.0°C)');
+    purearray(Selector ('coretemp-isa-0000', 'Core 1'),
+	      Selector ('thinkpad-isa-0000', 'temp14'))
+      ->map(sub {
+		my ($sel)=@_;
+		$m->select($sel)->value_or("no val")
+	    })
+  }
+  purearray('+37.0', "no val");
 
 
 1
