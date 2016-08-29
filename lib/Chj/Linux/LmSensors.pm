@@ -153,7 +153,7 @@ sub parse_value {
 	ValueNA($name)
     } else {
 	my ($value,$unit,$rest)=
-	  $rest1=~ m{^([+-]?\d+(?:\.\d*)?)\s*([°A-Za-z]\w+)\s*(.*)\z}sx
+	  $rest1=~ m{^([+-]?\d+(?:\.\d*)?)\s*([°A-Za-z]\w*)\s*(.*)\z}sx
 	    # wow ewil, space in ' *' would be dropped due to /x of course
 	    or die "no values match: '$rest1'";
 	Value($name,$value,$unit,$rest)
@@ -196,7 +196,7 @@ sub parse_measurement {
 use Chj::IO::Command;
 
 sub sensors_get_string {
-    my $p= Chj::IO::Command->new_sender({LANG=> "en_GB.UTF8"},
+    my $p= Chj::IO::Command->new_sender({LANG=> "C"},
 					"sensors", "-A");
     $p->set_encoding("utf-8");
     my $str= $p->xcontent;
