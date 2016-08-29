@@ -178,6 +178,7 @@ use Chj::IO::Command;
 
 sub sensors_get_string {
     my $p= Chj::IO::Command->new_sender("sensors","-A");
+    $p->set_encoding("utf-8");
     my $str= $p->xcontent;
     $p->xxfinish;
     $str
