@@ -196,7 +196,8 @@ sub parse_measurement {
 use Chj::IO::Command;
 
 sub sensors_get_string {
-    my $p= Chj::IO::Command->new_sender("sensors","-A");
+    my $p= Chj::IO::Command->new_sender({LANG=> "en_GB.UTF8"},
+					"sensors", "-A");
     $p->set_encoding("utf-8");
     my $str= $p->xcontent;
     $p->xxfinish;
