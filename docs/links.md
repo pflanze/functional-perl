@@ -43,6 +43,8 @@ properly formatted versions of these documents.
 
 * [The FSet Functional Collections Libraries (Common Lisp)](https://common-lisp.net/project/fset/Site/index.html) ([Github](https://github.com/slburson/fset))
 
+* [C# Functional Language Extensions](https://github.com/louthy/language-ext)
+
 
 ## Functional programming courses
 
