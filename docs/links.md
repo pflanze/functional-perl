@@ -44,6 +44,17 @@ properly formatted versions of these documents.
 * [The FSet Functional Collections Libraries (Common Lisp)](https://common-lisp.net/project/fset/Site/index.html) ([Github](https://github.com/slburson/fset))
 
 
+## Functional programming courses
+
+* [Introduction to Functional
+  Programming](https://www.edx.org/course/introduction-functional-programming-delftx-fp101x-0):
+  the interesting part here may be that this course is said to show
+  "[that good OOP code is actually
+  functional](https://www.quora.com/How-does-Scala-compare-to-F-as-a-functional-language)". (I
+  haven't verified, but would expect it to show why you want your
+  objects to be immutable, which applies to the `FP::Struct` model.)
+
+
 ## Functional programming in various contexts
 
 * [Pure UI](http://rauchg.com/2015/pure-ui/), on purely functional
