@@ -65,6 +65,15 @@ properly formatted versions of these documents.
   JavaScript library)
 
 
+## Testing
+
+* [How I Write Tests](https://blog.nelhage.com/2016/12/how-i-test/)
+  (Functional Perl helps satisfy most of these points; "Write lots of
+  fakes" may really be asking for a monad abstraction.)
+  ([HN](https://news.ycombinator.com/item?id=13296589)), also [Design
+  for
+  Testability](https://blog.nelhage.com/2016/03/design-for-testability/)
+
 ## Experiments
 
 * [The list monad in Perl and
