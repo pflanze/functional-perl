@@ -37,7 +37,7 @@ sub usage {
     print "$myname config inbase outbase
 
   config is the path to a Perl file ending in a hash with config
-  values, see gen-ml2json.pl for an example.
+  values, see functional-perl/website/gen-config.pl for an example.
 
   inbase needs to be a git working directory.
 
