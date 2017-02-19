@@ -114,11 +114,15 @@ usefully listed first).
 
 - finish PXML's HTML5 support.
 
-- avoid the duplication between `FP::List` and `FP::Stream` as much as
-  possible.
+- improve sequences class hierarchy
 
-  - those not using lazy internally: implement the List variants using
-    Keep and the stream variants.
+    - look at Ord (Ordering) in Haskell etc.
+
+    - avoid the duplication between `FP::List` and `FP::Stream` as much as
+      possible.
+
+        - those not using lazy internally: implement the List variants using
+          Keep and the stream variants.
 
 - what to do about data types that have both a class and some
   functions, like `is_sequence`, that now lives in `FP::Predicates`,
