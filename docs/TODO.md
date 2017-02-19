@@ -30,7 +30,7 @@ usefully listed first).
   Chj::{Trapl,WithRepl,Backtrace}. They are still fertile grounds for
   experimentation, though, thus shouldn't merge things too soon.
 
-- maybe FP::Path is not general or useful enough to keep
+- maybe `FP::Path` is not general or useful enough to keep
 
 ## Licensing
 
