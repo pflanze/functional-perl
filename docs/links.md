@@ -64,6 +64,11 @@ properly formatted versions of these documents.
   [React](https://en.wikipedia.org/wiki/React_(JavaScript_library))
   JavaScript library)
 
+* [Write code that is easy to delete, not easy to extend](http://programmingisterrible.com/post/139222674273/write-code-that-is-easy-to-delete-not-easy-to):
+  even though the article doesn't mention functional programming, it
+  helps this aim (pure functions don't depend on state, hence
+  dependencies are on code only)
+
 
 ## Testing
 
