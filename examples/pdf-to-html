@@ -43,7 +43,7 @@ GetOptions("verbose"=> \$verbose,
 usage unless @ARGV;
 
 use FP::IOStream qw(xdirectory_paths);
-use FP::List qw(list cons list_append);
+use FP::List qw(list cons);
 use FP::Stream qw(Keep);
 use Chj::xperlfunc qw(xstat xxsystem xunlink basename dirname);
 use FP::Combinators qw(compose_scalar);
