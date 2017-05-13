@@ -17,7 +17,7 @@ See also [[design]].
   instead?)
 
 * `XXX` in comments in source code is used to mark important
-  outstanding work, `XX` is used for "should probably be
+  unfinished work, `XX` is used for "should probably be
   improved, but not essential under normal working conditions".
   In text files, 'todo' is used.
 
