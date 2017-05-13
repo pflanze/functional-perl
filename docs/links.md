@@ -24,8 +24,11 @@ properly formatted versions of these documents.
 
     * [ES6 Tail Call Optimization Explained](http://benignbemine.github.io/2015/07/19/es6-tail-calls/)
     * [Trampolines in JavaScript](http://raganwald.com/2013/03/28/trampolines-in-javascript.html)
+        * (also [Paste from holmberd](http://paste.ubuntu.com/ 24568118/))
     * [lemonad](http://fogus.github.io/lemonad/)
-
+    * [Rambda](http://ramdajs.com/)
+        * [Introducing Ramda](http://buzzdecafe.github.io/code/2014/05/16/introducing-ramda) <small>*" Ramda includes all of the favorite list-manipulation functions you expect, e.g. map, filter, reduce, find, etc. But Ramda is significantly different from libraries like Underscore and Lodash. ..."*</small>
+    * [All About Recursion, PTC, TCO and STC in JavaScript](http://lucasfcosta.com/2017/05/08/All-About-Recursion-PTC-TCO-and-STC-in-JavaScript.html)
 
 * [Functional Programming in Python
   (pdf)](http://www.oreilly.com/programming/free/files/functional-programming-python.pdf)
