@@ -71,6 +71,8 @@ properly formatted versions of these documents.
   helps this aim (pure functions don't depend on state, hence
   dependencies are on code only)
 
+* [in which we plot an escape from the quagmire of equality](http://technomancy.us/159), nice citation: *(...) referential transparency allows you to have much greater confidence that your code is correct. Without it, the best you can say is "as long as the rest of this program behaves itself, this function should work". This works a lot like older OSes with cooperative multitasking and no process memory isolation*; also discusses equality, and proposes adding immutable data types to Emacs.
+
 
 ## Testing
 
