@@ -58,6 +58,7 @@ properly formatted versions of these documents.
   haven't verified, but would expect it to show why you want your
   objects to be immutable, which applies to the `FP::Struct` model.)
 
+* [Purely Functional Data Structures for the Impure (by osmaferon)](http://osfameron.github.io/pure-fp-book/) ([source](https://github.com/osfameron/pure-fp-book))
 
 ## Functional programming in various contexts
 
