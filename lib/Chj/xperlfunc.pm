@@ -247,6 +247,7 @@ require Exporter;
 	      xLmtime
 	      XLmtime
 	      min max
+              fstype_for_device
 	    );
               # would we really want to export these?:
 	      #caching_getpwuid
@@ -643,6 +644,41 @@ sub mk_caching_getANYid {
 *caching_getpwnam= mk_caching_getANYid (sub{getpwnam $_[0]},2);
 *caching_getgrnam= mk_caching_getANYid (sub{getgrnam $_[0]},2);
 
+
+our $fstype_for_device;
+
+sub fstype_for_device_init() {
+    open my $mounts, "<", "/proc/mounts"
+	or die "/proc/mounts: $!";
+    local $/="\n";
+    my %t;
+    while (<$mounts>) {
+	my @f= split / /, $_;
+	my ($_dev, $mountpoint, $fstype)= @f;
+	my $s= xlstat($mountpoint);
+	my $dev= $s->dev;
+	if (defined $t{$dev}) {
+	    warn "setting entry for '$dev' multiple times";
+	}
+	$t{$s->dev}= $fstype;
+    }
+    close $mounts
+	or die $!;
+    $fstype_for_device= \%t;
+}
+
+sub fstype_for_device($) {
+    my ($dev)=@_;
+    my $t= $fstype_for_device->{$dev};
+    if (! defined $t) {
+	fstype_for_device_init;
+	$t= $fstype_for_device->{$dev};
+    }
+    defined $t
+	or die "no fstype found for device $dev";
+    $t
+}
+
 {
     package Chj::xperlfunc::xstat;
     # (Alternative to arrays: hashes, so that slices like
@@ -688,14 +724,36 @@ sub mk_caching_getANYid {
     sub sticky { !!(shift->[2] & 01000) }
     sub filetype { (shift->[2] & 0170000) >> 12 } # 4*3bits
 
+
+    sub fstype {
+	my $s=shift;
+	Chj::xperlfunc::fstype_for_device($s->dev)
+    }
+
+    our $has_no_subdirs_safe_fstype=
+	+{
+	    ext2=> 1,
+	    ext3=> 1,
+	    ext4=> 1,
+	    tmpfs=> 1,
+	    vfat=> 1,
+	    squashfs=> 1,
+	    overlay=> 0,
+         };
+
     sub has_no_subdirs {
 	my $s=shift;
 	$s->is_dir
 	    or die "has_no_subdirs can only be used on directories";
-	my $n= $s->nlink;
-	# XX look at device nodes and look up the filesystem type?
-	$n < 2 ? undef
-	    : $n == 2
+	my $dev= $s->dev;
+	my $fstype= $s->fstype;
+	if ($$has_no_subdirs_safe_fstype{$fstype}) {
+	    my $n= $s->nlink;
+	    $n < 2 ? die "bug: dir on device node $dev has < 2 links, need to ignore this file system"
+	      : $n == 2;
+	} else {
+	    undef
+	}
     }
 
     # Guess access rights from permission bits
