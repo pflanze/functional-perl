@@ -658,7 +658,8 @@ sub fstype_for_device_init() {
 	my $s= xlstat($mountpoint);
 	my $dev= $s->dev;
 	if (defined $t{$dev}) {
-	    warn "setting entry for '$dev' multiple times";
+	    $t{$dev} eq $fstype
+		or die "entry for '$dev' was previously set to '$t{$dev}', now '$fstype'";
 	}
 	$t{$s->dev}= $fstype;
     }
