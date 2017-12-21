@@ -688,11 +688,16 @@ sub mk_caching_getANYid {
     sub sticky { !!(shift->[2] & 01000) }
     sub filetype { (shift->[2] & 0170000) >> 12 } # 4*3bits
 
-    sub has_no_subdirs { my $n= shift->nlink;
-			 # XX look at device nodes and look up the filesystem type?
-			 $n < 2 ? undef
-			     : $n == 2 }
-    
+    sub has_no_subdirs {
+	my $s=shift;
+	$s->is_dir
+	    or die "has_no_subdirs can only be used on directories";
+	my $n= $s->nlink;
+	# XX look at device nodes and look up the filesystem type?
+	$n < 2 ? undef
+	    : $n == 2
+    }
+
     # Guess access rights from permission bits
     # note that these might guess wrong (because of chattr stuff,
     # or things like grsecurity,lids,selinux..)!
