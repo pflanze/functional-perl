@@ -690,7 +690,7 @@ sub mk_caching_getANYid {
 
     sub has_no_subdirs { my $n= shift->nlink;
 			 # XX look at device nodes and look up the filesystem type?
-			 $n < 2 ? die "has_no_subdirs not supported on this file system"
+			 $n < 2 ? undef
 			     : $n == 2 }
     
     # Guess access rights from permission bits
