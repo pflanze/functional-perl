@@ -578,6 +578,7 @@ sub xlstat {
 }
 
 use Carp 'cluck';
+
 sub Xstat {
     my @r;
     @_<=1 or croak "Xstat: too many arguments";
@@ -598,15 +599,17 @@ sub Xstat {
 	cluck "Xstat call in void context doesn't make sense";
     }
 }
+
 sub Xlstat {
-    my @r;
-    @_<=1 or croak "Xlstat: too many arguments";
-    @r= lstat_possiblyhires(@_ ? @_ : $_);
+    @_<=2 or croak "Xlstat: too many arguments";
+    my ($path, $accept_errors)= @_;
+    $path= $_ unless @_;
+    my @r= lstat_possiblyhires($path);
     @r or do {
-	if ($!== ENOENT) {
+	if ($accept_errors or $! == ENOENT) {
 	    return;
 	} else {
-	    croak (@_ ? "Xlstat: '@_': $!" : "Xlstat: '$_': $!");
+	    croak ("Xlstat: '$path': $!");
 	}
     };
     if (wantarray) {
@@ -655,13 +658,17 @@ sub fstype_for_device_init() {
     while (<$mounts>) {
 	my @f= split / /, $_;
 	my ($_dev, $mountpoint, $fstype)= @f;
-	my $s= xlstat($mountpoint);
-	my $dev= $s->dev;
-	if (defined $t{$dev}) {
-	    $t{$dev} eq $fstype
-		or die "entry for '$dev' was previously set to '$t{$dev}', now '$fstype'";
+	if (defined (my $s= Xlstat($mountpoint, 1))) {
+	    my $dev= $s->dev;
+	    if (defined $t{$dev}) {
+		$t{$dev} eq $fstype
+		    or die "entry for '$dev' was previously set to '$t{$dev}', now '$fstype'";
+	    }
+	    $t{$s->dev}= $fstype;
 	}
-	$t{$s->dev}= $fstype;
+        # else silently ignore, presumably the fs should be reachable
+        # at another location then, or the $dev in question would
+        # never be found by that user. OK?
     }
     close $mounts
 	or die $!;
