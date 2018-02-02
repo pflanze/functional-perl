@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2014 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2018 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -55,6 +55,7 @@ package Chj::singlequote;
 @EXPORT_OK=qw(singlequote_sh singlequote_many many with_maxlen
 	      possibly_singlequote_sh singlequote_sh_many
 	      quote_javascript
+	      quote_C _quote_C
 	    );
 # importing 'many' is probably not a good idea (depreciated)
 %EXPORT_TAGS=(all=>[@EXPORT, @EXPORT_OK]);
@@ -156,5 +157,29 @@ sub quote_javascript ($) {
     # <mst> note that JSON::MaybeXS is trivial and fatpacks fine
     # <mst> intentionally
 }
+
+sub _quote_C($) {
+    my ($str)=@_;
+    $str=~ s{(.)}{
+	my $c=$1;
+	my $i= ord $c;
+	# https://en.wikipedia.org/wiki/Ascii
+	($i >= 32 and $i < 127) ?
+	  ( $c eq '"' ? "\\\"" :
+	    $c )
+	  :
+	  ( $c eq "\n" ? "\\n" :
+	    $c eq "\r" ? "\\r" :
+	    $c eq "\t" ? "\\t" :
+	    sprintf "\\%o", $i )
+    }sge;
+    $str
+}
+
+sub quote_C($){
+    my ($str)=@_;
+    '"'._quote_C($str).'"'
+}
+
 
 1
