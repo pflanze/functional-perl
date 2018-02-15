@@ -658,13 +658,25 @@ sub fstype_for_device_init() {
     while (<$mounts>) {
 	my @f= split / /, $_;
 	my ($_dev, $mountpoint, $fstype)= @f;
-	if (defined (my $s= Xlstat($mountpoint, 1))) {
-	    my $dev= $s->dev;
-	    if (defined $t{$dev}) {
-		$t{$dev} eq $fstype
-		    or die "entry for '$dev' was previously set to '$t{$dev}', now '$fstype'";
+	if (($fstype eq "rootfs"
+	     # stupid Linux, not only source but also fs type is shown
+	     # as rootfs.
+	    ) or
+	    ($fstype eq "autofs"
+	     # more stupid: entry with systemd-1 source, then later
+	     # with binfmt_misc source and fstype
+	    )) {
+	    # Ignore and count on the second entry from /proc/mounts
+	    # for the same mount.
+	} else {
+	    if (defined (my $s= Xlstat($mountpoint, 1))) {
+		my $dev= $s->dev;
+		if (defined $t{$dev}) {
+		    $t{$dev} eq $fstype
+		      or die "entry for '$dev' was previously set to '$t{$dev}', now '$fstype'";
+		}
+		$t{$s->dev}= $fstype;
 	    }
-	    $t{$s->dev}= $fstype;
 	}
         # else silently ignore, presumably the fs should be reachable
         # at another location then, or the $dev in question would
