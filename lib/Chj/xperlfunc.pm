@@ -626,26 +626,30 @@ sub Xlstat {
 # caching variants of perlfuncs:
 
 sub mk_caching_getANYid {
-    my ($function,$scalarindex)=@_;
+    my ($function, $scalarindex, $methodname)=@_;
     my %cache;
     sub {
 	@_==1 or die "wrong number of arguments";
 	my ($id)= @_;
-	my $v;
-	if (not defined ($v= $cache{$id})) {
-	    $v= [
-		 &$function ($id)
-		];
-	    $cache{$id}=$v;
+	if (defined $id) {
+	    my $v;
+	    if (not defined ($v= $cache{$id})) {
+		$v= [
+		     &$function ($id)
+		    ];
+		$cache{$id}=$v;
+	    }
+	    wantarray ? @$v : $$v[$scalarindex]
+	} else {
+	    croak "$methodname: got undefined value";
 	}
-	wantarray ? @$v : $$v[$scalarindex]
     }
 }
-*caching_getpwuid= mk_caching_getANYid (sub{getpwuid $_[0]},0);
-*caching_getgrgid= mk_caching_getANYid (sub{getgrgid $_[0]},0);
+*caching_getpwuid= mk_caching_getANYid (sub{getpwuid $_[0]}, 0, "caching_getpwuid");
+*caching_getgrgid= mk_caching_getANYid (sub{getgrgid $_[0]}, 0, "caching_getgrgid");
 
-*caching_getpwnam= mk_caching_getANYid (sub{getpwnam $_[0]},2);
-*caching_getgrnam= mk_caching_getANYid (sub{getgrnam $_[0]},2);
+*caching_getpwnam= mk_caching_getANYid (sub{getpwnam $_[0]}, 2, "caching_getpwnam");
+*caching_getgrnam= mk_caching_getANYid (sub{getgrnam $_[0]}, 2, "caching_getgrnam");
 
 
 our $fstype_for_device;
