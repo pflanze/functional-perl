@@ -966,9 +966,9 @@ sub stream_cartesian_product_2 {
     weaken $_[0]; weaken $_[1];
     my $rec; $rec= sub {
 	my ($a,$b)=@_;
+	my $rec= $rec;
 	lazy {
 	    if (is_null $a) {
-                undef $rec; # see X... comment below
 		null
 	    } elsif (is_null $b) {
 		&$rec (cdr $a, $orig_b);
@@ -978,9 +978,7 @@ sub stream_cartesian_product_2 {
 	    }
 	}
     };
-    # Weakened($rec)->($a, $orig_b)
-    # XXX is it impossible not to leak safely?
-    $rec->($a, $orig_b)
+    Weakened($rec)->($a, $orig_b)
 }
 
 *FP::List::List::stream_cartesian_product_2= *stream_cartesian_product_2;
