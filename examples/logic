@@ -282,7 +282,7 @@ fun buildmatrix ($bits) {
        $people_i);
 }
 
-fun search {
+fun search () {
     stream_iota->take(2**16)->map(*buildmatrix)->filter(*checks)
 }
 
