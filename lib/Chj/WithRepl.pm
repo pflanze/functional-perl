@@ -210,6 +210,7 @@ sub handler_for ($$) {
 	    # repl?  XX repl needs new feature, a "quit this context
 	    # with this value". Although not helping anyway since Perl
 	    # can't be made to avoid leaving the exception context.
+	    push_withrepl(0); # XX correct? Argument?
 	    repl(skip=> 1)
 	}
     }
