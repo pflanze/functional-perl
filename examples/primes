@@ -52,7 +52,8 @@ func primes_naive1 () {
 			      }, $xs)
 	}
     };
-    Weakened($sieve)->(stream_iota 2)
+    # XXX Weakened($sieve)
+    $sieve->(stream_iota 2)
 }
 
 # or simpler, by lifting `sieve` to the toplevel:
