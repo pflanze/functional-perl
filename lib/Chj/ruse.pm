@@ -121,15 +121,8 @@ sub new_import {
 	    }
 	    0
 	};
-	while (my($key,$file) = each %INC) {
-	    next if $memq_ignores->($file); # too confusing
-	    #local $^W = 0; XX nope, only shut down redefinition warnings please.
-	    my $mtime = (stat $file)[9];
-	    $Stat{$file} = $^T
-	      unless defined $Stat{$file};
-	    warn "Module::Reload: stat '$file' got $mtime >? $Stat{$file}\n"
-	      if $Debug >= 3;
-	    if ($mtime > $Stat{$file}) {
+	while (my ($key, $file) = each %INC) {
+	    my $reload= sub {
 		delete $INC{$key};
 		wipeout_namespace($key);
 		eval {
@@ -150,9 +143,24 @@ sub new_import {
 		    Chj::ruse::reimport($key);
 		}
 		++$c;
+	    };
+	    if (! defined $file) {
+		&$reload;
+		my $file2 = $INC{$key};
+		my $mtime = (stat $file2)[9];
+		$Stat{$file2} = $mtime;
+	    } else {
+		next if $memq_ignores->($file); # too confusing
+		#local $^W = 0; XX nope, only shut down redefinition warnings please.
+		my $mtime = (stat $file)[9];
+		$Stat{$file} = $^T
+		  unless defined $Stat{$file};
+		warn "Module::Reload: stat '$file' got $mtime >? $Stat{$file}\n"
+		  if $Debug >= 3;
+		&$reload if ($mtime > $Stat{$file});
+		$Stat{$file} = $mtime;
+		# (XX shouldn't let it warn forever if it couldn't reload?)
 	    }
-	    $Stat{$file} = $mtime;
-	    # (XX shouldn't let it warn forever if it couldn't reload?)
 	}
 	$c;
     }
