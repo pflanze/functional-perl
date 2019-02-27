@@ -57,7 +57,7 @@ fun entry ($path0,@subentries) {
     use FP::Struct [[list_of(instance_of "Htmlgen::Nav::Entry"),
 		     "subentries"]];
 
-    method subentries_of_subentries {
+    method subentries_of_subentries () {
 	$self->subentries->map(the_method "subentries")
     }
 
@@ -136,7 +136,7 @@ fun entry ($path0,@subentries) {
     # show what the navigation defines, but show all
     # pages that are not in deeper levels
 
-    method item_is_in_lower_hierarchy {
+    method item_is_in_lower_hierarchy () {
 	compose(hashset_to_predicate
 		array_to_hashset
 		($self
@@ -150,7 +150,7 @@ fun entry ($path0,@subentries) {
     # In the toplevel of the nav hierarchy, still also show pages that are
     # missing in the nav declaration; thus, use the nav declaration to
     # *order* the pages instead:
-    method path0_to_sortkey {
+    method path0_to_sortkey () {
 	my $sortprio= do {
 	    my $i=1;
 	    +{
@@ -167,7 +167,7 @@ fun entry ($path0,@subentries) {
 	}
     }
 
-    method path0_navigation_cmp {
+    method path0_navigation_cmp () {
 	on $self->path0_to_sortkey, *string_cmp
     }
 
