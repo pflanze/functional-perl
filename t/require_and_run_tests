@@ -53,7 +53,7 @@ our %dependencies=
    'Htmlgen::default_config'=> ['Function::Parameters' ],
    'Htmlgen::Cost'=> ['Function::Parameters' ],
    'Htmlgen::Nav'=> ['Function::Parameters'],
-   'HTTP::Daemon'=> ['HTTP::Request'],
+   'Chj::HTTP::Daemon'=> ['HTTP::Request'],
    map { $_ => ['Chj::Repl::Dependencies'] }
    qw(
 	 Chj::Repl::Dependencies

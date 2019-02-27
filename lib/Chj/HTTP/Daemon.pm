@@ -1,4 +1,5 @@
-package HTTP::Daemon;
+package # waiting for feedback of changes to original module HTTP::Daemon
+  Chj::HTTP::Daemon;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use vars qw($VERSION @ISA $PROTO $DEBUG);
@@ -74,12 +75,13 @@ sub product_tokens
 
 
 
-package HTTP::Daemon::ClientConn;
+package # waiting for feedback of changes to original module
+  Chj::HTTP::Daemon::ClientConn;
 
 use vars qw(@ISA $DEBUG);
 use IO::Socket ();
 @ISA=qw(IO::Socket::INET);
-*DEBUG = \$HTTP::Daemon::DEBUG;
+*DEBUG = \$Chj::HTTP::Daemon::DEBUG;
 
 use HTTP::Request  ();
 use HTTP::Response ();
@@ -403,7 +405,7 @@ sub send_status_line
     return if $self->antique_client;
     $status  ||= RC_OK;
     $message ||= status_message($status) || "";
-    $proto   ||= $HTTP::Daemon::PROTO || "HTTP/1.1";
+    $proto   ||= $Chj::HTTP::Daemon::PROTO || "HTTP/1.1";
     print $self "$proto $status $message$CRLF" or die $!;
 }
 
