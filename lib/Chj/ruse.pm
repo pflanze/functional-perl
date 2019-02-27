@@ -158,6 +158,8 @@ sub new_import {
     }
 }
 
+our $verbose= 0;
+
 sub reimport {
     my ($key)=@_;
     my $class=$key;
@@ -175,7 +177,8 @@ sub reimport {
 	}
     } else {
 	warn ("reimport WARNING: $class->can('import') didn't yield true, ".
-	      "seems the module doesn't inherit from Exporter any more ?");
+	      "apparently the module doesn't inherit from Exporter")
+	  if $verbose;
     }
 }
 
