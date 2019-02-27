@@ -34,7 +34,7 @@ project. Also, should this be merged with Data::Thunk ?
 The drawback of transparency might be more confusion, as it's not
 directly visible anymore (neither in the debugger nor the source code)
 what's lazy. Also, transparent forcing will be a bit more expensive
-CPU wise. Please give feedback from your experiences!
+CPU wise. Please give feedback about your experiences!
 
 =head1 SEE ALSO
 
