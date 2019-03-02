@@ -1,0 +1,167 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+use Function::Parameters qw(:strict);
+#use Sub::Call::Tail;
+
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+my $mainfile= "README.md";
+
+sub usage {
+    print "usage: $myname path/to/hiring-without-whiteboards/
+
+  Parse the $mainfile file of a check-out of
+  https://github.com/poteto/hiring-without-whiteboards, present it in
+  a repl as an FP::Stream of Company objects in the \$cs variable. Now
+  you can do things like:
+
+     \$cs->filter(fun(\$r) { \$r->locations->any(fun(\$l) { \$l=~ /\\bUK\\b/ }) })->show_items
+
+  Use tab completion to learn about the available methods, and read
+  the (probably not-so-fine) docs on functional-perl.org .
+
+";
+    exit 1;
+}
+
+use Getopt::Long;
+our $verbose=0;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   ) or exit 1;
+usage unless @ARGV==1;
+
+my ($basedir)= @ARGV;
+
+
+use Chj::ruse;
+use Chj::Trapl;
+use Chj::repl;
+
+use FP::List ":all";
+use FP::Stream ":all";
+use FP::IOStream ":all";
+use FP::Path;
+use FP::Array ":all";
+use FP::Array_sort ":all";
+use FP::Predicates ":all";
+use FP::Ops ":all";
+use FP::Combinators ":all";
+use FP::Show;
+use Chj::xperlfunc ":all";
+
+use Chj::TEST;
+
+{
+    package Company;
+    use FP::Struct ["name",
+                    "URL",
+                    "locations",
+                    "maybe_process"],
+      'FP::Show::Base::FP_Struct';
+
+    method remote () {
+        $self->locations->any (fun ($str) { $str=~ /\bRemote\b/i })
+    }
+
+    _END_
+}
+
+
+# markdown line parsing
+
+fun is_item ($s) {
+    $s=~ /^-\s+/
+}
+
+fun is_heading_of ($pred) {
+    fun ($s) {
+        if (my ($txt)= $s=~ /^\s*#+\s*(.*)/) {
+            &$pred ($txt)
+        } else {
+            0
+        }
+    }
+}
+
+*is_heading= is_heading_of (fun ($s) { 1 });
+*is_AlsoSee= is_heading_of (fun ($s) { $s=~ /also *see/i });
+
+fun is_hr ($s) {
+    $s=~ /^---\s*$/
+}
+
+fun is_empty ($s) {
+    $s=~ /^\s*$/
+}
+
+fun parse_line ($line) {
+    my $s=$line;
+    $s=~ s/^-\s*//
+      or die "line is not an item";
+    my ($name, $url, $rest) = $s=~ /^\[(.*?)\]\((.*?)\)\s*(.*)$/
+      or die "missing link formatting in: '$s'";
+
+    my @p= split /\s*\|\s*/, $rest;
+    @p == 2 or @p == 3
+      or die "rest does not contain 2 or 3 parts: '$rest'";
+    my (undef, $locations, $process)= @p;
+    new Company ($name,
+                 $url,
+                 # / and ; used inconsistently:
+                 list(split m%\s*[/;]\s*%, $locations),
+                 $process)
+}
+
+
+TEST {
+    parse_line "- [Accredible](https://www.accredible.com/careers) | Cambridge, UK / San Francisco, CA / Remote | Take home project, then a pair-programming and discussion onsite / Skype round."
+}
+  new Company ("Accredible", "https://www.accredible.com/careers",
+               list ("Cambridge, UK", "San Francisco, CA", "Remote"),
+               "Take home project, then a pair-programming and discussion onsite / Skype round.");
+
+
+# XX move?; name?
+fun FP::Sequence::drop_over ($l, $pred) {
+    $l->drop_while (complement $pred)->drop_while ($pred)
+}
+
+fun companies () {
+    xfile_lines_chomp ("$basedir/$mainfile")
+      ->drop_over (*is_hr)
+      ->take_while (complement *is_AlsoSee)
+      ->filter (complement either (*is_heading, *is_empty))
+      ->map (*parse_line)
+}
+
+
+# HACK: should really just use the repl printer (show) directly to
+# show the whole results list, but show currently doesn't do
+# multi-line pretty-printing; so:
+fun print_showln ($v) {
+    xprintln show $v
+}
+# XX see above, and move?
+fun FP::Sequence::show_items ($l) {
+    $l->for_each (*print_showln)
+}
+
+my $cs= companies;
+my $__cs_hold_on= $cs; # so that the stream won't be released in spite
+                       # of $cs being weakened by some methods
+
+# let the user play with the data
+repl;
