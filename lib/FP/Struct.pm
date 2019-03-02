@@ -137,6 +137,10 @@ the calculation of the cached value to clean the cache (TODO: provide
 option to turn off generation of setters, and/or provide hook (for
 cloning?)).)
 
+=head1 ALSO SEE
+
+<FP::Show::Base::FP_Struct>
+
 =cut
 
 
