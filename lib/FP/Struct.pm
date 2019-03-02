@@ -70,6 +70,9 @@ FP::Struct - classes for functional perl
  my $bar= new Bar ("Franz", ["Barney"], "some aa", 1,2);
  # same thing, but with sub instead of method call interface:
  my $baz= Bar::c::Bar ("Franz", ["Barney"], "some aa", 1,2);
+ # or:
+ import Bar::constructors;
+ my $baz= Bar ("Franz", ["Barney"], "some aa", 1,2);
 
  $bar-> div # => 1/2
 
