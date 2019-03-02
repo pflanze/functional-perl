@@ -321,7 +321,7 @@ sub import {
 	bless $s, $class
     };
 
-    # constructor exports:
+    # constructor exports: -- XX why did I decide to not use ::c:: for this? historic?
     *{"${package}::constructors::${package_lastpart}"}= $constructor;
     *{"${package}::constructors::${package_lastpart}_"}= $constructor_;
     *{"${package}::constructors::ISA"}= ["Exporter"];
