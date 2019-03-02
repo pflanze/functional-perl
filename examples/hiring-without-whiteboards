@@ -79,6 +79,8 @@ use Chj::TEST;
     _END_
 }
 
+import Company::constructors;
+
 
 # markdown line parsing
 
@@ -118,20 +120,20 @@ fun parse_line ($line) {
     @p == 2 or @p == 3
       or die "rest does not contain 2 or 3 parts: '$rest'";
     my (undef, $locations, $process)= @p;
-    new Company ($name,
-                 $url,
-                 # / and ; used inconsistently:
-                 list(split m%\s*[/;]\s*%, $locations),
-                 $process)
+    Company ($name,
+             $url,
+             # / and ; used inconsistently:
+             list(split m%\s*[/;]\s*%, $locations),
+             $process)
 }
 
 
 TEST {
     parse_line "- [Accredible](https://www.accredible.com/careers) | Cambridge, UK / San Francisco, CA / Remote | Take home project, then a pair-programming and discussion onsite / Skype round."
 }
-  new Company ("Accredible", "https://www.accredible.com/careers",
-               list ("Cambridge, UK", "San Francisco, CA", "Remote"),
-               "Take home project, then a pair-programming and discussion onsite / Skype round.");
+  Company ("Accredible", "https://www.accredible.com/careers",
+           list ("Cambridge, UK", "San Francisco, CA", "Remote"),
+           "Take home project, then a pair-programming and discussion onsite / Skype round.");
 
 
 # XX move?; name?
