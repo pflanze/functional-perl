@@ -32,6 +32,9 @@ sub usage {
   Use tab completion to learn about the available methods, and read
   the (probably not-so-fine) docs on functional-perl.org .
 
+  See https://news.ycombinator.com/item?id=19290044 for a
+  discussion.
+
 ";
     exit 1;
 }
