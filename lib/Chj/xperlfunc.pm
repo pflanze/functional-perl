@@ -87,6 +87,12 @@ These may be imported explicitely on demand.
 
 =over 4
 
+=item xfork_(&)
+
+Forks then runs the passed thunk in the child. The child process
+captures any uncaught exceptions and runs exit(1), otherwise upon
+ending the thunk exit(0).
+
 =item xLmtimed($), XLmtimed($)
 
 Those call lstat first, then if it's a symlink, also stat, then return
@@ -192,6 +198,7 @@ package Chj::xperlfunc;
 require Exporter;
 @EXPORT=qw(
 	   xfork
+	   xfork_
 	   xexec
 	   xsystem
 	   xxsystem
@@ -270,6 +277,26 @@ sub xfork() {
     my $pid=fork;
     defined $pid or croak "xfork: $!";
     $pid
+}
+
+# thread-like API; incomplete, for sure.
+sub xfork_(&) {
+    my ($thunk)=@_;
+    my $pid= xfork;
+    if ($pid) {
+	$pid
+    } else {
+	# kinda run in a new dynamic context, please... (evil,
+	# e.g. $SIG{__WARN__} is still set; do all of this?)
+	eval {
+	    &$thunk();
+	    # drop return value (transfer via pipe? 'No.')
+	    exit 0;
+	} || do {
+	    warn "uncaught exception in subprocess $$, exiting: $@";
+	    exit 1;
+	}
+    }
 }
 
 sub xexec {
