@@ -3,23 +3,23 @@ properly formatted versions of these documents.
 
 ---
 
-# Functional programming on Perl (5)
+# Functional programming on Perl
 
 This project aims to provide modules as well as tutorials and
-introductionary materials and other knowledge to work in a functional
-style on Perl. Currently the focus is on getting it to work well for
-programs on Perl 5. We'd appreciate discussing and collaborating with
-people working on Perl 6 now already, though, so as to adapt where
-useful.
-
+introductionary materials to work in a functional style on Perl 5.
 
 <with_toc>
 
 ## Teaser
 
-This is an example of the kind of code we want to make possible:
+This is an example of the kind of code this project aims to make possible:
 
+    # Generate functions which construct PXML objects (objects that
+    # can be serialized to XML) with the names given her as the XML
+    # tag names:
     use PXML::Tags qw(myexample protocol-version records record a b c d);
+    # The functions are generated in all-uppercase so as to minimize
+    # the chances for naming conflicts and to let them stand apart.
 
     print RECORD(A("hi"),B("there"))->string; 
     # prints: <record><a>hi</a><b>there</b></record>
@@ -37,33 +37,42 @@ This is an example of the kind of code we want to make possible:
                   my ($a,$b,$c,$d)= @{$_[0]};
                   RECORD A($a), B($b), C($c), D($d)
               })))
-      # print data structure to disk, forcing its evaluation as needed
+      # print XML document to disk
       ->xmlfile($outpath);
 
-    # Note that the above document is built lazily: `csv_file_to_rows`
-    # returns a *lazy* list of rows, which means the rows will only be
-    # read from disk once `xmlfile` runs and requests each
-    # XML-formatted row in turn while it prints the document as a
-    # string to the out file.
+    # Note that the MYEXAMPLE document above is built lazily:
+    # `csv_file_to_rows` returns a *lazy* list of rows, ->rest causes
+    # the first CSV row to be read and dropped and returns the
+    # remainder of the lazy list, ->map returns a new lazy list which
+    # is passed as argument to RECORDS, which returns a PXML object
+    # representing a 'records' XML element, that is then passed to
+    # MYEXAMPLE which returns a PXML object representing a 'myexample'
+    # XML element. PXML objects come with a xmlfile method which
+    # serializes the document to a file, and only while it runs, when
+    # it encounters the embedded lazy lists, it walks those evaluating
+    # the list items one at a time and dropping each item immediately
+    # after printing. This means that only one row of the CSV file
+    # needs to be held in memory at any given point.
 
 See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
 complete script, and the [examples](examples/README.md) page for more.
 
-The above example shows the use of functions as "template system", and
-lazy sequences. They are also internally implemented using the
-functional paradigm.
+The above example shows the use of functions as a "template system".
 
 Note that the example assumes that steps have been taken so that the
 CSV file doesn't change until the serialization step has completed,
-otherwise functional purity is broken; functional-perl, like in most
-functional languages (Scheme, Clojure, lazy streams on Perl 6, ..)
-that don't take type guarantees to the extreme (e.g. Haskell), the
-responsibility to ensure this assumption is left to the programmer
-(see [[howto#Pure_functions_versus_I/O_and_other_side-effects]] for
-more details about this).
+otherwise functional purity is broken; the responsibility to ensure
+this assumption is left to the programmer (see
+[[howto#Pure_functions_versus_I/O_and_other_side-effects]] for more
+details about this).
 
 If you'd like to see a practical step-by-step introduction, read the
 [[intro]].
+
+Even if you're not interested in lazy evaluation like in the above,
+this project may help you write parts of programs in a purely
+functional way, and benefit from the decreased coupling and improved
+testability and debuggability that this brings.
 
 
 ## Status: experimental
