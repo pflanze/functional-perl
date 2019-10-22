@@ -80,50 +80,38 @@ testability and debuggability that this brings.
 There are several reasons that this project should be considered
 experimental at this time:
 
-* some problems in the perl interpreter (leading to memory retention
-  issues) when using this style have only been fixed recently, and
-  some more exotic ones are still waiting to be examined.
+* there are some remaining issues which appear to be in the perl
+  interpreter that, in some cases, lead to memory being retained for
+  longer than necessary when using lazy lists
 
-* the author of the current code in this project has taken many
-  liberties to reimplement functionality that exists elsewhere on CPAN
-  already, partly out of interest in figuring out the best way to do
-  things on base principles, partly because of a lack of knowledge of
-  the latest trents in the Perl world (he programmed primarily in
-  Scheme for the last 8 years). For example to provide for objects
-  with purely functional updates, he chose to write the class
-  generator `FP::Struct` and based its type checking approach on
-  predicate functions instead of trying to extend Moose or one of its
-  alternatives: it was easy to do, nicely small and clean, and allowed
-  to play with the approach. But there's no need that this stays, work
-  or suggestions on how to move to an approach using Moose or
-  something else are very welcome. Similarly, the `Chj::IO::`
-  infrastructure should most probably be removed and the missing bits
-  added to existing commonly used modules.
+* also in the area of lazy lists, the current need in some situations
+  to use `Keep` and `weaken` to guide deallocation of list elements is
+  unfortunate; ideally the perl interpreter is extended with a pragma
+  that, when enabled, makes it automatically let go of unused list
+  elements (lexical lifetimes).
+
+* the project is currently using some modules which the author
+  developed a long time ago and could be replaced with other existing
+  ones from CPAN (e.g. `Chj::xperlfunc`, `Chj::IO::`).
+
+* `FP::Struct` was implemented as a class generator for classes that
+  come with functional setters (setters which don't mutate the
+  objects, but return modified versions). The author also liked to see
+  where a very simple approach may lead to (e.g. use of predicate
+  functions for type checking). The aim was to provide a very easy and
+  concise way to write classes. This is experimental, and may be
+  deprecated in favour of extending existing class generators where
+  needed and using them instead.
 
 * the namespaces are not fixed yet (in particular, everything in
   `Chj::` should probably be renamed); also, the interfaces should be
-  treated as alpha: this is freshly released and very much open to
-  input. For these reasons, the modules have not been packaged and
-  released on CPAN yet.
-
-* some of the complications when writing functional code (as described
-  in the [[howto]]) might be solvable through modules or core
-  interpreter changes. That would make some code easier to write and
-  look at. (See [[ideas]].) This may then also change where explicit
-  indication about memory retention are still expected (possibly
-  even in backwards incompatible ways.)
-
-* various parts (filesystem accesses etc.) probably won't work on
-  Microsoft Windows yet
-
-The plan is to accept compatibility-breaking changes until February
-2016, then make a stable release in April 2016. If you'd like to get a
-maintained and versioned release earlier, please say so.
+  treated as alpha. It could benefit from more work on building a good
+  type hierarchy for `FP::Sequence` and other types.
 
 [I](//contact.md)'m using it already in personal projects; where
 breakage due to changes is unacceptable, I currently add
-functional-perl as a Git submodule to the project using it and `use
-lib` it from the actual project.
+functional-perl as a Git submodule to the project using it and access
+it via `use lib`.
 
 
 ## Parts
