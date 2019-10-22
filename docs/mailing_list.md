@@ -13,21 +13,20 @@ mailing list at
 subscription is not needed to post. Messages that are considered by
 the spam filter to look somewhat spammy are moderated.
 
-To subscribe to the list, send an (empty) email to
+To subscribe to the list, send an empty email to
 [functional-perl-list-subscribe@functional-perl.org](mailto:functional-perl-list-subscribe@functional-perl.org). To
-unsubscribe, do the same to the address
-[functional-perl-list-unsubscribe@functional-perl.org](mailto:functional-perl-list-unsubscribe@functional-perl.org)
-instead.
+unsubscribe, send an empty email to
+[functional-perl-list-unsubscribe@functional-perl.org](mailto:functional-perl-list-unsubscribe@functional-perl.org).
 
-Gmail often first puts mails from this server to its spam folder (in
-spite of this server using the same IP for many years, is on no
-blacklists, uses DKIM and SPF and takes care never to send or bounce a
-spam). Please check your spam folder and teach Gmail that those mails
-are not spam. Hopefully this will improve deliverability for everyone
-over time. If it doesn't then I'll take the next steps.
+Be reminded that Gmail and some other large ISPs are filtering mail
+very aggressively for spam, and may deliver mails from this server to
+the spam folder first. If necessary, please check there and move the
+mails out of the spam folder to train the service. If that doesn't
+help, please [tell](//contact.md).
 
 ## IRC
 
 Christian (pflanze) is always logged onto `#functional-perl` on
-irc.perl.org; mention his nickname and he will get a notification.
+irc.perl.org; mention his nickname and he will get a notification via
+email, although he is currently not seeing that immediately anymore.
 
