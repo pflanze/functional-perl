@@ -5,6 +5,8 @@ properly formatted versions of these documents.
 
 # Various links
 
+Note: most of these links are from 2015 and 2016. Please submit new ones if you've got good suggestions.
+
 ## Function libraries
 
 * [srfi-1](http://srfi.schemers.org/srfi-1/srfi-1.html), the list
