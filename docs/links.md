@@ -32,14 +32,18 @@ Note: most of these links are from 2015 and 2016. Please submit new ones if you'
         * [Introducing Ramda](http://buzzdecafe.github.io/code/2014/05/16/introducing-ramda) <small>*" Ramda includes all of the favorite list-manipulation functions you expect, e.g. map, filter, reduce, find, etc. But Ramda is significantly different from libraries like Underscore and Lodash. ..."*</small>
     * [All About Recursion, PTC, TCO and STC in JavaScript](http://lucasfcosta.com/2017/05/08/All-About-Recursion-PTC-TCO-and-STC-in-JavaScript.html)
 
-* [Functional Programming in Python
-  (pdf)](http://www.oreilly.com/programming/free/files/functional-programming-python.pdf)
-  ([HN](https://news.ycombinator.com/item?id=9941748))
+* Python:
 
-* [PyFunctional](http://pedrorodriguez.io/PyFunctional/)
+    * [Functional Programming in Python
+      (pdf)](http://www.oreilly.com/programming/free/files/functional-programming-python.pdf)
+      ([HN](https://news.ycombinator.com/item?id=9941748))
 
-    * [main Github repo?](https://github.com/EntilZha/PyFunctional) ([HN](https://news.ycombinator.com/item?id=15919646))
-        * also: pipetools, itertools
+    * [PyFunctional](http://pedrorodriguez.io/PyFunctional/)
+
+        * [main Github repo?](https://github.com/EntilZha/PyFunctional) ([HN](https://news.ycombinator.com/item?id=15919646))
+            * also: pipetools, itertools
+
+    * [Functional Programming HOWTO](https://docs.python.org/2.7/howto/functional.html)
 
 * [Functional programming in C++](http://gamasutra.com/view/news/169296/Indepth_Functional_programming_in_C.php) ([John Carmack](https://en.wikipedia.org/wiki/John_Carmack)) ([alternative link](https://web.archive.org/web/20130819160454/http://www.altdevblogaday.com/2012/04/26/functional-programming-in-c/))
 
