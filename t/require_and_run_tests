@@ -90,6 +90,6 @@ done_testing;
 
 
 #use Chj::ruse;
-use Chj::Backtrace;
+#use Chj::Backtrace;
 #use Chj::repl;
 #repl;
