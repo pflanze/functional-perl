@@ -34,8 +34,8 @@ package FP::Array;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(array
-	      array_fst
-	      array_snd
+	      array_first
+	      array_second
 	      array_ref
 	      array_xref
 	      array_length
@@ -69,8 +69,6 @@ package FP::Array;
 	      array_every
 	      array_any
 	      array_sum
-	      array_first
-	      array_second
 	      array_last
 	      array_rest
 	      array_to_hash_group_by
@@ -87,11 +85,11 @@ sub array {
     [@_]
 }
 
-sub array_fst ($) {
+sub array_first ($) {
     $_[0][0]
 }
 
-sub array_snd ($) {
+sub array_second ($) {
     $_[0][1]
 }
 
@@ -445,8 +443,8 @@ sub array_sum ($) {
     array_fold \&add, 0, $_[0]
 }
 
-*array_first= *array_fst;
-*array_second= *array_snd;
+*array_first= *array_first;
+*array_second= *array_second;
 
 sub array_last ($) {
     my ($a)= @_;

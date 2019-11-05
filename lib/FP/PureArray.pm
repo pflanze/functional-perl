@@ -163,9 +163,7 @@ sub values {
 
 *cons= flip \&FP::List::pair;
 *rest= blessing \&array_rest;
-*fst= \&array_fst;
-*first= \&array_fst;
-*snd= \&array_snd;
+*first= \&array_first;
 *second= \&array_second;
 *last= \&array_last;
 *ref= \&array_ref;
@@ -280,7 +278,7 @@ TEST{ (purearray 7)->any (sub { $_[0] % 2 }) }
   1;
 
 TEST {(purearray ["a",1], ["b",2], ["a",4])
-	->hash_group_by (*array_fst) }
+	->hash_group_by (*array_first) }
   {'a'=>[['a',1],['a',4]],'b'=>[['b',2]]};
 
 TEST { purearray (3)->xone } 3;
