@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -173,7 +173,7 @@ TEST {
 	for my $i (1..1000) {
 	    my $k= random_key;
 	    &$set_both ($k, $i);
-	    $trie->xref (string_to_list $oldk) == $$hash{$oldk}
+	    $trie->ref (string_to_list $oldk) == $$hash{$oldk}
 	      or die "bug";
 	    $oldk= $k;
 	  DEL: {

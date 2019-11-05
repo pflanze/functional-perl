@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -37,7 +37,7 @@ package FP::Array;
 	      array_first
 	      array_second
 	      array_ref
-	      array_xref
+	      array_ref
 	      array_length
 	      array_is_null
 	      array_set
@@ -93,12 +93,12 @@ sub array_second ($) {
     $_[0][1]
 }
 
-sub array_ref ($$) {
+sub array_maybe_ref ($$) {
     my ($a,$i)=@_;
     $$a[$i]
 }
 
-sub array_xref ($$) {
+sub array_ref ($$) {
     my ($a,$i)=@_;
     # XX also check that $i is integer?
     ($i >= 0 and $i < @$a)
@@ -106,10 +106,10 @@ sub array_xref ($$) {
     $$a[$i]
 }
 
-TEST_EXCEPTION { array_xref [], 0 } "index out of bounds";
-TEST { array_xref [5], 0 } 5;
-TEST_EXCEPTION { array_xref [5], 1 } "index out of bounds";
-TEST_EXCEPTION { array_xref [5], -1 } "index out of bounds";
+TEST_EXCEPTION { array_ref [], 0 } "index out of bounds";
+TEST { array_ref [5], 0 } 5;
+TEST_EXCEPTION { array_ref [5], 1 } "index out of bounds";
+TEST_EXCEPTION { array_ref [5], -1 } "index out of bounds";
 
 sub array_length ($) {
     scalar @{$_[0]}

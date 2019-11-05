@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -26,7 +26,7 @@ FP::Trie - purely functional prefix tree
  # -> prints "1World"
 
  $t->maybe_ref ($keylist)
- $t->xref ($keylist)
+ $t->ref ($keylist)
  $t->ref_or ($keylist, $alternativevalue)
  $t->exists ($keylist) # boolean
 
@@ -135,7 +135,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     }
     *maybe_ref= perhaps_to_maybe *perhaps_ref;
     *ref_or= perhaps_to_or *perhaps_ref;
-    *xref= perhaps_to_x *perhaps_ref, $key_not_found_exception;
+    *ref= perhaps_to_x *perhaps_ref, $key_not_found_exception;
     *exists= perhaps_to_exists *perhaps_ref;
 
     # returns ($ending_level, $maybe_keyremainder,
