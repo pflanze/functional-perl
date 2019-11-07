@@ -16,12 +16,12 @@ Chj::time_this - benchmarking function that also returns the result(s)
  use Chj::tim;
  my $res= time_this { somefunc(66) }; # prints timing to stderr
  # or
- my $res= time_this { somefunc(66) }, "somefunc"; # included in message
+ my $res= time_this { somefunc(66) } "somefunc"; # included in message
  # or
- my $res= time_this { somefunc(66) },
+ my $res= time_this { somefunc(66) }
               msg=> "somefunc", n=> 10; # run thunk 10 times
  # or
- my $res= time_this { somefunc(66) }, out=> \@t; # push to @t instead of stderr
+ my $res= time_this { somefunc(66) } out=> \@t; # push to @t instead of stderr
 
 =head1 DESCRIPTION
 
