@@ -5,6 +5,6 @@ WriteMakefile(
     VERSION_FROM      => 'lib/FP/FunctionalPerl.pm',
     PREREQ_PM         => {'Test::Requires'=> 0}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?
-      (ABSTRACT_FROM  => 'lib/FP/FunctionalPerl.pm',
+      (ABSTRACT  => 'FP::FunctionalPerl - functional programming on Perl',
        AUTHOR         => 'Christian Jaeger <copying@christianjaeger.ch>') : ()),
 );

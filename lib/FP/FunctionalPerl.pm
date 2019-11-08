@@ -18,8 +18,7 @@ FP::FunctionalPerl - functional programming on Perl
 
 =head1 DESCRIPTION
 
-Currently just embeds the version variable, and the abstract (see
-NAME) for the distribution.
+Currently just embeds the version variable.
 
 =cut
 
