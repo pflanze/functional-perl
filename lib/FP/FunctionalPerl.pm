@@ -9,22 +9,22 @@
 
 =head1 NAME
 
-FP::* - functional programming on Perl
+FP::FunctionalPerl - functional programming on Perl
 
 =head1 SYNOPSIS
 
- use FP::FP_Version;
- FP::FP_Version->VERSION # or $FP::FP_Version::VERSION
+ use FP::FunctionalPerl;
+ FP::FunctionalPerl->VERSION # or $FP::FunctionalPerl::VERSION
 
 =head1 DESCRIPTION
 
-Just embeds the version variable, and the abstract (NAME) for the
-distribution.
+Currently just embeds the version variable, and the abstract (see
+NAME) for the distribution.
 
 =cut
 
 
-package FP::FP_Version;
+package FP::FunctionalPerl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw();

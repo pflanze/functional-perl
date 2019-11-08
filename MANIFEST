@@ -121,7 +121,6 @@ lib/Chj/xperlfunc.pm
 lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
-lib/FP.pm
 lib/FP/Array.pm
 lib/FP/Array_sort.pm
 lib/FP/Char.pm
@@ -131,6 +130,7 @@ lib/FP/Div.pm
 lib/FP/Equal.pm
 lib/FP/Equals.pm
 lib/FP/Equals/t.pm
+lib/FP/FunctionalPerl.pm
 lib/FP/Git/Repository.pm
 lib/FP/Hash.pm
 lib/FP/HashSet.pm
