@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -9,23 +9,22 @@
 
 =head1 NAME
 
-FP - functional programming on Perl
+FP::* - functional programming on Perl
 
 =head1 SYNOPSIS
 
- use FP;
- FP->VERSION # or $FP::VERSION, current version
+ use FP::FP_Version;
+ FP::FP_Version->VERSION # or $FP::FP_Version::VERSION
 
 =head1 DESCRIPTION
 
-Currently just embeds the version variable. Might become a bundle for
-easy import of all the futures that are most useful in most functional
-programs?
+Just embeds the version variable, and the abstract (NAME) for the
+distribution.
 
 =cut
 
 
-package FP;
+package FP::FP_Version;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw();
