@@ -627,12 +627,8 @@ sub _completion_function {
 			elsif ($r eq 'ARRAY'
                                or ($brace
                                    and UNIVERSAL::isa($val, 'ARRAY'))) {
-                            # ^ not sure this works here
-                            if ($brace) {
-                                ()
-                            } else {
-                                ("[")
-                            }
+                            # ^ not sure this works here; see commit messages
+                            ("[")
 			}
 			elsif ($r eq 'CODE') {
 			    ("(")
