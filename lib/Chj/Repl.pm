@@ -1152,9 +1152,9 @@ sub run {
 				# ref; but, remove this code anyway,
 				# use FP::Show now?
 				my $err= (UNIVERSAL::can($error,"plain") ?
-					  # e.g. EiD style wrapped "normal" exceptions
-					  # have this method for formatting as
-					  # 'plaintext' (in a programmer's sense)
+					  # error in plaintext; XX:
+					  # change to better
+					  # thought-out protocol?
 					  $error->plain
 					  : "$error");
 				chomp $err;
