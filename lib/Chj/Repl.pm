@@ -570,7 +570,7 @@ sub _completion_function {
 		$part=~ /(.*)\$(\w+)\s*->\s*([{\[]\s*)?(\w*)\z/s
 		or
 		($pre,$varnam,$brace,$alreadywritten)=
-		$part=~ /(.*\$)\$(\w+)\s+([{\[]\s*)?(\w*)\z/s) {
+		$part=~ /(.*\$)\$(\w+)(?:\s+|(?:\s*([{\[]\s*)(\w*)))\z/s) {
 		# need to know the class of that thing
 		no strict 'refs';
 		my $r;
