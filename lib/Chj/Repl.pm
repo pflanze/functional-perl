@@ -618,7 +618,7 @@ sub _completion_function {
 
 			    #("{")
 			    #("{foo}","{bar}")
-			    if ($brace and $brace eq '{') {
+			    if ($brace) {
 				map {"$_}"} keys %$val
 			    } else {
 				map {"{$_}"} keys %$val
@@ -628,7 +628,7 @@ sub _completion_function {
                                or ($brace
                                    and UNIVERSAL::isa($val, 'ARRAY'))) {
                             # ^ not sure this works here
-                            if ($brace and $brace eq '[') {
+                            if ($brace) {
                                 ()
                             } else {
                                 ("[")
