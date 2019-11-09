@@ -1202,7 +1202,7 @@ sub run {
 		$f->xclose;
 		$f->xputback(0600);
 	    };
-	    if(ref$@ or$@){
+            if (ref $@ or $@) {
 		warn "could not write history file: $@"
 	    }
 	}
@@ -1215,7 +1215,7 @@ sub run {
     # restore previous history, if any
     if ($current_history) {
 	$term->clear_history;
-	for (@$current_history){
+	for (@$current_history) {
 	    chomp;
 	    $term->addhistory($_);
 	}
