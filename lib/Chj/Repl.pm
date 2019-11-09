@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -609,19 +609,30 @@ sub _completion_function {
 		     })) {
 		    #warn "got value from \$$varnam";
 		    if ($r||=ref($val)) {
-			if ($r eq 'HASH') {
+			if ($r eq 'HASH'
+                            or ($brace
+                                and UNIVERSAL::isa($val, 'HASH'))) {
+                            # Could also check `$val->isa('HASH')` if
+                            # we wanted to run isa overloads, but
+                            # would we want to do that?
+
 			    #("{")
-			    #("{hallo}","{ballo}")
-			    if ($brace) {
+			    #("{foo}","{bar}")
+			    if ($brace and $brace eq '{') {
 				map {"$_}"} keys %$val
 			    } else {
-				#("{")
 				map {"{$_}"} keys %$val
-				  #(why no need for grep alreadywritten here?)
 			    }
 			}
-			elsif ($r eq 'ARRAY') {
-			    ("[")
+			elsif ($r eq 'ARRAY'
+                               or ($brace
+                                   and UNIVERSAL::isa($val, 'ARRAY'))) {
+                            # ^ not sure this works here
+                            if ($brace and $brace eq '[') {
+                                ()
+                            } else {
+                                ("[")
+                            }
 			}
 			elsif ($r eq 'CODE') {
 			    ("(")
