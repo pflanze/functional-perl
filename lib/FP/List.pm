@@ -79,7 +79,7 @@ package FP::List;
 	      list_fold list_fold_right list_to_perlstring
 	      unfold unfold_right
 	      list_pair_fold_right
-	      list_drop_last list_drop_while list_rtake_while list_take_while
+	      list_butlast list_drop_while list_rtake_while list_take_while
 	      list_rtake_while_and_rest list_take_while_and_rest
 	      list_append
 	      list_zip2
@@ -1511,24 +1511,24 @@ TEST{ list_to_perlstring string_to_list  "Hello's" }
 *FP::List::List::perlstring= *list_to_perlstring;
 
 
-sub list_drop_last ($);
-sub list_drop_last ($) {
+sub list_butlast ($);
+sub list_butlast ($) {
     my ($l)=@_;
     if (is_null ($l)) {
-	die "drop_last: got empty list"
+	die "butlast: got empty list"
 	# XX could make use of OO for the distinction instead
     } else {
 	my ($a,$r)= $l->first_and_rest;
-	is_null ($r) ? $r : cons($a, list_drop_last $r)
+	is_null ($r) ? $r : cons($a, list_butlast $r)
     }
 }
 
-*FP::List::List::drop_last= *list_drop_last;
+*FP::List::List::butlast= *list_butlast;
 
-TEST { list (3,4,5)->drop_last->array }
+TEST { list (3,4,5)->butlast->array }
   [3,4];
-TEST_EXCEPTION { list ()->drop_last->array }
-  'can\'t take the drop_last of the empty list';
+TEST_EXCEPTION { list ()->butlast->array }
+  'can\'t take the butlast of the empty list';
 
 
 sub list_drop_while ($ $) {
