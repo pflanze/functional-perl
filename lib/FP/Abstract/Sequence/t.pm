@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-FP::Sequence::t -- tests for FP::Sequence
+FP::Abstract::Sequence::t -- tests for FP::Abstract::Sequence
 
 =head1 SYNOPSIS
 
@@ -21,14 +21,14 @@ FP::Sequence::t -- tests for FP::Sequence
 =cut
 
 
-package FP::Sequence::t;
+package FP::Abstract::Sequence::t;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # from SYNOPSIS:
 
  use FP::Predicates "is_sequence"; # since we can't have it in
-                                   # FP::Sequence
+                                   # FP::Abstract::Sequence
  use FP::PureArray;
  use FP::StrictList;
  use FP::List;

@@ -105,8 +105,8 @@ experimental at this time:
 
 * the namespaces are not fixed yet (in particular, everything in
   `Chj::` should probably be renamed); also, the interfaces should be
-  treated as alpha. It could benefit from more work on building a good
-  type hierarchy for `FP::Sequence` and other types.
+  treated as alpha. More abstract types (like
+  `FP::Abstract::Sequence`) should be defined.
 
 [I](//contact.md)'m using it already in personal projects; where
 breakage due to changes is unacceptable, I currently add

@@ -121,6 +121,8 @@ lib/Chj/xperlfunc.pm
 lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
+lib/FP/Abstract/Sequence.pm
+lib/FP/Abstract/Sequence/t.pm
 lib/FP/Array.pm
 lib/FP/Array_sort.pm
 lib/FP/Char.pm
@@ -146,8 +148,6 @@ lib/FP/Path/t.pm
 lib/FP/Predicates.pm
 lib/FP/Pure.pm
 lib/FP/PureArray.pm
-lib/FP/Sequence.pm
-lib/FP/Sequence/t.pm
 lib/FP/Show.pm
 lib/FP/Show/Base/FP_Struct.pm
 lib/FP/Show/t.pm

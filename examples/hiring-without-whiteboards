@@ -140,7 +140,7 @@ TEST {
 
 
 # XX move?; name?
-fun FP::Sequence::drop_over ($l, $pred) {
+fun FP::Abstract::Sequence::drop_over ($l, $pred) {
     $l->drop_while (complement $pred)->drop_while ($pred)
 }
 
@@ -160,7 +160,7 @@ fun print_showln ($v) {
     xprintln show $v
 }
 # XX see above, and move?
-fun FP::Sequence::show_items ($l) {
+fun FP::Abstract::Sequence::show_items ($l) {
     $l->for_each (*print_showln)
 }
 

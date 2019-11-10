@@ -9,12 +9,12 @@
 
 =head1 NAME
 
-FP::Sequence - base class for functional sequences
+FP::Abstract::Sequence - functional sequence protocol
 
 =head1 SYNOPSIS
 
  use FP::Predicates "is_sequence"; # since we can't have it in
-                                   # FP::Sequence
+                                   # FP::Abstract::Sequence
  use FP::PureArray;
  use FP::StrictList;
  use FP::List;
@@ -55,7 +55,7 @@ implementations.
 =cut
 
 
-package FP::Sequence;
+package FP::Abstract::Sequence;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -89,7 +89,8 @@ sub flatten {
 # sequence
 
 # (XX only works computationally efficient for *some* sequences;
-# introduce an FP::IterativeSequence or so and move it there?)
+# introduce an FP::Abstract::IterativeSequence or so and move it
+# there?)
 sub join {
     @_==2 or die "wrong number of arguments";
     my ($self, $value)=@_;

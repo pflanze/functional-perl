@@ -128,7 +128,7 @@ use FP::Weak qw(Weakened);
 
 {
     package FP::List::List;
-    use base "FP::Sequence";
+    use base "FP::Abstract::Sequence";
     *null= \&FP::List::null;
 
     # return this sequence as a list, i.e. identity
