@@ -134,8 +134,10 @@ use FP::Interfaces;
     # return this sequence as a list, i.e. identity
     sub list {
 	@_==1 or die "wrong number of arguments";
+        # XXX returns a stream for a stream, fix please (?)
 	$_[0]
     }
+
 }
 
 {
