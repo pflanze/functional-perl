@@ -290,10 +290,12 @@ sub make_reduce {
 # But, the question is really eager vs. lazy evaluation, i.e. foldl vs
 # foldl'. Should we do that? For now just:
 
+sub reduce;
 *reduce= __PACKAGE__->make_reduce("fold");
 
 # These variants are explicit in which side they are folding from:
 
+sub reduce_right;
 *reduce_right= __PACKAGE__->make_reduce("fold_right");
 
 
