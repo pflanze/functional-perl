@@ -102,7 +102,7 @@ sub array_ref ($$) {
     my ($a,$i)=@_;
     # XX also check that $i is integer?
     ($i >= 0 and $i < @$a)
-      or die "index out of bounds";
+      or croak "index out of bounds: $i";
     $$a[$i]
 }
 
