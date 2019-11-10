@@ -285,13 +285,16 @@ sub make_reduce {
 
 # This variant folds from whichever side makes more sense for the
 # type:
+#  *reduce= __PACKAGE__->make_reduce("preferred_fold");
 
-*reduce= __PACKAGE__->make_reduce("preferred_fold");
+# But, the question is really eager vs. lazy evaluation, i.e. foldl vs
+# foldl'. Should we do that? For now just:
+
+*reduce= __PACKAGE__->make_reduce("fold");
 
 # These variants are explicit in which side they are folding from:
 
 *reduce_right= __PACKAGE__->make_reduce("fold_right");
-*reduce_left= __PACKAGE__->make_reduce("fold"); # XX rename fold to fold_left ?
 
 
 sub sum {
