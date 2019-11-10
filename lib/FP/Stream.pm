@@ -213,7 +213,8 @@ TEST {
 } [10, undef];
 
 
-# left fold, sometimes called `foldl` or `reduce`.
+# left fold, sometimes called `foldl` (or with changes, `reduce`,
+# which is defined in FP::Abstract::Sequence)
 
 # All functional languages seem to agree that right fold should pass
 # the state argument as the second argument (to the right) to the
