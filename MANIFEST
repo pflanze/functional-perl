@@ -121,6 +121,8 @@ lib/Chj/xperlfunc.pm
 lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
+lib/FP/Abstract/Interface.pm
+lib/FP/Abstract/Pure.pm
 lib/FP/Abstract/Sequence.pm
 lib/FP/Abstract/Sequence/t.pm
 lib/FP/Array.pm
@@ -137,6 +139,7 @@ lib/FP/Git/Repository.pm
 lib/FP/Hash.pm
 lib/FP/HashSet.pm
 lib/FP/IOStream.pm
+lib/FP/Interfaces.pm
 lib/FP/Lazy.pm
 lib/FP/List.pm
 lib/FP/Memoizing.pm
@@ -146,7 +149,6 @@ lib/FP/OrderedCollection.pm
 lib/FP/Path.pm
 lib/FP/Path/t.pm
 lib/FP/Predicates.pm
-lib/FP/Pure.pm
 lib/FP/PureArray.pm
 lib/FP/Show.pm
 lib/FP/Show/Base/FP_Struct.pm
