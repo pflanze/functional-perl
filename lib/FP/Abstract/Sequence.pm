@@ -66,6 +66,25 @@ use FP::Lazy;
 
 use Chj::NamespaceCleanAbove;
 
+sub fp_interface_method_names {
+    my $class= shift;
+    (qw(
+     is_null
+     first rest
+     first_and_rest
+     maybe_first maybe_rest
+     perhaps_first perhaps_rest
+     perhaps_first_and_rest
+     fold
+     fold_right
+     preferred_fold
+     append
+     ),
+     $class->NEXT::fp_interface_method_names)  # XXX how , fail, 
+}
+
+
+
 # XXX these don't weaken the caller arguments, thus will leak for
 # streams. How to solve this (and not copy-paste-adapt the methods
 # manually) without fixing perl?
