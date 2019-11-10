@@ -123,7 +123,7 @@ sub array_is_null ($) {
 # functional updates
 
 sub array_set ($$$) {
-    @_==3 or die "wrong number of arguments";
+    @_==3 or croak "wrong number of arguments";
     my ($a,$i,$v)=@_;
     my $a2= [@$a];
     $$a2[$i]= $v;
@@ -131,7 +131,7 @@ sub array_set ($$$) {
 }
 
 sub array_update ($$$) {
-    @_==3 or die "wrong number of arguments";
+    @_==3 or croak "wrong number of arguments";
     my ($a,$i,$fn)=@_;
     my $a2= [@$a];
     $$a2[$i]= &$fn ($$a2[$i]);
@@ -249,7 +249,7 @@ sub array_for_each ($$) {
 }
 
 sub array_map {
-    @_>1 or die "wrong number of arguments";
+    @_>1 or croak "wrong number of arguments";
     my $fn=shift;
     my $len= min (map { scalar @$_ } @_);
     my @res;
@@ -264,7 +264,7 @@ TEST{ array_map sub { $_[0]+$_[1]}, [1,2,20], [-1,4] } [ 0,6 ];
 
 # (should one use multi-arg stream_map with stream_iota instead?..)
 sub array_map_with_i {
-    @_>1 or die "wrong number of arguments";
+    @_>1 or croak "wrong number of arguments";
     my $fn=shift;
     my $len= min (map { scalar @$_ } @_);
     my @res;
@@ -278,7 +278,7 @@ TEST{ array_map_with_i sub {[@_]}, [qw(a b)], [20..40] }
   [[0,"a",20], [1,"b",21]];
 
 sub array_map_with_islast {
-    @_>1 or die "wrong number of arguments";
+    @_>1 or croak "wrong number of arguments";
     my $fn=shift;
     my $len= min (map { scalar @$_ } @_);
     my $last= $len - 1;
@@ -296,13 +296,13 @@ TEST{ array_map_with_islast sub { [@_] }, [1,2,20], ["b","c"] }
 
 
 sub array_to_hash_map {
-    @_>1 or die "wrong number of arguments";
+    @_>1 or croak "wrong number of arguments";
     my $fn=shift;
     my $len= min (map { scalar @$_ } @_);
     my %res;
     for (my $i=0; $i<$len; $i++) {
 	my @v= &$fn (map { $$_[$i] } @_);
-	@v==2 or die "wrong number of return values: ".show (\@v);
+	@v==2 or croak "wrong number of return values: ".show (\@v);
 	$res{$v[0]}= $v[1];
     }
     \%res
@@ -319,7 +319,7 @@ TEST { array_to_hash_map(sub { my($x,$a)=@_; $a=> $x*$x },
 
 
 sub array_filter ($$) {
-    @_==2 or die "wrong number of arguments";
+    @_==2 or croak "wrong number of arguments";
     my ($fn,$v)=@_;
     [
      grep {
@@ -363,7 +363,7 @@ TEST{ require FP::List;
 
 
 sub array_fold_right ($$$) {
-    @_==3 or die "wrong number of arguments";
+    @_==3 or croak "wrong number of arguments";
     my ($fn,$tail,$a)=@_;
     my $i= @$a - 1;
     while ($i >= 0) {
@@ -401,7 +401,7 @@ TEST{ array_join [1,2,3],"a" }
 TEST{ array_join [],"a" } [];
 
 sub array_strings_join ($$) {
-    @_==2 or die "wrong number of arguments";
+    @_==2 or croak "wrong number of arguments";
     my ($ary,$val)=@_;
     join $val, @$ary
 }
