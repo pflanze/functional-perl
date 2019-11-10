@@ -63,7 +63,8 @@ use base 'FP::Abstract::Pure';
 require FP::List; # "use"ing it would create a circular dependency
 use FP::Array_sort qw(on_maybe);
 use FP::Lazy;
-use FP::Ops ();
+use FP::Ops qw(add mult);
+use FP::Predicates qw(complement);
 
 use Chj::NamespaceCleanAbove;
 
@@ -85,6 +86,7 @@ sub fp_interface_method_names {
      reduce_right
      sum
      product
+     none
      ),
      # virtual methods:
      qw(
@@ -105,7 +107,6 @@ sub fp_interface_method_names {
      take_while_and_rest
      take_while
      every
-     none
      any
      find
      fold
@@ -292,14 +293,19 @@ sub make_reduce {
 
 sub sum {
     @_==1 or die "wrong number of arguments";
-    $_[0]->reduce(*FP::Ops::add)
+    $_[0]->reduce(*add)
 }
 
 sub product {
     @_==1 or die "wrong number of arguments";
-    $_[0]->reduce(*FP::Ops::mult)
+    $_[0]->reduce(*mult)
 }
 
+sub none {
+    @_==2 or die "wrong number of arguments";
+    my ($s, $pred)=@_;
+    $s->every (complement $pred)
+}
 
 
 _END_

@@ -1642,13 +1642,7 @@ TEST { string_to_list("Hello ") ->every(\&char_is_alphanumeric) }
   '';
 
 
-sub list_none ($$) {
-    my ($pred,$l)=@_;
-    list_every (complement ($pred), $l)
-}
-
-*FP::List::List::none= flip \&list_none;
-
+# none is defined in FP::Abstract::Sequence
 TEST { string_to_list("Hello") ->none(\&char_is_alphanumeric) }
   '';
 TEST { string_to_list(" -()&") ->none(\&char_is_alphanumeric) }
