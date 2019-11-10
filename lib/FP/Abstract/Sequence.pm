@@ -89,6 +89,9 @@ sub fp_interface_method_names {
      none
      ),
      # virtual methods:
+     grep {
+         not /^TODO/
+     }
      qw(
      is_null
      first rest
@@ -99,12 +102,11 @@ sub fp_interface_method_names {
      map
      map_with_islast
      filter
-     filter_with_tail
-     drop_last
+     TODO_filter_with_tail
      drop_while
-     rtake_while_and_rest
-     rtake_while
-     take_while_and_rest
+     TODO_rtake_while_and_rest
+     TODO_rtake_while
+     TODO_take_while_and_rest
      take_while
      every
      any
@@ -118,7 +120,6 @@ sub fp_interface_method_names {
      drop
      xone
      perhaps_one
-     zip2
      zip
      for_each
      join
@@ -131,7 +132,8 @@ sub fp_interface_method_names {
      stream
      sort
      ),
-     $class->NEXT::fp_interface_method_names)  # XXX how , fail, 
+     # $class->SUPER::fp_interface_method_names
+    )
 }
 #XXX different protocol for random access ones:
 #hmm add ref here too?  vs. efficient_ref  etc. *?*  or  slow_ref  or somthing?
@@ -148,6 +150,7 @@ sub fp_interface_method_names {
 
 #XXX other
 # group group_by
+#     zip2
 
 
 
