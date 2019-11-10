@@ -63,6 +63,7 @@ use base 'FP::Abstract::Pure';
 require FP::List; # "use"ing it would create a circular dependency
 use FP::Array_sort qw(on_maybe);
 use FP::Lazy;
+use FP::Ops ();
 
 use Chj::NamespaceCleanAbove;
 
@@ -80,6 +81,10 @@ sub fp_interface_method_names {
      minmax
      subsection
      make_reduce
+     reduce
+     reduce_right
+     sum
+     product
      ),
      # virtual methods:
      qw(
@@ -124,8 +129,6 @@ sub fp_interface_method_names {
      list
      stream
      sort
-     sum
-     product
      ),
      $class->NEXT::fp_interface_method_names)  # XXX how , fail, 
 }
@@ -285,6 +288,18 @@ sub make_reduce {
 
 *reduce_right= __PACKAGE__->make_reduce("fold_right");
 *reduce_left= __PACKAGE__->make_reduce("fold"); # XX rename fold to fold_left ?
+
+
+sub sum {
+    @_==1 or die "wrong number of arguments";
+    $_[0]->reduce(*FP::Ops::add)
+}
+
+sub product {
+    @_==1 or die "wrong number of arguments";
+    $_[0]->reduce(*FP::Ops::mult)
+}
+
 
 
 _END_
