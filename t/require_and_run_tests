@@ -75,9 +75,10 @@ use Test::More;
 
 for (@$modules) {
   SKIP: {
-	if (my $ds= $dependencies{$_}) {
+	if (0 and #no need anymore? ?
+            my $ds= $dependencies{$_}) {
 	    for my $d (@$ds) {
-		eval "require $d; 1" or skip "failed to use $d", 1
+                eval "require $d; 1" or skip "failed to use $d", 1
 	    }
 	}
 	require_ok $_
