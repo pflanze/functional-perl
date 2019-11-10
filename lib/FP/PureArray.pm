@@ -50,12 +50,17 @@ use FP::Array_sort "array_sort";
 use FP::Combinators qw (flip flip2of3 rot3right rot3left);
 use FP::Div 'inc';
 use FP::Predicates 'is_pure';
+use FP::Optional qw(perhaps_to_maybe);
 
 sub blessing ($) {
     my ($m)= @_;
     sub {
 	my $class=ref $_[0];
-	bless &$m (@_), $class
+        if (my ($v)= &$m (@_)) {
+            bless $v, $class
+        } else {
+            ()
+        }
     }
 }
 
@@ -159,8 +164,35 @@ sub values {
 
 
 *cons= flip \&FP::List::pair;
-*rest= blessing \&array_rest;
 *first= \&array_first;
+*maybe_first= \&array_maybe_first;
+*perhaps_first= \&array_perhaps_first;
+*rest= blessing \&array_rest;
+*maybe_rest= blessing \&array_maybe_rest;
+*perhaps_rest= blessing \&array_perhaps_rest;
+sub first_and_rest {
+    @_==1 or die "wrong number of arguments";
+    my ($a)= @_;
+    (array_first $a,
+     bless array_rest($a), ref $a)
+}
+# XXX ah could have used blessing_snd ^ v
+sub maybe_first_and_rest {
+    @_==1 or die "wrong number of arguments";
+    my ($a)= @_;
+    @$a ? 
+        (array_first $a,
+         bless array_rest($a), ref $a)
+        : undef
+}
+sub perhaps_first_and_rest {
+    @_==1 or die "wrong number of arguments";
+    my ($a)= @_;
+    @$a ? 
+        (array_first $a,
+         bless array_rest($a), ref $a)
+        : ()
+}
 *second= \&array_second;
 *last= \&array_last;
 *ref= \&array_ref;
@@ -179,6 +211,8 @@ sub FP_Sequence_length {
 *sub= blessing \&array_sub;
 *take= blessing \&array_take;
 *drop= blessing \&array_drop;
+*drop_while= blessing \&array_drop_while;
+*take_while= blessing \&array_take_while;
 *append= blessing \&array_append;
 *reverse= blessing \&array_reverse;
 *xone= \&array_xone;
@@ -192,6 +226,8 @@ sub FP_Sequence_length {
 *filter= blessing flip \&array_filter;
 *zip= blessing \&array_zip;
 *fold= rot3left \&array_fold;
+*fold_right= rot3left \&array_fold_right;
+*preferred_fold= *fold; # ?
 *join= blessing \&array_join;
 *strings_join= \&array_strings_join;
 *every= flip \&array_every;
@@ -329,6 +365,12 @@ TEST { purearray(3,4)->append(purearray (5,6),purearray (7)) }
   purearray 3,4,5,6,7;
 TEST { purearray(3,4)->append(FP::List::list (5,6),purearray (7)) }
   purearray 3,4,5,6,7;
+
+
+*perhaps_find_tail= blessing flip \&array_perhaps_find_tail;
+*perhaps_find= flip \&array_perhaps_find;
+*find= perhaps_to_maybe (\&array_perhaps_find);
+
 
 
 FP::Interfaces::implemented qw(FP::Abstract::Sequence);

@@ -35,7 +35,12 @@ package FP::Array;
 @EXPORT=qw();
 @EXPORT_OK=qw(array
 	      array_first
-	      array_second
+	      array_maybe_first
+	      array_rest
+	      array_maybe_rest
+              array_first_and_rest
+              array_maybe_first_and_rest
+              array_second
 	      array_ref
 	      array_ref
 	      array_length
@@ -48,7 +53,9 @@ package FP::Array;
 	      array_unshift
 	      array_sub
 	      array_take
+	      array_take_while
 	      array_drop
+	      array_drop_while
 	      array_append
               array_reverse
 	      array_xone
@@ -70,7 +77,6 @@ package FP::Array;
 	      array_any
 	      array_sum
 	      array_last
-	      array_rest
 	      array_to_hash_group_by
 	    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -85,8 +91,51 @@ sub array {
     [@_]
 }
 
-sub array_first ($) {
+sub array_maybe_first ($) {
     $_[0][0]
+}
+
+sub array_perhaps_first ($) {
+    my ($a)= @_;
+    @$a ? $$a[0] : ()
+}
+
+sub array_first ($) {
+    my ($a)= @_;
+    @$a or die "can't take the first of an empty array";
+    $$a[0]
+}
+
+sub array_maybe_rest ($) {
+    my ($a)= @_;
+    @$a ?
+      [ @$a[1..$#$a] ]
+      : undef
+}
+
+sub array_perhaps_rest ($) {
+    my ($a)= @_;
+    @$a ?
+      [ @$a[1..$#$a] ]
+      : ()
+}
+
+sub array_rest ($) {
+    my ($a)= @_;
+    @$a or die "can't take the rest of an empty array";
+    [ @$a[1..$#$a] ]
+}
+
+sub array_maybe_first_and_rest ($) {
+    my ($a)= @_;
+    @$a ? (array_first $a,
+           array_rest $a) : undef
+}
+
+sub array_first_and_rest ($) {
+    my ($a)= @_;
+    (array_first $a,
+     array_rest $a)
 }
 
 sub array_second ($) {
@@ -179,6 +228,26 @@ sub array_take ($$) {
 sub array_drop ($$) {
     my ($a,$n)= @_;
     array_sub $a, $n, array_length $a
+}
+
+sub array_take_while ($$) {
+    my ($pred,$s)=@_;
+    my $i=0;
+    my $len= @$s;
+    while (!($i>= $len) and &$pred($$s[$i])) {
+	$i++
+    }
+    [ @$s[0..$i-1] ]
+}
+
+sub array_drop_while ($ $) {
+    my ($pred,$s)=@_;
+    my $i=0;
+    my $len= @$s;
+    while (!($i>= $len) and &$pred($$s[$i])) {
+	$i++
+    }
+    [ @$s[$i..$#$s] ]
 }
 
 
@@ -443,19 +512,11 @@ sub array_sum ($) {
     array_fold \&add, 0, $_[0]
 }
 
-*array_first= *array_first;
-*array_second= *array_second;
-
 sub array_last ($) {
     my ($a)= @_;
     $$a[-1]
 }
 
-
-sub array_rest ($) {
-    my ($a)= @_;
-    [ @$a[1..$#$a] ]
-}
 
 sub array_to_hash_group_by ($$) {
     my ($ary,$on)=@_;
@@ -464,6 +525,43 @@ sub array_to_hash_group_by ($$) {
 	push @{$res{&$on ($_)}}, $_
     }
     \%res
+}
+
+
+# adapted from FP::List
+sub array_perhaps_find_tail ($$) {
+    @_==2 or die "wrong number of arguments";
+    my ($fn, $s,  )=@_;
+    my $len=  @$s;
+    my $i= 0;
+  LP: {
+	if ($i >= $len) {
+	    ()
+	} else {
+	    #my ($v,$l1)= $s->first_and_rest;
+            #  ^ with efficient slice we could do it !
+            my $v= $$s[$i];
+	    if (&$fn ($v)) {
+		# $s
+                # hmmm
+                $s->drop($i)
+	    } else {
+		# $s= $s1;
+                $i++;
+		redo LP
+	    }
+	}
+    }
+}
+
+sub array_perhaps_find ($$) {
+    @_==2 or die "wrong number of arguments";
+    my ($fn, $l)=@_;
+    if (my ($l)= array_perhaps_find_tail ($fn, $l)) {
+	$l->first
+    } else {
+	()
+    }
 }
 
 
