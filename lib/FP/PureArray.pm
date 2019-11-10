@@ -18,7 +18,7 @@ FP::PureArray
 =head1 DESCRIPTION
 
 Perl arrays blessed into the `FP::PureArray` package, inheriting from
-`FP::Pure`, and coming with the functions from `FP::Array` as methods.
+`FP::Abstract::Pure`, and coming with the functions from `FP::Array` as methods.
 
 If you hand someone an FP::PureArray you guarantee that you won't
 mutate it. This might be enforced in the future by making them

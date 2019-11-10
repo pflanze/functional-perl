@@ -127,7 +127,7 @@ respective modules that define them, like `is_pair` in `FP::List`).
 
 =head1 PURITY
 
-FP::Struct uses `FP::Pure` as default base class (i.e. when no other
+FP::Struct uses `FP::Abstract::Pure` as default base class (i.e. when no other
 base class is given). This means objects from classes based on
 FP::Struct are automatically treated as pure by `is_pure` from
 `FP::Predicates`.
@@ -224,7 +224,7 @@ sub import {
     if (@isa) {
 	require_package $_ for @isa;
     }
-    @isa= "FP::Pure" unless @isa;
+    @isa= "FP::Abstract::Pure" unless @isa;
     *{"${package}::ISA"}= \@isa;
 
     my $allfields=[ all_fields (\@isa), @$fields ];

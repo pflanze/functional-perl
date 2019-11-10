@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -9,16 +9,16 @@
 
 =head1 NAME
 
-FP::Pure - base class for all purely functional data structure
+FP::Abstract::Pure - functional purity protocol
 
 =head1 SYNOPSIS
 
- UNIVERSAL::isa ($v, "FP::Pure") # true if $v is a purely functional DS
+ UNIVERSAL::isa ($v, "FP::Abstract::Pure") # true if $v is a purely functional DS
 
  # but usually:
  use FP::Predicates;
  is_pure ($v) # true if $v is (officially) immutable, detectable from
-              # inheritance of FP::Pure or other means
+              # inheritance of FP::Abstract::Pure or other means
 
 =head1 DESCRIPTION
 
@@ -33,7 +33,7 @@ make other methods non-functions.
 =cut
 
 
-package FP::Pure;
+package FP::Abstract::Pure;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 

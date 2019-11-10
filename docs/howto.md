@@ -627,7 +627,7 @@ of whether it is implementing classes and objects or not.
 
 To build purely functional classes easily, have a look at
 `FP::Struct`. Classes generated with it automatically inherit from
-`FP::Pure` by default, so that `is_pure` from `FP::Predicates` will
+`FP::Abstract::Pure` by default, so that `is_pure` from `FP::Predicates` will
 return true (but currently it's your responsibility to not mutate the
 objects by writing to their hash fields directly, or if you do so,
 only in a manner that doesn't violate the purity as seen from the
@@ -746,7 +746,7 @@ documentation and conventions. What we currently have:
   names with `set_` etc. for mutators). See also [naming
   conventions](//design.md#Naming_conventions).
 
-* a base class `FP::Pure` and a predicate `is_pure` (in
+* a base class `FP::Abstract::Pure` and a predicate `is_pure` (in
   `FP::Predicates`) that allow to indicate that a value is never
   modified.
 

@@ -291,7 +291,7 @@ to get guarantees by machine instead of just by trust. Thus it is an
 aim of this project to try to provide for optional runtime enforcement
 of purity (in the future).
 
-### Use `FP::Pure` as base class for (in principle) immutable objects
+### Use `FP::Abstract::Pure` as base class for (in principle) immutable objects
 
 And let `is_pure` from `FP::Predicates` return true for all immutable
 data types (even if they are not blessed references.) 
@@ -307,7 +307,7 @@ way of relying on their implementation as arrays with two elements and
 mutating the array slots does not make them a(n officially) mutable
 object.
 
-The libraries inheriting from `FP::Pure` *should* try to disable such
+The libraries inheriting from `FP::Abstract::Pure` *should* try to disable such
 mutations from Perl code; they might be useful in some situations for
 debugging, though, so leaving open a back door that still allows for
 mutation (like using a mutator that issues a warning when run, or a

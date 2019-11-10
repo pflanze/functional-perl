@@ -101,7 +101,7 @@ package FP::Predicates;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
-use FP::Pure;
+use FP::Abstract::Pure;
 use Chj::BuiltinTypePredicates 'is_filehandle';
 # ^ should probably move more lowlevel predicates there
 
@@ -113,16 +113,16 @@ use Chj::BuiltinTypePredicates 'is_filehandle';
 # is no reason for fear from mutations from scopes before it got
 # control of the value:
 sub is_pure ($) {
-    length (ref $_[0]) ? UNIVERSAL::isa ($_[0], "FP::Pure")
+    length (ref $_[0]) ? UNIVERSAL::isa ($_[0], "FP::Abstract::Pure")
       : 1
 }
 
 sub is_pure_object ($) {
-    length ref $_[0] and UNIVERSAL::isa ($_[0], "FP::Pure")
+    length ref $_[0] and UNIVERSAL::isa ($_[0], "FP::Abstract::Pure")
 }
 
 sub is_pure_class ($) {
-    is_class_name $_[0] and UNIVERSAL::isa ($_[0], "FP::Pure")
+    is_class_name $_[0] and UNIVERSAL::isa ($_[0], "FP::Abstract::Pure")
 }
 
 sub is_string ($) {

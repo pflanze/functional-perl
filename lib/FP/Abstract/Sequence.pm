@@ -59,7 +59,7 @@ package FP::Abstract::Sequence;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use base 'FP::Pure';
+use base 'FP::Abstract::Pure';
 require FP::List; # "use"ing it would create a circular dependency
 use FP::Array_sort qw(on_maybe);
 use FP::Lazy;
