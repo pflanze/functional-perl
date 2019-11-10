@@ -103,7 +103,8 @@ sub join {
 	  do {
 	      my ($v,$rest)= $self->first_and_rest;
 	      $rest->is_null ? $self
-		: FP::List::cons ($v, FP::List::cons ($value, $rest->join($value)))
+                : FP::List::cons($v,
+                                 FP::List::cons($value, $rest->join($value)))
 	  }
     }
 }
