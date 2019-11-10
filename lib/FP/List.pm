@@ -1528,7 +1528,7 @@ sub list_drop_last ($) {
 TEST { list (3,4,5)->drop_last->array }
   [3,4];
 TEST_EXCEPTION { list ()->drop_last->array }
-  "drop_last: got empty list";
+  'can\'t take the drop_last of the empty list';
 
 
 sub list_drop_while ($ $) {
@@ -1626,7 +1626,7 @@ sub list_last ($) {
 TEST { list(qw(a b c))->last } 'c';
 TEST { list(qw(a))->last } 'a';
 TEST_EXCEPTION { list(qw())->last }
-  q{Can't locate object method "first_and_rest" via package "FP::List::Null"};
+  "can't take the first_and_rest of the empty list";
 
 # XX add stream_last to Stream.pm (only change as usual: deallocate head)
 
