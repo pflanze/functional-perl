@@ -270,7 +270,7 @@ sub stream_sum ($) {
 		 0,
 		 $s)
 }
-
+# XXX sum is in FP::Abstract::Sequence now, although not weakening.. soo ?
 *FP::List::List::stream_sum= *stream_sum;
 
 TEST{ stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum }
