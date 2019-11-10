@@ -100,10 +100,7 @@ require Exporter;
 
 # ---- Methods ---------------------------------------------------
 
-use base 'FP::Abstract::Sequence';
-# XX: ah, and 'FP::Array' as well, this is an array, ok? But then
-# actually move all the method setup below to FP::Array, too. But the
-# current FP::Array is not a class, this will have to change first.
+use FP::Interfaces;
 
 # de-import array from FP::Array to avoid redefinition warning
 BEGIN {undef *array }
@@ -333,5 +330,10 @@ TEST { purearray(3,4)->append(purearray (5,6),purearray (7)) }
 TEST { purearray(3,4)->append(FP::List::list (5,6),purearray (7)) }
   purearray 3,4,5,6,7;
 
+
+FP::Interfaces::implemented qw(FP::Abstract::Sequence);
+# XX: ah, and 'FP::Array' as well, this is an array, ok? But then
+# actually move all the method setup below to FP::Array, too. But the
+# current FP::Array is not a class, this will have to change first.
 
 _END_

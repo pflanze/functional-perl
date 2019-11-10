@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -121,6 +121,7 @@ use FP::Div qw(inc dec);
 use FP::Show;
 use Scalar::Util "weaken";
 use FP::Weak qw(Weakened);
+use FP::Interfaces;
 
 
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
@@ -128,7 +129,6 @@ use FP::Weak qw(Weakened);
 
 {
     package FP::List::List;
-    use base "FP::Abstract::Sequence";
     *null= \&FP::List::null;
 
     # return this sequence as a list, i.e. identity
@@ -172,6 +172,7 @@ use FP::Weak qw(Weakened);
 	my ($s,$show)=@_;
 	"list()"
     }
+
 }
 
 {
@@ -254,6 +255,7 @@ use FP::Weak qw(Weakened);
 	    }
 	}
     }
+
 }
 
 use FP::Equals;
@@ -1953,5 +1955,14 @@ sub ldie {
     croak join("",@strs)
 }
 
+
+{
+    package FP::List::Null;
+    FP::Interfaces::implemented qw(FP::Abstract::Sequence);
+}
+{
+    package FP::List::Pair;
+    FP::Interfaces::implemented qw(FP::Abstract::Sequence);
+}
 
 1
