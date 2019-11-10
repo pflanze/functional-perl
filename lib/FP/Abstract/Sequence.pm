@@ -170,4 +170,39 @@ sub subsection {
 }
 
 
+# Reduce is a variant of fold that doesn't require an initial
+# reduction value but instead takes $seq.first() as the initial
+# reduction value (it hence only works in general if the types of the
+# two arguments of $fn are the same). If $seq is empty, produces the
+# result by calling $fn with no arguments.
+
+# Note: this base implementation relies on an efficient ->rest
+# operation; for types where ->rest can't be made efficient (via
+# e.g. slices), override this implementation!
+
+sub make_reduce {
+    my ($_class, $fold)=@_;
+    sub {
+        @_==2 or die "wrong number of arguments";
+        my ($seq, $fn)= @_;
+        if ($seq->is_null()) {
+            &$fn()
+        } else {
+            my ($first, $rest)= $seq->first_and_rest;
+            $rest->$fold($fn,$first)
+        }
+    }
+}
+
+# This variant folds from whichever side makes more sense for the
+# type:
+
+*reduce= __PACKAGE__->make_reduce("preferred_fold");
+
+# These variants are explicit in which side they are folding from:
+
+*reduce_right= __PACKAGE__->make_reduce("fold_right");
+*reduce_left= __PACKAGE__->make_reduce("fold"); # XX rename fold to fold_left ?
+
+
 _END_
