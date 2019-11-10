@@ -23,12 +23,18 @@ examples/csv_to_xml_short
 examples/dbi
 examples/definitionlists
 examples/diff_to_html
+examples/existing_files
 examples/fibs
 examples/find-maildirs
 examples/gen-csv
+examples/goto
+examples/hiring-without-whiteboards
+examples/log-sensors
 examples/logic
 examples/logwatch
 examples/logwatch_exampleconfig.pl
+examples/maplines
+examples/maplines-example.pl
 examples/pdf-to-html
 examples/predicates
 examples/primes
@@ -69,6 +75,7 @@ lib/Chj/BuiltinTypePredicates.pm
 lib/Chj/CPAN/ModulePODUrl.pm
 lib/Chj/Class/methodnames.pm
 lib/Chj/Destructor.pm
+lib/Chj/HTTP/Daemon.pm
 lib/Chj/IO/Command.pm
 lib/Chj/IO/CommandCommon.pm
 lib/Chj/IO/Dir.pm
@@ -77,6 +84,7 @@ lib/Chj/IO/Pipe.pm
 lib/Chj/IO/PipelessCommand.pm
 lib/Chj/IO/Tempfile.pm
 lib/Chj/IO/WrappedFile.pm
+lib/Chj/Linux/LmSensors.pm
 lib/Chj/NamespaceClean.pm
 lib/Chj/NamespaceCleanAbove.pm
 lib/Chj/Package/OfPath.pm
@@ -158,7 +166,6 @@ lib/FP/Weak/t.pm
 lib/FP/fix.pm
 lib/FP/uncurry.pm
 lib/FP/url_.pm
-lib/HTTP/Daemon.pm
 lib/PXML.pm
 lib/PXML/Element.pm
 lib/PXML/HTML5.pm
@@ -177,6 +184,7 @@ meta/critic
 meta/dependencycheck
 meta/tail-expand
 meta/test.pl
+meta/update-manifest
 t/csv_to_xml
 t/csv_to_xml.expected
 t/csvstreams
