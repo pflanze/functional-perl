@@ -153,16 +153,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::NamespaceClean;
 use FP::Show qw(show);
+use FP::Interfaces qw(require_package
+                      package_check_possible_interface);
 
-sub require_package {
-    my ($package)=@_;
-    no strict 'refs';
-    if (not keys %{$package."::"}) {
-	$package=~ s|::|/|g;
-	$package.=".pm";
-	require $package
-    }
-}
 
 sub all_fields {
     my ($isa)=@_;
@@ -417,13 +410,8 @@ sub import {
 
 
     # Check any interfaces:
-    if (my $m= UNIVERSAL::can($package, "fp_interface_method_names")) {
-        for my $method (&$m($package)) {
-            unless (UNIVERSAL::can($package, $method)) {
-                warn "FP::Struct: Warning: class $package does not implement a method '$method' as required by its interface(s)";
-            }
-        }
-    }
+    package_check_possible_interface($package, $_)
+      for @isa;
 }
 
 
