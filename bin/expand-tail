@@ -40,8 +40,9 @@ our ($inpath,$outpath)=@ARGV;
 
 use Chj::xopen qw(xopen_read xopen_write);
 use Chj::TEST ":all";
-
-our $code= xopen_read($inpath)->xcontent; # evil, doesn't check close return value
+use Chj::xIOUtil qw(xgetfile_utf8);
+    
+our $code= xgetfile_utf8($inpath);
 
 our $IDENT= qr/\w+(?:::\w+)*/;
 
