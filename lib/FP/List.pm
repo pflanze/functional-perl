@@ -129,6 +129,10 @@ use FP::Interfaces;
 
 {
     package FP::List::List;
+    use FP::Lazy;
+
+    use Chj::NamespaceCleanAbove;
+
     *null= \&FP::List::null;
 
     # return this sequence as a list, i.e. identity
@@ -138,6 +142,23 @@ use FP::Interfaces;
 	$_[0]
     }
 
+    sub stream {
+        @_==1 or die "wrong number of arguments";
+        lazy { $_[0] }
+    }
+
+    sub preferred_fold {
+        my $s=shift;
+        my $r= $s->rest;
+        if (is_promise ($r)) {
+            # XX do we need to rewrap in lazy ?
+            lazy {$s}->fold_right(@_)
+        } else {
+            $s->fold(@_)
+        }
+    }
+
+    _END_
 }
 
 {
@@ -158,8 +179,19 @@ use FP::Interfaces;
 	0
     }
 
+    my $mkexn= sub {
+        my ($method)=@_;
+        sub { die "can't take the $method of the empty list" }
+    };
+    *first= &$mkexn("first");
+    *second= &$mkexn("second");
+    *rest= &$mkexn("rest");
+    *first_and_rest= &$mkexn("first_and_rest");
+    *butlast= &$mkexn("butlast");
     sub maybe_first { undef }
+    sub maybe_rest { undef }
     sub perhaps_first { () }
+    sub perhaps_rest { () }
     sub perhaps_first_and_rest { () }
 
     sub FP_Equals_equals {
@@ -204,6 +236,8 @@ use FP::Interfaces;
 	$_[0][1]
     }
     *rest= *cdr;
+    *maybe_rest= *rest;
+    *perhaps_rest= *rest;
 
     sub car_and_cdr {
 	@{$_[0]}
