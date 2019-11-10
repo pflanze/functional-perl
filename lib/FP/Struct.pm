@@ -416,6 +416,16 @@ sub import {
     }
 
     *{"${package}::__Struct__fields"}= $fields;
+
+
+    # Check any interfaces:
+    if (my $m= UNIVERSAL::can($package, "fp_interface_method_names")) {
+        for my $method (&$m($package)) {
+            unless (UNIVERSAL::can($package, $method)) {
+                warn "FP::Struct: Warning: class $package does not implement a method '$method' as required by its interface(s)";
+            }
+        }
+    }
 }
 
 
