@@ -217,6 +217,17 @@ TEST {
   1;
 
 TEST {
+    my $try= sub { # already have TEST_EXCEPTION, but this allows it
+                   # inline
+        my ($th)=@_;
+        my $res;
+        eval { $res= $th->(); 1 } ? $res
+            : do {
+                my $e= "$@";
+                $e=~ s/ at .*//s;
+                $e
+        }
+    };
     my $a= purearray (1,4,5);
     my $a2= $a->set (2,7)->set (0,-1);
     my $a3= $a2->update (2,*inc);
@@ -225,10 +236,12 @@ TEST {
     my ($s,undef)= $a4->shift;
     my $a6= $a4->shift;
     [$a->ref (2), $a2->array, $a3->array, $a4->length,
-     $p, $a5->ref(-1), $s, $a6->array]
+     $p, $a5->[-1], $s, $a6->array,
+     &$try(sub { $a5->ref(-1) })]
 }
   [ 5, [-1,4,7], [-1,4,8], 6,
-    99, 9, 77, [-1,4,8,9,99] ];
+    99, 9, 77, [-1,4,8,9,99],
+    'index out of bounds: -1' ];
 
 TEST {
     my $a= purearray (1,4,5,7);

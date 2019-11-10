@@ -106,10 +106,10 @@ sub array_ref ($$) {
     $$a[$i]
 }
 
-TEST_EXCEPTION { array_ref [], 0 } "index out of bounds";
+TEST_EXCEPTION { array_ref [], 0 } "index out of bounds: 0";
 TEST { array_ref [5], 0 } 5;
-TEST_EXCEPTION { array_ref [5], 1 } "index out of bounds";
-TEST_EXCEPTION { array_ref [5], -1 } "index out of bounds";
+TEST_EXCEPTION { array_ref [5], 1 } "index out of bounds: 1";
+TEST_EXCEPTION { array_ref [5], -1 } "index out of bounds: -1";
 
 sub array_length ($) {
     scalar @{$_[0]}
