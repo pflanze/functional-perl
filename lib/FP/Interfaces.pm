@@ -83,7 +83,7 @@ sub package_check_possible_interface ($$) {
                 push @missing, $method
             }
         }
-        warn "FP::Interfaces warning: '$caller' does not implement '$possible_interface_package': @missing\n"
+        warn "FP::Interfaces warning: '$caller' does not implement '$possible_interface_package' methods: @missing\n"
             if @missing;
         1
     } else {
