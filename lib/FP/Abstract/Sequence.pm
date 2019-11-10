@@ -68,20 +68,82 @@ use Chj::NamespaceCleanAbove;
 
 sub fp_interface_method_names {
     my $class= shift;
-    (qw(
+    (# base definition in this file hence not necessary to specify
+     # here except for the sake of safety in case the base implementation is
+     # removed:
+     qw(
+     flatten
+     join
+     extreme
+     min
+     max
+     minmax
+     subsection
+     make_reduce
+     ),
+     # virtual methods:
+     qw(
      is_null
      first rest
      first_and_rest
      maybe_first maybe_rest
      perhaps_first perhaps_rest
      perhaps_first_and_rest
+     map
+     map_with_islast
+     filter
+     filter_with_tail
+     drop_last
+     drop_while
+     rtake_while_and_rest
+     rtake_while
+     take_while_and_rest
+     take_while
+     every
+     none
+     any
+     find
      fold
      fold_right
      preferred_fold
      append
+     reverse
+     take
+     drop
+     xone
+     perhaps_one
+     zip2
+     zip
+     for_each
+     join
+     strings_join
+     length
+     second
+     cons
+     array
+     list
+     stream
+     sort
+     sum
+     product
      ),
      $class->NEXT::fp_interface_method_names)  # XXX how , fail, 
 }
+#XXX different protocol for random access ones:
+#hmm add ref here too?  vs. efficient_ref  etc. *?*  or  slow_ref  or somthing?
+#  InefficientSequence
+#     ref
+# last
+# butlast
+#  also  sub  subsection  slice ?
+# *set= blessing \&array_set;
+# *push= blessing \&array_push;
+# *pop= blessing_snd \&array_pop;
+# *shift= blessing_snd \&array_shift;
+# *unshift= blessing \&array_unshift;
+
+#XXX other
+# group group_by
 
 
 
