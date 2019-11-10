@@ -1,9 +1,15 @@
 #!/usr/bin/perl -w
 
 # Tue Jul 16 19:07:50 BST 2013
-(my $email='XXX%YYY,ch')=~ tr/%,/@./;
+(my $email='copying%christianjaeger,ch')=~ tr/%,/@./;
 
 use strict;
+
+use Chj::IO::Command;
+use Chj::xopen qw(xopen_read xopen_write);
+use FP::List ':all';
+use Chj::AutoTrapl;
+
 
 our $excludepath= ".update-manifest.exclude";
 
@@ -37,9 +43,6 @@ GetOptions("verbose"=> \$verbose,
 	   ) or exit 1;
 usage if @ARGV;
 
-use Chj::IO::Command;
-use Chj::xopen qw(xopen_read xopen_write);
-
 our $excludes=
   -f $excludepath ? do {
       +{
@@ -52,19 +55,15 @@ our $excludes=
        }
   } : +{map { $_=>1 } qw(.gitignore)};
 
-use lib "/home/chris/publish/ftemplate/lib";###
-use Chj::FP2::List ':all';
-use Data::Dumper;
 
 sub treebuild {
     my ($t,$l)=@_;
-    #warn "t=".Dumper($t).", l=".Dumper($l);
-    my $a= car $l;
-    my $r= cdr $l;
-    if ($r) {
-	treebuild($$t{$a}||={}, $r)
-    } else {
+    #use Data::Dumper; warn "t=".Dumper($t).", l=".Dumper($l);
+    my ($a,$r)= $l->first_and_rest;
+    if ($r->is_null) {
 	$$t{$a}= undef
+    } else {
+	treebuild($$t{$a} ||= {}, $r)
     }
 }
 
@@ -72,21 +71,21 @@ sub treebuild {
 our $tree= do {
     my $ls= Chj::IO::Command->new_sender("git", "ls-files", "-z");
 
-    my $tree={};
+    my $tree= {};
     local $/= "\0";
     while (<$ls>) {
 	chomp;
-	my @s= split "/";
-	treebuild($tree, array2list(\@s));
+	treebuild($tree, list split "/");
     }
     $ls->xxfinish;
     $tree
 };
 
 sub tree_for_each {
-    my ($t,$rbefore,$proc)=@_;
-    if ($rbefore and exists $$t{MANIFEST}) {
-	# stop processing, we're in a merged subtree
+    my ($t, $rbefore, $proc)=@_;
+    if (not($rbefore->is_null) and exists $$t{MANIFEST}) {
+	# stop processing, we're in a merged subtree with its own
+	# MANIFEST
     } else {
 	for my $k (keys %$t) {
 	    if (defined (my $subtree= $$t{$k})) {
@@ -101,24 +100,24 @@ sub tree_for_each {
 sub tree2array {
     my ($t)=@_;
     my @a;
-    tree_for_each($t,undef,sub {
-		      my ($name,$rbefore)=@_;
-		      push @a, join "/", reverse list2values(cons( $name, $rbefore))
-		  });
+    tree_for_each
+      ($t,
+       null,
+       sub {
+           my ($name, $rbefore)=@_;
+           push @a, cons($name, $rbefore)->reverse->strings_join("/")
+       });
     \@a
 }
 
 
+#use Chj::repl; repl;
 {
     my $m= xopen_write "MANIFEST";
     for (sort @{tree2array $tree}) {
-	#next if $_ eq "MANIFEST";
-	next if m{^bugs/};# and not -x $_;  hm
 	next if $$excludes{$_};
 	$m->xprintln($_);
     }
     $m->xclose;
 }
 
-#use Chj::ruse;
-#use Chj::Backtrace; use Chj::repl; repl;
