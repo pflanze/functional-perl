@@ -21,7 +21,7 @@ sub usage {
   expand `tail ` syntax in Perl code using `Sub::Call::Tail`, so that it
   doesn't depend on that module anymore.
 
-  This is currently just a crude hack (totally imprecise).
+  This is just a crude hack (totally imprecise).
 ";
     exit 1;
 }

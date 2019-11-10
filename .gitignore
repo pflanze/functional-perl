@@ -13,4 +13,7 @@ blib/
 pm_to_blib
 *.tar.gz
 website/.ModulePODUrl-cache/
-.htmlgen/
+
+# expansions from meta/tail-expand
+.*/
+.test.pl

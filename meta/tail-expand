@@ -15,7 +15,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
 use Chj::xopen 'xopen_read';
-use Chj::xperlfunc qw(dirname xxsystem xLmtime XLmtime);
+use Chj::xperlfunc qw(dirname xxsystem xLmtime XLmtime xmkdir_p);
 
 mkdir ".htmlgen";
 
@@ -24,9 +24,10 @@ my $manif= xopen_read "MANIFEST";
 local $_;
 while (<$manif>) {
     chomp;
-    next unless m|^htmlgen/|;
+    next unless m|\.pm$| or -x $_;
     my $from= $_;
     my $to= ".".$from;
+
     my $t_from= xLmtime $from;
     my $expand= sub {
 	xxsystem ("bin/expand-tail", $from, $to);
@@ -36,7 +37,7 @@ while (<$manif>) {
 	    &$expand;
 	}
     } else {
-	mkdir dirname $to;
+	xmkdir_p dirname $to;
 	&$expand;
     }
 }
