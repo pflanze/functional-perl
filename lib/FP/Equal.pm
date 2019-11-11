@@ -58,7 +58,7 @@ L<FP::Show>
 package FP::Equal;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(equal);
-@EXPORT_OK=qw(equals2);
+@EXPORT_OK=qw(equal2);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -73,7 +73,7 @@ our $primitive_equals=
 	@$a == @$b and do {
 	    my $i=0;
 	  LP: {
-		$i < @$a ? (equals2 ($$a[$i], $$b[$i]) and do{$i++; redo LP})
+		$i < @$a ? (equal2 ($$a[$i], $$b[$i]) and do{$i++; redo LP})
 		  : 1
 	    }
 	}
@@ -82,7 +82,7 @@ our $primitive_equals=
 	my ($a,$b)=@_;
 	keys %$a == keys %$b and do {
 	    for (keys %$a) {
-		my $v; $v= (exists $$b{$_} and equals2 ($$a{$_}, $$b{$_}))
+		my $v; $v= (exists $$b{$_} and equal2 ($$a{$_}, $$b{$_}))
 		  or return $v;
 	    }
 	    1
@@ -90,13 +90,13 @@ our $primitive_equals=
     },
     REF=> sub { # references to references
 	my ($a,$b)=@_;
-	equals2($$a, $$b)
+	equal2($$a, $$b)
     },
-    # *references* to globs; direct globs are compared in equals2 directly
+    # *references* to globs; direct globs are compared in equal2 directly
     GLOB=> sub {
  	# is it the same glob? If it's different ones, compare all of
  	# their contents? XX if so, then also change the direct
- 	# comparison in equals2
+ 	# comparison in equal2
 	'' # since if they are the same, then pointer comparison
            # already did it
     },
@@ -117,7 +117,7 @@ sub pointer_eq2 ($$) {
     refaddr($_[0]) == refaddr($_[1])
 }
 
-sub equals2 ($$) {
+sub equal2 ($$) {
     my ($a,$b)=@_;
     if (!defined $a) {
 	if (!defined $b) {
@@ -125,7 +125,7 @@ sub equals2 ($$) {
 	} else {
 	    if (length ref $b) {
 		if (is_promise $b) {
-		    @_=($a, force ($b)); goto \&equals2;
+		    @_=($a, force ($b)); goto \&equal2;
 		} else {
 		    undef
 		}
@@ -138,7 +138,7 @@ sub equals2 ($$) {
 	if (!defined $b) {
 	    if (length ref $a) {
 		if (is_promise $a) {
-		    @_=(force($a), $b); goto \&equals2;
+		    @_=(force($a), $b); goto \&equal2;
 		} else {
 		    undef
 		}
@@ -152,7 +152,7 @@ sub equals2 ($$) {
 		    pointer_eq2 ($a, $b) or
 		      do {
 			  if (is_promise $a or is_promise $b) {
-			      @_=(force ($a), force ($b)); goto \&equals2;
+			      @_=(force ($a), force ($b)); goto \&equal2;
 			  } elsif ($ar eq $br) {
 			      if (my $cmp= $$primitive_equals{$ar}) {
 				  &$cmp (@_)
@@ -166,7 +166,7 @@ sub equals2 ($$) {
 		} else {
 		    # $b is not a reference ($a is)
 		    if (is_promise $a) {
-			@_=(force ($a), $b); goto \&equals2;
+			@_=(force ($a), $b); goto \&equal2;
 		    } else {
 			undef
 		    }
@@ -175,7 +175,7 @@ sub equals2 ($$) {
 		# $a is not a reference
 		if (length ref $b) {
 		    if (is_promise $b) {
-			@_=($a, force($b)); goto \&equals2;
+			@_=($a, force($b)); goto \&equal2;
 		    } else {
 			undef
 		    }
@@ -204,13 +204,13 @@ sub equals2 ($$) {
 
 sub equal {
     if (@_ == 2) {
-	goto \&equals2
+	goto \&equal2
     } elsif (@_ == 1) {
 	1
     } else {
 	my $a= shift;
 	for (@_) {
-	    my $v; $v=equals2 ($a, $_)
+	    my $v; $v=equal2 ($a, $_)
 	      or return $v;
 	}
 	1
