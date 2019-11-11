@@ -16,18 +16,27 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
  use FP::Lazy;
 
  my $a = lazy { 1 / 0 };
- print force $a # -> Illegal division by zero
+ eval {
+     print force $a
+ };
+ like $@, qr/division by zero/;
 
- my $b = lazy { warn "evaluation happening"; 1 / 2 };
- print is_promise $b ? "promise" : "non-promise", "\n"; # -> "promise"
- print force ($b), "\n"; # shows the warning, and "0.5"
- # $b is still a promise at this poing (although an evaluated one):
- print is_promise $b ? "promise" : "non-promise", "\n"; # -> "promise"
+ my $count= 0;
+ my $b = lazy { $count++; 1 / 2 };
+ is is_promise($b), 1;
+ is $count, 0;
+ is force($b), 1/2; # increments $count
+ is $count, 1;
+ # $b is still a promise at this point (although an evaluated one):
+ is is_promise($b), 1;
+ is force($b), 1/2; # does not increment $count anymore
+ is $count, 1;
 
  # The following stores result of `force $b` back into $b
- FORCE $b; # does not show the warning anymore as evaluation happened already
- print is_promise $b ? "promise" : "non-promise", "\n"; # -> "non-promise"
- print $b, "\n"; # -> "0.5"
+ FORCE $b;
+ is is_promise($b), '';
+ is $b, 1/2;
+ is $count, 1;
 
  # Note that lazy evaluation and mutation usually doesn't mix well -
  # lazy programs better be purely functional. Here $tot depends not
@@ -39,9 +48,11 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
      $tot+=$x;
      $x*$x
  }, list (5,7,8);
- print "$tot\n"; # still 0
- print $l->first, " $tot\n"; # 25 5
- print $l->length, " $tot\n"; # 3 20
+ is $tot, 0;
+ is $l->first, 25;
+ is $tot, 5;
+ is $l->length, 3;
+ is $tot, 20;
 
  # Also note that `local` does mutation (even if in a somewhat
  # controlled way):
@@ -51,13 +62,23 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
      local $foo= "Hello";
      lazy { "$foo $bar" }
  }
- moo ("you")->force  # returns " you"
+ is moo("you")->force, " you";
 
  # runtime conditional lazyness:
- lazy_if { 1 / 0 }, 1  # returns a promise
 
- lazy_if { 1 / 0 }, 0  # immediate division by zero exception (still pays
-                       # the overhead of two subroutine calls, though)
+ sub condprom($) {
+     my ($cond)= @_;
+     lazy_if { 1 / 0 } $cond
+ }
+
+ is is_promise(condprom 1), 1;
+
+ eval {
+     # immediate division by zero exception (still pays
+     # the overhead of two subroutine calls, though)
+     condprom 0
+ };
+ like $@, qr/division by zero/;
 
 
 =head1 DESCRIPTION
@@ -68,11 +89,11 @@ only ever evaluated once, after which point its result is saved in the
 promise, and subsequent requests for evaluation are simply returning
 the saved value.
 
- $p = lazy { ...... } # returns a promise that represents the computation
-                      # given in the block of code
+ $p = lazy { "......" }; # returns a promise that represents the computation
+                         # given in the block of code
 
- force $p  # runs the block of code and stores the result within the
-           # promise and also returns it
+ force $p;  # runs the block of code and stores the result within the
+            # promise and also returns it
 
  FORCE $p,$q,$r;
            # in addition to running force, stores back the resulting
@@ -80,7 +101,7 @@ the saved value.
            # respectively (this example forces 3 (possibly) separate
            # values))
 
- is_promise $x # returns true iff $x holds a promise
+ is is_promise($p), ''; # returns true iff $x holds a promise
 
 
 =head1 NOTE
