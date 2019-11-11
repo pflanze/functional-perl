@@ -77,9 +77,6 @@ my %ignore= map{ $_=> 1}
 my $modules= modulenamelist;
 #my $modules= [qw(FP::Equal FP::Ops)];
 
-my $tps_direct = Test::Pod::Snippets->new();
-my $tps_file = Test::Pod::Snippets->new(+{preserve_lines=> 0});
-
 # plan tests=> scalar @$modules;
 #  nope, when running direct, each module contributes its own number of
 #  tests, not 1.
@@ -88,6 +85,7 @@ sub generate {
     my ($module)= @_;
     my $file= "tps-$module.pl";
     unlink $file;
+    my $tps_file = Test::Pod::Snippets->new(+{preserve_lines=> 0});
     $tps_file->generate_test_file( module => $module,
                                    output=> $file );
 
@@ -111,6 +109,8 @@ for (@$modules) {
         print "Ignoring pod snippets in module $_.\n";
     } else {
         print "Running pod snippets in module $_ ..\n";
+
+        my $tps_direct = Test::Pod::Snippets->new();
         my $fail_before= numfailures;
         if (eval {
             $tps_direct->runtest( module => $_ );
