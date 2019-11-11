@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,8 +13,8 @@ Chj::noTEST
 
 =head1 SYNOPSIS
 
- use Chj::noTEST; # instead of `use Chj::TEST;`
- TEST { foo } "bar"; # will be ignored / garbage collected right away
+    use Chj::noTEST; # instead of `use Chj::TEST;`
+    TEST { foo() } "bar"; # will be ignored / garbage collected right away
 
 =head1 DESCRIPTION
 
@@ -28,7 +28,7 @@ those within the given packages.
 
 =head1 SEE ALSO
 
- Chj::TEST
+L<Chj::TEST>
 
 =cut
 

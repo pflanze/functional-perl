@@ -51,7 +51,6 @@ my %ignore= map{ $_=> 1}
     Chj::Repl::StackPlus
     Chj::Repl::corefuncs
     Chj::Serialize
-    Chj::TEST
     Chj::TerseDumper
     Chj::Trapl
     Chj::Unix::Exitcode
@@ -61,7 +60,6 @@ my %ignore= map{ $_=> 1}
     Chj::WithRepl
     Chj::chompspace
     Chj::constructorexporter
-    Chj::noTEST
     Chj::pp
     Chj::repl
     Chj::ruse
