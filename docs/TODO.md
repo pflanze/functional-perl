@@ -19,7 +19,7 @@ usefully listed first).
   call dies or not. Also, there are various utilities like xspawn,
   xxsystem etc. that need replacing, too.
 
-- Chj::xopen*, Chj::xtmpfile, Chj::xpipe, Chj::IO::*
+- `Chj::xopen*`, `Chj::xtmpfile`, `Chj::xpipe`, `Chj::IO::*`
 
 - should `Chj::TEST` stay or be made a lexical extension of other test
   modules?
