@@ -131,9 +131,9 @@ lib/FP/Char.pm
 lib/FP/Combinators.pm
 lib/FP/DBI.pm
 lib/FP/Div.pm
+lib/FP/DumperEqual.pm
 lib/FP/Equal.pm
-lib/FP/Equals.pm
-lib/FP/Equals/t.pm
+lib/FP/Equal/t.pm
 lib/FP/FunctionalPerl.pm
 lib/FP/Git/Repository.pm
 lib/FP/Hash.pm
@@ -211,6 +211,7 @@ t/perl/weaken-coderef-alternative-__SUB__
 t/perl/weaken-coderef-alternative-fix
 t/perl/weaken-coderef-alternative-local
 t/perl/weaken-coderef-simplified
+t/pod_snippets
 t/predicates
 t/repl
 t/require_and_run_tests
