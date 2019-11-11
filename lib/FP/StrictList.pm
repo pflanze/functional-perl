@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -28,10 +28,12 @@ FP::StrictList - an FP::List that enforces list semantics
 
 =head1 DESCRIPTION
 
-FP::List does not (currently) enforce its pairs to only contain pairs
-or null in their rest (cdr) position. Which means that they may end in
-something else than a null (and operations encountering these will die
-with "improper list"). FP::StrictList does, which means that
+
+
+The pairs used to   çç  FP::List does not enforce its pairs to only contain pairs or null in
+their rest (cdr) position. Which means that they may end in something
+else than a null (and operations encountering these will die with
+"improper list"). FP::StrictList does, which means that
 `is_strictlist` only needs to check the head pair to know whether it's
 a proper list.
 

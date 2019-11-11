@@ -14,15 +14,25 @@ FP::List - singly linked (purely functional) lists
 =head1 SYNOPSIS
 
  use FP::List ':all';
+ use FP::Div qw(inc square);
+ use FP::Ops qw(div);
  list_to_string(cons("H",cons("e",cons("l",cons("l",cons("o",null))))))
  # "Hello"
 
- list (1,2,3)->map(sub{ $_[0]*$_[0]})->array
- # [1,4,9]
+ list(1,2,3)->map(sub{ $_[0] * $_[0] })
+ # => list (1,4,9)
+ list(1,2,3)->map(*square)->array
+ # => [1,4,9]
 
- list (qw(a b c))->first # "a"
- list (qw(a b c))->rest->array # ["b","c"]
+ list(qw(a b c))->first # => "a"
+ list(qw(a b c))->rest  # => list("b", "c")
 
+ list(1,2,3,4)->sum        # => 10 (1+2+3+4)
+ list(1,2,3,4)->product    # => 24 (1*2*3*4)
+ list(2,4)->reduce(*div)   # => 2  (4/2)
+ list(2,4,6)->reduce(*div) # => 3  (6/(4/2))
+ list(2,4,6)->reduce_right(*div) # => 3  (6/(4/2))
+ list(2,4,6)->reduce_right(*div) # => 1.33.. (
  # etc.
 
  # The `cons` function checks whether its second argument is an object
@@ -38,12 +48,16 @@ FP::List - singly linked (purely functional) lists
 
 Create and dissect sequences using pure functions or methods.
 
+
+
 =head1 NAMING
 
 Most functional programming languages are using either the `:` or `::`
 operator to prepend an item to a list. The name `cons` comes from
 lisps, where it's the basic (lisp = list processing!) "construction"
 function.
+
+çç
 
 Cons cells (pairs) in lisps can also be used to build other data
 structures than lists: they don't enforce the rest slot to be a pair
