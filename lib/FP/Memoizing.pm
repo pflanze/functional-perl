@@ -14,12 +14,14 @@ FP::Memoizing - a functional memoize
 =head1 SYNOPSIS
 
  use FP::Memoizing qw(memoizing memoizing_to_dir);
+ use Chj::tempdir;
+ my $tmp= do{ mkdir ".tmp"; tempdir ".tmp/" };
 
  my $count=0;
  sub f { $count++; $_[0] * 5 }
 
  *fm= memoizing *f; # memoize in process memory
- *fm2= memoizing_to_dir ".foo", *f; # memoize to files in ".foo/"
+ *fm2= memoizing_to_dir $tmp, *f; # memoize to files in ".foo/"
 
  is fm(3), 15;
  is $count, 1;
