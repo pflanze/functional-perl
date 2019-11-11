@@ -38,6 +38,7 @@ $repl \
  -M PXML::Serialize \
  -M FP::OrderedCollection \
  -M FP::Combinators=:all \
+ -M FP::Equal=:all \
  -M Chj::TEST=:all \
  -M Chj::time_this=:all \
  "$@"
