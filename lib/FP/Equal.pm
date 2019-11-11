@@ -25,13 +25,13 @@ FP::Equal - generic equality comparison
 Deep, generic (but class controlled) structure equality comparison.
 
 Non-objects are hard coded in this module. Objects are expected to
-have an `FP_Equals_equals` method that is able to take an argument of
+have an `FP_Equal_equal` method that is able to take an argument of
 the same class as the object to compare (if it doesn't have such an
 object, it simply can't be compared using this module).
 
 This does *name based* type comparison: structurally equivalent
 objects do not count as equal if they do not have the same class (or
-more general, reference name), the `FP_Equals_equals` method is not
+more general, reference name), the `FP_Equal_equal` method is not
 even called; the equal function returns undef in this case. This
 might be subject to change: certain pairs of types will be fine to
 compare; let the classes provide a method that checks whether a type
@@ -157,7 +157,7 @@ sub equal2 ($$) {
 			      if (my $cmp= $$primitive_equals{$ar}) {
 				  &$cmp (@_)
 			      } else {
-				  $a->FP_Equals_equals ($b)
+				  $a->FP_Equal_equal ($b)
 			      }
 			  } else {
 			      undef

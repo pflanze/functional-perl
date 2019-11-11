@@ -101,7 +101,7 @@ use FP::Combinators qw(flip2of3 flip);
 	bless [$_[0], $s, 1], $s->pair_namespace
     }
 
-    # simply inherit FP_Equals_equals
+    # simply inherit FP_Equal_equal
 
     sub FP_Show_show {
 	my ($s,$show)=@_;
@@ -127,7 +127,7 @@ use FP::Combinators qw(flip2of3 flip);
 	$_[0][2]
     }
 
-    # simply inherit FP_Equals_equals
+    # simply inherit FP_Equal_equal
 
     sub FP_Show_show {
 	my ($s,$show)=@_;

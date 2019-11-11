@@ -200,7 +200,7 @@ fun entry ($path0,@subentries) {
 	 ")")
     }
 
-    method FP_Equals_equals ($v) {
+    method FP_Equal_equal ($v) {
 	($self->path0 eq $v->path0
 	 and
 	 equal($self->subentries, $v->subentries))

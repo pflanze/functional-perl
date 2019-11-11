@@ -119,7 +119,7 @@ sub new_from_string {
 		scalar $str=~ m{^/}s)
 }
 
-sub FP_Equals_equals {
+sub FP_Equal_equal {
     @_==2 or die "wrong number of arguments";
     my ($a,$b)=@_;
     # no need to compare is_absolute, since it is being distinguished

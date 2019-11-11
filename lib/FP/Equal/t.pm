@@ -135,7 +135,7 @@ TEST{tequals *foo, *bar} '';
 # filehandles
 TEST{equal *STDIN{IO}, *STDIN{IO}} 1; # equal pointers
 TEST_EXCEPTION {equal *STDIN{IO}, *STDOUT{IO}}
-  q{Can't locate object method "FP_Equals_equals" via package "IO::File"};
+  q{Can't locate object method "FP_Equal_equal" via package "IO::File"};
 
 
 # encoding
