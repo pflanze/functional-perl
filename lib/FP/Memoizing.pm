@@ -42,7 +42,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use Storable qw(nfreeze nstore_fd fd_retrieve);
 use Digest;
-use Chj::TerseDumper;
+#use Chj::TerseDumper;
 use FP::Hash qw(hash_cache);
 
 # ----------------------------------------------------------------
