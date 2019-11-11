@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,14 +13,14 @@ Chj::CPAN::ModulePODUrl - get module POD url on metacpan
 
 =head1 SYNOPSIS
 
- use Chj::CPAN::ModulePODUrl "perhaps_module_pod_url";
- use PXML::XHTML;
- my $element= CODE "Frob";
- if (my ($url)= perhaps_module_pod_url $element->text) {
-     A {href=> $url}, $element
- } else {
-     $element
- }
+    use Chj::CPAN::ModulePODUrl "perhaps_module_pod_url";
+
+    is_equal [perhaps_module_pod_url "Test::More"],
+             ['https://metacpan.org/pod/Test::More'];
+
+    is_equal [perhaps_module_pod_url "SomeNonexisting::Module12345"],
+             [];
+
 
 =head1 DESCRIPTION
 
