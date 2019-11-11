@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,39 +13,40 @@ FP::Stream - functions for lazily generated, singly linked (purely functional) l
 
 =head1 SYNOPSIS
 
- use FP::Stream ':all';
+    use FP::Equal 'is_equal';
+    use FP::Stream ':all';
 
- stream_length stream_iota (101, 5)
- # => 5;
- stream_length stream_iota (undef, 5000000)
- # => 5000000;
+    is stream_length(stream_iota 101, 5), 5;
+    #is stream_length(stream_iota undef, 5000000), 5000000;
 
- stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum
- # => 30  (0+1+4+9+16)
+    use FP::Lazy;
+    is force( stream_fold_right sub { my ($n,$rest)=@_; $n + force $rest }, 0, stream_iota undef, 5),
+       10;
 
- use FP::Lazy;
- force stream_fold_right sub { my ($n,$rest)=@_; $n + force $rest }, 0, stream_iota undef, 5
- # => 10;
+    # Alternatively, use methods:
 
+    is stream_iota(101, 5)->length, 5;
+    # note that length needs to walk the whole stream
 
- # Alternatively, use methods:
+    is stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum, 30;
+    # (0+1+4+9+16)
 
- stream_iota(101, 5)->length  # => 5
- # note that length needs to walk the whole stream
+    stream_iota(undef, 5)->fold(sub { my ($n,$rest)=@_; $n + $rest }, 0)
 
- # also, there's a {stream_,}fold (without the _right) function/method:
- stream_iota(undef, 5)->fold(sub { my ($n,$rest)=@_; $n + $rest }, 0)
-
- # NOTE that the method calls are forcing evaluation of the object
- # (the first cell of the input stream), since that's the only way to
- # know the type to be dispatched on. This is unlike the non-generic
- # functions, some of which (like cons) don't force evaluation of
- # their arguments.
+    # NOTE that the method calls are forcing evaluation of the object
+    # (the first cell of the input stream), since that's the only way to
+    # know the type to be dispatched on. This is unlike the non-generic
+    # functions, some of which (like cons) don't force evaluation of
+    # their arguments.
 
 
 =head1 DESCRIPTION
 
 Create and dissect sequences using pure functions. Lazily.
+
+=head1 SEE ALSO
+
+L<FP::List>, L<FP::Lazy>
 
 =cut
 
