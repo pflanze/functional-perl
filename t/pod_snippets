@@ -31,7 +31,6 @@ my %ignore= map{ $_=> 1}
     Chj::BuiltinTypePredicates
     Chj::CPAN::ModulePODUrl
     Chj::Class::methodnames
-    Chj::Destructor
     Chj::HTTP::Daemon
     Chj::IO::Command
     Chj::IO::CommandCommon

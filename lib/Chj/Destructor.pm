@@ -13,13 +13,14 @@ Chj::Destructor
 
 =head1 SYNOPSIS
 
- use Chj::Destructor;
+    use Chj::Destructor;
 
- my $z=0;
- {
-    my $x= ["foo", Destructor { $z++ }];
- }
- # $z==1
+    my $z=0;
+    {
+       my $x= ["foo", Destructor { $z++ }];
+    }
+    is $z, 1;
+
 
 =head1 DESCRIPTION
 
