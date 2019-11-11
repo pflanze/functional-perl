@@ -131,61 +131,79 @@ sub expt {
 }
 
 sub string_cmp ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] cmp $_[1]
 }
 
 sub string_eq ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] eq $_[1]
 }
 sub string_ne ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] ne $_[1]
 }
 sub string_lt ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] lt $_[1]
 }
 sub string_le ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] le $_[1]
 }
 sub string_gt ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] gt $_[1]
 }
 sub string_ge ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] ge $_[1]
 }
 
 sub string_lc ($) {
+    @_==1 or die "need 1 argument";
     lc $_[0]
 }
 sub string_uc ($) {
+    @_==1 or die "need 1 argument";
     uc $_[0]
 }
 sub string_lcfirst ($) {
+    @_==1 or die "need 1 argument";
     lcfirst $_[0]
 }
 sub string_ucfirst ($) {
+    @_==1 or die "need 1 argument";
     ucfirst $_[0]
 }
 
 sub number_cmp ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] <=> $_[1]
 }
 
 sub number_eq ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] == $_[1]
 }
 sub number_ne ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] != $_[1]
 }
 sub number_lt ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] < $_[1]
 }
 sub number_le ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] <= $_[1]
 }
 sub number_gt ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] > $_[1]
 }
 sub number_ge ($ $) {
+    @_==2 or die "need 2 arguments";
     $_[0] >= $_[1]
 }
 
