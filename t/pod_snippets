@@ -1,0 +1,134 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+
+# Run example snippets in POD sections.
+
+# If there's an issue with those, run `DEBUG=1 t/pod_snippets` and
+# look at the saved file!
+
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+use Test::Requires qw(Test::Pod::Snippets Function::Parameters);
+use Test::More;
+
+use lib "./lib";
+use lib "./meta";
+use ModuleList;
+
+use lib "./htmlgen";
+
+my %ignore= map{ $_=> 1}
+  qw(
+        Class::Array
+    Chj::AutoTrapl
+    Chj::Backtrace
+    Chj::BinHexOctDec
+    Chj::BuiltinTypePredicates
+    Chj::CPAN::ModulePODUrl
+    Chj::Class::methodnames
+    Chj::Destructor
+    Chj::HTTP::Daemon
+    Chj::IO::Command
+    Chj::IO::CommandCommon
+    Chj::IO::Dir
+    Chj::IO::File
+    Chj::IO::Pipe
+    Chj::IO::PipelessCommand
+    Chj::IO::Tempfile
+    Chj::IO::WrappedFile
+    Chj::Linux::LmSensors
+    Chj::NamespaceClean
+    Chj::NamespaceCleanAbove
+    Chj::Package::OfPath
+    Chj::Repl
+    Chj::Repl::Dependencies
+    Chj::Repl::Stack
+    Chj::Repl::StackPlus
+    Chj::Repl::corefuncs
+    Chj::Serialize
+    Chj::TEST
+    Chj::TerseDumper
+    Chj::Trapl
+    Chj::Unix::Exitcode
+    Chj::Unix::Signal
+    Chj::Unix::exitcode
+    Chj::Util::AskYN
+    Chj::WithRepl
+    Chj::chompspace
+    Chj::constructorexporter
+    Chj::noTEST
+    Chj::pp
+    Chj::repl
+    Chj::ruse
+    Chj::singlequote
+    Chj::singlequote::t
+    Chj::time_this
+    Chj::xIO
+    Chj::xIOUtil
+    Chj::xhome
+    Chj::xopen
+    Chj::xopendir
+    Chj::xoutpipe
+    Chj::xperlfunc
+    Chj::xpipe
+    Chj::xtmpfile
+   );
+
+my $modules= modulenamelist;
+#my $modules= [qw(FP::Equal FP::Ops)];
+
+my $tps_direct = Test::Pod::Snippets->new();
+my $tps_file = Test::Pod::Snippets->new(+{preserve_lines=> 0});
+
+# plan tests=> scalar @$modules;
+#  nope, when running direct, each module contributes its own number of
+#  tests, not 1.
+
+sub generate {
+    my ($module)= @_;
+    my $file= "tps-$module.pl";
+    unlink $file;
+    $tps_file->generate_test_file( module => $module,
+                                   output=> $file );
+
+    if ($ENV{DEBUG}) {
+        # run it again to get more info and updated line numbers
+        system("perl", "-Mlib=./lib", "-MChj::Backtrace", $file);
+        exit 1
+    }
+}
+
+sub numfailures {
+    my @failures= grep {
+        not $_->{ok}
+    } @{ Test::Builder->new->{Test_Results} };
+    #warn "failures: @failures";
+    @failures
+}
+
+for (@$modules) {
+    if ($ignore{$_}) {
+        print "Ignoring pod snippets in module $_.\n";
+    } else {
+        print "Running pod snippets in module $_ ..\n";
+        my $fail_before= numfailures;
+        if (eval {
+            $tps_direct->runtest( module => $_ );
+            1
+        }) {
+            my $fail_after= numfailures;
+            generate $_
+              if $fail_after != $fail_before;
+        } else {
+            warn "Exception: $@\n";
+            generate $_
+        }
+    }
+}
+
+done_testing();
