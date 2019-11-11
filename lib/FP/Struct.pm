@@ -28,7 +28,7 @@ FP::Struct - classes for functional perl
  # the first entry is a predicate that receives the value in question,
  # if it doesn't return true then an exception is thrown.
 
- new Foo ("Tim")->name # => "Tim"
+ is new Foo ("Tim")->name, "Tim";
  new Foo ("Tim", 0) # exception
  new Foo (undef, ["Struppi"])->animals->[0] # "Struppi"
  new_ Foo (animals=> ["Struppi"])->animals->[0] # "Struppi"
@@ -74,7 +74,7 @@ FP::Struct - classes for functional perl
  import Bar::constructors;
  my $baz= Bar ("Franz", ["Barney"], "some aa", 1,2);
 
- $bar-> div # => 1/2
+ is $bar->div, 1/2;
 
  new_ Bar (a=>1,b=>2)-> div # => 1/2
  Bar::c::Bar_ (a=>1, b=>2)->div # dito
@@ -83,12 +83,12 @@ FP::Struct - classes for functional perl
  # NOTE: unsafe_new__ returns the argument hash after checking and
  # blessing it, it doesn't copy it! Be careful. `new__` does copy it.
 
- $bar->b_set(3)->div # => 1/3
+ is $bar->b_set(3)->div, 1/3;
 
  use FP::Div 'inc';
- $bar->b_update(\&inc)->div # => 1/3
+ is $bar->b_update(\&inc)->div, 1/3;
 
- $bar->hum # => "Franz hums 1 over 2"
+ is $bar->hum, "Franz hums 1 over 2";
 
 =head1 DESCRIPTION
 
