@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,18 +13,20 @@ FP::Trampoline -- tail call optimization without reliance on goto
 
 =head1 SYNOPSIS
 
- use FP::Trampoline; # exports `T` and `trampoline`
+    use FP::Trampoline; # exports `T` and `trampoline`
 
- sub iterative_fact {
-     my ($n,$tot)= @_;
-     $n > 1 ? T{ iterative_fact ($n-1, $tot*$n) } : $tot
-     # or
-     # $n > 1 ? TC *iterative_fact, $n-1, $tot*$n : $tot
- }
- sub fact {
-     my ($n)=@_;
-     trampoline iterative_fact ($n, 1)
- }
+    sub iterative_fact {
+        my ($n,$tot)= @_;
+        $n > 1 ? T{ iterative_fact ($n-1, $tot*$n) } : $tot
+        # or
+        # $n > 1 ? TC *iterative_fact, $n-1, $tot*$n : $tot
+    }
+    sub fact {
+        my ($n)=@_;
+        trampoline iterative_fact ($n, 1)
+    }
+    is fact(60), 34123;
+
 
 =head1 DESCRIPTION
 
