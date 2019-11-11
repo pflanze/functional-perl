@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,28 +13,34 @@ FP::HashSet - set operations for hash tables
 
 =head1 SYNOPSIS
 
- use FP::HashSet; # ":all";
+    use FP::Equal 'is_equal';
+    use FP::HashSet; # ":all";
 
- my $A= array_to_hashset ["a","b","c"];
- my $B= array_to_hashset ["a","c","d"];
- hashset_to_array hashset_union($A,$B) # -> ["a","b","c","d"]
- hashset_to_array hashset_intersection($A,$B) # -> ["a","c"]
- hashset_to_array hashset_difference($A,$B) # -> ["b"]
- hashset_is_subset($B,$A) # -> false
- hashset_is_subset(+{b=>1},$A) # -> true
- hashset_size($A) # -> 3
- hashset_empty($A) # -> false
- hashset_empty(+{}) # -> true
- hashset_keys_unsorted($A) # ("a","b","c") or in another sort order;
-                           # *keys* not values, hence always strings.
- hashset_keys ($A) # always ("a","b","c") (sorted)
+    my $A= array_to_hashset ["a","b","c"];
+    my $B= array_to_hashset ["a","c","d"];
+    is_equal hashset_to_array hashset_union($A,$B),
+             ["a","b","c","d"];
+    is_equal hashset_to_array hashset_intersection($A,$B),
+             ["a","c"];
+    is_equal hashset_to_array hashset_difference($A,$B),
+             ["b"];
+    ok not hashset_is_subset($B,$A);
+    ok hashset_is_subset(+{b=>1},$A);
+    is hashset_size($A), 3;
+    ok not hashset_empty($A);
+    ok hashset_empty(+{});
+    #hashset_keys_unsorted($A) # ("a","b","c") or in another sort order;
+                               # *keys* not values, hence always strings.
+    is_equal [hashset_keys ($A)],
+             [("a","b","c")]; # (always sorted)
 
- # a la diff tool:
- hashset_diff($A,$B) # -> {b=>"-",d=>"+"}
+    # a la diff tool:
+    is_equal hashset_diff($A,$B), +{ b=>"-", d=>"+" };
 
- # to treat a hashset as a function:
- my $f= hashset_to_predicate ($A);
- $f->("a") # -> true
+    # to treat a hashset as a function:
+    my $f= hashset_to_predicate ($A);
+    ok $f->("a");
+
 
 =head1 DESCRIPTION
 
