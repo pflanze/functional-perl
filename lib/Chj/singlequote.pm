@@ -13,9 +13,11 @@ Chj::singlequote
 
 =head1 SYNOPSIS
 
- use Chj::singlequote qw(singlequote singlequote_many with_maxlen);
+    use Chj::singlequote qw(singlequote singlequote_many with_maxlen);
 
- with_maxlen 9, sub { singlequote "Darc's place" } # => "'Darc\\'s...'"
+    is with_maxlen(9, sub { singlequote "Darc's place" }),
+       "'Darc\\'s...'";
+
 
 =head1 DESCRIPTION
 
