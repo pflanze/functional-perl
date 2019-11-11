@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -15,8 +15,23 @@ FP::Memoizing - a functional memoize
 
  use FP::Memoizing qw(memoizing memoizing_to_dir);
 
+ my $count=0;
+ sub f { $count++; $_[0] * 5 }
+
  *fm= memoizing *f; # memoize in process memory
  *fm2= memoizing_to_dir ".foo", *f; # memoize to files in ".foo/"
+
+ is fm(3), 15;
+ is $count, 1;
+ is fm(3), 15;
+ is $count, 1;
+ is fm(2), 10;
+ is $count, 2;
+ is fm2(3), 15;
+ is $count, 3;
+ is fm2(3), 15;
+ is $count, 3;
+
 
 =head1 DESCRIPTION
 
@@ -141,7 +156,7 @@ sub memoizing_ ($$$) {
     }
 }
 
-sub memoizing (&) {
+sub memoizing ($) {
     my ($fn)=@_;
     memoizing_ $fn, +{}, \&hash_cache
 }
@@ -175,7 +190,7 @@ sub file_cache ($$$) {
     }
 }
 
-sub memoizing_to_dir ($&) {
+sub memoizing_to_dir ($$) {
     my ($dirpath,$f)=@_;
     $dirpath.="/" unless $dirpath=~ /\/$/s;
     memoizing_ $f, $dirpath, \&file_cache
