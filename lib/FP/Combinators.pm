@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,19 +13,20 @@ FP::Combinators - function combinators
 
 =head1 SYNOPSIS
 
- use FP::Ops 'div';
- use FP::Combinators 'flip';
+    use FP::Ops 'div';
+    use FP::Combinators 'flip';
 
- TEST { div 2,3 } 2/3;
- TEST { flip(\&div)-> (2,3) } 3/2;
+    is div(2,3), 2/3;
+    is flip(\&div)->(2,3), 3/2;
 
 =head1 DESCRIPTION
 
-    "A combinator is a higher-order function that uses only function
-    application and earlier defined combinators to define a result from
-    its arguments."
+"A combinator is a higher-order function that uses only function
+application and earlier defined combinators to define a result from
+its arguments."
 
-    https://en.wikipedia.org/wiki/Combinator
+(from https://en.wikipedia.org/wiki/Combinator)
+
 
 =head1 SEE ALSO
 
