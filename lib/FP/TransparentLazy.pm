@@ -13,13 +13,16 @@ FP::TransparentLazy - lazy evaluation with transparent evaluation
 
 =head1 SYNOPSIS
 
- use FP::TransparentLazy;
+    use FP::TransparentLazy;
 
- my $a = lazy { 1 / 0 };
- print $a # -> Illegal division by zero
+    my $a = lazy { 1 / 0 };
+    like((eval {
+        # $a's evaluation is forced here
+        print $a
+    } || $@), qr/XXX/); 
 
- # etc., see SYNOPSIS in FP::Lazy but remove the `force` and `FORCE`
- # calls
+    # etc., see SYNOPSIS in FP::Lazy but remove the `force` and `FORCE`
+    # calls
 
 =head1 DESCRIPTION
 
