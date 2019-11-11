@@ -72,7 +72,7 @@ package FP::Ops;
 		 number_ge
 		 the_method
 		 cut_method
-		 applying
+		 applying_to
 		 binary_operator
 		 unary_operator
 		 regex_match
@@ -226,7 +226,7 @@ sub cut_method {
     }
 }
 
-sub applying {
+sub applying_to {
     my @v=@_;
     sub ($) {
 	@_==1 or die "wrong number of arguments";

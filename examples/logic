@@ -154,7 +154,7 @@ fun Or ($t0,$t1) {
 
 
 fun contradictions_for ($matrix) {
-    array_to_stream(\@tests) -> filter(complement applying $matrix)
+    array_to_stream(\@tests) -> filter(complement applying_to $matrix)
 }
 
 fun checks ($matrix) {
