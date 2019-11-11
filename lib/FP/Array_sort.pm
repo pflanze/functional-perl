@@ -13,16 +13,20 @@ FP::Array_sort - 'sensible' sorting setup
 
 =head1 SYNOPSIS
 
- use FP::Array_sort; # for `array_sort`, `on`, and `cmp_complement`
- # For this example:
- use FP::Ops 'number_cmp';
- use FP::List 'car';
- array_sort $ary, on \&car, \&number_cmp
+    use FP::Array_sort; # for `array_sort`, `on`, and `cmp_complement`
+
+    use FP::Ops 'number_cmp'; use FP::Array ':all'; use FP::Equal 'is_equal';
+    is_equal array_sort([[10, 'a'], [15, 'b'], [-3, 'c']],
+                        on *array_first, *number_cmp),
+             [[-3, 'c'], [10, 'a'], [15, 'b']];
+
 
 =head1 DESCRIPTION
 
 Perl's sort is rather verbose and uses repetition of the accessor
 code:
+
+=for test ignore
 
     sort { &$foo ($a) <=> &$foo ($b) } @$ary
 
