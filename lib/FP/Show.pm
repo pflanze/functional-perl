@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -16,17 +16,7 @@ FP::Show - give (nice) code representation for debugging purposes
  use FP::Show; # exports 'show'
  use FP::List;
 
- sub foo {
-     my ($l)=@_;
-     die "not what we wanted: ".show ($l)
-       unless ref ($l) eq "ARRAY";
- }
-
- foo list 100-1, "bottles";
-   # -> dies with: not what we wanted: list(99, 'bottles')
- foo "list(99, 'bottles')" ;
-   # -> dies with: not what we wanted: 'list(99, \'bottles\')'
-
+ is show(list 30, 40), "list(30, 40)";
 
 =head1 DESCRIPTION
 
