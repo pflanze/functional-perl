@@ -13,16 +13,23 @@ FP::Ops -- function wrappers around Perl ops
 
 =head1 SYNOPSIS
 
- use FP::Ops 'add';
+ use FP::Ops qw(add subt applying);
 
+ # Lazy fibonacci sequence using \&add which can also be used as *add
  our $fibs; $fibs=
-   cons 1, cons 1, lazy { stream_zip_with \&add, Keep($fibs), rest $fibs };
+   cons 1, cons 1, lazy { stream_zip_with *add, Keep($fibs), rest $fibs };
+
+ # For each list entry, call `subt` (subtract) with the values in the
+ # given array or sequence.
+ list([4], [4,2], list(4,2,-1))->map(applying *subt)
+  # => list(-4, 2, 3);
 
 =head1 DESCRIPTION
 
 There's no way to take a code reference to Perl operators, hence a
-subroutine wrapper is necessary to pass them as arguments. This module
-provides them.
+subroutine wrapper is necessary to use them as first-class values
+(like pass them as arguments to higher-order functions like
+list_map / ->map). This module provides them.
 
 Also similarly, `the_method("foo", @args)` returns a function that
 does a "foo" method call on its argument, passing @args and then
@@ -34,9 +41,11 @@ function that does a "foo" method call on $obj, passing @args and then
 whatever additional arguments the function receives.
 
 Also, `binary_operator("foo")` returns a function that uses "foo" as
-operator between 2 arguments. `unary_operator("foo")` returns a function
-that uses "foo" as operator before its single argument. CAREFUL: make
-sure the given strings are secured, as there is no safety check!
+operator between 2 arguments. `unary_operator("foo")` returns a
+function that uses "foo" as operator before its single
+argument. CAREFUL: make sure the strings given as the first argument
+to these are secured, as they are passed to eval and there is no
+safety check!
 
 =cut
 
