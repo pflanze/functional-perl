@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2014 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,8 +13,14 @@ Chj::Class::methodnames
 
 =head1 SYNOPSIS
 
- use Chj::Class::methodnames;
- print map { "$_\n"},methodnames($someobject);
+    use FP::Equal 'is_equal';
+    use Chj::Class::methodnames;
+    {
+        package Foo123; sub foo { }; sub bar { };
+    }
+    is_equal [ methodnames bless {}, Foo123 ],
+             [ "bar", "foo" ];
+
 
 =head1 DESCRIPTION
 
@@ -24,9 +30,9 @@ recurses into parent packages following @ISA.
 
 =head1 FUNCTIONS
 
- set_stoplist(list of methodnames not to return)
-   set another list than BEGIN and Dumper.
-   (It sets a new hashref at $Chj::Class::methodnames::stop.)
+set_stoplist(list of methodnames not to return)
+set another list than BEGIN and Dumper.
+(It sets a new hashref at $Chj::Class::methodnames::stop.)
 
 =cut
 
