@@ -13,15 +13,17 @@ FP::DumperEqual - equality
 
 =head1 SYNOPSIS
 
- use FP::DumperEqual;
- dumperequal [1, [2, 3]], [1, [1+1, 3]]; # -> true
- dumperequal [1, [2, 3]], [1, [1+2, 3]]; # -> false
+    use FP::DumperEqual;
 
- my $s1= "stringwithunicode";
- my $s2= "stringwithunicode";
- utf8::decode($s2);
- dumperequal $s1, $s2; # -> false
- dumperequal_utf8 $s1, $s2; # -> true
+    ok dumperequal [1, [2, 3]], [1, [1+1, 3]];
+    ok not dumperequal [1, [2, 3]], [1, [1+2, 3]];
+
+    my $s1= "stringwithunicode";
+    my $s2= "stringwithunicode";
+    utf8::decode($s2);
+    ok not dumperequal $s1, $s2;
+    ok dumperequal_utf8 $s1, $s2;
+
 
 =head1 DESCRIPTION
 
