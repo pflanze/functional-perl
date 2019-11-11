@@ -24,7 +24,10 @@ use lib "./htmlgen";
 
 my %ignore= map{ $_=> 1}
   qw(
-        Class::Array
+    Class::Array
+    FP::DBI
+    FP::Trie
+    FP::Untainted
     Chj::AutoTrapl
     Chj::Backtrace
     Chj::BinHexOctDec
