@@ -13,12 +13,22 @@ FP::Equal - generic equality comparison
 
 =head1 SYNOPSIS
 
- use FP::Equal;
- use FP::List;
- use FP::Div qw(inc);
- equal [1, list(2, 3)], [1, list(1, 2)->map(*inc)]; # -> 1
- equal [1, list(2, 3)], [1, list(1, 2)]; # -> ''
- equal [1, list(2, 3)], [1, list([], 3)]; # -> undef: "not the same type"
+    use FP::Equal;
+    use FP::List;
+    use FP::Div qw(inc);
+
+    ok equal [1, list(2, 3)], [1, list(1, 2)->map(*inc)];
+    ok not equal [1, list(2, 3)], [1, list(1, 2)];
+        # ^ equal returns '' in this case
+    ok not equal [1, list(2, 3)], [1, list([], 3)];
+        # ^ equal returns undef in this case, to say it's not the same type
+
+    # for writing tests with Test::More--the same as `is` but uses
+    # `equal` for comparisons, and shows values in failures via
+    # `show`:
+    use FP::Equal qw(is_equal);
+    is_equal list(1+1), list(2);
+
 
 =head1 DESCRIPTION
 
@@ -58,7 +68,7 @@ L<FP::Show>
 package FP::Equal;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(equal);
-@EXPORT_OK=qw(equal2);
+@EXPORT_OK=qw(equal2 is_equal);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -214,6 +224,22 @@ sub equal {
 	      or return $v;
 	}
 	1
+    }
+}
+
+
+sub is_equal ($$;$) {
+    my ($a, $b, $maybe_name)= @_;
+    require Test::More;
+    require FP::Show;
+    my $tb = Test::More->builder;
+
+    if (equal2 $a, $b) {
+        $tb->ok(1)
+    } else {
+        $tb->is_eq(FP::Show::show($a),
+                   FP::Show::show($b),
+                   $maybe_name ? $maybe_name : ())
     }
 }
 
