@@ -13,7 +13,7 @@ FP::Ops -- function wrappers around Perl ops
 
 =head1 SYNOPSIS
 
-    use FP::List; use FP::Stream; use FP::Lazy; use FP::Equals;
+    use FP::List; use FP::Stream; use FP::Lazy; use FP::Equal;
     use FP::Ops qw(add subt applying);
 
     # Lazy fibonacci sequence using \&add which can also be used as *add

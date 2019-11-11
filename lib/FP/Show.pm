@@ -100,7 +100,7 @@ would implement the cut-off value as an optional parameter.)
 
 =head1 SEE ALSO
 
-L<FP::Equals>
+L<FP::Equal>
 
 =cut
 

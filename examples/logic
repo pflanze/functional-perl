@@ -30,7 +30,7 @@ use FP::Predicates qw(complement);
 use FP::Stream ":all"; # incl. F
 use FP::Ops ":all";
 use Chj::TEST ":all";
-use FP::Equals;
+use FP::Equal;
 use Chj::Repl::Stack;
 use Chj::Trapl; # or Chj::Backtrace
 use Chj::repl;

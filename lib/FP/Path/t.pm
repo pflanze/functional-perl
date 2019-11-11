@@ -26,7 +26,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use FP::Path "path";
-use FP::Equals;
+use FP::Equal;
 
 
 TEST{ path("a/b/C")

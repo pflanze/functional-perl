@@ -54,11 +54,11 @@ package FP::Path;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::List ":all";
-use FP::Equals ();
+use FP::Equal ();
 use Chj::constructorexporter;
 use FP::Predicates qw(is_string is_boolean);
 use FP::Show;
-use FP::Equals;
+use FP::Equal;
 
 sub perhaps_segment_error ($) {
     my ($segment)=@_;

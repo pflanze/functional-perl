@@ -211,7 +211,7 @@ use FP::Interfaces;
     sub FP_Equals_equals {
 	my ($a,$b)=@_;
 	FP::List::is_null($b)
-	    # XX well, this is, *currently*, guaranteed by FP::Equals,
+	    # XX well, this is, *currently*, guaranteed by FP::Equal,
 	    # thus always 1
     }
 
@@ -277,9 +277,9 @@ use FP::Interfaces;
 	my ($a,$b)=@_;
 	(FP::List::is_pair($b)
 	 and
-	 FP::Equals::equals($a->car, $b->car)
+	 FP::Equal::equals($a->car, $b->car)
 	 and do {
-	     @_=($a->cdr, $b->cdr); goto \&FP::Equals::equals
+	     @_=($a->cdr, $b->cdr); goto \&FP::Equal::equals
 	 })
     }
 
@@ -308,7 +308,7 @@ use FP::Interfaces;
 
 }
 
-use FP::Equals;
+use FP::Equal;
 TEST {
     equals(list(2,3,4), list(2,3))
 } undef;

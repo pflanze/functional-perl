@@ -52,7 +52,7 @@ fun entry ($path0,@subentries) {
     use FP::Ops qw(the_method);
     use FP::List;
     use FP::fix;
-    use FP::Equals qw(equals);
+    use FP::Equal qw(equals);
 
     use FP::Struct [[list_of(instance_of "Htmlgen::Nav::Entry"),
 		     "subentries"]];
@@ -187,7 +187,7 @@ fun entry ($path0,@subentries) {
     package Htmlgen::Nav::RealEntry;
     use FP::Predicates ":all";
     use FP::Ops qw(the_method);
-    use FP::Equals qw(equals);
+    use FP::Equal qw(equals);
 
     use FP::Struct [[*is_string, "path0"]],
       "Htmlgen::Nav::Entry";

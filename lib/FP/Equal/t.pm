@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-FP::Equals::t -- tests for FP::Equals
+FP::Equal::t -- tests for FP::Equal
 
 =head1 SYNOPSIS
 
@@ -20,11 +20,11 @@ run by test suite
 =cut
 
 
-package FP::Equals::t;
+package FP::Equal::t;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use FP::Equals;
+use FP::Equal;
 use Chj::TEST;
 
 # compare arguments both straight and swapped; if the results don't
@@ -125,8 +125,8 @@ TEST{my $x= "foo";
 # globs
 TEST{tequals *foo::bar, "*foo::bar"} undef;
 TEST{tequals ((*foo::bar)."", "*foo::bar")} 1;
-TEST{tequals *foo, *FP::Equals::t::foo} 1;
-TEST{tequals \*foo, \*FP::Equals::t::foo} 1;
+TEST{tequals *foo, *FP::Equal::t::foo} 1;
+TEST{tequals \*foo, \*FP::Equal::t::foo} 1;
 TEST{tequals \(*foo::bar), \("*foo::bar")} undef;
 TEST{tequals \(*foo::bar), \(*foo::baz)} '';
 TEST{tequals *foo, *bar} '';

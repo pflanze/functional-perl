@@ -299,7 +299,7 @@ fun get_filesinfo () {
 # Navigation:
 
 use FP::PureArray;
-use FP::Equals qw(equals);
+use FP::Equal qw(equals);
 
 fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
     UL({class=> "menu"},

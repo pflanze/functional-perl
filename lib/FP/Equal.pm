@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -9,11 +9,11 @@
 
 =head1 NAME
 
-FP::Equals - generic equality comparison
+FP::Equal - generic equality comparison
 
 =head1 SYNOPSIS
 
- use FP::Equals;
+ use FP::Equal;
  use FP::List;
  use FP::Div qw(inc);
  equals [1, list(2, 3)], [1, list(1, 2)->map(*inc)]; # -> 1
@@ -55,7 +55,7 @@ L<FP::Show>
 =cut
 
 
-package FP::Equals;
+package FP::Equal;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(equals);
 @EXPORT_OK=qw(equals2);
