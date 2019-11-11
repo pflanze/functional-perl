@@ -798,9 +798,9 @@ sub stream_group ($$;$);
 *stream_group= FP::List::make_group(1);
 sub FP::List::List::stream_group {
     @_>= 2 and @_<= 3 or die "wrong number of arguments";
-    my ($self,$equals,$maybe_tail)=@_;
+    my ($self,$equal,$maybe_tail)=@_;
     weaken $_[0];
-    stream_group($equals,$self,$maybe_tail)
+    stream_group($equal,$self,$maybe_tail)
 }
 
 

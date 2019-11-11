@@ -299,7 +299,7 @@ fun get_filesinfo () {
 # Navigation:
 
 use FP::PureArray;
-use FP::Equal qw(equals);
+use FP::Equal qw(equal);
 
 fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
     UL({class=> "menu"},
@@ -307,8 +307,8 @@ fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
        (
 	fun ($is_last, $item) {
 	    my $filetitle= $pathtranslate->path0_to_title($item->path0);
-	    my $is_viewed= equals($item, $viewed_at_item);
-	    my $is_open= equals($item, $item_selected);
+	    my $is_viewed= equal($item, $viewed_at_item);
+	    my $is_open= equal($item, $item_selected);
 
 	    LI({class=> ($is_last ? "menu_last" : "menu")},
 	       ($is_viewed ?

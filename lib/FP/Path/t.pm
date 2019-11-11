@@ -46,8 +46,8 @@ my $p= path ("a/../b/C")->add
   (path("../d/../e"), 0);
 TEST { $p->string } 'a/../b/C/../d/../e';
 TEST { $p->xclean->string } 'b/e';
-TEST { equals($p->xclean, $p) } '';
-TEST { equals($p->xclean, $p->xclean) } 1;
+TEST { equal($p->xclean, $p) } '';
+TEST { equal($p->xclean, $p->xclean) } 1;
 
 
 TEST { path ("a/.././b/C")->add
@@ -162,25 +162,25 @@ TEST_EXCEPTION { FP::Path->new(list("/foo"), 1, 1)->string }
    : 'segment contains slash: \'/foo\'');
 
 
-# equals:
+# equal:
 
-sub t_equals ($$) {
+sub t_equal ($$) {
     my ($a,$b)=@_;
-    equals (path($a),
+    equal (path($a),
 	    path($b))
 }
 
-TEST { t_equals "/foo", "/foo" } 1;
-TEST { t_equals "/foo", "foo" } '';
-TEST { t_equals "/foo", "/foo/" } '';
-TEST { t_equals "/foo", "/bar" } '';
-TEST { t_equals "/", "/" } 1;
-TEST { t_equals "/foo/..", "/" } '';
-TEST { t_equals "/foo", "/foo/bar" } '';
+TEST { t_equal "/foo", "/foo" } 1;
+TEST { t_equal "/foo", "foo" } '';
+TEST { t_equal "/foo", "/foo/" } '';
+TEST { t_equal "/foo", "/bar" } '';
+TEST { t_equal "/", "/" } 1;
+TEST { t_equal "/foo/..", "/" } '';
+TEST { t_equal "/foo", "/foo/bar" } '';
 
-# test booleanization (!!) in equals method
+# test booleanization (!!) in equal method
 TEST { my $p= path("/foo");
-       equals $p, $p->has_endslash_set(0) } 1;
+       equal $p, $p->has_endslash_set(0) } 1;
 
 sub t_str_clean ($) {
     my ($a)=@_;
@@ -189,7 +189,7 @@ sub t_str_clean ($) {
 
 sub t_equals_clean ($$) {
     my ($a,$b)=@_;
-    equals (t_str_clean $a, t_str_clean $b);
+    equal (t_str_clean $a, t_str_clean $b);
 }
 
 TEST { t_equals_clean "/foo", "/foo" } 1;

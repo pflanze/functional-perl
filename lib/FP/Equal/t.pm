@@ -31,8 +31,8 @@ use Chj::TEST;
 # match, return an array with both results
 sub tequals {
     @_==2 or die "wrong num arg";
-    my $x= equals (@_);
-    my $y= equals (@_);
+    my $x= equal (@_);
+    my $y= equal (@_);
     if (defined $x) {
 	if (defined $y) {
 	    if ($x eq $y) {
@@ -51,36 +51,36 @@ sub tequals {
 # from the synopsis
 use FP::List;
 use FP::Div qw(inc);
-TEST{ equals [1, list(2, 3)], [1, list(1, 2)->map(*inc)] } 1;
-TEST{ equals [1, list(2, 3)], [1, list(1, 2)] } '';
-TEST{ equals [1, list(2, 3)], [1, list([], 3)] } undef;
+TEST{ equal [1, list(2, 3)], [1, list(1, 2)->map(*inc)] } 1;
+TEST{ equal [1, list(2, 3)], [1, list(1, 2)] } '';
+TEST{ equal [1, list(2, 3)], [1, list([], 3)] } undef;
 
 # 'systematic':
-TEST{equals undef, undef} 1;
-TEST{equals 1, undef} undef; # really give undef in
-TEST{equals undef, 1} undef; #   this case?
-TEST{equals 1, 1} 1;
-TEST{equals 1, 0} '';
-TEST{equals 0, 1} '';
-TEST{equals [], 0} undef;
-TEST{equals 0, []} undef;
-TEST{equals [], []} 1;
-TEST{my $v=[]; equals $v, $v} 1;
-TEST{equals [], {}} undef;
-TEST{equals {}, {}} 1;
-TEST{equals {}, {a=>1}} '';
-TEST{equals {a=>2}, {a=>1}} '';
-TEST{equals {a=>1}, {b=>1}} '';
-TEST{equals {a=>1}, {a=>1}} 1;
-TEST{equals {a=>1,b=>2}, {a=>1}} '';
-TEST{equals {a=>1,b=>2}, {a=>1,b=>2}} 1;
-TEST{equals {a=>1,b=>2}, {a=>1,B=>2}} '';
-TEST{equals {a=>1,b=>2}, {a=>1,b=>3}} '';
-TEST{equals {a=>[1,3]}, {a=>[1,2+1]}} 1;
-TEST{equals {a=>[1,3]}, {a=>[1,2]}} '';
+TEST{equal undef, undef} 1;
+TEST{equal 1, undef} undef; # really give undef in
+TEST{equal undef, 1} undef; #   this case?
+TEST{equal 1, 1} 1;
+TEST{equal 1, 0} '';
+TEST{equal 0, 1} '';
+TEST{equal [], 0} undef;
+TEST{equal 0, []} undef;
+TEST{equal [], []} 1;
+TEST{my $v=[]; equal $v, $v} 1;
+TEST{equal [], {}} undef;
+TEST{equal {}, {}} 1;
+TEST{equal {}, {a=>1}} '';
+TEST{equal {a=>2}, {a=>1}} '';
+TEST{equal {a=>1}, {b=>1}} '';
+TEST{equal {a=>1}, {a=>1}} 1;
+TEST{equal {a=>1,b=>2}, {a=>1}} '';
+TEST{equal {a=>1,b=>2}, {a=>1,b=>2}} 1;
+TEST{equal {a=>1,b=>2}, {a=>1,B=>2}} '';
+TEST{equal {a=>1,b=>2}, {a=>1,b=>3}} '';
+TEST{equal {a=>[1,3]}, {a=>[1,2+1]}} 1;
+TEST{equal {a=>[1,3]}, {a=>[1,2]}} '';
 
-TEST{equals "a", "b"} '';
-TEST{equals "a", "a"} 1;
+TEST{equal "a", "b"} '';
+TEST{equal "a", "a"} 1;
 
 # Perl just can't disambiguate between numbers and strings, don't try
 # to fight it?
@@ -133,8 +133,8 @@ TEST{tequals *foo, *bar} '';
 
 
 # filehandles
-TEST{equals *STDIN{IO}, *STDIN{IO}} 1; # equal pointers
-TEST_EXCEPTION {equals *STDIN{IO}, *STDOUT{IO}}
+TEST{equal *STDIN{IO}, *STDIN{IO}} 1; # equal pointers
+TEST_EXCEPTION {equal *STDIN{IO}, *STDOUT{IO}}
   q{Can't locate object method "FP_Equals_equals" via package "IO::File"};
 
 
@@ -144,9 +144,9 @@ use utf8;
     my ($s1,$s2);
     TEST{$s1= "Smørrebrød";
 	 $s2= "Smørrebrød";
-	 equals $s1, $s2} 1;
+	 equal $s1, $s2} 1;
     TEST{utf8::encode($s2);
-	 equals $s1, $s2} '';
+	 equal $s1, $s2} '';
 }
 
 

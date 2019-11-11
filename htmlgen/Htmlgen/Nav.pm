@@ -52,7 +52,7 @@ fun entry ($path0,@subentries) {
     use FP::Ops qw(the_method);
     use FP::List;
     use FP::fix;
-    use FP::Equal qw(equals);
+    use FP::Equal qw(equal);
 
     use FP::Struct [[list_of(instance_of "Htmlgen::Nav::Entry"),
 		     "subentries"]];
@@ -91,7 +91,7 @@ fun entry ($path0,@subentries) {
 		    # (advantage: show them on ~all the other items,
 		    # too)?
 		    if (is_pair(my $es=$upitem->subentries)) {
-			equals ($upitem, $viewed_at_item)
+			equal ($upitem, $viewed_at_item)
 			  or die "bug?";
 			# hack: passing $upitem as the item here (*no*
 			# item should be marked as selected, this
@@ -187,7 +187,7 @@ fun entry ($path0,@subentries) {
     package Htmlgen::Nav::RealEntry;
     use FP::Predicates ":all";
     use FP::Ops qw(the_method);
-    use FP::Equal qw(equals);
+    use FP::Equal qw(equal);
 
     use FP::Struct [[*is_string, "path0"]],
       "Htmlgen::Nav::Entry";
@@ -203,7 +203,7 @@ fun entry ($path0,@subentries) {
     method FP_Equals_equals ($v) {
 	($self->path0 eq $v->path0
 	 and
-	 equals($self->subentries, $v->subentries))
+	 equal($self->subentries, $v->subentries))
     }
 
     _END_

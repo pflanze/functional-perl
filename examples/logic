@@ -293,7 +293,7 @@ if ($ENV{RUN_SLOW_TESTS}) {
 	array_length $results
     } 2;
 
-    TEST { array_length array_filter fun($v){ equals $v, $onesolution }, $results }
+    TEST { array_length array_filter fun($v){ equal $v, $onesolution }, $results }
       1;
 
     my $sorted;

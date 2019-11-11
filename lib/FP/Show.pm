@@ -83,10 +83,10 @@ would implement the cut-off value as an optional parameter.)
   not be usable directly, as it follows a private API.
 
   Offer a mix-in that *does* offer a `show` method that works without
-  giving further arguments?  But then, like with equals, it's not safe
+  giving further arguments?  But then, like with equal, it's not safe
   in the general case where the object argument might not be an object
   or have the method. Users should really import and use the show and
-  equals functions.
+  equal functions.
 
 - should `show` try to never use multiple lines, or to do
   pretty-printing?

@@ -277,9 +277,9 @@ use FP::Interfaces;
 	my ($a,$b)=@_;
 	(FP::List::is_pair($b)
 	 and
-	 FP::Equal::equals($a->car, $b->car)
+	 FP::Equal::equal($a->car, $b->car)
 	 and do {
-	     @_=($a->cdr, $b->cdr); goto \&FP::Equal::equals
+	     @_=($a->cdr, $b->cdr); goto \&FP::Equal::equal
 	 })
     }
 
@@ -310,10 +310,10 @@ use FP::Interfaces;
 
 use FP::Equal;
 TEST {
-    equals(list(2,3,4), list(2,3))
+    equal(list(2,3,4), list(2,3))
 } undef;
 TEST {
-    equals(list(2,3,4), list(2,3,4))
+    equal(list(2,3,4), list(2,3,4))
 } 1;
 
 
@@ -1811,7 +1811,7 @@ TEST { [list(3,1,37,-5)->find_tail (*is_even)] }
 sub make_group {
     my ($is_stream)=@_;
     my $group= sub ($$;$) {
-	my ($equals,$s,$maybe_tail)=@_;
+	my ($equal,$s,$maybe_tail)=@_;
 	weaken $_[1] if $is_stream;
 	lazy_if {
 	    FORCE $s;
@@ -1830,7 +1830,7 @@ sub make_group {
 				cons $group, ($maybe_tail // null)
 			    } else {
 				my ($a, $r)= $s->first_and_rest;
-				if (&$equals($prev, $a)) {
+				if (&$equal($prev, $a)) {
 				    $s= $r;
 				    $group= cons $a, $group;
 				    redo LP;
@@ -1853,8 +1853,8 @@ sub list_group ($$;$);
 *list_group= make_group(0);
 sub FP::List::List::group {
     @_>= 2 and @_<= 3 or die "wrong number of arguments";
-    my ($self,$equals,$maybe_tail)=@_;
-    list_group($equals,$self,$maybe_tail)
+    my ($self,$equal,$maybe_tail)=@_;
+    list_group($equal,$self,$maybe_tail)
 }
 
 TEST {

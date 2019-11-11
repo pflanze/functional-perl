@@ -18,8 +18,8 @@ FP::Path
   (FP::Path->new_from_string("../d/../e"), 0);
  $p->string # 'a/../b/C/../d/../e'
  $p->xclean->string # 'b/e'
- $p->xclean->equals($p) # ''
- $p->xclean->equals($p->xclean) # 1
+ $p->xclean->equal($p) # ''
+ $p->xclean->equal($p->xclean) # 1
 
  # or use the (evil?) constructor function export feature:
  use FP::Path "path";
@@ -124,11 +124,11 @@ sub FP_Equals_equals {
     my ($a,$b)=@_;
     # no need to compare is_absolute, since it is being distinguished
     # anyway? Or better be safe than sorry?
-    (equals (!!$a->is_absolute, !!$b->is_absolute)
+    (equal (!!$a->is_absolute, !!$b->is_absolute)
      and
-     equals (!!$a->has_endslash, !!$b->has_endslash)
+     equal (!!$a->has_endslash, !!$b->has_endslash)
      and
-     equals ($a->rsegments, $b->rsegments))
+     equal ($a->rsegments, $b->rsegments))
 }
 
 sub segments {

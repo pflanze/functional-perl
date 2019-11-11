@@ -16,9 +16,9 @@ FP::Equal - generic equality comparison
  use FP::Equal;
  use FP::List;
  use FP::Div qw(inc);
- equals [1, list(2, 3)], [1, list(1, 2)->map(*inc)]; # -> 1
- equals [1, list(2, 3)], [1, list(1, 2)]; # -> ''
- equals [1, list(2, 3)], [1, list([], 3)]; # -> undef: "not the same type"
+ equal [1, list(2, 3)], [1, list(1, 2)->map(*inc)]; # -> 1
+ equal [1, list(2, 3)], [1, list(1, 2)]; # -> ''
+ equal [1, list(2, 3)], [1, list([], 3)]; # -> undef: "not the same type"
 
 =head1 DESCRIPTION
 
@@ -32,7 +32,7 @@ object, it simply can't be compared using this module).
 This does *name based* type comparison: structurally equivalent
 objects do not count as equal if they do not have the same class (or
 more general, reference name), the `FP_Equals_equals` method is not
-even called; the equals function returns undef in this case. This
+even called; the equal function returns undef in this case. This
 might be subject to change: certain pairs of types will be fine to
 compare; let the classes provide a method that checks whether a type
 is ok to compare?
@@ -57,7 +57,7 @@ L<FP::Show>
 
 package FP::Equal;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(equals);
+@EXPORT=qw(equal);
 @EXPORT_OK=qw(equals2);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -101,7 +101,7 @@ our $primitive_equals=
            # already did it
     },
     SCALAR=> sub {
-	equals(${$_[0]}, ${$_[1]})
+	equal(${$_[0]}, ${$_[1]})
     },
 
     # compare closures using XS? Existing module?
@@ -202,7 +202,7 @@ sub equals2 ($$) {
     }
 }
 
-sub equals {
+sub equal {
     if (@_ == 2) {
 	goto \&equals2
     } elsif (@_ == 1) {
