@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2014 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,8 +13,16 @@ Chj::BinHexOctDec
 
 =head1 SYNOPSIS
 
- my $num= Chj::BinHexOctDec->bin("1001010010");
- print $num->dec;
+    use Chj::BinHexOctDec;
+    my $num= Chj::BinHexOctDec->bin("1001010010");
+    is ref($num), "Chj::BinHexOctDec";
+    is $num->dec, 594;
+
+    use FP::Equal 'is_equal';
+    is_equal [ map { $num->$_ } qw(dec bin hex oct) ],
+             [ 594, "1001010010", "252", "1122" ];
+
+
 
 =head1 DESCRIPTION
 
@@ -27,11 +35,6 @@ Note: does not die on invalid input. (Should this be considered a
 bug?)
 
 =head1 METHODS
-
- dec
- bin
- hex
- oct
 
 =cut
 
