@@ -18,7 +18,7 @@ Chj::IO::Tempfile
 =head1 NOTES
 
 If you kill the program i.e. using Ctl-C, it will not clean up
-it's temp file.
+its temp file.
 
 =cut
 
