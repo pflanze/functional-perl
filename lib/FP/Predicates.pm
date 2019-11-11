@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,20 +13,33 @@ FP::Predicates
 
 =head1 SYNOPSIS
 
- package Foo;
- use FP::Predicates;
+    use FP::Predicates;
 
- *is_age= both *is_natural0, sub { $_[0] < 130 };
- # ^ wrap in BEGIN {  } to employ namespace cleaning;
- # or assign to a scalar instead (my $is_age), of course;
- # or use an inline expression (second line below)
+    is is_string("Hi"), 1;
+    is is_string(["Hi"]), '';
+    use FP::List;
+    is list(1, 2, 3, 0, -1, "hi")->map(*is_natural0),
+       list(41, 1, 1, '', '', '');
 
- use FP::Struct [[*is_string, "name"], [*is_age, "age"]];
+    package Foo {
+        use FP::Predicates;
 
- # use FP::Struct [[*is_string, "name"],
- #                 [both (*is_natural0, less_than 130), "age"]];
+        *is_age = both *is_natural0, sub { $_[0] < 130 };
+        # ^ if you do not want this to show up as a method,
+        #   wrap it in BEGIN { } to get deleted in FP::Struct's
+        #   namespace cleaning step; or assign to a scalar instead (my
+        #   $is_age), of course; or use an inline expression (second
+        #   line below)
 
- _END_
+        use FP::Struct [[*is_string, "name"], [*is_age, "age"]];
+
+        # use FP::Struct [[*is_string, "name"],
+        #                 [both (*is_natural0, less_than 130), "age"]];
+
+        _END_
+    }
+
+    is Foo->new(name=> "Moo", age=> 13)->age, 13;
 
 =head1 DESCRIPTION
 
