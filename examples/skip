@@ -110,7 +110,7 @@ sub test_with_size ($) {
 			   sub { my ($tail, $len)=@_; cons $len, $tail });
 }
 
-use FP::Equal;
+use FP::DumperEqual;
 
 TEST { test_with_size 1 }
 [
@@ -120,9 +120,9 @@ TEST { test_with_size 1 }
  'baz'
 ];
 
-TEST { equal test_with_size 2, test_with_size 1
+TEST { dumperequal test_with_size 2, test_with_size 1
 	   and
-       equal test_with_size 3, test_with_size 1 }
+       dumperequal test_with_size 3, test_with_size 1 }
 1;
 
 TEST { test_with_size 4 }

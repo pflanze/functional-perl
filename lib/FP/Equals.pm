@@ -48,7 +48,7 @@ is ok to compare?
 
 =head1 SEE ALSO
 
-L<FP::Equal> for a non-class controlled alternative
+L<FP::DumperEqual> for a non-class controlled alternative
 
 L<FP::Show>
 

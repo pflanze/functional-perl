@@ -215,14 +215,14 @@ TEST { require FP::List;
        FP::List::is_list (cons 0, FP::Lazy::lazy {cons 1, cons 2, strictnull }) }
   1;
 
-use FP::Equal 'equal';
+use FP::DumperEqual;
 
 TEST {
-    equal strictnull->cons(1), cons (1, strictnull)
+    dumperequal strictnull->cons(1), cons (1, strictnull)
 } 1;
 
 TEST {
-    equal strictnull->cons(1), cons (1, null)
+    dumperequal strictnull->cons(1), cons (1, null)
 } '';
 
 TEST {

@@ -177,7 +177,7 @@ sub GIVES (&) {
     bless $thunk, "Chj::TEST::GIVES";
 }
 
-use FP::Equal;
+use FP::DumperEqual;
 use FP::Show;
 
 sub eval_test ($$) {
@@ -189,7 +189,8 @@ sub eval_test ($$) {
 	$res= &$res;
     }
 
-    if (equal($got, $res) or equal_utf8($got, $res)) {
+    if (dumperequal($got, $res)
+        or dumperequal_utf8($got, $res)) {
 	print "ok\n";
 	$$stat{success}++
     } else {

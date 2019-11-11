@@ -140,11 +140,11 @@ TEST_EXCEPTION { path("")->to_relative->string }
 TEST { path("/foo/")->to_relative->string }
  'foo/';
 
-use FP::Equal;
+use FP::DumperEqual;
 
-TEST { equal (path("/"),
-	      path("//"),
-	      path("///")) }
+TEST { dumperequal (path("/"),
+                    path("//"),
+                    path("///")) }
   1;
 
 

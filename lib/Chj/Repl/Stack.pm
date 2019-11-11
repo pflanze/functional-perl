@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -144,8 +144,8 @@ our @fields; BEGIN { @fields= qw(args
 	    if (defined $s->args) {
 		(&$equal_standard_fields
 		 and do {
-		     require FP::Equal;
-		     FP::Equal::equal ($v->args, $s->args)
+		     require FP::DumperEqual;
+		     FP::DumperEqual::dumperequal ($v->args, $s->args)
 		 })
 	    } else {
 		''
