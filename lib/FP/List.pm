@@ -16,23 +16,25 @@ FP::List - singly linked (purely functional) lists
  use FP::List ':all';
  use FP::Div qw(inc square);
  use FP::Ops qw(div);
- list_to_string(cons("H",cons("e",cons("l",cons("l",cons("o",null))))))
- # "Hello"
 
- list(1,2,3)->map(sub{ $_[0] * $_[0] })
- # => list (1,4,9)
- list(1,2,3)->map(*square)->array
- # => [1,4,9]
+ is list_to_string(cons("H",cons("e",cons("l",cons("l",cons("o",null)))))),
+    "Hello";
 
- list(qw(a b c))->first # => "a"
- list(qw(a b c))->rest  # => list("b", "c")
+ is_equal list(1,2,3)->map(sub{ $_[0] * $_[0] }),
+          list (1,4,9);
+ is_equal list(1,2,3)->map(*square)->array,
+          [1,4,9];
 
- list(1,2,3,4)->sum        # => 10 (1+2+3+4)
- list(1,2,3,4)->product    # => 24 (1*2*3*4)
- list(2,4)->reduce(*div)   # => 2  (4/2)
- list(2,4,6)->reduce(*div) # => 3  (6/(4/2))
- list(2,4,6)->reduce_right(*div) # => 3  (6/(4/2))
- list(2,4,6)->reduce_right(*div) # => 1.33.. (
+ is list(qw(a b c))->first, "a";
+ is_equal list(qw(a b c))->rest,
+          list("b", "c");
+
+ is list(1,2,3,4)->sum, 10;             # (1+2+3+4)
+ is list(1,2,3,4)->product, 24;         # (1*2*3*4)
+ is list(2,4)->reduce(*div), 2;         # (4/2)
+ is list(2,4,6)->reduce(*div), 3;       # (6/(4/2))
+ is list(2,4,6)->reduce_right(*div), 3; # (6/(4/2))
+ is list(2,4,6)->reduce_right(*div), 1.3333; # XXXX. (
  # etc.
 
  # The `cons` function checks whether its second argument is an object
@@ -40,9 +42,10 @@ FP::List - singly linked (purely functional) lists
  # FP::List::Pair object holding both values (there's also a `pair`
  # function that doesn't check for a method and always directly
  # creates the pair)
- cons ("a","b")->rest # "b"
- cons ("a","b")->cdr  # "b"
- list (5,6,7)->caddr # 7
+ is cons("a","b")->rest, "b";
+ is cons("a","b")->cdr, "b";
+ is list (5,6,7)->caddr, 7;
+
 
 =head1 DESCRIPTION
 
