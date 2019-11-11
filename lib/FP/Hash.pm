@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,28 +13,30 @@ FP::Hash
 
 =head1 SYNOPSIS
 
+ use FP::Equal 'is_equal';
  use FP::Hash;
 
  my $a= {a=>1, b=>2};
  my $b= hash_set($a, "b", 3);
  my $c= hash_delete($b, "a");
  if (my ($v)= hash_perhaps_ref ($c, "x")) {
-    ...
+    is_equal $v, "XXX";
  }
- my $d= hash_update $a, 'a', sub { $_[0]+10 };
- # +{ a=> 11, b=> 2 };
- my $e= hash_update $a, 'x', sub { [@_] };
- # +{ a=> 1, b=> 2, x=>[] };
+ is_equal hash_update($a, 'a', sub { $_[0]+10 }),
+          +{ a=> 11, b=> 2 };
+ is_equal hash_update($a, 'x', sub { [@_] }),
+          +{ a=> 1, b=> 2, x=>[] };
 
  # The function passed to hash_update is run in list context! Empty
  # list means, delete the item.
  my $e= hash_update $a, 'a', sub { () };
- # +{ b=> 2 };
+ is_equal $e, +{ b=> 2 };
 
- print Dumper($c); # {b => 3}
- print Dumper($a); # {a => 1, b => 2}
+ is_equal $c, +{b => 3};
+ is_equal $a, +{a => 1, b => 2};
 
- subhash({a=>10, b=>11, c=>12}, "a", "c") # {a=>10, c=>12};
+ is_equal subhash({a=>10, b=>11, c=>12}, "a", "c"),
+          +{a=>10, c=>12};
 
 
 =head1 DESCRIPTION
