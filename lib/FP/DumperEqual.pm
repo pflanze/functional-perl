@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -9,25 +9,25 @@
 
 =head1 NAME
 
-FP::Equal - equality
+FP::DumperEqual - equality
 
 =head1 SYNOPSIS
 
- use FP::Equal;
- equal [1, [2, 3]], [1, [1+1, 3]]; # -> true
- equal [1, [2, 3]], [1, [1+2, 3]]; # -> false
+ use FP::DumperEqual;
+ dumperequal [1, [2, 3]], [1, [1+1, 3]]; # -> true
+ dumperequal [1, [2, 3]], [1, [1+2, 3]]; # -> false
 
  my $s1= "stringwithunicode";
  my $s2= "stringwithunicode";
  utf8::decode($s2);
- equal $s1, $s2; # -> false
- equal_utf8 $s1, $s2; # -> true
+ dumperequal $s1, $s2; # -> false
+ dumperequal_utf8 $s1, $s2; # -> true
 
 =head1 DESCRIPTION
 
 Deep structure equality comparison.
 
-NOTE: currently using Data::Dumper and thus slow.
+NOTE: using Data::Dumper and thus slow.
 
 For a more proper solution, see FP::Equals
 
@@ -38,9 +38,9 @@ L<FP::Equals>
 =cut
 
 
-package FP::Equal;
+package FP::DumperEqual;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(equal equal_utf8);
+@EXPORT=qw(dumperequal dumperequal_utf8);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -50,7 +50,7 @@ use Data::Dumper;
 
 # XX these are expensive, of course. Better solution?
 
-sub equal {
+sub dumperequal {
     local $Data::Dumper::Sortkeys=1;
     my $v0= shift;
     my $a0= Dumper($v0);
@@ -61,7 +61,7 @@ sub equal {
     1
 }
 
-sub equal_utf8 ($$) {
+sub dumperequal_utf8 ($$) {
     local $Data::Dumper::Sortkeys=1;
     # compare ignoring utf8 flags on strings
     local $Data::Dumper::Useperl = 1;
