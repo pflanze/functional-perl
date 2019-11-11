@@ -13,16 +13,19 @@ FP::Ops -- function wrappers around Perl ops
 
 =head1 SYNOPSIS
 
- use FP::Ops qw(add subt applying);
+    use FP::List; use FP::Stream; use FP::Lazy; use FP::Equals;
+    use FP::Ops qw(add subt applying);
 
- # Lazy fibonacci sequence using \&add which can also be used as *add
- our $fibs; $fibs=
-   cons 1, cons 1, lazy { stream_zip_with *add, Keep($fibs), rest $fibs };
+    # Lazy fibonacci sequence using \&add which can also be used as *add
+    our $fibs; $fibs=
+      cons 1, cons 1, lazy { stream_zip_with *add, Keep($fibs), rest $fibs };
+    is_equal $fibs->take(10),
+             list(1, 1, 2, 3, 5, 8, 13, 21, 34, 55);
 
- # For each list entry, call `subt` (subtract) with the values in the
- # given array or sequence.
- list([4], [4,2], list(4,2,-1))->map(applying *subt)
-  # => list(-4, 2, 3);
+    # For each list entry, call `subt` (subtract) with the values in the
+    # given array or sequence.
+    is_equal list([4], [4,2], list(4,2,-1))->map(applying *subt),
+             list(-4, 2, 3);
 
 =head1 DESCRIPTION
 
