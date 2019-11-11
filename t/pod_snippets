@@ -28,6 +28,8 @@ my %ignore= map{ $_=> 1}
     FP::DBI
     FP::Trie
     FP::Untainted
+    FP::IOStream
+    FP::Interfaces
     Chj::AutoTrapl
     Chj::Backtrace
     Chj::BinHexOctDec
