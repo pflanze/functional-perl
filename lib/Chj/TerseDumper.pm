@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,8 +13,10 @@ Chj::TerseDumper
 
 =head1 SYNOPSIS
 
- use Chj::TerseDumper;
- print TerseDumper($foo);
+    use Chj::TerseDumper;
+    my $foo= +{ foo=> 1, bar=> 10, baz=>-1 };
+    is terseDumper($foo), "XXX";
+    is TerseDumper($foo), "XXX";
 
 =head1 DESCRIPTION
 
@@ -25,26 +27,26 @@ Runs Data::Dumper's Dumper with $Data::Dumper::Terse set to 1.
 
 package Chj::TerseDumper;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(TerseDumper);
-@EXPORT_OK=qw(SortedTerseDumper terseDumper);
+@EXPORT=qw(TerseDumper terseDumper);
+@EXPORT_OK=qw(UnsortedTerseDumper);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Data::Dumper;
 
-sub TerseDumper {
+sub UnsortedTerseDumper {
     local $Data::Dumper::Terse= 1;
     Dumper(@_)
 }
 
-sub SortedTerseDumper {
+sub TerseDumper {
     local $Data::Dumper::Sortkeys= 1;
-    TerseDumper (@_)
+    UnsortedTerseDumper (@_)
 }
 
 sub terseDumper {
-    my $str= SortedTerseDumper (@_);
+    my $str= TerseDumper (@_);
     chomp $str;
     $str
 }

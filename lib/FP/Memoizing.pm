@@ -65,7 +65,7 @@ sub xncanonicalfreeze ($) {
 
 
 our $freeze_args= \&xncanonicalfreeze;
-# XX use SortedTerseDumper instead, to allow for unserializable
+# XX use TerseDumper instead, to allow for unserializable
 # values? But, says things like 'sub { "DUMMY" }' which isn't unique
 # for subs, thus nope, won't work either. Perl is a mess in this area,
 # right? (Plays nice with the OS? But then doesn't provide for a well
