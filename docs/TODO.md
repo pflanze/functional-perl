@@ -8,6 +8,11 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 <with_toc>
 
+## Work on the code
+
+* automatically test example code in pod sections (how?)
+
+
 ## Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
