@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -85,42 +85,48 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use FP::Show;
 
+
 sub add {
-    my $t=shift;
+    my $t= 0;
     $t+= $_ for @_;
     $t
 }
 
 sub subt {
-    my $t=shift;
-    # XXX: should subt($x) == -$x ?
-    $t-= $_ for @_;
-    $t
+    @_==1 ? -$_[0] :
+      @_ ? do {
+          my $t= shift;
+          $t-= $_ for @_;
+          $t
+      } :
+      die "need at least 1 argument"
 }
 
 sub mult {
-    my $t=shift;
+    my $t= 1;
     $t*= $_ for @_;
     $t
 }
 
 sub div {
-    my $t=shift;
-    # XXX: should div($x) == 1/$x ?
-    $t/= $_ for @_;
-    $t
+    @_==1 ? (1 / $_[0]) :
+      @_ ? do {
+          my $t= shift;
+          $t/= $_ for @_;
+          $t
+      } :
+      die "need at least 1 argument"
 }
 
 sub mod {
-    my $t=shift;
-    # XXX: dito
-    $t%= $_ for @_;
-    $t
+    @_==2 or die "need 2 arguments";
+    my ($a, $b)=@_;
+    $a % $b
 }
 
 sub expt {
     @_==2 or die "need 2 arguments";
-    my ($a,$b)=@_;
+    my ($a, $b)=@_;
     $a ** $b
 }
 
