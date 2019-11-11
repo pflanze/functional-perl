@@ -72,6 +72,7 @@ package FP::Ops;
 		 number_ge
 		 the_method
 		 cut_method
+                 applying
 		 applying_to
 		 binary_operator
 		 unary_operator
@@ -223,6 +224,17 @@ sub cut_method {
     my ($object,$method,@args)=@_;
     sub {
 	$object->$method(@args,@_)
+    }
+}
+
+sub applying ($) {
+    @_==1 or die "wrong number of arguments";
+    my ($f)=@_;
+    sub ($) {
+        @_==1 or die "wrong number of arguments";
+        my ($argv)=@_;
+        @_= ref($argv) eq "ARRAY" ? @$argv : $argv->values;
+	goto &$f
     }
 }
 
