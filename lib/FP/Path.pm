@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2011-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2011-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -21,7 +21,7 @@ FP::Path
  is $p->string, 'a/../b/C/../d/../e';
  is $p->xclean->string, 'b/e';
  ok not equal($p->xclean, $p);
- ok $p->xclean->equal($p->xclean);
+ ok equal($p->xclean, $p->xclean); # obviously, assuming purity
 
  # or use the (evil?) constructor function export feature:
  use FP::Path "path";
@@ -131,10 +131,6 @@ sub FP_Equal_equal {
      and
      equal ($a->rsegments, $b->rsegments))
 }
-
-# unlike the `equal` function, using this method will fail when given
-# an argument of the wrong type!
-*equal= *FP_Equal_equal;
 
 sub segments {
     my $s=shift;
