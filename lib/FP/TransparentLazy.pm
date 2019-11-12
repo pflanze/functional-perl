@@ -19,7 +19,7 @@ FP::TransparentLazy - lazy evaluation with transparent evaluation
     like((eval {
         # $a's evaluation is forced here
         print $a
-    } || $@), qr/XXX/); 
+    } || $@), qr/division by zero/); 
 
     # etc., see SYNOPSIS in FP::Lazy but remove the `force` and `FORCE`
     # calls
