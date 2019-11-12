@@ -82,6 +82,7 @@ lib/Chj/IO/Dir.pm
 lib/Chj/IO/File.pm
 lib/Chj/IO/Pipe.pm
 lib/Chj/IO/PipelessCommand.pm
+lib/Chj/IO/Tempdir.pm
 lib/Chj/IO/Tempfile.pm
 lib/Chj/IO/WrappedFile.pm
 lib/Chj/Linux/LmSensors.pm
@@ -110,6 +111,7 @@ lib/Chj/repl.pm
 lib/Chj/ruse.pm
 lib/Chj/singlequote.pm
 lib/Chj/singlequote/t.pm
+lib/Chj/tempdir.pm
 lib/Chj/time_this.pm
 lib/Chj/xIO.pm
 lib/Chj/xIOUtil.pm
