@@ -96,7 +96,7 @@ sub save {
     close $out or die $!;
 
     if ($ENV{DEBUG}) {
-        print "Running again as expanded file '$file' and with Trapl..\n";
+        print "=== Running again as expanded file '$file' and with Trapl..\n";
         system("perl", "-Mlib=./lib", "-MChj::Trapl", $file);
         exit 1
     }
@@ -114,9 +114,9 @@ my $namespacenum= 0;
 
 for (@$modules) {
     if ($ignore{$_}) {
-        print "Ignoring pod snippets in module $_.\n";
+        print "=== Ignoring pod snippets in module $_.\n";
     } else {
-        print "Running pod snippets in module $_ ..\n";
+        print "=== Running pod snippets in module $_ ..\n";
 
         my $tps_direct = Test::Pod::Snippets->new();
         my $fail_before= numfailures;
