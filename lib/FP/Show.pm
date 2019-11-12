@@ -61,32 +61,36 @@ would implement the cut-off value as an optional parameter.)
 
 =head1 TODO
 
-- cycle detection
+=over
 
-- cut-offs at configurable size?
+=item * cycle detection
 
-- modify Data::Dumper to allow for custom formatting instead?
+=item * cut-offs at configurable size?
 
-- should the 'FP_Show_show' methods simply be called 'show'? Or
-  '(show' and provide help for their installation like overload.pm?
-  Although, there is a reason not to do that: the `show` method would
-  not be usable directly, as it follows a private API.
+=item * modify Data::Dumper to allow for custom formatting instead?
 
-  Offer a mix-in that *does* offer a `show` method that works without
-  giving further arguments?  But then, like with equal, it's not safe
-  in the general case where the object argument might not be an object
-  or have the method. Users should really import and use the show and
-  equal functions.
+=item * should the 'FP_Show_show' methods simply be called 'show'?
 
-- should `show` try to never use multiple lines, or to do
+Or '(show' and provide help for their installation like overload.pm?
+Although, there is a reason not to do that: the `show` method would
+not be usable directly, as it follows a private API.
+
+Offer a mix-in that *does* offer a `show` method that works without
+giving further arguments?  But then, like with equal, it's not safe
+in the general case where the object argument might not be an object
+or have the method. Users should really import and use the show and
+equal functions.
+
+=item * should `show` try to never use multiple lines, or to do
   pretty-printing?
 
-- should constructor names be fully qualified? Any other idea to avoid
+=item * should constructor names be fully qualified? Any other idea to avoid
   this verbosity but still be unambiguous?
 
-- make it good enough to be used by Chj::repl by default for the
+=item * make it good enough to be used by Chj::repl by default for the
   printing.
 
+=back
 
 =head1 SEE ALSO
 
