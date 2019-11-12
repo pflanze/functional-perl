@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -31,10 +31,13 @@ PXML::Preserialize - faster PXML templating through preserialization
 
  # these expressions are all returning the same result, but the second
  # and third are (supposedly) evaluated faster than the first:
- &$link_normal("http://foo", [B("Foo"), "Bar"])->string
- &$link_fast("http://foo", [B("Foo"), "Bar"])->string
- &$link_fast2("http://foo", [B("Foo"), "Bar"])->string
- # -> '<a href="http://foo"><b>Foo</b>Bar</a>'
+ is $link_normal->("http://foo", [B("Foo"), "Bar"])->string,
+    '<a href="http://foo"><b>Foo</b>Bar</a>';
+ is $link_fast->("http://foo", [B("Foo"), "Bar"])->string,
+    '<a href="http://foo"><b>Foo</b>Bar</a>';
+ is $link_fast2->("http://foo", [B("Foo"), "Bar"])->string,
+    '<a href="http://foo"><b>Foo</b>Bar</a>';
+
 
 =head1 DESCRIPTION
 

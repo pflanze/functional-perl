@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,11 +13,16 @@ PXML - functional XML handling, general functions
 
 =head1 SYNOPSIS
 
- use PXML;
- use PXML::XHTML;
- is_pxml_element P() # => 1
+ use PXML qw(is_pxml_element);
+ use PXML::XHTML qw(P);
+
+ ok is_pxml_element P();
+ is P("Hi <there>")->string, '<p>Hi &lt;there&gt;</p>';
+
  use PXML ":all";
- pxmlbody ("foo")->string # => "foo"
+
+ is(pxmlbody("foo")->string, "foo");
+
 
 =head1 DESCRIPTION
 
