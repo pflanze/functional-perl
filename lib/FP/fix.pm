@@ -15,14 +15,15 @@ FP::fix -- recurse with the fix point combinator
 
  use FP::fix;
 
- sub foo {
+ sub fact {
      my ($z)= @_;
-     my $local= fix sub {
-         my ($local, $x, $y)=@_;
-         $x > 0 ? &$local ($x-1, $x*$y) : $y
+     my $f= fix sub {
+         my ($f,  $x, $y)=@_;
+         $x > 0 ? $f->($x-1, $x*$y) : $y
      };
-     &$local ($z, 0)
+     $f->($z, 1)
  }
+ is fact(5), 120;
 
 
 =head1 DESCRIPTION
@@ -39,15 +40,16 @@ The example from the synopsis is equivalent to:
 
  use Scalar::Util 'weaken';
 
- sub foo {
+ sub fact2 {
      my ($z)= @_;
-     my $local; $local= sub {
+     my $f; $f= sub {
          my ($x, $y)=@_;
-         $x > 0 ? &$local ($x-1, $x*$y) : $y
+         $x > 0 ? $f->($x-1, $x*$y) : $y
      };
-     my $_local= $local; weaken $local;
-     &$local ($z, 0)
+     my $_f= $f; weaken $f;
+     $f->($z, 1)
  }
+ is fact2(5), 120;
 
 
 =cut
