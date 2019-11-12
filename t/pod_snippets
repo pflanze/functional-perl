@@ -109,6 +109,8 @@ sub numfailures {
     @failures
 }
 
+my $namespacenum= 0;
+
 for (@$modules) {
     if ($ignore{$_}) {
         print "Ignoring pod snippets in module $_.\n";
@@ -117,10 +119,9 @@ for (@$modules) {
 
         my $tps_direct = Test::Pod::Snippets->new();
         my $fail_before= numfailures;
-        if (eval {
-            $tps_direct->runtest( module => $_ );
-            1
-        }) {
+        my $code= $tps_direct->generate_test( module => $_ );
+        $namespacenum++;
+        if (eval "package t_pod_snippets_$namespacenum; $code; \n1") {
             my $fail_after= numfailures;
             generate $_
               if $fail_after != $fail_before;
