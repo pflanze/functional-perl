@@ -170,6 +170,11 @@ sub equal2 ($$) {
 				  $a->FP_Equal_equal ($b)
 			      }
 			  } else {
+                              # XXX allow subclasses of same
+                              # hierarchy? Check whether $br isa $ar
+                              # or vica versa and then call
+                              # FP_Equal_equal on the one that's more?
+                              # (or the less?) specialized?
 			      undef
 			  }
 		      };
