@@ -86,13 +86,14 @@ my $modules= modulenamelist;
 #  nope, when running direct, each module contributes its own number of
 #  tests, not 1.
 
-sub generate {
-    my ($module)= @_;
+sub save {
+    my ($module, $code)= @_;
     my $file= "tps-$module.pl";
     unlink $file;
-    my $tps_file = Test::Pod::Snippets->new(+{preserve_lines=> 0});
-    $tps_file->generate_test_file( module => $module,
-                                   output=> $file );
+    # XX possibly remove line directives from $code.
+    open my $out, ">", $file or die "$file: $!";
+    print $out $code or die $!;
+    close $out or die $!;
 
     if ($ENV{DEBUG}) {
         print "Running again as expanded file '$file' and with Trapl..\n";
@@ -129,12 +130,12 @@ for (@$modules) {
                 # done_testing("snippets in $_") but that's part of $code
             } else {
                 fail("pod snippets in $_");
-                generate $_
+                save $_, $code;
             }
         } else {
             warn "Exception: $@\n";
             fail("pod snippets in $_");
-            generate $_
+            save $_, $code;
         }
     }
 }
