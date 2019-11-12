@@ -15,23 +15,28 @@ FP::Struct - classes for functional perl
 
  use FP::Predicates qw(is_array maybe);
 
- use FP::Struct Foo=>
-         ["name",
-          [maybe (\&is_array), "animals"]]
-       # => "Baz", "Buzz" # optional superclasses
-            ;
+ use FP::Struct FPStructExample::Foo=>
+         ["name", # accept any value
+          [maybe (\&is_array), "animals"], # accept arrays or undef
+         ]
+         # => "Baz", "Buzz" # optional superclasses
+          ;
 
  # creates a constructor new that takes positional arguments and
  # copies them to a hash with the keys "name" and "animals". Also,
- # sets @Bar::ISA to ("Baz") if the '#' is removed. [ ] around "Baz"
- # are optional.  If an array is given as a field declaration, then
- # the first entry is a predicate that receives the value in question,
- # if it doesn't return true then an exception is thrown.
+ # sets @Bar::ISA to ("Baz", "Buzz") if the '#' is removed. [ ] around
+ # "Baz", "Buzz" are optional.  If an array is given as a field
+ # declaration, then the first entry is a predicate that receives the
+ # value in question, if it doesn't return true then an exception is
+ # thrown.
 
- is new Foo ("Tim")->name, "Tim";
- new Foo ("Tim", 0) # exception
- new Foo (undef, ["Struppi"])->animals->[0] # "Struppi"
- new_ Foo (animals=> ["Struppi"])->animals->[0] # "Struppi"
+ is( new FPStructExample::Foo ("Tim")->name, "Tim" );
+ eval {
+      new FPStructExample::Foo ("Tim", 0)
+ };
+ like $@, qr/unacceptable value for field 'animals': 0 /;
+ is (new FPStructExample::Foo (undef, ["Struppi"])->animals->[0], "Struppi");
+ is (new_ FPStructExample::Foo (animals=> ["Struppi"])->animals->[0], "Struppi");
 
 
  # Usually preferred alternative: define the struct from within the
@@ -39,47 +44,47 @@ FP::Struct - classes for functional perl
 
  # a mixin package, if this weren't defined at the time of 'use
  # FP::Struct' below, it would try to load Hum.pm
- {
-   package Hum;
-   sub hum {
-      my $s=shift;
-      $s->name." hums ".$s->a." over ".$s->b
-   }
+ package FPStructExample::Hum {
+     sub hum {
+         my $s=shift;
+         $s->name." hums ".$s->a." over ".$s->b
+     }
  }
- {
-   package Hah;
-   use FP::Struct ["aa"];
-   _END_
+ package FPStructExample::Hah {
+     use FP::Struct ["aa"];
+     _END_
  }
 
- {
-   package Bar;
+ package FPStructExample::Bar2 {
+   
    use Chj::TEST; # the TEST sub will be removed from the package upon
                   # _END_ (namespace cleaning)
-   use FP::Struct ["a","b"]=> "Foo", "Hum", "Hah";
+   use FP::Struct ["a","b"]=> "FPStructExample::Foo",
+                              "FPStructExample::Hum",
+                              "FPStructExample::Hah";
    sub div {
       my $s=shift;
       $$s{a} / $$s{b}
    }
-   TEST { Bar->new_(a=> 1, b=> 2)->div } 1/2;
+   TEST { FPStructExample::Bar2->new_(a=> 1, b=> 2)->div } 1/2;
    _END_ # generate accessors for methods of given name which don't
          # exist yet *in either Bar or any super class*. (Does that
          # make sense?)
  }
 
- my $bar= new Bar ("Franz", ["Barney"], "some aa", 1,2);
+ my $bar= new FPStructExample::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
  # same thing, but with sub instead of method call interface:
- my $baz= Bar::c::Bar ("Franz", ["Barney"], "some aa", 1,2);
+ my $baz= FPStructExample::Bar2::c::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
  # or:
- import Bar::constructors;
- my $baz= Bar ("Franz", ["Barney"], "some aa", 1,2);
+ import FPStructExample::Bar2::constructors;
+ my $baz= Bar2 ("Franz", ["Barney"], "some aa", 1,2);
 
  is $bar->div, 1/2;
 
- new_ Bar (a=>1,b=>2)-> div # => 1/2
- Bar::c::Bar_ (a=>1, b=>2)->div # dito
- new__ Bar ({a=>1,b=>2})-> div # => 1/2
- unsafe_new__ Bar ({a=>1,b=>2})-> div # => 1/2
+ is(Bar2_(a=>1,b=>2)->div, 1/2);
+ is(FPStructExample::Bar2::c::Bar2_(a=>1, b=>2)->div, 1/2);
+ is(new__ FPStructExample::Bar2({a=>1,b=>2})->div, 1/2);
+ is(unsafe_new__ FPStructExample::Bar2({a=>1,b=>2})->div, 1/2);
  # NOTE: unsafe_new__ returns the argument hash after checking and
  # blessing it, it doesn't copy it! Be careful. `new__` does copy it.
 
@@ -89,6 +94,7 @@ FP::Struct - classes for functional perl
  is $bar->b_update(\&inc)->div, 1/3;
 
  is $bar->hum, "Franz hums 1 over 2";
+
 
 =head1 DESCRIPTION
 
