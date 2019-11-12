@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -16,7 +16,10 @@ PXML::Tags
  use PXML::Tags qw(records
      protocol-version
      record);
- my $xml= RECORDS(PROTOCOL_VERSION("1.0"), RECORD(...));
+ my $xml= RECORDS(PROTOCOL_VERSION("1.0"),
+                  RECORD("Hi"), RECORD("there!"));
+ is ref($xml), "PXML::Element";
+ is $xml->string, '<records><protocol-version>1.0</protocol-version><record>Hi</record><record>there!</record></records>';
 
 =head1 DESCRIPTION
 
