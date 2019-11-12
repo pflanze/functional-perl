@@ -10,7 +10,8 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 ## Work on the code
 
-* automatically test example code in pod sections (how?)
+* In `t/pod_snippets`, remove entries from the ignore list and fix
+  their pod snippets.
 
 
 ## Get rid of unnecessary home-grown code
