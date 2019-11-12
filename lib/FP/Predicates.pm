@@ -17,9 +17,9 @@ FP::Predicates
 
     is is_string("Hi"), 1;
     is is_string(["Hi"]), '';
-    use FP::List;
-    is list(1, 2, 3, 0, -1, "hi")->map(*is_natural0),
-       list(41, 1, 1, '', '', '');
+    use FP::List; use FP::Equal 'is_equal';
+    is_equal list(1, 2, 3, 0, -1, "hi")->map(*is_natural0),
+             list(1, 1, 1, 1, '', '');
 
     package Foo {
         use FP::Predicates;
@@ -39,7 +39,7 @@ FP::Predicates
         _END_
     }
 
-    is Foo->new(name=> "Moo", age=> 13)->age, 13;
+    is (Foo->new("Moo", 13)->age, 13);
 
 =head1 DESCRIPTION
 
