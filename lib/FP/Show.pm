@@ -131,8 +131,9 @@ our $primitive_show=
     HASH=> sub {
 	my ($v,$show)=@_;
 	"+{".join(", ",
-		 map { keyshow($_)." => ".&$show ($$v{$_}) }
-		 keys %$v)."}";
+                  map { keyshow($_)." => ".&$show ($$v{$_}) }
+                  sort
+                  keys %$v)."}";
     },
     REF=> sub { # references to references
 	my ($v,$show)=@_;
