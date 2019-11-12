@@ -49,8 +49,32 @@ FP::List - singly linked (purely functional) lists
 
 =head1 DESCRIPTION
 
-Create and dissect sequences using pure functions or methods.
+Purely functional (immutable) singly linked lists are interesting in
+functional programs because they can be extended and walked directly
+via recursion. They do not offer efficient random access (O(len)),
+also there is a constant space overhead and access indirection
+compared to arrays. They are most appropriate for maintaining smaller
+but frequently updated chains, for example maintaining a link chain to
+parent scopes while recursing into a tree datastructure (which, if
+it's a pure data structure, doesn't have parent links built into it).
 
+FP::List does not enforce its pairs to only contain pairs or null in
+their rest (cdr) position. Which means that they may end in something
+else than a null (and operations encountering these will die with
+"improper list"). The `show` function (or the `:s`
+mode in `Chj::Repl`) displays those as `improper_list`, e.g.:
+
+ # a normal, 'proper', list:
+ is_equal cons(5, cons(6, cons(7, null))), list(5, 6, 7);
+
+ # an 'improper' list:
+ is_equal cons(5, cons(6, 7)), improper_list(5, 6, 7);
+
+Note that destruction of linked lists in Perl requires space on the C
+stack proportional to their length. You should either avoid dropping a
+long linked list at once (dropping it one cell at a time intermixed
+with doing any other operation avoids the issue), or will want to
+increase the C stack size limit, lest your program will segfault.
 
 
 =head1 NAMING
@@ -60,8 +84,6 @@ operator to prepend an item to a list. The name `cons` comes from
 lisps, where it's the basic (lisp = list processing!) "construction"
 function.
 
-çç
-
 Cons cells (pairs) in lisps can also be used to build other data
 structures than lists: they don't enforce the rest slot to be a pair
 or null. Lisps traditionally use `car` and `cdr` as accessors for the
@@ -69,8 +91,15 @@ two fields, to respect this feature, and also because 'a' and 'd'
 combine easily into composed names like `caddr`. This library offers
 `car` and `cdr` as aliases to `first` and `rest`.
 
-Some languages call the accessory `head` and `tail`, but `tail` would
+Some languages call the accessors `head` and `tail`, but `tail` would
 conflict with `Sub::Call::Tail`, hence those are not used here.
+
+
+=head1 SEE ALSO
+
+Implements: L<FP::Abstract::Sequence>.
+
+L<FP::Stream>, L<FP::Array>, L<FP::PureArray>
 
 =cut
 

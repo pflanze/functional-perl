@@ -29,22 +29,21 @@ FP::StrictList - an FP::List that enforces list semantics
 
 =head1 DESCRIPTION
 
-
-
-The pairs used to   çç  FP::List does not enforce its pairs to only contain pairs or null in
+FP::List does not enforce its pairs to only contain pairs or null in
 their rest (cdr) position. Which means that they may end in something
 else than a null (and operations encountering these will die with
 "improper list"). FP::StrictList does, which means that
 `is_strictlist` only needs to check the head pair to know whether it's
 a proper list.
 
-Also, they maintain the list length within each pair, thus `length`
-has O(1) complexity instead of O(n) like the `length` from FP::List.
+Also, FP::StrictList maintains the list length within each pair, thus
+its `length` operation has O(1) complexity instead of O(n) like the
+`length` from FP::List.
 
-Both of these features dictate that the list can't be lazy (since (in
-a dynamically typed language) it's impossible to know the type that a
-promise will give without evaluating it, or worse, know the length of
-the unevaluated tail).
+Both of these features dictate that a StrictList can't be lazy, since
+(in a dynamically typed language) it's impossible to know the type
+that a promise will give without evaluating it, or know the length of
+the unevaluated tail.
 
 Keep in mind that destruction of strict lists requires space on the C
 stack proportional to their length. You will want to increase the C
@@ -63,7 +62,9 @@ suggestion is to simply use method calls and `the_method` from
 
 =head SEE ALSO
 
-L<FP::List>, L<FP::Ops>
+Implements: L<FP::Abstract::Sequence>.
+
+L<FP::List>, L<FP::Ops>, L<FP::Array>, L<FP::PureArray>
 
 =cut
 
