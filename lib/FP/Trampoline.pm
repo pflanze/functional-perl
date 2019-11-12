@@ -25,7 +25,10 @@ FP::Trampoline -- tail call optimization without reliance on goto
         my ($n)=@_;
         trampoline iterative_fact ($n, 1)
     }
-    is fact(60), 34123;
+    is fact(5), 120;
+
+    use FP::Stream;
+    is( fact(20), stream_iota(2)->take(19)->product );
 
 
 =head1 DESCRIPTION
