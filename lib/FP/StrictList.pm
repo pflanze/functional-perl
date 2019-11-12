@@ -15,16 +15,15 @@ FP::StrictList - an FP::List that enforces list semantics
 
  use FP::StrictList;
  my $l= strictlist (4,5)->map(*inc);
- is_strictlist $l # true, O(1)
+ ok is_strictlist $l; # O(1)
 
- use FP::Equal 'equal';
- equal strictnull->cons(1), cons (1, strictnull)
-   # true
- use FP::List 'null';
- equal strictnull->cons(1), cons (1, null)
+ use FP::Equal qw(equal is_equal); use FP::List 'null';
+ is_equal strictnull->cons(1), cons (1, strictnull);
+ ok not equal strictnull->cons(1), cons (1, null);
    # false: `cons` from `FP::List` and `FP::StrictList` are the same
    # function but it takes the type of their second argument into
    # consideration.
+
 
 =head1 DESCRIPTION
 
