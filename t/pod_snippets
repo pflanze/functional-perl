@@ -106,7 +106,7 @@ sub numfailures {
         not $_->{ok}
     } @{ Test::Builder->new->{Test_Results} };
     #warn "failures: @failures";
-    @failures
+    scalar @failures
 }
 
 my $namespacenum= 0;
@@ -123,10 +123,15 @@ for (@$modules) {
         $namespacenum++;
         if (eval "package t_pod_snippets_$namespacenum; $code; \n1") {
             my $fail_after= numfailures;
-            generate $_
-              if $fail_after != $fail_before;
+            if ($fail_after == $fail_before) {
+                # done_testing("snippets in $_") but that's part of $code
+            } else {
+                fail("pod snippets in $_");
+                generate $_
+            }
         } else {
             warn "Exception: $@\n";
+            fail("pod snippets in $_");
             generate $_
         }
     }
