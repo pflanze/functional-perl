@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -15,18 +15,14 @@ FP::Weak - utilities to weaken references
 
  use FP::Weak;
 
- sub stream_foo {
-     my ($s)=@_;
-     weaken $_[0];
-     my $f; $f= sub { ... &$f ... };
+ sub foo {
+     my $f; $f= sub { my ($n,$tot)=@_; $n < 100 ? &$f($n+1, $tot+$n) : $tot };
      Weakened $f
  }
 
- my $x = do {
-     my $s= somestream;
-     stream_foo (Keep $s);
-     $s->first
- };
+ is foo->(10, 0), 4905;
+ # the subroutine returned from foo will not be leaked.
+
 
 =head1 DESCRIPTION
 
