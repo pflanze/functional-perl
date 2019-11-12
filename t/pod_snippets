@@ -96,7 +96,7 @@ sub generate {
 
     if ($ENV{DEBUG}) {
         # run it again to get more info and updated line numbers
-        system("perl", "-Mlib=./lib", "-MChj::Backtrace", $file);
+        system("perl", "-Mlib=./lib", "-MChj::Trapl", $file);
         exit 1
     }
 }
