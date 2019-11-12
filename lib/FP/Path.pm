@@ -13,17 +13,19 @@ FP::Path
 
 =head1 SYNOPSIS
 
+ use FP::Equal;
  use FP::Path;
- my $p= FP::Path->new_from_string ("a/../b/C")->add
-  (FP::Path->new_from_string("../d/../e"), 0);
- $p->string # 'a/../b/C/../d/../e'
- $p->xclean->string # 'b/e'
- $p->xclean->equal($p) # ''
- $p->xclean->equal($p->xclean) # 1
+
+ my $p= FP::Path->new_from_string ("a/../b/C")
+        ->add(FP::Path->new_from_string("../d/../e"), 0);
+ is $p->string, 'a/../b/C/../d/../e';
+ is $p->xclean->string, 'b/e';
+ ok not equal($p->xclean, $p);
+ ok $p->xclean->equal($p->xclean);
 
  # or use the (evil?) constructor function export feature:
  use FP::Path "path";
- path("a/../b/C")->xclean->string # "b/C"
+ is path("a/../b/C")->xclean->string, "b/C";
 
 =head1 DESCRIPTION
 
@@ -54,7 +56,6 @@ package FP::Path;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::List ":all";
-use FP::Equal ();
 use Chj::constructorexporter;
 use FP::Predicates qw(is_string is_boolean);
 use FP::Show;
@@ -124,12 +125,16 @@ sub FP_Equal_equal {
     my ($a,$b)=@_;
     # no need to compare is_absolute, since it is being distinguished
     # anyway? Or better be safe than sorry?
-    (equal (!!$a->is_absolute, !!$b->is_absolute)
+    ((!!$a->is_absolute eq !!$b->is_absolute)
      and
-     equal (!!$a->has_endslash, !!$b->has_endslash)
+     (!!$a->has_endslash eq !!$b->has_endslash)
      and
      equal ($a->rsegments, $b->rsegments))
 }
+
+# unlike the `equal` function, using this method will fail when given
+# an argument of the wrong type!
+*equal= *FP_Equal_equal;
 
 sub segments {
     my $s=shift;
