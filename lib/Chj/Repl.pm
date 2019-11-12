@@ -818,7 +818,10 @@ sub run {
       new POSIX::SigAction __PACKAGE__.'::__signalhandler'
 	or die "Error setting SIGALRM handler: $!\n";
 
-    require Term::ReadLine;
+    {
+        local $SIG{__DIE__};
+        require Term::ReadLine;
+    }
     # only start one readline instance, do not nest (doing otherwise
     # seems to lead to segfaults). okay?.
     local our $term = $term || new Term::ReadLine 'Repl';
