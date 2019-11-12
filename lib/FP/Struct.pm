@@ -15,7 +15,7 @@ FP::Struct - classes for functional perl
 
  use FP::Predicates qw(is_array maybe);
 
- use FP::Struct FPStructExample::Foo=>
+ use FP::Struct 'FPStructExample::Foo'=>
          ["name", # accept any value
           [maybe (\&is_array), "animals"], # accept arrays or undef
          ]
@@ -95,6 +95,7 @@ FP::Struct - classes for functional perl
 
  is $bar->hum, "Franz hums 1 over 2";
 
+=for test ignore
 
 =head1 DESCRIPTION
 

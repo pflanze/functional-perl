@@ -14,6 +14,8 @@ FP::StrictList - an FP::List that enforces list semantics
 =head1 SYNOPSIS
 
  use FP::StrictList;
+ use FP::Div 'inc'; use FP::List;
+
  my $l= strictlist (4,5)->map(*inc);
  ok is_strictlist $l; # O(1)
 

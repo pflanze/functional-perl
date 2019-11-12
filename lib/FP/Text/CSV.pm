@@ -26,7 +26,7 @@ FP::Text::CSV - functional interface to Text::CSV
  use Method::Signatures; # func
  use Chj::xopen qw(xopen_read xopen_write);
  use FP::List; use FP::Stream; use FP::Equal 'is_equal';
- mkdir .tmp;
+ mkdir ".tmp";
 
  # -- Output: ---
  my $rows=

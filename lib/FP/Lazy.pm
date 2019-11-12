@@ -41,8 +41,9 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
  # Note that lazy evaluation and mutation usually doesn't mix well -
  # lazy programs better be purely functional. Here $tot depends not
  # just on the inputs, but also on how many elements were evaluated:
+ use FP::Stream qw(stream_map); # uses `lazy` internally
+ use FP::List;
  my $tot=0;
- # `stream_map` is from `FP::Stream` and uses `lazy`
  my $l= stream_map sub {
      my ($x)=@_;
      $tot+=$x;
@@ -89,17 +90,17 @@ only ever evaluated once, after which point its result is saved in the
 promise, and subsequent requests for evaluation are simply returning
 the saved value.
 
- $p = lazy { "......" }; # returns a promise that represents the computation
-                         # given in the block of code
+ my $p = lazy { "......" }; # returns a promise that represents the computation
+                            # given in the block of code
 
  force $p;  # runs the block of code and stores the result within the
             # promise and also returns it
 
- FORCE $p,$q,$r;
+ FORCE $p; # or FORCE $p,$q,$r;
            # in addition to running force, stores back the resulting
            # value into the variable given as argument ($p, $q, and $r
-           # respectively (this example forces 3 (possibly) separate
-           # values))
+           # respectively (the commented example forces 3 (possibly)
+           # separate values))
 
  is is_promise($p), ''; # returns true iff $x holds a promise
 

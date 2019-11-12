@@ -17,17 +17,23 @@ FP::Optional - dealing with optional values
                      perhaps_to_exists
                      optionally poptionally);
 
- sub perhaps_uid_to_username {
-     my ($uid)=@_;
-     exists $uid_to_username{$uid} ? $uid_to_username{$uid} : ()
+ sub perhaps_div {
+     my ($a, $b)=@_;
+     $b == 0 ? () : $a/$b
  }
- *maybe_uid_to_username= perhaps_to_maybe *perhaps_uid_to_username;
+ if (my ($r)= perhaps_div 10, 2) {
+     is $r, 5;
+ }
+ *maybe_div= perhaps_to_maybe *perhaps_div;
+ is maybe_div(10, 2), 5;
+ is maybe_div(10, 0), undef;
 
  use FP::Div qw(square);
- sub foo {
-     my ($a, $maybe_b)=@_;
-     bar (square ($a), optionally (*square)->($maybe_b))
- }
+ # short-cutting evaluation for undef:
+ *optionally_square= optionally(*square);
+ is optionally_square(2), 4;
+ is optionally_square(undef), undef;
+
 
 =head1 DESCRIPTION
 

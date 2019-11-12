@@ -41,6 +41,8 @@ PXML::Preserialize - faster PXML templating through preserialization
 
 =head1 DESCRIPTION
 
+=for test ignore
+
 PXML represents every XML/HTML element as an individual Perl object,
 and both building up a PXML tree and serializing it is somewhat
 costly.

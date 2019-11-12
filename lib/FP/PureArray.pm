@@ -14,6 +14,7 @@ FP::PureArray
 =head1 SYNOPSIS
 
     use FP::PureArray;
+    use FP::Div 'inc';
 
     is purearray(1,4,5)->map(*inc)->sum, 13;
 

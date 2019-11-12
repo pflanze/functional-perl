@@ -14,6 +14,8 @@ FP::List - singly linked (purely functional) lists
 =head1 SYNOPSIS
 
  use FP::Div qw(inc square); use FP::Ops qw(div); use FP::Equal 'is_equal';
+ use FP::Combinators qw(flip);
+
  use FP::List ':all';
 
  my $l= cons("H",cons("e",cons("l",cons("l",cons("o",null)))));
