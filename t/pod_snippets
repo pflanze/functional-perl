@@ -120,6 +120,8 @@ for (@$modules) {
         my $tps_direct = Test::Pod::Snippets->new();
         my $fail_before= numfailures;
         my $code= $tps_direct->generate_test( module => $_ );
+        $code=~ s/(;\s*)no warnings;/${1};/;
+        $code=~ s/(;\s*)no strict;/${1}use strict;/;
         $namespacenum++;
         if (eval "package t_pod_snippets_$namespacenum; $code; \n1") {
             my $fail_after= numfailures;
