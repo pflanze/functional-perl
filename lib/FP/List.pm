@@ -77,6 +77,19 @@ with doing any other operation avoids the issue), or will want to
 increase the C stack size limit, lest your program will segfault.
 
 
+=head1 PURITY
+
+`FP::List` cells are created to be immutable by default, which
+enforces the functional purity of the API. This can be disabled by
+setting `$FP::List::immutable` to false when creating lists; slots in
+pairs can then be mutated. Only ever use this during development (),
+if at all; if you need to update sequences in the middle efficiently ,
+use another data structure (like L<FP::Vec>).
+
+In either case, `FP::List` implements `FP::Abstract::Pure` (`is_pure`
+from `FP::Predicates` returns true).
+
+
 =head1 NAMING
 
 Most functional programming languages are using either the `:` or `::`
@@ -157,6 +170,8 @@ package FP::List;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+use 5.008; # for Internals::SvREADONLY
+
 use FP::Lazy; use FP::Lazy qw(force_noeval);
 use Chj::xperlfunc qw(xprint xprintln);
 use FP::Combinators qw(flip flip2of3 rot3right rot3left);
@@ -168,6 +183,8 @@ use FP::Show;
 use Scalar::Util "weaken";
 use FP::Weak qw(Weakened);
 use FP::Interfaces;
+
+our $immutable= 1; # whether pairs are to be made immutable
 
 
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
@@ -211,7 +228,14 @@ use FP::Interfaces;
     sub cons {
         my $s=shift;
         @_==1 or die "expecting 1 method argument";
-        bless [@_,$s], $s->pair_namespace
+        my @p= ($_[0], $s);
+        bless \@p, $s->pair_namespace;
+        if ($immutable) {
+            Internals::SvREADONLY $p[0], 1;
+            Internals::SvREADONLY $p[1], 1;
+        }
+        Internals::SvREADONLY @p, 1;
+        \@p
     }
 
     sub length {
@@ -257,7 +281,14 @@ use FP::Interfaces;
     sub cons {
         my $s=shift;
         @_==1 or die "expecting 1 method argument";
-        bless [@_,$s], ref($s)
+        my @p= ($_[0], $s);
+        bless \@p, ref($s);
+        if ($immutable) {
+            Internals::SvREADONLY $p[0], 1;
+            Internals::SvREADONLY $p[1], 1;
+        }
+        Internals::SvREADONLY @p, 1;
+        \@p
     }
 
     sub car {
@@ -347,13 +378,13 @@ sub cons ($$) {
     if (my $f= UNIVERSAL::can ($_[1], "cons")) {
         @_=($_[1], $_[0]); goto &$f;
     } else {
-        bless [@_], "FP::List::Pair";
+        goto \&unsafe_cons
     }
 }
 
 sub pair ($$) {
     @_==2 or die "wrong number of arguments";
-    bless [@_], "FP::List::Pair";
+    goto \&unsafe_cons
 }
 
 
@@ -363,8 +394,15 @@ sub pair ($$) {
 # was confirmed to be a pair with `is_pair`. unsafe_cons is safe if
 # the rest argument should never dictate the type of the result.
 
-sub unsafe_cons ($ $) {
-    bless [@_], "FP::List::Pair";
+sub unsafe_cons ($$) {
+    my @p= @_;
+    bless \@p, "FP::List::Pair";
+    if ($immutable) {
+        Internals::SvREADONLY $p[0], 1;
+        Internals::SvREADONLY $p[1], 1;
+    }
+    Internals::SvREADONLY @p, 1;
+    \@p
 }
 
 sub unsafe_car ($) {
@@ -410,7 +448,6 @@ sub is_pair_of ($$) {
 
 # nil value
 
-use 5.008;
 my $null= do {
     my @null;
     bless \@null, "FP::List::Null";
@@ -756,7 +793,13 @@ sub improper_list {
 sub circularlist {
     my $l= list (@_);
     my $last= $l->drop($#_);
-    $$last[1]=$l;
+    if ($immutable) {
+        Internals::SvREADONLY $$last[1], 0;
+        $$last[1]=$l;
+        Internals::SvREADONLY $$last[1], 1;
+    } else {
+        $$last[1]=$l;
+    }
     $l
 }
 
@@ -766,8 +809,15 @@ sub circularlist {
 sub weaklycircularlist {
     my $l= list (@_);
     my $last= $l->drop($#_);
-    $$last[1]=$l;
-    weaken ($$last[1]);
+    if ($immutable) {
+        Internals::SvREADONLY $$last[1], 0;
+        $$last[1]=$l;
+        weaken ($$last[1]);
+        Internals::SvREADONLY $$last[1], 1;
+    } else {
+        $$last[1]=$l;
+        weaken ($$last[1]);
+    }
     $l
 }
 
