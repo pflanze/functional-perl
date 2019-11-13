@@ -408,8 +408,16 @@ sub is_pair_of ($$) {
     }
 }
 
-# nil
-my $null= bless [], "FP::List::Null";
+# nil value
+
+use 5.008;
+my $null= do {
+    my @null;
+    bless \@null, "FP::List::Null";
+    Internals::SvREADONLY @null, 1;
+    \@null
+};
+Internals::SvREADONLY $null, 1;
 
 sub null () {
     $null
