@@ -1047,16 +1047,16 @@ sub list_slice ($ $) {
     my $rec; $rec= sub {
 	my ($s)=@_;
 	my $rec=$rec;
-	    $s= force $s;
-	    if (is_null $s) {
-		$s # null
-	    } else {
-		if ($s eq $end) {
-		    null
-		} else {
-		    cons car($s), &$rec(cdr $s)
-		}
-	    }
+        $s= force $s;
+        if (is_null $s) {
+            $s # null
+        } else {
+            if ($s eq $end) {
+                null
+            } else {
+                cons car($s), &$rec(cdr $s)
+            }
+        }
     };
     @_=($start); goto &{Weakened $rec};
 }
