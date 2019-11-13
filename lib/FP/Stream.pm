@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-FP::Stream - functions for lazily generated, singly linked (purely functional) lists
+FP::Stream - lazily generated, singly linked (purely functional) lists
 
 =head1 SYNOPSIS
 
@@ -19,19 +19,25 @@ FP::Stream - functions for lazily generated, singly linked (purely functional) l
     is stream_length(stream_iota 101, 5), 5;
     #is stream_length(stream_iota undef, 5000000), 5000000;
 
-    use FP::Lazy;
-    is force( stream_fold_right sub { my ($n,$rest)=@_; $n + force $rest }, 0, stream_iota undef, 5),
+    use FP::Lazy; # force
+    is force( stream_fold_right sub { my ($n,$rest)=@_;
+                                      $n + force $rest },
+                                0,
+                                stream_iota undef, 5),
        10;
 
-    # Alternatively, use methods:
+    # Alternatively (and probably preferably), use methods:
 
     is stream_iota(101, 5)->length, 5;
     # note that length needs to walk the whole stream
 
-    is stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum, 30;
-    # (0+1+4+9+16)
+    is stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum,
+       0+1+4+9+16;
 
-    stream_iota(undef, 5)->fold(sub { my ($n,$rest)=@_; $n + $rest }, 0)
+    is stream_iota(undef, 5)->fold(sub { my ($n,$rest)=@_;
+                                         $n + $rest },
+                                   0),
+       10;
 
     # NOTE that the method calls are forcing evaluation of the object
     # (the first cell of the input stream), since that's the only way to

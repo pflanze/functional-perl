@@ -18,7 +18,7 @@ FP::List - singly linked (purely functional) lists
 
  use FP::List ':all';
 
- my $l= cons("H",cons("e",cons("l",cons("l",cons("o",null)))));
+ my $l= cons("H", cons("e", cons("l", cons("l", cons("o", null)))));
  is_equal $l, list("H", "e", "l", "l", "o");
  is_equal list_to_string($l), "Hello";
 
