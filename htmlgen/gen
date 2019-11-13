@@ -55,10 +55,10 @@ use Getopt::Long;
 our $verbose=0;
 our ($opt_repl,$opt_trap);
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   "repl"=> \$opt_repl,
-	   "trap"=> \$opt_trap,
-	   ) or exit 1;
+           "help"=> sub{usage},
+           "repl"=> \$opt_repl,
+           "trap"=> \$opt_trap,
+           ) or exit 1;
 usage unless @ARGV==3 or ($opt_repl and @ARGV>=1);
 
 our ($configpath, $inbase, $outbase)= @ARGV;
@@ -92,7 +92,7 @@ use Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
 use Htmlgen::MarkdownPlus qw(markdownplus_parse);
 use FP::Lazy;
 use Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
-			  mediawiki_rexpand);
+                          mediawiki_rexpand);
 use PXML::Preserialize qw(pxmlpre);
 
 
@@ -127,25 +127,25 @@ our $pxml_mappers=
 fun pxml_name_to_mapper (@PXMLMapper_args) {
   +{
     map {
-	my $m= $_->new_(@PXMLMapper_args);
-	map {
-	    ($_, sub { $m->map_element(@_)})
-	} @{$m->match_element_names}
+        my $m= $_->new_(@PXMLMapper_args);
+        map {
+            ($_, sub { $m->map_element(@_)})
+        } @{$m->match_element_names}
     } @$pxml_mappers
    }
 }
 
 fun process_body ($v,
-		  $pxml_name_to_mapper=
-		  # fake instance for tests only:
-		  pxml_name_to_mapper
-		  (path0=> "NOPATH",
-		   maybe_have_path0=> sub{die"NOIMPL"},
-		   perhaps_filename_to_path0=> sub{die"NOIMPL"},
-		   pathtranslate=> $pathtranslate),
-		  $mediawikitoken="NOTOKEN",
-		  $mediawikitable={},
-		 ) {
+                  $pxml_name_to_mapper=
+                  # fake instance for tests only:
+                  pxml_name_to_mapper
+                  (path0=> "NOPATH",
+                   maybe_have_path0=> sub{die"NOIMPL"},
+                   perhaps_filename_to_path0=> sub{die"NOIMPL"},
+                   pathtranslate=> $pathtranslate),
+                  $mediawikitoken="NOTOKEN",
+                  $mediawikitable={},
+                 ) {
 
     # HACK: can't mediawiki_expand the whole document in string format
     # before the markdown parsing, since it would expand examples in
@@ -155,61 +155,61 @@ fun process_body ($v,
     # update here when prepending another mapping phase or so, right?) 
     # the same way the rest of the document is treated.
     my $map_text_mediawiki= fun ($v,$uplist) {
-	if (is_pair $uplist # tests may not have it!
-	    and $uplist->first->name eq "code") {
-	    # don't expand it in code segments
-	    mediawiki_replace($v, $mediawikitoken, $mediawikitable)
-	} else {
-	    my $body= mediawiki_rexpand
-	      ($v, $mediawikitoken, $mediawikitable);
-	    array_map (
-		       fun ($e) {
-			   pxml_map_elements_exhaustively
-			     ($e, $pxml_name_to_mapper, undef);
-		       },
-		       $body)
-	}
+        if (is_pair $uplist # tests may not have it!
+            and $uplist->first->name eq "code") {
+            # don't expand it in code segments
+            mediawiki_replace($v, $mediawikitoken, $mediawikitable)
+        } else {
+            my $body= mediawiki_rexpand
+              ($v, $mediawikitoken, $mediawikitable);
+            array_map (
+                       fun ($e) {
+                           pxml_map_elements_exhaustively
+                             ($e, $pxml_name_to_mapper, undef);
+                       },
+                       $body)
+        }
     };
 
     pxml_map_elements_exhaustively ($v,
-				    $pxml_name_to_mapper,
-				    $map_text_mediawiki)
+                                    $pxml_name_to_mapper,
+                                    $map_text_mediawiki)
 }
 
 TEST { HTML( process_body
-	     (["Hello",
-	       WITH_TOC({level=>1},
-			H1 "world")]))
-	 ->string }
+             (["Hello",
+               WITH_TOC({level=>1},
+                        H1 "world")]))
+         ->string }
   '<html>Hello<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#world">1. world</a></dir></li></dir></div><a name="world"><h1>1. world</h1></a></html>';
 
 TEST { HTML( process_body
-	     (["Hello", WITH_TOC ["some", H2 "world"]]))
-	 ->string }
+             (["Hello", WITH_TOC ["some", H2 "world"]]))
+         ->string }
   '<html>Hello<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#world">1. world</a></dir></li></dir></div>some<a name="world"><h2>1. world</h2></a></html>';
 
 TEST { HTML( process_body  ([P("Hello"),
-			     WITH_TOC
-			     {level=>1},
-			     [" ",
-			      P ("blabla"),
-			      A({name=>"a"}," ",DIV H1 ("for one")),
-			     ]]))->string }
+                             WITH_TOC
+                             {level=>1},
+                             [" ",
+                              P ("blabla"),
+                              A({name=>"a"}," ",DIV H1 ("for one")),
+                             ]]))->string }
   '<html><p>Hello</p><div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#for_one">1. for one</a></dir></li></dir></div> <p>blabla</p><a name="a"> <div><a name="for_one"><h1>1. for one</h1></a></div></a></html>';
 
 TEST { HTML( process_body  ([P("Hello"),
-			     WITH_TOC
-			     {level=>1},
-			     [" ",
-			      P ("blabla"),
-			      H1 ("for one"),
-			      H2 ("more one"),
-			      TABLE(TR
-				    TD
-				    P ("blah"),
-				    H1 ("sub two"),
-				    DIV ("bla")),
-			     ]]))->string }
+                             WITH_TOC
+                             {level=>1},
+                             [" ",
+                              P ("blabla"),
+                              H1 ("for one"),
+                              H2 ("more one"),
+                              TABLE(TR
+                                    TD
+                                    P ("blah"),
+                                    H1 ("sub two"),
+                                    DIV ("bla")),
+                             ]]))->string }
   '<html><p>Hello</p>'.
   '<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#for_one">1. for one</a><li><dir class="toc"><a href="#more_one">1.1. more one</a></dir></li></dir></li><li><dir class="toc"><a href="#sub_two">2. sub two</a></dir></li></dir></div>'.
   ' <p>blabla</p><a name="for_one"><h1>1. for one</h1></a><a name="more_one"><h2>1.1. more one</h2></a><table><tr><td><p>blah</p><a name="sub_two"><h1>2. sub two</h1></a><div>bla</div></td></tr></table></html>';
@@ -220,38 +220,38 @@ TEST { HTML( process_body  ([P("Hello"),
     package PFLANZE::Filesinfo;
     use FP::Hash "hash_perhaps_ref";
     use FP::Struct [qw(files
-			filename_to_path0
-			all_path0_exists
-			path0_exists
-			all_path0_used
-		      )];
+                        filename_to_path0
+                        all_path0_exists
+                        path0_exists
+                        all_path0_used
+                      )];
     method filename_to_path0 ($filename) {
-	$$self{filename_to_path0}{$filename}
-	  // die "no mapping for filename '$filename'"
+        $$self{filename_to_path0}{$filename}
+          // die "no mapping for filename '$filename'"
     }
     method filename_to_maybe_path0 ($filename) {
-	$$self{filename_to_path0}{$filename}
+        $$self{filename_to_path0}{$filename}
     }
     # still very unclear about the exact name styling. Prefer perhaps,
     # and "then" also move the qualificator to the front? (but leave
     # the one for hash_ where it is since hash_ is the type prefix?) :
     method perhaps_filename_to_path0 ($filename) {
-	hash_perhaps_ref ($$self{filename_to_path0}, $filename)
+        hash_perhaps_ref ($$self{filename_to_path0}, $filename)
     }
     method all_path0_exists ($path0) {
-	defined $$self{all_path0_exists}{$path0}
-	  or
-	defined $$self{all_path0_exists}{$path0."/"}
+        defined $$self{all_path0_exists}{$path0}
+          or
+        defined $$self{all_path0_exists}{$path0."/"}
     }
     method path0_is_directory ($path0) {
-	$path0=~ s|/+$||s;
-	defined $$self{all_path0_exists}{$path0."/"}
+        $path0=~ s|/+$||s;
+        defined $$self{all_path0_exists}{$path0."/"}
     }
     method path0_exists ($path0) {
-	defined $$self{path0_exists}{$path0}
+        defined $$self{path0_exists}{$path0}
     }
     method all_path0_used_inc ($path0) {
-	$$self{all_path0_used}{$path0}++
+        $$self{all_path0_used}{$path0}++
     }
     _END_
 }
@@ -260,39 +260,39 @@ fun get_filesinfo () {
     my $all_files= $gitrepository->ls_files->array;
 
     my $files= array_filter (cut_method($pathtranslate,"is_md"),
-			     $all_files);
+                             $all_files);
 
     my $filename_to_path0=
       +{map {
-	  basename ($_)=> path0($_)
+          basename ($_)=> path0($_)
       } @$files};
 
     my $all_path0_exists=
       +{
-	map {
-	    path0($_)=>1
-	}
-	@$all_files,
-	# and their directories, ok? Any directory that has files
-	# from git will be ok as link target, ok?
-	map {
-	    dirname($_)."/"
-	}
-	@$all_files
+        map {
+            path0($_)=>1
+        }
+        @$all_files,
+        # and their directories, ok? Any directory that has files
+        # from git will be ok as link target, ok?
+        map {
+            dirname($_)."/"
+        }
+        @$all_files
        };
 
     my $path0_exists=
       +{map {
-	  path0($_)=>1
+          path0($_)=>1
       } @$files};
 
     my $all_path0_used= {};
 
     PFLANZE::Filesinfo->new($files,
-			$filename_to_path0,
-			$all_path0_exists,
-			$path0_exists,
-			$all_path0_used)
+                        $filename_to_path0,
+                        $all_path0_exists,
+                        $path0_exists,
+                        $all_path0_used)
 }
 
 
@@ -305,23 +305,23 @@ fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
     UL({class=> "menu"},
        $items_in_level->map_with_islast
        (
-	fun ($is_last, $item) {
-	    my $filetitle= $pathtranslate->path0_to_title($item->path0);
-	    my $is_viewed= equal($item, $viewed_at_item);
-	    my $is_open= equal($item, $item_selected);
+        fun ($is_last, $item) {
+            my $filetitle= $pathtranslate->path0_to_title($item->path0);
+            my $is_viewed= equal($item, $viewed_at_item);
+            my $is_open= equal($item, $item_selected);
 
-	    LI({class=> ($is_last ? "menu_last" : "menu")},
-	       ($is_viewed ?
-		SPAN({class=> "menu_selected"},
-		     $filetitle)
-		: A ({class=> ($is_open ? "menu_open" : "menu"),
-		      href=>
-		      File::Spec->abs2rel
-		      ($pathtranslate->xsuffix_md_to_html($item->path0,0),
-		       dirname($viewed_at_item->path0))},
-		     $filetitle)),
-	       " ")
-	}))
+            LI({class=> ($is_last ? "menu_last" : "menu")},
+               ($is_viewed ?
+                SPAN({class=> "menu_selected"},
+                     $filetitle)
+                : A ({class=> ($is_open ? "menu_open" : "menu"),
+                      href=>
+                      File::Spec->abs2rel
+                      ($pathtranslate->xsuffix_md_to_html($item->path0,0),
+                       dirname($viewed_at_item->path0))},
+                     $filetitle)),
+               " ")
+        }))
 }
 
 # For access from main:: by the code in the configuration file:
@@ -339,11 +339,11 @@ sub nav {
 fun groupkey ($path) {
     my $p0= path0 $path;
     if ($p0=~ m|^bugs/|) {
-	"bugs"
+        "bugs"
     } elsif ($p0 =~ m|^docs/bugs.*\.md$|) {
-	"buglist"
+        "buglist"
     } else {
-	"normal"
+        "normal"
     }
 }
 
@@ -351,15 +351,15 @@ fun groupkey ($path) {
 {
     package PFLANZE::Genfilestate;
     use FP::Struct [qw(filesinfo
-			groupedfiles
-			nonbugfiles
-			costranges)];
+                        groupedfiles
+                        nonbugfiles
+                        costranges)];
     # ugly to keep that costranges state here ? well call it Genfilestate then?
     method set_costrange ($path0,$maybe_costrange) {
-	$$self{costranges}{$path0}= $maybe_costrange;
+        $$self{costranges}{$path0}= $maybe_costrange;
     }
     method costrange ($path0) {
-	$$self{costranges}{$path0}
+        $$self{costranges}{$path0}
     }
     _END_
 }
@@ -368,26 +368,26 @@ fun get_genfilestate ($filesinfo) {
     my $groupedfiles= array_to_hash_group_by $filesinfo->files, \&groupkey;
 
     my $nonbugfiles= purearray( @{$$groupedfiles{normal}},
-				@{$$groupedfiles{buglist}||[]} );
+                                @{$$groupedfiles{buglist}||[]} );
 
     my $costranges={};
     # path0 -> costrange-string; filled when processing non-buglist groups
 
     PFLANZE::Genfilestate->new
-	($filesinfo, # just so as to bundle it up, too, ugly?
-	 $groupedfiles,
-	 $nonbugfiles,
-	 $costranges)
+        ($filesinfo, # just so as to bundle it up, too, ugly?
+         $groupedfiles,
+         $nonbugfiles,
+         $costranges)
 }
 
 our $HEAD= pxmlpre 3, fun ($title, $csspath, $user_additions) {
     HEAD (
-	  TITLE ($title),
-	  LINK ({rel=> "stylesheet",
-		 href=> $csspath,
-		 type=> "text/css"}),
-	  $user_additions,
-	 )
+          TITLE ($title),
+          LINK ({rel=> "stylesheet",
+                 href=> $csspath,
+                 type=> "text/css"}),
+          $user_additions,
+         )
 };
 
 fun genfile ($path,$groupname,$genfilestate) {
@@ -400,113 +400,113 @@ fun genfile ($path,$groupname,$genfilestate) {
     my $str= xgetfile_utf8 "$inbase/$path";
 
     if ($$config{warn_hint}) {
-	$str=~ s/^\(?Check the.*?website.*?---\s+//s
-	  or $path=~/COPYING|bugs|licenses\//
-	    or warn "'$path' is missing hint";
+        $str=~ s/^\(?Check the.*?website.*?---\s+//s
+          or $path=~/COPYING|bugs|licenses\//
+            or warn "'$path' is missing hint";
     }
 
     if (my $hdl= $config->{path0_handlers}->{$path0}) {
-	$str= $hdl->($path,$path0,$str);
+        $str= $hdl->($path,$path0,$str);
     }
 
     my $maybe_costrange= do {
-	# extract Cost indicators:
-	my $namere= qr/\w+/;
-	my $nameplusre= qr/\(?$namere\)?/;
-	my $possibly_nameplus_to_name= fun ($maybe_nameplus) {
-	    if (defined $maybe_nameplus) {
-		my ($name)= $maybe_nameplus=~ qr/($namere)/
-		  or die "bug";
-		$name
-	    } else {
-		undef
-	    }
-	};
-	local our $costs=[];
-	while ($str=~ m{\b[Cc]ost
-			# name: parentheses for "library cost"
-			(?:\s+($nameplusre))?
-			:
-			\s*
-			# base costs
-			((?:$nameplusre\s*\+\s*)*)
-			\s*
-			# amount
-			\$\s*(\d+)
-		   }gx) {
-	    my ($nameplus,$basecosts,$val)=($1,$2,$3);
-	    my $name= &$possibly_nameplus_to_name($nameplus);
-	    my @basecosts= map { &$possibly_nameplus_to_name($_) }
-	      split /\s*\+\s*/, $basecosts;
-	    push @$costs, new PFLANZE::Cost ($name,
-					 (not $nameplus
-					  or not($nameplus=~ /^\(/)),
-					 \@basecosts,
-					 $val);
-	}
-	@$costs ? PFLANZE::Totalcost->new($costs)->range : undef
+        # extract Cost indicators:
+        my $namere= qr/\w+/;
+        my $nameplusre= qr/\(?$namere\)?/;
+        my $possibly_nameplus_to_name= fun ($maybe_nameplus) {
+            if (defined $maybe_nameplus) {
+                my ($name)= $maybe_nameplus=~ qr/($namere)/
+                  or die "bug";
+                $name
+            } else {
+                undef
+            }
+        };
+        local our $costs=[];
+        while ($str=~ m{\b[Cc]ost
+                        # name: parentheses for "library cost"
+                        (?:\s+($nameplusre))?
+                        :
+                        \s*
+                        # base costs
+                        ((?:$nameplusre\s*\+\s*)*)
+                        \s*
+                        # amount
+                        \$\s*(\d+)
+                   }gx) {
+            my ($nameplus,$basecosts,$val)=($1,$2,$3);
+            my $name= &$possibly_nameplus_to_name($nameplus);
+            my @basecosts= map { &$possibly_nameplus_to_name($_) }
+              split /\s*\+\s*/, $basecosts;
+            push @$costs, new PFLANZE::Cost ($name,
+                                         (not $nameplus
+                                          or not($nameplus=~ /^\(/)),
+                                         \@basecosts,
+                                         $val);
+        }
+        @$costs ? PFLANZE::Totalcost->new($costs)->range : undef
     };
     if (defined $maybe_costrange) {
-	$genfilestate->set_costrange($path0, $maybe_costrange);
+        $genfilestate->set_costrange($path0, $maybe_costrange);
     }
 
     my $mediawikitoken= rand; # not fork safe!
     my ($h1,$body,$mediawikitable)=
       markdownplus_parse ($str, lazy{ $pathtranslate->path0_to_title
-					($path0) },
-			  $mediawikitoken);
+                                        ($path0) },
+                          $mediawikitoken);
 
     my $maybe_buglist= $groupname eq "buglist" && do {
-	my $bugs=
-	  array_sort
-	    (array_map
-	     (
-	      fun ($path) {
-		  my $path0= path0 $path;
-		  my $title= $pathtranslate->path0_to_title($path0);
-		  [$title,$path0,$genfilestate->costrange($path0)]
-	      },
-	      $genfilestate->groupedfiles->{bugs}),
-	     on sub{$_[0][0]}, \&string_cmp # XX not a good cmp.
-	    );
+        my $bugs=
+          array_sort
+            (array_map
+             (
+              fun ($path) {
+                  my $path0= path0 $path;
+                  my $title= $pathtranslate->path0_to_title($path0);
+                  [$title,$path0,$genfilestate->costrange($path0)]
+              },
+              $genfilestate->groupedfiles->{bugs}),
+             on sub{$_[0][0]}, \&string_cmp # XX not a good cmp.
+            );
 
-	TABLE
-	  ({class=> "costlist"},
-	   THEAD (TH ("Type"), TH ("Title"),TH ("Cost range (USD)")),
-	   map {
-	       my ($title,$p0,$costrange)= @$_;
-	       my $relurl= File::Spec->abs2rel
-		 ($pathtranslate->xsuffix_md_to_html($p0,0),
-		  basename ($path0));
-	       TR (TD ($pathtranslate->path0_to_bugtype($p0)),
-		   TD (A({href=>$relurl},$title)),
-		   TD ({align=>"center"},$costrange))
-	   } @$bugs
-	  )
+        TABLE
+          ({class=> "costlist"},
+           THEAD (TH ("Type"), TH ("Title"),TH ("Cost range (USD)")),
+           map {
+               my ($title,$p0,$costrange)= @$_;
+               my $relurl= File::Spec->abs2rel
+                 ($pathtranslate->xsuffix_md_to_html($p0,0),
+                  basename ($path0));
+               TR (TD ($pathtranslate->path0_to_bugtype($p0)),
+                   TD (A({href=>$relurl},$title)),
+                   TD ({align=>"center"},$costrange))
+           } @$bugs
+          )
     };
 
     my $filesinfo= $genfilestate->filesinfo;
     my $pxml_name_to_mapper=
       pxml_name_to_mapper (path0=> $path0,
-			   maybe_have_path0=>
-			   fun ($path0) {
-			       if ($filesinfo->all_path0_exists ($path0)) {
-				   $filesinfo->all_path0_used_inc($path0);
-				   $path0
-			       } else {
-				   undef
-			       }
-			   },
-			   perhaps_filename_to_path0=>
-			   fun ($filename) {
-			       $filesinfo->perhaps_filename_to_path0
-				 ($filename)
-			   },
-			   map_code_body=>
-			   hash_maybe_ref ($config, "map_code_body"),
-			   pathtranslate=>
-			   $pathtranslate,
-			  );
+                           maybe_have_path0=>
+                           fun ($path0) {
+                               if ($filesinfo->all_path0_exists ($path0)) {
+                                   $filesinfo->all_path0_used_inc($path0);
+                                   $path0
+                               } else {
+                                   undef
+                               }
+                           },
+                           perhaps_filename_to_path0=>
+                           fun ($filename) {
+                               $filesinfo->perhaps_filename_to_path0
+                                 ($filename)
+                           },
+                           map_code_body=>
+                           hash_maybe_ref ($config, "map_code_body"),
+                           pathtranslate=>
+                           $pathtranslate,
+                          );
 
     my $nav= $$config{nav};
     my $nav_index= $nav->index;
@@ -517,44 +517,44 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     my $html=
       HTML (
-	    &$HEAD([$config->{title}->($filetitle)],
-		   scalar path_diff ($path0, $css_path),
-		   scalar $config->{head}->($path0)),
-	    BODY(
-		 $config->{header}->($path0),
+            &$HEAD([$config->{title}->($filetitle)],
+                   scalar path_diff ($path0, $css_path),
+                   scalar $config->{head}->($path0)),
+            BODY(
+                 $config->{header}->($path0),
 
-		 (1 ?
-		  # make the top nav level contain all unknown pages
-		  # (and don't include pages declared in the nav that
-		  # don't exist)
-		  (
-		   $nav->nav_bar_level0
-		   ($genfilestate->nonbugfiles->map
-		    (fun($p0) {$nav_index->path0_to_item($p0)}),
-		    $nav_upitems->last,
-		    $nav_upitems->first),
+                 (1 ?
+                  # make the top nav level contain all unknown pages
+                  # (and don't include pages declared in the nav that
+                  # don't exist)
+                  (
+                   $nav->nav_bar_level0
+                   ($genfilestate->nonbugfiles->map
+                    (fun($p0) {$nav_index->path0_to_item($p0)}),
+                    $nav_upitems->last,
+                    $nav_upitems->first),
 
-		   $nav->nav_bar_levels
-		   ($nav_self, $nav_upitems)
-		   ->rest
-		  )
-		  :
-		  # strictly follow the navigation declaration
-		  $nav->nav_bar_levels ($nav_self, $nav_upitems)
-		 ),
+                   $nav->nav_bar_levels
+                   ($nav_self, $nav_upitems)
+                   ->rest
+                  )
+                  :
+                  # strictly follow the navigation declaration
+                  $nav->nav_bar_levels ($nav_self, $nav_upitems)
+                 ),
 
-		 $config->{belownav}->($path0),
-		 $h1,
-		 process_body ($body, $pxml_name_to_mapper,
-			       $mediawikitoken, $mediawikitable),
-		 $maybe_buglist,
-		 BR,
-		 HR,
-		 ($maybe_costrange ? P("\x{21d2} Cost range: \$",
-				       $maybe_costrange) : ()),
-		 DIV({class=>"footer_date"},
-		     $gitrepository->author_date ($path)),
-		 $config->{footer}->($path0)));
+                 $config->{belownav}->($path0),
+                 $h1,
+                 process_body ($body, $pxml_name_to_mapper,
+                               $mediawikitoken, $mediawikitable),
+                 $maybe_buglist,
+                 BR,
+                 HR,
+                 ($maybe_costrange ? P("\x{21d2} Cost range: \$",
+                                       $maybe_costrange) : ()),
+                 DIV({class=>"footer_date"},
+                     $gitrepository->author_date ($path)),
+                 $config->{footer}->($path0)));
 
     puthtmlfile($outpath, $html);
 }
@@ -563,34 +563,34 @@ fun genfile ($path,$groupname,$genfilestate) {
 fun genfiles ($filesinfo) {
     my $genfilestate= get_genfilestate ($filesinfo);
     for my $groupname (qw(bugs normal buglist)) {
-	for (@{$genfilestate->groupedfiles->{$groupname}}) {
-	    genfile $_,$groupname,$genfilestate
-	}
+        for (@{$genfilestate->groupedfiles->{$groupname}}) {
+            genfile $_,$groupname,$genfilestate
+        }
     }
 }
 
 # copy referenced non-.md files:
 fun copyfiles ($filesinfo) {
     for my $path0 (hashset_keys
-		   hashset_union($filesinfo->all_path0_used,
-				 array_to_hashset
-				 (hash_ref_or ($config, "copy_paths", [])))) {
-	next if $filesinfo->path0_exists($path0); # md path
-	next if $filesinfo->path0_is_directory($path0);
-	create_parent_dirs ($path0, \&path0_to_outpath);
-	xcopyfile (path0_to_inpath($path0), path0_to_outpath($path0));
+                   hashset_union($filesinfo->all_path0_used,
+                                 array_to_hashset
+                                 (hash_ref_or ($config, "copy_paths", [])))) {
+        next if $filesinfo->path0_exists($path0); # md path
+        next if $filesinfo->path0_is_directory($path0);
+        create_parent_dirs ($path0, \&path0_to_outpath);
+        xcopyfile (path0_to_inpath($path0), path0_to_outpath($path0));
     }
     if (my ($separate)= hash_perhaps_ref($config, "copy_paths_separate")) {
-	for my $root (keys %$separate) {
-	    for my $path0 (@{$$separate{$root}}) {
-		xcopyfile "$root/$path0", path0_to_outpath $path0
-	    }
-	}
+        for my $root (keys %$separate) {
+            for my $path0 (@{$$separate{$root}}) {
+                xcopyfile "$root/$path0", path0_to_outpath $path0
+            }
+        }
     }
     # copy htmlgen CSS file
     xcopyfile (existingpath_or (path0_to_inpath($css_path),
-				path0_to_inpath("htmlgen/$css_path")),
-	       path0_to_outpath($css_path));
+                                path0_to_inpath("htmlgen/$css_path")),
+               path0_to_outpath($css_path));
 }
 
 fun main () {
@@ -604,13 +604,13 @@ fun main () {
 perhaps_run_tests __PACKAGE__
   or do {
       if ($opt_trap) {
-	  require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
+          require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
       }
 
       $opt_repl ? do {
-	  require Chj::repl;
-	  require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
-	  Chj::repl::repl();
+          require Chj::repl;
+          require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
+          Chj::repl::repl();
       } : main;
 };
 

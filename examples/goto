@@ -22,7 +22,7 @@ sub sumofsquares {
     my ($from, $to)=@_;
     my $tot=0;
     for (my $i= $from; $i<=$to; $i++) {
-	$tot+= $i * $i;
+        $tot+= $i * $i;
     }
     $tot
 }

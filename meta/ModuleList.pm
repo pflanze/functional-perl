@@ -34,19 +34,19 @@ our $moduleandpathlist; # [[ name, path ] ...]
 
 sub moduleandpathlist {
     $moduleandpathlist //= do {
-	my $f = xopen_read "MANIFEST";
-	my @m;
-	local $_;
-	while (<$f>) {
-	    chomp;
-	    my $path= $_;
-	    next unless s/\.pm$//;
-	    s|^(lib\|meta\|htmlgen)/|| or die "no match: $_";
-	    s|/|::|sg;
-	    push @m, [$_, $path]
-	}
-	$f->xclose;
-	\@m
+        my $f = xopen_read "MANIFEST";
+        my @m;
+        local $_;
+        while (<$f>) {
+            chomp;
+            my $path= $_;
+            next unless s/\.pm$//;
+            s|^(lib\|meta\|htmlgen)/|| or die "no match: $_";
+            s|/|::|sg;
+            push @m, [$_, $path]
+        }
+        $f->xclose;
+        \@m
     }
 }
 

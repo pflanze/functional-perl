@@ -9,14 +9,14 @@
 # /usr/bin/env: (thanks to spm and Zefram)
 BEGIN {
     if (!${^TAINT}) {
-	exec $^X, '-T', '--', $0, @ARGV
-	  or die "exec '$^X': $!";
+        exec $^X, '-T', '--', $0, @ARGV
+          or die "exec '$^X': $!";
     } else {
-	# trust PERL5LIB:
-	if (my $lib= $ENV{PERL5LIB}) {
-	    my @paths= $lib=~ m{([^:]+)(?::|\z)}sg;
-	    unshift @INC, @paths;
-	}
+        # trust PERL5LIB:
+        if (my $lib= $ENV{PERL5LIB}) {
+            my @paths= $lib=~ m{([^:]+)(?::|\z)}sg;
+            unshift @INC, @paths;
+        }
     }
 }
 
@@ -69,8 +69,8 @@ sub usage {
 use Getopt::Long;
 our $verbose=0;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   ) or exit 1;
+           "help"=> sub{usage},
+           ) or exit 1;
 usage unless @ARGV==1;
 
 our ($configpath)= @ARGV;
@@ -90,8 +90,8 @@ fun sleep_until ($unixtime) {
     my $t= time;
     my $seconds= $unixtime - $t;
     if ($seconds > 0.01) {
-	sleep $seconds;
-	tail sleep_until ($unixtime);
+        sleep $seconds;
+        tail sleep_until ($unixtime);
     }
 }
 
@@ -100,10 +100,10 @@ use Chj::xperlfunc;
 sub forked (&) {
     my ($thunk)=@_;
     if (my $pid= xfork) {
-	$pid
+        $pid
     } else {
-	&$thunk();
-	exit 0;
+        &$thunk();
+        exit 0;
     }
 }
 
@@ -132,21 +132,21 @@ fun report_mailto ($from, $to) {
     my $_from= safe_for_mail ($from);
     my $_to= safe_for_mail ($to);
     fun ($path) {
-	my $sendmail= Chj::IO::Command->new_receiver ("sendmail","-t");
-	my $in= xopen_read ($path);
-	$sendmail->xprintln("From: $_from");
-	$sendmail->xprintln("To: $_to");
-	$sendmail->xprintln("Subject: "
-			    .safe_for_mail($myname)." "
-			    .safe_for_mail($configpath));
-	$sendmail->xprintln;
-	$sendmail->xprintln("$0 on ".hostname()." found the following log messages:");
-	$sendmail->xprintln;
-	$sendmail->xflush;
-	$in->xsendfile_to ($sendmail);
-	$in->xclose;
-	$sendmail->xxfinish;
-	unlink $path;
+        my $sendmail= Chj::IO::Command->new_receiver ("sendmail","-t");
+        my $in= xopen_read ($path);
+        $sendmail->xprintln("From: $_from");
+        $sendmail->xprintln("To: $_to");
+        $sendmail->xprintln("Subject: "
+                            .safe_for_mail($myname)." "
+                            .safe_for_mail($configpath));
+        $sendmail->xprintln;
+        $sendmail->xprintln("$0 on ".hostname()." found the following log messages:");
+        $sendmail->xprintln;
+        $sendmail->xflush;
+        $in->xsendfile_to ($sendmail);
+        $in->xclose;
+        $sendmail->xxfinish;
+        unlink $path;
     }
 }
 
@@ -181,31 +181,31 @@ fun processlines_ ($lines, $out, $maybe_reporterpid) {
     warn "line='$line', maybe_reporterpid=".singlequote($maybe_reporterpid)
       if $verbose;
     if ($line=~ /^$REPORTMSG/) {
-	warn "REPORT!"
-	  if $verbose;
-	# XX is it really guaranteed that lines are never broken
-	# apart?
-	$out->xclose;
-	$$config{report}->($out->path);
-	xxwaitpid $maybe_reporterpid;
-	tail processlines_ ($rest, xtmpfile_noautoclean, undef)
+        warn "REPORT!"
+          if $verbose;
+        # XX is it really guaranteed that lines are never broken
+        # apart?
+        $out->xclose;
+        $$config{report}->($out->path);
+        xxwaitpid $maybe_reporterpid;
+        tail processlines_ ($rest, xtmpfile_noautoclean, undef)
     } else {
-	if ($$config{match}->($line)) {
-	    my $t_report= time + $$config{collecttime};
-	    $out->xprint($line);
-	    tail processlines_ ($rest,
-				$out,
-				$maybe_reporterpid // forked {
-				    $r->xclose;
-				    sleep_until $t_report;
-				    $w->xprintln ($REPORTMSG);
-				    $w->xclose;
-				    warn "sent $REPORTMSG"
-				      if $verbose;
-				});
-	} else {
-	    tail processlines_ ($rest, $out, $maybe_reporterpid)
-	}
+        if ($$config{match}->($line)) {
+            my $t_report= time + $$config{collecttime};
+            $out->xprint($line);
+            tail processlines_ ($rest,
+                                $out,
+                                $maybe_reporterpid // forked {
+                                    $r->xclose;
+                                    sleep_until $t_report;
+                                    $w->xprintln ($REPORTMSG);
+                                    $w->xclose;
+                                    warn "sent $REPORTMSG"
+                                      if $verbose;
+                                });
+        } else {
+            tail processlines_ ($rest, $out, $maybe_reporterpid)
+        }
     }
 }
 

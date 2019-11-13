@@ -54,12 +54,12 @@ functional hash tables implementation (like the one used by Clojure)?)
 package FP::Hash;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref hash_ref_or hash_cache
-	   hash_delete hash_update hash_diff
-	   hash_length
-	   subhash
-	   hashes_keys $empty_hash
-	   hash2_set
-	 );
+           hash_delete hash_update hash_diff
+           hash_length
+           subhash
+           hashes_keys $empty_hash
+           hash2_set
+         );
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -119,9 +119,9 @@ sub hash_update ($$$) {
     my ($h,$k,$fn)=@_;
     my $h2= +{%$h};
     if (my ($v)= &$fn (exists $$h{$k} ? $$h{$k} : ())) {
-	$$h2{$k}= $v;
+        $$h2{$k}= $v;
     } else {
-	delete $$h2{$k}
+        delete $$h2{$k}
     }
     $h2
 }
@@ -145,9 +145,9 @@ TEST { hash_length +{a=>4, b=>5} } 2;
 sub hash_perhaps_ref ($$) {
     my ($h,$k)=@_;
     if (exists $$h{$k}) {
-	$$h{$k}
+        $$h{$k}
     } else {
-	()
+        ()
     }
 }
 
@@ -156,18 +156,18 @@ sub hash_perhaps_ref ($$) {
 sub hash_maybe_ref ($$) {
     my ($h,$k)=@_;
     if (exists $$h{$k}) {
-	$$h{$k}
+        $$h{$k}
     } else {
-	undef
+        undef
     }
 }
 
 sub hash_xref ($$) {
     my ($h,$k)=@_;
     if (exists $$h{$k}) {
-	$$h{$k}
+        $$h{$k}
     } else {
-	die "unbound table key"; # no such key. unknown key. unbound
+        die "unbound table key"; # no such key. unknown key. unbound
                                  # hash key. ?
     }
 }
@@ -175,9 +175,9 @@ sub hash_xref ($$) {
 sub hash_ref_or ($$$) {
     my ($h,$k,$other)=@_;
     if (exists $$h{$k}) {
-	$$h{$k}
+        $$h{$k}
     } else {
-	$other
+        $other
     }
 }
 
@@ -185,9 +185,9 @@ sub hash_cache ($$$) {
     # only allowing for scalar context
     my ($h,$k,$generate)=@_;
     if (exists $$h{$k}) {
-	$$h{$k}
+        $$h{$k}
     } else {
-	$$h{$k}= &$generate()
+        $$h{$k}= &$generate()
     }
 }
 
@@ -198,17 +198,17 @@ sub hash_diff ($$) {
     my ($h1,$h2)=@_;
     my $changes={};
     for my $key (keys %$h2) {
-	my $old= $$h1{$key};
-	my $new= $$h2{$key};
-	if (defined ($old) and defined ($new)) {
-	    $$changes{$key}= ($old eq $new) ? "unchanged" : "changed";
-	} else {
-	    $$changes{$key}= defined ($old) ? "deleted" : "added";
-	}
+        my $old= $$h1{$key};
+        my $new= $$h2{$key};
+        if (defined ($old) and defined ($new)) {
+            $$changes{$key}= ($old eq $new) ? "unchanged" : "changed";
+        } else {
+            $$changes{$key}= defined ($old) ? "deleted" : "added";
+        }
     }
     for my $key (keys %$h1) {
-	next if defined $$h2{$key};
-	$$changes{$key}= "deleted";
+        next if defined $$h2{$key};
+        $$changes{$key}= "deleted";
     }
     $changes
 }
@@ -243,7 +243,7 @@ sub subhash {
     my $s=shift;
     my %r;
     for (@_) {
-	$r{$_}= $$s{$_}
+        $r{$_}= $$s{$_}
     }
     \%r
 }

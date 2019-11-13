@@ -43,10 +43,10 @@ use FP::Array_sort ":all";
     package examples_logic::Predicate;
     use FP::Struct ["coderef","stack"];
     use overload ('&{}'=> "coderef",
-		  '""'=> "FP_Show_show");
+                  '""'=> "FP_Show_show");
     method FP_Show_show (@args) {
-	# 2 args what for?
-	"predicate from:\n" . $self->stack->backtrace(0)
+        # 2 args what for?
+        "predicate from:\n" . $self->stack->backtrace(0)
     }
     _END_
 }
@@ -65,7 +65,7 @@ fun matrix_likes ($matrix, $subj, $obj) {
 
 fun likes ($subj, $obj) {
     fun ($matrix) {
-	matrix_likes $matrix, $subj, $obj
+        matrix_likes $matrix, $subj, $obj
     }
 }
 
@@ -75,12 +75,12 @@ fun does_not_like ($subj,$obj) {
 
 fun likes_either ($subj,@objs) {
     fun ($matrix) {
-	array_any
-	  (
-	   fun ($obj) {
-	       matrix_likes $matrix, $subj, $obj
-	   },
-	   \@objs);
+        array_any
+          (
+           fun ($obj) {
+               matrix_likes $matrix, $subj, $obj
+           },
+           \@objs);
     }
 }
 
@@ -95,7 +95,7 @@ fun matrix_likers ($matrix, $liked) {
     array_filter
       (
        fun ($person) {
-	   matrix_likes $matrix, $person, $liked
+           matrix_likes $matrix, $person, $liked
        },
        matrix_people $matrix);
 }
@@ -105,7 +105,7 @@ fun matrix_liked ($matrix, $subj) {
     my $l2= $$matrix{$subj};
     [
      grep {
-	 $$l2{$_}
+         $$l2{$_}
      }
      keys %$l2
     ]
@@ -114,22 +114,22 @@ fun matrix_liked ($matrix, $subj) {
 fun matrix_numrelations ($matrix) {
     my $n=0;
     for my $k0 (keys %$matrix) {
-	my $m= $$matrix{$k0};
-	for my $k1 (keys %$m) {
-	    $n++ if $$m{$k1}
-	}
+        my $m= $$matrix{$k0};
+        for my $k1 (keys %$m) {
+            $n++ if $$m{$k1}
+        }
     }
     $n
 }
 
 fun likes_everyone_that_x_likes ($subj, $othersubj) {
     fun ($matrix) {
-	array_every
-	  (
-	   fun ($obj) {
-	       matrix_likes $matrix, $subj, $obj
-	   },
-	   matrix_liked $matrix, $othersubj);
+        array_every
+          (
+           fun ($obj) {
+               matrix_likes $matrix, $subj, $obj
+           },
+           matrix_liked $matrix, $othersubj);
     }
 }
 
@@ -137,18 +137,18 @@ fun likes_everyone_who_likes ($subj,$liked) {
     # is this cheating, walking the matrix? Should it look at
     # predicates? ehr no, ehr?
     fun ($matrix) {
-	array_every
-	  (
-	   fun ($liker) {
-	       matrix_likes $matrix, $subj, $liker
-	   },
-	   matrix_likers $matrix, $liked);
+        array_every
+          (
+           fun ($liker) {
+               matrix_likes $matrix, $subj, $liker
+           },
+           matrix_likers $matrix, $liked);
     }
 }
 
 fun Or ($t0,$t1) {
     fun ($matrix) {
-	&$t0($matrix) or &$t1($matrix)
+        &$t0($matrix) or &$t1($matrix)
     }
 }
 
@@ -187,35 +187,35 @@ test does_not_like $_, $_ for qw(Dana Cody Abby Bess);
 
 # Abby likes Bess or Bess likes Abby.
 test Or (likes ("Abby", "Bess"),
-	 likes "Bess", "Abby");
+         likes "Bess", "Abby");
 
 
 my $onesolution=
   {
    Abby=> {
-	   Abby=>'',
-	   Bess=>1,
-	   Cody=>1,
-	   Dana=>''
-	  },
+           Abby=>'',
+           Bess=>1,
+           Cody=>1,
+           Dana=>''
+          },
    Bess=> {
-	   Abby=>'',
-	   Bess=>'',
-	   Cody=>1,
-	   Dana=>''
-	  },
+           Abby=>'',
+           Bess=>'',
+           Cody=>1,
+           Dana=>''
+          },
    Cody=> {
-	   Abby=>1,
-	   Bess=>1,
-	   Cody=>'',
-	   Dana=>1
-	  },
+           Abby=>1,
+           Bess=>1,
+           Cody=>'',
+           Dana=>1
+          },
    Dana=> {
-	   Abby=>'',
-	   Bess=>'',
-	   Cody=>1,
-	   Dana=>''
-	  },
+           Abby=>'',
+           Bess=>'',
+           Cody=>1,
+           Dana=>''
+          },
   };
 
 TEST { matrix_numrelations $onesolution } 7;
@@ -268,15 +268,15 @@ fun buildmatrix ($bits) {
     array_to_hash_map
       (
        fun ($subj, $subji) {
-	   $subj=>
-	     array_to_hash_map
-	       (
-		fun ($obj, $obji) {
-		    my $i= $subji * 4 + $obji;
-		    $obj=> !!($bits & (1<<$i))
-		},
-		$people,
-		$people_i);
+           $subj=>
+             array_to_hash_map
+               (
+                fun ($obj, $obji) {
+                    my $i= $subji * 4 + $obji;
+                    $obj=> !!($bits & (1<<$i))
+                },
+                $people,
+                $people_i);
        },
        $people,
        $people_i);
@@ -289,8 +289,8 @@ fun search () {
 if ($ENV{RUN_SLOW_TESTS}) {
     my $results;
     TEST {
-	$results= search ->array;
-	array_length $results
+        $results= search ->array;
+        array_length $results
     } 2;
 
     TEST { array_length array_filter fun($v){ equal $v, $onesolution }, $results }
@@ -298,9 +298,9 @@ if ($ENV{RUN_SLOW_TESTS}) {
 
     my $sorted;
     TEST {
-	$sorted= array_sort $results, on *matrix_numrelations, *number_cmp;
-	[matrix_numrelations ($$sorted[0]),
-	 matrix_numrelations ($$sorted[-1])]
+        $sorted= array_sort $results, on *matrix_numrelations, *number_cmp;
+        [matrix_numrelations ($$sorted[0]),
+         matrix_numrelations ($$sorted[-1])]
     } [7,8];
 
 }

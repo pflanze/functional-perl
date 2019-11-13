@@ -32,7 +32,7 @@ exit (@_ ? 1 : 0);
 use Getopt::Long;
 our $verbose=0;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage}) or exit 1;
+           "help"=> sub{usage}) or exit 1;
 
 #use Chj::Trapl; use Chj::repl;
 use FP::List;
@@ -78,13 +78,13 @@ fun fixlines ($orig) {
      $head->filter_with_tail
      (complement
       (regex_match ("^".
-		    regex_from_strings (qw(Return-Path
-					   BCC
-					   X-K9mail-Identity
-					   User-Agent
-					   Date
-					   Message-ID)).
-		    ":")),
+                    regex_from_strings (qw(Return-Path
+                                           BCC
+                                           X-K9mail-Identity
+                                           User-Agent
+                                           Date
+                                           Message-ID)).
+                    ":")),
       cons "Message-ID: <$messageid_uuid\@$fromdomain>\n",
       $rest))
 }

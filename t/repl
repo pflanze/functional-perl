@@ -27,12 +27,12 @@ sub clean ($) {
     $s=~ s/main>\s*$//s;
 
     my $id= do {
-	my %id;
-	my $counter=0;
-	sub {
-	    my ($str)=@_;
-	    $id{$str} //= $counter++
-	}
+        my %id;
+        my $counter=0;
+        sub {
+            my ($str)=@_;
+            $id{$str} //= $counter++
+        }
     };
 
     $s=~ s/\(eval (\d+)\)/'(eval ' . &$id ("eval $1") . ')'/sge;
@@ -53,47 +53,47 @@ sub t {
     my ($inr,$inw)= xpipe;
     my ($outr,$outw)= xpipe;
     if (xfork) {
-	$inr->xclose; $outw->xclose;
+        $inr->xclose; $outw->xclose;
 
-	$inw->xprintln($input);
-	$inw->xclose;
-	my $out= $outr->xcontent;
-	for my $filter (@filters) {
-	    local $_=$out;
-	    &$filter();
-	    $out=$_;
-	}
-	wait;
-	@_=(
-	    clean($out),
-	    clean($output));
-	if ($ENV{SHOWDIFF} and $_[0] ne $_[1]) {
-	    my ($package, $filename, $line)= caller;
-	    require Chj::xtmpfile; import Chj::xtmpfile;
-	    my @p=
-	      map {
-		  my $t= xtmpfile(".t-repl-$line-");
-		  $t->xprint($_[$_]);
-		  $t->xclose;
-		  $t->autoclean(0);
-		  $t->path
-	      } 0,1;
-	    xlaunch "tkdiff", @p;
-	}
-	goto \&is;
+        $inw->xprintln($input);
+        $inw->xclose;
+        my $out= $outr->xcontent;
+        for my $filter (@filters) {
+            local $_=$out;
+            &$filter();
+            $out=$_;
+        }
+        wait;
+        @_=(
+            clean($out),
+            clean($output));
+        if ($ENV{SHOWDIFF} and $_[0] ne $_[1]) {
+            my ($package, $filename, $line)= caller;
+            require Chj::xtmpfile; import Chj::xtmpfile;
+            my @p=
+              map {
+                  my $t= xtmpfile(".t-repl-$line-");
+                  $t->xprint($_[$_]);
+                  $t->xclose;
+                  $t->autoclean(0);
+                  $t->path
+              } 0,1;
+            xlaunch "tkdiff", @p;
+        }
+        goto \&is;
     } else {
-	$outr->xclose; $inw->xclose;
+        $outr->xclose; $inw->xclose;
 
-	$ENV{TERM}="";
-	$ENV{COLORTERM}="";
+        $ENV{TERM}="";
+        $ENV{COLORTERM}="";
 
-	local $Chj::Repl::maybe_settingspath= undef;
-	local $Chj::Repl::mode_formatter= 's';
-	repl (maybe_input=> $inr,
-	      maybe_output=> $outw,
-	     );
+        local $Chj::Repl::maybe_settingspath= undef;
+        local $Chj::Repl::mode_formatter= 's';
+        repl (maybe_input=> $inr,
+              maybe_output=> $outw,
+             );
 
-	exit 0;
+        exit 0;
     }
 }
 
@@ -161,18 +161,18 @@ do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 Exception: fun at (eval 0) line 1.
 main 1> ,b
-0	Chj::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
-1	main::__ANON__('99') called at (eval 0) line 1
-2	main::__ANON__() called at lib/Chj/Repl.pm line 2
-3	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 3
-4	(eval)() called at lib/Chj/Repl.pm line 3
-5	Chj::Repl::WithRepl_eval('CODE(0x11)') called at lib/Chj/Repl.pm line 4
-6	Chj::Repl::eval_code('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef, undef) called at lib/Chj/Repl.pm line 5
-7	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 6
-8	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 7
-9	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 8
-10	Chj::Repl::run('Chj::Repl=ARRAY(0x12)', undef) called at t/repl line 9
-11	main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl line 10
+0       Chj::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
+1       main::__ANON__('99') called at (eval 0) line 1
+2       main::__ANON__() called at lib/Chj/Repl.pm line 2
+3       Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 3
+4       (eval)() called at lib/Chj/Repl.pm line 3
+5       Chj::Repl::WithRepl_eval('CODE(0x11)') called at lib/Chj/Repl.pm line 4
+6       Chj::Repl::eval_code('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef, undef) called at lib/Chj/Repl.pm line 5
+7       Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 6
+8       Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 7
+9       Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 8
+10      Chj::Repl::run('Chj::Repl=ARRAY(0x12)', undef) called at t/repl line 9
+11      main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl line 10
 main 1> 
 fun at (eval 0) line 1.
 +;

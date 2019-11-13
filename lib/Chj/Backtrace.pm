@@ -50,25 +50,25 @@ our $do_confess_objects=0;
 
 sub import {
     $SIG{__DIE__} = sub {
-	$DB::single=1 if $singlestep;
-	if ($only_confess_if_not_already) {
-	    if (!$do_confess_objects and ref $_[0]) {
-		# exception object
-		# (ah well, confess does that check anyway!)
-		die @_
-	    } else {
-		#print STDERR "\n------\n@_\n------\n";
-		if ($_[0]=~ /^[^\n]*line \d+\.\n/s) { # die, not confess.
-		    die Clean Carp::longmess @_
-		} elsif ($_[0]=~ /^[^\n]*line \d+\n\t/s) { # confess
-		    die @_
-		} else { # unsure
-		    die Clean Carp::longmess @_
-		}
-	    }
-	} else {
-	    die Clean Carp::longmess @_
-	}
+        $DB::single=1 if $singlestep;
+        if ($only_confess_if_not_already) {
+            if (!$do_confess_objects and ref $_[0]) {
+                # exception object
+                # (ah well, confess does that check anyway!)
+                die @_
+            } else {
+                #print STDERR "\n------\n@_\n------\n";
+                if ($_[0]=~ /^[^\n]*line \d+\.\n/s) { # die, not confess.
+                    die Clean Carp::longmess @_
+                } elsif ($_[0]=~ /^[^\n]*line \d+\n\t/s) { # confess
+                    die @_
+                } else { # unsure
+                    die Clean Carp::longmess @_
+                }
+            }
+        } else {
+            die Clean Carp::longmess @_
+        }
     };
 }
 

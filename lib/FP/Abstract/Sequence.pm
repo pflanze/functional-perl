@@ -31,7 +31,7 @@ FP::Abstract::Sequence - functional sequence protocol
                         # what to do about it?
              array(3,4), # Could `autobox` change this?
              3,
-	     {3=>4},
+             {3=>4},
         )->map(*is_sequence)->array }
   [ 1,1,1,1,1,'','','' ];
 
@@ -163,8 +163,8 @@ sub flatten {
     my ($self, $perhaps_tail)=@_;
     $self->fold_right
       (sub {
-	   my ($v, $rest)=@_;
-	   $v->append($rest)
+           my ($v, $rest)=@_;
+           $v->append($rest)
        },
        @_==2 ? $perhaps_tail : FP::List::null());
 }
@@ -187,13 +187,13 @@ sub join {
     # improper_listS, but once we introduce a `cons` method on
     # PureArray etc. that won't happen anymore?)?)
     lazy {
-	$self->is_null ? $self :
-	  do {
-	      my ($v,$rest)= $self->first_and_rest;
-	      $rest->is_null ? $self
+        $self->is_null ? $self :
+          do {
+              my ($v,$rest)= $self->first_and_rest;
+              $rest->is_null ? $self
                 : FP::List::cons($v,
                                  FP::List::cons($value, $rest->join($value)))
-	  }
+          }
     }
 }
 
@@ -209,8 +209,8 @@ sub extreme {
     # order-irrelevant folding?
     $self->rest->fold
       (sub {
-	   my ($v, $res)=@_;
-	   &$cmp($v, $res) ? $v : $res
+           my ($v, $res)=@_;
+           &$cmp($v, $res) ? $v : $res
        },
        $self->first);
 }
@@ -232,22 +232,22 @@ sub minmax {
     my ($self, $maybe_extract)=@_;
     # XXX same comment as in `extreme`
     @{$self->rest->fold
-	(defined $maybe_extract ?
-	 sub {
-	     my ($v, $res)=@_;
-	     my ($min,$max)= @$res;
-	     my $v_ = &$maybe_extract($v);
-	     [ $v_ < &$maybe_extract($min) ? $v : $min,
-	       $v_ > &$maybe_extract($max) ? $v : $max ]
-	 }
-	 :
-	 sub {
-	     my ($v, $res)=@_;
-	     my ($min,$max)= @$res;
-	     [ $v < $min ? $v : $min,
-	       $v > $max ? $v : $max ]
-	 },
-	 [$self->first, $self->first])}
+        (defined $maybe_extract ?
+         sub {
+             my ($v, $res)=@_;
+             my ($min,$max)= @$res;
+             my $v_ = &$maybe_extract($v);
+             [ $v_ < &$maybe_extract($min) ? $v : $min,
+               $v_ > &$maybe_extract($max) ? $v : $max ]
+         }
+         :
+         sub {
+             my ($v, $res)=@_;
+             my ($min,$max)= @$res;
+             [ $v < $min ? $v : $min,
+               $v > $max ? $v : $max ]
+         },
+         [$self->first, $self->first])}
 }
 
 

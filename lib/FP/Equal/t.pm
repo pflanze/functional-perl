@@ -34,17 +34,17 @@ sub tequals {
     my $x= equal (@_);
     my $y= equal (@_);
     if (defined $x) {
-	if (defined $y) {
-	    if ($x eq $y) {
-		return $x
-	    }
-	}
+        if (defined $y) {
+            if ($x eq $y) {
+                return $x
+            }
+        }
     } else {
-	if (defined $y) {
-	    [$x, $y]
-	} else {
-	    undef
-	}
+        if (defined $y) {
+            [$x, $y]
+        } else {
+            undef
+        }
     }
 }
 
@@ -106,7 +106,7 @@ TEST{ tequals -1e1000, "-1e1000" } '';
 TEST{ tequals -1e1000, "-$inf" } 1;
 TEST{ -1e1000 == "-inf" } 1;
 
-TEST{tequals 2, 2.0} 1;	   # those are converted to the same value at
+TEST{tequals 2, 2.0} 1;    # those are converted to the same value at
                            # compile time.
 TEST{tequals "2", "2.0"} '';
 
@@ -143,10 +143,10 @@ use utf8;
 {
     my ($s1,$s2);
     TEST{$s1= "Smørrebrød";
-	 $s2= "Smørrebrød";
-	 equal $s1, $s2} 1;
+         $s2= "Smørrebrød";
+         equal $s1, $s2} 1;
     TEST{utf8::encode($s2);
-	 equal $s1, $s2} '';
+         equal $s1, $s2} '';
 }
 
 

@@ -37,19 +37,19 @@ package FP::IOStream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(maybeIO_to_stream
-	      fh_to_stream
-	      perhaps_directory_items
-	      perhaps_directory_paths
-	      xdirectory_items
-	      xdirectory_paths
-	      xfile_lines xfile_lines0 xfile_lines0chop xfile_lines_chomp
-	      fh_to_lines
-	      fh_to_chunks
-	      timestream
-	      xstream_print
-	      xstream_to_file
-	      xfile_replace_lines
-	    );
+              fh_to_stream
+              perhaps_directory_items
+              perhaps_directory_paths
+              xdirectory_items
+              xdirectory_paths
+              xfile_lines xfile_lines0 xfile_lines0chop xfile_lines_chomp
+              fh_to_lines
+              fh_to_chunks
+              timestream
+              xstream_print
+              xstream_to_file
+              xfile_replace_lines
+            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -64,13 +64,13 @@ use FP::Ops 'the_method';
 use Carp;
 use Chj::singlequote ":all";
 use Chj::xopen qw(
-		     xopen_read
-		     xopen_write
-		     xopen_append
-		     xopen_update
-		     possibly_fh_to_fh
-		     glob_to_fh
-		);
+                     xopen_read
+                     xopen_write
+                     xopen_append
+                     xopen_update
+                     possibly_fh_to_fh
+                     glob_to_fh
+                );
 use Chj::xtmpfile qw(xtmpfile);
 
 
@@ -79,17 +79,17 @@ use Chj::xtmpfile qw(xtmpfile);
 sub maybeIO_to_stream {
     my ($maybeIO, $maybe_close)=@_;
     my $next; $next= sub {
-	my $next=$next;
-	lazy {
-	    if (defined (my $v= &$maybeIO())) {
-		cons ($v, &$next)
-	    } else {
-		if (defined $maybe_close) {
-		    &$maybe_close()
-		}
-		null
-	    }
-	}
+        my $next=$next;
+        lazy {
+            if (defined (my $v= &$maybeIO())) {
+                cons ($v, &$next)
+            } else {
+                if (defined $maybe_close) {
+                    &$maybe_close()
+                }
+                null
+            }
+        }
     };
     &{Weakened $next}
 }
@@ -100,40 +100,40 @@ sub maybeIO_to_stream {
 sub _perhaps_opendir_stream ($) {
     my ($path)=@_;
     if (my ($d)= perhaps_opendir $path) {
-	my $next; $next= sub {
-	    my $next=$next;
-	    lazy {
-		if (defined (my $item= $d->xnread)) {
-		    cons $item, &$next
-		} else {
-		    $d->xclose;
-		    null
-		}
-	    }
-	};
-	&{Weakened $next}
+        my $next; $next= sub {
+            my $next=$next;
+            lazy {
+                if (defined (my $item= $d->xnread)) {
+                    cons $item, &$next
+                } else {
+                    $d->xclose;
+                    null
+                }
+            }
+        };
+        &{Weakened $next}
     } else {
-	()
+        ()
     }
 }
 
 sub _perhaps_opendir_stream_sorted ($$) {
     my ($path,$cmp)=@_;
     if (my ($d)= perhaps_opendir $path) {
-	my $items= array_sort [$d->xnread], $cmp;
-	$d->xclose;
-	unsafe_array_to_purearray $items
+        my $items= array_sort [$d->xnread], $cmp;
+        $d->xclose;
+        unsafe_array_to_purearray $items
     } else {
-	()
+        ()
     }
 }
 
 sub perhaps_directory_items ($;$) {
     my ($path,$maybe_cmp)=@_;
     if ($maybe_cmp) {
-	_perhaps_opendir_stream_sorted $path,$maybe_cmp;
+        _perhaps_opendir_stream_sorted $path,$maybe_cmp;
     } else {
-	_perhaps_opendir_stream $path;
+        _perhaps_opendir_stream $path;
     }
 }
 
@@ -141,30 +141,30 @@ sub perhaps_directory_paths ($;$) {
     my ($base,$maybe_cmp)=@_;
     $base.= "/" unless $base=~ /\/\z/;
     if (my ($s)= perhaps_directory_items $base,$maybe_cmp) {
-	$s->map(sub {
-	    my ($item)= @_;
-	    "$base$item"
-	})
+        $s->map(sub {
+            my ($item)= @_;
+            "$base$item"
+        })
     } else {
-	()
+        ()
     }
 }
 
 sub xdirectory_items ($;$) {
     my ($path,$maybe_cmp)=@_;
     if (my ($s)= perhaps_directory_items ($path, $maybe_cmp)) {
-	$s
+        $s
     } else {
-	croak "xdirectory_items(".singlequote_many(@_)."): $!";
+        croak "xdirectory_items(".singlequote_many(@_)."): $!";
     }
 }
 
 sub xdirectory_paths ($;$) {
     my ($path,$maybe_cmp)=@_;
     if (my ($s)= perhaps_directory_paths ($path, $maybe_cmp)) {
-	$s
+        $s
     } else {
-	croak "xdirectory_paths(".singlequote_many(@_)."): $!";
+        croak "xdirectory_paths(".singlequote_many(@_)."): $!";
     }
 }
 
@@ -172,15 +172,15 @@ sub xdirectory_paths ($;$) {
 sub fh_to_stream ($$$) {
     my ($fh, $read, $close)=@_;
     my $next; $next= sub {
-	my $next=$next;
-	lazy {
-	    if (defined (my $item= &$read($fh))) {
-		cons $item, &$next
-	    } else {
-		&$close ($fh);
-		null
-	    }
-	}
+        my $next=$next;
+        lazy {
+            if (defined (my $item= &$read($fh))) {
+                cons $item, &$next
+            } else {
+                &$close ($fh);
+                null
+            }
+        }
     };
     &{Weakened $next}
 }
@@ -192,31 +192,31 @@ sub make_open_stream {
     my ($open,$read,$maybe_close)=@_;
     my $close= $maybe_close // the_method ("xclose");
     sub ($) {
-	fh_to_stream(scalar &$open(@_),
-		  $read,
-		  $close)
+        fh_to_stream(scalar &$open(@_),
+                  $read,
+                  $close)
     }
 }
 
 sub xfile_lines ($);
 *xfile_lines=
   make_open_stream(\&xopen_read,
-		   the_method ("xreadline"));
+                   the_method ("xreadline"));
 
 sub xfile_lines0 ($);
 *xfile_lines0=
   make_open_stream(\&xopen_read,
-		   the_method ("xreadline0"));
+                   the_method ("xreadline0"));
 
 sub xfile_lines0chop ($);
 *xfile_lines0chop=
   make_open_stream(\&xopen_read,
-		   the_method ("xreadline0chop"));
+                   the_method ("xreadline0chop"));
 
 sub xfile_lines_chomp ($);
 *xfile_lines_chomp=
   make_open_stream(\&xopen_read,
-		   the_method ("xreadline_chomp"));
+                   the_method ("xreadline_chomp"));
 
 
 # Clojure calls this line-seq
@@ -224,8 +224,8 @@ sub xfile_lines_chomp ($);
 sub fh_to_lines ($) {
     my ($fh)=@_;
     fh_to_stream (possibly_fh_to_fh($fh),
-		  the_method ("xreadline"),
-		  the_method ("xclose"))
+                  the_method ("xreadline"),
+                  the_method ("xclose"))
 }
 
 
@@ -237,12 +237,12 @@ sub fh_to_lines ($) {
 sub fh_to_chunks ($$) {
     my ($fh,$bufsiz)= @_;
     fh_to_stream (possibly_fh_to_fh($fh),
-		  sub {
-		      my $buf;
-		      my $n= $fh->xsysread($buf, $bufsiz);
-		      $n == 0 ? undef : $buf
-		  },
-		  the_method("xclose"));
+                  sub {
+                      my $buf;
+                      my $n= $fh->xsysread($buf, $bufsiz);
+                      $n == 0 ? undef : $buf
+                  },
+                  the_method("xclose"));
 }
 
 
@@ -254,11 +254,11 @@ sub timestream (;$) {
     my ($maybe_sleep)=@_;
     require Time::HiRes;
     my $lp; $lp= sub {
-	lazy {
-	    Time::HiRes::sleep ($maybe_sleep)
-		if $maybe_sleep;
-	    cons (Time::HiRes::time (), &$lp())
-	}
+        lazy {
+            Time::HiRes::sleep ($maybe_sleep)
+                if $maybe_sleep;
+            cons (Time::HiRes::time (), &$lp())
+        }
     };
     Weakened ($lp)->();
 }
@@ -271,8 +271,8 @@ sub xstream_print ($;$) {
     weaken $_[0];
     $s->for_each
       (sub {
-	   print $fh $_[0]
-	     or die "xstream_print: writing to $fh: $!";
+           print $fh $_[0]
+             or die "xstream_print: writing to $fh: $!";
        });
 }
 

@@ -39,7 +39,7 @@ package FP::Combinators;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(compose compose_scalar maybe_compose compose_1side
-	      flip flip2of3 rot3right rot3left);
+              flip flip2of3 rot3right rot3left);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -49,11 +49,11 @@ use Chj::TEST;
 sub compose {
     my (@fn)= reverse @_;
     sub {
-	my (@v)= @_;
-	for my $fn (@fn) {
-	    @v= &$fn(@v);
-	}
-	wantarray ? @v : $v[-1]
+        my (@v)= @_;
+        for my $fn (@fn) {
+            @v= &$fn(@v);
+        }
+        wantarray ? @v : $v[-1]
     }
 }
 
@@ -64,11 +64,11 @@ sub compose_scalar {
     my $f0= pop @fn;
     my $fx= shift @fn;
     sub {
-	my $v= &$fx;
-	for my $fn (@fn) {
-	    $v= &$fn($v);
-	}
-	@_=($v); goto &$f0
+        my $v= &$fx;
+        for my $fn (@fn) {
+            $v= &$fn($v);
+        }
+        @_=($v); goto &$f0
     }
 }
 
@@ -78,14 +78,14 @@ TEST { compose_scalar  (sub { $_[0]+1 }, sub { $_[0]+$_[1] })->(2,3) }
   6;
 
 TEST { compose (sub { $_[0] / ($_[1]//5) },
-		sub { @_ },
-		sub { $_[1], $_[0] })
-	 ->(2,3) }
+                sub { @_ },
+                sub { $_[1], $_[0] })
+         ->(2,3) }
   1.5;
 TEST { compose_scalar (sub { $_[0] / ($_[1]//5) },
-		       sub { @_ },
-		       sub { $_[1], $_[0] })
-	 ->(2,3) }
+                       sub { @_ },
+                       sub { $_[1], $_[0] })
+         ->(2,3) }
   1/5;
 
 
@@ -95,14 +95,14 @@ TEST { compose_scalar (sub { $_[0] / ($_[1]//5) },
 sub maybe_compose {
     my (@fn)= reverse @_;
     sub {
-	my (@v)= @_;
-	for (@fn) {
-	    # return undef, not (), for 'maybe_'; the latter would ask
-	    # for convention 'perhaps_', ok?
-	    return undef unless @v>1 or defined $v[0];
-	    @v= &$_(@v);
-	}
-	wantarray ? @v : $v[-1]
+        my (@v)= @_;
+        for (@fn) {
+            # return undef, not (), for 'maybe_'; the latter would ask
+            # for convention 'perhaps_', ok?
+            return undef unless @v>1 or defined $v[0];
+            @v= &$_(@v);
+        }
+        wantarray ? @v : $v[-1]
     }
 }
 
@@ -118,9 +118,9 @@ TEST { maybe_compose (sub { [@_] }, sub { @_ })->(2,3) }
 sub compose_1side ($$) {
     my ($f, $g)=@_;
     sub {
-	my ($a,$b)=@_;
-	#XX TCO?
-	&$f (scalar &$g ($a, $b), $b)
+        my ($a,$b)=@_;
+        #XX TCO?
+        &$f (scalar &$g ($a, $b), $b)
     }
 }
 
@@ -136,8 +136,8 @@ use Carp;
 sub flip ($) {
     my ($f)=@_;
     sub {
-	@_==2 or croak "expecting 2 arguments";
-	@_=($_[1], $_[0]); goto &$f
+        @_==2 or croak "expecting 2 arguments";
+        @_=($_[1], $_[0]); goto &$f
     }
 }
 
@@ -148,24 +148,24 @@ TEST { flip (sub { $_[0] / $_[1] })->(2,3) }
 sub flip2of3 ($) {
     my ($f)=@_;
     sub {
-	@_==3 or croak "expecting 3 arguments";
-	@_=($_[1], $_[0], $_[2]); goto &$f
+        @_==3 or croak "expecting 3 arguments";
+        @_=($_[1], $_[0], $_[2]); goto &$f
     }
 }
 
 sub rot3right ($) {
     my ($f)=@_;
     sub {
-	@_==3 or croak "expecting 3 arguments";
-	@_=($_[2], $_[0], $_[1]); goto &$f
+        @_==3 or croak "expecting 3 arguments";
+        @_=($_[2], $_[0], $_[1]); goto &$f
     }
 }
 
 sub rot3left ($) {
     my ($f)=@_;
     sub {
-	@_==3 or croak "expecting 3 arguments";
-	@_=($_[1], $_[2], $_[0]); goto &$f
+        @_==3 or croak "expecting 3 arguments";
+        @_=($_[1], $_[2], $_[0]); goto &$f
     }
 }
 

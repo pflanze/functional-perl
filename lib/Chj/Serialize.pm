@@ -47,66 +47,66 @@ use Chj::TEST;
     our $deparse= B::Deparse->new("-p","-l","-q");
 
     use FP::Struct [[*is_hash, "_closure_generator_code_to_id"],
-		    [*is_hash, "_id_to_closure_generator_code"],
-		    [*is_hash, "_id_to_closure_generator"],
-		    [*is_natural0, "current_id"]];
+                    [*is_hash, "_id_to_closure_generator_code"],
+                    [*is_hash, "_id_to_closure_generator"],
+                    [*is_natural0, "current_id"]];
 
     sub next_id {
-	my ($self)=@_;
-	$$self{current_id}++
+        my ($self)=@_;
+        $$self{current_id}++
     }
 
     sub id_to_closure_generator_code {
-	my ($self,$id)=@_;
-	$$self{_id_to_closure_generator_code}{$id}
-	  // die "unknown code_id $id";
+        my ($self,$id)=@_;
+        $$self{_id_to_closure_generator_code}{$id}
+          // die "unknown code_id $id";
     }
 
     sub id_to_closure_generator {
-	my ($self,$id)=@_;
-	$$self{_id_to_closure_generator}{$id} //=
-	  &WithRepl_eval ($self->id_to_closure_generator_code ($id))
-	    // die "eval error: $@";
-	#XX oh, want a WithRepl_xeval ?
+        my ($self,$id)=@_;
+        $$self{_id_to_closure_generator}{$id} //=
+          &WithRepl_eval ($self->id_to_closure_generator_code ($id))
+            // die "eval error: $@";
+        #XX oh, want a WithRepl_xeval ?
     }
 
     sub serializable {
-	my ($self,$fn)=@_;
+        my ($self,$fn)=@_;
 
-	my $env= closed_over ($fn);
-	my $code= $deparse->coderef2text ($fn);
+        my $env= closed_over ($fn);
+        my $code= $deparse->coderef2text ($fn);
 
-	my $vars= [sort keys %$env];
+        my $vars= [sort keys %$env];
 
-	my $closure_generator_code=
-	  'sub { my ('.join(",", @$vars).')=@_; sub '.$code.' }';
-	# use this as key right now.
+        my $closure_generator_code=
+          'sub { my ('.join(",", @$vars).')=@_; sub '.$code.' }';
+        # use this as key right now.
 
-	my $id=
-	  $$self{_closure_generator_code_to_id}{$closure_generator_code} //= do {
-	      my $id= $self->next_id;
-	      $$self{_id_to_closure_generator_code}{$id}=
-		$closure_generator_code;
-	      $id
-	  };
+        my $id=
+          $$self{_closure_generator_code_to_id}{$closure_generator_code} //= do {
+              my $id= $self->next_id;
+              $$self{_id_to_closure_generator_code}{$id}=
+                $closure_generator_code;
+              $id
+          };
 
-	# XX exclude web server handle (request) etc. [hw btw in schem? xhu]
+        # XX exclude web server handle (request) etc. [hw btw in schem? xhu]
 
-	Chj::Serializable::Closure->new($env, $id);
+        Chj::Serializable::Closure->new($env, $id);
     }
 
     sub executable {
-	my ($self,$serializable_closure)=@_;
-	my ($env, $code_id)= ($serializable_closure->env,
-			      $serializable_closure->code_id);
+        my ($self,$serializable_closure)=@_;
+        my ($env, $code_id)= ($serializable_closure->env,
+                              $serializable_closure->code_id);
 
-	my @vals=
-	  map {
-	      $$env{$_}
-	  }
-	    sort keys %$env;
+        my @vals=
+          map {
+              $$env{$_}
+          }
+            sort keys %$env;
 
-	$self->id_to_closure_generator($code_id)->(map {$$_} @vals);
+        $self->id_to_closure_generator($code_id)->(map {$$_} @vals);
     }
 
     _END_
@@ -128,23 +128,23 @@ TEST {
     my $unused= "Value";
     $construct=
       sub{
-	  my ($a,$b)=@_;
-	  sub {
-	      my ($x)=@_;
-	      "$hello $x $a $b"
-	  }
+          my ($a,$b)=@_;
+          sub {
+              my ($x)=@_;
+              "$hello $x $a $b"
+          }
       };
     $sfn= $sc->serializable
       ($construct->("the", "world", "so"));
 }
   bless( {
-	  'env' => {
-		    '$hello' => \'Hello',
-		    '$a' => \'the',
-		    '$b' => \'world',
-		   },
-	  'code_id' => 0
-	 }, 'Chj::Serializable::Closure' );
+          'env' => {
+                    '$hello' => \'Hello',
+                    '$a' => \'the',
+                    '$b' => \'world',
+                   },
+          'code_id' => 0
+         }, 'Chj::Serializable::Closure' );
 
 
 TEST {
@@ -152,13 +152,13 @@ TEST {
       ($construct->("fool", "!"));
 }
   bless( {
-	  'env' => {
-		    '$hello' => \'Hello',
-		    '$a' => \'fool',
-		    '$b' => \'!',
-		   },
-	  'code_id' => 0
-	 }, 'Chj::Serializable::Closure' );
+          'env' => {
+                    '$hello' => \'Hello',
+                    '$a' => \'fool',
+                    '$b' => \'!',
+                   },
+          'code_id' => 0
+         }, 'Chj::Serializable::Closure' );
 
 
 TEST {

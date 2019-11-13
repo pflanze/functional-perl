@@ -35,9 +35,9 @@ sub capture_stdout_ {
     open my $out, ">", \$buf
       or die $!;
     {
-	# XX threadsafe or not?
-	local *STDOUT= $out;
-	&$thunk(); # dropping results
+        # XX threadsafe or not?
+        local *STDOUT= $out;
+        &$thunk(); # dropping results
     }
     close $out
       or die $!;

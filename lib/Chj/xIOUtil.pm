@@ -23,7 +23,7 @@ package Chj::xIOUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
-	      xcopyfile);
+              xcopyfile);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -47,18 +47,18 @@ sub xprint_object ($$);
 sub xprint_object ($$) {
     my ($fh,$v)=@_;
     if (ref $v) {
-	if (ref($v) eq "ARRAY") {
-	    xprint_object ($fh, $_) for @$v;
-	} elsif (is_pair $v) {
-	    xprint_object ($fh, car $v);
-	    xprint_object ($fh, cdr $v);
-	} elsif (is_promise $v) {
-	    xprint_object ($fh, force $v)
-	} else {
-	    die "don't know how to print a ".ref($v)." ('$v')";
-	}
+        if (ref($v) eq "ARRAY") {
+            xprint_object ($fh, $_) for @$v;
+        } elsif (is_pair $v) {
+            xprint_object ($fh, car $v);
+            xprint_object ($fh, cdr $v);
+        } elsif (is_promise $v) {
+            xprint_object ($fh, force $v)
+        } else {
+            die "don't know how to print a ".ref($v)." ('$v')";
+        }
     } else {
-	xprint $fh, $v
+        xprint $fh, $v
     }
 }
 

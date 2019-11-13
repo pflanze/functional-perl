@@ -23,10 +23,10 @@ package FP::Div;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(inc dec square
-	      identity
-	      min max minmax
-	      Chomp
-	      );
+              identity
+              min max minmax
+              Chomp
+              );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -58,7 +58,7 @@ sub square ($) {
 sub min {
     my $x=shift;
     for (@_) {
-	$x= $_ if $_ < $x
+        $x= $_ if $_ < $x
     }
     $x
 }
@@ -66,7 +66,7 @@ sub min {
 sub max {
     my $x=shift;
     for (@_) {
-	$x= $_ if $_ > $x
+        $x= $_ if $_ > $x
     }
     $x
 }
@@ -75,8 +75,8 @@ sub minmax {
     my $min=shift;
     my $max=$min;
     for (@_) {
-	$min= $_ if $_ < $min;
-	$max= $_ if $_ > $max;
+        $min= $_ if $_ < $min;
+        $max= $_ if $_ > $max;
     }
     ($min,$max)
 }

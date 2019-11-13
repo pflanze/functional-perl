@@ -24,7 +24,7 @@ package Htmlgen::Mediawiki;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(mediawiki_prepare mediawiki_replace mediawiki_rexpand
-	      mediawiki_expand);
+              mediawiki_expand);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -99,71 +99,71 @@ fun mediawiki_expand ($str) {
     my $res=[];
     my $lastpos= 0;
     while ($str=~ m%(^|.)\[\[(.*?[^\\])\]\]%sg) {
-	next if $1 eq '\\';
-	my $cont= $2;
-	my $pos= pos $str;
+        next if $1 eq '\\';
+        my $cont= $2;
+        my $pos= pos $str;
 
-	my $matchlen= 2 + length ($cont) + 2;
-	my $prelen= $pos-$matchlen-$lastpos;
-	push @$res, substr $str, $lastpos, $prelen
-	  if $prelen>0;
-	$lastpos=$pos;
+        my $matchlen= 2 + length ($cont) + 2;
+        my $prelen= $pos-$matchlen-$lastpos;
+        push @$res, substr $str, $lastpos, $prelen
+          if $prelen>0;
+        $lastpos=$pos;
 
-	$cont=~ s|(?<=[^\\])\\(.)|$1|sg; # remove quoting
-	my @parts= map { chompspace $_ } split /(?<=[^\\])\|/, $cont;
-	if (@parts==1) {
-	    my ($docname_and_perhaps_fragment)= @parts;
-	    my $uri= URI->new($docname_and_perhaps_fragment);
+        $cont=~ s|(?<=[^\\])\\(.)|$1|sg; # remove quoting
+        my @parts= map { chompspace $_ } split /(?<=[^\\])\|/, $cont;
+        if (@parts==1) {
+            my ($docname_and_perhaps_fragment)= @parts;
+            my $uri= URI->new($docname_and_perhaps_fragment);
 
-	    my $fragment= url_decode $uri->fragment;
-	    my $fragmenttext= do {
-		if (length $fragment) {
-		    my @f= split /,/, $fragment;
-		    my $f= shift @f;
-		    while (@f and length $f < 20 and length $f[0] < 20) {
-			$f.= ",".shift @f;
-		    }
-		    $f.= ".." if @f;
-		    if (length $f > 40) {
-			$f= substr ($f, 0, 28). ".."
-		    }
-		    # convert underscores back to spaces (XX
-		    # well.. that's lossy!)
-		    $f=~ s/_/ /sg;
-		    " ($f)";
-		} else {
-		    ""
-		}
-	    };
+            my $fragment= url_decode $uri->fragment;
+            my $fragmenttext= do {
+                if (length $fragment) {
+                    my @f= split /,/, $fragment;
+                    my $f= shift @f;
+                    while (@f and length $f < 20 and length $f[0] < 20) {
+                        $f.= ",".shift @f;
+                    }
+                    $f.= ".." if @f;
+                    if (length $f > 40) {
+                        $f= substr ($f, 0, 28). ".."
+                    }
+                    # convert underscores back to spaces (XX
+                    # well.. that's lossy!)
+                    $f=~ s/_/ /sg;
+                    " ($f)";
+                } else {
+                    ""
+                }
+            };
 
-	    # (Get title of document at path? But may be too long,
-	    # probably not a good idea.)
+            # (Get title of document at path? But may be too long,
+            # probably not a good idea.)
 
-	    # XX use 'opaque' instead of 'path' for the url? for
-	    # locations with protocol or so? Or croak about those? Use
-	    # opaque for the text, though, ok?
-	    my $text= $uri->opaque;
-	    $text=~ tr/_/ /;
-	    push @$res,
-	      A({
-		 href=>
-		 "//"
-		 . $uri->path.".md"
-		 . do {
-		     my $f= $uri->fragment;
-		     length $f ? "#".$f : ""
-		 }
-		},
-		$text.$fragmenttext);
-	} elsif (@parts==2) {
-	    my ($loc,$text)= @parts;
-	    push @$res,
-	      A({href=> $loc},
-		$text)
-	} else {
-	    # XX location?...
-	    die "more than 2 parts in a wiki style link: ".show($cont);
-	}
+            # XX use 'opaque' instead of 'path' for the url? for
+            # locations with protocol or so? Or croak about those? Use
+            # opaque for the text, though, ok?
+            my $text= $uri->opaque;
+            $text=~ tr/_/ /;
+            push @$res,
+              A({
+                 href=>
+                 "//"
+                 . $uri->path.".md"
+                 . do {
+                     my $f= $uri->fragment;
+                     length $f ? "#".$f : ""
+                 }
+                },
+                $text.$fragmenttext);
+        } elsif (@parts==2) {
+            my ($loc,$text)= @parts;
+            push @$res,
+              A({href=> $loc},
+                $text)
+        } else {
+            # XX location?...
+            die "more than 2 parts in a wiki style link: ".show($cont);
+        }
     }
 
     my $postlen= length($str)-$lastpos;
@@ -178,9 +178,9 @@ TEST { mediawiki_expand "<foo>[[bar]] baz</foo>" }
   ['<foo>', A({href=> "//bar.md"}, "bar"), ' baz</foo>'];
 
 TEST { mediawiki_expand
-	 ' [[howto#References (and "mutation"), "variables" versus "bindings"]] ' }
+         ' [[howto#References (and "mutation"), "variables" versus "bindings"]] ' }
   [' ', A({href=> '//howto.md#References%20(and%20%22mutation%22),%20%22variables%22%20versus%20%22bindings%22'},
-	  'howto (References (and "mutation")..)'), ' '];
+          'howto (References (and "mutation")..)'), ' '];
 
 TEST { mediawiki_expand ' [[Foo#yah_Hey\\[1\\]]] ' }
   [' ', A({href=> '//Foo.md#yah_Hey[1]'}, 'Foo (yah Hey[1])'), ' '];

@@ -179,21 +179,21 @@ our $debug= $ENV{DEBUG_FP_LAZY} ? 1 : '';
 
 sub lazy (&) {
     bless [$_[0],
-	   undef,
-	   $debug && Chj::Repl::Stack->get(1)->backtrace
-	  ], "FP::Lazy::Promise"
+           undef,
+           $debug && Chj::Repl::Stack->get(1)->backtrace
+          ], "FP::Lazy::Promise"
       }
 
 sub lazy_if (&$) {
     ($_[1] ?
      bless ([$_[0],
-	     undef,
-	     $debug && Chj::Repl::Stack->get(1)->backtrace
-	    ], "FP::Lazy::Promise")
+             undef,
+             $debug && Chj::Repl::Stack->get(1)->backtrace
+            ], "FP::Lazy::Promise")
      : do {
-	 my ($thunk)=@_;
-	 @_=();
-	 goto $thunk;
+         my ($thunk)=@_;
+         @_=();
+         goto $thunk;
      })
 }
 
@@ -213,29 +213,29 @@ sub delayLight (&); *delayLight= \&lazyLight;
 sub force ($;$) {
     my ($perhaps_promise,$nocache)=@_;
   LP: {
-	if (length (my $r= ref $perhaps_promise)) {
-	    if (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::PromiseLight")) {
-		$perhaps_promise= &$perhaps_promise;
-		redo LP;
-	    } elsif (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::Promise")) {
-		if (my $thunk= $$perhaps_promise[0]) {
-		    my $v= &$thunk();
-		    unless ($nocache) {
-			$$perhaps_promise[1]= $v;
-			$$perhaps_promise[0]= undef;
-		    }
-		    $perhaps_promise= $v;
-		    redo LP;
-		} else {
-		    $perhaps_promise= $$perhaps_promise[1];
-		    redo LP;
-		}
-	    } else {
-		$perhaps_promise
-	    }
-	} else {
-	    $perhaps_promise
-	}
+        if (length (my $r= ref $perhaps_promise)) {
+            if (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::PromiseLight")) {
+                $perhaps_promise= &$perhaps_promise;
+                redo LP;
+            } elsif (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::Promise")) {
+                if (my $thunk= $$perhaps_promise[0]) {
+                    my $v= &$thunk();
+                    unless ($nocache) {
+                        $$perhaps_promise[1]= $v;
+                        $$perhaps_promise[0]= undef;
+                    }
+                    $perhaps_promise= $v;
+                    redo LP;
+                } else {
+                    $perhaps_promise= $$perhaps_promise[1];
+                    redo LP;
+                }
+            } else {
+                $perhaps_promise
+            }
+        } else {
+            $perhaps_promise
+        }
     }
 }
 
@@ -243,24 +243,24 @@ sub force ($;$) {
 sub force_noeval ($) {
     my ($s)=@_;
     if (length (my $r= ref $s)) {
-	if (UNIVERSAL::isa ($s, "FP::Lazy::Promise")) {
-	    if ($$s[0]) {
-		$s
-	    } else {
-		$$s[1]
-	    }
-	} else {
-	    $s
-	}
+        if (UNIVERSAL::isa ($s, "FP::Lazy::Promise")) {
+            if ($$s[0]) {
+                $s
+            } else {
+                $$s[1]
+            }
+        } else {
+            $s
+        }
     } else {
-	$s
+        $s
     }
 }
 
 
 sub FORCE {
     for (@_) {
-	$_ = force $_
+        $_ = force $_
     }
     wantarray ? @_ : $_[-1]
 }
@@ -269,51 +269,51 @@ sub FORCE {
     package FP::Lazy::Promise;
     *force= *FP::Lazy::force;
     sub FORCE {
-	$_[0] = force ($_[0]);
+        $_[0] = force ($_[0]);
     }
     sub DESTROY {
-	# nothing, catch this to prevent it from entering AUTOLOAD
+        # nothing, catch this to prevent it from entering AUTOLOAD
     }
     our $AUTOLOAD; # needs to be declared even though magical
     sub AUTOLOAD {
-	my $methodname= $AUTOLOAD;
-	my $v= force ($_[0]);
-	$methodname =~ s/.*:://;
-	# To be able to select special implementations for lazy
-	# inputs, select a method with `stream_` prefix if present.
-	# (No need to check whether $v is a reference, as the same
-	# code is valid for class names.)
-	my $method=
-	  ($methodname=~ /^stream_/ ? UNIVERSAL::can($v, $methodname)
-	   : UNIVERSAL::can($v, "stream_$methodname")
-	     // UNIVERSAL::can($v, $methodname));
-	if ($method) {
-	    # can't change @_ or it would break 'env clearing' ability
-	    # of the method. Thus assign to $_[0], which will effect
-	    # our env, too, but so what? XX still somewhat bad.
-	    $_[0]= $v; goto &$method;
-	} else {
-	    # XX imitate perl's ~exact error message?
-	    die "no method '$methodname' found for object: $v";
-	}
+        my $methodname= $AUTOLOAD;
+        my $v= force ($_[0]);
+        $methodname =~ s/.*:://;
+        # To be able to select special implementations for lazy
+        # inputs, select a method with `stream_` prefix if present.
+        # (No need to check whether $v is a reference, as the same
+        # code is valid for class names.)
+        my $method=
+          ($methodname=~ /^stream_/ ? UNIVERSAL::can($v, $methodname)
+           : UNIVERSAL::can($v, "stream_$methodname")
+             // UNIVERSAL::can($v, $methodname));
+        if ($method) {
+            # can't change @_ or it would break 'env clearing' ability
+            # of the method. Thus assign to $_[0], which will effect
+            # our env, too, but so what? XX still somewhat bad.
+            $_[0]= $v; goto &$method;
+        } else {
+            # XX imitate perl's ~exact error message?
+            die "no method '$methodname' found for object: $v";
+        }
     }
 
     # should really have a maybe_ prefix, but since it's for debugging
     # purposes only (and in that case also likely always returns a
     # value) and we like short names for that, leave it at this, ok?
     sub bt {
-	my $s=shift;
-	$$s[2]
+        my $s=shift;
+        $$s[2]
     }
 
     sub FP_Show_show {
-	my ($s,$show)=@_;
-	# do not force unforced promises
-	if ($$s[0]) {
-	    'lazy { "DUMMY" }'
-	} else {
-	    &$show($$s[1])
-	}
+        my ($s,$show)=@_;
+        # do not force unforced promises
+        if ($$s[0]) {
+            'lazy { "DUMMY" }'
+        } else {
+            &$show($$s[1])
+        }
     }
 }
 
@@ -322,9 +322,9 @@ sub FORCE {
     our @ISA= qw(FP::Lazy::Promise);
 
     sub FP_Show_show {
-	my ($s,$show)=@_;
-	# do not force unforced promises
-	'lazyLight { "DUMMY" }'
+        my ($s,$show)=@_;
+        # do not force unforced promises
+        'lazyLight { "DUMMY" }'
     }
 }
 
@@ -333,9 +333,9 @@ use Chj::TEST;
 TEST {
     our $foo= "";
     sub moo {
-	my ($bar)=@_;
-	local $foo= "Hello";
-	lazy { "$foo $bar" }
+        my ($bar)=@_;
+        local $foo= "Hello";
+        lazy { "$foo $bar" }
     }
     moo ("you")->force
 }

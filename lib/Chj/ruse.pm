@@ -89,80 +89,80 @@ sub new_import {
     our $Debug;
 
     sub wipeout_namespace {
-	my ($key)=@_;
-	my $class=$key;
-	$class=~ s|/|::|sg;##COPY!!below.
-	$class=~ s|\.pm$||s;
-	my $h= do {
-	    no strict 'refs';
-	    \%{"${class}::"}
-	};
-	for (keys %$h) {
-	    unless (/[^:]::\z/) {
-		delete $$h{$_};
-		warn "deleted '$_'" if $Chj::ruse::DEBUG > 0;
-	    }
-	}
+        my ($key)=@_;
+        my $class=$key;
+        $class=~ s|/|::|sg;##COPY!!below.
+        $class=~ s|\.pm$||s;
+        my $h= do {
+            no strict 'refs';
+            \%{"${class}::"}
+        };
+        for (keys %$h) {
+            unless (/[^:]::\z/) {
+                delete $$h{$_};
+                warn "deleted '$_'" if $Chj::ruse::DEBUG > 0;
+            }
+        }
     }
 
     sub check {
-	$Debug= $Chj::ruse::DEBUG;  # so that it works when that one's local'ized
-	my $c=0;
-	my @ignores;
-	push @ignores,$INC{"Module/Reload.pm"}
-	  if exists $INC{"Module/Reload.pm"};
-	push @ignores,$INC{"Chj/ruse.pm"}
-	  if exists $INC{"Chj/ruse.pm"};
-	local $^W= ($Debug>=0);
-	my $memq_ignores= sub {
-	    my ($f)=@_;
-	    for (@ignores) {
-		return 1 if $_ eq $f
-	    }
-	    0
-	};
-	while (my ($key, $file) = each %INC) {
-	    my $reload= sub {
-		delete $INC{$key};
-		wipeout_namespace($key);
-		eval {
-		    local $SIG{__WARN__} = \&warn;  # (cj: what does that do?)
-		    require $key;
-		};
-		if ($@) {
-		    warn "Module::Reload: error during reload of '$key': $@\n"
-		}
-		else {
-		    if ($Debug>0) {
-			warn "Module::Reload: process $$ reloaded '$key'\n"
-			  if $Debug == 1;
-			warn("Module::Reload: process $$ reloaded '$key' (\@INC=".
-			     join(', ',@INC).")\n")
-			  if $Debug >= 2;
-		    }
-		    Chj::ruse::reimport($key);
-		}
-		++$c;
-	    };
-	    if (! defined $file) {
-		&$reload;
-		my $file2 = $INC{$key};
-		my $mtime = (stat $file2)[9];
-		$Stat{$file2} = $mtime;
-	    } else {
-		next if $memq_ignores->($file); # too confusing
-		#local $^W = 0; XX nope, only shut down redefinition warnings please.
-		my $mtime = (stat $file)[9];
-		$Stat{$file} = $^T
-		  unless defined $Stat{$file};
-		warn "Module::Reload: stat '$file' got $mtime >? $Stat{$file}\n"
-		  if $Debug >= 3;
-		&$reload if ($mtime > $Stat{$file});
-		$Stat{$file} = $mtime;
-		# (XX shouldn't let it warn forever if it couldn't reload?)
-	    }
-	}
-	$c;
+        $Debug= $Chj::ruse::DEBUG;  # so that it works when that one's local'ized
+        my $c=0;
+        my @ignores;
+        push @ignores,$INC{"Module/Reload.pm"}
+          if exists $INC{"Module/Reload.pm"};
+        push @ignores,$INC{"Chj/ruse.pm"}
+          if exists $INC{"Chj/ruse.pm"};
+        local $^W= ($Debug>=0);
+        my $memq_ignores= sub {
+            my ($f)=@_;
+            for (@ignores) {
+                return 1 if $_ eq $f
+            }
+            0
+        };
+        while (my ($key, $file) = each %INC) {
+            my $reload= sub {
+                delete $INC{$key};
+                wipeout_namespace($key);
+                eval {
+                    local $SIG{__WARN__} = \&warn;  # (cj: what does that do?)
+                    require $key;
+                };
+                if ($@) {
+                    warn "Module::Reload: error during reload of '$key': $@\n"
+                }
+                else {
+                    if ($Debug>0) {
+                        warn "Module::Reload: process $$ reloaded '$key'\n"
+                          if $Debug == 1;
+                        warn("Module::Reload: process $$ reloaded '$key' (\@INC=".
+                             join(', ',@INC).")\n")
+                          if $Debug >= 2;
+                    }
+                    Chj::ruse::reimport($key);
+                }
+                ++$c;
+            };
+            if (! defined $file) {
+                &$reload;
+                my $file2 = $INC{$key};
+                my $mtime = (stat $file2)[9];
+                $Stat{$file2} = $mtime;
+            } else {
+                next if $memq_ignores->($file); # too confusing
+                #local $^W = 0; XX nope, only shut down redefinition warnings please.
+                my $mtime = (stat $file)[9];
+                $Stat{$file} = $^T
+                  unless defined $Stat{$file};
+                warn "Module::Reload: stat '$file' got $mtime >? $Stat{$file}\n"
+                  if $Debug >= 3;
+                &$reload if ($mtime > $Stat{$file});
+                $Stat{$file} = $mtime;
+                # (XX shouldn't let it warn forever if it couldn't reload?)
+            }
+        }
+        $c;
     }
 }
 
@@ -174,19 +174,19 @@ sub reimport {
     $class=~ s|/|::|sg;##COPY above !!
     $class=~ s|\.pm$||s;
     if (my $importer= $class->can("import")) {
-	my $imports= $rdep{$class};
-	for my $caller (keys %$imports) {
-	    my $code= "package $caller; "
-	      .'$Chj::ruse::orig_import->(@{$$imports{$caller}})';
-	    eval $code; # XX is this safe? (security)
-	    if (ref $@ or $@) {
-		warn "reimport WARNING: evaling '$code' gave: $@";
-	    }
-	}
+        my $imports= $rdep{$class};
+        for my $caller (keys %$imports) {
+            my $code= "package $caller; "
+              .'$Chj::ruse::orig_import->(@{$$imports{$caller}})';
+            eval $code; # XX is this safe? (security)
+            if (ref $@ or $@) {
+                warn "reimport WARNING: evaling '$code' gave: $@";
+            }
+        }
     } else {
-	warn ("reimport WARNING: $class->can('import') didn't yield true, ".
-	      "apparently the module doesn't inherit from Exporter")
-	  if $verbose;
+        warn ("reimport WARNING: $class->can('import') didn't yield true, ".
+              "apparently the module doesn't inherit from Exporter")
+          if $verbose;
     }
 }
 

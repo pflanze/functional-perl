@@ -42,7 +42,7 @@ sub unsafe_new_from_array {
     my ($a)=@_;
     my %h;
     for my $i (0..$#$a) {
-	$h{$$a[$i]}= $i;
+        $h{$$a[$i]}= $i;
     }
     $cl->new ($a,\%h)
 }

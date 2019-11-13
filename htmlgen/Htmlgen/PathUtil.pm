@@ -23,9 +23,9 @@ package Htmlgen::PathUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(path_add path_diff
-	      path0
-	      path_path0_append
-	    );
+              path0
+              path_path0_append
+            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -41,8 +41,8 @@ use Chj::TEST ":all";
 
 fun path_add ($base,$rel) {
     FP::Path->new_from_string($base)->add
-	(FP::Path->new_from_string($rel), 1)
-	  ->string
+        (FP::Path->new_from_string($rel), 1)
+          ->string
 }
 
 TEST{path_add "/foo", "/zoo" } "/zoo";

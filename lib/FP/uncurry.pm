@@ -53,13 +53,13 @@ CPAN.
 package FP::uncurry;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
-	      uncurry
-	      uncurry_1_1
-	      uncurry_2_1
-	      uncurry_1_2
-	      uncurry_2_2
-	      uncurry_1_1_1
-	 );
+              uncurry
+              uncurry_1_1
+              uncurry_2_1
+              uncurry_1_2
+              uncurry_2_2
+              uncurry_1_1_1
+         );
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -70,9 +70,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 sub uncurry_1_1 ($) {
     my ($f)=@_;
     sub {
-	@_==2 or die "expecting 2 arguments";
-	my ($a,$b)=@_;
-	$f->($a)->($b)
+        @_==2 or die "expecting 2 arguments";
+        my ($a,$b)=@_;
+        $f->($a)->($b)
     }
 }
 
@@ -82,36 +82,36 @@ sub uncurry ($);
 sub uncurry_2_1 ($) {
     my ($f)=@_;
     sub {
-	@_==3 or die "expecting 3 arguments";
-	my ($a,$b,$c)=@_;
-	$f->($a,$b)->($c)
+        @_==3 or die "expecting 3 arguments";
+        my ($a,$b,$c)=@_;
+        $f->($a,$b)->($c)
     }
 }
 
 sub uncurry_1_2 ($) {
     my ($f)=@_;
     sub {
-	@_==3 or die "expecting 3 arguments";
-	my ($a,$b,$c)=@_;
-	$f->($a)->($b,$c)
+        @_==3 or die "expecting 3 arguments";
+        my ($a,$b,$c)=@_;
+        $f->($a)->($b,$c)
     }
 }
 
 sub uncurry_2_2 ($) {
     my ($f)=@_;
     sub {
-	@_==4 or die "expecting 4 arguments";
-	my ($a,$b,$c,$d)=@_;
-	$f->($a,$b)->($c,$d)
+        @_==4 or die "expecting 4 arguments";
+        my ($a,$b,$c,$d)=@_;
+        $f->($a,$b)->($c,$d)
     }
 }
 
 sub uncurry_1_1_1 ($) {
     my ($f)=@_;
     sub {
-	@_==3 or die "expecting 3 arguments";
-	my ($a,$b,$c)=@_;
-	$f->($a)->($b)->($c)
+        @_==3 or die "expecting 3 arguments";
+        my ($a,$b,$c)=@_;
+        $f->($a)->($b)->($c)
     }
 }
 

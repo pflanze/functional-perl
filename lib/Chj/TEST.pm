@@ -84,42 +84,42 @@ sub import {
     my ($package, $filename, $line)= caller;
     my @args;
     for (my $i=0; $i < @_; $i++) {
-	my $v= $_[$i];
-	if ($v eq "use" or $v eq "require") {
-	    my $val= $_[$i+1];
-	    defined $val
-	      or croak "undef given as 'require' parameter";
-	    my ($module,@args)= do {
-		if (ref($val) eq "ARRAY") {
-		    @$val
-		} elsif (length $val) {
-		    ($val)
-		} else {
-		    croak "value given as 'require' parameter must be a string or array";
-		}
-	    };
-	    my $smallcode=
-	      ("$v $module "
-	       .join(",", map {singlequote $_} @args));
-	    $filename=~ /[\r\n]/
-	      and die "possible security issue"; # XXX: how to do it fully right?
-	    my $code= "#line $line $filename\npackage $package; $smallcode; 1";
-	    if (eval $code) {
-		# ok
-	    } else {
-		if ($ENV{RUN_TESTS}) {
-		    #carp "RUN_TESTS is set and we failed to $smallcode";
-		    require Test::More;
-		    Test::More::plan (skip_all=> "failed to $smallcode");
-		    exit 1; # necessary?
-		} else {
-		    die $@
-		}
-	    }
-	    $i++;
-	} else {
-	    push @args, $v
-	}
+        my $v= $_[$i];
+        if ($v eq "use" or $v eq "require") {
+            my $val= $_[$i+1];
+            defined $val
+              or croak "undef given as 'require' parameter";
+            my ($module,@args)= do {
+                if (ref($val) eq "ARRAY") {
+                    @$val
+                } elsif (length $val) {
+                    ($val)
+                } else {
+                    croak "value given as 'require' parameter must be a string or array";
+                }
+            };
+            my $smallcode=
+              ("$v $module "
+               .join(",", map {singlequote $_} @args));
+            $filename=~ /[\r\n]/
+              and die "possible security issue"; # XXX: how to do it fully right?
+            my $code= "#line $line $filename\npackage $package; $smallcode; 1";
+            if (eval $code) {
+                # ok
+            } else {
+                if ($ENV{RUN_TESTS}) {
+                    #carp "RUN_TESTS is set and we failed to $smallcode";
+                    require Test::More;
+                    Test::More::plan (skip_all=> "failed to $smallcode");
+                    exit 1; # necessary?
+                } else {
+                    die $@
+                }
+            }
+            $i++;
+        } else {
+            push @args, $v
+        }
     }
     my $sub= $class->can("SUPER::import")
       or die "$class does not have an 'import' procedure";
@@ -142,12 +142,12 @@ sub no_tests () {
 sub _TEST {
     my ($proc,$res)=@_;
     if (no_tests) {
-	$dropped_tests++;
+        $dropped_tests++;
     } else {
-	my ($package, $filename, $line) = caller(1);
-	$$num_by_package{$package}++;
-	push @{$$tests_by_package{$package}},
-	  [$proc,$res, $$num_by_package{$package}, ($package, $filename, $line)];
+        my ($package, $filename, $line) = caller(1);
+        $$num_by_package{$package}++;
+        push @{$$tests_by_package{$package}},
+          [$proc,$res, $$num_by_package{$package}, ($package, $filename, $line)];
     }
 }
 
@@ -163,18 +163,18 @@ sub TEST_STDOUT (&$) {
 sub TEST_EXCEPTION (&$) {
     my ($proc,$res)=@_;
     _TEST(sub{
-	      if (eval {
-		  &$proc();
-		  1
-	      }) {
-		  undef
-	      } else {
-		  my $msg= "$@";
-		  $msg=~ s| at .*? line \d*.*||s;
-		  $msg
-	      }
-	  },
-	  $res);
+              if (eval {
+                  &$proc();
+                  1
+              }) {
+                  undef
+              } else {
+                  my $msg= "$@";
+                  $msg=~ s| at .*? line \d*.*||s;
+                  $msg
+              }
+          },
+          $res);
 }
 
 sub GIVES (&) {
@@ -191,57 +191,57 @@ sub eval_test ($$) {
     print "running test $num..";
     my $got= &$proc;
     if (ref ($res) eq 'Chj::TEST::GIVES') {
-	$res= &$res;
+        $res= &$res;
     }
 
     if (dumperequal($got, $res)
         or dumperequal_utf8($got, $res)) {
-	print "ok\n";
-	$$stat{success}++
+        print "ok\n";
+        $$stat{success}++
     } else {
-	my $gotstr= show $got;
-	my $resstr= show $res;
+        my $gotstr= show $got;
+        my $resstr= show $res;
 
-	print "FAIL at $filename line $line:\n";
-	print "       got: $gotstr\n";
-	print "  expected: $resstr\n";
-	$$stat{fail}++
+        print "FAIL at $filename line $line:\n";
+        print "       got: $gotstr\n";
+        print "  expected: $resstr\n";
+        $$stat{fail}++
     }
 }
 
 sub run_tests_for_package {
     my ($package,$stat,$maybe_testnumbers)=@_;
     if (my $tests= $$tests_by_package{$package}) {
-	local $|=1;
-	if (defined $maybe_testnumbers) {
-	    print "=== running selected tests in package '$package'\n";
-	    for my $number (@$maybe_testnumbers) {
-		if ($number=~ /^\d+\z/ and $number > 0
-		    and (my $test= $$tests[$number-1])) {
-		    eval_test $test, $stat
-		} else {
-		    print "ignoring invalid test number '$number'\n";
-		}
-	    }
-	} else {
-	    print "=== running tests in package '$package'\n";
-	    for my $test (@$tests) {
-		eval_test $test, $stat
-	    }
-	}
+        local $|=1;
+        if (defined $maybe_testnumbers) {
+            print "=== running selected tests in package '$package'\n";
+            for my $number (@$maybe_testnumbers) {
+                if ($number=~ /^\d+\z/ and $number > 0
+                    and (my $test= $$tests[$number-1])) {
+                    eval_test $test, $stat
+                } else {
+                    print "ignoring invalid test number '$number'\n";
+                }
+            }
+        } else {
+            print "=== running tests in package '$package'\n";
+            for my $test (@$tests) {
+                eval_test $test, $stat
+            }
+        }
     } else {
-	print "=== no tests for package '$package'\n";
+        print "=== no tests for package '$package'\n";
     }
 }
 
 sub unify_values {
     my $maybe_values;
     for (@_) {
-	if (ref $_) {
-	    push @$maybe_values, @$_
-	} elsif (defined $_) {
-	    push @$maybe_values, $_
-	}
+        if (ref $_) {
+            push @$maybe_values, @$_
+        } elsif (defined $_) {
+            push @$maybe_values, $_
+        }
     }
     $maybe_values
 }
@@ -253,16 +253,16 @@ sub run_tests_ {
       unify_values delete $$args{packages}, delete $$args{package};
     my $maybe_testnumbers=
       unify_values delete $$args{numbers}, delete $$args{number},
-	delete $$args{no};
+        delete $$args{no};
     for (keys %$args) { warn "run_tests_: unknown argument '$_'" }
 
     my $stat= {success=>0, fail=>0};
     if (defined $maybe_packages and @$maybe_packages) {
-	run_tests_for_package $_,$stat,$maybe_testnumbers
-	  for @$maybe_packages;
+        run_tests_for_package $_,$stat,$maybe_testnumbers
+          for @$maybe_packages;
     } else {
-	run_tests_for_package $_,$stat,$maybe_testnumbers
-	  for keys %$tests_by_package;
+        run_tests_for_package $_,$stat,$maybe_testnumbers
+          for keys %$tests_by_package;
     }
     print "===\n";
     print "=> $$stat{success} success(es), $$stat{fail} failure(s)\n";
@@ -277,22 +277,22 @@ sub run_tests {
 
 sub perhaps_run_tests {
     if ($ENV{RUN_TESTS}) {
-	# run TEST forms (called as part of test suite)
+        # run TEST forms (called as part of test suite)
 
-	die "Tests were dropped due to the TEST environmental "
-	  ."variable being set to false"
-	    if $dropped_tests;
+        die "Tests were dropped due to the TEST environmental "
+          ."variable being set to false"
+            if $dropped_tests;
 
-	require Test::More;
-	import Test::More;
-	is( eval { run_tests(@_) } // do { diag ($@); undef},
-	    0,
-	    "run_tests" );
-	done_testing();
+        require Test::More;
+        import Test::More;
+        is( eval { run_tests(@_) } // do { diag ($@); undef},
+            0,
+            "run_tests" );
+        done_testing();
 
-	1  # so that one can write  `perhaps_run_tests or something_else;`
+        1  # so that one can write  `perhaps_run_tests or something_else;`
     } else {
-	()
+        ()
     }
 }
 

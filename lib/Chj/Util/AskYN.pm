@@ -45,26 +45,26 @@ sub maybe_askyn {
     my ($maybe_prompt)=@_;
     local $|=1;
   ASK:{
-	if (defined $maybe_prompt) {
-	    print $maybe_prompt;
-	}
-	print " ";
-	my $ans=<STDIN>;
-	if (defined $ans) {
-	    if ($ans=~ /^n(?:o|ein|ada|on)?$/i) {
-		''
-	    } elsif ($ans=~ /^(?:ja|yes|j|y|oui)$/i){
-		1
-	    } else {
-		print "Please answer with yes or no or their initials, ".
-		  "or the same in french or german.\n";
-		redo ASK;
-	    }
-	} else {
-	    # EOF, i.e. ctl-d
-	    print "\n";
-	    undef
-	}
+        if (defined $maybe_prompt) {
+            print $maybe_prompt;
+        }
+        print " ";
+        my $ans=<STDIN>;
+        if (defined $ans) {
+            if ($ans=~ /^n(?:o|ein|ada|on)?$/i) {
+                ''
+            } elsif ($ans=~ /^(?:ja|yes|j|y|oui)$/i){
+                1
+            } else {
+                print "Please answer with yes or no or their initials, ".
+                  "or the same in french or german.\n";
+                redo ASK;
+            }
+        } else {
+            # EOF, i.e. ctl-d
+            print "\n";
+            undef
+        }
     }
 }
 

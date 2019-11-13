@@ -60,25 +60,25 @@ TEST{ pxmlfunc { pxmlbody 3, 2 } ->()->string }
 
 TEST_EXCEPTION {
     pxmlfunc {
-	my ($loc,$body)=@_;
-	A {href=> "http://$loc"}, $body
-	  # yes, already *that* is forbidden.
+        my ($loc,$body)=@_;
+        A {href=> "http://$loc"}, $body
+          # yes, already *that* is forbidden.
     }
 }
   "tried to access a PXML::Preserialize::Argument object";
 
 TEST_EXCEPTION {
     pxmlfunc {
-	my ($loc,$body)=@_;
-	A {href=> $loc}, 0-$body
+        my ($loc,$body)=@_;
+        A {href=> $loc}, 0-$body
     }
 }
   "tried to access a PXML::Preserialize::Argument object";
 
 TEST_EXCEPTION {
     pxmlfunc {
-	my ($loc,$body)=@_;
-	A {href=> $loc},  $loc ? $body : 1
+        my ($loc,$body)=@_;
+        A {href=> $loc},  $loc ? $body : 1
     }
 }
   "tried to access a PXML::Preserialize::Argument object";

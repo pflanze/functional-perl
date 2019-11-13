@@ -10,16 +10,16 @@ use Scalar::Util "weaken";
 
 sub foo {
     my $f; $f= sub {
-	my ($n)= @_;
-	my $f=$f; # create a new, strong binding for f to prevent it
-		  # from being freed (upon return from f)
-	sub {
-	    if ($n > 0) {
-		$n + &{&$f($n - 1)}
-	    } else {
-		0
-	    }
-	}
+        my ($n)= @_;
+        my $f=$f; # create a new, strong binding for f to prevent it
+                  # from being freed (upon return from f)
+        sub {
+            if ($n > 0) {
+                $n + &{&$f($n - 1)}
+            } else {
+                0
+            }
+        }
     };
     my $f_= $f; weaken $f;
     &$f_;

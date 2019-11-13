@@ -59,14 +59,14 @@ sub repl {
     my $r= new Chj::Repl;
 
     if (exists $args{maybe_settingspath}) {
-	$r->set_maybe_settingspath(delete $args{maybe_settingspath});
+        $r->set_maybe_settingspath(delete $args{maybe_settingspath});
     }
 
     $r->possibly_restore_settings;
 
     for (keys %args) {
-	my $m= "set_$_";
-	$r->$m($args{$_});
+        my $m= "set_$_";
+        $r->$m($args{$_});
     }
 
     #$r->run ($maybe_skip);

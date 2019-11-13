@@ -167,7 +167,7 @@ TEST_EXCEPTION { FP::Path->new(list("/foo"), 1, 1)->string }
 sub t_equal ($$) {
     my ($a,$b)=@_;
     equal (path($a),
-	    path($b))
+            path($b))
 }
 
 TEST { t_equal "/foo", "/foo" } 1;
@@ -206,9 +206,9 @@ sub path_split_first_segment {
     my ($str, $clean)= @_;
     my $p= path $str;
     if (my @v = ($clean ? $p->xclean : $p)->perhaps_split_first_segment) {
-	[map {$_->string} @v]
+        [map {$_->string} @v]
     } else {
-	"unsplittable"
+        "unsplittable"
     }
 }
 
@@ -246,8 +246,8 @@ use FP::Ops qw(the_method);
 sub tupleify ($) {
     my ($f)=@_;
     sub {
-	@_==1 or die "wrong number of arguments";
-	[ &$f (@{$_[0]}) ]
+        @_==1 or die "wrong number of arguments";
+        [ &$f (@{$_[0]}) ]
     }
 }
 
@@ -258,13 +258,13 @@ sub all_splits {
     my $p0= ($clean ? $p->xclean : $p);
 
     unfold (# ending predicate
-	    *array_is_null,
-	    # mapping function
-	    sub { array_map the_method ("string"), $_[0] },
-	    # stepping function
-	    tupleify the_method ("perhaps_resplit_next_segment"),
-	    # seed value
-	    [ $p0->perhaps_split_first_segment ])
+            *array_is_null,
+            # mapping function
+            sub { array_map the_method ("string"), $_[0] },
+            # stepping function
+            tupleify the_method ("perhaps_resplit_next_segment"),
+            # seed value
+            [ $p0->perhaps_split_first_segment ])
       ->array
 }
 

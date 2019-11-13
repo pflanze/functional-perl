@@ -67,49 +67,49 @@ that are false.
 package FP::Predicates;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
-	      is_pure
-	      is_pure_object
-	      is_pure_class
-	      is_string
-	      is_nonnullstring
-	      is_natural0
-	      is_natural
-	      is_even is_odd
-	      is_boolean01
-	      is_booleanyesno
-	      is_boolean
-	      is_hash
-	      is_array
-	      is_procedure
-	      is_class_name
-	      instance_of
-	      is_instance_of
-	      is_subclass_of
+              is_pure
+              is_pure_object
+              is_pure_class
+              is_string
+              is_nonnullstring
+              is_natural0
+              is_natural
+              is_even is_odd
+              is_boolean01
+              is_booleanyesno
+              is_boolean
+              is_hash
+              is_array
+              is_procedure
+              is_class_name
+              instance_of
+              is_instance_of
+              is_subclass_of
 
-	      is_filehandle
+              is_filehandle
 
-	      is_filename
-	      is_sequence
+              is_filename
+              is_sequence
 
-	      less_than
-	      greater_than
-	      less_equal
-	      greater_equal
-	      is_zero
+              less_than
+              greater_than
+              less_equal
+              greater_equal
+              is_zero
 
-	      maybe
-	      is_defined
-	      is_true
-	      true
-	      is_false
-	      false
-	      complement
-	      either
-	      all_of both
-	 );
+              maybe
+              is_defined
+              is_true
+              true
+              is_false
+              false
+              complement
+              either
+              all_of both
+         );
 @EXPORT_OK=qw(
-		 is_coderef
-	    );
+                 is_coderef
+            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -193,28 +193,28 @@ TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
 sub less_than ($) {
     my ($x)=@_;
     sub ($) {
-	$_[0] < $x
+        $_[0] < $x
     }
 }
 
 sub greater_than ($) {
     my ($x)=@_;
     sub ($) {
-	$_[0] > $x
+        $_[0] > $x
     }
 }
 
 sub less_equal ($) {
     my ($x)=@_;
     sub ($) {
-	$_[0] <= $x
+        $_[0] <= $x
     }
 }
 
 sub greater_equal ($) {
     my ($x)=@_;
     sub ($) {
-	$_[0] >= $x
+        $_[0] >= $x
     }
 }
 
@@ -239,8 +239,8 @@ sub is_booleanyesno ($) {
 sub is_boolean ($) {
     not ref ($_[0]) # relax?
       and (! $_[0]
-	   or
-	   $_[0] eq "1");
+           or
+           $_[0] eq "1");
 }
 
 
@@ -270,7 +270,7 @@ sub is_procedure ($) {
       (ref ($_[0]) eq "CODE"
        or
        (ref \($_[0]) eq "GLOB" ? *{$_[0]}{CODE} ? 1 : '' : ''))
-	# XX: also check for objects that overload '&'?
+        # XX: also check for objects that overload '&'?
 }
 
 TEST { is_procedure [] } '';
@@ -290,7 +290,7 @@ sub instance_of ($) {
     my ($cl)=@_;
     is_class_name $cl or die "need class name string, got: $cl";
     sub ($) {
-	length ref $_[0] ? UNIVERSAL::isa ($_[0], $cl) : ''
+        length ref $_[0] ? UNIVERSAL::isa ($_[0], $cl) : ''
     }
 }
 
@@ -316,13 +316,13 @@ TEST { require Chj::IO::File;
 # is_filename in Chj::BuiltinTypePredicates
 
 TEST {[ map { is_filehandle $_ }
-	"STDOUT", undef,
-	*STDOUT, *STDOUT{IO}, \*STDOUT,
-	*SMK69GXDB, *SMK69GXDB{IO}, \*SMK69GXDB,
-	bless (\*WOFWEOXVV, "ReallyNotIO"),
-	do { open my $in, '<', $0 or die $!;
-	     #warn "HM".<$in>;  # works
-	     bless $in, "MightActullyBeIO" }
+        "STDOUT", undef,
+        *STDOUT, *STDOUT{IO}, \*STDOUT,
+        *SMK69GXDB, *SMK69GXDB{IO}, \*SMK69GXDB,
+        bless (\*WOFWEOXVV, "ReallyNotIO"),
+        do { open my $in, '<', $0 or die $!;
+             #warn "HM".<$in>;  # works
+             bless $in, "MightActullyBeIO" }
       ]}
   ['', '',
    '', 1, 1,
@@ -352,7 +352,7 @@ sub is_sequence ($) {
        # XX evil: inlined `is_promise`
        UNIVERSAL::isa($_[0], "FP::Lazy::Promise")
        && is_sequence (force $_[0]))
-	: '';
+        : '';
 }
 
 
@@ -360,8 +360,8 @@ sub maybe ($) {
     @_==1 or die "wrong number of arguments";
     my ($pred)=@_;
     sub ($) {
-	my ($v)=@_;
-	defined $v ? &$pred ($v) : 1
+        my ($v)=@_;
+        defined $v ? &$pred ($v) : 1
     }
 }
 
@@ -394,7 +394,7 @@ sub complement ($) {
     @_==1 or die "wrong number of arguments";
     my ($f)=@_;
     sub {
-	! &$f(@_)
+        ! &$f(@_)
     }
 }
 
@@ -407,11 +407,11 @@ TEST {
 sub either {
     my (@fn)=@_;
     sub {
-	for my $fn (@fn) {
-	    my $v= &$fn;
-	    return $v if $v;
-	}
-	0
+        for my $fn (@fn) {
+            my $v= &$fn;
+            return $v if $v;
+        }
+        0
     }
 }
 
@@ -424,10 +424,10 @@ TEST {
 sub all_of {
     my (@fn)=@_;
     sub {
-	for my $fn (@fn) {
-	    return '' unless &$fn;
-	}
-	1
+        for my $fn (@fn) {
+            return '' unless &$fn;
+        }
+        1
     }
 }
 

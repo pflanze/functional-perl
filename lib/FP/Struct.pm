@@ -168,17 +168,17 @@ sub all_fields {
     my ($isa)=@_;
     (
      map {
-	 my ($package)=$_;
-	 no strict 'refs';
-	 if (my $fields= \@{"${package}::__Struct__fields"}) {
-	     (
-	      all_fields (\@{"${package}::ISA"}),
-	      @$fields
-	     )
-	 } else {
-	     () # don't even look at parent classes in that case, is
+         my ($package)=$_;
+         no strict 'refs';
+         if (my $fields= \@{"${package}::__Struct__fields"}) {
+             (
+              all_fields (\@{"${package}::ISA"}),
+              @$fields
+             )
+         } else {
+             () # don't even look at parent classes in that case, is
                 # that reasonable?
-	 }
+         }
      } @$isa
     )
 }
@@ -209,16 +209,16 @@ sub import {
     return unless @_;
     my ($package, $is_expandedvariant, $fields, @perhaps_isa);
     if (ref $_[0]) {
-	($fields, @perhaps_isa)= @_;
-	$package= caller;
-	$is_expandedvariant= 1;
+        ($fields, @perhaps_isa)= @_;
+        $package= caller;
+        $is_expandedvariant= 1;
     } else {
-	($package, $fields, @perhaps_isa)= @_;
-	$is_expandedvariant= 0;
+        ($package, $fields, @perhaps_isa)= @_;
+        $is_expandedvariant= 0;
     }
     my @isa= (@perhaps_isa==1 and ref($perhaps_isa[0])) ?
       $perhaps_isa[0]
-	: @perhaps_isa;
+        : @perhaps_isa;
 
     @isa= "FP::Abstract::Pure" unless @isa;
     require_package $_ for @isa;
@@ -239,46 +239,46 @@ sub import {
 
     # constructor with positional parameters:
     my $allfields_i_with_predicate= do {
-	my $i=-1;
-	[ map {
-	    $i++;
-	    if (my $pred= field_maybe_predicate $_) {
-		[$pred, field_name ($_), $i]
-	    } else {
-		()
-	    }
-	} @$allfields ]
+        my $i=-1;
+        [ map {
+            $i++;
+            if (my $pred= field_maybe_predicate $_) {
+                [$pred, field_name ($_), $i]
+            } else {
+                ()
+            }
+        } @$allfields ]
     };
     *{"${package}::new"}= sub {
-	my $class=shift;
-	@_ <= @$allfields
-	  or croak "too many arguments to ${package}::new";
-	for (@$allfields_i_with_predicate) {
-	    my ($pred,$name,$i)=@$_;
-	    &$pred ($_[$i])
-	      or die "unacceptable value for field '$name': ".show($_[$i]);
-	}
-	my %s;
-	for (my $i=0; $i< @_; $i++) {
-	    $s{ $$allfields_name[$i] }= $_[$i];
-	}
-	bless \%s, $class
+        my $class=shift;
+        @_ <= @$allfields
+          or croak "too many arguments to ${package}::new";
+        for (@$allfields_i_with_predicate) {
+            my ($pred,$name,$i)=@$_;
+            &$pred ($_[$i])
+              or die "unacceptable value for field '$name': ".show($_[$i]);
+        }
+        my %s;
+        for (my $i=0; $i< @_; $i++) {
+            $s{ $$allfields_name[$i] }= $_[$i];
+        }
+        bless \%s, $class
     };
     # XX bah, almost copy-paste, because want to avoid sub call
     # overhead (inlining please finally?):
     *{"${package}::c::${package_lastpart}"}= my $constructor= sub {
-	@_ <= @$allfields
-	  or croak "too many arguments to ${package}::new";
-	for (@$allfields_i_with_predicate) {
-	    my ($pred,$name,$i)=@$_;
-	    &$pred ($_[$i])
-	      or die "unacceptable value for field '$name': ".show($_[$i]);
-	}
-	my %s;
-	for (my $i=0; $i< @_; $i++) {
-	    $s{ $$allfields_name[$i] }= $_[$i];
-	}
-	bless \%s, $package
+        @_ <= @$allfields
+          or croak "too many arguments to ${package}::new";
+        for (@$allfields_i_with_predicate) {
+            my ($pred,$name,$i)=@$_;
+            &$pred ($_[$i])
+              or die "unacceptable value for field '$name': ".show($_[$i]);
+        }
+        my %s;
+        for (my $i=0; $i< @_; $i++) {
+            $s{ $$allfields_name[$i] }= $_[$i];
+        }
+        bless \%s, $package
     };
 
 
@@ -286,37 +286,37 @@ sub import {
     my $allfields_h= +{ map { field_name($_)=> undef } @$allfields };
     my $allfields_with_predicate= [grep { field_maybe_predicate $_ } @$allfields];
     *{"${package}::new_"}= sub {
-	my $class=shift;
-	$class->unsafe_new__(+{@_})
+        my $class=shift;
+        $class->unsafe_new__(+{@_})
     };
     # XX mostly-copy-pasting again (like above):
     *{"${package}::c::${package_lastpart}_"}= my $constructor_= sub {
-	$package->unsafe_new__(+{@_})
+        $package->unsafe_new__(+{@_})
     };
 
     # constructor with hash parameter:
     *{"${package}::new__"}= sub {
-	my $class=shift;
-	@_==1 or croak "wrong number of arguments to ${package}::new__";
-	my ($h)=@_;
-	$class->unsafe_new__(+{%$h})
+        my $class=shift;
+        @_==1 or croak "wrong number of arguments to ${package}::new__";
+        my ($h)=@_;
+        $class->unsafe_new__(+{%$h})
     },
     *{"${package}::unsafe_new__"}= sub {
-	# NOTE: reuses (blesses) the argument hash! careful!
-	my $class=shift;
-	@_==1 or croak "wrong number of arguments to ${package}::unsafe_new__";
-	my ($s)=@_;
-	scalar (keys %$s) <= (@$allfields * 2)
-	  or croak "too many arguments to ${package}::new_";
-	for (keys %$s) {
-	    exists $$allfields_h{$_} or die "unknown field '$_'";
-	}
-	for (@$allfields_with_predicate) {
-	    my ($pred,$name)=@$_;
-	    &$pred ($$s{$name})
-	      or die "unacceptable value for field '$name': ".show($$s{$name});
-	}
-	bless $s, $class
+        # NOTE: reuses (blesses) the argument hash! careful!
+        my $class=shift;
+        @_==1 or croak "wrong number of arguments to ${package}::unsafe_new__";
+        my ($s)=@_;
+        scalar (keys %$s) <= (@$allfields * 2)
+          or croak "too many arguments to ${package}::new_";
+        for (keys %$s) {
+            exists $$allfields_h{$_} or die "unknown field '$_'";
+        }
+        for (@$allfields_with_predicate) {
+            my ($pred,$name)=@$_;
+            &$pred ($$s{$name})
+              or die "unacceptable value for field '$name': ".show($$s{$name});
+        }
+        bless $s, $class
     };
 
     # constructor exports: -- XX why did I decide to not use ::c:: for this? historic?
@@ -329,88 +329,88 @@ sub import {
     *{"${package}::constructors::EXPORT_TAGS"}= +{all=> $exports};
 
     my $end= sub {
-	#warn "_END_ called for package '$package'";
-	for my $_field (@$fields) {
-	    my ($maybe_predicate,$name)=
-	      field_maybe_predicate_and_name $_field;
+        #warn "_END_ called for package '$package'";
+        for my $_field (@$fields) {
+            my ($maybe_predicate,$name)=
+              field_maybe_predicate_and_name $_field;
 
-	    # accessors
-	    if (not $package->can($name)) {
-		*{"${package}::$name"}= sub {
-		    my $s=shift;
-		    $$s{$name}
-		};
-	    }
+            # accessors
+            if (not $package->can($name)) {
+                *{"${package}::$name"}= sub {
+                    my $s=shift;
+                    $$s{$name}
+                };
+            }
 
-	    # functional modifiers
-	    my $add_modifier= sub {
-		my ($modifierappendix,$modifier)= @_;
-		my $modifiername= "$name$modifierappendix";
-		unless ($package->can($modifiername)) {
-		    *{"${package}::$modifiername"}= $modifier;
-		}
-	    };
+            # functional modifiers
+            my $add_modifier= sub {
+                my ($modifierappendix,$modifier)= @_;
+                my $modifiername= "$name$modifierappendix";
+                unless ($package->can($modifiername)) {
+                    *{"${package}::$modifiername"}= $modifier;
+                }
+            };
 
-	    &$add_modifier
-	      ("_set",
-	       $maybe_predicate ?
-	       sub {
-		   my $s=shift;
-		   @_==1 or die "${name}_set: need 1 argument";
-		   my $v=shift;
-		   &$maybe_predicate($v)
-		     or die "unacceptable value for field '$name': "
-		       .show($v);
-		   my $new= +{%$s};
-		   $$new{$name}= $v;
-		   bless $new, ref $s
-	       }
-	       :
-	       sub {
-		   my $s=shift;
-		   @_==1 or die "${name}_set: need 1 argument";
-		   my $new= +{%$s};
-		   ($$new{$name})=@_;
-		   bless $new, ref $s
-	       });
+            &$add_modifier
+              ("_set",
+               $maybe_predicate ?
+               sub {
+                   my $s=shift;
+                   @_==1 or die "${name}_set: need 1 argument";
+                   my $v=shift;
+                   &$maybe_predicate($v)
+                     or die "unacceptable value for field '$name': "
+                       .show($v);
+                   my $new= +{%$s};
+                   $$new{$name}= $v;
+                   bless $new, ref $s
+               }
+               :
+               sub {
+                   my $s=shift;
+                   @_==1 or die "${name}_set: need 1 argument";
+                   my $new= +{%$s};
+                   ($$new{$name})=@_;
+                   bless $new, ref $s
+               });
 
-	    &$add_modifier
-	      ("_update",
-	       $maybe_predicate ?
-	       sub {
-		   @_==2 or die "${name}_update: need 1 argument";
-		   my ($s,$fn)=@_;
-		   my $v= &$fn ($s->{$name});
-		   &$maybe_predicate($v)
-		     or die "unacceptable value for field '$name': "
-		       .show($v);
-		   my $new= +{%$s};
-		   $$new{$name}= $v;
-		   bless $new, ref $s
-	       }
-	       :
-	       sub {
-		   @_==2 or die "${name}_update: need 1 argument";
-		   my ($s,$fn)=@_;
-		   my $v= &$fn ($s->{$name});
-		   my $new= +{%$s};
-		   ($$new{$name})= $v;
-		   bless $new, ref $s
-	       });
-	}
-	1 # make module load succeed at the same time.
+            &$add_modifier
+              ("_update",
+               $maybe_predicate ?
+               sub {
+                   @_==2 or die "${name}_update: need 1 argument";
+                   my ($s,$fn)=@_;
+                   my $v= &$fn ($s->{$name});
+                   &$maybe_predicate($v)
+                     or die "unacceptable value for field '$name': "
+                       .show($v);
+                   my $new= +{%$s};
+                   $$new{$name}= $v;
+                   bless $new, ref $s
+               }
+               :
+               sub {
+                   @_==2 or die "${name}_update: need 1 argument";
+                   my ($s,$fn)=@_;
+                   my $v= &$fn ($s->{$name});
+                   my $new= +{%$s};
+                   ($$new{$name})= $v;
+                   bless $new, ref $s
+               });
+        }
+        1 # make module load succeed at the same time.
     };
     *{"${package}::_END__"}= $end;
     *{"${package}::_END_"}= sub {
-	#warn "_END_ called for package '$package'";
-	package_delete $package, $nonmethods;
-	&$end;
+        #warn "_END_ called for package '$package'";
+        package_delete $package, $nonmethods;
+        &$end;
     };
 
     unless ($is_expandedvariant) {
-	# Not expecting the user to write methods, finalize
-	# immediately.
-	&$end()
+        # Not expecting the user to write methods, finalize
+        # immediately.
+        &$end()
     }
 
     *{"${package}::__Struct__fields"}= $fields;

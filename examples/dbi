@@ -38,7 +38,7 @@ TEST {
     TABLE
       (TH($s->first->map (*TD)),
        $s->rest->take (10)->map (sub {TR($_[0]->map (*TD))}))
-	->string;
+        ->string;
 }
   '<table><th><td>1</td><td>2</td><td>3</td><td>4</td></th>'.
   '<tr><td>4</td><td>3.3</td><td>foo</td><td>bar</td></tr></table>';

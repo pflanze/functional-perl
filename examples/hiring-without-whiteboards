@@ -42,8 +42,8 @@ sub usage {
 use Getopt::Long;
 our $verbose=0;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   ) or exit 1;
+           "help"=> sub{usage},
+           ) or exit 1;
 usage unless @ARGV==1;
 
 my ($basedir)= @ARGV;

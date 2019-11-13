@@ -44,10 +44,10 @@ our %dependencies=
    'Htmlgen::PathTranslate'=> ['Function::Parameters', 'Htmlgen::PathUtil'],
    'Htmlgen::Mediawiki'=> ['Function::Parameters', 'Encode', 'URI'],
    'Htmlgen::MarkdownPlus'=> ['Function::Parameters', 'Htmlgen::Htmlparse',
-			      'Text::Markdown', 'Htmlgen::Mediawiki'],
+                              'Text::Markdown', 'Htmlgen::Mediawiki'],
    'Htmlgen::Linking'=> ['Function::Parameters', 'Htmlgen::PathUtil',
-			 'Chj::CPAN::ModulePODUrl', 'Htmlgen::UriUtil',
-			],
+                         'Chj::CPAN::ModulePODUrl', 'Htmlgen::UriUtil',
+                        ],
    'Htmlgen::Htmlparse'=> ['Function::Parameters', 'HTML::TreeBuilder'],
    'Htmlgen::FileUtil'=> ['Function::Parameters' ],
    'Htmlgen::default_config'=> ['Function::Parameters' ],
@@ -56,14 +56,14 @@ our %dependencies=
    'Chj::HTTP::Daemon'=> ['HTTP::Request'],
    map { $_ => ['Chj::Repl::Dependencies'] }
    qw(
-	 Chj::Repl::Dependencies
-	 Chj::Repl
-	 Chj::Repl::StackPlus
-	 Chj::Serialize
-	 Chj::Trapl
-	 Chj::WithRepl
-	 Chj::repl
-	 FP::Trie::t
+         Chj::Repl::Dependencies
+         Chj::Repl
+         Chj::Repl::StackPlus
+         Chj::Serialize
+         Chj::Trapl
+         Chj::WithRepl
+         Chj::repl
+         FP::Trie::t
     ),
   );
 
@@ -75,13 +75,13 @@ use Test::More;
 
 for (@$modules) {
   SKIP: {
-	if (0 and #no need anymore? ?
+        if (0 and #no need anymore? ?
             my $ds= $dependencies{$_}) {
-	    for my $d (@$ds) {
+            for my $d (@$ds) {
                 eval "require $d; 1" or skip "failed to use $d", 1
-	    }
-	}
-	require_ok $_
+            }
+        }
+        require_ok $_
     }
 }
 

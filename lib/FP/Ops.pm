@@ -57,41 +57,41 @@ package FP::Ops;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(
-		 add
-		 subt
-		 mult
-		 div
-		 mod
-		 expt
-		 string_cmp
-		 string_eq
-		 string_eq
-		 string_ne
-		 string_lt
-		 string_le
-		 string_gt
-		 string_ge
-		 string_lc
-		 string_uc
-		 string_lcfirst
-		 string_ucfirst
-		 number_cmp
-		 number_eq
-		 number_ne
-		 number_lt
-		 number_le
-		 number_gt
-		 number_ge
-		 the_method
-		 cut_method
+                 add
+                 subt
+                 mult
+                 div
+                 mod
+                 expt
+                 string_cmp
+                 string_eq
+                 string_eq
+                 string_ne
+                 string_lt
+                 string_le
+                 string_gt
+                 string_ge
+                 string_lc
+                 string_uc
+                 string_lcfirst
+                 string_ucfirst
+                 number_cmp
+                 number_eq
+                 number_ne
+                 number_lt
+                 number_le
+                 number_gt
+                 number_ge
+                 the_method
+                 cut_method
                  applying
-		 applying_to
-		 binary_operator
-		 unary_operator
-		 regex_match
-		 regex_substitute
-		 regex_xsubstitute
-	    );
+                 applying_to
+                 binary_operator
+                 unary_operator
+                 regex_match
+                 regex_substitute
+                 regex_xsubstitute
+            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -224,10 +224,10 @@ sub the_method {
     @_ or die "wrong number of arguments";
     my ($method,@args)=@_;
     sub {
-	my $self=shift;
-	$self->$method(@args,@_)
-	  # any reason to put args before or after _ ? So far I only
-	  # have args, no _.
+        my $self=shift;
+        $self->$method(@args,@_)
+          # any reason to put args before or after _ ? So far I only
+          # have args, no _.
     }
 }
 
@@ -235,7 +235,7 @@ sub cut_method {
     @_>=2 or die "wrong number of arguments";
     my ($object,$method,@args)=@_;
     sub {
-	$object->$method(@args,@_)
+        $object->$method(@args,@_)
     }
 }
 
@@ -246,16 +246,16 @@ sub applying ($) {
         @_==1 or die "wrong number of arguments";
         my ($argv)=@_;
         @_= ref($argv) eq "ARRAY" ? @$argv : $argv->values;
-	goto &$f
+        goto &$f
     }
 }
 
 sub applying_to {
     my @v=@_;
     sub ($) {
-	@_==1 or die "wrong number of arguments";
-	my ($f)=@_;
-	@_=@v; goto &$f
+        @_==1 or die "wrong number of arguments";
+        my ($f)=@_;
+        @_=@v; goto &$f
     }
 }
 
@@ -277,12 +277,12 @@ sub unary_operator ($) {
 
 TEST { my $lt= binary_operator "lt";
        [map { &$lt (@$_) }
-	([2,4], [4,2], [3,3], ["abc","bbc"], ["ab","ab"], ["bbc", "abc"])] }
+        ([2,4], [4,2], [3,3], ["abc","bbc"], ["ab","ab"], ["bbc", "abc"])] }
   [1,'','', 1, '', ''];
 
 TEST { my $neg= unary_operator "-";
        [map { &$neg ($_) }
-	(3, -2.5, 0)] }
+        (3, -2.5, 0)] }
   [-3, 2.5, 0];
 
 
@@ -290,9 +290,9 @@ sub regex_match ($) {
     @_==1 or die "wrong number of arguments";
     my ($re)= @_;
     sub {
-	@_==1 or die "wrong number of arguments";
-	my ($str)=@_;
-	$str=~ /$re/
+        @_==1 or die "wrong number of arguments";
+        my ($str)=@_;
+        $str=~ /$re/
     }
 }
 
@@ -300,10 +300,10 @@ sub regex_substitute {
     @_==2 or die "wrong number of arguments";
     my ($re,$sub)=@_;
     sub {
-	@_==1 or die "wrong number of arguments";
-	my ($str)=@_;
-	$str=~ s/$re/&$sub()/e;
-	$str
+        @_==1 or die "wrong number of arguments";
+        my ($str)=@_;
+        $str=~ s/$re/&$sub()/e;
+        $str
     }
 }
 
@@ -311,11 +311,11 @@ sub regex_xsubstitute {
     @_==2 or die "wrong number of arguments";
     my ($re,$sub)=@_;
     sub {
-	@_==1 or die "wrong number of arguments";
-	my ($str)=@_;
-	$str=~ s/$re/&$sub()/e
-	  or die "no match";
-	$str
+        @_==1 or die "wrong number of arguments";
+        my ($str)=@_;
+        $str=~ s/$re/&$sub()/e
+          or die "no match";
+        $str
     }
 }
 

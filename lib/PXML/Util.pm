@@ -23,8 +23,8 @@ package PXML::Util;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(pxml_deferred_map pxml_eager_map
-	      pxml_map_elements pxml_map_elements_exhaustively
-	    );
+              pxml_map_elements pxml_map_elements_exhaustively
+            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -56,30 +56,30 @@ sub pxml_deferred_map ($$;$$) {
     my ($v, $elementfn, $maybe_otherfn, $maybe_uplist)= @_;
 
     my $make_inferior_map= sub {
-	my ($uplist)=@_;
-	sub {
-	    pxml_deferred_map ($_[0],
-			       $elementfn,
-			       $maybe_otherfn,
-			       $uplist)
-	}
+        my ($uplist)=@_;
+        sub {
+            pxml_deferred_map ($_[0],
+                               $elementfn,
+                               $maybe_otherfn,
+                               $uplist)
+        }
     };
 
     my $uplist= $maybe_uplist // null;
 
     if (my $r= ref $v) {
-	my $uplist2= cons $v, $uplist;
-	if (UNIVERSAL::isa ($v, "PXML::Element")) {
-	    # XX TCO?
-	    &$elementfn ($v,
-			 $uplist,
-			 &$make_inferior_map ($uplist2))
-	} else {
-	    stream_map (&$make_inferior_map ($uplist),
-			stream_mixed_flatten ($v))
-	}
+        my $uplist2= cons $v, $uplist;
+        if (UNIVERSAL::isa ($v, "PXML::Element")) {
+            # XX TCO?
+            &$elementfn ($v,
+                         $uplist,
+                         &$make_inferior_map ($uplist2))
+        } else {
+            stream_map (&$make_inferior_map ($uplist),
+                        stream_mixed_flatten ($v))
+        }
     } else {
-	$maybe_otherfn ? &$maybe_otherfn ($v, $uplist) : $v
+        $maybe_otherfn ? &$maybe_otherfn ($v, $uplist) : $v
     }
 }
 
@@ -93,14 +93,14 @@ sub pxml_eager_map ($$;$$) {
     my ($v, $elementfn, $maybe_otherfn, $maybe_uplist)= @_;
 
     pxml_deferred_map ($v,
-		       sub {
-			   my ($e, $uplist, $inferior_map)=@_;
-			   # XX TCO?
-			   &$elementfn($e->body_map ($inferior_map),
-				       $uplist)
-		       },
-		       $maybe_otherfn,
-		       $maybe_uplist)
+                       sub {
+                           my ($e, $uplist, $inferior_map)=@_;
+                           # XX TCO?
+                           &$elementfn($e->body_map ($inferior_map),
+                                       $uplist)
+                       },
+                       $maybe_otherfn,
+                       $maybe_uplist)
 }
 
 
@@ -115,9 +115,9 @@ TEST { t_data->string }
   '<p>foo<b>bar5678</b></p>';
 
 TEST { pxml_eager_map
-	 (t_data,
-	  sub { $_[0]->name_update(sub {$_[0]."A"})},
-	  sub { ($_[0]//"-")."."} )->string }
+         (t_data,
+          sub { $_[0]->name_update(sub {$_[0]."A"})},
+          sub { ($_[0]//"-")."."} )->string }
   '<pA>foo.<bA>bar.-.5.6.7.8.</bA></pA>';
 
 use FP::Ops "the_method";
@@ -128,39 +128,39 @@ sub uplist_show {
 }
 
 TEST { pxml_eager_map
-	 (t_data,
-	  sub {
-	      my ($e, $uplist)=@_;
-	      $e->body_update (sub {
-				   cons (uplist_show ($uplist), $_[0])
-			       })
-	  },
-	  sub {
-	      my ($v, $uplist)=@_;
-	      uplist_show ($uplist) . ($v//"-") . "."
-	  })->string }
+         (t_data,
+          sub {
+              my ($e, $uplist)=@_;
+              $e->body_update (sub {
+                                   cons (uplist_show ($uplist), $_[0])
+                               })
+          },
+          sub {
+              my ($v, $uplist)=@_;
+              uplist_show ($uplist) . ($v//"-") . "."
+          })->string }
   '<p>[][p]foo.<b>[p][b|p]bar.[b|p]-.[b|p]5.[b|p]6.[b|p]7.[b|p]8.</b></p>';
 
 TEST { pxml_deferred_map
-	 (t_data,
-	  sub {
-	      my ($e, $uplist, $inferior_map)=@_;
-	      $e->body_update
-		(sub {
-		     my ($body)=@_;
-		     cons (uplist_show ($uplist),
-			   $e->name eq "b" ? do {
-			       my $s= stream_mixed_flatten $body;
-			       cons( &$inferior_map (car $s),
-				     cdr $s )
-			   }
-			   : &$inferior_map ($body))
-		 });
-	  },
-	  sub {
-	      my ($v, $uplist)=@_;
-	      uplist_show ($uplist) . ($v//"-") . "."
-	  })->string }
+         (t_data,
+          sub {
+              my ($e, $uplist, $inferior_map)=@_;
+              $e->body_update
+                (sub {
+                     my ($body)=@_;
+                     cons (uplist_show ($uplist),
+                           $e->name eq "b" ? do {
+                               my $s= stream_mixed_flatten $body;
+                               cons( &$inferior_map (car $s),
+                                     cdr $s )
+                           }
+                           : &$inferior_map ($body))
+                 });
+          },
+          sub {
+              my ($v, $uplist)=@_;
+              uplist_show ($uplist) . ($v//"-") . "."
+          })->string }
   '<p>[][p]foo.<b>[p][b|p]bar.5678</b></p>';
 
 
@@ -168,15 +168,15 @@ TEST { pxml_deferred_map
 sub pxml_map_elements ($$;$) {
     my ($v, $name_to_mapper, $maybe_otherfn)= @_;
     pxml_eager_map ($v,
-		    sub {
-			my ($e, $uplist)=@_;
-			if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $e->name) {
-			    &$mapper ($e, $uplist)
-			} else {
-			    $e
-			}
-		    },
-		    $maybe_otherfn);
+                    sub {
+                        my ($e, $uplist)=@_;
+                        if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $e->name) {
+                            &$mapper ($e, $uplist)
+                        } else {
+                            $e
+                        }
+                    },
+                    $maybe_otherfn);
 }
 
 
@@ -192,25 +192,25 @@ sub pxml_map_elements_exhaustively ($$;$) {
     pxml_eager_map
       ($v,
        sub {
-	   my ($e, $uplist)=@_;
-	 LP: {
-	       my $name= $e->name;
-	       if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $name) {
-		   my $v= &$mapper ($e, $uplist);
-		   if (is_pxml_element $v) {
-		       $e= $v;
-		       if ($e->name eq $name) {
-			   $e
-		       } else {
-			   redo LP
-		       }
-		   } else {
-		       $v
-		   }
-	       } else {
-		   $e
-	       }
-	   }
+           my ($e, $uplist)=@_;
+         LP: {
+               my $name= $e->name;
+               if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $name) {
+                   my $v= &$mapper ($e, $uplist);
+                   if (is_pxml_element $v) {
+                       $e= $v;
+                       if ($e->name eq $name) {
+                           $e
+                       } else {
+                           redo LP
+                       }
+                   } else {
+                       $v
+                   }
+               } else {
+                   $e
+               }
+           }
        },
        $maybe_otherfn);
 }
@@ -220,20 +220,20 @@ sub t_exh {
     &$map
       (P(A({href=>"fun"}, "hey"), B(CODE ("boo")), B("fi")),
        {# a mapper does not go into an endless loop:
-	a=> sub { my($e,$uplist)=@_; $e->attribute_set (href=> "foo")},
-	# b mapper's output, if a, still goes through the above as
-	# well in the 'exhaustively' test; also, return value does not
-	# need to be an element. (XX NOTE that a list around an
-	# element, even if the element is the only list value, will
-	# stop exhaustive processing!)
-	b=> sub { my($e,$uplist)=@_;
-		  if (is_pxml_element
-		      stream_mixed_flatten($e->body)->first) {
-		      A({name=>"x"}, $e->body)
-		  } else {
-		      $e->body
-		  }
-		 }})->string
+        a=> sub { my($e,$uplist)=@_; $e->attribute_set (href=> "foo")},
+        # b mapper's output, if a, still goes through the above as
+        # well in the 'exhaustively' test; also, return value does not
+        # need to be an element. (XX NOTE that a list around an
+        # element, even if the element is the only list value, will
+        # stop exhaustive processing!)
+        b=> sub { my($e,$uplist)=@_;
+                  if (is_pxml_element
+                      stream_mixed_flatten($e->body)->first) {
+                      A({name=>"x"}, $e->body)
+                  } else {
+                      $e->body
+                  }
+                 }})->string
 }
 
 TEST{ t_exh \&pxml_map_elements }

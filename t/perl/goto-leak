@@ -15,11 +15,11 @@ our ($n, $m) = @ARGV;
 sub naturals {
     my ($n)= @_;
     sub {
-	if ($n > 0) {
-	    [ $n, naturals($n - 1) ]
-	} else {
-	    undef
-	}
+        if ($n > 0) {
+            [ $n, naturals($n - 1) ]
+        } else {
+            undef
+        }
     }
 }
 
@@ -29,9 +29,9 @@ sub naturals {
 sub stream_sum_LEAK {
     my ($s, $tot)=@_;
     if (my $fs= &$s) {
-	@_=($$fs[1], $$fs[0] + $tot); goto \&stream_sum_LEAK;
+        @_=($$fs[1], $$fs[0] + $tot); goto \&stream_sum_LEAK;
     } else {
-	$tot
+        $tot
     }
 }
 
@@ -44,9 +44,9 @@ sub stream_sum_OK {
   stream_sum_OK: {
     my ($s, $tot)=@_;
     if (my $fs= &$s) {
-	@_=($$fs[1], $$fs[0] + $tot); goto stream_sum_OK;
+        @_=($$fs[1], $$fs[0] + $tot); goto stream_sum_OK;
     } else {
-	$tot
+        $tot
     }
 }}
 
@@ -62,7 +62,7 @@ sub T (&) {
 sub trampoline ($) {
     my ($v)=@_;
     while (ref ($v) eq "TrampolineContinuation") {
-	$v=&$v()
+        $v=&$v()
     }
     $v
 }
@@ -70,9 +70,9 @@ sub trampoline ($) {
 sub _stream_sum_TRAMPOLINE {
     my ($s, $tot)=@_;
     if (my $fs= &$s) {
-	T { _stream_sum_TRAMPOLINE($$fs[1], $$fs[0] + $tot) }
+        T { _stream_sum_TRAMPOLINE($$fs[1], $$fs[0] + $tot) }
     } else {
-	$tot
+        $tot
     }
 }
 

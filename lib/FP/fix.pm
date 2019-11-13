@@ -67,16 +67,16 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # Y combinator
 *Y= do {
-	my $fix0= sub {
-	    my ($fix0, $f)=@_;
-	    sub {
-		@_=(&$fix0 ($fix0, $f), @_); goto &$f;
-	    }
-	};
-	sub ($) {
-	    my ($f)=@_;
-	    &$fix0 ($fix0, $f)
-	}
+        my $fix0= sub {
+            my ($fix0, $f)=@_;
+            sub {
+                @_=(&$fix0 ($fix0, $f), @_); goto &$f;
+            }
+        };
+        sub ($) {
+            my ($f)=@_;
+            &$fix0 ($fix0, $f)
+        }
     };
 
 
@@ -97,11 +97,11 @@ use FP::TransparentLazy qw(lazy lazyLight);
 use Chj::TEST;
 TEST {
     my $f= haskell_curried (sub {
-	my ($self)= @_;
-	sub {
-	    my ($x)=@_;
-	    $x > 0 ? $x * &$self($x-1) : 1
-	}
+        my ($self)= @_;
+        sub {
+            my ($x)=@_;
+            $x > 0 ? $x * &$self($x-1) : 1
+        }
     });
     [ &$f(0), &$f(3) ]
 } [1, 6];
@@ -123,11 +123,11 @@ TEST {
 # indirectly self-referencing through package variable
 *rec=
     sub ($) {
-	my ($f)=@_;
-	sub {
-	    #@_=(fix ($f), @_); goto &$f;
-	    unshift @_, fix ($f); goto &$f;
-	}
+        my ($f)=@_;
+        sub {
+            #@_=(fix ($f), @_); goto &$f;
+            unshift @_, fix ($f); goto &$f;
+        }
     };
 
 # directly locally self-referencing
@@ -136,11 +136,11 @@ use Scalar::Util 'weaken';
 
 *weakcycle=
     sub ($) {
-	my ($f)=@_;
-	my $f2; $f2= sub {
-	    unshift @_, $f2; goto &$f
-	};
-	my $f2_=$f2; weaken $f2; $f2_
+        my ($f)=@_;
+        my $f2; $f2= sub {
+            unshift @_, $f2; goto &$f
+        };
+        my $f2_=$f2; weaken $f2; $f2_
     };
 
 
@@ -158,18 +158,18 @@ sub fixn {
     my (@f)=@_;
     my @ff;
     for (my $i=0; $i<@f; $i++) {
-	my $f= $f[$i];
-	$ff[$i]= sub {
-	    unshift @_, @ff; goto &$f;
-	}
+        my $f= $f[$i];
+        $ff[$i]= sub {
+            unshift @_, @ff; goto &$f;
+        }
     }
     my @ff_= @ff;
     # weaken $_ for @ff;
     # ^ XXX: releases too early, same issue as
     #   mentioned in `intro/more_tailcalls`
     wantarray ? @ff_ : do {
-	@ff==1 or die "fixn: got multiple arguments, but scalar context";
-	$ff_[0]
+        @ff==1 or die "fixn: got multiple arguments, but scalar context";
+        $ff_[0]
     }
 }
 

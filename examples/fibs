@@ -65,7 +65,7 @@ sub fibs {
 
 sub fibs2 {
     cons 1, cons 1, lazy { my $fibs= fibs2 ();
-			   stream_zip_with *add, $fibs, rest $fibs };
+                           stream_zip_with *add, $fibs, rest $fibs };
 }
 
 # But it's less efficient: it recalculates parts multiple times, as
@@ -129,12 +129,12 @@ sub _fib {
     my ($n)=@_;
     ($n == 0) ? (0, 1)
       : do {
-	  my ($a,$b)= _fib(int $n / 2);
-	  my $c= $a * ($b * 2 - $a);
-	  my $d= $a * $a + $b * $b;
-	  ($n % 2) == 0 ? ($c, $d)
-	    : ($d, $c + $d)
-	};
+          my ($a,$b)= _fib(int $n / 2);
+          my $c= $a * ($b * 2 - $a);
+          my $d= $a * $a + $b * $b;
+          ($n % 2) == 0 ? ($c, $d)
+            : ($d, $c + $d)
+        };
 }
 
 sub _fibonacci {

@@ -38,23 +38,23 @@ our @functional_inspect;
 sub functional_fact_iter {
     my ($x, $res) = @_;
     push @functional_inspect, sub {
-	($x,$res)
+        ($x,$res)
     };
     if ($x < 2) {
-	return $res;
+        return $res;
     } else {
-	# This is a tail call. Instead of doing it unoptimized like:
-	#
-	#  functional_fact_iter($x - 1,  $x * $res)
-	#
-	# we're making use of Perl's goto &$subroutine feature (see
-	# `perldoc -f goto`):
+        # This is a tail call. Instead of doing it unoptimized like:
+        #
+        #  functional_fact_iter($x - 1,  $x * $res)
+        #
+        # we're making use of Perl's goto &$subroutine feature (see
+        # `perldoc -f goto`):
 
-	@_=($x - 1,  $x * $res);
-	goto \&functional_fact_iter
+        @_=($x - 1,  $x * $res);
+        goto \&functional_fact_iter
 
-	# Yes that's rather ugly; see the file `more_tailcalls`
-	# for a better-looking way.
+        # Yes that's rather ugly; see the file `more_tailcalls`
+        # for a better-looking way.
     }
 }
 
@@ -65,18 +65,18 @@ sub functional_fact_iter {
 sub odd {
     my ($n)=@_;
     if ($n == 0) {
-	0
+        0
     } else {
-	even ($n - 1)
+        even ($n - 1)
     }
 }
 
 sub even {
     my ($n)=@_;
     if ($n == 0) {
-	1
+        1
     } else {
-	odd ($n - 1)
+        odd ($n - 1)
     }
 }
 
@@ -100,20 +100,20 @@ sub even {
 sub opt_odd {
     my ($n)=@_;
     if ($n == 0) {
-	0
+        0
     } else {
-	@_=($n - 1);
-	goto \&opt_even
+        @_=($n - 1);
+        goto \&opt_even
     }
 }
 
 sub opt_even {
     my ($n)=@_;
     if ($n == 0) {
-	1
+        1
     } else {
-	@_=($n - 1);
-	goto \&opt_odd
+        @_=($n - 1);
+        goto \&opt_odd
     }
 }
 

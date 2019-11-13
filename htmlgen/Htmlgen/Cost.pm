@@ -34,13 +34,13 @@ use Sub::Call::Tail;
     use FP::Array ":all";
     use FP::Struct [qw(name is_purchaseable basecosts val)];
     method cost ($index) {
-	$$self{_cost} ||= do {
-	    add($self->val,
-		map {
-		    $$index{$_}->cost ($index)
-		} @{$self->basecosts}
-	       );
-	}
+        $$self{_cost} ||= do {
+            add($self->val,
+                map {
+                    $$index{$_}->cost ($index)
+                } @{$self->basecosts}
+               );
+        }
     }
     _END_
 }
@@ -49,21 +49,21 @@ use Sub::Call::Tail;
     use FP::Array_sort ":all";
     use FP::Struct [qw(costs)];
     method range () {
-	@{$$self{costs}} or die "no costs given";#
-	my $index;
-	for (@{$$self{costs}}) {
-	    if (defined (my $name= $_->name)) {
-		$$index{$name}= $_
-	    }
-	}
-	my $purchaseable= [grep { $_->is_purchaseable } @{$$self{costs}}];
-	@$purchaseable or die "no purchaseable costs";#
-	local our $all= array_sort
-	  ( $purchaseable,
-	    on the_method ("cost",$index), \&number_cmp );
-	(@$all == 1
-	 ? $$all[0]->cost ($index)
-	 : $$all[0]->cost ($index)."..".$$all[-1]->cost($index)),
+        @{$$self{costs}} or die "no costs given";#
+        my $index;
+        for (@{$$self{costs}}) {
+            if (defined (my $name= $_->name)) {
+                $$index{$name}= $_
+            }
+        }
+        my $purchaseable= [grep { $_->is_purchaseable } @{$$self{costs}}];
+        @$purchaseable or die "no purchaseable costs";#
+        local our $all= array_sort
+          ( $purchaseable,
+            on the_method ("cost",$index), \&number_cmp );
+        (@$all == 1
+         ? $$all[0]->cost ($index)
+         : $$all[0]->cost ($index)."..".$$all[-1]->cost($index)),
     }
     _END_
 }

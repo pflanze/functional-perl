@@ -17,7 +17,7 @@ my $version_numrevisions = lazy {
     my $describe= $gitrepository->describe ();
     my ($version,$maybe_numrevisions,$maybe_shorthash)=
       $describe=~ /^(.*?)(?:-(\d+)-g(.*))?\z/s
-	or die "huh describe '$describe'";
+        or die "huh describe '$describe'";
     [$version, $maybe_numrevisions]
 };
 
@@ -32,10 +32,10 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
       my $version_underscores= $version;
       $version_underscores=~ tr/./_/;
       my $commits=
-	$maybe_numrevisions ?
-	  ($maybe_numrevisions==1 ? "$maybe_numrevisions commit"
-	   : "$maybe_numrevisions commits")
-	    : "zero commits";
+        $maybe_numrevisions ?
+          ($maybe_numrevisions==1 ? "$maybe_numrevisions commit"
+           : "$maybe_numrevisions commits")
+            : "zero commits";
 
       $str=~ s|\$FP_VERSION\b|$version|sg;
       $str=~ s|\$FP_VERSION_UNDERSCORES\b|$version_underscores|sg;
@@ -46,9 +46,9 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
   copy_paths_separate=>
   # source_root => path0s
   +{"."=> [
-	   "FP-logo.png",
-	   $css_path0,
-	  ]},
+           "FP-logo.png",
+           $css_path0,
+          ]},
   path0_handlers=>
   +{
    },
@@ -61,8 +61,8 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
   head=> fun ($path0) {
       # HTML to add to the <head> section
       LINK ({rel=> "stylesheet",
-	     href=> path_diff ($path0, $css_path0),
-	     type=> "text/css"})
+             href=> path_diff ($path0, $css_path0),
+             type=> "text/css"})
   },
 
   header=> fun ($path0) {
@@ -74,50 +74,50 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
   },
   nav=>
   nav(entry("README.md",
-	    entry("docs/intro.md"),
-	    entry("docs/howto.md"),
-	    entry("docs/design.md"),
-	    entry("examples/README.md")),
+            entry("docs/intro.md"),
+            entry("docs/howto.md"),
+            entry("docs/design.md"),
+            entry("examples/README.md")),
       entry("functional_XML/README.md",
-	    entry("functional_XML/TODO.md")),
+            entry("functional_XML/TODO.md")),
       entry("htmlgen/README.md",
-	    entry("htmlgen/TODO.md")),
+            entry("htmlgen/TODO.md")),
       entry("docs/ideas.md"),
       entry("docs/TODO.md",
-	    entry("docs/names.md")),
+            entry("docs/names.md")),
       entry("docs/HACKING.md"),
       entry("COPYING.md",
-	    entry("licenses/artistic_license_2.0.md")),
+            entry("licenses/artistic_license_2.0.md")),
       entry("docs/links.md"),
       entry("docs/contact.md",
-	    entry("docs/mailing_list.md"))),
+            entry("docs/mailing_list.md"))),
   belownav=> fun ($path0) {
       # HTML between navigation and page content.
       # path0 is the source (.md) file.
 
       DIV({class=> "editandhist"},
-	  A({href=> "https://github.com/pflanze/functional-perl/commits/master/$path0"},
-	    "history"),
-	  " | ",
-	  A({href=> "https://github.com/pflanze/functional-perl/edit/master/$path0"},
-	    "edit"))
+          A({href=> "https://github.com/pflanze/functional-perl/commits/master/$path0"},
+            "history"),
+          " | ",
+          A({href=> "https://github.com/pflanze/functional-perl/edit/master/$path0"},
+            "edit"))
   },
   footer=> fun ($path0) {
       my $yearstart= 2014;
       my $years= $year == $yearstart ? $year : "$yearstart-$year";
       DIV({class=>"footer_legalese"},
 
-	  # our part
-	  "© $years ",
-	  A ({href=> "mailto:$email"}, "Christian Jaeger"),
+          # our part
+          "© $years ",
+          A ({href=> "mailto:$email"}, "Christian Jaeger"),
 
-	  ". ",
+          ". ",
 
-	  # camel logo
-	  "The Perl camel image is a trademark of ",
-	  A({href=> "http://www.oreilly.com"}, "O'Reilly Media, Inc."),
-	  " Used with permission."
-	 )
+          # camel logo
+          "The Perl camel image is a trademark of ",
+          A({href=> "http://www.oreilly.com"}, "O'Reilly Media, Inc."),
+          " Used with permission."
+         )
   },
 
   warn_hint=> 1, # warn if the website hint (header) is missing in a

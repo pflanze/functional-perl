@@ -43,11 +43,11 @@ our %keys=
 sub url_ {
     my $u= new URI;
     while (@_) {
-	my $k=shift;
-	@_ or die "url_: uneven number of arguments";
-	my $v=shift;
-	my $m= $keys{$k} // die "url_: unknown key '$k'";
-	$u->$m($v);
+        my $k=shift;
+        @_ or die "url_: uneven number of arguments";
+        my $v=shift;
+        my $m= $keys{$k} // die "url_: unknown key '$k'";
+        $u->$m($v);
     }
     $u
 }

@@ -38,14 +38,14 @@ use PXML::Element;
 sub import {
     my $caller=caller;
     for my $name (@_) {
-	my $fname= uc $name;
-	$fname=~ s/-/_/sg;
-	my $fqname= "${caller}::$fname";
-	no strict 'refs';
-	*$fqname= sub {
-	    my $atts= ref($_[0]) eq "HASH" ? shift : undef;
-	    PXML::Element->new($name, $atts, [@_]);
-	};
+        my $fname= uc $name;
+        $fname=~ s/-/_/sg;
+        my $fqname= "${caller}::$fname";
+        no strict 'refs';
+        *$fqname= sub {
+            my $atts= ref($_[0]) eq "HASH" ? shift : undef;
+            PXML::Element->new($name, $atts, [@_]);
+        };
     }
     1
 }

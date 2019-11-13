@@ -58,8 +58,8 @@ sub dumperequal {
     my $v0= shift;
     my $a0= Dumper($v0);
     for (@_) {
-	Dumper($_) eq $a0
-	  or return '';
+        Dumper($_) eq $a0
+          or return '';
     }
     1
 }
@@ -71,8 +71,8 @@ sub dumperequal_utf8 ($$) {
     my $v0= shift;
     my $a0= Dumper($v0);
     for (@_) {
-	Dumper($_) eq $a0
-	  or return '';
+        Dumper($_) eq $a0
+          or return '';
     }
     1
 }

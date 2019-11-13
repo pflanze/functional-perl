@@ -14,9 +14,9 @@ my $m= +{
   map=> sub {
       my ($addr)=@_;
       if (exists $$m{$addr}) {
-	  $$m{$addr}
+          $$m{$addr}
       } else {
-	  die "unknown address: '$addr'";
+          die "unknown address: '$addr'";
       }
   },
   cmp=> on (*string_lc, *string_cmp),

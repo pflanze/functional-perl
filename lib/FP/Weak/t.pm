@@ -45,10 +45,10 @@ TEST { t }
 TEST {
     my @w;
     local $SIG{__WARN__}= sub {
-	my ($msg)= @_;
-	$msg=~ s/0x[0-9a-f]*/0x.../s;
-	$msg=~ s/ at .*/ .../s;
-	push @w, $msg
+        my ($msg)= @_;
+        $msg=~ s/0x[0-9a-f]*/0x.../s;
+        $msg=~ s/ at .*/ .../s;
+        push @w, $msg
     };
     [ &with_warnweaken (*t), @w]
 }

@@ -35,22 +35,22 @@ our $html5_void_elements=
    # http://dev.w3.org/html5/markup/syntax.html
    # "The following is a complete list of the void elements in HTML:"
    qw(
-	 area
-	 base
-	 br
-	 col
-	 command
-	 embed
-	 hr
-	 img
-	 input
-	 keygen
-	 link
-	 meta
-	 param
-	 source
-	 track
-	 wbr
+         area
+         base
+         br
+         col
+         command
+         embed
+         hr
+         img
+         input
+         keygen
+         link
+         meta
+         param
+         source
+         track
+         wbr
     )
    ];
 

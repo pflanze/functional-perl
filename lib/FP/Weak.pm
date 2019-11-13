@@ -83,11 +83,11 @@ package FP::Weak;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(weaken Weakened Keep);
 @EXPORT_OK=qw(
-		 do_weaken
-		 noweaken noWeakened with_noweaken
-		 warnweaken warnWeakened with_warnweaken
-		 cluckweaken cluckWeakened with_cluckweaken
-	    );
+                 do_weaken
+                 noweaken noWeakened with_noweaken
+                 warnweaken warnWeakened with_warnweaken
+                 cluckweaken cluckWeakened with_cluckweaken
+            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -164,19 +164,19 @@ sub do_weaken ($) {
     my ($v)=@_;
     my $w=
       $v ?
-	(+{
-	   1=> \&Scalar::Util::weaken,
-	   "yes"=> \&Scalar::Util::weaken,
-	   "no"=> \&noweaken,
-	   "on"=> \&Scalar::Util::weaken,
-	   "off"=> \&noweaken,
-	   "noweaken"=> \&noweaken,
-	   "warn"=> \&warnweaken,
-	   "warnweaken"=> \&warnweaken,
-	   "cluck"=> \&cluckweaken,
-	   "cluckweaken"=> \&cluckweaken,
-	  }->{$v} // die "do_weaken: unknown key '$v'")
-	  : \&noweaken;
+        (+{
+           1=> \&Scalar::Util::weaken,
+           "yes"=> \&Scalar::Util::weaken,
+           "no"=> \&noweaken,
+           "on"=> \&Scalar::Util::weaken,
+           "off"=> \&noweaken,
+           "noweaken"=> \&noweaken,
+           "warn"=> \&warnweaken,
+           "warnweaken"=> \&warnweaken,
+           "cluck"=> \&cluckweaken,
+           "cluckweaken"=> \&cluckweaken,
+          }->{$v} // die "do_weaken: unknown key '$v'")
+          : \&noweaken;
     $weaken= $w
 }
 

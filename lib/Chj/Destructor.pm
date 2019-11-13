@@ -47,9 +47,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     use FP::Predicates ":all";
     use FP::Struct [[*is_procedure, "thunk"]];
     sub DESTROY {
-	my ($self)=@_;
-	local ($@,$!,$?,$^E,$.);
-	$self->thunk->()
+        my ($self)=@_;
+        local ($@,$!,$?,$^E,$.);
+        $self->thunk->()
     }
     _END_
 }
@@ -63,7 +63,7 @@ use Chj::TEST;
 TEST {
     my $z=0;
     {
-	my $x= ["foo", Destructor { $z++ }];
+        my $x= ["foo", Destructor { $z++ }];
     }
     $z
 } 1;

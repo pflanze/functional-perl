@@ -15,15 +15,15 @@ sub rss () {
 
 sub naturals {
     my $f; $f= sub {
-	my ($n)= @_;
-	my $f=$f;
-	sub {
-	    if ($n > 0) {
-		[ $n, &$f($n - 1) ]
-	    } else {
-		undef
-	    }
-	}
+        my ($n)= @_;
+        my $f=$f;
+        sub {
+            if ($n > 0) {
+                [ $n, &$f($n - 1) ]
+            } else {
+                undef
+            }
+        }
     };
     my $f_= $f; weaken $f;
     goto &$f_;
@@ -37,10 +37,10 @@ sub stream_sum {
     my $tot=0;
   LP: {
       if (my $fs= &$s) {
-	  ($tot, $s)= ($$fs[0] + $tot, $$fs[1]);
-	  goto LP;
+          ($tot, $s)= ($$fs[0] + $tot, $$fs[1]);
+          goto LP;
       } else {
-	  $tot
+          $tot
       }
     }
 }

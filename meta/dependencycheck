@@ -39,9 +39,9 @@ our $namespaces=
   array_map sub {
     my ($file)=@_;
     $file=~ m{lib/(.*)\.pm} ? do {
-	my $str= $1;
-	$str=~ s{/}{::}sg;
-	$str
+        my $str= $1;
+        $str=~ s{/}{::}sg;
+        $str
     } : undef;
 }, $files;
 
@@ -53,10 +53,10 @@ our $executables=
   array_filter sub {
       my ($v)=@_;
       not ($v=~ m{^t(?:/|est)}
-	   or $v=~ m{^meta/}
-	   or $v=~ m{/t/}
-	   or $v=~ m{functional_XML/testlazy} #runs endlessly ah yes of course.
-	  )
+           or $v=~ m{^meta/}
+           or $v=~ m{/t/}
+           or $v=~ m{functional_XML/testlazy} #runs endlessly ah yes of course.
+          )
   },
   array_filter sub { -x $_[0] },
   $files;
@@ -67,9 +67,9 @@ sub collect_cmd {
     warn "running @_..";
     my $t= xtmpfile;
     my $code= xsystem( "daemonize", "--no-ask", "--quiet",
-		       "straceopens", "-o", $t->path, @_);
+                       "straceopens", "-o", $t->path, @_);
     if ($code != 0) {
-	warn "straceopens @_: exited with code $code"
+        warn "straceopens @_: exited with code $code"
     }
     my $tr= xopen_read($t->path);
     $tr->xsendfile_to($out);
@@ -78,7 +78,7 @@ sub collect_cmd {
 
 for my $ns (@$namespaces) {
     collect_cmd ( qw(perl -w -Mlib=./lib),
-		  "-M$ns", "-e", "" );
+                  "-M$ns", "-e", "" );
 }
 
 for my $exe (@$executables) {

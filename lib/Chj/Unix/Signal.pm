@@ -45,16 +45,16 @@ our $signo;
 our $signame;
 sub MaybeInit {
     $inited ||= do {
-	require Config;
-	my $cfg= $Config::Config{sig_name};
-	defined $cfg or die "No sigs?";
-	my $i=0;
-	foreach my $name (split(' ', $cfg)) {
-	    $$signo{$name}= $i;
-	    $$signame[$i]= $name;
-	    $i++
-	}
-	1
+        require Config;
+        my $cfg= $Config::Config{sig_name};
+        defined $cfg or die "No sigs?";
+        my $i=0;
+        foreach my $name (split(' ', $cfg)) {
+            $$signo{$name}= $i;
+            $$signame[$i]= $name;
+            $i++
+        }
+        1
     }
 }
 

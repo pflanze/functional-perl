@@ -73,9 +73,9 @@ my @overload;
 BEGIN {
     @overload=
       ((map {
-	    $_=> "FORCE"
-	} split / +/,
-	'"" 0+ bool qr &{} ${} %{} *{}'),
+            $_=> "FORCE"
+        } split / +/,
+        '"" 0+ bool qr &{} ${} %{} *{}'),
        # XX hm, can't overload '@{}', why?
        fallback=> 1);
 }

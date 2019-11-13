@@ -41,9 +41,9 @@ use Getopt::Long;
 our $verbose=0;
 my $opt_sort_result;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   "sort-result"=> \$opt_sort_result,
-	   ) or exit 1;
+           "help"=> sub{usage},
+           "sort-result"=> \$opt_sort_result,
+           ) or exit 1;
 usage unless @ARGV==1;
 
 my ($mappingfile)=@ARGV;

@@ -41,12 +41,12 @@ sub xopendir {
     my $hdl= gensym;
     $!= undef;
     if (opendir $hdl,$_[0]) {
-	bless $hdl, $class;
-	$metadata{pack "I",$hdl}=[1, $_[0]];
-	return $hdl;
+        bless $hdl, $class;
+        $metadata{pack "I",$hdl}=[1, $_[0]];
+        return $hdl;
     }
     else {
-	croak "xopendir ".Chj::singlequote::singlequote_many(@_).": $!";
+        croak "xopendir ".Chj::singlequote::singlequote_many(@_).": $!";
     }
 }
 # *new= \&xopendir;  really? no.
@@ -56,12 +56,12 @@ sub opendir {
     my $hdl= gensym;
     $!= undef;
     if (opendir $hdl,$_[0]) {
-	bless $hdl, $class;
-	$metadata{pack "I",$hdl}=[1, $_[0]];
-	return $hdl;
+        bless $hdl, $class;
+        $metadata{pack "I",$hdl}=[1, $_[0]];
+        return $hdl;
     }
     else {
-	undef
+        undef
     }
 }
 
@@ -69,9 +69,9 @@ sub perhaps_opendir {
     my $class=shift;
     $!= undef;
     if (defined (my $fh= $class->opendir(@_))) {
-	$fh
+        $fh
     } else {
-	()
+        ()
     }
 }
 
@@ -80,11 +80,11 @@ sub perhaps_opendir {
 sub perhaps_xopendir {
     my $proto=shift;
     if (my ($fh)= $proto->perhaps_opendir (@_)) {
-	$fh
+        $fh
     } elsif ($! == ENOENT) {
-	()
+        ()
     } else {
-	croak "xopen @_: $!";
+        croak "xopen @_: $!";
     }
 }
 
@@ -108,21 +108,21 @@ sub xread {
     # not even set any error? Hm, well, at least on end of dir it sets
     # it to Bad file descriptor.
     if (wantarray) {
-	my $res=[ CORE::readdir $self ];
-	# we *hope* that [ ] will never copy until the end as opposed
-	# to @res= which *might* (well probably (or I think IIRC I've
-	# even tested and confirmed it) does) copy all elements.
-	if ($!){
-	    croak "xread: $!";
-	}
-	@$res
+        my $res=[ CORE::readdir $self ];
+        # we *hope* that [ ] will never copy until the end as opposed
+        # to @res= which *might* (well probably (or I think IIRC I've
+        # even tested and confirmed it) does) copy all elements.
+        if ($!){
+            croak "xread: $!";
+        }
+        @$res
     } else {
-	my $res= CORE::readdir $self;
-	if ($! and $! != EBADF){
-	    croak "xread: $!";
-	    #croak "xread: $! (".($!+0).")";   ## exception objects would still be coool
-	}
-	$res
+        my $res= CORE::readdir $self;
+        if ($! and $! != EBADF){
+            croak "xread: $!";
+            #croak "xread: $! (".($!+0).")";   ## exception objects would still be coool
+        }
+        $res
     }
 }
 
@@ -130,12 +130,12 @@ sub nread { # ignore . and .. entries
     my $self=shift;
     $!= undef;
     if (wantarray) {
-	grep { $_ ne '.' and $_ ne '..' } readdir $self
+        grep { $_ ne '.' and $_ ne '..' } readdir $self
     } else {
-	while (defined (my $item=readdir $self)) {
-	    return $item unless $item eq '.' or $item eq '..';
-	}
-	undef
+        while (defined (my $item=readdir $self)) {
+            return $item unless $item eq '.' or $item eq '..';
+        }
+        undef
     }
 }
 
@@ -143,13 +143,13 @@ sub xnread {
     my $self=shift;
     $!= undef;
     if (wantarray) {
-	my $res= [ grep { $_ ne '.' and $_ ne '..' } readdir $self ];
-	@$res
+        my $res= [ grep { $_ ne '.' and $_ ne '..' } readdir $self ];
+        @$res
     } else {
-	while (defined (my $item=readdir $self)) {
-	    return $item unless $item eq '.' or $item eq '..';
-	}
-	undef
+        while (defined (my $item=readdir $self)) {
+            return $item unless $item eq '.' or $item eq '..';
+        }
+        undef
     }
 }
 
@@ -193,8 +193,8 @@ sub DESTROY {
     my $self=shift;
     local ($@,$!,$?);
     if ($metadata{pack "I",$self}[0]) {
-	closedir $self
-	  or carp "$self DESTROY: $!";
+        closedir $self
+          or carp "$self DESTROY: $!";
     }
     delete $metadata{pack "I",$self};
 }

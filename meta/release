@@ -29,9 +29,9 @@ exit (@_ ? 1 : 0);
 use Getopt::Long;
 our $verbose=0;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   #"dry-run"=> \$opt_dry,
-	   ) or exit 1;
+           "help"=> sub{usage},
+           #"dry-run"=> \$opt_dry,
+           ) or exit 1;
 usage unless @ARGV<=1;
 
 use Chj::xopen qw(xopen_read);

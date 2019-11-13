@@ -43,16 +43,16 @@ sub FP_Show_show {
     length $class
       or die "FP_Show_show called on non-object: $self";
     my $fieldnames= do {
-	no strict 'refs';
-	\@{"${class}::__Struct__fields"}
+        no strict 'refs';
+        \@{"${class}::__Struct__fields"}
     };
     my @class_parts= split /::/, $class;
     ($class_parts[-1]."(".
      join(", ",
-	  map {
-	      my $fieldname= FP::Struct::field_name($_);
-	      &$show($self->$fieldname)
-	  } FP::Struct::all_fields([$class])).
+          map {
+              my $fieldname= FP::Struct::field_name($_);
+              &$show($self->$fieldname)
+          } FP::Struct::all_fields([$class])).
      ")")
 }
 

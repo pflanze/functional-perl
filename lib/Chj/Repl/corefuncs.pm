@@ -119,12 +119,12 @@ END
     $txt=~ s/(\w)[-­]\s*(\w)/$1$2/sg;# careful: the -­ are two different chars.
     #print $txt;
     my @corefuncs= grep {
-	length($_)>=3
+        length($_)>=3
     }
       $txt=~ /"(\w+)"/g;
     no warnings 'redefine';
     *corefuncs= sub {
-	@corefuncs
+        @corefuncs
     };
 }
 

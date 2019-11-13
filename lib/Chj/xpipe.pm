@@ -45,12 +45,12 @@ use Carp;
 
 sub xpipe {
     if (@_) {
-	confess "form with arguments not yet supported";
+        confess "form with arguments not yet supported";
     } else {
-	my $r=new Chj::IO::Pipe;
-	my $w=new Chj::IO::Pipe;
-	pipe $r,$w or croak "xpipe: $!";
-	($r,$w)
+        my $r=new Chj::IO::Pipe;
+        my $w=new Chj::IO::Pipe;
+        pipe $r,$w or croak "xpipe: $!";
+        ($r,$w)
     }
 }
 

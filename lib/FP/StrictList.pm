@@ -73,13 +73,13 @@ package FP::StrictList;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(strictnull is_strictlist strictlist);
 @EXPORT_OK=qw(
-		 cons
-		 first second rest car cdr car_and_cdr first_and_rest
-		 strictlist_reverse__map_with_length_with_tail
-		 strictlist_reverse__map_with_length
-		 strictlist_array__reverse__map_with_length
-		 strictlist_array__map_with_length
-	    );
+                 cons
+                 first second rest car cdr car_and_cdr first_and_rest
+                 strictlist_reverse__map_with_length_with_tail
+                 strictlist_reverse__map_with_length
+                 strictlist_array__reverse__map_with_length
+                 strictlist_array__map_with_length
+            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -96,18 +96,18 @@ use FP::Combinators qw(flip2of3 flip);
     *null= \&FP::StrictList::strictnull;
 
     sub cons {
-	@_==2 or die "wrong number of arguments";
-	my $s=shift;
-	# different than FP::List::Null::cons in that it needs to set
-	# the length field, too:
-	bless [$_[0], $s, 1], $s->pair_namespace
+        @_==2 or die "wrong number of arguments";
+        my $s=shift;
+        # different than FP::List::Null::cons in that it needs to set
+        # the length field, too:
+        bless [$_[0], $s, 1], $s->pair_namespace
     }
 
     # simply inherit FP_Equal_equal
 
     sub FP_Show_show {
-	my ($s,$show)=@_;
-	"strictnull"
+        my ($s,$show)=@_;
+        "strictnull"
     }
 }
 
@@ -120,22 +120,22 @@ use FP::Combinators qw(flip2of3 flip);
     # represented as blessed [ v, pair-or-null, length]
 
     sub cons {
-	@_==2 or die "wrong number of arguments";
-	my $s=shift;
-	bless [$_[0], $s, $$s[2]+1], ref $s
+        @_==2 or die "wrong number of arguments";
+        my $s=shift;
+        bless [$_[0], $s, $$s[2]+1], ref $s
     }
 
     sub length {
-	$_[0][2]
+        $_[0][2]
     }
 
     # simply inherit FP_Equal_equal
 
     sub FP_Show_show {
-	my ($s,$show)=@_;
-	("strictlist(".
-	 $s->map($show)->strings_join(", ").
-	 ")")
+        my ($s,$show)=@_;
+        ("strictlist(".
+         $s->map($show)->strings_join(", ").
+         ")")
     }
 }
 
@@ -164,7 +164,7 @@ TEST { require FP::Show;
 sub strictlist {
     my $res= strictnull;
     for (my $i= $#_; $i>=0; $i--) {
-	$res= $res-> cons ($_[$i]);
+        $res= $res-> cons ($_[$i]);
     }
     $res
 }
@@ -179,20 +179,20 @@ TEST {
 sub is_strictlist ($) {
     my ($v)=@_;
     if (length (my $r= ref $v)) {
-	UNIVERSAL::isa($v, "FP::StrictList::List")
-	    or
+        UNIVERSAL::isa($v, "FP::StrictList::List")
+            or
         # XX evil: inlined `is_promise`
         UNIVERSAL::isa($v, "FP::Lazy::Promise")
-	    && &is_strictlist (force $v)
-	    or
+            && &is_strictlist (force $v)
+            or
         ''
     } else {
-	''
+        ''
     }
 }
 
 TEST { [map { is_strictlist $_ } 
-	null, strictnull, cons (1,null), cons (1,strictnull)] }
+        null, strictnull, cons (1,null), cons (1,strictnull)] }
   ['', 1, '', 1];
 
 TEST {
@@ -239,24 +239,24 @@ TEST {
   # strictlist would not accept such a value as the tail anyway; hm,
   # hopefully nobody expects this operation to give an exception?)
   bless( [
-	  7,
-	  8
-	 ], 'FP::List::Pair' );
+          7,
+          8
+         ], 'FP::List::Pair' );
 
 
 
 sub make_reverse__map_with_length_with_tail {
     my ($cons)= @_;
     sub ($$$) {
-	@_==3 or die "wrong number of arguments";
-	my ($fn,$l,$tail)=@_;
-	my $a;
-	while (! $l->is_null) {
-	    my $i= $l->length;
-	    ($a,$l)= $l->first_and_rest;
-	    $tail= &$cons (&$fn ($a,$i), $tail);
-	}
-	$tail
+        @_==3 or die "wrong number of arguments";
+        my ($fn,$l,$tail)=@_;
+        my $a;
+        while (! $l->is_null) {
+            my $i= $l->length;
+            ($a,$l)= $l->first_and_rest;
+            $tail= &$cons (&$fn ($a,$i), $tail);
+        }
+        $tail
     }
 }
 
@@ -296,10 +296,10 @@ sub strictlist_array__reverse__map_with_length ($$) {
     my $i= $l->length;
     make_reverse__map_with_length_with_tail
       (sub {
-	   my ($v,$ary)=@_;
-	   #unshift @$ary, $v; is this faster?:
-	   $$ary[--$i]= $v;
-	   $ary
+           my ($v,$ary)=@_;
+           #unshift @$ary, $v; is this faster?:
+           $$ary[--$i]= $v;
+           $ary
        })->($fn, $l, []);
 }
 
@@ -319,10 +319,10 @@ sub strictlist_array__map_with_length ($$) {
     my $ary= []; $$ary[$len-1]=undef; # preallocate array, faster?
     make_reverse__map_with_length_with_tail
       (sub {
-	   my ($v,$ary)=@_;
-	   #push @$ary, $v;
-	   $$ary[$i++]= $v;
-	   $ary
+           my ($v,$ary)=@_;
+           #push @$ary, $v;
+           $$ary[$i++]= $v;
+           $ary
        })->($fn, $l, $ary);
 }
 

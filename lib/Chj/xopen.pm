@@ -19,7 +19,7 @@ Chj::xopen
      my $out= glob_to_fh(*STDOUT,"utf-8");
      local $_;
      while (<$in>) { # default operation. (overload not possible :/)
-	 $out->xprint($_); # print, throwing an exception on error
+         $out->xprint($_); # print, throwing an exception on error
      }
      $out->xclose; # close explicitely, throwing an exception on error
  }
@@ -77,16 +77,16 @@ package Chj::xopen;
 require Exporter;
 @EXPORT= qw(xopen xopen_read);
 @EXPORT_OK= qw(xopen_write xopen_append xopen_update
-	       perhaps_open_read perhaps_xopen_read
-	       devnull devzero
-	       glob_to_fh
-	       fd_to_fh
-	       inout_fd_to_fh
-	       input_fd_to_fh
-	       output_fd_to_fh
-	       fh_to_fh
-	       possibly_fh_to_fh
-	      );
+               perhaps_open_read perhaps_xopen_read
+               devnull devzero
+               glob_to_fh
+               fd_to_fh
+               inout_fd_to_fh
+               input_fd_to_fh
+               output_fd_to_fh
+               fh_to_fh
+               possibly_fh_to_fh
+              );
 %EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -149,9 +149,9 @@ sub fh_to_fh ($) {
 sub possibly_fh_to_fh ($) {
     my ($fh)=@_;
     if (length ref $fh and UNIVERSAL::isa($fh, "Chj::IO::File")) {
-	$fh
+        $fh
     } else {
-	fh_to_fh $fh
+        fh_to_fh $fh
     }
 }
 
@@ -167,12 +167,12 @@ sub xopen {
 
 sub xopen_read($) {
     if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
-	croak "xopen_read: mode $1 not allowed"
-	  unless $2; # XXX isn't this wong? Too many parens above?
+        croak "xopen_read: mode $1 not allowed"
+          unless $2; # XXX isn't this wong? Too many parens above?
     } elsif (@_==1 and $_[0] eq '-') {
-	@_=("<-")
+        @_=("<-")
     } else {
-	unshift @_,"<";
+        unshift @_,"<";
     }
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
@@ -197,12 +197,12 @@ sub perhaps_open_read ($) {
 
 sub xopen_write($) {
     if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
-	croak "xopen_write: mode $1 not allowed"
-	  unless $3 or $4;
+        croak "xopen_write: mode $1 not allowed"
+          unless $3 or $4;
     } elsif (@_==1 and $_[0] eq '-') {
-	@_=(">-")
+        @_=(">-")
     } else {
-	unshift @_,">";
+        unshift @_,">";
     }
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
@@ -210,12 +210,12 @@ sub xopen_write($) {
 
 sub xopen_append($) {
     if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
-	croak "xopen_append: mode $1 not allowed"
-	  unless $3;
+        croak "xopen_append: mode $1 not allowed"
+          unless $3;
     } elsif (@_==1 and $_[0] eq '-') {
-	@_=(">>-")
+        @_=(">>-")
     } else {
-	unshift @_,">>";
+        unshift @_,">>";
     }
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
@@ -223,12 +223,12 @@ sub xopen_append($) {
 
 sub xopen_update($) {
     if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
-	croak "xopen_update: mode $1 not allowed"
-	  unless $5 or $6;
+        croak "xopen_update: mode $1 not allowed"
+          unless $5 or $6;
     } elsif (@_==1 and $_[0] eq '-') {
-	@_=("+<-")
+        @_=("+<-")
     } else {
-	unshift @_, "+<";
+        unshift @_, "+<";
     }
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
@@ -237,15 +237,15 @@ sub xopen_update($) {
 our $devnull;
 sub devnull {
     $devnull ||= do {
-	require POSIX; import POSIX "O_RDWR";
-	Chj::IO::File->xsysopen("/dev/null",&O_RDWR)
+        require POSIX; import POSIX "O_RDWR";
+        Chj::IO::File->xsysopen("/dev/null",&O_RDWR)
       }
 }
 our $devzero;
 sub devzero {
     $devzero ||= do {
-	require POSIX; import POSIX "O_RDWR";
-	Chj::IO::File->xsysopen("/dev/zero",&O_RDWR)
+        require POSIX; import POSIX "O_RDWR";
+        Chj::IO::File->xsysopen("/dev/zero",&O_RDWR)
       }
 }
 

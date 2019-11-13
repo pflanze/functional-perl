@@ -28,8 +28,8 @@ sub usage {
 use Getopt::Long;
 our $verbose=0;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   ) or exit 1;
+           "help"=> sub{usage},
+           ) or exit 1;
 usage unless @ARGV==2;
 
 our ($inpath, $outpath)=@ARGV;
@@ -53,9 +53,9 @@ MYEXAMPLE
     ->rest
     # map rows to XML elements
     ->map(sub {
-	      my ($a,$b,$c,$d)= @{$_[0]};
-	      RECORD A($a), B($b), C($c), D($d)
-	  })))
+              my ($a,$b,$c,$d)= @{$_[0]};
+              RECORD A($a), B($b), C($c), D($d)
+          })))
   # print data structure to disk, forcing its evaluation as needed
   ->xmlfile($outpath);
 

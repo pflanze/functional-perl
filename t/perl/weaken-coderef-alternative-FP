@@ -25,15 +25,15 @@ use FP::Lazy ":all";
 
 sub naturals {
     my $f; $f= sub {
-	my ($n)= @_;
-	my $f=$f;
-	lazy {
-	    if ($n > 0) {
-		cons $n, &$f($n - 1)
-	    } else {
-		null
-	    }
-	}
+        my ($n)= @_;
+        my $f=$f;
+        lazy {
+            if ($n > 0) {
+                cons $n, &$f($n - 1)
+            } else {
+                null
+            }
+        }
     };
     my $f_= $f; weaken $f;
     goto &$f_;
@@ -45,14 +45,14 @@ sub stream_sum {
     # ^ not necessary here, since, unlike with FP::Lazy::Promise,
     # resulting value is not saved in its 'generating container'
     my $lp; $lp= sub {
-	my ($tot,$s)=@_;
-	weaken $_[1];
-	FORCE $s;
-	if (is_null $s) {
-	    $tot
-	} else {
-	    @_=(car ($s) + $tot, cdr $s); goto &$lp;
-	}
+        my ($tot,$s)=@_;
+        weaken $_[1];
+        FORCE $s;
+        if (is_null $s) {
+            $tot
+        } else {
+            @_=(car ($s) + $tot, cdr $s); goto &$lp;
+        }
     };
     @_=(0, $s); my $lp_=$lp; weaken $lp; goto &$lp_;
 }

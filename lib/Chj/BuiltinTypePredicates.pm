@@ -57,12 +57,12 @@ sub is_filehandle ($) {
     # though; but still.)
 
     if (defined (my $rt= reftype ($v))) {
-	(($rt eq "GLOB" and *{$v}{IO})
-	 or
-	 $rt eq "IO") ? 1 : '';
-	# explicitely return '' instead of undef
+        (($rt eq "GLOB" and *{$v}{IO})
+         or
+         $rt eq "IO") ? 1 : '';
+        # explicitely return '' instead of undef
     } else {
-	''
+        ''
     }
 }
 
@@ -70,7 +70,7 @@ sub is_filehandle ($) {
 #     my ($v)=@_;
 #     my $r= ref ($v);
 #     (length $r and ($r eq "GLOB" ? (*{$v}{IO} ? 1 : '')
-# 		    : UNIVERSAL::isa($v, "IO"))) ? 1 : ''
+#                   : UNIVERSAL::isa($v, "IO"))) ? 1 : ''
 # }
 # fails for bless $in, "MightActullyBeIO" case
 

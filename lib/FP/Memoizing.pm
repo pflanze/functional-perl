@@ -135,26 +135,26 @@ sub fh_xdeserialize ($) {
 sub memoizing_ ($$$) {
     my ($fn,$cache,$getcache)=@_;
     sub {
-	my @args=@_;
-	my $wantarray= wantarray;
-	defined $wantarray
-	  or die "memoizing a function in void context";
+        my @args=@_;
+        my $wantarray= wantarray;
+        defined $wantarray
+          or die "memoizing a function in void context";
 
-	# Can't reuse the result from an array context in a scalar
-	# context, since we can't assume that $fn would return the
-	# last value in scalar context, thus make the context part of
-	# the key.
-	my $key= ($wantarray ? "n" : "1").&$digest_args(@_);
+        # Can't reuse the result from an array context in a scalar
+        # context, since we can't assume that $fn would return the
+        # last value in scalar context, thus make the context part of
+        # the key.
+        my $key= ($wantarray ? "n" : "1").&$digest_args(@_);
 
-	my $vals= &$getcache
-	  ($cache,
-	   $key,
-	   sub {
-	       [ $wantarray ? &$fn (@args)
-		 : scalar &$fn (@args) ]
-	   });
+        my $vals= &$getcache
+          ($cache,
+           $key,
+           sub {
+               [ $wantarray ? &$fn (@args)
+                 : scalar &$fn (@args) ]
+           });
 
-	$wantarray ? @$vals : $$vals[-1]
+        $wantarray ? @$vals : $$vals[-1]
     }
 }
 
@@ -178,17 +178,17 @@ sub file_cache ($$$) {
     my $path= $basepath.$k;
 
     if (my ($in)= perhaps_xopen_read $path) {
-	my $val= fh_xdeserialize ($in);
-	$in->xclose;
-	$val
+        my $val= fh_xdeserialize ($in);
+        $in->xclose;
+        $val
     }
     else {
-	my $out= xtmpfile $path;
-	my $val= &$generate ();
-	fh_xnstore ($out, $val);
-	$out->xclose;
-	$out->xputback(0444);
-	$val
+        my $out= xtmpfile $path;
+        my $val= &$generate ();
+        fh_xnstore ($out, $val);
+        $out->xclose;
+        $out->xputback(0444);
+        $val
     }
 }
 
@@ -206,7 +206,7 @@ sub tests_for ($) {
     my ($t_count,$f);
 
     TEST { $f= &$memoizing (sub { my ($x)=@_; $t_count++; ($x, $x*$x) });
-	   [[ &$f(1) ], $t_count] }
+           [[ &$f(1) ], $t_count] }
       [[1,1], 1];
 
     TEST { [[ &$f(2) ], $t_count] }
@@ -219,15 +219,15 @@ sub tests_for ($) {
       [[4], 3];
 
     TEST { my $f= &$memoizing (sub { $t_count++; undef });
-	   [ &$f (undef), &$f (undef),
-	     scalar &$f (undef), scalar &$f (undef) ] }
+           [ &$f (undef), &$f (undef),
+             scalar &$f (undef), scalar &$f (undef) ] }
       [undef, undef, undef, undef];
 
     TEST {
-	my $r=
-	  [[ scalar &$f(2)], $t_count];
-	undef $f; undef $t_count;
-	$r}
+        my $r=
+          [[ scalar &$f(2)], $t_count];
+        undef $f; undef $t_count;
+        $r}
       [[4], 5];
 }
 
@@ -236,13 +236,13 @@ tests_for \&memoizing;
 {
     my $tdir= ".FP-Memoizing-tests";
     TEST {
-	mkdir $tdir;
+        mkdir $tdir;
     } 1;
     tests_for sub {
-	my ($f)=@_;
-	&memoizing_to_dir ($tdir, $f);
+        my ($f)=@_;
+        &memoizing_to_dir ($tdir, $f);
     };
-	
+        
     TEST { system qw(rm -rf --), $tdir }
       0;
 }

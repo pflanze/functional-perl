@@ -44,8 +44,8 @@ package Chj::xhome;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(xhome);
 @EXPORT_OK=qw(xHOME
-	      xeffectiveuserhome
-	      xsafehome);
+              xeffectiveuserhome
+              xsafehome);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -65,28 +65,28 @@ sub xHOME () {
 sub xeffectiveuserhome () {
     my $uid= $>;
     my ($name,$passwd,$_uid,$gid,
-	$quota,$comment,$gcos,$dir,$shell,$expire)
+        $quota,$comment,$gcos,$dir,$shell,$expire)
       = getpwuid $uid
-	or die "unknown user for uid $uid";
+        or die "unknown user for uid $uid";
     $dir
 }
 
 sub xsafehome () {
     my $effectiveuserhome= xeffectiveuserhome;
     if (my $e= $ENV{HOME}) {
-	$e eq $effectiveuserhome
-	  or die "HOME environment variable is set to something other ".
-	    "than the effective user home: '$e' vs. '$effectiveuserhome'";
+        $e eq $effectiveuserhome
+          or die "HOME environment variable is set to something other ".
+            "than the effective user home: '$e' vs. '$effectiveuserhome'";
     }
     $effectiveuserhome
 }
 
 sub xhome () {
     if ($ENV{HOME}) {
-	xHOME
+        xHOME
     } else {
-	# what about setting $ENV{HOME} in this case?
-	xeffectiveuserhome
+        # what about setting $ENV{HOME} in this case?
+        xeffectiveuserhome
     }
 }
 

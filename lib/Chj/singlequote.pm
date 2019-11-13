@@ -55,10 +55,10 @@ package Chj::singlequote;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(singlequote);
 @EXPORT_OK=qw(singlequote_sh singlequote_many many with_maxlen
-	      possibly_singlequote_sh singlequote_sh_many
-	      quote_javascript
-	      quote_C _quote_C
-	    );
+              possibly_singlequote_sh singlequote_sh_many
+              quote_javascript
+              quote_C _quote_C
+            );
 # importing 'many' is probably not a good idea (depreciated)
 %EXPORT_TAGS=(all=>[@EXPORT, @EXPORT_OK]);
 
@@ -77,36 +77,36 @@ sub with_maxlen ($&) {
 sub singlequote($ ;$ ) {
     my ($str,$alternative)=@_;
     if (defined $str) {
-	if (defined $maybe_maxlen and length ($str) > $maybe_maxlen) {
-	    $str= substr ($str, 0, $maybe_maxlen-3) . "...";
-	}
-	$str=~ s/\'/\\\'/sg;
-	# avoid newlines (and more?), try to follow the Carp::confess
-	# format, if maxlen is given:
-	$str=~ s/([\t\n\r])/sprintf ('\\x{%x}', ord $1)/sge
-	  if defined $maybe_maxlen;
-	"'$str'"
+        if (defined $maybe_maxlen and length ($str) > $maybe_maxlen) {
+            $str= substr ($str, 0, $maybe_maxlen-3) . "...";
+        }
+        $str=~ s/\'/\\\'/sg;
+        # avoid newlines (and more?), try to follow the Carp::confess
+        # format, if maxlen is given:
+        $str=~ s/([\t\n\r])/sprintf ('\\x{%x}', ord $1)/sge
+          if defined $maybe_maxlen;
+        "'$str'"
     } else {
-	defined($alternative)? $alternative:"undef"
+        defined($alternative)? $alternative:"undef"
     }
 }
 *Chj::singlequote= \&singlequote;
 
 sub many {
     my @strs= map {
-	my $str;
-	if (eval { $str= singlequote($_); 1 }) {
-	    $str
-	} else {
-	    my $e= "$@";
-	    $e=~ s/\n.*//s;
-	    "<stringification error: $e>"
-	}
+        my $str;
+        if (eval { $str= singlequote($_); 1 }) {
+            $str
+        } else {
+            my $e= "$@";
+            $e=~ s/\n.*//s;
+            "<stringification error: $e>"
+        }
     } @_;
     if (wantarray) {
-	@strs
+        @strs
     } else {
-	join ", ", @strs
+        join ", ", @strs
     }
 }
 *singlequote_many= \&many;
@@ -117,10 +117,10 @@ sub many {
 sub singlequote_sh($ ;$ ) {
     my ($str,$alternative)=@_;
     if (defined $str) {
-	$str=~ s/\'/'\\\''/sg;
-	"'$str'"
+        $str=~ s/\'/'\\\''/sg;
+        "'$str'"
     } else {
-	defined($alternative)? $alternative:"undef"
+        defined($alternative)? $alternative:"undef"
     }
 }
 *Chj::singlequote_sh= \&singlequote_sh;
@@ -130,9 +130,9 @@ sub singlequote_sh($ ;$ ) {
 sub possibly_singlequote_sh ($) {
     my ($str)=@_;
     if ($str=~ m{^[\w/.-]+\z}) {
-	$str
+        $str
     } else {
-	singlequote_sh $str
+        singlequote_sh $str
     }
 }
 
@@ -163,17 +163,17 @@ sub quote_javascript ($) {
 sub _quote_C($) {
     my ($str)=@_;
     $str=~ s{(.)}{
-	my $c=$1;
-	my $i= ord $c;
-	# https://en.wikipedia.org/wiki/Ascii
-	($i >= 32 and $i < 127) ?
-	  ( $c eq '"' ? "\\\"" :
-	    $c )
-	  :
-	  ( $c eq "\n" ? "\\n" :
-	    $c eq "\r" ? "\\r" :
-	    $c eq "\t" ? "\\t" :
-	    sprintf "\\%o", $i )
+        my $c=$1;
+        my $i= ord $c;
+        # https://en.wikipedia.org/wiki/Ascii
+        ($i >= 32 and $i < 127) ?
+          ( $c eq '"' ? "\\\"" :
+            $c )
+          :
+          ( $c eq "\n" ? "\\n" :
+            $c eq "\r" ? "\\r" :
+            $c eq "\t" ? "\\t" :
+            sprintf "\\%o", $i )
     }sge;
     $str
 }

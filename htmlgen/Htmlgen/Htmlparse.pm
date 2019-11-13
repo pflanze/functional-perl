@@ -48,25 +48,25 @@ fun htmlmap ($e) {
     my $name= lc($e->tag);
     my $atts={};
     for ($e->all_external_attr_names) {
-	next if $_ eq "/";
-	die "att name '$_'" unless /^\w+\z/s;
-	$$atts{lc $_}= $e->attr($_);
+        next if $_ eq "/";
+        die "att name '$_'" unless /^\w+\z/s;
+        $$atts{lc $_}= $e->attr($_);
     }
     PXML::Element->new
-	($name,
-	 $atts,
-	 [
-	  map {
-	      if (ref $_) {
-		  # another HTML::Element
-		  no warnings "recursion";# XX should rather sanitize input?
-		  htmlmap ($_)
-	      } else {
-		  # a string
-		  $_
-	      }
-	  } @{$e->content||[]}
-	 ]);
+        ($name,
+         $atts,
+         [
+          map {
+              if (ref $_) {
+                  # another HTML::Element
+                  no warnings "recursion";# XX should rather sanitize input?
+                  htmlmap ($_)
+              } else {
+                  # a string
+                  $_
+              }
+          } @{$e->content||[]}
+         ]);
 }
 
 # parse HTML string to PXML
@@ -76,18 +76,18 @@ fun htmlparse ($str,$whichtag) {
 
 
 # TEST{ htmlparse ('<with_toc><p>abc</p><p>foo</p></with_toc>', "body")
-# 	->string }
+#       ->string }
 #   '<body><with_toc><p>abc</p><p>foo</p></with_toc></body>';
 # HTML::TreeBuilder VERSION 5.02 drops with_toc here.
 
 TEST{ htmlparse ('x<with_toc><p>abc</p><p>foo</p></with_toc>', "body")
-	->string }
+        ->string }
   '<body>x<with_toc><p>abc</p><p>foo</p></with_toc></body>';
 # interestingly here it doesn't.
 
 # But perhaps it's best to do like:
 TEST{ htmlparse ('<body><with_toc><p>abc</p><p>foo</p></with_toc></body>',
-		 "body")->string }
+                 "body")->string }
   '<body><with_toc><p>abc</p><p>foo</p></with_toc></body>';
 
 

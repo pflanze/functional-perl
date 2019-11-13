@@ -36,11 +36,11 @@ sub package_keys {
     no strict 'refs';
     [
      map {
-	 if (my $c= *{"${package}::$_"}{CODE}) {
-	     [$_, $c]
-	 } else {
-	     ()
-	 }
+         if (my $c= *{"${package}::$_"}{CODE}) {
+             [$_, $c]
+         } else {
+             ()
+         }
      }
      keys %{$package."::"}
     ]
@@ -53,18 +53,18 @@ sub package_delete {
     #warn "package_delete '$package'";
     no strict 'refs';
     for (@$keys) {
-	my ($key,$val)= @$_;
-	no warnings 'once';
-	my $val2= *{"${package}::$key"}{CODE};
-	# check val to be equal so that it will work with Chj::ruse
+        my ($key,$val)= @$_;
+        no warnings 'once';
+        my $val2= *{"${package}::$key"}{CODE};
+        # check val to be equal so that it will work with Chj::ruse
         if ($val2 and $val == $val2) {
-	    #warn "deleting ${package}::$key ($val)";
-	    my @v= map { *{"${package}::$key"}{$_} } @slotnames;
-	    delete ${$package."::"}{$key};
-	    for (@v) {
-		*{"${package}::$key"}= $_ if defined $_
-	    }
-	}
+            #warn "deleting ${package}::$key ($val)";
+            my @v= map { *{"${package}::$key"}{$_} } @slotnames;
+            delete ${$package."::"}{$key};
+            for (@v) {
+                *{"${package}::$key"}= $_ if defined $_
+            }
+        }
     }
 }
 

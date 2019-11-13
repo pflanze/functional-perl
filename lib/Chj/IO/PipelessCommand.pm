@@ -35,8 +35,8 @@ package Chj::IO::PipelessCommand;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use base qw(
-	    Chj::IO::CommandCommon
-	   );
+            Chj::IO::CommandCommon
+           );
 
 sub new_with_in_out {
     my $class=shift;

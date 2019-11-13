@@ -70,11 +70,11 @@ TEST_STDOUT {
   "1World";
 
 my $t2= $t->update (string_to_list ("Hell"), sub {
-			[@_,"yes"]
-		    });
+                        [@_,"yes"]
+                    });
 my $t3= $t2->update (string_to_list ("Hello"), sub {
-			[@_,"2"]
-		    });
+                        [@_,"2"]
+                    });
 my $t4= $t3->set (string_to_list ("Hell"), "no");
 
 TEST {
@@ -143,9 +143,9 @@ TEST_EXCEPTION {
 sub random_key {
     my $len= int rand 3;
     join("",
-	 map {
-	     chr (32 + int rand 64)
-	 } 1..$len)
+         map {
+             chr (32 + int rand 64)
+         } 1..$len)
 }
 
 use Chj::WithRepl 'withrepl';##
@@ -155,50 +155,50 @@ TEST {
     my $hash= {};
 
     my $set_both= sub ($$) {
-	my ($k,$i)=@_;
-	$trie= $trie->set (string_to_list ($k), $i);
-	$$hash{$k}=$i;
+        my ($k,$i)=@_;
+        $trie= $trie->set (string_to_list ($k), $i);
+        $$hash{$k}=$i;
     };
 
     my $delete_both= sub ($) {
-	my ($k)=@_;
-	$trie= $trie->delete (string_to_list $k);
-	delete $$hash{$k};
+        my ($k)=@_;
+        $trie= $trie->delete (string_to_list $k);
+        delete $$hash{$k};
     };
 
     withrepl {
-	my $oldk= random_key;
-	&$set_both ($oldk, -1);
+        my $oldk= random_key;
+        &$set_both ($oldk, -1);
 
-	for my $i (1..1000) {
-	    my $k= random_key;
-	    &$set_both ($k, $i);
-	    $trie->ref (string_to_list $oldk) == $$hash{$oldk}
-	      or die "bug";
-	    $oldk= $k;
-	  DEL: {
-		my $k2= random_key;
-		redo DEL if $k2 eq $oldk;
-		&$delete_both ($k2);
-	    }
-	}
+        for my $i (1..1000) {
+            my $k= random_key;
+            &$set_both ($k, $i);
+            $trie->ref (string_to_list $oldk) == $$hash{$oldk}
+              or die "bug";
+            $oldk= $k;
+          DEL: {
+                my $k2= random_key;
+                redo DEL if $k2 eq $oldk;
+                &$delete_both ($k2);
+            }
+        }
 
-	for my $k (keys %$hash) {
-	    $trie->exists (string_to_list $k)
-	      or die "missing '$k' in trie";
-	}
+        for my $k (keys %$hash) {
+            $trie->exists (string_to_list $k)
+              or die "missing '$k' in trie";
+        }
 
-	$trie->keys->for_each
-	  (sub {
-	       my ($kl)=@_;
-	       my $k= $kl->string;
-	       exists $$hash{$k}
-		 or die "key in trie that shouldn't be: '$k'";
-	       delete $$hash{$k};
-	   });
+        $trie->keys->for_each
+          (sub {
+               my ($kl)=@_;
+               my $k= $kl->string;
+               exists $$hash{$k}
+                 or die "key in trie that shouldn't be: '$k'";
+               delete $$hash{$k};
+           });
 
-	keys %$hash
-	  and die "keys didn't give all keys it should have";
+        keys %$hash
+          and die "keys didn't give all keys it should have";
     };
     ''
 } '';

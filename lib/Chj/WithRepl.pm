@@ -67,25 +67,25 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 sub WithRepl_eval (&;$) {
     my ($arg, $maybe_package)=@_;
     if (ref $arg) {
-	eval { &$arg() }
+        eval { &$arg() }
     } else {
-	my $package= $maybe_package // caller;
-	eval "package $package; $arg"
+        my $package= $maybe_package // caller;
+        eval "package $package; $arg"
     }
 }
 
 sub WithRepl_eval_e (&;$) {
     my ($arg, $maybe_package)=@_;
     if (ref $arg) {
-	die "WithRepl_eval_e only supports string eval";
+        die "WithRepl_eval_e only supports string eval";
     } else {
-	my $package= $maybe_package // caller;
-	my $res;
-	if (eval "package $package; \$res= do { $arg }; 1") {
-	    ($res, $@, '')
-	} else {
-	    (undef, $@, 1)
-	}
+        my $package= $maybe_package // caller;
+        my $res;
+        if (eval "package $package; \$res= do { $arg }; 1") {
+            ($res, $@, '')
+        } else {
+            (undef, $@, 1)
+        }
     }
 }
 
@@ -107,14 +107,14 @@ sub current_user_frame ($) {
     my @v;
     my $i= 0;
     while ((@v)= caller ($i++)) {
-	if ($v[0] ne "Chj::WithRepl") {
-	    if ($skip) {
-		unless ((@v) = caller ($i + $skip)) {
-		    die "skip value goes beyond the end of the stack";
-		}
-	    }
-	    return Chj::Repl::StackFrame->new(undef, @v);
-	}
+        if ($v[0] ne "Chj::WithRepl") {
+            if ($skip) {
+                unless ((@v) = caller ($i + $skip)) {
+                    die "skip value goes beyond the end of the stack";
+                }
+            }
+            return Chj::Repl::StackFrame->new(undef, @v);
+        }
     }
     die "???"
 }
@@ -137,40 +137,40 @@ sub have_eval_since_frame ($) {
     my $i=1;
 
   SKIP: {
-	while ((@v)= caller $i++) {
-	    last SKIP if ($v[0] ne "Chj::WithRepl");
-	}
-	die "???"
+        while ((@v)= caller $i++) {
+            last SKIP if ($v[0] ne "Chj::WithRepl");
+        }
+        die "???"
     }
 
     do {
-	my $f= Chj::Repl::StackFrame->new(undef, @v);
-	if ($f->equal ($startframe)) {
-	    warn "reached startframe, thus return false"
-	      if $debug;
-	    return ''
-	} elsif ($f->subroutine eq "(eval)") {
-	    if ((@v)= caller $i++) {
-		my $f= Chj::Repl::StackFrame->new(undef, @v);
-		my $sub= $f->subroutine;
-		if ($sub =~ /::WithRepl_eval(?:_e)?\z/) {
-		    warn "(ignore eval since it's from a WithRepl_eval)"
-		      if $debug;
-		} elsif ($sub =~ /::BEGIN\z/) {
-		    # (why does BEGIN use eval?)
-		    warn "(ignore eval since it's from a BEGIN)"
-		      if $debug;
-		} else {
-		    warn "GOT eval (standalone)"
-		      if $debug;
-		    return 1
-		}
-	    } else {
-	        warn "GOT eval right at end of stack"
-		  if $debug;
-		return 1
-	    }
-	}
+        my $f= Chj::Repl::StackFrame->new(undef, @v);
+        if ($f->equal ($startframe)) {
+            warn "reached startframe, thus return false"
+              if $debug;
+            return ''
+        } elsif ($f->subroutine eq "(eval)") {
+            if ((@v)= caller $i++) {
+                my $f= Chj::Repl::StackFrame->new(undef, @v);
+                my $sub= $f->subroutine;
+                if ($sub =~ /::WithRepl_eval(?:_e)?\z/) {
+                    warn "(ignore eval since it's from a WithRepl_eval)"
+                      if $debug;
+                } elsif ($sub =~ /::BEGIN\z/) {
+                    # (why does BEGIN use eval?)
+                    warn "(ignore eval since it's from a BEGIN)"
+                      if $debug;
+                } else {
+                    warn "GOT eval (standalone)"
+                      if $debug;
+                    return 1
+                }
+            } else {
+                warn "GOT eval right at end of stack"
+                  if $debug;
+                return 1
+            }
+        }
     }
       while ((@v)= caller $i++);
 
@@ -186,40 +186,40 @@ sub have_eval_since_frame ($) {
 sub handler_for ($$) {
     my ($startframe, $orig_handler)=@_;
     sub {
-	my ($e)=@_;
-	# to show local errors with backtrace:
-	# require Chj::Backtrace; import Chj::Backtrace;
-	if (have_eval_since_frame $startframe) {
-	    #$SIG{__DIE__}= $orig_handler;
-	    # ^ helps against the loop but makes the push_withrepl
-	    #   one-shot, of course
-	    #goto &{$orig_handler // sub { die $_[0] }}  nah, try:
-	    if (defined $orig_handler) {
-		#goto $orig_handler
-		# ^ just doesn't work, seems to undo the looping
-		#   protection. so..:  -- XX test goto &$orig_handler
-		&$orig_handler ($e)
-	    } else {
-		#warn "no orig_handler, returning";
-		return
-	    }
-	} else {
-	    my $err= $Chj::Repl::maybe_output // *STDERR{IO};
-	    print $err "Exception: $e";
-	    # then what to do upon exiting it? return the value of the
-	    # repl?  XX repl needs new feature, a "quit this context
-	    # with this value". Although not helping anyway since Perl
-	    # can't be made to avoid leaving the exception context.
-	    push_withrepl(0); # XX correct? Argument?
-	    repl(skip=> 1)
-	}
+        my ($e)=@_;
+        # to show local errors with backtrace:
+        # require Chj::Backtrace; import Chj::Backtrace;
+        if (have_eval_since_frame $startframe) {
+            #$SIG{__DIE__}= $orig_handler;
+            # ^ helps against the loop but makes the push_withrepl
+            #   one-shot, of course
+            #goto &{$orig_handler // sub { die $_[0] }}  nah, try:
+            if (defined $orig_handler) {
+                #goto $orig_handler
+                # ^ just doesn't work, seems to undo the looping
+                #   protection. so..:  -- XX test goto &$orig_handler
+                &$orig_handler ($e)
+            } else {
+                #warn "no orig_handler, returning";
+                return
+            }
+        } else {
+            my $err= $Chj::Repl::maybe_output // *STDERR{IO};
+            print $err "Exception: $e";
+            # then what to do upon exiting it? return the value of the
+            # repl?  XX repl needs new feature, a "quit this context
+            # with this value". Although not helping anyway since Perl
+            # can't be made to avoid leaving the exception context.
+            push_withrepl(0); # XX correct? Argument?
+            repl(skip=> 1)
+        }
     }
 }
 
 sub handler ($) {
     my ($skip)= @_;
     handler_for (current_user_frame($skip),
-		 $SIG{__DIE__})
+                 $SIG{__DIE__})
 }
 
 sub withrepl (&) {

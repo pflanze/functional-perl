@@ -42,14 +42,14 @@ sub as_string {
     my $s=shift;
     my $code= $$s[Code];
     if ($code < 256) {
-	"signal $code (".Chj::Unix::Signal->new($code)->as_string.")"
+        "signal $code (".Chj::Unix::Signal->new($code)->as_string.")"
     } else {
-	if (($code & 255) == 0) {
-	    "exit value ".($code >> 8)
-	} else {
-	    warn "does this ever happen?";
-	    "both exit value and signal ($code)"
-	}
+        if (($code & 255) == 0) {
+            "exit value ".($code >> 8)
+        } else {
+            warn "does this ever happen?";
+            "both exit value and signal ($code)"
+        }
     }
 }
 

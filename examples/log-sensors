@@ -41,13 +41,13 @@ sub usage {
 use Getopt::Long;
 our $verbose=0;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   "delay=n"=> \$delay,
-	   ) or exit 1;
+           "help"=> sub{usage},
+           "delay=n"=> \$delay,
+           ) or exit 1;
 usage unless @ARGV;
 
 use Chj::Linux::LmSensors qw(sensors_get
-			     Selector);
+                             Selector);
 
 my @sel= map {
     my $sel=$_;
@@ -66,23 +66,23 @@ use Chj::xopen qw(glob_to_fh);
 sub input {
     my $is_first=1;
     my $in= maybeIO_to_stream(sub {
-				  if ($is_first) {
-				      $is_first=0;
-				  } else {
-				      sleep $delay;
-				  }
-				  sensors_get
-			      });
+                                  if ($is_first) {
+                                      $is_first=0;
+                                  } else {
+                                      sleep $delay;
+                                  }
+                                  sensors_get
+                              });
     $in->map(sub {
-		 my ($m)=@_;
-		 [
-		  $m->time,
-		  map {
-		      my $sel= $_;
-		      $m->select($_)->value_or("")
-		  } @sel
-		 ]
-	     })
+                 my ($m)=@_;
+                 [
+                  $m->time,
+                  map {
+                      my $sel= $_;
+                      $m->select($_)->value_or("")
+                  } @sel
+                 ]
+             })
 }
 
 

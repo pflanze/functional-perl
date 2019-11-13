@@ -69,22 +69,22 @@ sub xtmpdir {
     my $item;
     my $n= $MAXTRIES;
     TRY: {
-	$item= int(rand(999)*1000+rand(999));
-	my $path= "$basepath$item";
-	if (mkdir $path,$mask) {
-	    my $self= $class->SUPER::new;
-	    $self->set(path=>$path, autoclean=> $DEFAULT_AUTOCLEAN);
-	    return $self;
-	} elsif ($! == EEXIST  or $! == EINTR) {
-	    if (--$n > 0) {
-		redo TRY;
-	    } else {
-		croak "xtmpdir: too many attempts to create a ".
-		  "tempfile starting with path '$basepath'";
-	    }
-	} else {
-	    croak "xtmpdir: could not create dir '$path': $!";
-	}
+        $item= int(rand(999)*1000+rand(999));
+        my $path= "$basepath$item";
+        if (mkdir $path,$mask) {
+            my $self= $class->SUPER::new;
+            $self->set(path=>$path, autoclean=> $DEFAULT_AUTOCLEAN);
+            return $self;
+        } elsif ($! == EEXIST  or $! == EINTR) {
+            if (--$n > 0) {
+                redo TRY;
+            } else {
+                croak "xtmpdir: too many attempts to create a ".
+                  "tempfile starting with path '$basepath'";
+            }
+        } else {
+            croak "xtmpdir: could not create dir '$path': $!";
+        }
     }
 }
 
@@ -97,18 +97,18 @@ sub path {
     my $self=shift;
     my $key= pack "I", $self;
     if (@_) {
-	($meta{$key}{path})=@_
+        ($meta{$key}{path})=@_
     } else {
-	$meta{$key}{path};
+        $meta{$key}{path};
     }
 }
 
 sub autoclean {
     my $self=shift;
     if (@_) {
-	($meta{pack "I",$self}{autoclean})=@_;
+        ($meta{pack "I",$self}{autoclean})=@_;
     } else {
-	$meta{pack "I",$self}{autoclean}
+        $meta{pack "I",$self}{autoclean}
     }
 }
 
@@ -148,15 +148,15 @@ sub DESTROY {
     local ($@,$!,$?,$_);
     my $str= pack "I",$self;
     if (my $arr= $meta{$str}{on_destruction}) {
-	&$_($self) for @$arr
+        &$_($self) for @$arr
     }
     if (my $autoclean=$meta{$str}{autoclean}) {
-	rmdir $meta{$str}{path}
-	  or do{
-	      warn "autoclean: could not remove dir '$meta{$str}{path}': $!"
-		unless $autoclean and $autoclean==2
-		  # XX how to do right order with cleaning contained tmpfiles?
-	    };
+        rmdir $meta{$str}{path}
+          or do{
+              warn "autoclean: could not remove dir '$meta{$str}{path}': $!"
+                unless $autoclean and $autoclean==2
+                  # XX how to do right order with cleaning contained tmpfiles?
+            };
     }
     delete $meta{$str};
     #warn "/DESTROY $self";

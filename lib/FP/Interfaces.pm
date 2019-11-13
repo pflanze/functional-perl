@@ -66,9 +66,9 @@ sub require_package ($) {
     my ($package)=@_;
     no strict 'refs';
     if (not keys %{$package."::"}) {
-	$package=~ s|::|/|g;
-	$package.=".pm";
-	require $package
+        $package=~ s|::|/|g;
+        $package.=".pm";
+        require $package
     }
 }
 

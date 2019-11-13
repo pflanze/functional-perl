@@ -30,10 +30,10 @@ use Getopt::Long;
 our $verbose=0;
 our $opt_repl;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   "repl"=> \$opt_repl,
-	   #"dry-run"=> \$opt_dry,
-	   ) or exit 1;
+           "help"=> sub{usage},
+           "repl"=> \$opt_repl,
+           #"dry-run"=> \$opt_dry,
+           ) or exit 1;
 usage unless @ARGV==2;
 
 our ($inpath,$outpath)=@ARGV;
@@ -52,20 +52,20 @@ sub translate {
     $c=~ s/^\s+//s; # dito?
     my @p;
     if ($c=~ /\#/) {
-	undef
+        undef
     } elsif (@p= split /->/, $c and @p==2) {
-	my ($before,$after)= @p;
-	'@_='.$after.'; goto &{'.$before.'}'
+        my ($before,$after)= @p;
+        '@_='.$after.'; goto &{'.$before.'}'
     } elsif ($c=~ s/^\&//) {
-	if (my ($ident, $args)= $c=~ m/^(\$${IDENT})\s*(\(.*)/s) {
-	    '@_='.$args.'; goto &'.$ident
-	} else {
-	    die "dunno about '$c'";
-	}
+        if (my ($ident, $args)= $c=~ m/^(\$${IDENT})\s*(\(.*)/s) {
+            '@_='.$args.'; goto &'.$ident
+        } else {
+            die "dunno about '$c'";
+        }
     } elsif (my ($ident,$args)= $c=~ m/^($IDENT)\s*(\(.*)/s) {
-	'@_='.$args.'; goto \&'.$ident
+        '@_='.$args.'; goto \&'.$ident
     } else {
-	undef
+        undef
     }
 }
 
@@ -91,24 +91,24 @@ sub get_line_position_and_indents {
     my $line_position_and_indents=[];
     my $lineno=-1; # 0-based index, *not* what editors expect
     while ($code=~ /(?:^|\n)([ \t]*)/g) {
-	$lineno++;
-	my $indentstr= $1;
-	my $pos= pos ($code);
-	# the pos where that line starts:
-	my $pos0= $pos - length ($indentstr);
-	my $i=0;
-	for (split //, $indentstr) {
-	    if ($_ eq ' ') {
-		$i++
-	    } elsif ($_ eq "\t") {
-		# 8-based tabs
-		$i= (int ($i / 8) + 1)* 8
-	    } else {
-		die "??"
-	    }
-	}
-	push @$line_position_and_indents,
-	  [$lineno, $pos0, $i];
+        $lineno++;
+        my $indentstr= $1;
+        my $pos= pos ($code);
+        # the pos where that line starts:
+        my $pos0= $pos - length ($indentstr);
+        my $i=0;
+        for (split //, $indentstr) {
+            if ($_ eq ' ') {
+                $i++
+            } elsif ($_ eq "\t") {
+                # 8-based tabs
+                $i= (int ($i / 8) + 1)* 8
+            } else {
+                die "??"
+            }
+        }
+        push @$line_position_and_indents,
+          [$lineno, $pos0, $i];
     }
     $line_position_and_indents
 }
@@ -121,9 +121,9 @@ sub find_line_by_pos {
     # XX would need binary search for efficiency.
     my $prevline= $$line_position_and_indents[0];
     for (@$line_position_and_indents[1..$#$line_position_and_indents]) {
-	my ($lineno, $pos0, $i)= @$_;
-	return $prevline if $pos < $pos0;
-	$prevline=$_;
+        my ($lineno, $pos0, $i)= @$_;
+        return $prevline if $pos < $pos0;
+        $prevline=$_;
     }
     return $prevline # (don't have len of that line to check, thus trust)
 }
@@ -144,8 +144,8 @@ sub expand_tail_at_pos {
       @{find_line_by_pos $pos};
     my $afterline;
     for my $lineno ($tailline_lineno+1 .. $#$line_position_and_indents) {
-	$afterline= $$line_position_and_indents[$lineno];
-	last if $$afterline[2] <= $tailline_i;
+        $afterline= $$line_position_and_indents[$lineno];
+        last if $$afterline[2] <= $tailline_i;
     }
     my $maybe_endpos_indent= $$afterline[1]-1 if $afterline;
     # -1 so as to leave the "\n" in.
@@ -153,23 +153,23 @@ sub expand_tail_at_pos {
     my $maybe_endpos= min_maybe ($maybe_endpos_semicolon, $maybe_endpos_indent);
 
     if (defined $maybe_endpos) {
-	my $endpos= $maybe_endpos;
-	my $args= substr $code, $pos, $endpos-$pos;
-	if (defined (my $replacement= translate $args)) {
-	    my $startpos = $pos - 4;
+        my $endpos= $maybe_endpos;
+        my $args= substr $code, $pos, $endpos-$pos;
+        if (defined (my $replacement= translate $args)) {
+            my $startpos = $pos - 4;
 
-	    substr $code, $startpos, $endpos - $startpos, $replacement;
+            substr $code, $startpos, $endpos - $startpos, $replacement;
 
-	    # re-init index. XX nonscalable of course.
-	    $line_position_and_indents= get_line_position_and_indents;
+            # re-init index. XX nonscalable of course.
+            $line_position_and_indents= get_line_position_and_indents;
 
-	    pos($code)= $startpos + length $replacement;
-	    #warn "right: '$args'";
-	} else {
-	    #warn "wrong1: '$args'";
-	}
+            pos($code)= $startpos + length $replacement;
+            #warn "right: '$args'";
+        } else {
+            #warn "wrong1: '$args'";
+        }
     } else {
-	#warn "wrong2"
+        #warn "wrong2"
     }
 }
 
@@ -192,7 +192,7 @@ if ($opt_repl) {
     # only more indentation than the line where the tail statement is
     # found on has.
     while ($code=~ m/(?<!\$)\btail\b/g) {
-	expand_tail_at_pos
+        expand_tail_at_pos
     }
 
     $code=~ s/\buse\s*Sub::Call::Tail\b.*?;//s; # XX kills line numbering
@@ -202,6 +202,6 @@ if ($opt_repl) {
     $o->xclose;
 
     chmod 0755, $outpath
-	if -x $inpath;
+        if -x $inpath;
 
 }

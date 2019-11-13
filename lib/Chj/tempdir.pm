@@ -30,15 +30,15 @@ sub tempdir ($) {
     my $tries=0;
     my $perhapsrnd= "";
   TRY: {
-	my $path= "$base-${$}${perhapsrnd}";
-	if (mkdir $path, 0700) {
-	    return $path
-	} else {
-	    $tries++;
-	    $perhapsrnd= "-".substr(rand,2,7);
-	    redo TRY if ($tries < 10);
-	    die "can't mkdir '$path': $!";
-	}
+        my $path= "$base-${$}${perhapsrnd}";
+        if (mkdir $path, 0700) {
+            return $path
+        } else {
+            $tries++;
+            $perhapsrnd= "-".substr(rand,2,7);
+            redo TRY if ($tries < 10);
+            die "can't mkdir '$path': $!";
+        }
     }
 }
 

@@ -24,9 +24,9 @@ Chj::Package::OfPath
 package Chj::Package::OfPath;
 @ISA="Exporter"; require Exporter;
 @EXPORT_OK=qw(
-	      package_of_path
-	      package_of_path_or_package
-	     );
+              package_of_path
+              package_of_path_or_package
+             );
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Cwd 'abs_path';
@@ -41,11 +41,11 @@ sub package_of_path {
     $class=~ s/\.pm$//;
     $class=~ s|/|::|sg;
     if ($path=~ m{^/}) {
-	# absolute
+        # absolute
     } else {
-	my $p= abs_path $path
-	  or die "abs_path '$path': $!";
-	$path= $p;
+        my $p= abs_path $path
+          or die "abs_path '$path': $!";
+        $path= $p;
     }
     warn "path=".singlequote($path) if $DEBUG;
 
@@ -57,16 +57,16 @@ sub package_of_path {
     close $in
       or die "closing '$path': $!";
   CHECK: {
-	while ($content=~ m{\bpackage +([\w:]+)}g) {
-	    my $namespace= $1;
-	    if ($class=~ m/\Q$namespace\E$/) {
-		warn "cutting '$class' down to '$namespace'\n" if $DEBUG;
-		$class= $namespace;
-		last CHECK;
-	    }
-	}
-	die "could not find any package definition in '$path' ".
-	  "matching its path";
+        while ($content=~ m{\bpackage +([\w:]+)}g) {
+            my $namespace= $1;
+            if ($class=~ m/\Q$namespace\E$/) {
+                warn "cutting '$class' down to '$namespace'\n" if $DEBUG;
+                $class= $namespace;
+                last CHECK;
+            }
+        }
+        die "could not find any package definition in '$path' ".
+          "matching its path";
     }
     $class
 }
@@ -74,14 +74,14 @@ sub package_of_path {
 sub package_of_path_or_package {
     my ($path_or_package)=@_;
     if ($path_or_package=~ m{(\S+\.pm)}) {
-	package_of_path($1)
+        package_of_path($1)
     } elsif ($path_or_package=~ m{^(\w+\:\:)*\w+\z}s) {
-	$path_or_package
+        $path_or_package
     } elsif ($path_or_package=~ m{^(\w+/)*\w+\z}s) {
-	$path_or_package=~ s|/|::|sg;
-	$path_or_package
+        $path_or_package=~ s|/|::|sg;
+        $path_or_package
     } else {
-	die "doesn't look sane: ".singlequote($path_or_package)
+        die "doesn't look sane: ".singlequote($path_or_package)
     }
 }
 

@@ -70,9 +70,9 @@ use Chj::NamespaceCleanAbove;
     our @ISA= 'DBI::db';
 
     sub prepare {
-	my $s=shift;
-	my $st= $s->SUPER::prepare(@_);
-	bless $st, "FP::DBI::st"
+        my $s=shift;
+        my $st= $s->SUPER::prepare(@_);
+        bless $st, "FP::DBI::st"
     }
 }
 
@@ -89,40 +89,40 @@ use Chj::NamespaceCleanAbove;
     use FP::List;
 
     sub make_X_stream {
-	my ($method, $maybe_mapfn)=@_;
-	sub {
-	    my $s=shift;
-	    my $id= ++$$s{private_fp__dbi__id};
-	    my $lp; $lp= sub {
-		my $lp=$lp; #keep strong reference
-		lazy {
-		    $$s{private_fp__dbi__id} == $id
-		      or die ("stream was interrupted by another execute".
-			      " or stream request");
-		    if (my $v= $s->$method) {
-			cons ($maybe_mapfn ? &$maybe_mapfn($v) : $v, &$lp);
-		    } else {
-			null
-		    }
-		}
-	    };
-	    Weakened ($lp)->()
-	}
+        my ($method, $maybe_mapfn)=@_;
+        sub {
+            my $s=shift;
+            my $id= ++$$s{private_fp__dbi__id};
+            my $lp; $lp= sub {
+                my $lp=$lp; #keep strong reference
+                lazy {
+                    $$s{private_fp__dbi__id} == $id
+                      or die ("stream was interrupted by another execute".
+                              " or stream request");
+                    if (my $v= $s->$method) {
+                        cons ($maybe_mapfn ? &$maybe_mapfn($v) : $v, &$lp);
+                    } else {
+                        null
+                    }
+                }
+            };
+            Weakened ($lp)->()
+        }
     }
 
     use Chj::NamespaceCleanAbove;
 
 
     sub execute {
-	my $s=shift;
-	$$s{private_fp__dbi__id}++;
-	$s->SUPER::execute (@_)
+        my $s=shift;
+        $$s{private_fp__dbi__id}++;
+        $s->SUPER::execute (@_)
     }
 
     *row_stream= make_X_stream ("fetchrow_arrayref",
-				sub {
-				    bless ([ @{$_[0]} ], "FP::DBI::Row")
-				});
+                                sub {
+                                    bless ([ @{$_[0]} ], "FP::DBI::Row")
+                                });
     *array_stream= make_X_stream ("fetchrow_arrayref");
     *hash_stream= make_X_stream ("fetchrow_hashref");
 

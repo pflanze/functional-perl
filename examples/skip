@@ -71,33 +71,33 @@ sub chunks_change_tail {
     # start and rest are parts of the same stream of chunks,
     # windowsize is the number of bytes between them
     my $next; $next= sub {
-	@_==3 or die "wrong number of arguments";
-	my ($start, $rest, $windowsize)= @_;
-	my $next=$next;
-	lazy {
-	  NEXT: {
-		FORCE $start, $rest; # optional (since is_null, first
+        @_==3 or die "wrong number of arguments";
+        my ($start, $rest, $windowsize)= @_;
+        my $next=$next;
+        lazy {
+          NEXT: {
+                FORCE $start, $rest; # optional (since is_null, first
                                      # etc. are forcing promises
                                      # anyway), but might reduce
                                      # overhead slightly?
-		my $first= first $start;
-		my $lenfirst= length $first;
-		my $reserve= $windowsize - $minsize;
-		if ($lenfirst <= $reserve) {
-		    cons ($first,
-			  &$next(rest $start, $rest, $windowsize - $lenfirst))
-		} else {
-		    if (is_null $rest) {
-			&$fn($start, $windowsize)
-		    } else {
-			#&$next($start, rest $rest, $windowsize + length first $rest)
-			$windowsize= $windowsize + length first $rest;
-			$rest= rest $rest;
-			redo NEXT;
-		    }
-		}
-	    }
-	}
+                my $first= first $start;
+                my $lenfirst= length $first;
+                my $reserve= $windowsize - $minsize;
+                if ($lenfirst <= $reserve) {
+                    cons ($first,
+                          &$next(rest $start, $rest, $windowsize - $lenfirst))
+                } else {
+                    if (is_null $rest) {
+                        &$fn($start, $windowsize)
+                    } else {
+                        #&$next($start, rest $rest, $windowsize + length first $rest)
+                        $windowsize= $windowsize + length first $rest;
+                        $rest= rest $rest;
+                        redo NEXT;
+                    }
+                }
+            }
+        }
     };
     Weakened ($next)->($chunks, $chunks, 0);
 }
@@ -105,9 +105,9 @@ sub chunks_change_tail {
 sub test_with_size ($) {
     my ($size)=@_;
     stream_to_array
-	chunks_change_tail(array_to_stream (["foo","bars","baz"]),
-			   $size,
-			   sub { my ($tail, $len)=@_; cons $len, $tail });
+        chunks_change_tail(array_to_stream (["foo","bars","baz"]),
+                           $size,
+                           sub { my ($tail, $len)=@_; cons $len, $tail });
 }
 
 use FP::DumperEqual;
@@ -121,7 +121,7 @@ TEST { test_with_size 1 }
 ];
 
 TEST { dumperequal test_with_size 2, test_with_size 1
-	   and
+           and
        dumperequal test_with_size 3, test_with_size 1 }
 1;
 
@@ -149,12 +149,12 @@ our $opt_repl;
 our $opt_leaktest;
 our $opt_silent;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   "bufsize=n"=> \$BUFSIZ,
-	   "repl"=> \$opt_repl,
-	   "leaktest"=> \$opt_leaktest,
-	   "silent"=> \$opt_silent,
-	   ) or exit 1;
+           "help"=> sub{usage},
+           "bufsize=n"=> \$BUFSIZ,
+           "repl"=> \$opt_repl,
+           "leaktest"=> \$opt_leaktest,
+           "silent"=> \$opt_silent,
+           ) or exit 1;
 
 
 # called for testing or debugging:
@@ -192,51 +192,51 @@ our $out= glob_to_fh *STDOUT;
 
 if ($n) {
     $in->seek($n) || do {
-	if ($! == ESPIPE) {
-	    # non-seekable device
-	    my $nbufs= int ($n / $BUFSIZ);
-	    my $nrest= $n % $BUFSIZ;
-	    $nbufs * $BUFSIZ + $nrest == $n
-		or die "Perl can't calculate?";
-	    my $buf;
-	    for (1..$nbufs) {
-		$in->xsysreadcompletely($buf, $BUFSIZ);
-	    }
-	    $in->xsysreadcompletely($buf, $nrest);
-	    # XX: seek does not complain when file is too short; this
-	    # does. This is inconsistent. Also, check $opt_silent ?
-	} else {
-	    die "seek: $!";
-	}
+        if ($! == ESPIPE) {
+            # non-seekable device
+            my $nbufs= int ($n / $BUFSIZ);
+            my $nrest= $n % $BUFSIZ;
+            $nbufs * $BUFSIZ + $nrest == $n
+                or die "Perl can't calculate?";
+            my $buf;
+            for (1..$nbufs) {
+                $in->xsysreadcompletely($buf, $BUFSIZ);
+            }
+            $in->xsysreadcompletely($buf, $nrest);
+            # XX: seek does not complain when file is too short; this
+            # does. This is inconsistent. Also, check $opt_silent ?
+        } else {
+            die "seek: $!";
+        }
     };
 }
 
 if ($maybe_m) {
     my $chunks= force fh_to_chunks $in, $BUFSIZ;
     if (is_null $chunks) {
-	die "$myname: no remainder left after skipping $n byte(s)\n"
-	    unless $opt_silent;
+        die "$myname: no remainder left after skipping $n byte(s)\n"
+            unless $opt_silent;
     } else {
-	my $chunks2= chunks_change_tail
-	    ($chunks, $maybe_m, sub {
-		my ($rest, $remainingsize)=@_;
-		$mem_end= resource_rss if $opt_leaktest;
+        my $chunks2= chunks_change_tail
+            ($chunks, $maybe_m, sub {
+                my ($rest, $remainingsize)=@_;
+                $mem_end= resource_rss if $opt_leaktest;
 
-		if ($remainingsize < $maybe_m) {
-		    if ($opt_silent) {
-			null
-		    } else {
-			die "$myname: only $remainingsize byte(s) left ".
-			  "after skipping $n byte(s)\n"
-		    }
-		} else {
-		    my $last= first $rest;
-		    cons(substr ($last, 0, $remainingsize - $maybe_m), null)
-		}
-	     });
-	stream_for_each sub {
-	    $out->xprint($_[0])
-	}, $chunks2;
+                if ($remainingsize < $maybe_m) {
+                    if ($opt_silent) {
+                        null
+                    } else {
+                        die "$myname: only $remainingsize byte(s) left ".
+                          "after skipping $n byte(s)\n"
+                    }
+                } else {
+                    my $last= first $rest;
+                    cons(substr ($last, 0, $remainingsize - $maybe_m), null)
+                }
+             });
+        stream_for_each sub {
+            $out->xprint($_[0])
+        }, $chunks2;
     }
 } else {
     $in->xsendfile_to($out);

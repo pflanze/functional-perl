@@ -86,16 +86,16 @@ sub trampoline ($) {
     @_=(); # so that calling a continuation does not need () (possible
            # speedup)
     while (1) {
-	if (my $r= ref $v) {
-	    $v=
-	      ($r eq "FP::Trampoline::Continuation" ? &$v
-	       : $r eq "FP::Trampoline::Call" ? do {
-		   $$v[0]->(@$v[1..$#$v])
-	       }
-	       : return $v);
-	} else {
-	    return $v
-	}
+        if (my $r= ref $v) {
+            $v=
+              ($r eq "FP::Trampoline::Continuation" ? &$v
+               : $r eq "FP::Trampoline::Call" ? do {
+                   $$v[0]->(@$v[1..$#$v])
+               }
+               : return $v);
+        } else {
+            return $v
+        }
     }
 }
 

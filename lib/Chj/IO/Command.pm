@@ -56,10 +56,10 @@ package Chj::IO::Command;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use base qw(
-	    Chj::IO::CommandCommon
-	    Chj::IO::Pipe
-	    IO
-	   );
+            Chj::IO::CommandCommon
+            Chj::IO::Pipe
+            IO
+           );
 sub import {};
 
 use Chj::xpipe;

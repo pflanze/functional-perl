@@ -49,14 +49,14 @@ sub if_get ($&&&) {
     my $response = $ua->get($url);
 
     do {
-	if ($response->is_success) {
-	    $success
-	} elsif ($response->code == 404) {
-	    $res404
-	} else {
-	    # XX todo: handle redirects transparently?
-	    $error
-	}
+        if ($response->is_success) {
+            $success
+        } elsif ($response->code == 404) {
+            $res404
+        } else {
+            # XX todo: handle redirects transparently?
+            $error
+        }
     }->($response)
 }
 
@@ -72,18 +72,18 @@ sub perhaps_module_pod_url ($) {
     my $url= "https://metacpan.org/pod/$module_name";
 
     if_get( $url,
-	    sub {
-		my ($response)=@_;
-		($url)
-	    },
-	    sub {
-		my ($response)=@_;
-		()
-	    },
-	    sub {
-		my ($response)=@_;
-		die $response->status_line
-	    })
+            sub {
+                my ($response)=@_;
+                ($url)
+            },
+            sub {
+                my ($response)=@_;
+                ()
+            },
+            sub {
+                my ($response)=@_;
+                die $response->status_line
+            })
 }
 
 1

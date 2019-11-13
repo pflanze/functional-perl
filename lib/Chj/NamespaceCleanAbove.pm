@@ -43,8 +43,8 @@ sub import {
     my $keys= package_keys $package;
     no strict 'refs';
     *{"${package}::_END_"}= sub {
-	package_delete $package, $keys;
-	1 # make _END_ work as the last statement in a module
+        package_delete $package, $keys;
+        1 # make _END_ work as the last statement in a module
     };
 }
 

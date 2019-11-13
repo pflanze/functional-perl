@@ -179,7 +179,7 @@ package FP::Optional;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists
-	      optionally poptionally);
+              optionally poptionally);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -191,46 +191,46 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 sub perhaps_to_maybe ($) {
     my ($f)= @_;
     sub {
-	if (my ($v)= &$f (@_)) {
-	    $v
-	} else {
-	    undef
-	}
+        if (my ($v)= &$f (@_)) {
+            $v
+        } else {
+            undef
+        }
     }
 }
 
 sub perhaps_to_x ($$) {
     my ($f, $exception)= @_;
     sub {
-	if (my ($v)= &$f (@_)) {
-	    $v
-	} else {
-	    die $exception
-	}
+        if (my ($v)= &$f (@_)) {
+            $v
+        } else {
+            die $exception
+        }
     }
 }
 
 sub perhaps_to_or ($) {
     my ($f)= @_;
     sub {
-	@_==3 or die "wrong number of arguments";
-	my ($t,$k,$other)=@_;
-	if (my ($v)= &$f ($t, $k)) {
-	    $v
-	} else {
-	    $other
-	}
+        @_==3 or die "wrong number of arguments";
+        my ($t,$k,$other)=@_;
+        if (my ($v)= &$f ($t, $k)) {
+            $v
+        } else {
+            $other
+        }
     }
 }
 
 sub perhaps_to_exists ($) {
     my ($f)= @_;
     sub {
-	if (my ($_v)= &$f (@_)) {
-	    1
-	} else {
-	    ''
-	}
+        if (my ($_v)= &$f (@_)) {
+            1
+        } else {
+            ''
+        }
     }
 }
 
@@ -243,12 +243,12 @@ sub optionally ($;$) {
     my ($f,$maybe_pos)=@_;
     my $pos= $maybe_pos // 0;
     sub {
-	if (defined $_[$pos]) {
-	    goto &$f
-	} else {
-	    # pass on the undef value
-	    undef
-	}
+        if (defined $_[$pos]) {
+            goto &$f
+        } else {
+            # pass on the undef value
+            undef
+        }
     }
 }
 
@@ -256,12 +256,12 @@ sub optionally ($;$) {
 sub poptionally ($) {
     my ($f)=@_;
     sub {
-	if (@_) {
-	    goto &$f
-	} else {
-	    # pass on the empty list
-	    ()
-	}
+        if (@_) {
+            goto &$f
+        } else {
+            # pass on the empty list
+            ()
+        }
     }
 }
 

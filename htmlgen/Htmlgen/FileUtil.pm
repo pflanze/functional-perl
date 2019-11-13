@@ -32,7 +32,7 @@ use Sub::Call::Tail;
 # lib?
 fun existingpath_or (@paths) {
     for (@paths) {
-	return $_ if -e $_
+        return $_ if -e $_
     }
     die "none of the paths exist: @paths";
 }
@@ -46,14 +46,14 @@ fun create_parent_dirs ($path0, $path0_to_outpath) {
     my $path0= dirname $path0;
     my $outpath= &$path0_to_outpath ($path0);
     if (mkdir $outpath) {
-	# ok, return
+        # ok, return
     } elsif ($! == EEXIST) {
-	# ok, return
+        # ok, return
     } elsif ($! == ENOENT) {
-	create_parent_dirs ($path0, $path0_to_outpath);
-	xmkdir $outpath;
+        create_parent_dirs ($path0, $path0_to_outpath);
+        xmkdir $outpath;
     } else {
-	die "mkdir '$outpath': $!";
+        die "mkdir '$outpath': $!";
     }
 }
 

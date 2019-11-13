@@ -11,15 +11,15 @@ use v5.16;
 
 sub foo {
     my $f= sub {
-	my ($n)= @_;
-	my $f=__SUB__;
-	sub {
-	    if ($n > 0) {
-		$n + &{&$f($n - 1)}
-	    } else {
-		0
-	    }
-	}
+        my ($n)= @_;
+        my $f=__SUB__;
+        sub {
+            if ($n > 0) {
+                $n + &{&$f($n - 1)}
+            } else {
+                0
+            }
+        }
     };
     goto &$f
 }

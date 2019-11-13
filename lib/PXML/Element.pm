@@ -88,9 +88,9 @@ sub perhaps_attribute {
     my $s=shift;
     my ($name)=@_;
     if (defined (my $h= $$s[ATTRIBUTES])) {
-	exists $$h{$name} ? $$h{$name} : ()
+        exists $$h{$name} ? $$h{$name} : ()
     } else {
-	()
+        ()
     }
 }
 
@@ -168,31 +168,31 @@ sub body_map {
 sub _text {
     my ($v)=@_;
     if (defined $v) {
-	if (ref $v)  {
-	    if (UNIVERSAL::isa ($v, "PXML::Element")) {
-		$v->text
-	    } elsif (UNIVERSAL::isa ($v, "ARRAY")) {
-		join("",
-		     map {
-			 _text ($_)
-		     } @$v);
-	    } elsif (UNIVERSAL::isa ($v, "CODE")) {
-		# correct? XX why does A(string_to_stream("You're
-		# great."))->text trigger this case?
-		_text (&$v ());
-	    } elsif (is_pair $v) {
-		my ($a,$v2)= $v->car_and_cdr;
-		_text ($a) . _text ($v2); # XXX quadratic complexity?
-	    } elsif (is_promise $v) {
-		_text (force $v);
-	    } else {
-		die "don't know how to get text of: $v";
-	    }
-	} else {
-	    $v
-	}
+        if (ref $v)  {
+            if (UNIVERSAL::isa ($v, "PXML::Element")) {
+                $v->text
+            } elsif (UNIVERSAL::isa ($v, "ARRAY")) {
+                join("",
+                     map {
+                         _text ($_)
+                     } @$v);
+            } elsif (UNIVERSAL::isa ($v, "CODE")) {
+                # correct? XX why does A(string_to_stream("You're
+                # great."))->text trigger this case?
+                _text (&$v ());
+            } elsif (is_pair $v) {
+                my ($a,$v2)= $v->car_and_cdr;
+                _text ($a) . _text ($v2); # XXX quadratic complexity?
+            } elsif (is_promise $v) {
+                _text (force $v);
+            } else {
+                die "don't know how to get text of: $v";
+            }
+        } else {
+            $v
+        }
     } else {
-	""
+        ""
     }
 }
 
@@ -209,8 +209,8 @@ sub string {
     my $s=shift;
     require PXML::Serialize;
     capture_stdout {
-	PXML::Serialize::pxml_print_fragment_fast
-	    ($s, *STDOUT);
+        PXML::Serialize::pxml_print_fragment_fast
+            ($s, *STDOUT);
     }
 }
 

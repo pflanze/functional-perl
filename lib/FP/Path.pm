@@ -76,7 +76,7 @@ sub is_segment ($) { not perhaps_segment_error $_[0] }
 
 sub check_segment ($) {
     if (my ($e)= perhaps_segment_error $_[0]) {
-	die $e
+        die $e
     }
 }
 
@@ -87,9 +87,9 @@ our $use_costly_typing= use_costly_typing; # for access from FP::Path::t
 sub typed ($$) {
     my ($pred,$name)=@_;
     if (use_costly_typing) {
-	[$pred,$name]
+        [$pred,$name]
     } else {
-	$name
+        $name
     }
 }
 
@@ -97,14 +97,14 @@ sub typed ($$) {
 use FP::Struct
   [
    typed(list_of (*is_segment),
-	 'rsegments'), # reversed list
+         'rsegments'), # reversed list
    typed(*is_boolean,
-	 'has_endslash'), # whether the path is forcibly specifying a
+         'has_endslash'), # whether the path is forcibly specifying a
                           # dir by using a slash at the end (forcing a
                           # dir by ending in "." isn't setting this
                           # flag)
    typed(*is_boolean,
-	 'is_absolute'), # bool
+         'is_absolute'), # bool
   ];
 
 *import= constructorexporter new_from_string=> "path";
@@ -116,8 +116,8 @@ sub new_from_string {
     my @p= split m{/+}, $str;
     shift @p if (@p and $p[0] eq "");
     $class->new(array_to_list_reverse(\@p),
-		scalar $str=~ m{/$}s,
-		scalar $str=~ m{^/}s)
+                scalar $str=~ m{/$}s,
+                scalar $str=~ m{^/}s)
 }
 
 sub FP_Equal_equal {
@@ -165,18 +165,18 @@ sub clean_dot {
     my $rseg= $s->rsegments;
     $s->rsegments_set ($rseg->filter(sub { not ($_[0] eq ".") }))
       ->has_endslash_set
-	(
-	 # set forced dir flag if the last segment was a ".", even
-	 # if previously it didn't end in "/"
-	 $$s{has_endslash}
-	 or
-	 do {
-	     if (is_null $rseg) {
-		 0
-	     } else {
-		 $rseg->first eq "."
-	     }
-	 });
+        (
+         # set forced dir flag if the last segment was a ".", even
+         # if previously it didn't end in "/"
+         $$s{has_endslash}
+         or
+         do {
+             if (is_null $rseg) {
+                 0
+             } else {
+                 $rseg->first eq "."
+             }
+         });
 }
 
 # This is only valid to be applied to paths that have already been
@@ -189,15 +189,15 @@ sub perhaps_clean_dotdot {
     my $ends_in_dotdot= is_pair ($rs) && $rs->first eq "..";
     my @s;
     for my $seg ($rs->reverse_values) {
-	if ($seg eq "..") {
-	    if (@s) {
-		pop @s;
-	    } else {
-		return ()
-	    }
-	} else {
-	    push @s, $seg
-	}
+        if ($seg eq "..") {
+            if (@s) {
+                pop @s;
+            } else {
+                return ()
+            }
+        } else {
+            push @s, $seg
+        }
     }
     my $s1= $s->rsegments_set (array_to_list_reverse \@s);
     $ends_in_dotdot ? $s1->has_endslash_set(1) : $s1
@@ -210,9 +210,9 @@ sub perhaps_clean_dotdot {
 sub xclean_dotdot {
     my $s=shift;
     if (my ($v)= $s->perhaps_clean_dotdot) {
-	$v
+        $v
     } else {
-	die "can't take '..' of root directory"
+        die "can't take '..' of root directory"
     }
 }
 
@@ -234,10 +234,10 @@ sub add_segment { # functionally. hm.
     check_segment $segment;
     $s->rsegments_update
       (sub {
-	   cons $segment, $_[0]
+           cons $segment, $_[0]
        })
-	# no forced endslash anymore
-	->has_endslash_set(0);
+        # no forced endslash anymore
+        ->has_endslash_set(0);
 }
 
 sub add {
@@ -245,11 +245,11 @@ sub add {
     @_==2 or die "wrong number of arguments";
     my ($b, $is_url)=@_; # when is_url is true, it cleans dit
     if ($b->is_absolute) {
-	$b
+        $b
     } else {
-	my $c= $a->rsegments_set ($b->rsegments->append($a->rsegments))
-	  ->clean_dot;
-	$is_url ? $c->xclean_dotdot : $c
+        my $c= $a->rsegments_set ($b->rsegments->append($a->rsegments))
+          ->clean_dot;
+        $is_url ? $c->xclean_dotdot : $c
     }
 }
 
@@ -294,16 +294,16 @@ sub perhaps_resplit_next_segment {
     # representation.
     my $ss= $p1->segments;
     if (is_pair $ss) {
-	my $class= ref ($p0);
-	my ($first,$rest)= $ss->first_and_rest;
-	($class->new ($p0->rsegments->cons ($first),
-		      is_null($rest) ? $p1->has_endslash : 1,
-		      $p0->is_absolute),
-	 $class->new ($rest->reverse,
-		      $p1->has_endslash,
-		      ''))
+        my $class= ref ($p0);
+        my ($first,$rest)= $ss->first_and_rest;
+        ($class->new ($p0->rsegments->cons ($first),
+                      is_null($rest) ? $p1->has_endslash : 1,
+                      $p0->is_absolute),
+         $class->new ($rest->reverse,
+                      $p1->has_endslash,
+                      ''))
     } else {
-	()
+        ()
     }
 }
 

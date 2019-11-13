@@ -29,7 +29,7 @@ use Chj::repl;
     BEGIN { *is_age= both *is_natural0, sub { $_[0] < 130 } }
 
     use FP::Struct [[*is_string, "name"],
-		    [*is_age, "age"]];
+                    [*is_age, "age"]];
     _END_
 }
 
@@ -38,7 +38,7 @@ use Chj::repl;
     use FP::Predicates;
 
     use FP::Struct [[*is_string, "name"],
-		    [both (*is_natural0, less_than 130), "age"]];
+                    [both (*is_natural0, less_than 130), "age"]];
     _END_
 }
 
@@ -49,8 +49,8 @@ sub test {
     TEST { $f->age }
       105;
     TEST {
-	# check namespace cleaning
-	$f->can("is_age")
+        # check namespace cleaning
+        $f->can("is_age")
     } undef;
     TEST_EXCEPTION { $f= $class->new ("Maria", 1300) }
       'unacceptable value for field \'age\': 1300';

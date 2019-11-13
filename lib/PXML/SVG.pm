@@ -53,11 +53,11 @@ our $funcs=
    map {
        my $tag=$_;
        [
-	uc $tag,
-	sub {
-	    my $atts= ref($_[0]) eq "HASH" ? shift : undef;
-	    PXML::PSVG->new($tag, $atts, [@_]);
-	}
+        uc $tag,
+        sub {
+            my $atts= ref($_[0]) eq "HASH" ? shift : undef;
+            PXML::PSVG->new($tag, $atts, [@_]);
+        }
        ]
    } @$tags
   ];

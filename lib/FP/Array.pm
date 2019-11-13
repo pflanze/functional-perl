@@ -40,51 +40,51 @@ package FP::Array;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(array
-	      array_first
-	      array_maybe_first
-	      array_rest
-	      array_maybe_rest
+              array_first
+              array_maybe_first
+              array_rest
+              array_maybe_rest
               array_first_and_rest
               array_maybe_first_and_rest
               array_second
-	      array_ref
-	      array_ref
-	      array_length
-	      array_is_null
-	      array_set
-	      array_update
-	      array_push
-	      array_pop
-	      array_shift
-	      array_unshift
-	      array_sub
-	      array_take
-	      array_take_while
-	      array_drop
-	      array_drop_while
-	      array_append
+              array_ref
+              array_ref
+              array_length
+              array_is_null
+              array_set
+              array_update
+              array_push
+              array_pop
+              array_shift
+              array_unshift
+              array_sub
+              array_take
+              array_take_while
+              array_drop
+              array_drop_while
+              array_append
               array_reverse
-	      array_xone
-	      array_perhaps_one
-	      array_hashing_uniq
-	      array_zip2
-	      array_for_each
-	      array_map
-	      array_map_with_i
-	      array_map_with_islast
-	      array_to_hash_map
-	      array_filter
-	      array_zip
-	      array_fold
-	      array_fold_right
-	      array_join
-	      array_strings_join
-	      array_every
-	      array_any
-	      array_sum
-	      array_last
-	      array_to_hash_group_by
-	    );
+              array_xone
+              array_perhaps_one
+              array_hashing_uniq
+              array_zip2
+              array_for_each
+              array_map
+              array_map_with_i
+              array_map_with_islast
+              array_to_hash_map
+              array_filter
+              array_zip
+              array_fold
+              array_fold_right
+              array_join
+              array_strings_join
+              array_every
+              array_any
+              array_sum
+              array_last
+              array_to_hash_group_by
+            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -241,7 +241,7 @@ sub array_take_while ($$) {
     my $i=0;
     my $len= @$s;
     while (!($i>= $len) and &$pred($$s[$i])) {
-	$i++
+        $i++
     }
     [ @$s[0..$i-1] ]
 }
@@ -251,7 +251,7 @@ sub array_drop_while ($ $) {
     my $i=0;
     my $len= @$s;
     while (!($i>= $len) and &$pred($$s[$i])) {
-	$i++
+        $i++
     }
     [ @$s[$i..$#$s] ]
 }
@@ -262,15 +262,15 @@ sub array_drop_while ($ $) {
 
 sub array_append {
     [ map {
-	# @$_ nope, that's totally unsafe, will open up array-based
-	# objects, like for example cons cells...
+        # @$_ nope, that's totally unsafe, will open up array-based
+        # objects, like for example cons cells...
 
-	# evil inlined `is_array`
-	if (defined $_[0] and ref ($_[0]) eq "ARRAY") {
-	    @$_
-	} else {
-	    $_->values
-	}
+        # evil inlined `is_array`
+        if (defined $_[0] and ref ($_[0]) eq "ARRAY") {
+            @$_
+        } else {
+            $_->values
+        }
     } @_ ]
 }
 
@@ -288,9 +288,9 @@ sub array_xone ($) {
 sub array_perhaps_one ($) {
     my ($a)=@_;
     if (@$a==1) {
-	$$a[0]
+        $$a[0]
     } else {
-	()
+        ()
     }
 }
 
@@ -299,10 +299,10 @@ sub array_hashing_uniq ($;$ ) {
     my %seen;
     [
      grep {
-	 my $s= $seen{$_};
-	 if ($s and $maybe_warn) { &$maybe_warn($_) };
-	 $seen{$_}=1;
-	 not $s
+         my $s= $seen{$_};
+         if ($s and $maybe_warn) { &$maybe_warn($_) };
+         $seen{$_}=1;
+         not $s
      } @$ary
     ]
 }
@@ -313,7 +313,7 @@ sub array_zip2 ($$) {
     my @res;
     my $len= min(scalar @$l, scalar @$m);
     for (my $i=0; $i<$len; $i++) {
-	$res[$i]= [ $$l[$i], $$m[$i] ];
+        $res[$i]= [ $$l[$i], $$m[$i] ];
     }
     \@res
 }
@@ -329,7 +329,7 @@ sub array_map {
     my $len= min (map { scalar @$_ } @_);
     my @res;
     for (my $i=0; $i<$len; $i++) {
-	$res[$i]= &$fn (map { $$_[$i] } @_);
+        $res[$i]= &$fn (map { $$_[$i] } @_);
     }
     \@res
 }
@@ -344,7 +344,7 @@ sub array_map_with_i {
     my $len= min (map { scalar @$_ } @_);
     my @res;
     for (my $i=0; $i<$len; $i++) {
-	$res[$i]= &$fn ($i, map { $$_[$i] } @_);
+        $res[$i]= &$fn ($i, map { $$_[$i] } @_);
     }
     \@res
 }
@@ -359,7 +359,7 @@ sub array_map_with_islast {
     my $last= $len - 1;
     my @res;
     for (my $i=0; $i<$len; $i++) {
-	$res[$i]= &$fn ($i == $last, map { $$_[$i] } @_);
+        $res[$i]= &$fn ($i == $last, map { $$_[$i] } @_);
     }
     \@res
 }
@@ -376,16 +376,16 @@ sub array_to_hash_map {
     my $len= min (map { scalar @$_ } @_);
     my %res;
     for (my $i=0; $i<$len; $i++) {
-	my @v= &$fn (map { $$_[$i] } @_);
-	@v==2 or croak "wrong number of return values: ".show (\@v);
-	$res{$v[0]}= $v[1];
+        my @v= &$fn (map { $$_[$i] } @_);
+        @v==2 or croak "wrong number of return values: ".show (\@v);
+        $res{$v[0]}= $v[1];
     }
     \%res
 }
 
 TEST { array_to_hash_map(sub { my($x,$a)=@_; $a=> $x*$x },
-			 [2,3,4,5],
-			 ["a","b","c"]) }
+                         [2,3,4,5],
+                         ["a","b","c"]) }
   +{
     'a' => 4,
     'b' => 9,
@@ -398,7 +398,7 @@ sub array_filter ($$) {
     my ($fn,$v)=@_;
     [
      grep {
-	 &$fn($_)
+         &$fn($_)
      } @$v
     ]
 }
@@ -424,7 +424,7 @@ TEST { array_zip [3,4], [qw(a b c)] }
 sub array_fold ($$$) {
     my ($fn,$start,$ary)=@_;
     for (@$ary) {
-	$start= &$fn($_,$start);
+        $start= &$fn($_,$start);
     }
     $start
 }
@@ -442,16 +442,16 @@ sub array_fold_right ($$$) {
     my ($fn,$tail,$a)=@_;
     my $i= @$a - 1;
     while ($i >= 0) {
-	$tail= &$fn($$a[$i], $tail);
-	$i--;
+        $tail= &$fn($$a[$i], $tail);
+        $i--;
     }
     $tail
 }
 
 TEST{ require FP::List;
       FP::List::list_to_array (array_fold_right (\&FP::List::cons,
-					      &FP::List::null,
-					      [1,2,3])) }
+                                              &FP::List::null,
+                                              [1,2,3])) }
   [1,2,3];
 
 
@@ -459,7 +459,7 @@ sub array_join ($$) {
     my ($ary,$val)=@_;
     my @res;
     for (@$ary) {
-	push @res, $_, $val
+        push @res, $_, $val
     }
     pop @res;
     \@res
@@ -488,7 +488,7 @@ TEST{ array_strings_join [1,2,3], "-" }
 sub array_every ($$) {
     my ($fn,$ary)=@_;
     for (@$ary) {
-	return 0 unless &$fn($_);
+        return 0 unless &$fn($_);
     }
     1
 }
@@ -500,7 +500,7 @@ TEST{ array_every sub { ($_[0] % 2) == 0 }, [ ] } 1;
 sub array_any ($$) {
     my ($fn,$ary)=@_;
     for (@$ary) {
-	return 1 if &$fn($_);
+        return 1 if &$fn($_);
     }
     0
 }
@@ -528,7 +528,7 @@ sub array_to_hash_group_by ($$) {
     my ($ary,$on)=@_;
     my %res;
     for (@$ary) {
-	push @{$res{&$on ($_)}}, $_
+        push @{$res{&$on ($_)}}, $_
     }
     \%res
 }
@@ -541,22 +541,22 @@ sub array_perhaps_find_tail ($$) {
     my $len=  @$s;
     my $i= 0;
   LP: {
-	if ($i >= $len) {
-	    ()
-	} else {
-	    #my ($v,$l1)= $s->first_and_rest;
+        if ($i >= $len) {
+            ()
+        } else {
+            #my ($v,$l1)= $s->first_and_rest;
             #  ^ with efficient slice we could do it !
             my $v= $$s[$i];
-	    if (&$fn ($v)) {
-		# $s
+            if (&$fn ($v)) {
+                # $s
                 # hmmm
                 $s->drop($i)
-	    } else {
-		# $s= $s1;
+            } else {
+                # $s= $s1;
                 $i++;
-		redo LP
-	    }
-	}
+                redo LP
+            }
+        }
     }
 }
 
@@ -564,9 +564,9 @@ sub array_perhaps_find ($$) {
     @_==2 or die "wrong number of arguments";
     my ($fn, $l)=@_;
     if (my ($l)= array_perhaps_find_tail ($fn, $l)) {
-	$l->first
+        $l->first
     } else {
-	()
+        ()
     }
 }
 

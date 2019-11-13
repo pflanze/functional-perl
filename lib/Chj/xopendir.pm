@@ -17,7 +17,7 @@ Chj::xopendir
  {
      my $dir= xopendir "/foo";
      while (defined(my $item=$dir->read)) {
-	 print $item;
+         print $item;
      }
  } # $dir is closed automatically (issuing a warning on error)
 

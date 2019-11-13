@@ -62,39 +62,39 @@ my $opt_t;
 for (my $i=0; $i<=$#ARGV; $i++) {
     local $_=$ARGV[$i];
     if (/^--?h(elp)?$/) {
-	usage
+        usage
     } elsif ($_ eq '--') {
-	push @files, @ARGV[$i+1..$#ARGV];
-	last;
+        push @files, @ARGV[$i+1..$#ARGV];
+        last;
     } elsif ($_ eq '-H' or $_ eq '--no-history') {
-	$opt_H=1;
+        $opt_H=1;
     } elsif ($_ eq '-t') {
-	$opt_t=1;
+        $opt_t=1;
     } elsif (/^-M(.*)/) {
-	if ($1) {
-	    push @opt_M,$1;
-	} else {
-	    my $arg= $ARGV[++$i];
-	    defined $arg or usage "missing argument to -M";
-	    push @opt_M,$arg;
-	}
+        if ($1) {
+            push @opt_M,$1;
+        } else {
+            my $arg= $ARGV[++$i];
+            defined $arg or usage "missing argument to -M";
+            push @opt_M,$arg;
+        }
     } elsif (/^-m(.*)/) {
-	if ($1) {
-	    push @opt_m,$1;
-	} else {
-	    my $arg= $ARGV[++$i];
-	    defined $arg or usage "missing argument to -m";
-	    push @opt_m,$arg;
-	}
+        if ($1) {
+            push @opt_m,$1;
+        } else {
+            my $arg= $ARGV[++$i];
+            defined $arg or usage "missing argument to -m";
+            push @opt_m,$arg;
+        }
     } elsif (/^--name$/) {
-	my $arg= $ARGV[++$i];
-	defined $arg or usage "missing argument to --name";
-	$myname= $arg;
+        my $arg= $ARGV[++$i];
+        defined $arg or usage "missing argument to --name";
+        $myname= $arg;
     } elsif (/^-/) {
-	warn "Unknown option '$_'\n";
-	usage(1)
+        warn "Unknown option '$_'\n";
+        usage(1)
     } else {
-	push @files, $_
+        push @files, $_
     }
 }
 
@@ -121,11 +121,11 @@ sub moduleoption_to_code ($) {
     my $path_or_package= $1;
     my $p= package_of_path_or_package($path_or_package);
     "use ".do {
-	if ($a=~ s/^=//s) {
-	    $p." ".join(", ",map{"'$_'"} split /,/,$a)
-	} else {
-	    $p
-	}
+        if ($a=~ s/^=//s) {
+            $p." ".join(", ",map{"'$_'"} split /,/,$a)
+        } else {
+            $p
+        }
     }
 }
 
@@ -133,12 +133,12 @@ sub moduleoption_to_code ($) {
 if (@opt_M) {
     my $code=
       join(";",
-	   map { moduleoption_to_code $_ }
-	   @opt_M);
+           map { moduleoption_to_code $_ }
+           @opt_M);
 
     &WithRepl_eval ("package $myname; "
-		    .$code
-		    ."; 1")
+                    .$code
+                    ."; 1")
       or die $@;
 }
 
@@ -149,16 +149,16 @@ for my $path_or_package (@opt_m) {
 
 if (@files) {
     for (@files) {
-	my ($res,$e,$is_error)= &WithRepl_eval_e($_, $myname);
-	die $e if $is_error;
-	print "$res\n";
+        my ($res,$e,$is_error)= &WithRepl_eval_e($_, $myname);
+        die $e if $is_error;
+        print "$res\n";
     }
 }
 
 else {
     require Chj::repl;
     Chj::repl(maybe_historypath=> ($opt_H ? undef : $HISTFILE),
-	      maxhistlen=> $MAXHISTLEN,
-	      maybe_package=> $myname);
+              maxhistlen=> $MAXHISTLEN,
+              maybe_package=> $myname);
 }
 

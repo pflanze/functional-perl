@@ -43,9 +43,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     # CAREFUL: equal stackframes still don't need to be the *same*
     # stackframe!
     sub equal {
-	my $s=shift;
-	my ($v)=@_;
-	die "not implemented (yet?)";
+        my $s=shift;
+        my ($v)=@_;
+        die "not implemented (yet?)";
     }
 
     _END_
@@ -61,17 +61,17 @@ our $maybe_peek_my= sub {
     my ($skip)=@_;
     my $res;
     if (eval {
-	$res= peek_my ($skip);
-	1
+        $res= peek_my ($skip);
+        1
     }) {
-	$res
+        $res
     } else {
-	my $e= $@;
-	if ($e=~ /^Not nested deeply enough/i) {
-	    undef
-	} else {
-	    die $e
-	}
+        my $e= $@;
+        if ($e=~ /^Not nested deeply enough/i) {
+            undef
+        } else {
+            die $e
+        }
     }
 };
 
@@ -84,13 +84,13 @@ sub get {
     package DB; # needs to be outside loop or it won't work. Wow Perl.
     my @frames;
     while (my @vals=caller($skip)) {
-	my $subargs= [ @DB::args ];
-	# XX how to handle this?: "@DB::args might have
-	# information from the previous time "caller" was
-	# called" (perlfunc on 'caller')
-	push @frames, Chj::Repl::StackPlusFrame->new
-	  ($subargs, @vals, &$maybe_peek_my($skip+2));
-	$skip++;
+        my $subargs= [ @DB::args ];
+        # XX how to handle this?: "@DB::args might have
+        # information from the previous time "caller" was
+        # called" (perlfunc on 'caller')
+        push @frames, Chj::Repl::StackPlusFrame->new
+          ($subargs, @vals, &$maybe_peek_my($skip+2));
+        $skip++;
     }
     $class->new(\@frames);
 }

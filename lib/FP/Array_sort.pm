@@ -73,7 +73,7 @@ sub array_sort ($;$) {
     (defined $maybe_cmp ?
      [
       sort {
-	  &$maybe_cmp($a,$b)
+          &$maybe_cmp($a,$b)
       } @$in
      ]
      :
@@ -86,9 +86,9 @@ sub on ($ $) {
     @_==2 or die "expecting 2 arguments";
     my ($select, $cmp)=@_;
     sub {
-	@_==2 or die "expecting 2 arguments";
-	my ($a,$b)=@_;
-	&$cmp(&$select($a), &$select($b))
+        @_==2 or die "expecting 2 arguments";
+        my ($a,$b)=@_;
+        &$cmp(&$select($a), &$select($b))
     }
 }
 
@@ -104,13 +104,13 @@ sub cmp_complement ($) {
     @_==1 or die "expecting 1 argument";
     my ($cmp)=@_;
     sub {
-	-&$cmp(@_)
+        -&$cmp(@_)
     }
 }
 
 TEST { my $f= cmp_complement binary_operator "cmp";
        [map { &$f(@$_) }
-	([2,4], [4,2], [3,3], ["abc","bbc"], ["ab","ab"], ["bbc", "abc"])] }
+        ([2,4], [4,2], [3,3], ["abc","bbc"], ["ab","ab"], ["bbc", "abc"])] }
   [1, -1, 0, 1, 0, -1];
 
 1

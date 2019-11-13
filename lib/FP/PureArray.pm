@@ -58,7 +58,7 @@ use FP::Optional qw(perhaps_to_maybe);
 sub blessing ($) {
     my ($m)= @_;
     sub {
-	my $class=ref $_[0];
+        my $class=ref $_[0];
         if (my ($v)= &$m (@_)) {
             bless $v, $class
         } else {
@@ -70,12 +70,12 @@ sub blessing ($) {
 sub blessing_snd ($) {
     my ($m)= @_;
     sub {
-	my $class=ref $_[0];
-	wantarray ? do {
-	    my ($v,$a)= &$m (@_);
-	    ($v, bless $a, $class)
-	}
-	  : bless &$m (@_), $class;
+        my $class=ref $_[0];
+        wantarray ? do {
+            my ($v,$a)= &$m (@_);
+            ($v, bless $a, $class)
+        }
+          : bless &$m (@_), $class;
     }
 }
 
@@ -282,7 +282,7 @@ TEST {
 TEST {
     my $a= purearray (1,4,5,7);
     my @a= ($a->sub (0,2),
-	    $a->sub (1,3));
+            $a->sub (1,3));
     push @a, $a->sub (2,4);
     # throw out of range errors or what?
     push @a, $a->sub (3,5);
@@ -327,7 +327,7 @@ TEST{ (purearray 7)->any (sub { $_[0] % 2 }) }
   1;
 
 TEST {(purearray ["a",1], ["b",2], ["a",4])
-	->hash_group_by (*array_first) }
+        ->hash_group_by (*array_first) }
   {'a'=>[['a',1],['a',4]],'b'=>[['b',2]]};
 
 TEST { purearray (3)->xone } 3;

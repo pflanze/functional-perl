@@ -45,7 +45,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
                         # what to do about it?
              array(3,4), # Could `autobox` change this?
              3,
-	     {3=>4},
+             {3=>4},
         )->map(*is_sequence)->array }
   [ 1,1,1,1,1,'','','' ];
 
@@ -76,9 +76,9 @@ TEST { purearray(3,-2,5)->min } -2;
 TEST { [stream(3,4,5,-1)->minmax] } [-1,5];
 
 TEST { [list([3, "a"],
-	     [4, "b"],
-	     [5, "c"],
-	     [-1, "d"])->minmax(*array_first)] }
+             [4, "b"],
+             [5, "c"],
+             [-1, "d"])->minmax(*array_first)] }
   [[-1, "d"], [5, "c"]];
 
 
@@ -128,12 +128,12 @@ TEST {
 } [undef,
    [list([0,3]),
     list([2,4],
-	 [1,4]),
+         [1,4]),
     list([3,5]),
     list([4,6]),
     list([5,8]),
     list([7,5],
-	 [6,5])]];
+         [6,5])]];
 
 TEST {
     [

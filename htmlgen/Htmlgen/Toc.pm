@@ -61,71 +61,71 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
     use FP::Struct [[*is_strictlist, "subnodes"]];
 
     method subnodes_length () {
-	$self->subnodes->length
+        $self->subnodes->length
     }
 
     method subnodes_add ($node) {
-	is_instance_of $node, "PFLANZE::TocNode"
-	  or die "wrong type";
-	# (^ XX so poor, neither do I have a TypedList yet, nor the
-	# syntax to add it to the method declaration)
-	$self->subnodes_update(fun ($l){ cons $node, $l })
+        is_instance_of $node, "PFLANZE::TocNode"
+          or die "wrong type";
+        # (^ XX so poor, neither do I have a TypedList yet, nor the
+        # syntax to add it to the method declaration)
+        $self->subnodes_update(fun ($l){ cons $node, $l })
     }
 
     method subnodes_head_update ($fn) {
-	my $ss= $self->subnodes;
-	if (is_null $ss) {
-	    die "skipped level" ## nicer message and all?
-	} else {
-	    $self->subnodes_set (cons (&$fn ($ss->first), $ss->rest))
-	}
+        my $ss= $self->subnodes;
+        if (is_null $ss) {
+            die "skipped level" ## nicer message and all?
+        } else {
+            $self->subnodes_set (cons (&$fn ($ss->first), $ss->rest))
+        }
     }
 
     method level_add ($levelsdown, $node) {
-	is_natural $levelsdown or die "wrong type: $levelsdown";
-	if ($levelsdown > 1) {
-	    $self->subnodes_head_update (fun ($subnode) {
-		$subnode->level_add ($levelsdown - 1, $node)
-	    })
-	} else {
-	    $self->subnodes_add ($node)
-	}
+        is_natural $levelsdown or die "wrong type: $levelsdown";
+        if ($levelsdown > 1) {
+            $self->subnodes_head_update (fun ($subnode) {
+                $subnode->level_add ($levelsdown - 1, $node)
+            })
+        } else {
+            $self->subnodes_add ($node)
+        }
     }
 
     # just for debugging? $indices is a list of 1-based indices
     method ref ($indices) {
-	if (is_null $indices) {
-	    $self
-	} else {
-	    my ($i,$indices1)= $indices->first_and_rest;
-	    my $subnodes= $self->subnodes;
-	    $subnodes->ref ($subnodes->length - $i)->ref ($indices1)
-	}
+        if (is_null $indices) {
+            $self
+        } else {
+            my ($i,$indices1)= $indices->first_and_rest;
+            my $subnodes= $self->subnodes;
+            $subnodes->ref ($subnodes->length - $i)->ref ($indices1)
+        }
     }
 
     # used during document mapping (while the toc is collected)
     method numberstring () {
-	my $ss= $self->subnodes;
-	my $len= $ss->length;
-	# the first is the one that was added last
-	$len ? $len . "." . $ss->first->numberstring
-	  : "";
-	# (O(n^2) complexity)
+        my $ss= $self->subnodes;
+        my $len= $ss->length;
+        # the first is the one that was added last
+        $len ? $len . "." . $ss->first->numberstring
+          : "";
+        # (O(n^2) complexity)
     }
 
     # build the TOC html. Need to get the numberstring differently
     # now.
     method html_with_parents ($rindices) {
-	my $maybe_name= $self->name;
-	my $shown= [Htmlgen::Toc::rindices_numberstring ($rindices),
-		    $self->header_pxml_for_toc ];
-	DIR({class=> "toc"},
-	    (defined $maybe_name ? A({href=> "#".$maybe_name}, $shown)
-	     : $shown),
-	    $self->subnodes->array__reverse__map_with_length
-	    (fun ($node,$num) {
-		LI ($node->html_with_parents(cons $num, $rindices))
-	    }))
+        my $maybe_name= $self->name;
+        my $shown= [Htmlgen::Toc::rindices_numberstring ($rindices),
+                    $self->header_pxml_for_toc ];
+        DIR({class=> "toc"},
+            (defined $maybe_name ? A({href=> "#".$maybe_name}, $shown)
+             : $shown),
+            $self->subnodes->array__reverse__map_with_length
+            (fun ($node,$num) {
+                LI ($node->html_with_parents(cons $num, $rindices))
+            }))
     }
 
     _END_
@@ -139,13 +139,13 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
 
     use FP::Struct [[*is_string, "name"], # as used in the <a name="">
                                           # already in the document
-		    [*is_pxml_element, "header"]
-		   ],
-		     "PFLANZE::TocNodeBase";
+                    [*is_pxml_element, "header"]
+                   ],
+                     "PFLANZE::TocNodeBase";
 
     method header_pxml_for_toc () {
-	# XX keep some formatting?
-	$self->header->text
+        # XX keep some formatting?
+        $self->header->text
     }
 
     _END_
@@ -161,8 +161,8 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
     method name () { undef }
 
     method html () {
-	DIV({class=> "toc_box"},
-	    $self->html_with_parents (null))
+        DIV({class=> "toc_box"},
+            $self->html_with_parents (null))
     }
 
     _END__
@@ -208,48 +208,48 @@ fun process__with_toc__body ($body, $first_level, $toc, $parents) {
     stream_mixed_state_fold_right
       (
        fun ($v,$toc,$rest) {
-	   if (is_pxml_element ($v)) {
-	       if (my ($_level)= $v->name =~ /^[hH](\d+)$/s) {
-		   my $level= $_level - $first_level + 1;
-		   is_natural $level
-		     or die "The given <with_toc> tag dictates that the ".
-		       "top-most header level is '$first_level', but ".
-			 "encountering <".$v->name.">";
+           if (is_pxml_element ($v)) {
+               if (my ($_level)= $v->name =~ /^[hH](\d+)$/s) {
+                   my $level= $_level - $first_level + 1;
+                   is_natural $level
+                     or die "The given <with_toc> tag dictates that the ".
+                       "top-most header level is '$first_level', but ".
+                         "encountering <".$v->name.">";
 
-		   my $anchor= $parents->find (fun ($e) {
-		       $e->name eq "a" and $e->maybe_attribute("name")
-		   }) // die "bug, missing anchor element";
+                   my $anchor= $parents->find (fun ($e) {
+                       $e->name eq "a" and $e->maybe_attribute("name")
+                   }) // die "bug, missing anchor element";
 
-		   my $toc= $toc->level_add
-		     ($level,
-		      tocnode ($anchor->maybe_attribute("name"), $v));
+                   my $toc= $toc->level_add
+                     ($level,
+                      tocnode ($anchor->maybe_attribute("name"), $v));
 
-		   my ($tail, $toc2)= &$rest ($toc);
+                   my ($tail, $toc2)= &$rest ($toc);
 
-		   (cons ($v->body_update
-			  (fun ($body)
-			   { cons ($toc->numberstring." ", $body) }),
-			  $tail),
-		    $toc2)
-	       } else {
-		   # map $v's body
-		   my ($body2, $toc2)= process__with_toc__body
-		     ($v->body, $first_level, $toc,
-		      cons ($v, $parents));
+                   (cons ($v->body_update
+                          (fun ($body)
+                           { cons ($toc->numberstring." ", $body) }),
+                          $tail),
+                    $toc2)
+               } else {
+                   # map $v's body
+                   my ($body2, $toc2)= process__with_toc__body
+                     ($v->body, $first_level, $toc,
+                      cons ($v, $parents));
 
-		   my ($tail, $toc3)= &$rest ($toc2);
+                   my ($tail, $toc3)= &$rest ($toc2);
 
-		   (cons ($v->body_set ($body2), $tail),
-		    $toc3)
-	       }
-	   } else {
-	       my ($tail, $toc2)= &$rest ($toc);
-	       (cons ($v, $tail), $toc2)
-	   }
+                   (cons ($v->body_set ($body2), $tail),
+                    $toc3)
+               }
+           } else {
+               my ($tail, $toc2)= &$rest ($toc);
+               (cons ($v, $tail), $toc2)
+           }
        },
        fun ($toc) {
-	   # return counter back up the chain
-	   (null, $toc)
+           # return counter back up the chain
+           (null, $toc)
        },
        $body)->($toc);
 }
@@ -264,30 +264,30 @@ TEST {
   ];
 
 TEST {HTML((process__with_toc__body
-	    ["foo", A({name=>"a"}, H1("hed")),"bar"],
-	    1,
-	    $empty_toc, null)[0])->string}
+            ["foo", A({name=>"a"}, H1("hed")),"bar"],
+            1,
+            $empty_toc, null)[0])->string}
   '<html>foo<a name="a"><h1>1. hed</h1></a>bar</html>';
 
 TEST {HTML((process__with_toc__body
-	    ["foo", A({name=>"a"}, H1("hed")),P("bar")],
-	    1,
-	    $empty_toc, null)[0])->string}
+            ["foo", A({name=>"a"}, H1("hed")),P("bar")],
+            1,
+            $empty_toc, null)[0])->string}
   '<html>foo<a name="a"><h1>1. hed</h1></a><p>bar</p></html>';
 
 TEST {HTML((process__with_toc__body
-	    [cons "foo", [A({name=>"a"}, H1("hed")),
-			  A({name=>"b"}, H2("hud")),
-			  ["",P("bar")]]],
-	    1,
-	    $empty_toc, null)[0])->string}
+            [cons "foo", [A({name=>"a"}, H1("hed")),
+                          A({name=>"b"}, H2("hud")),
+                          ["",P("bar")]]],
+            1,
+            $empty_toc, null)[0])->string}
   '<html>foo<a name="a"><h1>1. hed</h1></a><a name="b"><h2>1.1. hud</h2></a><p>bar</p></html>';
 
 TEST {HTML ((process__with_toc__body
-	     [" ", P ("blabla"), A({name=>"a"}, H1 ("for one"))],
-	     1,
-	     $empty_toc, null)
-	    [0])->string}
+             [" ", P ("blabla"), A({name=>"a"}, H1 ("for one"))],
+             1,
+             $empty_toc, null)
+            [0])->string}
   '<html> <p>blabla</p><a name="a"><h1>1. for one</h1></a></html>';
 
 
@@ -301,8 +301,8 @@ method match_element_names () { ["with_toc"] }
 method map_element ($e, $uplist) {
     my ($body, $toc)=
       process__with_toc__body ($e->body,
-			       $e->maybe_attribute("level") // 2,
-			       $empty_toc, null);
+                               $e->maybe_attribute("level") // 2,
+                               $empty_toc, null);
     [ $toc->html, $body]
 }
 

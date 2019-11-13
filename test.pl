@@ -14,31 +14,31 @@ $ENV{TEST}=1;
 
 our @t=
   qw(
-	require_and_run_tests
+        require_and_run_tests
         pod_snippets
-	fp-struct
-	universal-isa
-	repl
-	testlazy
-	testlazy10
-	functional_XML-test
-	functional_XML-t-div
-	csv_to_xml
-	htmlgen
-	intro-basics
-	trampoline-fix
-	examples-fibs
-	examples-primes
-	examples-logic
-	predicates
-	dbi
-	skip-internal
-	skip
-	skip-leak
-	csvstreams
-	perl-weaken-coderef-correctness
-	perl-weaken-coderef
-	perl-goto-leak
+        fp-struct
+        universal-isa
+        repl
+        testlazy
+        testlazy10
+        functional_XML-test
+        functional_XML-t-div
+        csv_to_xml
+        htmlgen
+        intro-basics
+        trampoline-fix
+        examples-fibs
+        examples-primes
+        examples-logic
+        predicates
+        dbi
+        skip-internal
+        skip
+        skip-leak
+        csvstreams
+        perl-weaken-coderef-correctness
+        perl-weaken-coderef
+        perl-goto-leak
    );
 
 runtests(map {"t/$_"} @t);

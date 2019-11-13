@@ -44,9 +44,9 @@ fun pxml_body_split_h1 ($body) {
     my $b= stream_mixed_flatten $body;
     my ($v,$rest)= $b->first_and_rest;
     if (is_pxml_element $v and $v->name eq "h1") {
-	($v, $rest)
+        ($v, $rest)
     } else {
-	(undef, $body)
+        (undef, $body)
     }
 }
 

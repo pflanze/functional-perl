@@ -126,11 +126,11 @@ our $funcs=
    map {
        my $tag=$_;
        [
-	uc $tag,
-	sub {
-	    my $atts= ref($_[0]) eq "HASH" ? shift : undef;
-	    PXML::PXHTML->new($tag, $atts, [@_]);
-	}
+        uc $tag,
+        sub {
+            my $atts= ref($_[0]) eq "HASH" ? shift : undef;
+            PXML::PXHTML->new($tag, $atts, [@_]);
+        }
        ]
    } @$tags
   ];
@@ -150,13 +150,13 @@ our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
     # serialize to HTML5 compatible representation:
     sub require_printing_nonvoid_elements_nonselfreferential  {
-	1
+        1
     }
 
     use PXML::HTML5 '$html5_void_element_h';
 
     sub void_element_h {
-	$html5_void_element_h
+        $html5_void_element_h
     }
 
     use FP::Show ();
@@ -167,15 +167,15 @@ our %EXPORT_TAGS=(all=>\@EXPORT_OK);
     # names, and which packages they were exported to.) XXX at least
     # move to common base class of XHTML and HTML5.
     sub FP_Show_show {
-	my ($s,$show)=@_;
-	my $a= $s->maybe_attributes;
-	my $b= $s->body;
-	(uc($s->name)."(".
-	 join(", ",
-	      defined $a ? &$show($a) : (),
-	      ref($b) eq "ARRAY" ? join(", ",map { &$show($_) } @$b)
-	      : &$show($b)).
-	 ")")
+        my ($s,$show)=@_;
+        my $a= $s->maybe_attributes;
+        my $b= $s->body;
+        (uc($s->name)."(".
+         join(", ",
+              defined $a ? &$show($a) : (),
+              ref($b) eq "ARRAY" ? join(", ",map { &$show($_) } @$b)
+              : &$show($b)).
+         ")")
     }
 }
 

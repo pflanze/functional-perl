@@ -62,7 +62,7 @@ sub time_this (&;@) {
     my $a= [times];
     my @res;
     for (1..$n) {
-	@res= $wantarray ? &$thunk() : scalar &$thunk();
+        @res= $wantarray ? &$thunk() : scalar &$thunk();
     }
     my $b= [times];
 
@@ -70,17 +70,17 @@ sub time_this (&;@) {
     my $forstr= defined($maybe_msg) ? " for $maybe_msg" : "";
     my $msgstr= "times$forstr: ".join(", ",@$d)."\n";
     if (my $out= $$args{out}) {
-	if (ref ($out) eq "ARRAY") {
-	    push @$out, $msgstr
-	} elsif (ref ($out) eq "SCALAR") {
-	    $$out= $msgstr
-	} elsif (is_filehandle $out) {
-	    print $out $msgstr
-	} else {
-	    warn "don't know how to output to '$out'";
-	}
+        if (ref ($out) eq "ARRAY") {
+            push @$out, $msgstr
+        } elsif (ref ($out) eq "SCALAR") {
+            $$out= $msgstr
+        } elsif (is_filehandle $out) {
+            print $out $msgstr
+        } else {
+            warn "don't know how to output to '$out'";
+        }
     } else {
-	warn $msgstr;
+        warn $msgstr;
     }
     $wantarray ? @res : $res[0]
 }

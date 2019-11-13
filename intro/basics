@@ -118,8 +118,8 @@ sub f {
     # is given); it is called a "closure" as it "closes over"
     # variables in its enclosing scope, i.e. $x and $y here.
     sub {
-	my ($z) = @_;
-	$x * $y - $z
+        my ($z) = @_;
+        $x * $y - $z
     }
 }
 
@@ -160,9 +160,9 @@ sub fact {
     my ($n) = @_;
     warn "n=$n";
     if ($n < 2) {
-	1
+        1
     } else {
-	$n * fact ($n - 1)
+        $n * fact ($n - 1)
     }
 }
 
@@ -254,21 +254,21 @@ sub imperative_fact {
     my ($n) = @_;
     my $res= 1;
     while (1) {
-	# save closure for later inspection of $n and $res
-	push @imperative_inspect, sub {
-	    ($n,$res)
-	};
+        # save closure for later inspection of $n and $res
+        push @imperative_inspect, sub {
+            ($n,$res)
+        };
 
-	if ($n < 2) {
-	    return $res;
-	} else {
-	    # treat $res and $n not as immutable binding of a name to
-	    # a value, but as mutable memory location
-	    $res= $n * $res;
-	    $n = $n - 1;
-	}
+        if ($n < 2) {
+            return $res;
+        } else {
+            # treat $res and $n not as immutable binding of a name to
+            # a value, but as mutable memory location
+            $res= $n * $res;
+            $n = $n - 1;
+        }
     }
-}	
+}       
 
 
 #main> imperative_fact 4
@@ -323,32 +323,32 @@ our @functional_inspect;
 sub functional_fact_iter {
     my ($n, $res) = @_;
     push @functional_inspect, sub {
-	($n,$res)
+        ($n,$res)
     };
     if ($n < 2) {
-	return $res;
+        return $res;
     } else {
-	# This is a tail call: it happens in tail position,
-	# i.e. there's nothing happening *after* this call within this
-	# function.
-	functional_fact_iter($n - 1,  $n * $res)
+        # This is a tail call: it happens in tail position,
+        # i.e. there's nothing happening *after* this call within this
+        # function.
+        functional_fact_iter($n - 1,  $n * $res)
 
-	# In different words: when this sub-call returns a value, it
-	# will be immediately returned by the current call, too,
-	# without doing any further computation with it. Because of
-	# this, there's no need to keep space allocated (on the call
-	# stack) for the current context--it won't be used
-	# anymore. Dropping the current context at the same time as
-	# executing the tail call is what one calls "tail-call
-	# optimization".
+        # In different words: when this sub-call returns a value, it
+        # will be immediately returned by the current call, too,
+        # without doing any further computation with it. Because of
+        # this, there's no need to keep space allocated (on the call
+        # stack) for the current context--it won't be used
+        # anymore. Dropping the current context at the same time as
+        # executing the tail call is what one calls "tail-call
+        # optimization".
 
-	# But: Perl does *not* carry out this optimization
-	# automatically, thus this code will still use stack space
-	# (not a real problem for factorial since it will not be a
-	# huge amount; cases where a loop can be repeated millions of
-	# times it would be a problem as Perl would run out of stack
-	# space). It can be specified explicitely, though. See the
-	# file `tailcalls` for a version that won't use stack space.
+        # But: Perl does *not* carry out this optimization
+        # automatically, thus this code will still use stack space
+        # (not a real problem for factorial since it will not be a
+        # huge amount; cases where a loop can be repeated millions of
+        # times it would be a problem as Perl would run out of stack
+        # space). It can be specified explicitely, though. See the
+        # file `tailcalls` for a version that won't use stack space.
     }
 }
 
@@ -417,9 +417,9 @@ use Chj::TEST;
 
 TEST { cons(1,2) }
   bless( [
-	  1,
-	  2
-	 ], 'FP::List::Pair' );
+          1,
+          2
+         ], 'FP::List::Pair' );
 
 
 # Let's build a list containing 3 elements; null is returning the list
@@ -427,14 +427,14 @@ TEST { cons(1,2) }
 
 TEST { cons(1, cons(2, cons(5, null))) }
   bless( [
-	  1,
-	  bless( [
-		  2,
-		  bless( [
-			  5,
-			  bless( [], 'FP::List::Null' )
-			 ], 'FP::List::Pair' )
-		 ], 'FP::List::Pair' )
+          1,
+          bless( [
+                  2,
+                  bless( [
+                          5,
+                          bless( [], 'FP::List::Null' )
+                         ], 'FP::List::Pair' )
+                 ], 'FP::List::Pair' )
          ], 'FP::List::Pair' );
 
 # This becomes ugly fast, so, turn it back into an array that Perl
@@ -453,9 +453,9 @@ TEST { list_to_array cons(1, cons(2, cons(5, null))) }
 sub iota {
     my ($from, $to)=@_;
     if ($from >= $to) {
-	null
+        null
     } else {
-	cons $from, iota($from + 1, $to)
+        cons $from, iota($from + 1, $to)
     }
 }
 

@@ -31,8 +31,8 @@ sub usage {
 use Getopt::Long;
 our $verbose=0;
 GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-	   ) or exit 1;
+           "help"=> sub{usage},
+           ) or exit 1;
 usage unless @ARGV==2;
 
 my ($infile,$outfile)= @ARGV;
@@ -72,19 +72,19 @@ fun parselinks ($str, $processmatch=*Link, $processnonmatch=*NonMatch) {
     my $pos=0;
     my @res;
     while ($str=~ /\[([^\[\]]+)\]\(([^()]+)\)/sgc) {
-	my $len= length($1)+length($2)+4;
-	my $pos1= pos($str);
-	my $pos0= $pos1-$len;
-	if ($pos < $pos0) {
-	    push @res, &$processnonmatch(substr($str, $pos, $pos0-$pos));
-	}
-	push @res, &$processmatch($1,$2); # aheh difference
-	$pos= $pos1;
+        my $len= length($1)+length($2)+4;
+        my $pos1= pos($str);
+        my $pos0= $pos1-$len;
+        if ($pos < $pos0) {
+            push @res, &$processnonmatch(substr($str, $pos, $pos0-$pos));
+        }
+        push @res, &$processmatch($1,$2); # aheh difference
+        $pos= $pos1;
     }
     my $pos1= length($str); #end.
     my $lenremainder= $pos1-$pos;
     if ($lenremainder) {
-	push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
+        push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
     }
     unsafe_array_to_purearray \@res
 }
@@ -106,20 +106,20 @@ fun parse ($str, $processmatch, $processnonmatch) {
     my $pos=0;
     my @res;
     while ($str=~ /(?:\n|\G)\* (.*?)\n([^ \n]|\z)/sgc) {
-	my $len= length($1);
-	my $pos1= pos($str);
-	my $pos0= $pos1-$len-4; #why 4 not 2 ???
-	if ($pos < $pos0) {
-	    push @res, &$processnonmatch(substr($str, $pos, $pos0-$pos));
-	}
-	push @res, &$processmatch($1);
-	$pos=$pos1 - length($2);
-	pos($str)=$pos;
+        my $len= length($1);
+        my $pos1= pos($str);
+        my $pos0= $pos1-$len-4; #why 4 not 2 ???
+        if ($pos < $pos0) {
+            push @res, &$processnonmatch(substr($str, $pos, $pos0-$pos));
+        }
+        push @res, &$processmatch($1);
+        $pos=$pos1 - length($2);
+        pos($str)=$pos;
     }
     my $pos1= length($str); #end.
     my $lenremainder= $pos1-$pos;
     if ($lenremainder) {
-	push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
+        push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
     }
     unsafe_array_to_purearray \@res
 }
@@ -135,7 +135,7 @@ fun translate_paragraphs ($str) {
 fun pxml_body_is_empty ($e) {
     my $l= mixed_flatten($e->body);
     $l->every(fun($v){
-	is_string $v ? $v=~ /^\s*$/s : 0
+        is_string $v ? $v=~ /^\s*$/s : 0
     })
 }
 
@@ -144,23 +144,23 @@ TEST{ pxml_body_is_empty P(" ",[" "]) } 1;
 
 fun pxml_de_paragraphy ($e) {
     if ($e->name eq "p") {
-	if (pxml_body_is_empty $e) {
-	    BR # HACK.
-	} else {
-	    $e->body
-	}
+        if (pxml_body_is_empty $e) {
+            BR # HACK.
+        } else {
+            $e->body
+        }
     } else {
-	$e
+        $e
     }
 }
 
 fun de_paragraphy ($v) {
     if (is_pxml_element $v) {
-	pxml_de_paragraphy $v
+        pxml_de_paragraphy $v
     } elsif (my ($v0)= $v->perhaps_one) {
-	de_paragraphy($v0)
+        de_paragraphy($v0)
     } else {
-	$v->map(*de_paragraphy)
+        $v->map(*de_paragraphy)
     }
 }
 
@@ -169,10 +169,10 @@ fun translate_links ($str) {
     my $l= parselinks
       ($str,
        fun ($txt,$url) {
-	   A {href=> $url}, $txt
+           A {href=> $url}, $txt
        },
        fun ($str) {
-	   translate_paragraphs($str)
+           translate_paragraphs($str)
        }
       );
     $l->map(*de_paragraphy)
@@ -208,24 +208,24 @@ fun type_eq ($a,$b) {
 
 fun translate ($str) {
     my $parsed= parse ($str,
-		       *definitionlists::Match::c::Match,
-		       *definitionlists::NonMatch::c::NonMatch);
+                       *definitionlists::Match::c::Match,
+                       *definitionlists::NonMatch::c::NonMatch);
     my $grouped= $parsed->list->group(*type_eq)->map(the_method "reverse");
     my $body= $grouped->map(fun ($l) {
-	my $t= $l->map(the_method "translate");
-	if ($l->first->isa("definitionlists::Match")) {
-	    DL $t
-	} else {
-	    $t
-	}
+        my $t= $l->map(the_method "translate");
+        if ($l->first->isa("definitionlists::Match")) {
+            DL $t
+        } else {
+            $t
+        }
     });
 
     HTML(HEAD(TITLE($infile),
-	      # Hack to try to get htmldoc to interpret content as
-	      # UTF-8, but doesn't work
-	      META ({'http-equiv'=>"Content-Type",
-		     content=> "text/html;charset=UTF-8"})),
-	 BODY($body))
+              # Hack to try to get htmldoc to interpret content as
+              # UTF-8, but doesn't work
+              META ({'http-equiv'=>"Content-Type",
+                     content=> "text/html;charset=UTF-8"})),
+         BODY($body))
 }
 
 #repl;exit;

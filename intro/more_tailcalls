@@ -52,23 +52,23 @@ our @functional_inspect;
 
 func functional_fact_iter ($x, $res) {
     push @functional_inspect, func {
-	($x,$res)
+        ($x,$res)
     };
     if ($x < 2) {
-	return $res;
+        return $res;
     } else {
-	# This is a tail call. Instead of doing it unoptimized like:
-	#
-	#  functional_fact_iter($x - 1,  $x * $res)
-	#
-	# we could be making use of Perl's goto &$subroutine feature (see
-	# `perldoc -f goto`):
-	#
-	# @_=($x - 1,  $x * $res);
-	# goto \&functional_fact_iter
-	#
-	# or, with nicer looks, by using Sub::Call::Tail:
-	tail functional_fact_iter($x - 1,  $x * $res)
+        # This is a tail call. Instead of doing it unoptimized like:
+        #
+        #  functional_fact_iter($x - 1,  $x * $res)
+        #
+        # we could be making use of Perl's goto &$subroutine feature (see
+        # `perldoc -f goto`):
+        #
+        # @_=($x - 1,  $x * $res);
+        # goto \&functional_fact_iter
+        #
+        # or, with nicer looks, by using Sub::Call::Tail:
+        tail functional_fact_iter($x - 1,  $x * $res)
     }
 }
 
@@ -78,17 +78,17 @@ func functional_fact_iter ($x, $res) {
 
 func odd ($n) {
     if ($n == 0) {
-	0
+        0
     } else {
-	even ($n - 1)
+        even ($n - 1)
     }
 }
 
 func even ($n) {
     if ($n == 0) {
-	1
+        1
     } else {
-	odd ($n - 1)
+        odd ($n - 1)
     }
 }
 
@@ -111,17 +111,17 @@ func even ($n) {
 
 func opt_odd ($n) {
     if ($n == 0) {
-	0
+        0
     } else {
-	tail opt_even ($n - 1);
+        tail opt_even ($n - 1);
     }
 }
 
 func opt_even ($n) {
     if ($n == 0) {
-	1
+        1
     } else {
-	tail opt_odd ($n - 1);
+        tail opt_odd ($n - 1);
     }
 }
 
@@ -140,17 +140,17 @@ use Chj::time_this;
 
 func tramp_odd ($n) {
     if ($n == 0) {
-	0
+        0
     } else {
-	T{ tramp_even ($n - 1) }
+        T{ tramp_even ($n - 1) }
     }
 }
 
 func tramp_even ($n) {
     if ($n == 0) {
-	1
+        1
     } else {
-	T{ tramp_odd ($n - 1) }
+        T{ tramp_odd ($n - 1) }
     }
 }
 
@@ -162,17 +162,17 @@ TEST { time_this { trampoline tramp_even 60000 } "T" }
 
 func tramp2_odd ($n) {
     if ($n == 0) {
-	0
+        0
     } else {
-	TC *tramp2_even, $n - 1
+        TC *tramp2_even, $n - 1
     }
 }
 
 func tramp2_even ($n) {
     if ($n == 0) {
-	1
+        1
     } else {
-	TC *tramp2_odd, $n - 1
+        TC *tramp2_odd, $n - 1
     }
 }
 
@@ -196,18 +196,18 @@ use FP::Stream 'Weakened'; # XX should probably move to non-lazyness
 func weakened_even ($n) {
     my ($odd,$even);
     $odd= func ($n) {
-	if ($n == 0) {
-	    0
-	} else {
-	    tail &$even ($n - 1)
-	}
+        if ($n == 0) {
+            0
+        } else {
+            tail &$even ($n - 1)
+        }
     };
     $even= func ($n) {
-	if ($n == 0) {
-	    1
-	} else {
-	    tail &$odd ($n - 1)
-	}
+        if ($n == 0) {
+            1
+        } else {
+            tail &$odd ($n - 1)
+        }
     };
     # do *not* make this a tail call or $even will become undef on
     # bleadperl at some point (not so on v5.14.2):
@@ -216,8 +216,8 @@ func weakened_even ($n) {
 }
 
 TEST { ($^V->{version}[1] > 20) ?
-	 weakened_even 60000
-	   :  warn "skipping test on older perl" }
+         weakened_even 60000
+           :  warn "skipping test on older perl" }
   1;
 # XXX this actually fails both on v5.14.2 and bleadperl for undefined
 # subroutine call. Submit bug report?
@@ -229,25 +229,25 @@ use FP::fix;
 
 func fix_even ($n) {
     my ($odd,
-	$even)= fixn
-	  (
-	   func ($odd, $even,
-		 $n) {
-	       if ($n == 0) {
-		   0
-	       } else {
-		   tail &$even ($n - 1)
-	       }
-	   },
-	   func ($odd, $even,
-		 $n) {
-	       if ($n == 0) {
-		   1
-	       } else {
-		   tail &$odd ($n - 1)
-	       }
-	   }
-	  );
+        $even)= fixn
+          (
+           func ($odd, $even,
+                 $n) {
+               if ($n == 0) {
+                   0
+               } else {
+                   tail &$even ($n - 1)
+               }
+           },
+           func ($odd, $even,
+                 $n) {
+               if ($n == 0) {
+                   1
+               } else {
+                   tail &$odd ($n - 1)
+               }
+           }
+          );
     tail &$even($n)
 }
 

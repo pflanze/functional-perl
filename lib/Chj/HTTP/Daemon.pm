@@ -42,14 +42,14 @@ sub url
     my $url = $self->_default_scheme . "://";
     my $addr = $self->sockaddr;
     if (!$addr || $addr eq INADDR_ANY) {
- 	require Sys::Hostname;
- 	$url .= lc Sys::Hostname::hostname();
+        require Sys::Hostname;
+        $url .= lc Sys::Hostname::hostname();
     }
     elsif ($addr eq INADDR_LOOPBACK) {
-	$url .= inet_ntoa($addr);
+        $url .= inet_ntoa($addr);
     }
     else {
-	$url .= gethostbyaddr($addr, AF_INET) || inet_ntoa($addr);
+        $url .= gethostbyaddr($addr, AF_INET) || inet_ntoa($addr);
     }
     my $port = $self->sockport;
     $url .= ":$port" if $port != $self->_default_port;
@@ -100,7 +100,7 @@ sub get_request
     my($self, $only_headers) = @_;
     if (${*$self}{'httpd_nomore'}) {
         $self->reason("No more requests from this connection");
-	return;
+        return;
     }
 
     $self->reason("");
@@ -114,36 +114,36 @@ sub get_request
 
   READ_HEADER:
     while (1) {
-	# loop until we have the whole header in $buf
-	$buf =~ s/^(?:\015?\012)+//;  # ignore leading blank lines
-	if ($buf =~ /\012/) {  # potential, has at least one line
-	    if ($buf =~ /^\w+[^\012]+HTTP\/\d+\.\d+\015?\012/) {
-		if ($buf =~ /\015?\012\015?\012/) {
-		    last READ_HEADER;  # we have it
-		}
-		elsif (length($buf) > 16*1024) {
-		    $self->send_error(413); # REQUEST_ENTITY_TOO_LARGE
-		    $self->reason("Very long header");
-		    return;
-		}
-	    }
-	    else {
-		last READ_HEADER;  # HTTP/0.9 client
-	    }
-	}
-	elsif (length($buf) > 16*1024) {
-	    $self->send_error(414); # REQUEST_URI_TOO_LARGE
-	    $self->reason("Very long first line");
-	    return;
-	}
-	print STDERR "Need more data for complete header\n" if $DEBUG;
-	return unless $self->_need_more($buf, $timeout, $fdset);
+        # loop until we have the whole header in $buf
+        $buf =~ s/^(?:\015?\012)+//;  # ignore leading blank lines
+        if ($buf =~ /\012/) {  # potential, has at least one line
+            if ($buf =~ /^\w+[^\012]+HTTP\/\d+\.\d+\015?\012/) {
+                if ($buf =~ /\015?\012\015?\012/) {
+                    last READ_HEADER;  # we have it
+                }
+                elsif (length($buf) > 16*1024) {
+                    $self->send_error(413); # REQUEST_ENTITY_TOO_LARGE
+                    $self->reason("Very long header");
+                    return;
+                }
+            }
+            else {
+                last READ_HEADER;  # HTTP/0.9 client
+            }
+        }
+        elsif (length($buf) > 16*1024) {
+            $self->send_error(414); # REQUEST_URI_TOO_LARGE
+            $self->reason("Very long first line");
+            return;
+        }
+        print STDERR "Need more data for complete header\n" if $DEBUG;
+        return unless $self->_need_more($buf, $timeout, $fdset);
     }
     if ($buf !~ s/^(\S+)[ \t]+(\S+)(?:[ \t]+(HTTP\/\d+\.\d+))?[^\012]*\012//) {
-	${*$self}{'httpd_client_proto'} = _http_version("HTTP/1.0");
-	$self->send_error(400);  # BAD_REQUEST
-	$self->reason("Bad request line: $buf");
-	return;
+        ${*$self}{'httpd_client_proto'} = _http_version("HTTP/1.0");
+        $self->send_error(400);  # BAD_REQUEST
+        $self->reason("Bad request line: $buf");
+        return;
     }
     my $method = $1;
     my $uri = $2;
@@ -156,37 +156,37 @@ sub get_request
     ${*$self}{'httpd_head'} = ($method eq "HEAD");
 
     if ($proto >= $HTTP_1_0) {
-	# we expect to find some headers
-	my($key, $val);
+        # we expect to find some headers
+        my($key, $val);
       HEADER:
-	while ($buf =~ s/^([^\012]*)\012//) {
-	    $_ = $1;
-	    s/\015$//;
-	    if (/^([^:\s]+)\s*:\s*(.*)/) {
-		$r->push_header($key, $val) if $key;
-		($key, $val) = ($1, $2);
-	    }
-	    elsif (/^\s+(.*)/) {
-		$val .= " $1";
-	    }
-	    else {
-		last HEADER;
-	    }
-	}
-	$r->push_header($key, $val) if $key;
+        while ($buf =~ s/^([^\012]*)\012//) {
+            $_ = $1;
+            s/\015$//;
+            if (/^([^:\s]+)\s*:\s*(.*)/) {
+                $r->push_header($key, $val) if $key;
+                ($key, $val) = ($1, $2);
+            }
+            elsif (/^\s+(.*)/) {
+                $val .= " $1";
+            }
+            else {
+                last HEADER;
+            }
+        }
+        $r->push_header($key, $val) if $key;
     }
 
     my $conn = $r->header('Connection');
     if ($proto >= $HTTP_1_1) {
-	${*$self}{'httpd_nomore'}++ if $conn && lc($conn) =~ /\bclose\b/;
+        ${*$self}{'httpd_nomore'}++ if $conn && lc($conn) =~ /\bclose\b/;
     }
     else {
-	${*$self}{'httpd_nomore'}++ unless $conn &&
+        ${*$self}{'httpd_nomore'}++ unless $conn &&
                                            lc($conn) =~ /\bkeep-alive\b/;
     }
 
     if ($only_headers) {
-	${*$self}{'httpd_rbuf'} = $buf;
+        ${*$self}{'httpd_rbuf'} = $buf;
         return $r;
     }
 
@@ -209,111 +209,111 @@ sub get_request
     }
 
     if ($te && lc($te) eq 'chunked') {
-	# Handle chunked transfer encoding
-	my $body = "";
+        # Handle chunked transfer encoding
+        my $body = "";
       CHUNK:
-	while (1) {
-	    print STDERR "Chunked\n" if $DEBUG;
-	    if ($buf =~ s/^([^\012]*)\012//) {
-		my $chunk_head = $1;
-		unless ($chunk_head =~ /^([0-9A-Fa-f]+)/) {
-		    $self->send_error(400);
-		    $self->reason("Bad chunk header $chunk_head");
-		    return;
-		}
-		my $size = hex($1);
-		last CHUNK if $size == 0;
+        while (1) {
+            print STDERR "Chunked\n" if $DEBUG;
+            if ($buf =~ s/^([^\012]*)\012//) {
+                my $chunk_head = $1;
+                unless ($chunk_head =~ /^([0-9A-Fa-f]+)/) {
+                    $self->send_error(400);
+                    $self->reason("Bad chunk header $chunk_head");
+                    return;
+                }
+                my $size = hex($1);
+                last CHUNK if $size == 0;
 
-		my $missing = $size - length($buf) + 2; # 2=CRLF at chunk end
-		# must read until we have a complete chunk
-		while ($missing > 0) {
-		    print STDERR "Need $missing more bytes\n" if $DEBUG;
-		    my $n = $self->_need_more($buf, $timeout, $fdset);
-		    return unless $n;
-		    $missing -= $n;
-		}
-		$body .= substr($buf, 0, $size);
-		substr($buf, 0, $size+2) = '';
+                my $missing = $size - length($buf) + 2; # 2=CRLF at chunk end
+                # must read until we have a complete chunk
+                while ($missing > 0) {
+                    print STDERR "Need $missing more bytes\n" if $DEBUG;
+                    my $n = $self->_need_more($buf, $timeout, $fdset);
+                    return unless $n;
+                    $missing -= $n;
+                }
+                $body .= substr($buf, 0, $size);
+                substr($buf, 0, $size+2) = '';
 
-	    }
-	    else {
-		# need more data in order to have a complete chunk header
-		return unless $self->_need_more($buf, $timeout, $fdset);
-	    }
-	}
-	$r->content($body);
+            }
+            else {
+                # need more data in order to have a complete chunk header
+                return unless $self->_need_more($buf, $timeout, $fdset);
+            }
+        }
+        $r->content($body);
 
-	# pretend it was a normal entity body
-	$r->remove_header('Transfer-Encoding');
-	$r->header('Content-Length', length($body));
+        # pretend it was a normal entity body
+        $r->remove_header('Transfer-Encoding');
+        $r->header('Content-Length', length($body));
 
-	my($key, $val);
+        my($key, $val);
       FOOTER:
-	while (1) {
-	    if ($buf !~ /\012/) {
-		# need at least one line to look at
-		return unless $self->_need_more($buf, $timeout, $fdset);
-	    }
-	    else {
-		$buf =~ s/^([^\012]*)\012//;
-		$_ = $1;
-		s/\015$//;
-		if (/^([\w\-]+)\s*:\s*(.*)/) {
-		    $r->push_header($key, $val) if $key;
-		    ($key, $val) = ($1, $2);
-		}
-		elsif (/^\s+(.*)/) {
-		    $val .= " $1";
-		}
-		elsif (!length) {
-		    last FOOTER;
-		}
-		else {
-		    $self->reason("Bad footer syntax");
-		    return;
-		}
-	    }
-	}
-	$r->push_header($key, $val) if $key;
+        while (1) {
+            if ($buf !~ /\012/) {
+                # need at least one line to look at
+                return unless $self->_need_more($buf, $timeout, $fdset);
+            }
+            else {
+                $buf =~ s/^([^\012]*)\012//;
+                $_ = $1;
+                s/\015$//;
+                if (/^([\w\-]+)\s*:\s*(.*)/) {
+                    $r->push_header($key, $val) if $key;
+                    ($key, $val) = ($1, $2);
+                }
+                elsif (/^\s+(.*)/) {
+                    $val .= " $1";
+                }
+                elsif (!length) {
+                    last FOOTER;
+                }
+                else {
+                    $self->reason("Bad footer syntax");
+                    return;
+                }
+            }
+        }
+        $r->push_header($key, $val) if $key;
 
     }
     elsif ($te) {
-	$self->send_error(501); 	# Unknown transfer encoding
-	$self->reason("Unknown transfer encoding '$te'");
-	return;
+        $self->send_error(501);         # Unknown transfer encoding
+        $self->reason("Unknown transfer encoding '$te'");
+        return;
 
     }
     elsif ($len) {
-	# Plain body specified by "Content-Length"
-	my $missing = $len - length($buf);
-	while ($missing > 0) {
-	    print "Need $missing more bytes of content\n" if $DEBUG;
-	    my $n = $self->_need_more($buf, $timeout, $fdset);
-	    return unless $n;
-	    $missing -= $n;
-	}
-	if (length($buf) > $len) {
-	    $r->content(substr($buf,0,$len));
-	    substr($buf, 0, $len) = '';
-	}
-	else {
-	    $r->content($buf);
-	    $buf='';
-	}
+        # Plain body specified by "Content-Length"
+        my $missing = $len - length($buf);
+        while ($missing > 0) {
+            print "Need $missing more bytes of content\n" if $DEBUG;
+            my $n = $self->_need_more($buf, $timeout, $fdset);
+            return unless $n;
+            $missing -= $n;
+        }
+        if (length($buf) > $len) {
+            $r->content(substr($buf,0,$len));
+            substr($buf, 0, $len) = '';
+        }
+        else {
+            $r->content($buf);
+            $buf='';
+        }
     }
     elsif ($ct && $ct =~ m/^multipart\/\w+\s*;.*boundary\s*=\s*("?)(\w+)\1/i) {
-	# Handle multipart content type
-	my $boundary = "$CRLF--$2--";
-	my $index;
-	while (1) {
-	    $index = index($buf, $boundary);
-	    last if $index >= 0;
-	    # end marker not yet found
-	    return unless $self->_need_more($buf, $timeout, $fdset);
-	}
-	$index += length($boundary);
-	$r->content(substr($buf, 0, $index));
-	substr($buf, 0, $index) = '';
+        # Handle multipart content type
+        my $boundary = "$CRLF--$2--";
+        my $index;
+        while (1) {
+            $index = index($buf, $boundary);
+            last if $index >= 0;
+            # end marker not yet found
+            return unless $self->_need_more($buf, $timeout, $fdset);
+        }
+        $index += length($boundary);
+        $r->content(substr($buf, 0, $index));
+        substr($buf, 0, $index) = '';
 
     }
     ${*$self}{'httpd_rbuf'} = $buf;
@@ -327,13 +327,13 @@ sub _need_more
     my $self = shift;
     #my($buf,$timeout,$fdset) = @_;
     if ($_[1]) {
-	my($timeout, $fdset) = @_[1,2];
-	print STDERR "select(,,,$timeout)\n" if $DEBUG;
-	my $n = select($fdset,undef,undef,$timeout);
-	unless ($n) {
-	    $self->reason(defined($n) ? "Timeout" : "select: $!");
-	    return;
-	}
+        my($timeout, $fdset) = @_[1,2];
+        print STDERR "select(,,,$timeout)\n" if $DEBUG;
+        my $n = select($fdset,undef,undef,$timeout);
+        unless ($n) {
+            $self->reason(defined($n) ? "Timeout" : "select: $!");
+            return;
+        }
     }
     print STDERR "sysread()\n" if $DEBUG;
     my $n = sysread($self, $_[0], 2048, length($_[0]));
@@ -347,7 +347,7 @@ sub read_buffer
     my $self = shift;
     my $old = ${*$self}{'httpd_rbuf'};
     if (@_) {
-	${*$self}{'httpd_rbuf'} = shift;
+        ${*$self}{'httpd_rbuf'} = shift;
     }
     $old;
 }
@@ -432,9 +432,9 @@ sub send_header
 {
     my $self = shift;
     while (@_) {
-	my($k, $v) = splice(@_, 0, 2);
-	$v = "" unless defined($v);
-	print $self "$k: $v$CRLF" or die $!;
+        my($k, $v) = splice(@_, 0, 2);
+        $v = "" unless defined($v);
+        print $self "$k: $v$CRLF" or die $!;
     }
 }
 
@@ -444,63 +444,63 @@ sub send_response
     my $self = shift;
     my $res = shift;
     if (!ref $res) {
-	$res ||= RC_OK;
-	$res = HTTP::Response->new($res, @_);
+        $res ||= RC_OK;
+        $res = HTTP::Response->new($res, @_);
     }
     my $content = $res->content;
     my $chunked;
     unless ($self->antique_client) {
-	my $code = $res->code;
-	$self->send_basic_header($code, $res->message, $res->protocol);
-	if ($code =~ /^(1\d\d|[23]04)$/) {
-	    # make sure content is empty
-	    $res->remove_header("Content-Length");
-	    $content = "";
-	}
-	elsif ($res->request && $res->request->method eq "HEAD") {
-	    # probably OK
-	}
-	elsif (ref($content) eq "CODE") {
-	    if ($self->proto_ge("HTTP/1.1")) {
-		$res->push_header("Transfer-Encoding" => "chunked");
-		$chunked++;
-	    }
-	    else {
-		$self->force_last_request;
-	    }
-	}
-	elsif (length($content)) {
-	    $res->header("Content-Length" => length($content));
-	}
-	elsif (lc($res->header('connection')//"") =~ /\bkeep-alive\b/) {
-	    # don't close connection if user asks for it to stay open
-	}
-	else {
-	    $self->force_last_request;
+        my $code = $res->code;
+        $self->send_basic_header($code, $res->message, $res->protocol);
+        if ($code =~ /^(1\d\d|[23]04)$/) {
+            # make sure content is empty
+            $res->remove_header("Content-Length");
+            $content = "";
+        }
+        elsif ($res->request && $res->request->method eq "HEAD") {
+            # probably OK
+        }
+        elsif (ref($content) eq "CODE") {
+            if ($self->proto_ge("HTTP/1.1")) {
+                $res->push_header("Transfer-Encoding" => "chunked");
+                $chunked++;
+            }
+            else {
+                $self->force_last_request;
+            }
+        }
+        elsif (length($content)) {
+            $res->header("Content-Length" => length($content));
+        }
+        elsif (lc($res->header('connection')//"") =~ /\bkeep-alive\b/) {
+            # don't close connection if user asks for it to stay open
+        }
+        else {
+            $self->force_last_request;
             $res->header('connection','close');
-	}
-	print $self $res->headers_as_string($CRLF) or die $!;
-	print $self $CRLF or die $!;  # separates headers and content
+        }
+        print $self $res->headers_as_string($CRLF) or die $!;
+        print $self $CRLF or die $!;  # separates headers and content
     }
     if ($self->head_request) {
-	# no content
+        # no content
     }
     elsif (ref($content) eq "CODE") {
-	while (1) {
-	    my $chunk = &$content();
-	    last unless defined($chunk) && length($chunk);
-	    if ($chunked) {
-		printf $self "%x%s%s%s", length($chunk), $CRLF, $chunk, $CRLF
-		  or die $!;
-	    }
-	    else {
-		print $self $chunk or die $!;
-	    }
-	}
-	print $self "0$CRLF$CRLF" or die $! if $chunked;  # no trailers either
+        while (1) {
+            my $chunk = &$content();
+            last unless defined($chunk) && length($chunk);
+            if ($chunked) {
+                printf $self "%x%s%s%s", length($chunk), $CRLF, $chunk, $CRLF
+                  or die $!;
+            }
+            else {
+                print $self $chunk or die $!;
+            }
+        }
+        print $self "0$CRLF$CRLF" or die $! if $chunked;  # no trailers either
     }
     elsif (length $content) {
-	print $self $content or die $!;
+        print $self $content or die $!;
     }
 }
 
@@ -516,8 +516,8 @@ sub send_redirect
     $loc = $loc->abs($base);
     print $self "Location: $loc$CRLF" or die $!;
     if ($content) {
-	my $ct = $content =~ /^\s*</ ? "text/html" : "text/plain";
-	print $self "Content-Type: $ct$CRLF" or die $!;
+        my $ct = $content =~ /^\s*</ ? "text/html" : "text/plain";
+        print $self "Content-Type: $ct$CRLF" or die $!;
     }
     print $self $CRLF or die $!;
     print $self $content or die $! if $content && !$self->head_request;
@@ -540,7 +540,7 @@ EOT
     unless ($self->antique_client) {
         $self->send_basic_header($status);
         print $self "Content-Type: text/html$CRLF" or die $!;
-	print $self "Content-Length: " . length($mess) . $CRLF or die $!;
+        print $self "Content-Length: " . length($mess) . $CRLF or die $!;
         print $self $CRLF or die $!;
     }
     print $self $mess or die $! unless $self->head_request;
@@ -552,30 +552,30 @@ sub send_file_response
 {
     my($self, $file) = @_;
     if (-d $file) {
-	$self->send_dir($file);
+        $self->send_dir($file);
     }
     elsif (-f _) {
-	# plain file
-	local(*F);
-	sysopen(F, $file, 0) or 
-	  return $self->send_error(RC_FORBIDDEN);
-	binmode(F);
-	my($ct,$ce) = guess_media_type($file);
-	my($size,$mtime) = (stat _)[7,9];
-	unless ($self->antique_client) {
-	    $self->send_basic_header;
-	    print $self "Content-Type: $ct$CRLF" or die $!;
-	    print $self "Content-Encoding: $ce$CRLF" or die $! if $ce;
-	    print $self "Content-Length: $size$CRLF" or die $! if $size;
-	    print $self "Last-Modified: ", time2str($mtime), "$CRLF" or die $!
-	      if $mtime;
-	    print $self $CRLF or die $!;
-	}
-	$self->send_file(\*F) unless $self->head_request;
-	return RC_OK;
+        # plain file
+        local(*F);
+        sysopen(F, $file, 0) or 
+          return $self->send_error(RC_FORBIDDEN);
+        binmode(F);
+        my($ct,$ce) = guess_media_type($file);
+        my($size,$mtime) = (stat _)[7,9];
+        unless ($self->antique_client) {
+            $self->send_basic_header;
+            print $self "Content-Type: $ct$CRLF" or die $!;
+            print $self "Content-Encoding: $ce$CRLF" or die $! if $ce;
+            print $self "Content-Length: $size$CRLF" or die $! if $size;
+            print $self "Last-Modified: ", time2str($mtime), "$CRLF" or die $!
+              if $mtime;
+            print $self $CRLF or die $!;
+        }
+        $self->send_file(\*F) unless $self->head_request;
+        return RC_OK;
     }
     else {
-	$self->send_error(RC_NOT_FOUND);
+        $self->send_error(RC_NOT_FOUND);
     }
 }
 
@@ -594,18 +594,18 @@ sub send_file
     my $opened = 0;
     local(*FILE);
     if (!ref($file)) {
-	open(FILE, $file) || return undef;
-	binmode(FILE);
-	$file = \*FILE;
-	$opened++;
+        open(FILE, $file) || return undef;
+        binmode(FILE);
+        $file = \*FILE;
+        $opened++;
     }
     my $cnt = 0;
     my $buf = "";
     my $n;
     while ($n = sysread($file, $buf, 8*1024)) {
-	last if !$n;
-	$cnt += $n;
-	print $self $buf or die $!;
+        last if !$n;
+        $cnt += $n;
+        print $self $buf or die $!;
     }
     close($file) if $opened;
     $cnt;
@@ -636,13 +636,13 @@ HTTP::Daemon - a simple http server class
   print "Please contact me at: <URL:", $d->url, ">\n";
   while (my $c = $d->accept) {
       while (my $r = $c->get_request) {
-	  if ($r->method eq 'GET' and $r->uri->path eq "/xyzzy") {
+          if ($r->method eq 'GET' and $r->uri->path eq "/xyzzy") {
               # remember, this is *not* recommended practice :-)
-	      $c->send_file_response("/etc/passwd");
-	  }
-	  else {
-	      $c->send_error(RC_FORBIDDEN)
-	  }
+              $c->send_file_response("/etc/passwd");
+          }
+          else {
+              $c->send_error(RC_FORBIDDEN)
+          }
       }
       $c->close;
       undef($c);
