@@ -345,7 +345,7 @@ TEST {
 sub cons ($$) {
     @_==2 or die "wrong number of arguments";
     if (my $f= UNIVERSAL::can ($_[1], "cons")) {
-        @_=(reverse @_); goto &$f;
+        @_=($_[1], $_[0]); goto &$f;
     } else {
         bless [@_], "FP::List::Pair";
     }
