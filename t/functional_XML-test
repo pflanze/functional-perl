@@ -7,7 +7,7 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 our $len= 672;
-require "meta/test.pl";
+require "./meta/test.pl";
 
 use Test::More;
 
