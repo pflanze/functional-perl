@@ -123,6 +123,8 @@ sub keyshow ($) {
 
 our $primitive_show=
   +{
+    # these return string or (string, bool) where the bool indicates
+    # the string already contains blessing
     ARRAY=> sub {
         my ($v,$show)=@_;
         "[".join(", ",
@@ -142,16 +144,16 @@ our $primitive_show=
     # *references* to globs; direct globs are compared in equal2 directly
     GLOB=> sub {
         my ($v,$show)=@_;
-        terseDumper($v)
+        (terseDumper($v), 1)
     },
     SCALAR=> sub {
         my ($v,$show)=@_;
-        terseDumper($v)
+        (terseDumper($v), 1)
     },
     CODE=> sub {
         my ($v,$show)=@_;
         # XX something better?
-        terseDumper($v)
+        (terseDumper($v), 1)
     },
     # Don't really have any sensible serialization for these either,
     # but at least prevent them from hitting Data::Dumper which issues
@@ -174,12 +176,14 @@ sub show ($) {
     my ($v)=@_;
     if (length ref($v)) {
         if (my $m= UNIVERSAL::can ($v, "FP_Show_show")) {
-            &$m ($v,*show)
+            (&$m ($v,*show))[0]
         } elsif ($m= $$primitive_show{ref $v}) {
-            &$m ($v,*show)
+            (&$m ($v,*show))[0]
         } elsif ($m= $$primitive_show{reftype $v}) {
             # blessed basic type
-            "bless(" . &$m($v,*show) . ", " . &show(ref($v)) . ")"
+            my ($str, $includes_blessing)= &$m($v,*show);
+            $includes_blessing ? $str
+              : "bless($str, " . &show(ref($v)) . ")"
         } else {
             terseDumper($v)
         }
