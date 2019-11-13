@@ -44,12 +44,62 @@ first cell of the input stream), since that's the only way to know the
 type to be dispatched on. This is unlike the non-generic functions,
 some of which (like cons) don't force evaluation of their arguments.
 
-
 =head1 DESCRIPTION
 
-Create and dissect sequences using pure functions. Lazily.
+`FP::Stream`s (from now on called "streams") are the same as
+`FP::List`s (from now on called "lists") except that their cells are
+generated on demand. If your code has got a list in a particular point
+in time, all the items in the list are calculated already, and the
+list takes as much space in memory to represent all of the values. A
+stream on the other hand, at the beginning consists of only a single
+unevaluated promise, which is an object from `FP::Lazy` which
+represents a to-be done calculation to produce, surprise, a
+`FP::List::Null` (end of list) value to indicate the end or a
+`FP::List::Pair` which holds the first value and the remainder of the
+sequence--itself again a stream, or more precisely a promise to either
+a null or pair value.
+
+So, like a list, a stream is a recursive data structure, with the only
+difference that the rest field in pairs is a promise. It also
+automatically "inherits" all of the list methods, since calling a
+method on a promise is forcing the promise and then is delegated to
+the generated value; although delegation goes to the method with
+"stream_" prefixed, if it exists--this is to allow for overrides if a
+method on a stream needs to behave differently. For example `map` is
+overridden with `stream_map` which produces the resulting linked list
+lazily:
+
+    use FP::Div 'inc'; use FP::List 'list';
+
+    is ref( list(30, 60)->map(*inc) ),
+       'FP::List::Pair';
+    is ref( list(30, 60)->stream_map(*inc) ),
+       'FP::Lazy::Promise';
+    is ref( stream(30, 60)->map(*inc) ),
+       'FP::Lazy::Promise';
+    is ref( stream(30, 60)->stream_map(*inc) ),
+       'FP::Lazy::Promise';
+
+    is ref(force( stream(30, 60)->map(*inc) )),
+       'FP::List::Pair';
+
+All of the examples evaluate to the same values--the result isn't
+different, it's just calculated lazily (on demand) in some cases. The
+`equal` calls in the following are all true even though the second
+argument is always an eager list (whereas the first argument is a
+stream in 3 out of 4 cases) because `equal` automatically forces the
+evaluation of promises it encounters.
+
+    use FP::Equal 'equal';
+
+    ok equal(list(30, 60)->map(*inc), list(31, 61));
+    ok equal(list(30, 60)->stream_map(*inc), list(31, 61));
+    ok equal(stream(30, 60)->map(*inc), list(31, 61));
+    ok equal(stream(30, 60)->stream_map(*inc), list(31, 61));
 
 =head1 SEE ALSO
+
+The general functional perl documentation.
 
 L<FP::List>, L<FP::Lazy>
 
