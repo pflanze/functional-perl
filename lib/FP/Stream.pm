@@ -26,7 +26,7 @@ FP::Stream - lazily generated, singly linked (purely functional) lists
                                 stream_iota 0, 5),
        10;
 
-    # Alternatively (and probably preferably), use methods:
+Alternatively (and probably preferably), use methods:
 
     is stream_iota(101, 5)->length, 5;
     # note that length needs to walk the whole stream
@@ -39,11 +39,10 @@ FP::Stream - lazily generated, singly linked (purely functional) lists
                                0),
        10;
 
-    # NOTE that the method calls are forcing evaluation of the object
-    # (the first cell of the input stream), since that's the only way to
-    # know the type to be dispatched on. This is unlike the non-generic
-    # functions, some of which (like cons) don't force evaluation of
-    # their arguments.
+NOTE that the method calls are forcing evaluation of the object (the
+first cell of the input stream), since that's the only way to know the
+type to be dispatched on. This is unlike the non-generic functions,
+some of which (like cons) don't force evaluation of their arguments.
 
 
 =head1 DESCRIPTION
