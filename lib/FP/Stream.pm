@@ -90,6 +90,8 @@ package FP::Stream;
               stream_zip
               stream_zip_with
               stream_to_array
+              stream_to_purearray
+              stream_to_list
               stream_sort
               stream_group
               stream_mixed_flatten
@@ -767,6 +769,14 @@ TEST {
     stream (1,3,4)->purearray->map (sub{$_[0]**2})
 }
   bless [1,9,16], "FP::PureArray";
+
+sub stream_to_list ($) {
+    my ($l)=@_;
+    weaken $_[0];
+    array_to_list stream_to_array $l
+}
+
+*FP::List::List::stream_list= *stream_to_list;
 
 
 sub stream_sort ($;$) {
