@@ -123,6 +123,7 @@ lib/Chj/xperlfunc.pm
 lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/Class/Array.pm
+lib/FP/Abstract/Equal.pm
 lib/FP/Abstract/Interface.pm
 lib/FP/Abstract/Pure.pm
 lib/FP/Abstract/Sequence.pm
