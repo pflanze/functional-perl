@@ -353,7 +353,8 @@ sub stream_append ($$) {
 
 *FP::List::List::stream_append= *stream_append;
 
-TEST{ stream_to_string (stream_append string_to_stream("Hello"), string_to_stream(" World")) }
+TEST{ stream_to_string (stream_append string_to_stream("Hello"),
+                                      string_to_stream(" World")) }
   'Hello World';
 
 sub stream_map ($ $);
@@ -1025,7 +1026,8 @@ sub stream_mixed_state_fold_right {
     @_=($fn, $statefn, stream_mixed_flatten $v);goto \&stream_state_fold_right
 }
 
-*FP::List::List::stream_mixed_state_fold_right= rot3left *stream_mixed_state_fold_right;
+*FP::List::List::stream_mixed_state_fold_right=
+  rot3left *stream_mixed_state_fold_right;
 
 
 # 'cross product'
@@ -1153,8 +1155,9 @@ TEST{ stream_to_array stream_zip cons (2, null), null }
   [];
 
 
-TEST{ list_to_array F stream_zip2 stream_map (sub{$_[0]+10}, stream_iota (0, 5)),
-        stream_iota (0, 3) }
+TEST{ list_to_array F stream_zip2 (stream_map (sub{$_[0]+10},
+                                               stream_iota (0, 5)),
+                                   stream_iota (0, 3)) }
   [
    [
     10,
@@ -1170,13 +1173,15 @@ TEST{ list_to_array F stream_zip2 stream_map (sub{$_[0]+10}, stream_iota (0, 5))
    ]
   ];
 
-TEST{ stream_to_array stream_take_while sub { my ($x)=@_; $x < 2 }, stream_iota }
+TEST{ stream_to_array
+        stream_take_while sub { my ($x)=@_; $x < 2 }, stream_iota }
   [
    0,
    1
   ];
 
-TEST{stream_to_array  stream_take stream_drop_while( sub{ $_[0] < 10}, stream_iota ()), 3}
+TEST{stream_to_array
+       stream_take stream_drop_while( sub{ $_[0] < 10}, stream_iota ()), 3}
   [
    10,
    11,
@@ -1200,13 +1205,22 @@ TEST { stream_to_string
             undef) }
   'loWorld';
 
-TEST { stream_to_string stream__subarray_fold_right \&cons, string_to_stream("World"), [split //, "Hello"], 3, 4 }
+TEST { stream_to_string
+         stream__subarray_fold_right(\&cons,
+                                     string_to_stream("World"),
+                                     [split //, "Hello"],
+                                     3,
+                                     4) }
   'lWorld';
 
-TEST { stream_to_string stream__subarray_fold_right_reverse  \&cons, cons("W",null), [split //, "Hello"], 1, undef }
+TEST { stream_to_string
+         stream__subarray_fold_right_reverse
+         \&cons, cons("W",null), [split //, "Hello"], 1, undef }
   'eHW';
 
-TEST { stream_to_string stream__subarray_fold_right_reverse  \&cons, cons("W",null), [split //, "Hello"], 2,0 }
+TEST { stream_to_string
+         stream__subarray_fold_right_reverse
+         \&cons, cons("W",null), [split //, "Hello"], 2,0 }
   'leW'; # hmm really? exclusive lower boundary?
 
 TEST { stream_to_string subarray_to_stream [split //, "Hello"], 1, 3 }
@@ -1243,7 +1257,9 @@ TEST { my $s= string_to_stream "Hello";
        $ss->string }
   "Hello";
 
-TEST { array_to_stream([1,2,3])->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
+TEST { array_to_stream([1,2,3])
+         ->map(sub{$_[0]+1})
+         ->fold(sub{ $_[0] + $_[1]},0) }
   9;
 
 
