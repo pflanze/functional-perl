@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -161,18 +161,18 @@ do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 Exception: fun at (eval 0) line 1.
 main 1> ,b
-0       Chj::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
-1       main::__ANON__('99') called at (eval 0) line 1
-2       main::__ANON__() called at lib/Chj/Repl.pm line 2
-3       Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 3
-4       (eval)() called at lib/Chj/Repl.pm line 3
-5       Chj::Repl::WithRepl_eval('CODE(0x11)') called at lib/Chj/Repl.pm line 4
-6       Chj::Repl::eval_code('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef, undef) called at lib/Chj/Repl.pm line 5
-7       Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 6
-8       Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 7
-9       Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 8
-10      Chj::Repl::run('Chj::Repl=ARRAY(0x12)', undef) called at t/repl line 9
-11      main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl line 10
+0	Chj::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
+1	main::__ANON__('99') called at (eval 0) line 1
+2	main::__ANON__() called at lib/Chj/Repl.pm line 2
+3	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 3
+4	(eval)() called at lib/Chj/Repl.pm line 3
+5	Chj::Repl::WithRepl_eval('CODE(0x11)') called at lib/Chj/Repl.pm line 4
+6	Chj::Repl::eval_code('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef, undef) called at lib/Chj/Repl.pm line 5
+7	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 6
+8	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 7
+9	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 8
+10	Chj::Repl::run('Chj::Repl=ARRAY(0x12)', undef) called at t/repl line 9
+11	main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl line 10
 main 1> 
 fun at (eval 0) line 1.
 +;
