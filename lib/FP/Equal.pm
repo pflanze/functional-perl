@@ -18,15 +18,21 @@ FP::Equal - generic equality comparison
     use FP::Div qw(inc);
 
     ok equal [1, list(2, 3)], [1, list(1, 2)->map(*inc)];
-    ok not equal [1, list(2, 3)], [1, list(1, 2)];
-        # ^ equal returns '' in this case
-    ok not equal [1, list(2, 3)], [1, list([], 3)];
-        # ^ equal returns undef in this case, to say it's not the same type
+    is equal( [1, list(2, 3)], [1, list(1, 2)] ),
+       ''; # false but defined since same type
+    is equal( [1, list(2, 3)], [1, list([], 3)] ),
+       undef; # to say it's not the same type
 
     # equal forces any promises that it encounters:
     use FP::Lazy; use FP::List 'pair';
     ok equal lazy{pair 3, lazy{2 + 1}},
              pair(3, 2 + 1);
+
+    use FP::Stream 'string_to_stream';
+    is equal( string_to_stream("Hello"),
+              string_to_stream("Hello1") ),
+       undef; # not the same type at the end, null vs. pair;
+              # although this may be subject to change
 
     # for writing tests with Test::More--the same as `is` but uses
     # `equal` for comparisons, and shows values in failures via
