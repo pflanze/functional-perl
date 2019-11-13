@@ -194,13 +194,7 @@ use FP::Interfaces;
 
     sub preferred_fold {
         my $s=shift;
-        my $r= $s->rest;
-        if (is_promise ($r)) {
-            # XX do we need to rewrap in lazy ?
-            lazy {$s}->fold_right(@_)
-        } else {
-            $s->fold(@_)
-        }
+        $s->fold(@_)
     }
 
     _END_

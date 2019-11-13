@@ -427,6 +427,9 @@ sub stream_fold_right ($ $ $) {
 
 *FP::List::List::stream_fold_right= rot3left *stream_fold_right;
 
+*FP::List::List::stream_preferred_fold=
+  *FP::List::List::stream_fold_right;
+
 
 sub make_stream__fold_right {
     my ($length, $ref, $start, $d, $whileP)=@_;
