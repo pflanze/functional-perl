@@ -398,6 +398,11 @@ sub import {
                    bless $new, ref $s
                });
         }
+
+        # Check any interfaces:
+        package_check_possible_interface($package, $_)
+          for @isa;
+
         1 # make module load succeed at the same time.
     };
     *{"${package}::_END__"}= $end;
@@ -415,10 +420,6 @@ sub import {
 
     *{"${package}::__Struct__fields"}= $fields;
 
-
-    # Check any interfaces:
-    package_check_possible_interface($package, $_)
-      for @isa;
 }
 
 
