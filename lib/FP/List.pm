@@ -868,7 +868,7 @@ sub list_to_string ($) {
 	my $c= car $l;
 	substr($res,$i,1)= $c;
 	$l= cdr $l;
-	$i+= length($c);
+	$i+= length $c;
     }
     $res
 }

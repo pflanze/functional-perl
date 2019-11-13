@@ -320,7 +320,7 @@ TEST {[ map { is_filehandle $_ }
 	*STDOUT, *STDOUT{IO}, \*STDOUT,
 	*SMK69GXDB, *SMK69GXDB{IO}, \*SMK69GXDB,
 	bless (\*WOFWEOXVV, "ReallyNotIO"),
-	do { open my $in, $0 or die $!;
+	do { open my $in, '<', $0 or die $!;
 	     #warn "HM".<$in>;  # works
 	     bless $in, "MightActullyBeIO" }
       ]}
