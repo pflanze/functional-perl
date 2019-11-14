@@ -128,6 +128,7 @@ lib/FP/Abstract/Interface.pm
 lib/FP/Abstract/Pure.pm
 lib/FP/Abstract/Sequence.pm
 lib/FP/Abstract/Sequence/t.pm
+lib/FP/Abstract/Show.pm
 lib/FP/Array.pm
 lib/FP/Array_sort.pm
 lib/FP/Char.pm
