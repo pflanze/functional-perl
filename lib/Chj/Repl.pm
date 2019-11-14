@@ -1113,7 +1113,7 @@ sub run {
                                $get_package,
                                $stack->perhaps_lexicals($frameno) // {},
                                $maybe_kept_results,
-                               $maybe_lexical_persistence);
+                               $maybe_lexical_persistence)
                         };
                         hash_xref
                           (+{
