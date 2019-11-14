@@ -2085,11 +2085,13 @@ sub ldie {
 
 {
     package FP::List::Null;
-    FP::Interfaces::implemented qw(FP::Abstract::Sequence);
+    FP::Interfaces::implemented qw(FP::Abstract::Sequence
+                                   FP::Abstract::Equal);
 }
 {
     package FP::List::Pair;
-    FP::Interfaces::implemented qw(FP::Abstract::Sequence);
+    FP::Interfaces::implemented qw(FP::Abstract::Sequence
+                                   FP::Abstract::Equal);
 }
 
 1

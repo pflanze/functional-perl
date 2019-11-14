@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -123,7 +123,7 @@ fun entry ($path0,@subentries) {
                     [*is_procedure, "nav_bar"],
                     [maybe instance_of "Htmlgen::Nav::Index", "index"]
                    ],
-      "Htmlgen::Nav::Entry";
+        "Htmlgen::Nav::Entry";
 
     method FP_Show_show ($show) {
         ("nav(".
@@ -190,7 +190,8 @@ fun entry ($path0,@subentries) {
     use FP::Equal qw(equal);
 
     use FP::Struct [[*is_string, "path0"]],
-      "Htmlgen::Nav::Entry";
+        "Htmlgen::Nav::Entry",
+        "FP::Abstract::Equal";
 
     method FP_Show_show ($show) {
         ("entry(".

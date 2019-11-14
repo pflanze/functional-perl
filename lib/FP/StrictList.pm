@@ -109,6 +109,9 @@ use FP::Combinators qw(flip2of3 flip);
         my ($s,$show)=@_;
         "strictnull"
     }
+
+    use FP::Interfaces;
+    FP::Interfaces::implemented qw(FP::Abstract::Equal);
 }
 
 {
@@ -137,6 +140,9 @@ use FP::Combinators qw(flip2of3 flip);
          $s->map($show)->strings_join(", ").
          ")")
     }
+
+    use FP::Interfaces;
+    FP::Interfaces::implemented qw(FP::Abstract::Equal);
 }
 
 

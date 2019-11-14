@@ -105,7 +105,8 @@ use FP::Struct
                           # flag)
    typed(*is_boolean,
          'is_absolute'), # bool
-  ];
+  ],
+    'FP::Abstract::Equal';
 
 *import= constructorexporter new_from_string=> "path";
 

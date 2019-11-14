@@ -69,6 +69,8 @@ is ok to compare?
 
 =head1 SEE ALSO
 
+L<FP::Abstract::Equal> for the protocol definition
+
 L<FP::DumperEqual> for a non-class controlled alternative
 
 L<FP::Show>
