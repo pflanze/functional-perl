@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -24,15 +24,15 @@ package FP::Equal::t;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use FP::Equal;
+use FP::Equal ":all";
 use Chj::TEST;
 
 # compare arguments both straight and swapped; if the results don't
 # match, return an array with both results
 sub tequals {
     @_==2 or die "wrong num arg";
-    my $x= equal (@_);
-    my $y= equal (@_);
+    my $x= equaln (@_);
+    my $y= equaln (@_);
     if (defined $x) {
         if (defined $y) {
             if ($x eq $y) {
