@@ -905,6 +905,8 @@ sub fstype_for_device($) {
          and $s->size == $s2->size
          and $s->mtime == $s2->mtime)
     }
+    # Could also implement FP::Abstract::Equal, but do not just use
+    # the following *equal for it, rather check *all* the fields!
     sub equal {
         my $s=shift;
         my ($s2)=@_;
