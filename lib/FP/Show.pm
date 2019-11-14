@@ -16,13 +16,30 @@ FP::Show - give (nice) code representation for debugging purposes
  use FP::Show; # exports 'show'
  use FP::List;
 
- is show(list 30, 40), "list(30, 40)";
+ is show(list(3, 4)->map(sub{$_[0]*10})), "list(30, 40)";
+
 
 =head1 DESCRIPTION
 
-Unlike Data::Dumper, this allows classes to provide a 'FP_Show_show'
-method that gets a function it can itself recursively call on
-contained values, and that must return the string representation.
+The 'show' function takes a value and returns a string of Perl code
+which when evaluated should produce an equivalent clone of that value
+(assuming that the Perl functions used in the string are imported into
+the namespace where the code is evaluated).
+
+It is somewhat like Data::Dumper, but enables classes to determine the
+formatting of their instances by implementing the
+L<FP::Abstract::Show> protocol (for details, see there). This allows
+for concise, more highlevel output than just showing the bare
+internals. It's, for example, normally not useful when inspecting data
+for debugging to know that an instance of FP::List consists of a chain
+of FP::List::Pair objects which in turn are made of blessed arrays or
+what not; just showing a call to the same convenience constructor
+function that can be used normally to create such a value is a better
+choice (see the example in the SYNOPSIS, and for more examples the
+`intro` document of the Functional Perl distribution or website).
+
+
+=head1 ALTERNATIVES
 
 Data::Dumper *does* have a similar feature, $Data::Dumper::Freezer,
 but it needs the object to be mutated, which is not what one will
@@ -62,40 +79,11 @@ needs to do is compare against a short representation. Also, likely we
 would implement the cut-off value as an optional parameter.)
 
 
-=head1 TODO
-
-=over
-
-=item * cycle detection
-
-=item * cut-offs at configurable size?
-
-=item * modify Data::Dumper to allow for custom formatting instead?
-
-=item * should the 'FP_Show_show' methods simply be called 'show'?
-
-Or '(show' and provide help for their installation like overload.pm?
-Although, there is a reason not to do that: the `show` method would
-not be usable directly, as it follows a private API.
-
-Offer a mix-in that *does* offer a `show` method that works without
-giving further arguments?  But then, like with equal, it's not safe
-in the general case where the object argument might not be an object
-or have the method. Users should really import and use the show and
-equal functions.
-
-=item * should `show` try to never use multiple lines, or to do
-  pretty-printing?
-
-=item * should constructor names be fully qualified? Any other idea to avoid
-  this verbosity but still be unambiguous?
-
-=item * make it good enough to be used by Chj::repl by default for the
-  printing.
-
-=back
-
 =head1 SEE ALSO
+
+L<FP::Abstract::Show> for the protocol definition
+
+L<http://www.functional-perl.org/docs/intro.xhtml> for the mentioned intro.
 
 L<FP::Equal>
 
