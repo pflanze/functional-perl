@@ -141,7 +141,6 @@ our $primitive_show=
         my ($v,$show)=@_;
         "\\(".&$show ($$v).")"
     },
-    # *references* to globs; direct globs are compared in equal2 directly
     GLOB=> sub {
         my ($v,$show)=@_;
         (terseDumper($v), 1)
