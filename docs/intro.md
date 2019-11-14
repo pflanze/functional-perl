@@ -24,34 +24,32 @@ Functional programming languages usually come with a read-eval-print
 loop (REPL). A REPL reads a statement or expression, evaluates it and
 prints its result. The better ones come with debugging features, like
 being able to inspect the context (stack) from where they were
-called. Functional perl is no exception on either account.
+called. Functional Perl is no exception.
 
-(NOTE: the author of the functional-perl repl didn't know about the
-`reply` repl and maybe others when finishing the work on this; he
-originally started Chj::repl more than a decade ago. It would probably
-be best to merge the efforts: TODO.)
+(NOTE: the author didn't know about the `reply` repl and maybe others
+when finishing the work on this; he originally started `Chj::repl` in
+2004. It might be worth merging the efforts.)
 
 There are three ways to run the functional-perl REPL:
 
  - Run it from somewhere in your program by using `use Chj::repl;` and
    calling `repl;`.
- - Register the repl to be run upon encountering uncatched exceptions
+ - Register the repl to be run upon encountering uncaught exceptions
    by adding `use Chj::Trapl;` somewhere to your code.
  - Run the [bin/repl](../bin/repl) script, which takes the `-M` option
    like perl itself to load modules of your choice. Or
    [bin/repl+](../bin/repl+) which calls the repl with the most
    interesting modules preloaded.
 
-In this section we're going to use the latter. You need to install
-`Term::ReadLine::Gnu` and `PadWalker` to use the repl. Once you've
-done that, from the shell run:
+You need to install `Term::ReadLine::Gnu` and `PadWalker` to use the
+repl. Once you've done that, from the shell run:
 
     $ cd functional-perl
     $ bin/repl+
     repl> 
 
 The string left of the ">" indicates the current namespace, "repl" in
-this case. Let's try some math:
+this case. Let's try:
 
     repl> 1+2
     $VAR1 = 3;
@@ -62,20 +60,25 @@ You can refer to the given $VAR1 etc. variables in subsequent entries:
     $VAR1 = 6;
     repl> $VAR1*2
     $VAR1 = 12;
-    repl> $VAR1*2,$VAR1+1
+    repl> $VAR1*2, $VAR1+1
     $VAR1 = 24;
     $VAR2 = 13;
 
 If you happen to produce an error at run time of the code that you
-enter, you will be in a sub-repl (this happens since `bin/repl` also
-loads `Chj::Trapl` (well, it uses `Chj::WithRepl` directly for the
-same purpose)):
+enter, you will be in a sub-repl, indicated by the level number `1`
+here:
 
     repl> foo()
     Exception: Undefined subroutine &repl::foo called at (eval 143) line 1.
     repl 1> 
 
-In that case, you can return to the parent repl by pressing ctl-d.
+In that case, you can return to the parent repl by pressing ctl-d. It
+will then show:
+
+    repl> 
+
+(In case you really don't like this nesting feature, you can omit the
+`-t` flag to the `repl` script (adapt the `repl+` wrapper script).)
 
 
 ## Lists the functional way
@@ -124,12 +127,8 @@ settings across repl runs (they are stored in ~/.perl-repl_settings).
 So, yes, `cons 3, null` is equivalent to `cons 3, list()` which is
 equivalent to `list(3)`, and the :s representation shows perl code
 that would construct the given result using existing constructor
-functions. (How the repl knows which perl function to show is by way
-of a `FP_Show_show` method on the object in question, which is called
-through the `show` function in the `FP::Show` module. The indirection
-through the `show` function (versus calling the method directly) is so
-that `show` also works on inputs that are not objects or don't have an
-`FP_Show_show` method.)
+functions. (How the repl knows how to print data structures is via the
+`show` function in the `FP::Show` module.)
 
 As you've already seen above, linked lists are objects, and they come
 with a broad set of useful methods, for example:
@@ -431,14 +430,13 @@ be evaluated lazily, a topic we'll look into in the next section.
 
 ## Lazy evaluation
 
-Perl, like most traditional programming languages, is evaluating
-exressions and statements eagerly: an expression used to set a
-variable is evaluated before assigning its result to a variable and
-the variable assignment happens before the code continues after its
-trailing semicolon, and expressions in argument position of a
-subroutine or method call are evaluated before the statements in the
-subroutine are evaluated. This means for example that we get this
-behaviour:
+Perl, like most programming languages, is evaluating exressions and
+statements eagerly: an expression used to set a variable is evaluated
+before assigning its result to a variable and the variable assignment
+happens before the code continues after its trailing semicolon, and
+expressions in argument position of a subroutine or method call are
+evaluated before the statements in the subroutine are evaluated. This
+means for example that we get this behaviour:
 
     repl> fun inverse ($x) { 1 / $x }
     repl> fun or_square ($x,$y) { $x || $y * $y }
@@ -474,10 +472,8 @@ This is usually better since the knowledge about the need for lazy
 evaluation is kept locally, near the expression in question, and the
 `lazy` keyword has to be used only once instead of at every call site.
 
-Lazy terms are represented by a data structure we'll call a *promise*,
-since that's what Scheme and some other languages have called them way
-before JavaScript started using the term for something rather
-different. The `:s` pretty-printing in the repl shows them like this:
+Lazy terms are represented by a data structure called a *promise*. The
+`:s` pretty-printing in the repl shows them like this:
 
     repl> inverse 2
     $VAR1 = lazy { "DUMMY" };
@@ -1276,16 +1272,18 @@ bit easier to write, and may help document the code (both can be read
 together). Unlike `is` from `Test::More` which in principle is
 symmetric in the treatment of the gotten and expected values, its
 `TEST` procedure expects a code block as its first argument, plus the
-expected result as the second. The code block is not evaluated when
-the `TEST` form is evaluated, but stored away and only run when
-`Chj::TEST`'s `run_tests` procedure is run. Concerns about using up
-process memory to store tests that will usually not be run before the
-process exits seem largely unfounded (RAM usage grew by a few percents
-at most in the heaviest tested modules (todo: find tests again?)), but
-`Chj::TEST` can also be instructed to drop the tests right away by
-setting the TEST env variable to 0 or ''.
+expected result as the second (although you can also use `GIVES` and a
+block if computation of the result is expensive, see `Chj::TEST`
+docs). The code block is not evaluated when the `TEST` form is
+evaluated, but stored away and only run when `Chj::TEST`'s `run_tests`
+procedure is run. Concerns about using up process memory to store
+tests that will usually not be run before the process exits seem
+largely unfounded (RAM usage grew by a few percents at most in the
+heaviest tested modules (todo: find tests again?)), but `Chj::TEST`
+can also be instructed to drop the tests at module load time by
+setting the TEST environment variable to 0 or ''.
 
-You can even use it without leaving the repl :)
+You can use it without leaving the repl:
 
     repl> fun inverse ($x) { lazy { 1 / $x } }
     repl> TEST { F inverse 2 } 0.5;
@@ -1331,15 +1329,12 @@ good match.
 
 Update the examples/introexample script with the following:
 
-    {
-        package Shape;
+    package Shape {
         use FP::Struct [];
         _END_
     }
 
-    {
-        package Point;
-
+    package Point {
         # for illustration, we don't check types here
         use FP::Struct ["x","y"],
           "Shape";
@@ -1347,15 +1342,13 @@ Update the examples/introexample script with the following:
         _END_ # defines accessors that have not been defined explicitely
     }
 
-    {
-        package Rectangle;
-
+    package Rectangle {
         # Let's type-check here.
         # Subroutines imported here will be cleaned away by _END_
         use FP::Predicates qw(instance_of);
 
         use FP::Struct [[instance_of("Point"), "topleft"],
-                    [instance_of("Point"), "bottomright"]],
+                        [instance_of("Point"), "bottomright"]],
           "Shape";
 
         method area () {
@@ -1419,8 +1412,7 @@ To get the constructor functions whose existence these implicate:
 Instead of adding the `FP_Show_show` methods, you could also have just
 added `FP::Show::Base::FP_Struct` as a base class:
 
-    {
-        package Shape;
+    package Shape {
         use FP::Struct [], 'FP::Show::Base::FP_Struct';
         _END_
     }
