@@ -114,9 +114,9 @@ my $namespacenum= 0;
 
 for (@$modules) {
     if ($ignore{$_}) {
-        print "=== Ignoring pod snippets in module $_.\n";
+        print "=== Ignoring pod snippets in $_.\n";
     } else {
-        print "=== Running pod snippets in module $_ ..\n";
+        print "=== Running pod snippets in $_ ..\n";
 
         my $tps_direct = Test::Pod::Snippets->new();
         my $fail_before= numfailures;
