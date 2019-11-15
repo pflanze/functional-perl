@@ -108,10 +108,24 @@ experimental at this time:
   treated as alpha. More abstract types (like
   `FP::Abstract::Sequence`) should be defined.
 
-[I](//contact.md)'m using it already in personal projects; where
-breakage due to changes is unacceptable, I currently add
-functional-perl as a Git submodule to the project using it and access
-it via `use lib`.
+* get it working correctly first, then fast: some operations aren't
+  efficient yet. There is no functional sequence data structure yet
+  that allows efficient random access, and none for functional
+  hashmaps with efficient updates, but the author has plans to address
+  those. Also the author has plans for implementing mechanisms to make
+  chains of sequence operations (like
+  `$foo->map($bar)->filter($baz)->drop(10)->reverse->drop(5)`) as
+  performant as the imperative equivalent.
+
+There is a lot that still needs to be done, and it depends on the
+author or other people be able and willing to invest the time.
+
+(An approach to use this project while avoiding breakage due to future
+changes could be to add the
+[functional-perl Github repository](https://github.com/pflanze/functional-perl)
+as a Git submodule to the project using it and have it access it via
+`use lib`. Tell if you'd like to see stable branches of older versions
+with fixes.)
 
 
 ## Parts
