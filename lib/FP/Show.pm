@@ -97,6 +97,9 @@ package FP::Show;
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use Chj::TerseDumper qw(terseDumper);
+use Scalar::Util qw(reftype);
+use Devel::Peek q(DumpWithOP);
+use Capture::Tiny qw(capture_stderr);
 
 sub keyshow ($) {
     my ($str)=@_;
@@ -139,8 +142,23 @@ our $primitive_show=
     },
     CODE=> sub {
         my ($v,$show)=@_;
-        # XX something better?
-        (terseDumper($v), 1)
+        my $info= capture_stderr { DumpWithOP($v) };
+        my @FILE= $info=~ m/\bFILE *= *("[^"]*"|\S+) *\n/g;
+        my @LINE= $info=~ m/\bLINE *= *(\d+) *\n/g; # col?..
+        my $dummy= do {
+            if (@FILE) {
+                my $filestr= $FILE[-1];
+                if (@LINE) {
+                    my $line= $LINE[0];
+                    "DUMMY: at $filestr line $line"
+                } else {
+                    "DUMMY: at $filestr (line unknown)"
+                }
+            } else {
+                "DUMMY (no location found)"
+            }
+        };
+        "sub { ".show($dummy)." }"
     },
     # Don't really have any sensible serialization for these either,
     # but at least prevent them from hitting Data::Dumper which issues
@@ -156,8 +174,6 @@ our $primitive_show=
         "LVALUE(UNKNOWN)"
     },
    };
-
-use Scalar::Util qw(reftype);
 
 sub show ($) {
     my ($v)=@_;
