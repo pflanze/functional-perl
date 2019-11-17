@@ -26,8 +26,9 @@ Chj::xIO - some IO utilities
 
 =head1 DESCRIPTION
 
-Oh, but there's Capture::Tiny ! Even uses the same names. TODO: move to
-that.
+Oh, but there's Capture::Tiny ! Even uses the same names. TODO: move
+to that. Although, Capture::Tiny might be using 'dup', which would not
+be thread safe. Shrug.
 
 =cut
 
