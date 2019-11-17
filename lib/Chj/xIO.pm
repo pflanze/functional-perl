@@ -26,6 +26,8 @@ Chj::xIO - some IO utilities
 
 =head1 DESCRIPTION
 
+Oh, but there's Capture::Tiny ! Even uses the same names. TODO: move to
+that.
 
 =cut
 
