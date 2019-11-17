@@ -68,7 +68,6 @@ my %ignore= map{ $_=> 1}
     Chj::repl
     Chj::ruse
     Chj::time_this
-    Chj::xIO
     Chj::xIOUtil
     Chj::xhome
     Chj::xopen
