@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Chj::xIO - exception-throwing I/O wrappers (and utilities)
+Chj::xIO - some IO utilities
 
 =head1 SYNOPSIS
 
@@ -26,8 +26,6 @@ Chj::xIO - exception-throwing I/O wrappers (and utilities)
 
 =head1 DESCRIPTION
 
-Much simpler procedures than my extensive OO based Chj::IO::File and
-Chj::xopen modules.
 
 =cut
 
