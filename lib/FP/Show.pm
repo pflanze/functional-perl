@@ -147,20 +147,31 @@ our $primitive_show=
         my $info= capture_stderr { DumpWithOP($v) };
         my @FILE= $info=~ m/\bFILE *= *("[^"]*"|\S+) *\n/g;
         my @LINE= $info=~ m/\bLINE *= *(\d+) *\n/g; # col?..
-        my $dummy= do {
+        my $location= do {
             if (@FILE) {
                 my $filestr= $FILE[-1];
                 if (@LINE) {
                     my $line= $LINE[0];
-                    "DUMMY: at $filestr line $line"
+                    "at $filestr line $line"
                 } else {
-                    "DUMMY: at $filestr (line unknown)"
+                    "at $filestr (line unknown)"
                 }
             } else {
-                "DUMMY (no location found)"
+                "(no location found)"
             }
         };
-        "sub { ".show($dummy)." }"
+
+        my ($name, $maybe_prototype)=
+          eval { require Sub::Util; 1 } ?
+          (Sub::Util::subname($v),
+           Sub::Util::prototype($v))
+          : ("(for name, install Sub::Util)",
+             undef);
+
+        my $prototypestr= defined $maybe_prototype ? "($maybe_prototype) " : "";
+
+        my $dummystr= "DUMMY: $name $location";
+        "sub ".$prototypestr."{ ".show($dummystr)." }"
     },
     # Don't really have any sensible serialization for these either,
     # but at least prevent them from hitting Data::Dumper which issues
