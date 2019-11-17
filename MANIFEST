@@ -138,6 +138,7 @@ lib/FP/Div.pm
 lib/FP/DumperEqual.pm
 lib/FP/Equal.pm
 lib/FP/Equal/t.pm
+lib/FP/Failure.pm
 lib/FP/FunctionalPerl.pm
 lib/FP/Git/Repository.pm
 lib/FP/Hash.pm
