@@ -96,6 +96,8 @@ package FP::Show;
 @EXPORT_OK=qw(show_many);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
 use Chj::TerseDumper qw(terseDumper);
 use Scalar::Util qw(reftype);
 use Devel::Peek q(DumpWithOP);
