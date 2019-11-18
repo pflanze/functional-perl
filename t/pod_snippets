@@ -19,6 +19,7 @@ use Test::More;
 use lib "./lib";
 use lib "./meta";
 use ModuleList;
+use Chj::Backtrace;
 
 use lib "./htmlgen";
 
