@@ -101,9 +101,10 @@ non-failure values, as obviously those include false as well), or
 checked via the `is_failure` function.
 
 The `value` method delivers the first argument given to `failure`,
-`parents` an array of the remaining ones which are meant for chaining
-failures (reasons why this failure happened). `message` produces a
-somewhat nice to read string, multi-line if parents are chained in.
+`maybe_parents` an array of the remaining ones which are meant for
+chaining failures (reasons why this failure happened). `message`
+produces a somewhat nice to read string, multi-line if parents are
+chained in.
 
 Calling the constructor in void context throws the constructed failure
 value as an exception.
@@ -144,12 +145,21 @@ package FP::Failure::Failure {
 
     use FP::Show;
 
+    # avoid circular dependency on FP::Predicates
+    sub maybe_array {
+        my ($v)=@_;
+        !defined $v
+            or ref($v) eq "ARRAY"
+    }
+
     use FP::Struct [
         "value",
-        "parents", # Array of failures that are the reason for this
-                   # failure. Values other than FP::Failure::Failure
-                   # are (mostly) ignored; allow anything to be stored
-                   # so no complicated logic is needed for capture.
+        [*maybe_array, "maybe_parents"
+         # Array of failures that are the reason for this
+         # failure. Values other than FP::Failure::Failure are
+         # (mostly) ignored; allow anything to be stored so no
+         # complicated logic is needed for capture.
+         ],
         "maybe_trace", # [[caller(0)],...]
         ],
         'FP::Show::Base::FP_Struct';
@@ -187,7 +197,9 @@ package FP::Failure::Failure {
                 : show($value)
         };
         $indent."failure: ".$valuestr.$tracestr."\n".do {
-            my @parents= grep {FP::Failure::is_failure($_)} @{$s->parents};
+            my @parents= grep {
+                FP::Failure::is_failure($_)
+            } @{$s->maybe_parents // []};
             if (@parents) {
                 $indent."  because:\n"
                     .join("",
@@ -205,9 +217,9 @@ package FP::Failure::Failure {
 
 our $trace_failures= 0; # bool
 
-sub failure {
-    my ($value, @parents)= @_;
-    my $v= FP::Failure::Failure->new($value, \@parents, $trace_failures ?
+sub failure ($;$) {
+    my ($value, $maybe_parents)= @_;
+    my $v= FP::Failure::Failure->new($value, $maybe_parents, $trace_failures ?
                                      do {
                                          my @t;
                                          my $i=0;
@@ -231,7 +243,7 @@ sub is_failure($) {
 
 our $use_failure= 0; # bool
 
-sub fails {
+sub fails ($;$) {
     $use_failure ? &failure(@_) :
         defined wantarray ? 0 : die "fails called in void context";
 }
