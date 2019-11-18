@@ -240,7 +240,7 @@ sub is_boolean ($) {
     not ref ($_[0]) # relax?
       and (! $_[0]
            or
-           $_[0] eq "1");
+           $_[0] eq "1")
 }
 
 
@@ -283,7 +283,7 @@ my $classpart_re= qr/\w+/;
 
 sub is_class_name ($) {
     my ($v)= @_;
-    ! length ref ($v) and $v=~ /^(?:${classpart_re}::)*$classpart_re\z/;
+    ! length ref ($v) and $v=~ /^(?:${classpart_re}::)*$classpart_re\z/
 }
 
 sub instance_of ($) {
@@ -303,7 +303,7 @@ sub is_instance_of ($$) {
 sub is_subclass_of ($$) {
     my ($v,$cl)=@_;
     # is_class_name $cl or die "need class name string, got: $cl";
-    !length ref $v and UNIVERSAL::isa ($v, $cl);
+    !length ref $v and UNIVERSAL::isa ($v, $cl)
 }
 
 TEST { my $v= "IO"; is_instance_of $v, "IO" } '';
@@ -352,7 +352,7 @@ sub is_sequence ($) {
        # XX evil: inlined `is_promise`
        UNIVERSAL::isa($_[0], "FP::Lazy::Promise")
        && is_sequence (force $_[0]))
-        : '';
+        : ''
 }
 
 
