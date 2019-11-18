@@ -51,7 +51,7 @@ FP::Failure - failure values
  # record backtraces
  my $v= do {
      local $trace_failures = 1;
-     failure(666, $vals->first)
+     failure(666, [$vals->first])
  };
  
  is_equal $v->message,
@@ -60,7 +60,7 @@ FP::Failure - failure values
  # request recorded backtrace to be shown
  is_equal $v->message(1),
           join("\n", "failure: 666 at lib/FP/Failure.pm line 54",
-                     "    (eval) at t/pod_snippets line 126",
+                     "    (eval) at t/pod_snippets line 127",
                      "  because:",
                      "  failure: 'not good'\n");
 
@@ -101,9 +101,9 @@ non-failure values, as obviously those include false as well), or
 checked via the `is_failure` function.
 
 The `value` method delivers the first argument given to `failure`,
-`maybe_parent` the optional second which is meant for chaining
-failures. `message` produces a somewhat nice to read string,
-multi-line if parents are chained in.
+`parents` an array of the remaining ones which are meant for chaining
+failures (reasons why this failure happened). `message` produces a
+somewhat nice to read string, multi-line if parents are chained in.
 
 Calling the constructor in void context throws the constructed failure
 value as an exception.
@@ -146,10 +146,10 @@ package FP::Failure::Failure {
 
     use FP::Struct [
         "value",
-        "maybe_parent", # values other than FP::Failure::Failure are
-                        # (mostly) ignored; allow anything to be
-                        # stored so no complicated logic is needed for
-                        # capture.
+        "parents", # Array of failures that are the reason for this
+                   # failure. Values other than FP::Failure::Failure
+                   # are (mostly) ignored; allow anything to be stored
+                   # so no complicated logic is needed for capture.
         "maybe_trace", # [[caller(0)],...]
         ],
         'FP::Show::Base::FP_Struct';
@@ -187,8 +187,13 @@ package FP::Failure::Failure {
                 : show($value)
         };
         $indent."failure: ".$valuestr.$tracestr."\n".do {
-            if (FP::Failure::is_failure(my $parent= $s->maybe_parent)) {
-                $indent."  because:\n".$parent->message($showtrace, $indent."  ")
+            my @parents= grep {FP::Failure::is_failure($_)} @{$s->parents};
+            if (@parents) {
+                $indent."  because:\n"
+                    .join("",
+                          map {
+                              $_->message($showtrace, $indent."  ")
+                          } @parents)
             } else {
                 ""
             }
@@ -200,9 +205,9 @@ package FP::Failure::Failure {
 
 our $trace_failures= 0; # bool
 
-sub failure ($;$) {
-    my ($value, $maybe_parent)= @_;
-    my $v= FP::Failure::Failure->new($value, $maybe_parent, $trace_failures ?
+sub failure {
+    my ($value, @parents)= @_;
+    my $v= FP::Failure::Failure->new($value, \@parents, $trace_failures ?
                                      do {
                                          my @t;
                                          my $i=0;
@@ -226,7 +231,7 @@ sub is_failure($) {
 
 our $use_failure= 0; # bool
 
-sub fails ($;$) {
+sub fails {
     $use_failure ? &failure(@_) :
         defined wantarray ? 0 : die "fails called in void context";
 }
