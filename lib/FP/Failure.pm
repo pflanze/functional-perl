@@ -121,6 +121,11 @@ optionally exported wrapper function `fails` calls `failure` with its
 arguments, otherwise it returns `0` (fully compatible with standard
 Perl booleans, and a little bit faster).
 
+=head1 TODO
+
+Instead of using `FP::Failure::Failure` as base class, create a
+failure protocol (FP::Abstract::Failure) instead?
+
 =cut
 
 
@@ -138,13 +143,13 @@ use FP::Lazy 'force';
 package FP::Failure::Failure {
 
     use FP::Show;
-    use FP::Predicates;
 
     use FP::Struct [
         "value",
-        [maybe(instance_of("FP::Failure::Failure")),
-         # ^ XX create a failure protocol (FP::Abstract::Failure) instead?
-         "maybe_parent"],
+        "maybe_parent", # values other than FP::Failure::Failure are
+                        # (mostly) ignored; allow anything to be
+                        # stored so no complicated logic is needed for
+                        # capture.
         "maybe_trace", # [[caller(0)],...]
         ],
         'FP::Show::Base::FP_Struct';
@@ -182,7 +187,7 @@ package FP::Failure::Failure {
                 : show($value)
         };
         $indent."failure: ".$valuestr.$tracestr."\n".do {
-            if (defined(my $parent= $s->maybe_parent)) {
+            if (FP::Failure::is_failure(my $parent= $s->maybe_parent)) {
                 $indent."  because:\n".$parent->message($showtrace, $indent."  ")
             } else {
                 ""
