@@ -18,8 +18,8 @@ FP::Predicates
     is is_string("Hi"), 1;
     is is_string(["Hi"]), 0;
     use FP::List; use FP::Equal 'is_equal';
-    is_equal list(1, 2, 3, 0, -1, "hi")->map(*is_natural0),
-             list(1, 1, 1, 1, 0, 0);
+    is_equal list(1, 2, 3, 0, -1, "hi", [1])->map(*is_natural0),
+             list(1, 1, 1, 1, 0, 0, 0);
 
     package Foo {
         use FP::Predicates;
