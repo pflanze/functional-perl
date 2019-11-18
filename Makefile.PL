@@ -22,7 +22,10 @@ WriteMakefile (
             },
         },
     },
-    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
+    PREREQ_PM         => {
+        # e.g., Module::Name => 1.1
+        "Scalar::Util"=> 0,
+    },
     TEST_REQUIRES => {'Test::Requires'=> 0},
     ($] >= 5.005 ?
       (ABSTRACT  => 'FP::FunctionalPerl - functional programming on Perl',
