@@ -57,6 +57,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   directly, remove duplicates of tests e.g. in `t/fp-struct` (and in
   general move tests to POD?)
   
+* Systematically go through the docs and update it. Use/make something
+  like POD snippets for markdown and change the docs to use examples
+  and then automatically check that they are up to date.
+
 * Make `FP::Struct` immutable, unless requested by user (using similar
   approach like taken in `FP::List`); like wise for StrictList etc.;
   and them to `FP::Abstract::Pure`. Change `FP::Struct` to only
