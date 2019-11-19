@@ -277,6 +277,22 @@ way of checking for a '(&' method?))
   type, or constructors that reuse a mutable data structure passed as
   argument and return it as ostensibly pure object.
 
+### Error handling
+
+Type safety is important and helpful for constructing correct
+programs. For example `ref` methods that take an index do not accept
+negative numbers (to mean "from the end"). (Offer a `circular_ref`
+method instead.)
+
+Early error reporting is useful because it makes debugging easier. For
+example `ref` methods do not return `undef` for invalid indices,
+instead they throw exceptions.
+
+There's also the approach of using error *values*; `FP::Failure` is a
+start (TODO: perhaps provide `FP::Result`, `FP::Maybe`). In general
+though using exceptions is fine since native to Perl, and fast, not
+planning to replace this.
+
 
 ## Purity
 
