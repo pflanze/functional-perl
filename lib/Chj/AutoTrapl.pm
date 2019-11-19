@@ -32,7 +32,7 @@ package Chj::AutoTrapl;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-# Interesting, Chj::Repl::maybe_tty works differently; well makes
+# Interesting, Chj::Repl::Repl::maybe_tty works differently; well makes
 # sense. So this is the "non-forcing" way to check:
 use POSIX qw(isatty);
 

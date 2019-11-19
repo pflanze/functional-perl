@@ -62,7 +62,7 @@ FP::List does not enforce its pairs to only contain pairs or null in
 their rest (cdr) position. Which means that they may end in something
 else than a null (and operations encountering these will die with
 "improper list"). The `show` function (or the `:s`
-mode in `Chj::Repl`) displays those as `improper_list`, e.g.:
+mode in `Chj::Repl::Repl`) displays those as `improper_list`, e.g.:
 
  # a normal, 'proper', list:
  is_equal cons(5, cons(6, cons(7, null))), list(5, 6, 7);

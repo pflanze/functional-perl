@@ -44,6 +44,6 @@ $Term::ReadLine::Gnu::VERSION
   or die "dependency Term::ReadLine::Gnu not present";
 
 # now also depend on PadWalker etc.
-require Chj::Repl;
+require Chj::Repl::Repl;
 
 1

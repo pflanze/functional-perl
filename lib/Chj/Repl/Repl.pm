@@ -9,11 +9,11 @@
 
 =head1 NAME
 
-Chj::Repl - read-eval-print loop
+Chj::Repl::Repl - read-eval-print loop
 
 =head1 SYNOPSIS
 
- my $repl= new Chj::Repl;
+ my $repl= new Chj::Repl::Repl;
  $repl->set_prompt("foo> ");
  # ^ if left undefined, "$package$perhapslevel> " is used
  $repl->set_historypath("somefile"); # default is ~/.perl-repl_history
@@ -89,7 +89,7 @@ L<Chj::repl>: easy wrapper
 =cut
 
 
-package Chj::Repl;
+package Chj::Repl::Repl;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -352,9 +352,9 @@ $x x  do not persist lexicals, use strict 'vars'
 $X X  do not persist lexicals, no strict 'vars' (default)
 
 Other features:
-  \$Chj::Repl::args   is an array holding the arguments of the last subroutine call
+  \$Chj::Repl::Repl::args   is an array holding the arguments of the last subroutine call
                      that led to the currently selected frame
-  \$Chj::Repl::argsn  is an array holding the arguments of the subroutine call
+  \$Chj::Repl::Repl::argsn  is an array holding the arguments of the subroutine call
                      that *leaves* the currently selected frame
 };
 }
@@ -785,8 +785,8 @@ our ($maybe_input, $maybe_output); # dynamic parametrization of
                                    # filehandles
 
 our $repl_level; # maybe number of repl layers above
-our $args; # see '$Chj::Repl::args' in help text
-our $argsn; # see '$Chj::Repl::argsn' in help text
+our $args; # see '$Chj::Repl::Repl::args' in help text
+our $argsn; # see '$Chj::Repl::Repl::argsn' in help text
 
 # TODO: split this monstrosity into pieces.
 sub run {
@@ -1134,7 +1134,7 @@ sub run {
                             # make it possible for the code entered in
                             # the repl to access the arguments in the
                             # last call leading to this position by
-                            # accessing $Chj::Repl::args :
+                            # accessing $Chj::Repl::Repl::args :
                             my $getframe= sub {
                                 my ($i)=@_;
                                 if (defined (my $frame= $stack->frame

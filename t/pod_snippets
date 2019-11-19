@@ -50,7 +50,7 @@ my %ignore= map{ $_=> 1}
     Chj::NamespaceClean
     Chj::NamespaceCleanAbove
     Chj::Package::OfPath
-    Chj::Repl
+    Chj::Repl::Repl
     Chj::Repl::Dependencies
     Chj::Repl::Stack
     Chj::Repl::StackPlus

@@ -87,8 +87,8 @@ sub t {
         $ENV{TERM}="";
         $ENV{COLORTERM}="";
 
-        local $Chj::Repl::maybe_settingspath= undef;
-        local $Chj::Repl::mode_formatter= 's';
+        local $Chj::Repl::Repl::maybe_settingspath= undef;
+        local $Chj::Repl::Repl::mode_formatter= 's';
         repl (maybe_input=> $inr,
               maybe_output=> $outw,
              );
@@ -163,15 +163,15 @@ Exception: fun at (eval 0) line 1.
 main 1> ,b
 0	Chj::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
 1	main::__ANON__('99') called at (eval 0) line 1
-2	main::__ANON__() called at lib/Chj/Repl.pm line 2
-3	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 3
-4	(eval)() called at lib/Chj/Repl.pm line 3
-5	Chj::Repl::WithRepl_eval('CODE(0x11)') called at lib/Chj/Repl.pm line 4
-6	Chj::Repl::eval_code('Chj::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef, undef) called at lib/Chj/Repl.pm line 5
-7	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 6
-8	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 7
-9	Chj::Repl::__ANON__() called at lib/Chj/Repl.pm line 8
-10	Chj::Repl::run('Chj::Repl=ARRAY(0x12)', undef) called at t/repl line 9
+2	main::__ANON__() called at lib/Chj/Repl/Repl.pm line 2
+3	Chj::Repl::Repl::__ANON__() called at lib/Chj/Repl/Repl.pm line 3
+4	(eval)() called at lib/Chj/Repl/Repl.pm line 3
+5	Chj::Repl::Repl::WithRepl_eval('CODE(0x11)') called at lib/Chj/Repl/Repl.pm line 4
+6	Chj::Repl::Repl::eval_code('Chj::Repl::Repl=ARRAY(0x12)', 'do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)', 'CODE(0x13)', 'HASH(0x14)', undef, undef) called at lib/Chj/Repl/Repl.pm line 5
+7	Chj::Repl::Repl::__ANON__() called at lib/Chj/Repl/Repl.pm line 6
+8	Chj::Repl::Repl::__ANON__() called at lib/Chj/Repl/Repl.pm line 7
+9	Chj::Repl::Repl::__ANON__() called at lib/Chj/Repl/Repl.pm line 8
+10	Chj::Repl::Repl::run('Chj::Repl::Repl=ARRAY(0x12)', undef) called at t/repl line 9
 11	main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl line 10
 main 1> 
 fun at (eval 0) line 1.
@@ -181,11 +181,11 @@ fun at (eval 0) line 1.
 # argsn; args would contain the argument for t, thus recursive def
 # (quine?..)
 t '
-$Chj::Repl::argsn
+$Chj::Repl::Repl::argsn
 ',
   q+
-main> $Chj::Repl::argsn
-$VAR1 = [bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a', 'X', bless( \*Symbol::GEN0, 'Chj::IO::Pipe' ), bless( \*Symbol::GEN1, 'Chj::IO::Pipe' )], 'Chj::Repl'), undef];
+main> $Chj::Repl::Repl::argsn
+$VAR1 = [bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a', 'X', bless( \*Symbol::GEN0, 'Chj::IO::Pipe' ), bless( \*Symbol::GEN1, 'Chj::IO::Pipe' )], 'Chj::Repl::Repl'), undef];
 +,
   $filterHOME;
 
@@ -197,21 +197,21 @@ $VAR1 = [bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, und
 # (A) from subrepl
 t '
 do {my $z=123; sub { my ($x)=@_; repl }}->(99)
-$Chj::Repl::argsn
-$Chj::Repl::args
+$Chj::Repl::Repl::argsn
+$Chj::Repl::Repl::args
 ,0
 ,e
 $x
 ',
   q+
 main> do {my $z=123; sub { my ($x)=@_; repl }}->(99)
-main 1> $Chj::Repl::argsn
-$VAR1 = [bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a', 'X'], 'Chj::Repl'), undef];
-main 1> $Chj::Repl::args
+main 1> $Chj::Repl::Repl::argsn
+$VAR1 = [bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a', 'X'], 'Chj::Repl::Repl'), undef];
+main 1> $Chj::Repl::Repl::args
 $VAR1 = [99];
 main 1> ,0
-Chj::Repl::run(
-  bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a', 'X'], 'Chj::Repl'),
+Chj::Repl::Repl::run(
+  bless(['<HOME>/.perl-repl_history', undef, 100, undef, undef, 1, 1, undef, 1, 'less', 'l', 's', 'a', 'X'], 'Chj::Repl::Repl'),
   undef
 ) called at (eval 0) line 1
 main 1> ,e
@@ -228,8 +228,8 @@ $VAR1 = '';
 # (B) from Trapl
 t '
 do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
-$Chj::Repl::argsn
-$Chj::Repl::args
+$Chj::Repl::Repl::argsn
+$Chj::Repl::Repl::args
 ,0
 ,e
 $x
@@ -237,10 +237,10 @@ $x
   q+
 main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 Exception: fun at (eval 0) line 1.
-main 1> $Chj::Repl::argsn
+main 1> $Chj::Repl::Repl::argsn
 $VAR1 = ['fun at (eval 0) line 1.
 '];
-main 1> $Chj::Repl::args
+main 1> $Chj::Repl::Repl::args
 $VAR1 = [99];
 main 1> ,0
 Chj::WithRepl::__ANON__(

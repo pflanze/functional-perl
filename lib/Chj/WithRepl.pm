@@ -204,7 +204,7 @@ sub handler_for ($$) {
                 return
             }
         } else {
-            my $err= $Chj::Repl::maybe_output // *STDERR{IO};
+            my $err= $Chj::Repl::Repl::maybe_output // *STDERR{IO};
             my $estr= "$e"; chomp $estr;
             print $err "Exception: $estr\n";
             # then what to do upon exiting it? return the value of the

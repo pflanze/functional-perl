@@ -1049,7 +1049,7 @@ useful here. To see a backtrace, enter `:b` (or `,b`, comma and colon
 are equivalent):
 
     main 1> :b
-    0        Chj::Repl::run('Chj::Repl=ARRAY(0x920b5f8)', undef) called at examples/introexample line 46
+    0        Chj::Repl::Repl::run('Chj::Repl::Repl=ARRAY(0x920b5f8)', undef) called at examples/introexample line 46
     1        main::hello('5') called at (eval 114) line 1
     ...
 

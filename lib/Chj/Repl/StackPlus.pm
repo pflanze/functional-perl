@@ -33,7 +33,7 @@ package Chj::Repl::StackPlus;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 {
-    package Chj::Repl::StackPlusFrame;
+    package Chj::Repl::Repl::StackPlusFrame;
 
     use Chj::Repl::Stack; # so that FP::Struct won't try to load
                           # Chj/Repl/StackFrame.pm
@@ -88,7 +88,7 @@ sub get {
         # XX how to handle this?: "@DB::args might have
         # information from the previous time "caller" was
         # called" (perlfunc on 'caller')
-        push @frames, Chj::Repl::StackPlusFrame->new
+        push @frames, Chj::Repl::Repl::StackPlusFrame->new
           ($subargs, @vals, &$maybe_peek_my($skip+2));
         $skip++;
     }

@@ -57,7 +57,7 @@ our %dependencies=
    map { $_ => ['Chj::Repl::Dependencies'] }
    qw(
          Chj::Repl::Dependencies
-         Chj::Repl
+         Chj::Repl::Repl
          Chj::Repl::StackPlus
          Chj::Serialize
          Chj::Trapl

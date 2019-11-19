@@ -19,12 +19,12 @@ Chj::repl - read-eval-print loop
  use Chj::repl();
  Chj::repl();
 
- # pass parameters (any fields of the Chj::Repl class):
+ # pass parameters (any fields of the Chj::Repl::Repl class):
  repl (skip=> 3, # skip 3 caller frames (when the repl call is nested
                  # within something you dont't want the user to see)
        tty=> $fh, # otherwise repl tries to open /dev/tty, or if that fails,
                   # uses readline defaults (which is somewhat broken?)
-       # also, any fields of the Chj::Repl class are possible:
+       # also, any fields of the Chj::Repl::Repl class are possible:
        maxHistLen=> 100, maybe_prompt=> "foo>", maybe_package=> "Foo::Bar",
        maybe_historypath=> ".foo_history", pager=> "more"
        # etc.
@@ -32,11 +32,11 @@ Chj::repl - read-eval-print loop
 
 =head1 DESCRIPTION
 
-For a simple parameterless start of `Chj::Repl`.
+For a simple parameterless start of `Chj::Repl::Repl`.
 
 =head1 SEE ALSO
 
-L<Chj::Repl>: the class implementing this
+L<Chj::Repl::Repl>: the class implementing this
 
 =cut
 
@@ -48,7 +48,7 @@ package Chj::repl;
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
-use Chj::Repl;
+use Chj::Repl::Repl;
 
 sub repl {
     @_ % 2 and die "expecting even number of arguments";
@@ -56,7 +56,7 @@ sub repl {
     my $maybe_skip= delete $args{skip};
     my $maybe_tty= delete $args{tty};
 
-    my $r= new Chj::Repl;
+    my $r= new Chj::Repl::Repl;
 
     if (exists $args{maybe_settingspath}) {
         $r->set_maybe_settingspath(delete $args{maybe_settingspath});
