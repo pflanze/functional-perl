@@ -70,7 +70,7 @@ my $existing_files = $all_paths->filter(unary_operator "-e");
 
 
 
-use Chj::Trapl;
+use FP::Repl::Trap;
 use FP::Repl;
 repl;
 # at the repl, enter 'F $all_paths', 'F $existing_files'

@@ -9,11 +9,11 @@
 
 =head1 NAME
 
-Chj::WithRepl
+FP::Repl::WithRepl
 
 =head1 SYNOPSIS
 
- use Chj::WithRepl;
+ use FP::Repl::WithRepl;
  withrepl { die "foo"; };  # shows the exception, then runs a repl
                            # within the exception context
 
@@ -51,7 +51,7 @@ installation (or n frames back from there, as per the argument to
 =cut
 
 
-package Chj::WithRepl;
+package FP::Repl::WithRepl;
 
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(withrepl push_withrepl pop_withrepl);
@@ -62,7 +62,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 #-- moved up here before any lexicals to avoid their exposure--
 # Wrapping `eval` calls with a special frame
-# (`Chj::WithRepl::WithRepl_eval`) that the handler can test for:
+# (`FP::Repl::WithRepl::WithRepl_eval`) that the handler can test for:
 
 sub WithRepl_eval (&;$) {
     my ($arg, $maybe_package)=@_;
@@ -107,7 +107,7 @@ sub current_user_frame ($) {
     my @v;
     my $i= 0;
     while ((@v)= caller ($i++)) {
-        if ($v[0] ne "Chj::WithRepl") {
+        if ($v[0] ne "FP::Repl::WithRepl") {
             if ($skip) {
                 unless ((@v) = caller ($i + $skip)) {
                     die "skip value goes beyond the end of the stack";
@@ -138,7 +138,7 @@ sub have_eval_since_frame ($) {
 
   SKIP: {
         while ((@v)= caller $i++) {
-            last SKIP if ($v[0] ne "Chj::WithRepl");
+            last SKIP if ($v[0] ne "FP::Repl::WithRepl");
         }
         die "???"
     }

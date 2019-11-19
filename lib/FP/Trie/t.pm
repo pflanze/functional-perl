@@ -148,7 +148,7 @@ sub random_key {
          } 1..$len)
 }
 
-use Chj::WithRepl 'withrepl';##
+use FP::Repl::WithRepl 'withrepl';##
 
 TEST {
     my $trie= empty_trie;

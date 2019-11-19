@@ -13,7 +13,7 @@ use lib "./lib";
 use Test::Requires 'FP::Repl::Dependencies';
 use Test::More;
 use FP::Repl;
-use Chj::Trapl;
+use FP::Repl::Trap;
 use Chj::xpipe;
 use Chj::xperlfunc;
 use Chj::xperlfunc qw(xlaunch);
@@ -161,7 +161,7 @@ do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 Exception: fun at (eval 0) line 1.
 main 1> ,b
-0	Chj::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
+0	FP::Repl::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
 1	main::__ANON__('99') called at (eval 0) line 1
 2	main::__ANON__() called at lib/FP/Repl/Repl.pm line 2
 3	FP::Repl::Repl::__ANON__() called at lib/FP/Repl/Repl.pm line 3
@@ -225,7 +225,7 @@ $VAR1 = '';
   $filterHOME;
 
 
-# (B) from Trapl
+# (B) from FP::Repl::Trap
 t '
 do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 $FP::Repl::Repl::argsn
@@ -243,7 +243,7 @@ $VAR1 = ['fun at (eval 0) line 1.
 main 1> $FP::Repl::Repl::args
 $VAR1 = [99];
 main 1> ,0
-Chj::WithRepl::__ANON__(
+FP::Repl::WithRepl::__ANON__(
   'fun at (eval 0) line 1.
   '
 ) called at (eval 0) line 1

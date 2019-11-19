@@ -35,7 +35,7 @@ There are three ways to run the functional-perl REPL:
  - Run it from somewhere in your program by using `use FP::Repl;` and
    calling `repl;`.
  - Register the repl to be run upon encountering uncaught exceptions
-   by adding `use Chj::Trapl;` somewhere to your code.
+   by adding `use FP::Repl::Trap;` somewhere to your code.
  - Run the [bin/repl](../bin/repl) script, which takes the `-M` option
    like perl itself to load modules of your choice. Or
    [bin/repl+](../bin/repl+) which calls the repl with the most

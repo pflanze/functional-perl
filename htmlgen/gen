@@ -66,7 +66,7 @@ our ($configpath, $inbase, $outbase)= @ARGV;
 our $user_config= require $configpath;
 
 use Chj::Backtrace;
-use Chj::Trapl;#
+use FP::Repl::Trap;#
 use Hash::Util 'lock_hash';
 use Chj::xperlfunc qw(basename dirname);
 use Chj::xIOUtil qw(xgetfile_utf8 xcopyfile);
@@ -607,12 +607,12 @@ fun main () {
 perhaps_run_tests __PACKAGE__
   or do {
       if ($opt_trap) {
-          require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
+          require FP::Repl::WithRepl; &FP::Repl::WithRepl::push_withrepl (0);
       }
 
       $opt_repl ? do {
           require FP::Repl;
-          require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
+          require FP::Repl::WithRepl; &FP::Repl::WithRepl::push_withrepl (0);
           FP::Repl::repl();
       } : main;
 };

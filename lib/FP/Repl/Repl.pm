@@ -93,7 +93,7 @@ package FP::Repl::Repl;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-# Copy from Chj::WithRepl, to prevent circular dependency.  This has
+# Copy from FP::Repl::WithRepl, to prevent circular dependency.  This has
 # to be at the top before any lexicals are defined! so that lexicals
 # from this module are not active in the eval'ed code.
 

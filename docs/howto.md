@@ -804,7 +804,7 @@ interrupted, or purity will break.
   inspect the context and experiment with local function calls.
 
 * Use `Chj::Backtrace` in your program to see errors with stack
-  traces. Or use `Chj::Trapl` to trap uncatched exceptions in a
+  traces. Or use `FP::Repl::Trap` to trap uncatched exceptions in a
   repl.
 
 * Disable tail call optimizations to see the history of function calls

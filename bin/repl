@@ -108,7 +108,7 @@ eval {
 warn $@ if $@;
 
 use Chj::Package::OfPath qw(package_of_path_or_package);
-use Chj::WithRepl qw(push_withrepl WithRepl_eval WithRepl_eval_e);
+use FP::Repl::WithRepl qw(push_withrepl WithRepl_eval WithRepl_eval_e);
 
 push_withrepl (0)
   if $opt_t;

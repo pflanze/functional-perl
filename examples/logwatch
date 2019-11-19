@@ -116,7 +116,7 @@ use Chj::IO::Command;
 use Chj::xpipe;
 use Chj::singlequote;
 use FP::Show;
-#use Chj::Trapl; # or Chj::Backtrace
+#use FP::Repl::Trap; # or Chj::Backtrace
 #use FP::Repl;
 
 

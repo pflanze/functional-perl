@@ -10,7 +10,7 @@ use lib "./lib";
 use Chj::IO::Command;
 use Chj::xopen qw(xopen_read xopen_write);
 use FP::List ':all';
-use Chj::AutoTrapl;
+use FP::Repl::AutoTrap;
 
 
 our $excludepath= ".update-manifest.exclude";

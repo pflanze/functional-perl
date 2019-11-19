@@ -96,5 +96,5 @@ sub do_log {
     # But -T is off here.)
 }
 
-#use Chj::ruse; use Chj::Trapl; use FP::Repl; repl;
+#use Chj::ruse; use FP::Repl::Trap; use FP::Repl; repl;
 do_log;

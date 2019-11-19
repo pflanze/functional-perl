@@ -460,7 +460,7 @@ fun pdf_to_html ($infile) {
 
 
 if ($ENV{DEBUG}) {
-    require Chj::AutoTrapl;
+    require FP::Repl::AutoTrap;
     FP::Repl::repl();
 } else {
     perhaps_run_tests __PACKAGE__ or do {

@@ -60,8 +60,8 @@ our %dependencies=
          FP::Repl::Repl
          FP::Repl::StackPlus
          Chj::Serialize
-         Chj::Trapl
-         Chj::WithRepl
+         FP::Repl::Trap
+         FP::Repl::WithRepl
          FP::Repl
          FP::Trie::t
     ),

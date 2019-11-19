@@ -32,7 +32,7 @@ use FP::Ops ":all";
 use Chj::TEST ":all";
 use FP::Equal;
 use FP::Repl::Stack;
-use Chj::Trapl; # or Chj::Backtrace
+use FP::Repl::Trap; # or Chj::Backtrace
 use FP::Repl;
 use FP::Hash ":all";
 use FP::Show;

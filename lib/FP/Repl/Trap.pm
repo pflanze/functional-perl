@@ -9,33 +9,33 @@
 
 =head1 NAME
 
-Chj::Trapl
+FP::Repl::Trap
 
 =head1 SYNOPSIS
 
- use Chj::Trapl;
+ use FP::Repl::Trap;
  die "fun"; # opens a repl from FP::Repl
 
 =head1 DESCRIPTION
 
-Dead-simple wrapper around Chj::WithRepl that simply enables trapping
+Dead-simple wrapper around FP::Repl::WithRepl that simply enables trapping
 globally.
 
 NOTE: the name is not set in stone yet, also, perhaps it should be
-*merged* with Chj::WithRepl.
+*merged* with FP::Repl::WithRepl.
 
 =head1 SEE ALSO
 
-L<Chj::WithRepl>, L<Chj::AutoTrapl>
+L<FP::Repl::WithRepl>, L<FP::Repl::AutoTrap>
 
 =cut
 
 
-package Chj::Trapl;
+package FP::Repl::Trap;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::WithRepl;
+use FP::Repl::WithRepl;
 
 push_withrepl (0);
 

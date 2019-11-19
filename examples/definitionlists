@@ -52,7 +52,7 @@ use FP::Ops qw(the_method);
 use FP::Ops ":all"; #qw(the_method);
 use FP::Combinators ":all";
 use Chj::ruse;
-use Chj::Trapl;
+use FP::Repl::Trap;
 use FP::Repl;
 
 

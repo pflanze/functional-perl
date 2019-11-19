@@ -66,10 +66,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   decide that have to, or otherwise appropriately (handling of
   promises, should it let methods shine through via can?)
 
-* die vs. croak: die is nice since `Chj::Trapl` will go to the real
+* die vs. croak: die is nice since `FP::Repl::Trap` will go to the real
   location, how is the situation with croak? (Also, `Chj::Backtrace`?)
   In `FP::Repl`, skip call frames within `Carp` and similar like
-  `Chj::WithRepl` (maybe the same way calling code from `Carp`, or
+  `FP::Repl::WithRepl` (maybe the same way calling code from `Carp`, or
   perhaps `Trace::Mask`)?
 
 * Would it be possible to write either an XS module that allows to
@@ -139,7 +139,7 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 * Add ->[$i] to RandomAccessSequence protocol. Move ref and set over
   to RandomAccessSequence protocol?
 
-* `Chj::Trapl`, `Chj::AutoTrapl`, tests: check `DEBUG` or `BACKTRACE`
+* `FP::Repl::Trap`, `FP::Repl::AutoTrap`, tests: check `DEBUG` or `BACKTRACE`
   or similar env var(s) to make it possible to enable permanently in
   the code but stay really safe (never break the situation for any
   user). Write docs about it.
@@ -184,7 +184,7 @@ usefully listed first).
 - migrate `FP::Struct` functionality as Moose extensions or something?
 
 - merge FP::Repl with other repls/debuggers? Also,
-  Chj::{Trapl,WithRepl,Backtrace}. They are still fertile grounds for
+  Chj::{FP::Repl::Trap,WithRepl,Backtrace}. They are still fertile grounds for
   experimentation, though, thus shouldn't merge things too soon.
 
 - maybe `FP::Path` is not general or useful enough to keep

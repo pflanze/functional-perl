@@ -130,7 +130,7 @@ fun find_below ($path, $pred) {
 }
 
 
-#use Chj::Trapl; # or Chj::Backtrace
+#use FP::Repl::Trap; # or Chj::Backtrace
 #use FP::Repl;repl;
 
 my $s= find_below ($rootdir, *is_maildir);

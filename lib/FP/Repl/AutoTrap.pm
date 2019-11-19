@@ -9,26 +9,26 @@
 
 =head1 NAME
 
-Chj::AutoTrapl -- use Chj::Trapl on tty, Chj::Backtrace otherwise
+FP::Repl::AutoTrap -- use FP::Repl::Trap on tty, Chj::Backtrace otherwise
 
 =head1 SYNOPSIS
 
-  use Chj::AutoTrapl;
+  use FP::Repl::AutoTrap;
 
 =head1 DESCRIPTION
 
 This checks whether stdin and stdout are going to a tty, if so, then
-activate Chj::Trapl to trap errors in a repl, otherwise just activate
+activate FP::Repl::Trap to trap errors in a repl, otherwise just activate
 Chj::Backtrace.
 
 =head1 SEE ALSO
 
-L<Chj::Trapl>, L<Chj::Backtrace>
+L<FP::Repl::Trap>, L<Chj::Backtrace>
 
 =cut
 
 
-package Chj::AutoTrapl;
+package FP::Repl::AutoTrap;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -37,8 +37,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use POSIX qw(isatty);
 
 if (isatty(0) and isatty(1)) {
-    require Chj::WithRepl;
-    import Chj::WithRepl;
+    require FP::Repl::WithRepl;
+    import FP::Repl::WithRepl;
     push_withrepl (0);
 } else {
     require Chj::Backtrace;

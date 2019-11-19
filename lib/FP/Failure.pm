@@ -114,7 +114,7 @@ be imported mutably via '*trace_failures'; default: false), then a
 stack trace is collected with the failures and displayed with
 `message` (if a true value is passed to message ?). (XX: use
 `BACKTRACE=1` idea here, too?  Implement the same in `Chj::Backtrace`,
-too, and Trapl if fitting?)
+too, and FP::Repl::Trap if fitting?)
 
 If the variable `$FP::Failure::use_failure` is set to true (it can be
 imported mutably via '*use_failures'; default: false), then the

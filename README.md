@@ -143,7 +143,7 @@ with fixes.)
   functions.
 
 * some developer utilities: `FP::Repl`, `Chj::ruse`, `Chj::Backtrace`,
-  `Chj::Trapl`.
+  `FP::Repl::Trap`.
 
 * [lib/Chj/IO/](lib/Chj/IO/), and its users/wrappers
   `Chj::xopen`,

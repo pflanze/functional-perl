@@ -53,7 +53,7 @@ use Chj::xopen qw(glob_to_fh);
 use FP::Ops qw(cut_method unary_operator);
 use Chj::TEST;
 
-#use Chj::Trapl; # or Chj::Backtrace
+#use FP::Repl::Trap; # or Chj::Backtrace
 
 my $config= require $mappingfile;
 ref($config) eq "HASH"

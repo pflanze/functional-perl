@@ -18,7 +18,7 @@ use lib "$mydir/../lib";
 use Chj::xopen qw(xopen_read xopen_write);
 use Chj::TEST ":all";
 use Chj::xIOUtil qw(xgetfile_utf8);
-#use Chj::Trapl; $SIG{INT}=sub{ die "SIGINT" };
+#use FP::Repl::Trap; $SIG{INT}=sub{ die "SIGINT" };
 
 
 sub usage {

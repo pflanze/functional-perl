@@ -40,7 +40,7 @@ use Chj::TEST;
     package Chj::Serialize::Closure;
 
     use PadWalker qw(closed_over set_closed_over);
-    use Chj::WithRepl qw(WithRepl_eval);
+    use FP::Repl::WithRepl qw(WithRepl_eval);
     use B::Deparse;
     use FP::Predicates ":all";
 

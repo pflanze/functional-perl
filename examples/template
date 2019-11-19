@@ -40,7 +40,7 @@ use Chj::TEST;
 
 # for development/debugging
 use Chj::ruse;
-use Chj::Trapl; # or Chj::Backtrace
+use FP::Repl::Trap; # or Chj::Backtrace
 use FP::Repl;
 
 # add your own code.... (possibly adding `repl` calls within, too;

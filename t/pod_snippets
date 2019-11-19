@@ -31,7 +31,7 @@ my %ignore= map{ $_=> 1}
     FP::Untainted
     FP::IOStream
     FP::Interfaces
-    Chj::AutoTrapl
+    FP::Repl::AutoTrap
     Chj::Backtrace
     Chj::BinHexOctDec
     Chj::BuiltinTypePredicates
@@ -57,11 +57,11 @@ my %ignore= map{ $_=> 1}
     FP::Repl::corefuncs
     Chj::Serialize
     Chj::TerseDumper
-    Chj::Trapl
+    FP::Repl::Trap
     Chj::Unix::Exitcode
     Chj::Unix::Signal
     Chj::Util::AskYN
-    Chj::WithRepl
+    FP::Repl::WithRepl
     Chj::chompspace
     Chj::constructorexporter
     Chj::pp
@@ -95,8 +95,8 @@ sub save {
     close $out or die $!;
 
     if ($ENV{DEBUG}) {
-        print "=== Running again as expanded file '$file' and with Trapl..\n";
-        system("perl", "-Mlib=./lib", "-MChj::Trapl", $file);
+        print "=== Running again as expanded file '$file' and with FP::Repl::Trap..\n";
+        system("perl", "-Mlib=./lib", "-MFP::Repl::Trap", $file);
         exit 1
     }
 }

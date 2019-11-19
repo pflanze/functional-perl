@@ -153,7 +153,7 @@ fun sendprepare ($path) {
 
 
 $ENV{DEBUG} ? do {
-    require Chj::Trapl;
+    require FP::Repl::Trap;
     FP::Repl::repl();
 } : do {
     perhaps_run_tests __PACKAGE__ or

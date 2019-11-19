@@ -68,7 +68,6 @@ htmlgen/htmlgen.css
 intro/basics
 intro/more_tailcalls
 intro/tailcalls
-lib/Chj/AutoTrapl.pm
 lib/Chj/Backtrace.pm
 lib/Chj/BinHexOctDec.pm
 lib/Chj/BuiltinTypePredicates.pm
@@ -92,11 +91,9 @@ lib/Chj/Package/OfPath.pm
 lib/Chj/Serialize.pm
 lib/Chj/TEST.pm
 lib/Chj/TerseDumper.pm
-lib/Chj/Trapl.pm
 lib/Chj/Unix/Exitcode.pm
 lib/Chj/Unix/Signal.pm
 lib/Chj/Util/AskYN.pm
-lib/Chj/WithRepl.pm
 lib/Chj/chompspace.pm
 lib/Chj/constructorexporter.pm
 lib/Chj/noTEST.pm
@@ -149,10 +146,13 @@ lib/FP/Path/t.pm
 lib/FP/Predicates.pm
 lib/FP/PureArray.pm
 lib/FP/Repl.pm
+lib/FP/Repl/AutoTrap.pm
 lib/FP/Repl/Dependencies.pm
 lib/FP/Repl/Repl.pm
 lib/FP/Repl/Stack.pm
 lib/FP/Repl/StackPlus.pm
+lib/FP/Repl/Trap.pm
+lib/FP/Repl/WithRepl.pm
 lib/FP/Repl/corefuncs.pm
 lib/FP/Show.pm
 lib/FP/Show/Base/FP_Struct.pm
