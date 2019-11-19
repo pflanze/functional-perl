@@ -1,9 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Tue Jul 16 19:07:50 BST 2013
 (my $email='copying%christianjaeger,ch')=~ tr/%,/@./;
 
-use strict;
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
 
