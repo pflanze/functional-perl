@@ -37,7 +37,9 @@ use them.)
 
 *NOTE: since this was written, the method call based style has become
  the primary way to provide functionality, and function based access
- is spotty now. TODO: rewrite this section.*
+ is spotty now. TODO: rewrite this section. BTW, providing functions
+ would be good but provide generic wrappers (which also work for
+ builtin types which can't have methods)--TODO.*
 
 The sequence processing functions use the argument order conventions
 from functional programming languages (Scheme, Ocaml, Haskell). The
