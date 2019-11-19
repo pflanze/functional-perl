@@ -38,7 +38,7 @@ Chj::WithRepl
 =head1 DESCRIPTION
 
 Sets `$SIG{__DIE__}` to a wrapper that shows the exception then calls
-a repl from L<Chj::repl>. This means, when getting an exception,
+a repl from L<Chj::Repl>. This means, when getting an exception,
 instead of terminating the program (with a message), you get a chance
 to inspect the program state interactively.
 
@@ -89,7 +89,7 @@ sub WithRepl_eval_e (&;$) {
     }
 }
 
-use Chj::repl;
+use Chj::Repl;
 use Chj::Repl::Stack;
 use Chj::TEST;
 

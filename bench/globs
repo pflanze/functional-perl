@@ -26,7 +26,7 @@ use lib "$mydir/../lib";
                 # since we're putting the meat of the program into the
                 # main file, this won't help us here.
 use Chj::Backtrace; # show backtraces when an error happens
-use Chj::repl; # get the 'repl' procedure.
+use Chj::Repl; # get the 'repl' procedure.
 use Chj::TEST;
 
 # ------------------------------------------------------------------

@@ -12,7 +12,7 @@ repl=$(dirname "$0")/repl
 $repl \
  -t \
  -M Chj::ruse \
- -M Chj::repl \
+ -M Chj::Repl \
  -M FP::TransparentLazy \
  -M FP::List=:all \
  -M FP::Stream=:all \

@@ -59,7 +59,7 @@ TEST { P(cons I("Hello"), B(cons null, "World"))->string }
 
 
 use Chj::Backtrace;
-use Chj::repl;
+use Chj::Repl;
 
 perhaps_run_tests(__PACKAGE__) or repl;
 

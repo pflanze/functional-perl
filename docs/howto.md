@@ -787,8 +787,8 @@ interrupted, or purity will break.
 
 ### General
 
-* Write small functions, test them from an embedded `use Chj::repl;
-  repl;` (or `Chj::repl();` if already loaded elsewhere) placed in the
+* Write small functions, test them from an embedded `use Chj::Repl;
+  repl;` (or `Chj::Repl::repl();` if already loaded elsewhere) placed in the
   module body. Write bigger functions by reusing smaller ones. Write
   test cases (using `Chj::TEST` to make it as easy as possible) for
   all of them so that when you need to adapt a function, you can

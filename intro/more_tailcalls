@@ -23,7 +23,7 @@ use lib "$mydir/../lib";
 
 use Chj::TEST;
 use Chj::Backtrace;
-use Chj::repl;
+use Chj::Repl;
 
 # This needs `Method::Signatures`, which is likely packaged
 # (libmethod-signatures-perl in Debian), and `Sub::Call::Tail` which

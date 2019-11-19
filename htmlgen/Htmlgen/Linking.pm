@@ -243,7 +243,7 @@ use Sub::Call::Tail;
                         unless ($self->maybe_have_path0->($p0)) {
                             warn "link target does not exist: ".show($p0).
                               "('$path' from '$selfpath0', link '$href')";
-                            #use Chj::repl;repl;
+                            #use Chj::Repl;repl;
                         }
                         ($path, $uri, $self->pathtranslate->is_md($path))
                     }

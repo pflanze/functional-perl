@@ -33,7 +33,7 @@ use Chj::TEST ":all";
 use FP::Equal;
 use Chj::Repl::Stack;
 use Chj::Trapl; # or Chj::Backtrace
-use Chj::repl;
+use Chj::Repl;
 use FP::Hash ":all";
 use FP::Show;
 use FP::Array_sort ":all";

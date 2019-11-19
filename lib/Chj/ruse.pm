@@ -13,7 +13,7 @@ Chj::ruse - reload modules
 
 =head1 SYNOPSIS
 
- use Chj::repl;
+ use Chj::Repl;
  use Foo;
  use Chj::ruse;
  use Bar qw(biz bim);

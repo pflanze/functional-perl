@@ -84,7 +84,7 @@ Completion:
 
 =head1 SEE ALSO
 
-L<Chj::repl>: easy wrapper
+L<Chj::Repl>: easy wrapper
 
 =cut
 

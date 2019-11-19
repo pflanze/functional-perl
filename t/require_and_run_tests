@@ -62,7 +62,7 @@ our %dependencies=
          Chj::Serialize
          Chj::Trapl
          Chj::WithRepl
-         Chj::repl
+         Chj::Repl
          FP::Trie::t
     ),
   );
@@ -92,5 +92,5 @@ done_testing;
 
 #use Chj::ruse;
 #use Chj::Backtrace;
-#use Chj::repl;
+#use Chj::Repl;
 #repl;

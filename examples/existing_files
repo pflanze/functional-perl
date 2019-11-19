@@ -71,6 +71,6 @@ my $existing_files = $all_paths->filter(unary_operator "-e");
 
 
 use Chj::Trapl;
-use Chj::repl;
+use Chj::Repl;
 repl;
 # at the repl, enter 'F $all_paths', 'F $existing_files'

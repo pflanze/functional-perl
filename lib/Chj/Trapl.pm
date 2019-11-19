@@ -14,7 +14,7 @@ Chj::Trapl
 =head1 SYNOPSIS
 
  use Chj::Trapl;
- die "fun"; # opens a repl from Chj::repl
+ die "fun"; # opens a repl from Chj::Repl
 
 =head1 DESCRIPTION
 

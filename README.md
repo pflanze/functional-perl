@@ -142,7 +142,7 @@ with fixes.)
   system" for XML based markup languages by way of Perl
   functions.
 
-* some developer utilities: `Chj::repl`, `Chj::ruse`, `Chj::Backtrace`,
+* some developer utilities: `Chj::Repl`, `Chj::ruse`, `Chj::Backtrace`,
   `Chj::Trapl`.
 
 * [lib/Chj/IO/](lib/Chj/IO/), and its users/wrappers

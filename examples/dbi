@@ -23,7 +23,7 @@ use PXML::XHTML ":all";
 use FP::Weak;
 
 use Chj::Backtrace;
-use Chj::repl;
+use Chj::Repl;
 
 
 our $db= FP::DBI->connect ("dbi:CSV:");

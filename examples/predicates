@@ -19,7 +19,7 @@ use lib "$mydir/../lib";
 use Chj::TEST
   use=> 'Chj::Repl::Dependencies';
 use Chj::Backtrace;
-use Chj::repl;
+use Chj::Repl;
 
 
 {

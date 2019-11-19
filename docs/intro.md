@@ -27,12 +27,12 @@ being able to inspect the context (stack) from where they were
 called. Functional Perl is no exception.
 
 (NOTE: the author didn't know about the `reply` repl and maybe others
-when finishing the work on this; he originally started `Chj::repl` in
+when finishing the work on this; he originally started `Chj::Repl` in
 2004. It might be worth merging the efforts.)
 
 There are three ways to run the functional-perl REPL:
 
- - Run it from somewhere in your program by using `use Chj::repl;` and
+ - Run it from somewhere in your program by using `use Chj::Repl;` and
    calling `repl;`.
  - Register the repl to be run upon encountering uncaught exceptions
    by adding `use Chj::Trapl;` somewhere to your code.

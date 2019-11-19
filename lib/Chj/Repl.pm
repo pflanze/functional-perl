@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -9,15 +9,12 @@
 
 =head1 NAME
 
-Chj::repl - read-eval-print loop
+Chj::Repl - read-eval-print loop
 
 =head1 SYNOPSIS
 
- use Chj::repl;
+ use Chj::Repl;
  repl;
- # -or-
- use Chj::repl();
- Chj::repl();
 
  # pass parameters (any fields of the Chj::Repl::Repl class):
  repl (skip=> 3, # skip 3 caller frames (when the repl call is nested
@@ -41,7 +38,7 @@ L<Chj::Repl::Repl>: the class implementing this
 =cut
 
 
-package Chj::repl;
+package Chj::Repl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(repl);
 @EXPORT_OK=qw();
@@ -73,6 +70,6 @@ sub repl {
     my $m= $r->can("run"); @_=($r, $maybe_skip); goto &$m
 }
 
-*Chj::repl= \&repl;
+*Chj::Repl= \&repl;
 
 1

@@ -53,7 +53,7 @@ use FP::Ops ":all"; #qw(the_method);
 use FP::Combinators ":all";
 use Chj::ruse;
 use Chj::Trapl;
-use Chj::repl;
+use Chj::Repl;
 
 
 use FP::Struct 'definitionlists::Match'=> ["value"],

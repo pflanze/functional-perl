@@ -65,7 +65,7 @@ my %ignore= map{ $_=> 1}
     Chj::chompspace
     Chj::constructorexporter
     Chj::pp
-    Chj::repl
+    Chj::Repl
     Chj::ruse
     Chj::time_this
     Chj::xIOUtil

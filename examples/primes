@@ -23,7 +23,7 @@ use Chj::TEST
   use=> 'Chj::Repl::Dependencies',
   use=> 'Method::Signatures';
 use Chj::Backtrace;
-use Chj::repl;
+use Chj::Repl;
 use FP::List ":all";
 use FP::Ops ":all";
 use FP::Lazy ":all";

@@ -160,8 +160,8 @@ GetOptions("verbose"=> \$verbose,
 # called for testing or debugging:
 
 if ($opt_repl) {
-    require Chj::repl;
-    Chj::repl();
+    require Chj::Repl;
+    Chj::Repl::repl();
     exit 0
 }
 
