@@ -16,10 +16,10 @@ FP::Predicates
     use FP::Predicates;
 
     is is_string("Hi"), 1;
-    is is_string(["Hi"]), '';
+    is is_string(["Hi"]), 0;
     use FP::List; use FP::Equal 'is_equal';
     is_equal list(1, 2, 3, 0, -1, "hi")->map(*is_natural0),
-             list(1, 1, 1, 1, '', '');
+             list(1, 1, 1, 1, 0, 0);
 
     package Foo {
         use FP::Predicates;
@@ -226,12 +226,12 @@ sub is_odd ($) {
 }
 
 TEST { [map { is_even $_ } -3..3] }
-  ['',1,'',1,'',1,''];
+  [0,1,0,1,0,1,0];
 TEST { [map { is_odd $_ } -3..3] }
   [1,0,1,0,1,0,1];
 TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
   # XX what should it give?
-  ['','',1,1,1];
+  [0,0,1,1,1];
 
 
 # no `is_` prefix as those are not the final predicates (they are
@@ -335,10 +335,10 @@ sub is_procedure ($) {
       or fail "is_procedure", $_[0]
 }
 
-TEST { is_procedure [] } '';
+TEST { is_procedure [] } 0;
 TEST { is_procedure \&is_procedure } 1;
 TEST { is_procedure *is_procedure } 1;
-TEST { is_procedure *fifu } '';
+TEST { is_procedure *fifu } 0;
 
 
 my $classpart_re= qr/\w+/;
@@ -372,7 +372,7 @@ sub is_subclass_of ($$) {
         or fail "is_subclass_of", $v, $cl
 }
 
-TEST { my $v= "IO"; is_instance_of $v, "IO" } '';
+TEST { my $v= "IO"; is_instance_of $v, "IO" } 0;
 TEST { my $v= bless [], "IO"; is_instance_of $v, "IO" } 1;
 TEST { my $v= "IO"; is_subclass_of $v, "IO" } 1;
 TEST { require Chj::IO::File;
@@ -479,7 +479,7 @@ sub complement ($) {
 TEST {
     my $t= complement (\&is_natural);
     [map { &$t($_) } (-1,0,1,2,"foo")]
-} [1,1,'','',1];
+} [1,1,0,0,1];
 
 
 sub either {

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -82,7 +82,7 @@ TEST { is_pure_object cons 1,2 }
   1;
 
 TEST { is_pure [ 1,2 ] }
-  '';
+  0;
 
 TEST { is_pure purearray 1, 2 }
   1;
@@ -90,8 +90,8 @@ TEST { is_pure purearray 1, 2 }
 use FP::Lazy;
 
 TEST { is_pure lazy { cons 1,2 } }
-  ''; # or should it force it? XX or (wildly) assume that lazy
-      # expressions are always returning pure values?
+  0; # or should it force it? XX or (wildly) assume that lazy
+     # expressions are always returning pure values?
 
 
 use FP::OrderedCollection; # based on FP::Struct

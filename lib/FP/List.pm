@@ -1775,7 +1775,7 @@ TEST { string_to_list("Hello ") ->every(\&char_is_alphanumeric) }
 
 # none is defined in FP::Abstract::Sequence
 TEST { string_to_list("Hello") ->none(\&char_is_alphanumeric) }
-  '';
+  0;
 TEST { string_to_list(" -()&") ->none(\&char_is_alphanumeric) }
   1;
 TEST {
@@ -1783,13 +1783,13 @@ TEST {
     my $r=string_to_list(" -()&a")->none(sub { $z++; char_is_alphanumeric $_[0] });
     [$z,$r]
 }
-  [6, ''];
+  [6, 0];
 TEST {
     my $z=0;
     my $r=string_to_list(" a-()&a")->none(sub { $z++; char_is_alphanumeric $_[0] });
     [$z,$r]
 }
-  [2, ''];
+  [2, 0];
 
 
 sub list_any ($ $) {

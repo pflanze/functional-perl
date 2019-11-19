@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -47,7 +47,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
              3,
              {3=>4},
         )->map(*is_sequence)->array }
-  [ 1,1,1,1,1,'','','' ];
+  [ 1,1,1,1,1,0,0,0 ];
 
 
 # more tests:
