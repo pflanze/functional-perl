@@ -171,6 +171,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * Add a Changes file.
 
+* e.g. when implementing `FP::Interfaces`, how to collect the values
+  from all super classes? Well, use `NEXT::` and make these methods
+  folds (take a rest argument)!
+
 ## Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
