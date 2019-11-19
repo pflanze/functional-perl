@@ -101,8 +101,8 @@ non-failure values, as obviously those include false as well), or
 checked via the `is_failure` function.
 
 The `value` method delivers the first argument given to `failure`,
-`maybe_parents` an array of the remaining ones which are meant for
-chaining failures (reasons why this failure happened). `message`
+`maybe_parents` the second, which is an array of the parents, meant
+for chaining failures (reasons why this failure happened). `message`
 produces a somewhat nice to read string, multi-line if parents are
 chained in.
 
