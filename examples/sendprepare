@@ -1,12 +1,11 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
-#use Sub::Call::Tail;
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -34,64 +33,130 @@ our $verbose=0;
 GetOptions("verbose"=> \$verbose,
            "help"=> sub{usage}) or exit 1;
 
-#use Chj::Trapl; use FP::Repl;
 use FP::List;
 use FP::IOStream qw(xfile_replace_lines);
 use FP::Ops qw(regex_match);
 use FP::Predicates qw(complement either);
-# ^ should these (also) be in FP::Combinators?
+use Chj::chompspace;
+use Chj::TEST;
 
 # do not warn about failures to keep owner, or backups, due to
 # different user than owner
 local $Chj::IO::Tempfile::warn_all_failures= 0;
 
 
+# Split lines into head and body (at the first empty line)
+
+fun lines_head_and_body($lines) {
+    $lines->take_while_and_rest(
+        complement regex_match qr/^\n\z/s)
+}
+
+
+# Get headers of given name; this ad-hoc mail "parser" unsafely assumes
+# that the headers we're interested in consist of one line only
+
+fun head_get ($head, $name) {
+    $head->filter(regex_match qr/^\Q$name:/i)
+}
+
+# Get one of the headers
+
+fun head_xgetone ($head, $name) {
+    my ($header)= head_get($head, $name)->perhaps_one
+        or die "missing header '$name'";
+    $header
+}
+
+# Extract the value of a header
+
+fun header_value ($header) {
+    $header=~ s/^[^:]+://
+        or die "header line missing a key: '$header'";
+    chompspace $header
+}
+
+TEST { header_value "From:  <foo\@br>\t\n" } '<foo@br>';
+
+
 sub regex_from_strings {
     join ("|", map { quotemeta $_ } @_)
 }
 
+my $drop_header_name_regex=
+    regex_from_strings(qw(
+                       Return-Path
+                       BCC
+                       X-K9mail-Identity
+                       User-Agent
+                       Date
+                       Message-ID));
 
-# This ad-hoc mail "parser" unsafely assumes that the headers we're
-# interested in consist of one line only
+fun fixlines ($lines) {
+    my ($head, $body)= lines_head_and_body $lines;
 
-fun xheader ($head, $name) {
-    $head->filter (regex_match qr/^\Q$name:/)->xone
-}
-
-fun fixlines ($orig) {
-    my ($head,$rest)= $orig->
-      take_while_and_rest (complement regex_match qr/^\n\z/s);
-
-    my $from= xheader $head, "From";
+    my $from= head_xgetone $head, "From";
     my ($fromaddr)= $from=~ m@<([^<>]+)>@s
-      or die "missing from address in '$from'";
+        or die "missing from address in '$from'";
     my ($fromwhole)= $from=~ m@.?: *([^\n]*)@s
-      or die "?";
+        or die "?";
     my ($fromdomain)= $fromaddr=~ m{\@(.*)}s
-      or die "?";
-    my $messageid= xheader $head, "Message-ID";
+        or die "?";
+    my $messageid= head_xgetone $head, "Message-ID";
     my ($messageid_uuid)= $messageid=~ m{([^<>@]+)\@}s
-      or die "no match in messageid '$messageid'";
+        or die "no match in messageid '$messageid'";
+    my $bcc_values=
+        cons $fromwhole,
+        head_get($head, "BCC")->map(*header_value);
 
     (cons "Return-Path: <$fromaddr>\n",
-     cons "BCC: $fromwhole\n",
-     $head->filter_with_tail
-     (complement
-      (regex_match ("^".
-                    regex_from_strings (qw(Return-Path
-                                           BCC
-                                           X-K9mail-Identity
-                                           User-Agent
-                                           Date
-                                           Message-ID)).
-                    ":")),
-      cons "Message-ID: <$messageid_uuid\@$fromdomain>\n",
-      $rest))
+     cons "BCC: ".$bcc_values->strings_join(", ")."\n",
+     $head->filter_with_tail(
+         complement(regex_match("(?^i:^$drop_header_name_regex:)")),
+         cons "Message-ID: <$messageid_uuid\@$fromdomain>\n", $body))
 }
+
+
+fun string2lines ($str) {
+    list map { "$_\n" } split /\n/, $str
+}
+
+TEST {
+    fixlines(string2lines
+'return-path: Hello
+from: <foo@bar.com>
+To: Heiri Hunten <heiri.hunten@example.com>
+Bcc: some@where.com
+message-id: 1235@meh
+user-agent: tester
+
+Hi There!
+
+All good?
+')->strings_join("")
+}
+'Return-Path: <foo@bar.com>
+BCC: <foo@bar.com>, some@where.com
+from: <foo@bar.com>
+To: Heiri Hunten <heiri.hunten@example.com>
+Message-ID: <message-id: 1235@bar.com>
+
+Hi There!
+
+All good?
+';
+
 
 fun sendprepare ($path) {
     xfile_replace_lines $path, *fixlines;
 }
 
-sendprepare $_ for @ARGV;
+
+$ENV{DEBUG} ? do {
+    require Chj::Trapl;
+    FP::Repl::repl();
+} : do {
+    perhaps_run_tests __PACKAGE__ or
+        do { sendprepare $_ for @ARGV };
+};
 
