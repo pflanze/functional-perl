@@ -10,6 +10,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 ## Work on the code
 
+* See entries in BUGS pod sections (e.g. `FP::Show` cycles, `FP::Repl`
+  bugs)
+
 * Consistently use "{ package Foo; ... }" or "package Foo { ... }"
   (latter if compatible with the minimal required Perl version)
 
@@ -146,6 +149,8 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   equal(@_) doesn't work, any similar issues?; `is equal $a,$b, $c`
   doesn't work anyway; con: why provide a syntactically rich language
   if it's not to be used (but, where does it help?))
+
+* Add a Changes file.
 
 ## Get rid of unnecessary home-grown code
 
