@@ -366,5 +366,10 @@ The current mix seems to work well, but details are still open for
 change.
 
 
+## Various / "Hacking"
+
+* The project is now using spaces for indentation (no tabs).
+
+
 </with_toc>
 
