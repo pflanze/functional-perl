@@ -42,7 +42,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   handle it again?
 
 * In `t/pod_snippets`, remove entries from the ignore list and fix
-  their pod snippets.
+  their pod snippets. Also, now that pod snippets can be tested
+  directly, remove duplicates of tests e.g. in `t/fp-struct` (and in
+  general move tests to POD?)
   
 * Make `FP::Struct` immutable, unless requested by user (using similar
   approach like taken in `FP::List`); like wise for StrictList etc.;
