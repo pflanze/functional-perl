@@ -185,7 +185,7 @@ howto/design documents.
 
     These are the slides of an introductory presentation, but there's
     no recording and the slides may not be saying enough for
-    understanding. (Todo: add text of speach somehow?)
+    understanding. It's also somewhat outdated.
 
 * [__Intro directory__](intro/)
 
@@ -197,7 +197,10 @@ howto/design documents.
     1. [tailcalls](intro/tailcalls)
     1. [more_tailcalls](intro/more_tailcalls)
 
-    This doesn't go very far yet (todo: add more).
+    This doesn't go very far yet (todo: add more). Also, please note
+    that `Sub::Call::Tail` is currently broken with newer Perl
+    versions (todo: look into fixing it or whether it is possible to
+    imlement it in a simpler manner).
 
 * [__Examples__](examples/README.md)
 
@@ -222,17 +225,11 @@ howto/design documents.
     functional programming, you may find it in *[Higher-Order
     Perl](http://hop.perl.plover.com/)* by Mark Jason Dominus.  This book
     was written long before the functional-perl project was started, and
-    does various details differently, and IIRC doesn't care about memory
-    retention problems (to be fair, at the time the book was written the
-    perl interpreter wouldn't have allowed to avoid them anyway). Also,
-    IIRC it bundles lazy evaluation into the list elements (pairs);
-    separating these concerns should be preferable as they are then
-    more universally usable and combinable. (Todo: reread book,
-    contact author.)
+    does various details differently.
 
 Please ask [me](http://leafpair.com/contact) or on the
-[[mailing_list]] if you'd like to meet up in London or Switzerland to
-get an introduction in person.
+[[mailing_list]] if you'd like to meet up in London, Berlin or
+Switzerland to get an introduction in person.
 
 
 ## Dependencies

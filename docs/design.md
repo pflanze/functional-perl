@@ -35,6 +35,10 @@ use them.)
 
 ### Generally provide functionality both as functions and methods.
 
+*NOTE: since this was written, the method call based style has become
+ the primary way to provide functionality, and function based access
+ is spotty now. TODO: rewrite this section.*
+
 The sequence processing functions use the argument order conventions
 from functional programming languages (Scheme, Ocaml, Haskell). The
 methods move the sequence argument to the object position.
@@ -276,6 +280,10 @@ way of checking for a '(&' method?))
 
 ## Purity
 
+*NOTE: current Perl versions support immutability, and using it has
+ been enabled in some of the modules; TODO: make this support
+ complete, and rewrite this section.*
+
 Perl does not have a compile time type checker to guarantee
 (sub-)programs to be purely functional like e.g. Haskell does, but
 programs could still enforce checks at run time.
@@ -335,6 +343,9 @@ though.)
 
 
 ## Lazyness
+
+*NOTE: There is `FP::TransparentLazy` now. TODO: rewrite this
+ section.*
 
 Promises created with `FP::Lazy` are not automatically forced when
 used by perl builtins (todo: should they?). Also, type predicates
