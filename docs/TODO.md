@@ -90,7 +90,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * Add a `boolean_eq` function?
 
-* Show: handle cycles; pretty printing.
+* Show: handle cycles; pretty printing. Also, add an auto-forcing
+  dynamic parameter and print immediately instead of building a string
+  (have `show` just capture that)?
 
 * Be consistent with exceptions, `array_drop [4], 3` should probably
   give one.
