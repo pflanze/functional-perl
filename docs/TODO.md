@@ -13,6 +13,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 * See entries in BUGS pod sections (e.g. `FP::Show` cycles, `FP::Repl`
   bugs)
 
+* `FP::Failure`: add tests. Solve the `complement` issue (which would
+  mean, make FP::Result and use that)?
+
 * Consistently use "{ package Foo; ... }" or "package Foo { ... }"
   (latter if compatible with the minimal required Perl version)
 
@@ -25,6 +28,8 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   `FP::Lib::` or something? They are still about a type; but
   `FP::Array` may break it (will want to use `FP::Array` as the class,
   hence `FP::Lib::Array` for the functions?)
+
+* Rename `FP::Struct` to `FP::Define::Struct`?
 
 * Make generic functions (for sequences) that work with both objects
   (which implement the method of the same name) and non-objects that
