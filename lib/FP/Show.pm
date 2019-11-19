@@ -38,6 +38,9 @@ function that can be used normally to create such a value is a better
 choice (see the example in the SYNOPSIS, and for more examples the
 `intro` document of the Functional Perl distribution or website).
 
+`show` always works, regardless of whether a value implements the
+protocol--it falls back to L<Data::Dumper>.
+
 
 =head1 ALTERNATIVES
 
@@ -78,10 +81,17 @@ cut-offs, values returned by `show` will be good enough when what one
 needs to do is compare against a short representation. Also, likely we
 would implement the cut-off value as an optional parameter.)
 
+=head1 BUGS
+
+Show can't currently handle circular data structures (it will run out
+of stack space.) Not hard to fix (turtle and hare algo), just need to
+do it.
 
 =head1 SEE ALSO
 
-L<FP::Abstract::Show> for the protocol definition
+L<FP::Abstract::Show> for the protocol definition. Note that FP::Show
+also works on values which don't implement the protocol (fall back to
+Data::Dumper).
 
 L<http://www.functional-perl.org/docs/intro.xhtml> for the mentioned intro.
 
