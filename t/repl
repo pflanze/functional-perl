@@ -132,7 +132,7 @@ $inw = bless( \*Symbol::GEN1, 'Chj::IO::Pipe' );
 $output = 'DUMMY';
 $outr = bless( \*Symbol::GEN2, 'Chj::IO::Pipe' );
 $outw = bless( \*Symbol::GEN3, 'Chj::IO::Pipe' );
-\@filters = [sub { "DUMMY" }, sub { "DUMMY" }];
+\@filters = [sub { 'DUMMY: main::__ANON__ at "t/repl" line 0' }, sub { 'DUMMY: main::__ANON__ at "t/repl" line 1' }];
 },
   sub { s/(\$output = ').*(';\s*\$outr)/${1}DUMMY$2/s },
   $filterHOME;

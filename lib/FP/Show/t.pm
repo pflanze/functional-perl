@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -43,7 +43,7 @@ TEST { show improper_list (list (1,3), 2) }
   'improper_list(list(1, 3), 2)';
 
 TEST { show improper_list ([1,3], {foo=> list("bar",sub{"f"})}) }
-  'improper_list([1, 3], +{foo => list(\'bar\', sub { "DUMMY" })})';
+  'improper_list([1, 3], +{foo => list(\'bar\', sub { \'DUMMY: FP::Show::t::__ANON__ at "lib/FP/Show/t.pm" line 45\' })})';
 
 my $s;
 TEST {
