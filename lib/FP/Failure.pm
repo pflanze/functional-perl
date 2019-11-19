@@ -166,7 +166,12 @@ package FP::Failure::Failure {
 
     use overload
         bool=> sub { undef },
-        # '""'=> sub { warn "hellostr"; '' },
+        # Have to provide stringification, too, or it will stringify
+        # to undef and then fail to use the undef value in strings
+        # because of fatal warnings... and it can't be avoided by
+        # checking with `defined $v` first, as that returns
+        # false. Tricky Perl features.
+        '""'=> sub { show $_[0] },
         # '0+'=> sub { warn "hello0+"; '' },
         # fallback=> 0
         ;
