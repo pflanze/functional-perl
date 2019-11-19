@@ -103,7 +103,7 @@ fun fixlines ($lines) {
     my ($fromdomain)= $fromaddr=~ m{\@(.*)}s
         or die "?";
     my $messageid= head_xgetone $head, "Message-ID";
-    my ($messageid_uuid)= $messageid=~ m{([^<>@]+)\@}s
+    my ($messageid_uuid)= header_value($messageid)=~ m{([^<>@]+)\@}s
         or die "no match in messageid '$messageid'";
     my $bcc_values=
         cons $fromwhole,
@@ -139,7 +139,7 @@ All good?
 BCC: <foo@bar.com>, some@where.com
 from: <foo@bar.com>
 To: Heiri Hunten <heiri.hunten@example.com>
-Message-ID: <message-id: 1235@bar.com>
+Message-ID: <1235@bar.com>
 
 Hi There!
 
