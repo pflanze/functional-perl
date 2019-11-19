@@ -144,6 +144,11 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   the code but stay really safe (never break the situation for any
   user). Write docs about it.
 
+* Similar to the above point, `RUN_TESTS` should be streamlined /
+  automated (any program should ~by default allow to have its tests
+  run by simply setting this env var (OK?); `perhaps_run_tests` does
+  part of the job).
+
 * For type checks in `FP::Struct` (perhaps move those out to separate
   module), as well as maybe protocol checks: have warning and die
   modes, selectable via env variable? Also, disable completely for
