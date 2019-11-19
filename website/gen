@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -14,11 +14,18 @@ inbase=".."
 outbase="www"
 configpath="./gen-config.pl"
 
-# to make work without Sub::Call::Tail for t/htmlgen:
-if [ "${HTMLGEN_-}" == 1 ]; then
-    prefix="."
-else
+# make it work by default without Sub::Call::Tail:
+if [ "${SUB_CALL_TAIL-}" == 1 ]; then
     prefix=""
+else
+    prefix="."
 fi
 
-"../${prefix}htmlgen/gen" "$configpath" "$inbase" "$outbase" "$@"
+gen="../${prefix}htmlgen/gen"
+
+if [ -e "$gen" ]; then
+    "$gen" "$configpath" "$inbase" "$outbase" "$@"
+else
+    echo "Missing $gen, run 'meta/tail-expand' (or simply 'make test') first"
+fi
+
