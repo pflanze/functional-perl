@@ -12,7 +12,11 @@ programs that this project offers. (The files in the
 they are a bit older and possibly could use some updating (todo).)
 
 If you've got questions, please tell, either on the [[mailing_list]],
-or join [the IRC channel](//mailing_list.md).
+or join [the IRC channel](//mailing_list.md). If you find any errors
+or would like to clarify some wording or add to this or other
+documents: if you're reading this document via the
+[website](http://functional-perl.org), there is an edit link at the
+top right corner that lets you edit it on Github.
 
 
 <with_toc>
