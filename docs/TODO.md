@@ -75,9 +75,7 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * Add a `boolean_eq` function?
 
-* Should there be a show protocol (FP::Abstract::Show)? Currently show
-  falls back to data dumper anyway, so does anything implement it?
-  Also, have a pretty printing show?
+* Show: handle cycles; pretty printing.
 
 * Be consistent with exceptions, `array_drop [4], 3` should probably
   give one.
