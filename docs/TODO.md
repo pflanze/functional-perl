@@ -175,6 +175,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   from all super classes? Well, use `NEXT::` and make these methods
   folds (take a rest argument)!
 
+* Mostly eliminate the use of `FP::DumperEqual` (replace with
+  `FP::Equal`). Also, make `TEST` use `equal` so that there's no need
+  to `->array`.
+
 ## Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
