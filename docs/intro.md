@@ -73,7 +73,8 @@ here:
     repl 1> 
 
 In that case, you can return to the parent repl by pressing ctl-d. It
-will then show:
+will then show (XX: currently it also shows the exception again; work
+is under way to improve this):
 
     repl> 
 

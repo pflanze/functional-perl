@@ -10,6 +10,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 ## Work on the code
 
+* Finish unmerged work on FP::Repl (see note from this commit in
+  [intro])
+
 * See entries in BUGS pod sections (e.g. `FP::Show` cycles, `FP::Repl`
   bugs)
 
