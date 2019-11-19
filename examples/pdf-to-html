@@ -40,7 +40,6 @@ GetOptions("verbose"=> \$verbose,
            "single-page"=> \$opt_single,
            "outdir=s"=> \$opt_outdir,
           ) or exit 1;
-usage unless @ARGV;
 
 use FP::IOStream qw(xdirectory_paths);
 use FP::List qw(list cons);
@@ -464,6 +463,9 @@ if ($ENV{DEBUG}) {
     require Chj::AutoTrapl;
     FP::Repl::repl();
 } else {
-    pdf_to_html ($_) for @ARGV;
+    perhaps_run_tests __PACKAGE__ or do {
+        usage unless @ARGV;
+        pdf_to_html ($_) for @ARGV;
+    }
 }
 
