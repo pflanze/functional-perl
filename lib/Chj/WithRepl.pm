@@ -205,7 +205,8 @@ sub handler_for ($$) {
             }
         } else {
             my $err= $Chj::Repl::maybe_output // *STDERR{IO};
-            print $err "Exception: $e";
+            my $estr= "$e"; chomp $estr;
+            print $err "Exception: $estr\n";
             # then what to do upon exiting it? return the value of the
             # repl?  XX repl needs new feature, a "quit this context
             # with this value". Although not helping anyway since Perl
