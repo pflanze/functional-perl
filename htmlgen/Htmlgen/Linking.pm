@@ -70,7 +70,12 @@ use Sub::Call::Tail;
     our $podurl_cache= ".ModulePODUrl-cache"; mkdir $podurl_cache;
     use FP::Memoizing 'memoizing_to_dir';
     *xmaybe_module_pod_url=
-      memoizing_to_dir $podurl_cache, \&perhaps_module_pod_url;
+        memoizing_to_dir $podurl_cache, sub {
+            print STDERR "perhaps_module_pod_url(@_)..";
+            my @res= perhaps_module_pod_url @_;
+            print STDERR "@res\n";
+            wantarray ? @res : $res[-1]
+        };
 
     fun maybe_module_pod_url ($v) {
         my $res;

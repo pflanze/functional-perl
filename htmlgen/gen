@@ -595,8 +595,11 @@ fun copyfiles ($filesinfo) {
 
 fun main () {
     mkdir $outbase;
+    warn "running get_filesinfo..";
     my $filesinfo= get_filesinfo;
+    warn "running genfiles..";
     genfiles ($filesinfo);
+    warn "running copyfiles..";
     copyfiles ($filesinfo);
 }
 
