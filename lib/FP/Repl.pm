@@ -9,19 +9,19 @@
 
 =head1 NAME
 
-Chj::Repl - read-eval-print loop
+FP::Repl - read-eval-print loop
 
 =head1 SYNOPSIS
 
- use Chj::Repl;
+ use FP::Repl;
  repl;
 
- # pass parameters (any fields of the Chj::Repl::Repl class):
+ # pass parameters (any fields of the FP::Repl::Repl class):
  repl (skip=> 3, # skip 3 caller frames (when the repl call is nested
                  # within something you dont't want the user to see)
        tty=> $fh, # otherwise repl tries to open /dev/tty, or if that fails,
                   # uses readline defaults (which is somewhat broken?)
-       # also, any fields of the Chj::Repl::Repl class are possible:
+       # also, any fields of the FP::Repl::Repl class are possible:
        maxHistLen=> 100, maybe_prompt=> "foo>", maybe_package=> "Foo::Bar",
        maybe_historypath=> ".foo_history", pager=> "more"
        # etc.
@@ -29,23 +29,23 @@ Chj::Repl - read-eval-print loop
 
 =head1 DESCRIPTION
 
-For a simple parameterless start of `Chj::Repl::Repl`.
+For a simple parameterless start of `FP::Repl::Repl`.
 
 =head1 SEE ALSO
 
-L<Chj::Repl::Repl>: the class implementing this
+L<FP::Repl::Repl>: the class implementing this
 
 =cut
 
 
-package Chj::Repl;
+package FP::Repl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(repl);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
-use Chj::Repl::Repl;
+use FP::Repl::Repl;
 
 sub repl {
     @_ % 2 and die "expecting even number of arguments";
@@ -53,7 +53,7 @@ sub repl {
     my $maybe_skip= delete $args{skip};
     my $maybe_tty= delete $args{tty};
 
-    my $r= new Chj::Repl::Repl;
+    my $r= new FP::Repl::Repl;
 
     if (exists $args{maybe_settingspath}) {
         $r->set_maybe_settingspath(delete $args{maybe_settingspath});
@@ -70,6 +70,6 @@ sub repl {
     my $m= $r->can("run"); @_=($r, $maybe_skip); goto &$m
 }
 
-*Chj::Repl= \&repl;
+*FP::Repl= \&repl;
 
 1

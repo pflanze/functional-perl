@@ -9,12 +9,12 @@
 
 =head1 NAME
 
-Chj::Repl::StackPlus - Stack including lexical variables
+FP::Repl::StackPlus - Stack including lexical variables
 
 =head1 SYNOPSIS
 
- my $stack= Chj::Repl::StackPlus->get($numbers_of_levels_to_skip);
- # same as Chj::Repl::Stack, but frames also have `lexicals`, a hash
+ my $stack= FP::Repl::StackPlus->get($numbers_of_levels_to_skip);
+ # same as FP::Repl::Stack, but frames also have `lexicals`, a hash
  # as delivered from PadWalker
 
 =head1 DESCRIPTION
@@ -23,22 +23,22 @@ I'm pretty sure this is still re-inventing some wheel...
 
 =head1 SEE ALSO
 
-L<Chj::Repl::Stack>, L<PadWalker>
+L<FP::Repl::Stack>, L<PadWalker>
 
 =cut
 
 
-package Chj::Repl::StackPlus;
+package FP::Repl::StackPlus;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 {
-    package Chj::Repl::Repl::StackPlusFrame;
+    package FP::Repl::Repl::StackPlusFrame;
 
-    use Chj::Repl::Stack; # so that FP::Struct won't try to load
-                          # Chj/Repl/StackFrame.pm
+    use FP::Repl::Stack; # so that FP::Struct won't try to load
+                          # FP/Repl/StackFrame.pm
 
-    use FP::Struct ["lexicals"], "Chj::Repl::StackFrame";
+    use FP::Struct ["lexicals"], "FP::Repl::StackFrame";
 
     # CAREFUL: equal stackframes still don't need to be the *same*
     # stackframe!
@@ -75,9 +75,9 @@ our $maybe_peek_my= sub {
     }
 };
 
-use FP::Struct [], "Chj::Repl::Stack";
+use FP::Struct [], "FP::Repl::Stack";
 
-# XX ugly, modified COPY from Chj::Repl::Stack
+# XX ugly, modified COPY from FP::Repl::Stack
 sub get {
     my $class=shift;
     my ($skip)=@_;
@@ -88,7 +88,7 @@ sub get {
         # XX how to handle this?: "@DB::args might have
         # information from the previous time "caller" was
         # called" (perlfunc on 'caller')
-        push @frames, Chj::Repl::Repl::StackPlusFrame->new
+        push @frames, FP::Repl::Repl::StackPlusFrame->new
           ($subargs, @vals, &$maybe_peek_my($skip+2));
         $skip++;
     }
@@ -96,7 +96,7 @@ sub get {
 }
 
 
-*lexicals= &$Chj::Repl::Stack::make_frame_accessor ("lexicals");
-*perhaps_lexicals= &$Chj::Repl::Stack::make_perhaps_frame_accessor ("lexicals");
+*lexicals= &$FP::Repl::Stack::make_frame_accessor ("lexicals");
+*perhaps_lexicals= &$FP::Repl::Stack::make_perhaps_frame_accessor ("lexicals");
 
 _END_

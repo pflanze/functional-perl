@@ -21,7 +21,7 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 use Chj::Backtrace;
-use Chj::Repl;
+use FP::Repl;
 
 
 # ------------------------------------------------------------------

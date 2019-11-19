@@ -9,11 +9,11 @@
 
 =head1 NAME
 
-Chj::Repl::Dependencies - hack to load Repl dependencies
+FP::Repl::Dependencies - hack to load Repl dependencies
 
 =head1 SYNOPSIS
 
- use Chj::TEST use=> 'Chj::Repl::Dependencies';
+ use Chj::TEST use=> 'FP::Repl::Dependencies';
 
 =head1 DESCRIPTION
 
@@ -29,7 +29,7 @@ So, this.
 =cut
 
 
-package Chj::Repl::Dependencies;
+package FP::Repl::Dependencies;
 #@ISA="Exporter"; require Exporter;
 #@EXPORT=qw();
 #@EXPORT_OK=qw();
@@ -44,6 +44,6 @@ $Term::ReadLine::Gnu::VERSION
   or die "dependency Term::ReadLine::Gnu not present";
 
 # now also depend on PadWalker etc.
-require Chj::Repl::Repl;
+require FP::Repl::Repl;
 
 1

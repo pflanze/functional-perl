@@ -50,11 +50,11 @@ my %ignore= map{ $_=> 1}
     Chj::NamespaceClean
     Chj::NamespaceCleanAbove
     Chj::Package::OfPath
-    Chj::Repl::Repl
-    Chj::Repl::Dependencies
-    Chj::Repl::Stack
-    Chj::Repl::StackPlus
-    Chj::Repl::corefuncs
+    FP::Repl::Repl
+    FP::Repl::Dependencies
+    FP::Repl::Stack
+    FP::Repl::StackPlus
+    FP::Repl::corefuncs
     Chj::Serialize
     Chj::TerseDumper
     Chj::Trapl
@@ -65,7 +65,7 @@ my %ignore= map{ $_=> 1}
     Chj::chompspace
     Chj::constructorexporter
     Chj::pp
-    Chj::Repl
+    FP::Repl
     Chj::ruse
     Chj::time_this
     Chj::xIOUtil

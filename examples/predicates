@@ -17,9 +17,9 @@ use lib "$mydir/../lib";
 
 
 use Chj::TEST
-  use=> 'Chj::Repl::Dependencies';
+  use=> 'FP::Repl::Dependencies';
 use Chj::Backtrace;
-use Chj::Repl;
+use FP::Repl;
 
 
 {

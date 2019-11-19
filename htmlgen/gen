@@ -608,9 +608,9 @@ perhaps_run_tests __PACKAGE__
       }
 
       $opt_repl ? do {
-          require Chj::Repl;
+          require FP::Repl;
           require Chj::WithRepl; &Chj::WithRepl::push_withrepl (0);
-          Chj::Repl::repl();
+          FP::Repl::repl();
       } : main;
 };
 

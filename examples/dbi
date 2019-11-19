@@ -16,14 +16,14 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 use Chj::TEST
-  use=> 'Chj::Repl::Dependencies',
+  use=> 'FP::Repl::Dependencies',
   use=> "DBD::CSV",
   use=> "FP::DBI"; # 'DBI' really, indirectly
 use PXML::XHTML ":all";
 use FP::Weak;
 
 use Chj::Backtrace;
-use Chj::Repl;
+use FP::Repl;
 
 
 our $db= FP::DBI->connect ("dbi:CSV:");

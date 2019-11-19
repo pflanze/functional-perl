@@ -97,7 +97,7 @@ while (<$in>) {
 
 $in->xclose;
 
-#use Chj::Repl;repl;
+#use FP::Repl;repl;
 
 if (keys %o) {
     say "DEPENDENCY: $_" for sort keys %o;

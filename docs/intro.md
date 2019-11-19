@@ -27,12 +27,12 @@ being able to inspect the context (stack) from where they were
 called. Functional Perl is no exception.
 
 (NOTE: the author didn't know about the `reply` repl and maybe others
-when finishing the work on this; he originally started `Chj::Repl` in
+when finishing the work on this; he originally started `FP::Repl` in
 2004. It might be worth merging the efforts.)
 
 There are three ways to run the functional-perl REPL:
 
- - Run it from somewhere in your program by using `use Chj::Repl;` and
+ - Run it from somewhere in your program by using `use FP::Repl;` and
    calling `repl;`.
  - Register the repl to be run upon encountering uncaught exceptions
    by adding `use Chj::Trapl;` somewhere to your code.
@@ -1049,7 +1049,7 @@ useful here. To see a backtrace, enter `:b` (or `,b`, comma and colon
 are equivalent):
 
     main 1> :b
-    0        Chj::Repl::Repl::run('Chj::Repl::Repl=ARRAY(0x920b5f8)', undef) called at examples/introexample line 46
+    0        FP::Repl::Repl::run('FP::Repl::Repl=ARRAY(0x920b5f8)', undef) called at examples/introexample line 46
     1        main::hello('5') called at (eval 114) line 1
     ...
 

@@ -51,7 +51,7 @@ my ($basedir)= @ARGV;
 
 use Chj::ruse;
 use Chj::Trapl;
-use Chj::Repl;
+use FP::Repl;
 
 use FP::List ":all";
 use FP::Stream ":all";

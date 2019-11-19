@@ -57,7 +57,7 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * die vs. croak: die is nice since `Chj::Trapl` will go to the real
   location, how is the situation with croak? (Also, `Chj::Backtrace`?)
-  In `Chj::Repl`, skip call frames within `Carp` and similar like
+  In `FP::Repl`, skip call frames within `Carp` and similar like
   `Chj::WithRepl` (maybe the same way calling code from `Carp`, or
   perhaps `Trace::Mask`)?
 
@@ -165,7 +165,7 @@ usefully listed first).
 
 - migrate `FP::Struct` functionality as Moose extensions or something?
 
-- merge Chj::Repl with other repls/debuggers? Also,
+- merge FP::Repl with other repls/debuggers? Also,
   Chj::{Trapl,WithRepl,Backtrace}. They are still fertile grounds for
   experimentation, though, thus shouldn't merge things too soon.
 

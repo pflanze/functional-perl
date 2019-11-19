@@ -41,7 +41,7 @@ use Chj::TEST;
 # for development/debugging
 use Chj::ruse;
 use Chj::Trapl; # or Chj::Backtrace
-use Chj::Repl;
+use FP::Repl;
 
 # add your own code.... (possibly adding `repl` calls within, too;
 # also, it's better to put most code in modules, and use `ruse` to

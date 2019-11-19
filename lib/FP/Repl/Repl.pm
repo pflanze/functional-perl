@@ -9,11 +9,11 @@
 
 =head1 NAME
 
-Chj::Repl::Repl - read-eval-print loop
+FP::Repl::Repl - read-eval-print loop
 
 =head1 SYNOPSIS
 
- my $repl= new Chj::Repl::Repl;
+ my $repl= new FP::Repl::Repl;
  $repl->set_prompt("foo> ");
  # ^ if left undefined, "$package$perhapslevel> " is used
  $repl->set_historypath("somefile"); # default is ~/.perl-repl_history
@@ -84,12 +84,12 @@ Completion:
 
 =head1 SEE ALSO
 
-L<Chj::Repl>: easy wrapper
+L<FP::Repl>: easy wrapper
 
 =cut
 
 
-package Chj::Repl::Repl;
+package FP::Repl::Repl;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -117,7 +117,7 @@ use Chj::xhome qw(xeffectiveuserhome);
 use Chj::singlequote 'singlequote';
 use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
-use Chj::Repl::StackPlus;
+use FP::Repl::StackPlus;
 use FP::Lazy;
 
 sub maybe_tty {
@@ -271,8 +271,8 @@ sub splitpackage {
 
 my $PACKAGE= qr/\w+(?:::\w+)*/;
 
-use Chj::Repl::corefuncs();
-our @builtins= Chj::Repl::corefuncs;
+use FP::Repl::corefuncs();
+our @builtins= FP::Repl::corefuncs;
 
 # whether to use Data::Dumper in perl mode
 our $Dumper_Useperl= 0;
@@ -352,9 +352,9 @@ $x x  do not persist lexicals, use strict 'vars'
 $X X  do not persist lexicals, no strict 'vars' (default)
 
 Other features:
-  \$Chj::Repl::Repl::args   is an array holding the arguments of the last subroutine call
+  \$FP::Repl::Repl::args   is an array holding the arguments of the last subroutine call
                      that led to the currently selected frame
-  \$Chj::Repl::Repl::argsn  is an array holding the arguments of the subroutine call
+  \$FP::Repl::Repl::argsn  is an array holding the arguments of the subroutine call
                      that *leaves* the currently selected frame
 };
 }
@@ -785,15 +785,15 @@ our ($maybe_input, $maybe_output); # dynamic parametrization of
                                    # filehandles
 
 our $repl_level; # maybe number of repl layers above
-our $args; # see '$Chj::Repl::Repl::args' in help text
-our $argsn; # see '$Chj::Repl::Repl::argsn' in help text
+our $args; # see '$FP::Repl::Repl::args' in help text
+our $argsn; # see '$FP::Repl::Repl::argsn' in help text
 
 # TODO: split this monstrosity into pieces.
 sub run {
     my ($self, $maybe_skip)=@_;
 
     my $skip= $maybe_skip // 0;
-    my $stack= Chj::Repl::StackPlus->get ($skip + 1);
+    my $stack= FP::Repl::StackPlus->get ($skip + 1);
 
     local $repl_level= ($repl_level // -1) + 1;
 
@@ -1134,7 +1134,7 @@ sub run {
                             # make it possible for the code entered in
                             # the repl to access the arguments in the
                             # last call leading to this position by
-                            # accessing $Chj::Repl::Repl::args :
+                            # accessing $FP::Repl::Repl::args :
                             my $getframe= sub {
                                 my ($i)=@_;
                                 if (defined (my $frame= $stack->frame

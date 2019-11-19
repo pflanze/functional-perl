@@ -89,12 +89,6 @@ lib/Chj/Linux/LmSensors.pm
 lib/Chj/NamespaceClean.pm
 lib/Chj/NamespaceCleanAbove.pm
 lib/Chj/Package/OfPath.pm
-lib/Chj/Repl.pm
-lib/Chj/Repl/Dependencies.pm
-lib/Chj/Repl/Repl.pm
-lib/Chj/Repl/Stack.pm
-lib/Chj/Repl/StackPlus.pm
-lib/Chj/Repl/corefuncs.pm
 lib/Chj/Serialize.pm
 lib/Chj/TEST.pm
 lib/Chj/TerseDumper.pm
@@ -154,6 +148,12 @@ lib/FP/Path.pm
 lib/FP/Path/t.pm
 lib/FP/Predicates.pm
 lib/FP/PureArray.pm
+lib/FP/Repl.pm
+lib/FP/Repl/Dependencies.pm
+lib/FP/Repl/Repl.pm
+lib/FP/Repl/Stack.pm
+lib/FP/Repl/StackPlus.pm
+lib/FP/Repl/corefuncs.pm
 lib/FP/Show.pm
 lib/FP/Show/Base/FP_Struct.pm
 lib/FP/Show/t.pm

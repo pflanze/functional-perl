@@ -113,7 +113,7 @@ sub tree2array {
 }
 
 
-#use Chj::Repl; repl;
+#use FP::Repl; repl;
 {
     my $m= xopen_write "MANIFEST";
     for (sort @{tree2array $tree}) {

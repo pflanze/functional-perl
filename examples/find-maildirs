@@ -131,7 +131,7 @@ fun find_below ($path, $pred) {
 
 
 #use Chj::Trapl; # or Chj::Backtrace
-#use Chj::Repl;repl;
+#use FP::Repl;repl;
 
 my $s= find_below ($rootdir, *is_maildir);
 $s->for_each (the_method "xprintln");

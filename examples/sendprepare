@@ -34,7 +34,7 @@ our $verbose=0;
 GetOptions("verbose"=> \$verbose,
            "help"=> sub{usage}) or exit 1;
 
-#use Chj::Trapl; use Chj::Repl;
+#use Chj::Trapl; use FP::Repl;
 use FP::List;
 use FP::IOStream qw(xfile_replace_lines);
 use FP::Ops qw(regex_match);

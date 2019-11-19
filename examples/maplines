@@ -82,4 +82,4 @@ $result->for_each (cut_method $out, "xprintln");
 
 $out->xclose;
 
-#use Chj::Repl; repl;
+#use FP::Repl; repl;

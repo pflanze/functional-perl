@@ -46,7 +46,7 @@ use FP::PureArray;
 use Chj::xperlfunc qw(xprintln);
 use FP::Ops "the_method";
 use Chj::ruse;
-use Chj::Repl;
+use FP::Repl;
 
 
 {

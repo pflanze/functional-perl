@@ -31,9 +31,9 @@ use FP::Stream ":all"; # incl. F
 use FP::Ops ":all";
 use Chj::TEST ":all";
 use FP::Equal;
-use Chj::Repl::Stack;
+use FP::Repl::Stack;
 use Chj::Trapl; # or Chj::Backtrace
-use Chj::Repl;
+use FP::Repl;
 use FP::Hash ":all";
 use FP::Show;
 use FP::Array_sort ":all";
@@ -56,7 +56,7 @@ my @tests;
 fun test ($pred) {
     push @tests, examples_logic::Predicate->new
       ($pred,
-       Chj::Repl::Stack->get(1));
+       FP::Repl::Stack->get(1));
 }
 
 fun matrix_likes ($matrix, $subj, $obj) {

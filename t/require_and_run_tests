@@ -54,15 +54,15 @@ our %dependencies=
    'Htmlgen::Cost'=> ['Function::Parameters' ],
    'Htmlgen::Nav'=> ['Function::Parameters'],
    'Chj::HTTP::Daemon'=> ['HTTP::Request'],
-   map { $_ => ['Chj::Repl::Dependencies'] }
+   map { $_ => ['FP::Repl::Dependencies'] }
    qw(
-         Chj::Repl::Dependencies
-         Chj::Repl::Repl
-         Chj::Repl::StackPlus
+         FP::Repl::Dependencies
+         FP::Repl::Repl
+         FP::Repl::StackPlus
          Chj::Serialize
          Chj::Trapl
          Chj::WithRepl
-         Chj::Repl
+         FP::Repl
          FP::Trie::t
     ),
   );
@@ -92,5 +92,5 @@ done_testing;
 
 #use Chj::ruse;
 #use Chj::Backtrace;
-#use Chj::Repl;
+#use FP::Repl;
 #repl;

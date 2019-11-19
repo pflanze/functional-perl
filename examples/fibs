@@ -23,7 +23,7 @@ use FP::Lazy ":all";
 use FP::Stream ":all";
 
 use Chj::Backtrace;
-use Chj::Repl;
+use FP::Repl;
 
 # fibs :: [Integer]
 # fibs = 1:1:zipWith (+) fibs (tail fibs)

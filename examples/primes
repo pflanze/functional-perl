@@ -20,10 +20,10 @@ use lib "$mydir/../lib";
 # gracefully fail when run as a test and Method::Signatures is not
 # available
 use Chj::TEST
-  use=> 'Chj::Repl::Dependencies',
+  use=> 'FP::Repl::Dependencies',
   use=> 'Method::Signatures';
 use Chj::Backtrace;
-use Chj::Repl;
+use FP::Repl;
 use FP::List ":all";
 use FP::Ops ":all";
 use FP::Lazy ":all";

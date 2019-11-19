@@ -65,7 +65,7 @@
 
 #lib/Chj/pp.pm	Code before strictures are enabled at line 26, column 1. See page 429 of PBP.
 
-#lib/Chj/repl.pm	Code before strictures are enabled at line 30, column 1. See page 429 of PBP.
+#lib/FP/repl.pm	Code before strictures are enabled at line 30, column 1. See page 429 of PBP.
 
 #lib/Chj/ruse.pm	Stricture disabled at line 92, column 6. See page 429 of PBP.
 #lib/Chj/ruse.pm	Expression form of "eval" at line 166, column 6. See page 161 of PBP.

@@ -461,5 +461,5 @@ fun pdf_to_html ($infile) {
 
 
 
-$ENV{DEBUG} ? Chj::Repl::repl() : do { pdf_to_html ($_) for @ARGV };
+$ENV{DEBUG} ? FP::Repl::repl() : do { pdf_to_html ($_) for @ARGV };
 

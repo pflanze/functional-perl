@@ -176,8 +176,8 @@ sub expand_tail_at_pos {
 
 if ($opt_repl) {
     require Chj::Backtrace;
-    require Chj::Repl;
-    Chj::Repl::repl ();
+    require FP::Repl;
+    FP::Repl::repl ();
     exit;
 
 } else {

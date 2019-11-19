@@ -38,7 +38,7 @@ Chj::WithRepl
 =head1 DESCRIPTION
 
 Sets `$SIG{__DIE__}` to a wrapper that shows the exception then calls
-a repl from L<Chj::Repl>. This means, when getting an exception,
+a repl from L<FP::Repl>. This means, when getting an exception,
 instead of terminating the program (with a message), you get a chance
 to inspect the program state interactively.
 
@@ -89,8 +89,8 @@ sub WithRepl_eval_e (&;$) {
     }
 }
 
-use Chj::Repl;
-use Chj::Repl::Stack;
+use FP::Repl;
+use FP::Repl::Stack;
 use Chj::TEST;
 
 
@@ -113,7 +113,7 @@ sub current_user_frame ($) {
                     die "skip value goes beyond the end of the stack";
                 }
             }
-            return Chj::Repl::StackFrame->new(undef, @v);
+            return FP::Repl::StackFrame->new(undef, @v);
         }
     }
     die "???"
@@ -144,14 +144,14 @@ sub have_eval_since_frame ($) {
     }
 
     do {
-        my $f= Chj::Repl::StackFrame->new(undef, @v);
+        my $f= FP::Repl::StackFrame->new(undef, @v);
         if ($f->equal ($startframe)) {
             warn "reached startframe, thus return false"
               if $debug;
             return ''
         } elsif ($f->subroutine eq "(eval)") {
             if ((@v)= caller $i++) {
-                my $f= Chj::Repl::StackFrame->new(undef, @v);
+                my $f= FP::Repl::StackFrame->new(undef, @v);
                 my $sub= $f->subroutine;
                 if ($sub =~ /::WithRepl_eval(?:_e)?\z/) {
                     warn "(ignore eval since it's from a WithRepl_eval)"
@@ -204,7 +204,7 @@ sub handler_for ($$) {
                 return
             }
         } else {
-            my $err= $Chj::Repl::Repl::maybe_output // *STDERR{IO};
+            my $err= $FP::Repl::Repl::maybe_output // *STDERR{IO};
             my $estr= "$e"; chomp $estr;
             print $err "Exception: $estr\n";
             # then what to do upon exiting it? return the value of the

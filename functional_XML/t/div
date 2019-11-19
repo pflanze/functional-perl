@@ -15,7 +15,7 @@ use lib "$mydir/../../lib";
 
 use Chj::TEST ":all";
 use Chj::TEST
-  use=> 'Chj::Repl::Dependencies';
+  use=> 'FP::Repl::Dependencies';
 use PXML::XHTML ":all";
 use PXML::Serialize "pxml_print_fragment_fast";
 use FP::Lazy;
@@ -59,7 +59,7 @@ TEST { P(cons I("Hello"), B(cons null, "World"))->string }
 
 
 use Chj::Backtrace;
-use Chj::Repl;
+use FP::Repl;
 
 perhaps_run_tests(__PACKAGE__) or repl;
 

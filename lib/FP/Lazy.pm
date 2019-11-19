@@ -180,7 +180,7 @@ our $debug= $ENV{DEBUG_FP_LAZY} ? 1 : '';
 sub lazy (&) {
     bless [$_[0],
            undef,
-           $debug && Chj::Repl::Stack->get(1)->backtrace
+           $debug && FP::Repl::Stack->get(1)->backtrace
           ], "FP::Lazy::Promise"
       }
 
@@ -188,7 +188,7 @@ sub lazy_if (&$) {
     ($_[1] ?
      bless ([$_[0],
              undef,
-             $debug && Chj::Repl::Stack->get(1)->backtrace
+             $debug && FP::Repl::Stack->get(1)->backtrace
             ], "FP::Lazy::Promise")
      : do {
          my ($thunk)=@_;

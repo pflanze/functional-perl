@@ -41,14 +41,14 @@ use lib "$mydir/../lib";
 
 # specify dependency when running through test suite
 use Chj::TEST
-  use=> 'Chj::Repl::Dependencies';
+  use=> 'FP::Repl::Dependencies';
 
 # for development/debugging
 #use Chj::ruse; # get the 'ruse' procedure which will reload modules;
                 # since we're putting the meat of the program into the
                 # main file, this won't help us here.
 use Chj::Backtrace; # show backtraces when an error happens
-use Chj::Repl; # get the 'repl' procedure.
+use FP::Repl; # get the 'repl' procedure.
 
 
 # ------------------------------------------------------------------
