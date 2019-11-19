@@ -331,6 +331,7 @@ our $immutable= 1; # whether pairs are to be made immutable
 
     sub FP_Equal_equal {
         my ($a,$b)=@_;
+        no warnings 'recursion';
         (FP::List::is_pair($b)
          and
          FP::Equal::equal($a->car, $b->car)

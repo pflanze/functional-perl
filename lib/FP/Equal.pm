@@ -92,6 +92,11 @@ package FP::Equal;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+# equal can easily recurse deeply into data structures.
+no warnings "recursion";
+# To be fair, it's also currently missing loop detection, TODO.
+
+
 # I find it odd that nobody did this before. But I can't find anything
 # on CPAN.
 
