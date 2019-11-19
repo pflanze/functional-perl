@@ -198,6 +198,7 @@ t/dbi
 t/examples-fibs
 t/examples-logic
 t/examples-primes
+t/examples-sendprepare
 t/fp-struct
 t/functional_XML-t-div
 t/functional_XML-test
