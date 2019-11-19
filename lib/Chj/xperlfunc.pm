@@ -263,7 +263,7 @@ require Exporter;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::singlequote 'singlequote_many'; # the only dependency so far
-use Chj::Unix::exitcode;
+use Chj::Unix::Exitcode qw(exitcode);
 
 BEGIN {
     if ($^O eq 'linux') {

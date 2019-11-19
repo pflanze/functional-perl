@@ -60,7 +60,6 @@ my %ignore= map{ $_=> 1}
     Chj::Trapl
     Chj::Unix::Exitcode
     Chj::Unix::Signal
-    Chj::Unix::exitcode
     Chj::Util::AskYN
     Chj::WithRepl
     Chj::chompspace

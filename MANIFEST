@@ -100,7 +100,6 @@ lib/Chj/TerseDumper.pm
 lib/Chj/Trapl.pm
 lib/Chj/Unix/Exitcode.pm
 lib/Chj/Unix/Signal.pm
-lib/Chj/Unix/exitcode.pm
 lib/Chj/Util/AskYN.pm
 lib/Chj/WithRepl.pm
 lib/Chj/chompspace.pm
