@@ -15,6 +15,11 @@ our ($mydir, $myname); BEGIN {
 }
 use lib "$mydir/../lib";
 
+use Chj::xopen qw(xopen_read xopen_write);
+use Chj::TEST ":all";
+use Chj::xIOUtil qw(xgetfile_utf8);
+#use Chj::Trapl; $SIG{INT}=sub{ die "SIGINT" };
+
 
 sub usage {
     print "usage: $myname in out
@@ -38,9 +43,6 @@ usage unless @ARGV==2;
 
 our ($inpath,$outpath)=@ARGV;
 
-use Chj::xopen qw(xopen_read xopen_write);
-use Chj::TEST ":all";
-use Chj::xIOUtil qw(xgetfile_utf8);
     
 our $code= xgetfile_utf8($inpath);
 
@@ -48,6 +50,7 @@ our $IDENT= qr/\w+(?:::\w+)*/;
 
 sub translate {
     my ($c)=@_;
+    #warn "translate: <$c>";
     $c=~ s/\s+\z//s; # XX killing line numbering
     $c=~ s/^\s+//s; # dito?
     my @p;
@@ -132,6 +135,7 @@ sub find_line_by_pos {
 # afterwards.
 sub expand_tail_at_pos {
     my $pos= pos ($code);
+    #warn "expand_tail_at_pos $pos";
 
     # Where is the end of the arguments? Either when encountering a
     # ";", or a line with indent the same or smaller than the current
@@ -167,9 +171,10 @@ sub expand_tail_at_pos {
             #warn "right: '$args'";
         } else {
             #warn "wrong1: '$args'";
+            pos($code)= $pos+1;
         }
     } else {
-        #warn "wrong2"
+        warn "wrong2"
     }
 }
 
