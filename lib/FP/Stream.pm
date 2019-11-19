@@ -925,13 +925,13 @@ sub stream_state_fold_right {
     sub {
         @_==1 or die "wrong number of arguments";
         my ($statedown)=@_;
+        no warnings 'recursion';
         FORCE $s;
         if (is_null $s) {
             @_=($statedown);
             goto &$stateupfn
         } else {
             my ($v,$s)= $s->first_and_rest;
-            no warnings 'recursion';
             @_=($v,
                 $statedown,
                 stream_state_fold_right ($fn, $stateupfn, $s));
