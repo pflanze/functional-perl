@@ -13,8 +13,8 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 * Finish unmerged work on FP::Repl (see note from this commit in
   [intro])
 
-* See entries in BUGS pod sections (e.g. `FP::Show` cycles, `FP::Repl`
-  bugs)
+* See entries in BUGS pod sections (e.g. `FP::Show` and `FP::Equal`
+  cycles, `FP::Repl` bugs)
 
 * `FP::Failure`: add tests. Solve the `complement` issue (which would
   mean, make FP::Result and use that)?
@@ -178,6 +178,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 * Mostly eliminate the use of `FP::DumperEqual` (replace with
   `FP::Equal`). Also, make `TEST` use `equal` so that there's no need
   to `->array`.
+
+* Make `FP::StrictList` implement `FP::Abstract::Sequence`.
+
+* Repl: support language server protocol for IDE integration?
 
 ## Get rid of unnecessary home-grown code
 
