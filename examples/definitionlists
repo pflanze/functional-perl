@@ -86,7 +86,7 @@ fun parselinks ($str, $processmatch=*Link, $processnonmatch=*NonMatch) {
     if ($lenremainder) {
         push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
     }
-    unsafe_array_to_purearray \@res
+    array_to_purearray \@res
 }
 
 TEST {
@@ -121,7 +121,7 @@ fun parse ($str, $processmatch, $processnonmatch) {
     if ($lenremainder) {
         push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
     }
-    unsafe_array_to_purearray \@res
+    array_to_purearray \@res
 }
 
 

@@ -951,7 +951,7 @@ sub list_to_purearray {
     my ($l)=@_;
     my $a= list_to_array $l;
     require FP::PureArray;
-    FP::PureArray::unsafe_array_to_purearray ($a)
+    FP::PureArray::array_to_purearray ($a)
 }
 
 *FP::List::List::purearray= *list_to_purearray;

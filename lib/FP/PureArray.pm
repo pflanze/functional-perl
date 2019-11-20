@@ -67,7 +67,7 @@ package FP::PureArray;
 
 #@ISA="Exporter"; require Exporter; see hack below
 
-@EXPORT=qw(is_purearray purearray array_to_purearray unsafe_array_to_purearray);
+@EXPORT=qw(is_purearray purearray array_clone_to_purearray array_to_purearray);
 # or optional export only?
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
@@ -132,11 +132,11 @@ sub purearray {
     purebless [@_], "FP::PureArray"
 }
 
-sub array_to_purearray ($) {
+sub array_clone_to_purearray ($) {
     purebless [@{$_[0]}], "FP::PureArray"
 }
 
-sub unsafe_array_to_purearray ($) {
+sub array_to_purearray ($) {
     purebless $_[0], "FP::PureArray"
 }
 
@@ -348,7 +348,7 @@ TEST {
 }
   bless [[0,4], [1,5]], 'FP::PureArray';
 
-TEST { array_to_purearray ([1,2,20])->map_with_islast (sub { $_[0] })->array }
+TEST { array_clone_to_purearray ([1,2,20])->map_with_islast (sub { $_[0] })->array }
   [ '','',1 ];
 
 TEST{ purearray(3,4)->fold (sub{[@_]}, 's') }

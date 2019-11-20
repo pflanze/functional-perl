@@ -168,7 +168,7 @@ TEST {
 
 
 
-use FP::PureArray qw(purearray unsafe_array_to_purearray);
+use FP::PureArray qw(purearray array_to_purearray);
 
 sub parse_measurement {
     my ($str,$time)=@_;
@@ -185,11 +185,11 @@ sub parse_measurement {
         }
           split /\n/, $groupvalues;
 
-        ValueGroup($groupname, unsafe_array_to_purearray \@values)
+        ValueGroup($groupname, array_to_purearray \@values)
     }
       split /\n\n/, $str;
 
-    Measurement($time, unsafe_array_to_purearray \@groups)
+    Measurement($time, array_to_purearray \@groups)
 }
 
 
