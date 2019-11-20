@@ -47,7 +47,7 @@ TEST { show improper_list (list (1,3), 2) }
   'improper_list(list(1, 3), 2)';
 
 TEST { show improper_list ([1,3], {foo=> list("bar",sub{"f"})}) }
-  'improper_list([1, 3], +{foo => list(\'bar\', sub { \'DUMMY: FP::Show::t::__ANON__ at "lib/FP/Show/t.pm" line 45\' })})';
+  'improper_list([1, 3], +{foo => list(\'bar\', sub { \'DUMMY: FP::Show::t::__ANON__ at "lib/FP/Show/t.pm" line 49\' })})';
 
 my $s;
 TEST {
