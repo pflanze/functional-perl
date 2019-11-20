@@ -22,7 +22,9 @@ FunctionalPerl - functional programming on Perl
 
 =head1 DESCRIPTION
 
-Currently just embeds the version variable.
+Allow Perl programs to be written with fewer side effects.
+
+See the L<Functional Perl|http://functional-perl.org/> home page.
 
 =head1 NOTE
 
