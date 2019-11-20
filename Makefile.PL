@@ -3,7 +3,10 @@ use ExtUtils::MakeMaker;
 WriteMakefile (
     NAME              => 'FunctionalPerl',
     VERSION_FROM      => 'lib/FunctionalPerl.pm',
-    META_ADD => {
+    META_MERGE => {
+        'meta-spec'=> {
+            version => '2',
+        },
         prereqs=> {
             runtime=> {
                 recommends=> {
@@ -21,6 +24,18 @@ WriteMakefile (
                 # etc., but see note above
             },
         },
+        no_index=> {
+            directory=> [
+                # default?, say explicitly again (although META_MERGE
+                # should merge?)
+                "t",
+                "inc",
+                # here also:
+                "examples", # ?
+                "meta",
+            ],
+        },
+
     },
     PREREQ_PM         => {
         # e.g., Module::Name => 1.1
