@@ -130,7 +130,6 @@ lib/FP/DumperEqual.pm
 lib/FP/Equal.pm
 lib/FP/Equal/t.pm
 lib/FP/Failure.pm
-lib/FP/FunctionalPerl.pm
 lib/FP/Git/Repository.pm
 lib/FP/Hash.pm
 lib/FP/HashSet.pm
@@ -175,6 +174,7 @@ lib/FP/Weak/t.pm
 lib/FP/fix.pm
 lib/FP/uncurry.pm
 lib/FP/url_.pm
+lib/FunctionalPerl.pm
 lib/PXML.pm
 lib/PXML/Element.pm
 lib/PXML/HTML5.pm
