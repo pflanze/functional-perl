@@ -1,5 +1,4 @@
-package # waiting for feedback of changes to original module HTTP::Daemon
-  Chj::HTTP::Daemon;
+package Chj::HTTP::Daemon;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use vars qw($VERSION @ISA $PROTO $DEBUG);
@@ -24,7 +23,7 @@ sub new
 sub accept
 {
     my $self = shift;
-    my $pkg = shift || "HTTP::Daemon::ClientConn";
+    my $pkg = shift || "Chj::HTTP::Daemon::ClientConn";
     my ($sock, $peer) = $self->SUPER::accept($pkg);
     if ($sock) {
         ${*$sock}{'httpd_daemon'} = $self;
@@ -625,14 +624,14 @@ __END__
 
 =head1 NAME
 
-HTTP::Daemon - a simple http server class
+Chj::HTTP::Daemon - a simple http server class (modified HTTP::Daemon)
 
 =head1 SYNOPSIS
 
-  use HTTP::Daemon;
+  use Chj::HTTP::Daemon;
   use HTTP::Status;
 
-  my $d = HTTP::Daemon->new || die;
+  my $d = Chj::HTTP::Daemon->new || die;
   print "Please contact me at: <URL:", $d->url, ">\n";
   while (my $c = $d->accept) {
       while (my $r = $c->get_request) {
@@ -649,6 +648,10 @@ HTTP::Daemon - a simple http server class
   }
 
 =head1 DESCRIPTION
+
+This is just a slightly modified version of the HTTP::Daemon
+module. TODO: feed back the changes and eliminate this. In the
+following, HTTP::Daemon means Chj::HTTP::Daemon.
 
 Instances of the C<HTTP::Daemon> class are HTTP/1.1 servers that
 listen on a socket for incoming requests. The C<HTTP::Daemon> is a
