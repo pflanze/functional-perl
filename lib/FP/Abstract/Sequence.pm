@@ -37,9 +37,9 @@ FP::Abstract::Sequence - functional sequence protocol
 
 =head1 DESCRIPTION
 
-FP sequences are pure (no mutation is allowed, either by force
-(immutability) or by convention (don't offer mutating accessors,
-remind users not to mutate)).
+This is a functional protocol, i.e. its use does not exert any side
+effects. It does *not* imply `FP::Sequence::Pure`, though; impure data
+structure might like to implement it all the same.
 
 XX This is a work in progress. More base implementations should be
 moved here, etc.
@@ -51,6 +51,9 @@ move functions over as plain wrappers across method calls
 importable under a type specific name that have type specific
 implementations.
 
+=head1 SEE ALSO
+
+L<FP::Sequence::Pure>
 
 =cut
 
@@ -59,7 +62,6 @@ package FP::Abstract::Sequence;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use base 'FP::Abstract::Pure';
 require FP::List; # "use"ing it would create a circular dependency
 use FP::Array_sort qw(on_maybe);
 use FP::Lazy;
