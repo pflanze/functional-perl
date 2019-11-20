@@ -1,7 +1,8 @@
 use 5.014002;
 use ExtUtils::MakeMaker;
 WriteMakefile (
-    NAME              => 'FunctionalPerl',
+    NAME              => 'functional-perl',
+    DISTNAME          => 'functional-perl',
     VERSION_FROM      => 'lib/FP/FunctionalPerl.pm',
     META_ADD => {
         prereqs=> {
