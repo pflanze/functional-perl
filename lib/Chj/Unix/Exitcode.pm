@@ -35,7 +35,7 @@ package Chj::Unix::Exitcode::Exitcode {
 
     use Chj::Unix::Signal;
 
-    use Class::Array -fields=>
+    use Chj::Class::Array -fields=>
       -publica=>
       'code',
       ;
@@ -63,7 +63,7 @@ package Chj::Unix::Exitcode::Exitcode {
         }
     }
 
-    end Class::Array;
+    end Chj::Class::Array;
 }
 
 

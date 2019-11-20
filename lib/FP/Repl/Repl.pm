@@ -157,7 +157,7 @@ our $mode_viewer= 'a';
 our $mode_lexical_persistence= 'X';
 our $maybe_env_path= '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
 
-use Class::Array -fields=>
+use Chj::Class::Array -fields=>
   -publica=> (
               'Maybe_historypath', # undef=none, but a default is set
               'Maybe_settingspath', # undef=none, but a default is set
@@ -1230,7 +1230,7 @@ sub run {
 }
 
 
-end Class::Array;
+end Chj::Class::Array;
 
 # for backwards compatibility:
 *set_maxhistlen= *set_maxHistLen{CODE};

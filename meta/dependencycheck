@@ -34,7 +34,7 @@ our $files= @ARGV ? [@ARGV] : do {
 };
 
 our $namespaces=
-  array_filter sub { $_[0] ne "Class::Array" },
+  array_filter sub { $_[0] ne "Chj::Class::Array" },
   array_filter \&identity,
   array_map sub {
     my ($file)=@_;

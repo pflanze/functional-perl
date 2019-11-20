@@ -141,27 +141,27 @@
 
 #lib/Chj/xtmpfile.pm	Code before strictures are enabled at line 19, column 1. See page 429 of PBP.
 
-#lib/Class/Array.pm	Code before strictures are enabled at line 17, column 1. See page 429 of PBP.
-#lib/Class/Array.pm	Expression form of "eval" at line 23, column 9. See page 161 of PBP.
-#lib/Class/Array.pm	Subroutine prototypes used at line 27, column 1. See page 194 of PBP.
-#lib/Class/Array.pm	Subroutine prototypes used at line 27, column 20. See page 194 of PBP.
-#lib/Class/Array.pm	Subroutine prototypes used at line 27, column 42. See page 194 of PBP.
-#lib/Class/Array.pm	Subroutine prototypes used at line 28, column 1. See page 194 of PBP.
-#lib/Class/Array.pm	Loop iterator is not lexical at line 32, column 5. See page 108 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 167, column 9. See page 429 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 202, column 8. See page 429 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 216, column 2. See page 429 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 236, column 5. See page 429 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 294, column 5. See page 429 of PBP.
-#lib/Class/Array.pm	Expression form of "eval" at line 303, column 19. See page 161 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 318, column 5. See page 429 of PBP.
-#lib/Class/Array.pm	Expression form of "eval" at line 347, column 29. See page 161 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 378, column 5. See page 429 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 473, column 5. See page 429 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 510, column 5. See page 429 of PBP.
-#lib/Class/Array.pm	Expression form of "eval" at line 523, column 47. See page 161 of PBP.
-#lib/Class/Array.pm	Expression form of "eval" at line 528, column 51. See page 161 of PBP.
-#lib/Class/Array.pm	Stricture disabled at line 603, column 5. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Code before strictures are enabled at line 17, column 1. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Expression form of "eval" at line 23, column 9. See page 161 of PBP.
+#lib/Chj/Class/Array.pm	Subroutine prototypes used at line 27, column 1. See page 194 of PBP.
+#lib/Chj/Class/Array.pm	Subroutine prototypes used at line 27, column 20. See page 194 of PBP.
+#lib/Chj/Class/Array.pm	Subroutine prototypes used at line 27, column 42. See page 194 of PBP.
+#lib/Chj/Class/Array.pm	Subroutine prototypes used at line 28, column 1. See page 194 of PBP.
+#lib/Chj/Class/Array.pm	Loop iterator is not lexical at line 32, column 5. See page 108 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 167, column 9. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 202, column 8. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 216, column 2. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 236, column 5. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 294, column 5. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Expression form of "eval" at line 303, column 19. See page 161 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 318, column 5. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Expression form of "eval" at line 347, column 29. See page 161 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 378, column 5. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 473, column 5. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 510, column 5. See page 429 of PBP.
+#lib/Chj/Class/Array.pm	Expression form of "eval" at line 523, column 47. See page 161 of PBP.
+#lib/Chj/Class/Array.pm	Expression form of "eval" at line 528, column 51. See page 161 of PBP.
+#lib/Chj/Class/Array.pm	Stricture disabled at line 603, column 5. See page 429 of PBP.
 
 #lib/FP.pm	Code before strictures are enabled at line 25, column 1. See page 429 of PBP.
 

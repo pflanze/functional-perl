@@ -65,7 +65,7 @@ set_stoplist(qw(
 
 sub methods_of_class {
     my ($class, $maybe_ignore_codes)=@_;
-    if ($class eq 'Class::Array') {
+    if ($class eq 'Chj::Class::Array') {
         # since I have such a mess there, I exclude that one, and
         # return a list of only some of it's methods.
         return qw(clone )

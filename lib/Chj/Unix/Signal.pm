@@ -27,7 +27,7 @@ package Chj::Unix::Signal;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Class::Array -fields=>
+use Chj::Class::Array -fields=>
   -publica=>
   'number',
   ;
@@ -69,4 +69,4 @@ sub as_string {
     defined $maybe_str ? $maybe_str : "<unknown signal (number $$s[Number])>"
 }
 
-end Class::Array;
+end Chj::Class::Array;

@@ -1352,7 +1352,7 @@ sub xlink_p ($ $ ) {
 # }
 {
     package Chj::xperlfunc::Getpwnam;
-    use Class::Array -fields=>-publica=>
+    use Chj::Class::Array -fields=>-publica=>
       qw(name passwd uid gid quota comment gcos dir shell expire);
     sub perhaps_get {
         my $class=shift;
@@ -1364,7 +1364,7 @@ sub xlink_p ($ $ ) {
             return
         }
     }
-    end Class::Array;
+    end Chj::Class::Array;
 }
 sub xgetpwnam ( $ ) {
     my ($user)=@_;
@@ -1380,7 +1380,7 @@ sub xgetpwnam ( $ ) {
 
 {
     package Chj::xperlfunc::Getgrnam;
-    use Class::Array -fields=>-publica=>
+    use Chj::Class::Array -fields=>-publica=>
       qw(name passwd gid members);
     sub perhaps_get {
         my $class=shift;
@@ -1392,7 +1392,7 @@ sub xgetpwnam ( $ ) {
             return
         }
     }
-    end Class::Array;
+    end Chj::Class::Array;
 }
 sub xgetgrnam ( $ ) {
     my ($group)=@_;

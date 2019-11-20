@@ -25,7 +25,7 @@ use lib "./htmlgen";
 
 my %ignore= map{ $_=> 1}
   qw(
-    Class::Array
+    Chj::Class::Array
     FP::DBI
     FP::Trie
     FP::Untainted

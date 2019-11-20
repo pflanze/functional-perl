@@ -8,7 +8,7 @@
 ### make it easier to use chj-perllib; see original repo for the
 ### complete thing including docs.
 
-package Class::Array;
+package Chj::Class::Array;
 
 # Copyright 2001-2008 by Christian Jaeger, copying@christianjaeger.ch
 #
@@ -172,10 +172,10 @@ sub import {
         my $counter= $ {"${class}::_CLASS_ARRAY_COUNTER"};
         unless (defined $counter) {
             if ($class eq __PACKAGE__) {
-                croak __PACKAGE__.": please use the '-fields' argument instead of '-extend' for deriving from the Class::Array base class";
+                croak __PACKAGE__.": please use the '-fields' argument instead of '-extend' for deriving from the Chj::Class::Array base class";
                 # (Hmm, does it really make sense?, should we just drop the '-fields' arg in favour of -extend in all cases?)
             } else {
-                croak __PACKAGE__.": class $class doesn't seem to be a Class::Array type class";
+                croak __PACKAGE__.": class $class doesn't seem to be a Chj::Class::Array type class";
             }
         }
         warn "    going to call create_fields_and_bless_class for extension, calling_class=$calling_class, counter=$counter, class=$class" if DEBUG;
@@ -207,7 +207,7 @@ sub import {
               defined ${"${class}::_CLASS_ARRAY_SUPERCLASS"};
           };
         # don't simply test '$class eq __PACKAGE__' since this would
-        # stop one to extent Class::Array itself.
+        # stop one to extent Chj::Class::Array itself.
         alias_fields ($class, $calling_class, $flag_onlyfields ? { map { $_=> 1 } @only_fields } : undef, 
             $flag_nowarn, 0);
         if ($namehash) { # create (if needed) and import name lookup hash (and cache it)
@@ -257,7 +257,7 @@ sub alias_fields {
                             #delete *{"${calling_class}::$_"}{CODE}; ## geht nicht, muss undef?:
                             #undef *{"${calling_class}::$_"}{CODE}; ## geht auch nicht, Can't modify glob elem in undef operator
                             #*{"${calling_class}::$_"}= undef; ## ist doch wüst weil es auch alle andern löscht.
-                            #*{"${calling_class}::$_"}= *Class::Array::nonexistant{CODE}; ist genaudasselbe.
+                            #*{"${calling_class}::$_"}= *Chj::Class::Array::nonexistant{CODE}; ist genaudasselbe.
                             #*{"${calling_class}::$_"}= sub { print "SCheisse\n" };  #"
                             delete $ {"${calling_class}::"}{$_}; #"  OK! Works, but deletes all glob fields, not only CODE. Does anybody know how to do this correctly? In Perl?, in a C extension?
                         }
@@ -279,7 +279,7 @@ sub alias_fields {
             }
         }
         $superclass or do { 
-            warn __PACKAGE__.": Error: class $class is set up as Class::Array type class except that _CLASS_ARRAY_SUPERCLASS is not defined" unless $class eq 'Class::Array';     ### don't warn when class = Class::Array, happens often
+            warn __PACKAGE__.": Error: class $class is set up as Chj::Class::Array type class except that _CLASS_ARRAY_SUPERCLASS is not defined" unless $class eq 'Chj::Class::Array';     ### don't warn when class = Chj::Class::Array, happens often
             return;
         };
 
@@ -371,7 +371,7 @@ sub class_array_namehash { #(cj 05/10/05: offensichtlich keine publica felder be
 
 sub class_array_indices {
     my $class=shift;
-    my $hash= $class->class_array_namehash(undef,undef,caller); # is is required to get caller already here!, it would be Class::Array otherwise
+    my $hash= $class->class_array_namehash(undef,undef,caller); # is is required to get caller already here!, it would be Chj::Class::Array otherwise
 #use Data::Dumper;
 #warn "class_array_indices bekam ".Dumper($hash);
     map { exists $hash->{$_} ? $hash->{$_} : confess "class_array_indices: '$_': no such field (known in your namespace)" } @_;
@@ -441,7 +441,7 @@ sub transport {
     }
 }
 #use Carp 'cluck';
-# sub create_name_lookup_hash { # only call this if needed since it's slow; only call if sure that the given class is Class::Array based.
+# sub create_name_lookup_hash { # only call this if needed since it's slow; only call if sure that the given class is Chj::Class::Array based.
 #   my $class=shift;
 # #cluck "DEBUG: create_name_lookup_hash for class '$class'";
 #   my $superclass;
@@ -458,7 +458,7 @@ sub transport {
 # 
 #           last;# for
 #       }
-#   } # else there is no superclass. (Except ("hopefully") Class::Array itself)
+#   } # else there is no superclass. (Except ("hopefully") Chj::Class::Array itself)
 #   
 #   # Put members from this class into the hash
 #   for (@{"${class}::_CLASS_ARRAY_PUBLIC_FIELDS"}, @{"${class}::_CLASS_ARRAY_PROTECTED_FIELDS"}, @{"${class}::_CLASS_ARRAY_PRIVATE_FIELDS"}) {
@@ -475,7 +475,7 @@ sub create_fields_and_bless_class {
         $newprivatefields,
         $class)=@_;
     no strict 'refs';
-#   if ($namehash and $class ne __PACKAGE__) { # last compare is needed (for -fields creation step) to stop from creating stuff in Class::Array itself
+#   if ($namehash and $class ne __PACKAGE__) { # last compare is needed (for -fields creation step) to stop from creating stuff in Chj::Class::Array itself
 # ##ç               defined ${"${class}::_CLASS_ARRAY_COUNTER"}) {
 # ##der scheiss ist   aber eigtl sollt ichs doch von oben von params her kriegen?
 #       # copy nameindex from inherited class.
@@ -492,7 +492,7 @@ sub create_fields_and_bless_class {
             *{"${calling_class}::$_"}= sub () { $scalar };
             # The following isn't any better. It's accelerated in both cases (perl5.00503). In both cases the constants are valid during global destruction. The following doesn't work if $_ eq 'ç' or some such.
             #eval "sub ${calling_class}::$_ () { $scalar }"; ## somewhat dangerous, maybe we should check vars
-            #warn "Class::Array: $@ (`$_')" if $@;
+            #warn "Chj::Class::Array: $@ (`$_')" if $@;
 #           if ($namehash) {
 #               ${"${calling_class}::CLASS_ARRAY_NAMEHASH"}{$_}=$scalar;
 #           }
@@ -515,7 +515,7 @@ sub createaccessors {
     my $public = *{"${calling_class}::_CLASS_ARRAY_PUBLIC_FIELDS"}{ARRAY};
     my $publica = *{"${calling_class}::_CLASS_ARRAY_PUBLICA_FIELDS"}{ARRAY};
     if (!$publica) {
-        croak __PACKAGE__."::createaccessors: class '$calling_class' does not seem to be a Class::Array based class";
+        croak __PACKAGE__."::createaccessors: class '$calling_class' does not seem to be a Chj::Class::Array based class";
     }
     my $namehash= $calling_class->class_array_namehash;
 #    use Data::Dumper;
@@ -607,7 +607,7 @@ sub class_array_publica_fields {
     no strict 'refs';
     my $publica= *{"${class}::_CLASS_ARRAY_PUBLICA_FIELDS"}{ARRAY};
     if (!$publica) {
-        croak __PACKAGE__."::class_array_publica_fields: class '$class' does not seem to be a Class::Array based class";
+        croak __PACKAGE__."::class_array_publica_fields: class '$class' does not seem to be a Chj::Class::Array based class";
     }
     unshift @$result,@$publica;
     # und MUSS ich noch hoch iterieren oder nicht? DOCH man muss.
@@ -637,13 +637,13 @@ __END__
 
 =head1 NAME
 
-Class::Array - array based perl objects
+Chj::Class::Array - array based perl objects
 
 =head1 SYNOPSIS
 
  package My::BaseClass;
  use strict;
- use Class::Array -fields=> -public=> qw(Name Firstname),
+ use Chj::Class::Array -fields=> -public=> qw(Name Firstname),
                             -protected=> qw(Age),
                             -private=> qw(Secret);
 
@@ -674,7 +674,7 @@ Class::Array - array based perl objects
  sub new {
      my $class=shift;
      my $self= $class->SUPER::new;
-        # Class::Array::new will catch the above if 
+        # Chj::Class::Array::new will catch the above if 
         # no one else does
      # do initialization stuff of your own here
      $self
@@ -685,7 +685,7 @@ Class::Array - array based perl objects
      # do some cleanup here
      $self->SUPER::DESTROY; 
         # can be called without worries, 
-        # Class::Array provides an empty default DESTROY method.
+        # Chj::Class::Array provides an empty default DESTROY method.
  }
  
  ----
@@ -706,7 +706,7 @@ mistakes while accessing object data is to create accessor methods which are
 slow and inconvenient (and you don't want to use depreciated  pseudohashes
 either) - what's left? Some say, use constants and  array based objects. Of
 course it's a mess since the constants and the objects aren't coupled, and
-what about inheritance? Class::Array tries to help you with that.
+what about inheritance? Chj::Class::Array tries to help you with that.
 
 Array based classes give the possibility to access data fields of your
 objects directly without the need of slow (and inconvenient) wrapper methods
@@ -716,7 +716,7 @@ privacy.
 =head1 USAGE
 
 Usage is somewhat similar to importing from non-object oriented modules. `use
-Class::Array', as well as `use ' of any Class::Array derived class,  takes a
+Chj::Class::Array', as well as `use ' of any Chj::Class::Array derived class,  takes a
 number of arguments. These declare which parent class you intend to use, and
 which object fields you want to create. See below for an explanation of all
 options. Option arguments begin with a minus `-'
@@ -724,14 +724,14 @@ options. Option arguments begin with a minus `-'
 Arguments listed I<before the first option> are interpreted as symbol names
 to be imported into your namespace directly (apart from the field names).
 This is handy to import constants and `L<enum|enum>'s. (Note that unlike the
-usual L<Exporter|Exporter>, the one from Class::Array doesn't look at the
+usual L<Exporter|Exporter>, the one from Chj::Class::Array doesn't look at the
 @EXPORT* variables yet. Drop me a note if you would like to have that.)
 
 =over 4
 
 =item -fields => I<list>
 
-This option is needed to set up an initial Class::Array based class (i.e. not
+This option is needed to set up an initial Chj::Class::Array based class (i.e. not
 extend an existing class). The following arguments are the names of the object
 fields in this class. (For compatibility reasons with older versions of this
 module, `-members' is an alias for -fields.)
@@ -776,7 +776,7 @@ names with -onlyfields).
 In order to make it possible to define classes independant from module files
 (i.e. package Some::Baseclass is not located in a file .../Some/Baseclass.pm)
 you can inherit from such classes by using the -class option. Instead of `use
-Some::Baseclass ...'  you would type `use Class::Array
+Some::Baseclass ...'  you would type `use Chj::Class::Array
 -class=>"Some::Baseclass", ...'.
 
 =item -namehash => 'hashname'
@@ -824,7 +824,7 @@ object. So there are two sources of mistakes:
 =item * Use of member names that are also used as subroutine names, perl
 builtins, or as member names of another array based class you use in the same
 package (namespace). When a particular name is already used in your namespace
-and you call `use' on a Class::Array  based class, Class::Array will detect
+and you call `use' on a Chj::Class::Array  based class, Chj::Class::Array will detect
 this, warn you and either die (if it's about a member name you're about to
 newly create), or both not import the member name into your namespace and
 also *remove* the existant entry, so you can't accidentally use the wrong
@@ -835,24 +835,24 @@ warning messages.
 
 =item * Using the member constants from another class than the one the object
 belongs to. I.e. if you have two classes, `My::House' and `My::Person', perl
-and Class::Array won't warn you if you accidentally type $me->[Pissoire]
+and Chj::Class::Array won't warn you if you accidentally type $me->[Pissoire]
 instead of $me->[Memoire]. 
 
 =back
 
 
-2.) The `use Class::Array' or `use My::ArraybasedClass' lines should always
+2.) The `use Chj::Class::Array' or `use My::ArraybasedClass' lines should always
 be the *LAST*  ones importing something from another module. Only this way
-name conflicts can be detected by Class::Array. But there is one important
-exception to this rule: use of other Class::Array based modules should be
+name conflicts can be detected by Chj::Class::Array. But there is one important
+exception to this rule: use of other Chj::Class::Array based modules should be
 even *later*. This is to resolve circularities: if there are two array
 bases modules named A and B, and both use each other, they will have to
 create their field names before they can be imported by the other one.
 To rephrase: always put your "use" lines in this order: 1. other, not
-Class::Array based modules, 2. our own definition, 3. other Class::Array
+Chj::Class::Array based modules, 2. our own definition, 3. other Chj::Class::Array
 based modules.
 
-3.) Remember that Class::Array relies on the module import mechanism and
+3.) Remember that Chj::Class::Array relies on the module import mechanism and
 thus on it's `import' method. So either don't define subroutines called
 `import' in your modules, or call SUPER::import from there after having
 stripped the arguments meant for your own import functionality, and 
@@ -885,7 +885,7 @@ entries in the symbol table.)
 
 =head1 CAVEATS
 
-Class::Array only supports single inheritance. I think there's no way to
+Chj::Class::Array only supports single inheritance. I think there's no way to
 implement multiple inheritance with arrays / member name constants. Another
 reason not to use multiple inheritance with arrays is that  users can't both
 inherit from hash and array based classes, so any class aiming to be
@@ -896,14 +896,14 @@ There is now a -pmixin => class
 Note that you can still force multiple inheritance by loading further
 subclasses yourself ('use Classname ()' or 'require Classname') and
 push()ing the additional classnames onto @ISA.
-(But for Class::Array, subclasses of such a class will look as they
-would only inherit from the one class that Class::Array has been told of.)
+(But for Chj::Class::Array, subclasses of such a class will look as they
+would only inherit from the one class that Chj::Class::Array has been told of.)
 
 =head1 NOTE
 
 There is also another helper module for array classes (on CPAN),
 L<Class::ArrayObjects|Class::ArrayObjects> by Robin Berjon. I didn't know
-about his module at the time I wrote Class::Array. You may want to have a
+about his module at the time I wrote Chj::Class::Array. You may want to have a
 look at it, too.
 
 =head1 FAQ

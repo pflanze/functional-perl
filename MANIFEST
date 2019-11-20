@@ -72,6 +72,7 @@ lib/Chj/Backtrace.pm
 lib/Chj/BinHexOctDec.pm
 lib/Chj/BuiltinTypePredicates.pm
 lib/Chj/CPAN/ModulePODUrl.pm
+lib/Chj/Class/Array.pm
 lib/Chj/Class/methodnames.pm
 lib/Chj/Destructor.pm
 lib/Chj/HTTP/Daemon.pm
@@ -112,7 +113,6 @@ lib/Chj/xoutpipe.pm
 lib/Chj/xperlfunc.pm
 lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
-lib/Class/Array.pm
 lib/FP/Abstract/Equal.pm
 lib/FP/Abstract/Interface.pm
 lib/FP/Abstract/Pure.pm
