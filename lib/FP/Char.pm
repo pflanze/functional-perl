@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -33,6 +33,9 @@ package FP::Char;
 @EXPORT=qw();
 @EXPORT_OK=qw(is_char char_is_whitespace char_is_alphanumeric);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
 
 sub is_char ($) {
     my ($v)=@_;
