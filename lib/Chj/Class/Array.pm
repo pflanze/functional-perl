@@ -637,7 +637,7 @@ __END__
 
 =head1 NAME
 
-Chj::Class::Array - array based perl objects
+Chj::Class::Array - array based perl objects (deprecated)
 
 =head1 SYNOPSIS
 
