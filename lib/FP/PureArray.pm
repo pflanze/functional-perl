@@ -27,6 +27,30 @@ If you hand someone an FP::PureArray you guarantee that you won't
 mutate it. This might be enforced in the future by making them
 immutable (todo).
 
+=head1 PURITY
+
+`PureArray`s are created to be immutable by default, which enforces
+the functional purity of the API. This can be disabled by setting
+`$FP::PureArray::immutable` to false when creating them. Only ever use
+this during development, if at all. If you need to have efficient
+updates, use another data structure (L<FP::List> suits many cases, or
+the to-be written L<FP::Vec>, although at that point updates directly
+on PureArray may be implemented efficiently, too). Or if you're sure
+making a PureArray mutable again is safe, you can call the
+`unsafe_mutable` method. Should lexical analysis get implemented in
+Perl at some point, a method `mutable` could be offered that safely
+(by way of checking via the reference count that there are no other
+users) turns a PureArray back into a mutable array. Currently the
+class `FP::MutableArray` is used but it is (TODO) planned to use
+`FP::Array` for that (and remodel the existing module of the same name
+to suit this).
+
+PureArray implements `FP::Abstract::Pure` (`is_pure` from
+`FP::Predicates` returns true even if instances were made mutable via
+setting `$FP::PureArray::immutable`). Values returned from
+`unsafe_mutable` are in a different class which does *not* implement
+`FP::Abstract::Pure`.
+
 =head1 TODO
 
 Create alternative implementation that is efficient for updates on big
@@ -59,12 +83,27 @@ use FP::Div 'inc';
 use FP::Predicates 'is_pure';
 use FP::Optional qw(perhaps_to_maybe);
 
+
+our $immutable= 1; # whether new instances are to be immutable
+
+sub purebless ($$) {
+    my ($a, $class)=@_;
+    bless $a, $class;
+    if ($immutable) {
+        Internals::SvREADONLY $_, 1
+            for @$a;
+        Internals::SvREADONLY @$a, 1;
+    }
+    $a
+}
+
+
 sub blessing ($) {
     my ($m)= @_;
     sub {
         my $class=ref $_[0];
         if (my ($v)= &$m (@_)) {
-            bless $v, $class
+            purebless $v, $class
         } else {
             ()
         }
@@ -77,9 +116,9 @@ sub blessing_snd ($) {
         my $class=ref $_[0];
         wantarray ? do {
             my ($v,$a)= &$m (@_);
-            ($v, bless $a, $class)
+            ($v, purebless $a, $class)
         }
-          : bless &$m (@_), $class;
+          : purebless &$m (@_), $class;
     }
 }
 
@@ -90,17 +129,15 @@ sub is_purearray ($) {
 }
 
 sub purearray {
-    bless [@_], "FP::PureArray"
+    purebless [@_], "FP::PureArray"
 }
 
 sub array_to_purearray ($) {
-    # XX assume it, and turn on readonly flag instead of copying?
-    bless [@{$_[0]}], "FP::PureArray"
+    purebless [@{$_[0]}], "FP::PureArray"
 }
 
 sub unsafe_array_to_purearray ($) {
-    # XX turn on readonly flag?
-    bless $_[0], "FP::PureArray"
+    purebless $_[0], "FP::PureArray"
 }
 
 
@@ -153,8 +190,9 @@ sub stream {
 # right thing even if PureArray doesn't make arrays readonly (yet))
 my %empties;
 sub empty {
-    my $cl=shift;
-    $empties{$cl} ||= bless [], $cl
+    my $proto=shift;
+    my $cl= ref($proto) || $proto;
+    $empties{$cl} ||= purebless [], $cl
 }
 
 sub is_null {
@@ -181,7 +219,7 @@ sub first_and_rest {
     @_==1 or die "wrong number of arguments";
     my ($a)= @_;
     (array_first $a,
-     bless array_rest($a), ref $a)
+     purebless array_rest($a), ref $a)
 }
 # XXX ah could have used blessing_snd ^ v
 sub maybe_first_and_rest {
@@ -189,7 +227,7 @@ sub maybe_first_and_rest {
     my ($a)= @_;
     @$a ? 
         (array_first $a,
-         bless array_rest($a), ref $a)
+         purebless array_rest($a), ref $a)
         : undef
 }
 sub perhaps_first_and_rest {
@@ -197,7 +235,7 @@ sub perhaps_first_and_rest {
     my ($a)= @_;
     @$a ? 
         (array_first $a,
-         bless array_rest($a), ref $a)
+         purebless array_rest($a), ref $a)
         : ()
 }
 *second= \&array_second;
