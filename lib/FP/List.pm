@@ -961,7 +961,7 @@ sub list_to_purearray {
 TEST {
     list (1,3,4)->purearray->map (sub{$_[0]**2})
 }
-  bless [1,9,16], "FP::PureArray";
+  bless [1,9,16], "FP::_::PureArray";
 
 
 sub list_sort ($;$) {
@@ -977,7 +977,7 @@ TEST { require FP::Ops;
   [3,4,5,8];
 
 TEST { ref (list (5,3,8,4)->sort (\&FP::Ops::number_cmp)) }
-  'FP::PureArray'; # XX ok? Need to `->list` if a list is needed
+  'FP::_::PureArray'; # XX ok? Need to `->list` if a list is needed
 
 TEST { list (5,3,8,4)->sort (\&FP::Ops::number_cmp)->list->car }
   3; # but then PureArray has `first`, too, if that's all you need.

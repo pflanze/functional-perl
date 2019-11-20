@@ -120,6 +120,7 @@ lib/FP/Abstract/Sequence.pm
 lib/FP/Abstract/Sequence/t.pm
 lib/FP/Abstract/Show.pm
 lib/FP/Array.pm
+lib/FP/Array/Mixin.pm
 lib/FP/Array_sort.pm
 lib/FP/Char.pm
 lib/FP/Combinators.pm
@@ -138,6 +139,7 @@ lib/FP/Interfaces.pm
 lib/FP/Lazy.pm
 lib/FP/List.pm
 lib/FP/Memoizing.pm
+lib/FP/MutableArray.pm
 lib/FP/Ops.pm
 lib/FP/Optional.pm
 lib/FP/OrderedCollection.pm
@@ -145,6 +147,7 @@ lib/FP/Path.pm
 lib/FP/Path/t.pm
 lib/FP/Predicates.pm
 lib/FP/PureArray.pm
+lib/FP/PureArray/t.pm
 lib/FP/Repl.pm
 lib/FP/Repl/AutoTrap.pm
 lib/FP/Repl/Dependencies.pm

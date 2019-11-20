@@ -827,7 +827,7 @@ sub stream_to_purearray {
 TEST {
     stream (1,3,4)->purearray->map (sub{$_[0]**2})
 }
-  bless [1,9,16], "FP::PureArray";
+  bless [1,9,16], "FP::_::PureArray";
 
 sub stream_to_list ($) {
     my ($l)=@_;
@@ -851,7 +851,7 @@ TEST { require FP::Ops;
   [3,4,5,8];
 
 TEST { ref (stream (5,3,8,4)->sort (*FP::Ops::number_cmp)) }
-  'FP::PureArray'; # XX ok? Need to `->stream` if a stream is needed
+  'FP::_::PureArray'; # XX ok? Need to `->stream` if a stream is needed
 
 TEST { stream (5,3,10,8,4)->sort (*FP::Ops::number_cmp)->stream->car }
   3;

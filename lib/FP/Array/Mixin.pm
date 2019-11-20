@@ -1,0 +1,195 @@
+#
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
+#
+# This is free software, offered under either the same terms as perl 5
+# or the terms of the Artistic License version 2 or the terms of the
+# MIT License (Expat version). See the file COPYING.md that came
+# bundled with this file.
+#
+
+=head1 NAME
+
+FP::Array::Mixin
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+Used to implement array based sequences.
+
+=head1 SEE ALSO
+
+L<FP::PureArray>, L<FP::MutableArray>
+
+L<FP::Array> -- definition of most functions used here
+
+=cut
+
+
+package FP::Array::Mixin;
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+use FP::Optional qw(perhaps_to_maybe);
+use FP::Combinators qw (flip flip2of3 rot3right rot3left);
+use FP::Array ":all";
+use FP::Array_sort "array_sort";
+
+sub blessing ($) {
+    my ($m)= @_;
+    sub {
+        my $class=ref $_[0];
+        if (my ($v)= &$m (@_)) {
+            $class->new_from_array($v)
+        } else {
+            ()
+        }
+    }
+}
+
+sub blessing_snd ($) {
+    my ($m)= @_;
+    sub {
+        my $class=ref $_[0];
+        wantarray ? do {
+            my ($v,$a)= &$m (@_);
+            ($v, $class->new_from_array($a))
+        }
+          : $class->new_from_array((&$m (@_))[-1]);
+    }
+}
+
+use Chj::NamespaceCleanAbove;
+
+
+sub FP_Show_show {
+    my ($s,$show)=@_;
+    $s->constructor_name."(".join(", ", @{array_map($show,$s)}).")"
+}
+
+# de-import array from FP::Array to avoid redefinition warning
+BEGIN {undef *array }
+
+sub array {
+    @_==1 or die "wrong number of arguments";
+    my $s=shift;
+    # 'debless', and copy necessary as the user is entitled to mod it
+    # now. (XX: might optimize if only reference left by checking the
+    # refcount)
+    [@$s]
+}
+
+sub list {
+    @_==1 or die "wrong number of arguments";
+    my $s=shift;
+    require FP::List; # (overhead of repeated require?)
+    FP::List::array_to_list ($s)
+}
+
+sub stream {
+    @_==1 or die "wrong number of arguments";
+    my $s=shift;
+    require FP::Stream; # (ditto)
+    FP::Stream::array_to_stream ($s)
+}
+
+
+sub is_null {
+    @_==1 or die "wrong number of arguments";
+    not @{$_[0]}
+}
+# Do *not* provide `is_pair`, though, since this is not a pair based
+# data structure? Or is the `is_null` already evil because of this and
+# should be named `is_empty`?
+
+sub values {
+    @{$_[0]}
+}
+
+
+*cons= flip \&FP::List::pair; # XX ?  Also, XXX FP::List might not
+                              # be loaded here
+*first= \&array_first;
+*maybe_first= \&array_maybe_first;
+*perhaps_first= \&array_perhaps_first;
+*rest= blessing \&array_rest;
+*maybe_rest= blessing \&array_maybe_rest;
+*perhaps_rest= blessing \&array_perhaps_rest;
+sub first_and_rest {
+    @_==1 or die "wrong number of arguments";
+    my ($a)= @_;
+    (array_first $a,
+     ref($a)->new_from_array(array_rest($a)))
+}
+# XXX ah could have used blessing_snd ^ v
+sub maybe_first_and_rest {
+    @_==1 or die "wrong number of arguments";
+    my ($a)= @_;
+    @$a ? 
+        (array_first $a,
+         ref($a)->new_from_array(array_rest($a)))
+        : undef
+}
+sub perhaps_first_and_rest {
+    @_==1 or die "wrong number of arguments";
+    my ($a)= @_;
+    @$a ? 
+        (array_first $a,
+         ref($a)->new_from_array(array_rest($a)))
+        : ()
+}
+*second= \&array_second;
+*last= \&array_last;
+*ref= \&array_ref;
+*FP_Sequence_ref=*ref;
+*length= \&array_length;
+sub FP_Sequence_length {
+    my ($self,$prefixlen)=@_;
+    $prefixlen + $self->length
+}
+*set= blessing \&array_set;
+*update= blessing \&array_update;
+*push= blessing \&array_push;
+*pop= blessing_snd \&array_pop;
+*shift= blessing_snd \&array_shift;
+*unshift= blessing \&array_unshift;
+*sub= blessing \&array_sub;
+*take= blessing \&array_take;
+*drop= blessing \&array_drop;
+*drop_while= blessing \&array_drop_while;
+*take_while= blessing \&array_take_while;
+*append= blessing \&array_append;
+*reverse= blessing \&array_reverse;
+*xone= \&array_xone;
+*perhaps_one= \&array_perhaps_one;
+*hashing_uniq= blessing \&array_hashing_uniq;
+*zip2= blessing \&array_zip2;
+*for_each= flip \&array_for_each;
+*map= blessing flip \&array_map;
+*map_with_i= blessing flip \&array_map_with_i;
+*map_with_islast= blessing flip \&array_map_with_islast;
+*filter= blessing flip \&array_filter;
+*zip= blessing \&array_zip;
+*fold= rot3left \&array_fold;
+*fold_right= rot3left \&array_fold_right;
+*preferred_fold= *fold; # ?
+*join= blessing \&array_join;
+*strings_join= \&array_strings_join;
+*every= flip \&array_every;
+*any= flip \&array_any;
+*sum= \&array_sum;
+*hash_group_by= \&array_to_hash_group_by;
+
+*sort= blessing \&array_sort;
+
+# XX provide them as functions, too? (prefixed with `purearray_`) (to
+# avoid requiring the user to use `the_method` [and perhaps missing
+# the explicit type check?])
+
+
+*perhaps_find_tail= blessing flip \&array_perhaps_find_tail;
+*perhaps_find= flip \&array_perhaps_find;
+*find= perhaps_to_maybe (\&array_perhaps_find);
+
+
+_END_ # Chj::NamespaceCleanAbove

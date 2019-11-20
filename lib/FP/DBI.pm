@@ -78,7 +78,8 @@ use Chj::NamespaceCleanAbove;
 
 {
     package FP::DBI::Row;
-    use base 'FP::PureArray';
+    use FP::PureArray(); # XX oh, ugly, to load the below namespace!
+    use base 'FP::_::PureArray';
 }
 
 {
