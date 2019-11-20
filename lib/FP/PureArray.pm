@@ -124,6 +124,15 @@ sub blessing_snd ($) {
 
 use Chj::NamespaceCleanAbove;
 
+# EXPORT HACK
+# to make it possible to use this package both for OO and exports
+require Exporter;
+*import= *Exporter::import; # needs to stay around as a method, can't
+                            # be cleaned. Did I say this is a hack?
+
+# XX TODO: really just use 2 packages, one for functions and one for
+# methods. Or would need yet more hackery to hide these.
+
 sub is_purearray ($) {
     length ref ($_[0]) and UNIVERSAL::isa($_[0], "FP::PureArray")
 }
@@ -140,12 +149,6 @@ sub array_to_purearray ($) {
     purebless $_[0], "FP::PureArray"
 }
 
-
-# EXPORT HACK
-# to make it possible to use this package both for OO and exports
-require Exporter;
-*import= *Exporter::import; # needs to stay around as a method, can't
-                            # be cleaned. Did I say this is a hack?
 
 # ---- Methods ---------------------------------------------------
 
