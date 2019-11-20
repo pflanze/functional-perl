@@ -22,7 +22,7 @@ use Chj::xperlfunc qw(xxsystem);
 xxsystem "meta/tail-expand";
 use lib "$mydir/../.htmlgen";
 
-use ModuleList;
+use FunctionalPerl::ModuleList;
 
 our $modules= modulenamelist;
 

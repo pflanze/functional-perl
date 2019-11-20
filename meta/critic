@@ -38,7 +38,7 @@ usage if @ARGV;
 
 use Function::Parameters qw(:strict);
 use Perl::Critic;
-use ModuleList;
+use FunctionalPerl::ModuleList;
 use Chj::Backtrace;
 use FP::Array ":all";
 use FP::Stream ":all";

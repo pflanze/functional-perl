@@ -187,7 +187,7 @@ lib/PXML/Tags.pm
 lib/PXML/Util.pm
 lib/PXML/XHTML.pm
 licenses/artistic_license_2.0.md
-meta/ModuleList.pm
+meta/FunctionalPerl/ModuleList.pm
 meta/_critic.out
 meta/critic
 meta/dependencycheck

@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-ModuleList
+FunctionalPerl::ModuleList
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package ModuleList;
+package FunctionalPerl::ModuleList;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(modulenamelist modulepathlist);
 @EXPORT_OK=qw();
