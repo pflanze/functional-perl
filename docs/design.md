@@ -279,6 +279,41 @@ way of checking for a '(&' method?))
   type, or constructors that reuse a mutable data structure passed as
   argument and return it as ostensibly pure object.
 
+### Name spaces
+
+Perl using namespaces both to name types (classes) and to hold
+functions is somewhat unfortunate. The confusion is well known to the
+Perl programmer (imported or locally defined functions may
+accidentally shadow methods in parent classes). But they are
+conflicting more because of two aims followed in the Functional Perl
+Project:
+
+- Functions in class scopes show up in tab completion in `FP::Repl`,
+  since there's no way to know whether it's functions or methods. One
+  solution to this, which is used in this project, is namespace
+  cleaning: deleting functions from the package after the package
+  definition has been read. `FP::Struct` automatically does this, and
+  `Chj::NamespaceCleanAbove` can be used in classes not using
+  `FP::Struct`. (There are other packages on CPAN which do the same.)
+
+- Constructor functions fit well with functional programming (they can
+  easily be passed as function values), and provide better ergonomy in
+  many cases (for example the `list` or `purearray` functions). But
+  the natural way to request a type including its constructor is say
+  `FP::PureArray`, but if `FP::PureArray` is used as the class name
+  for the objects then where should the objects live? `use
+  FP::PureArray` calls the `import` method on this package, so it must
+  be the one holding the constructor functions. Namespace cleaning
+  doesn't work here as exporting would fail. The solution that this
+  project has started to use (TODO: do it consistently) is to always
+  use nested namespaces for the actual classes; in this example,
+  `FP::_::PureArray`. The underscore is used in cases where such a
+  sub-namespace is "artificually" introduced. Basically it's "the
+  type" defined by that package. (Some packages use subpackages anyway
+  because they are multiple, e.g. `FP::List` uses `FP::List::Pair`,
+  `FP::List::Null`, but also a common base class `FP::List::List`.)
+
+
 ### Error handling
 
 Type safety is important and helpful for constructing correct
