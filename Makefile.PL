@@ -29,6 +29,7 @@ WriteMakefile (
                 # "t" and "inc" are added anyway.
                 "examples", # ?
                 "meta",
+                "htmlgen",
             ],
         },
 
