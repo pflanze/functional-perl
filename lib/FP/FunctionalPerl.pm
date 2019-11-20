@@ -35,6 +35,6 @@ package FP::FunctionalPerl;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our $VERSION= "0.72";
+our $VERSION= "0.72.1";
 
 1
