@@ -62,7 +62,7 @@ package FP::Abstract::Show;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub fp_interface_method_names {
-    ("2FP_Show_show")
+    ("FP_Show_show")
 }
 
 
