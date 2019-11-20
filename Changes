@@ -1,0 +1,9 @@
+Revision history for FunctionalPerl
+
+0.72.2 2019-11-20
+    - rename some modules to fix unauthorized namespace use
+    - other improvements for CPAN indexing incl. POD fixes
+
+0.72.1 2019-11-20
+    - first release to CPAN
+
