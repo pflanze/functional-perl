@@ -163,7 +163,8 @@ package FP::_::PureArray {
 
     FP::Interfaces::implemented qw(
         FP::Abstract::Sequence
-        FP::Abstract::Pure);
+        FP::Abstract::Pure
+        FP::Abstract::Show);
 }
 
 1

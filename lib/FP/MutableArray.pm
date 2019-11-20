@@ -102,7 +102,9 @@ package FP::_::MutableArray {
 
     _END_; # Chj::NamespaceCleanAbove
 
-    FP::Interfaces::implemented qw(FP::Abstract::Sequence);
+    FP::Interfaces::implemented qw(
+        FP::Abstract::Sequence
+        FP::Abstract::Show);
 }
 
 1
