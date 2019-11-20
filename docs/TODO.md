@@ -183,6 +183,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * Repl: support language server protocol for IDE integration?
 
+* Get rid of `test.pl` script, as this is old style and not necessary
+  anymore? But I'm setting an env var and define the ordering there,
+  how?
+
 ## Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
