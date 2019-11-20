@@ -26,11 +26,7 @@ WriteMakefile (
         },
         no_index=> {
             directory=> [
-                # default?, say explicitly again (although META_MERGE
-                # should merge?)
-                "t",
-                "inc",
-                # here also:
+                # "t" and "inc" are added anyway.
                 "examples", # ?
                 "meta",
             ],
