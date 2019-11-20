@@ -15,12 +15,14 @@ FP::List - singly linked (purely functional) lists
 
  use FP::Div qw(inc square); use FP::Ops qw(div); use FP::Equal 'is_equal';
  use FP::Combinators qw(flip);
+ use FP::Predicates qw(is_pure);
 
  use FP::List ':all';
 
  my $l= cons("H", cons("e", cons("l", cons("l", cons("o", null)))));
  is_equal $l, list("H", "e", "l", "l", "o");
  is_equal list_to_string($l), "Hello";
+ ok is_pure $l;
 
  is_equal list(1,2,3)->map(sub{ $_[0] * $_[0] }),
           list (1,4,9);
@@ -2086,12 +2088,14 @@ sub ldie {
 
 {
     package FP::List::Null;
-    FP::Interfaces::implemented qw(FP::Abstract::Sequence
+    FP::Interfaces::implemented qw(FP::Abstract::Pure
+                                   FP::Abstract::Sequence
                                    FP::Abstract::Equal);
 }
 {
     package FP::List::Pair;
-    FP::Interfaces::implemented qw(FP::Abstract::Sequence
+    FP::Interfaces::implemented qw(FP::Abstract::Pure
+                                   FP::Abstract::Sequence
                                    FP::Abstract::Equal);
 }
 
