@@ -43,6 +43,8 @@ language. Its drawbacks are more overhead and the requirement to put a
 
 =head1 FUNCTIONS
 
+=over 4
+
 =item T { ... }
 
 Returns a closure blessed into the `FP::Trampoline::Continuation`
@@ -61,6 +63,8 @@ local'ized globals). It may also be a bit faster.
 The trampoline that bounces back as long as it receives a trampolining
 continuation: if so, the continuation is run, and the result passed to
 the `trampoline` again, otherwise it is returned directly.
+
+=back
 
 =head1 NOTE
 

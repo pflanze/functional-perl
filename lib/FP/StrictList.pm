@@ -60,7 +60,7 @@ guaranteed to always work on the rest field of a pair. Hence, the
 suggestion is to simply use method calls and `the_method` from
 `FP::Ops` to pass methods as first class functions.
 
-=head SEE ALSO
+=head1 SEE ALSO
 
 Implements: L<FP::Abstract::Sequence>.
 

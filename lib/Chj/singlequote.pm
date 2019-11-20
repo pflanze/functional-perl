@@ -48,6 +48,8 @@ Unlike the separate ones above, this captures exceptions during the
 quoting process (stringification errors) and returns "<stringification
 error: $@>" in that case.
 
+=back
+
 =head1 NOTE
 
 This is alpha software! Read the package README.
