@@ -29,8 +29,12 @@ immutable (todo).
 
 =head1 TODO
 
-Write alternative implementation that is efficient for updates on big
-arrays.
+Create alternative implementation that is efficient for updates on big
+arrays (perhaps to be called FP::Vec, but to be interoperable).
+
+=head1 SEE ALSO
+
+Implements: L<FP::Abstract::Sequence>.
 
 =cut
 
