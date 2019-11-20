@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::Htmlparse
+FunctionalPerl::Htmlgen::Htmlparse
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::Htmlparse;
+package FunctionalPerl::Htmlgen::Htmlparse;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(htmlparse);

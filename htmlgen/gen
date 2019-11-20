@@ -84,14 +84,14 @@ use FP::Hash ":all";
 use PXML::Tags qw(with_toc);
 use FP::Predicates qw(complement);
 use FP::Git::Repository;
-use Htmlgen::PathTranslate;
-use Htmlgen::PathUtil qw(path_add path_diff path0);
-use Htmlgen::Cost;
-use Htmlgen::default_config qw($default_config);
-use Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
-use Htmlgen::MarkdownPlus qw(markdownplus_parse);
+use FunctionalPerl::Htmlgen::PathTranslate;
+use FunctionalPerl::Htmlgen::PathUtil qw(path_add path_diff path0);
+use FunctionalPerl::Htmlgen::Cost;
+use FunctionalPerl::Htmlgen::default_config qw($default_config);
+use FunctionalPerl::Htmlgen::FileUtil qw(existingpath_or create_parent_dirs);
+use FunctionalPerl::Htmlgen::MarkdownPlus qw(markdownplus_parse);
 use FP::Lazy;
-use Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
+use FunctionalPerl::Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
                           mediawiki_rexpand);
 use PXML::Preserialize qw(pxmlpre);
 
@@ -100,7 +100,7 @@ our $config = hashset_union ($user_config, $default_config);
 
 lock_hash %$config;
 
-our $pathtranslate= Htmlgen::PathTranslate->new__
+our $pathtranslate= FunctionalPerl::Htmlgen::PathTranslate->new__
   (subhash $config, "is_indexpath0", "downcaps");
 
 our $gitrepository= FP::Git::Repository->new_(chdir=> $inbase);
@@ -116,13 +116,13 @@ fun path0_to_outpath ($path0) {
 }
 
 
-use Htmlgen::Toc;
-use Htmlgen::Linking;
+use FunctionalPerl::Htmlgen::Toc;
+use FunctionalPerl::Htmlgen::Linking;
 
 # XX make configurable
 our $pxml_mappers=
-  ["Htmlgen::Linking::Anchors", "Htmlgen::Toc",
-   "Htmlgen::Linking::code", "Htmlgen::Linking::a_href"];
+  ["FunctionalPerl::Htmlgen::Linking::Anchors", "FunctionalPerl::Htmlgen::Toc",
+   "FunctionalPerl::Htmlgen::Linking::code", "FunctionalPerl::Htmlgen::Linking::a_href"];
 
 fun pxml_name_to_mapper (@PXMLMapper_args) {
   +{
@@ -325,7 +325,7 @@ fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
 }
 
 # For access from main:: by the code in the configuration file:
-use Htmlgen::Nav qw(_nav entry);
+use FunctionalPerl::Htmlgen::Nav qw(_nav entry);
 
 sub nav {
     _nav (list(@_), \&nav_bar)

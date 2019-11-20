@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::default_config
+FunctionalPerl::Htmlgen::default_config
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::default_config;
+package FunctionalPerl::Htmlgen::default_config;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw($default_config);
 @EXPORT_OK=qw();

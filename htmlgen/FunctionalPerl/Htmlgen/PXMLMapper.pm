@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::PXMLMapper - base class for PXML mappers
+FunctionalPerl::Htmlgen::PXMLMapper - base class for PXML mappers
 
 =head1 SYNOPSIS
 
@@ -25,7 +25,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::PXMLMapper;
+package FunctionalPerl::Htmlgen::PXMLMapper;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -38,7 +38,7 @@ use FP::Struct [
                 [*is_procedure, "maybe_have_path0"],
                 [*is_procedure, "perhaps_filename_to_path0"],
                 [maybe(*is_procedure), "map_code_body"],
-                [instance_of("Htmlgen::PathTranslate"), "pathtranslate"],
+                [instance_of("FunctionalPerl::Htmlgen::PathTranslate"), "pathtranslate"],
                ];
 
 method match_element_names ()

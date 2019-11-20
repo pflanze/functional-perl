@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::PathTranslate
+FunctionalPerl::Htmlgen::PathTranslate
 
 =head1 SYNOPSIS
 
@@ -25,7 +25,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::PathTranslate;
+package FunctionalPerl::Htmlgen::PathTranslate;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -33,9 +33,9 @@ use Sub::Call::Tail;
 use Chj::TEST;
 use FP::Predicates;
 use Chj::xperlfunc qw(dirname basename);
-use Htmlgen::PathUtil qw(path_path0_append);
+use FunctionalPerl::Htmlgen::PathUtil qw(path_path0_append);
 use FP::Div qw(identity);
-use Htmlgen::default_config;
+use FunctionalPerl::Htmlgen::default_config;
 use FP::Show;
 use FP::Predicates 'false';
 

@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::Toc - building a table of contents
+FunctionalPerl::Htmlgen::Toc - building a table of contents
 
 =head1 SYNOPSIS
 
@@ -24,7 +24,7 @@ numbering added to the hX section headers.
 
 =head1 SEE ALSO
 
-This is a L<Htmlgen::PXMLMapper>
+This is a L<FunctionalPerl::Htmlgen::PXMLMapper>
 
 =head1 NOTE
 
@@ -33,7 +33,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::Toc;
+package FunctionalPerl::Htmlgen::Toc;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -121,7 +121,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
     # now.
     method html_with_parents ($rindices) {
         my $maybe_name= $self->name;
-        my $shown= [Htmlgen::Toc::rindices_numberstring ($rindices),
+        my $shown= [FunctionalPerl::Htmlgen::Toc::rindices_numberstring ($rindices),
                     $self->header_pxml_for_toc ];
         DIR({class=> "toc"},
             (defined $maybe_name ? A({href=> "#".$maybe_name}, $shown)
@@ -298,7 +298,7 @@ TEST {HTML ((process__with_toc__body
 
 # now the "EXPORT":
 
-use FP::Struct []=> "Htmlgen::PXMLMapper";
+use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
 
 method match_element_names () { ["with_toc"] }
 

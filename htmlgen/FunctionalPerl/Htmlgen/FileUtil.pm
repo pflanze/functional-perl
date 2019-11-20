@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::FileUtil
+FunctionalPerl::Htmlgen::FileUtil
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::FileUtil;
+package FunctionalPerl::Htmlgen::FileUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(existingpath_or create_parent_dirs);

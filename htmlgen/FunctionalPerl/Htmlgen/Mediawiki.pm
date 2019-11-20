@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::Mediawiki
+FunctionalPerl::Htmlgen::Mediawiki
 
 =head1 SYNOPSIS
 
@@ -24,7 +24,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::Mediawiki;
+package FunctionalPerl::Htmlgen::Mediawiki;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(mediawiki_prepare mediawiki_replace mediawiki_rexpand

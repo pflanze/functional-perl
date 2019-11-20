@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::PathUtil
+FunctionalPerl::Htmlgen::PathUtil
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::PathUtil;
+package FunctionalPerl::Htmlgen::PathUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(path_add path_diff

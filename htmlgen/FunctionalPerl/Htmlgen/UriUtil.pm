@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::UriUtil
+FunctionalPerl::Htmlgen::UriUtil
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::UriUtil;
+package FunctionalPerl::Htmlgen::UriUtil;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(uri_add URI_is_internal);

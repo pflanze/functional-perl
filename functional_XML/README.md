@@ -11,7 +11,7 @@ doesn't support XML namespaces properly (manually prefixing element
 names may be a workable solution, though?). It is primarily meant to
 *produce* XML output; parsing of XML is of secondary interest (but
 [Htmlgen](../htmlgen/README.md) already has [some
-code](../htmlgen/Htmlgen/Htmlparse.pm) to parse by way of
+code](../htmlgen/FunctionalPerl/Htmlgen/Htmlparse.pm) to parse by way of
 `HTML::TreeBuilder`).
 
 Its in-memory representation are `PXML::Element` (or subclassed)

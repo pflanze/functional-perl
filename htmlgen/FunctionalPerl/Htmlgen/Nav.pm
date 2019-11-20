@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::Nav -- configurable navigation bar data structure
+FunctionalPerl::Htmlgen::Nav -- configurable navigation bar data structure
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::Nav;
+package FunctionalPerl::Htmlgen::Nav;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(_nav entry);
@@ -36,12 +36,12 @@ use Function::Parameters qw(:strict);
 # Constructors
 
 fun _nav ($items, $nav_bar) {
-    my $nav= Htmlgen::Nav::TopEntry->new($items, $nav_bar, undef);
+    my $nav= FunctionalPerl::Htmlgen::Nav::TopEntry->new($items, $nav_bar, undef);
     $nav->index_set(nav_index ($nav))
 }
 
 fun entry ($path0,@subentries) {
-    Htmlgen::Nav::RealEntry->new_(path0=> $path0,
+    FunctionalPerl::Htmlgen::Nav::RealEntry->new_(path0=> $path0,
                                   subentries=> list(@subentries));
 }
 
@@ -49,7 +49,7 @@ fun entry ($path0,@subentries) {
 # Classes
 
 {
-    package Htmlgen::Nav::Entry;
+    package FunctionalPerl::Htmlgen::Nav::Entry;
     use FP::Predicates ":all";
     use FP::List qw(list_of); # should that be re-exported by
                               # FP::Predicates?
@@ -58,7 +58,7 @@ fun entry ($path0,@subentries) {
     use FP::fix;
     use FP::Equal qw(equal);
 
-    use FP::Struct [[list_of(instance_of "Htmlgen::Nav::Entry"),
+    use FP::Struct [[list_of(instance_of "FunctionalPerl::Htmlgen::Nav::Entry"),
                      "subentries"]];
 
     method subentries_of_subentries () {
@@ -115,7 +115,7 @@ fun entry ($path0,@subentries) {
 }
 
 {
-    package Htmlgen::Nav::TopEntry;
+    package FunctionalPerl::Htmlgen::Nav::TopEntry;
     use FP::Predicates ":all";
     use FP::Ops qw(the_method string_cmp);
     use FP::Combinators qw(compose);
@@ -125,9 +125,9 @@ fun entry ($path0,@subentries) {
 
     use FP::Struct [
                     [*is_procedure, "nav_bar"],
-                    [maybe instance_of "Htmlgen::Nav::Index", "index"]
+                    [maybe instance_of "FunctionalPerl::Htmlgen::Nav::Index", "index"]
                    ],
-        "Htmlgen::Nav::Entry";
+        "FunctionalPerl::Htmlgen::Nav::Entry";
 
     method FP_Show_show ($show) {
         ("nav(".
@@ -188,13 +188,13 @@ fun entry ($path0,@subentries) {
 }
 
 {
-    package Htmlgen::Nav::RealEntry;
+    package FunctionalPerl::Htmlgen::Nav::RealEntry;
     use FP::Predicates ":all";
     use FP::Ops qw(the_method);
     use FP::Equal qw(equal);
 
     use FP::Struct [[*is_string, "path0"]],
-        "Htmlgen::Nav::Entry",
+        "FunctionalPerl::Htmlgen::Nav::Entry",
         "FP::Abstract::Equal";
 
     method FP_Show_show ($show) {
@@ -223,18 +223,18 @@ use FP::fix;
 # nav object.
 
 {
-    package Htmlgen::Nav::Index;
+    package FunctionalPerl::Htmlgen::Nav::Index;
     use FP::List qw(null);
 
     use FP::Struct ["p0_to_upitems", "p0_to_item"];
 
     method path0_to_upitems ($p0) {
         # now includes the $p0 item itself
-        $self->p0_to_upitems->{$p0} // Htmlgen::Nav::entry($p0)  # not null
+        $self->p0_to_upitems->{$p0} // FunctionalPerl::Htmlgen::Nav::entry($p0)  # not null
     }
 
     method path0_to_item ($p0) {
-        $self->p0_to_item->{$p0} // Htmlgen::Nav::entry($p0)
+        $self->p0_to_item->{$p0} // FunctionalPerl::Htmlgen::Nav::entry($p0)
     }
     _END_
 }
@@ -253,7 +253,7 @@ fun nav_index ($nav) {
             });
       };
     &$index_level ($nav, null);
-    Htmlgen::Nav::Index->new(\%p0_to_upitems, \%p0_to_item);
+    FunctionalPerl::Htmlgen::Nav::Index->new(\%p0_to_upitems, \%p0_to_item);
 }
 
 

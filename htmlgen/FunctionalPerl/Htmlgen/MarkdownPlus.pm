@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::MarkdownPlus
+FunctionalPerl::Htmlgen::MarkdownPlus
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::MarkdownPlus;
+package FunctionalPerl::Htmlgen::MarkdownPlus;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(markdownplus_parse);
@@ -37,10 +37,10 @@ use Chj::TEST;
 use PXML qw(is_pxml_element);
 use PXML::XHTML ":all";
 use FP::Stream ":all";
-use Htmlgen::Htmlparse 'htmlparse';
+use FunctionalPerl::Htmlgen::Htmlparse 'htmlparse';
 use Text::Markdown 'markdown';
 use FP::Lazy;
-use Htmlgen::Mediawiki qw(mediawiki_prepare);
+use FunctionalPerl::Htmlgen::Mediawiki qw(mediawiki_prepare);
 
 
 # Return <h1> element if available, and rest.

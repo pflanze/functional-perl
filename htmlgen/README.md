@@ -13,7 +13,7 @@ really employ exemplary separation between pure and non-pure parts.
 (Todo: improve that aspect?)
 
 The code that builds the table of content, `process__with_toc__body`
-in `Htmlgen::Toc`, *is* purely functional and may serve as an example
+in `FunctionalPerl::Htmlgen::Toc`, *is* purely functional and may serve as an example
 of relatively involved functional code. It uses a variant of
 `fold_right` that also explicitely passes state while recursing down
 the input lists (the HTML (which is parsed to `PXML`) element bodies),
@@ -28,9 +28,9 @@ state. (To be fair, Haskell programmers would probably do the same
 (todo: ask/try?), but at least the side-effects would be channeled to
 some extent?)
 
-While we're explaining code: `Htmlgen::Toc` is one of the classes that
-follow the `Htmlgen::PXMLMapper` api (for others see the sub-packages
-in `Htmlgen::Linking`), which take a few configuration values (in a
+While we're explaining code: `FunctionalPerl::Htmlgen::Toc` is one of the classes that
+follow the `FunctionalPerl::Htmlgen::PXMLMapper` api (for others see the sub-packages
+in `FunctionalPerl::Htmlgen::Linking`), which take a few configuration values (in a
 way similar to how currying might be used in functional languages that
 don't support OO) and are then used to build a hash table (by
 `pxml_name_to_mapper` in the [`gen`](gen) script) which is passed to

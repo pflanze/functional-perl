@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Htmlgen::Linking
+FunctionalPerl::Htmlgen::Linking
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,7 @@ Adding/changing links, currently:
 
 =head1 SEE ALSO
 
-This is a L<Htmlgen::PXMLMapper>
+This is a L<FunctionalPerl::Htmlgen::PXMLMapper>
 
 =head1 NOTE
 
@@ -36,7 +36,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package Htmlgen::Linking;
+package FunctionalPerl::Htmlgen::Linking;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -44,12 +44,12 @@ use Sub::Call::Tail;
 
 
 {
-    package Htmlgen::Linking::Anchors;
+    package FunctionalPerl::Htmlgen::Linking::Anchors;
     # add anchors
 
     use PXML::XHTML ":all";
 
-    use FP::Struct []=> "Htmlgen::PXMLMapper";
+    use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
 
     method match_element_names () { [qw(h1 h2 h3 h4)] }
 
@@ -63,11 +63,11 @@ use Sub::Call::Tail;
 
 
 {
-    package Htmlgen::Linking::code;
+    package FunctionalPerl::Htmlgen::Linking::code;
 
     use FP::List;
     use FP::Predicates;
-    use Htmlgen::PathUtil qw(path_diff);
+    use FunctionalPerl::Htmlgen::PathUtil qw(path_diff);
     use PXML::XHTML ":all";
 
     use Chj::CPAN::ModulePODUrl 'perhaps_module_pod_url';
@@ -118,7 +118,7 @@ use Sub::Call::Tail;
     }
 
 
-    use FP::Struct []=> "Htmlgen::PXMLMapper";
+    use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
 
     method match_element_names () { [ "code" ] }
 
@@ -181,14 +181,14 @@ use Sub::Call::Tail;
 }
 
 {
-    package Htmlgen::Linking::a_href;
+    package FunctionalPerl::Htmlgen::Linking::a_href;
 
-    use Htmlgen::UriUtil qw(URI_is_internal);
+    use FunctionalPerl::Htmlgen::UriUtil qw(URI_is_internal);
     use Chj::xperlfunc qw(dirname);
-    use Htmlgen::PathUtil qw(path_add path_diff);
+    use FunctionalPerl::Htmlgen::PathUtil qw(path_add path_diff);
     use FP::Show;
 
-    use FP::Struct []=> "Htmlgen::PXMLMapper";
+    use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
 
     method match_element_names () { ["a"] }
 
