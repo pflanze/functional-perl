@@ -10,7 +10,7 @@ our $len= 672;
 require "./meta/test.pl";
 
 use lib "./lib";
-use Test::Requires 'FP::Repl::Dependencies';
+use Test::Requires qw(FP::Repl::Dependencies Sub::Util);
 use Test::More;
 use FP::Repl;
 use FP::Repl::Trap;
