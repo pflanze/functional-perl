@@ -52,6 +52,10 @@ The example from the synopsis is equivalent to:
  is fact2(5), 120;
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

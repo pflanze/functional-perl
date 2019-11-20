@@ -14,6 +14,10 @@ Chj::tempdir
 
 A simple tempdir procedure, without auto cleanup.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

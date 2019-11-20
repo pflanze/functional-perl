@@ -115,6 +115,10 @@ Also, the values returned by `pxmlpre`'d functions can not be
 processed with e.g. functions in `PXML::Util`, or at least those won't
 find the elements in the parts that have been pre-serialized.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

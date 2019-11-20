@@ -25,6 +25,10 @@ Chj::Backtrace.
 
 L<FP::Repl::Trap>, L<Chj::Backtrace>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

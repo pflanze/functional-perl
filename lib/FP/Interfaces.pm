@@ -47,6 +47,10 @@ FP::Interfaces - implement interfaces
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

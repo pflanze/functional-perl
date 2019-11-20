@@ -103,6 +103,10 @@ The general functional perl documentation.
 
 L<FP::List>, L<FP::Lazy>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

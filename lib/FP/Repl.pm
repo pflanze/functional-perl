@@ -35,6 +35,10 @@ For a simple parameterless start of `FP::Repl::Repl`.
 
 L<FP::Repl::Repl>: the class implementing this
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

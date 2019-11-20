@@ -18,6 +18,10 @@ FP::Abstract::Sequence::t -- tests for FP::Abstract::Sequence
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

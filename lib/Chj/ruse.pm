@@ -54,6 +54,10 @@ This module might have problems with threads - I don't know if
 other threads might try to run subroutines which have been deleted before
 being defined again.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

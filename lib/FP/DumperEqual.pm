@@ -38,6 +38,10 @@ For a more proper solution, see FP::Equal
 
 L<FP::Equal>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

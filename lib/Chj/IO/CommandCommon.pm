@@ -19,6 +19,10 @@ Chj::IO::CommandCommon
 
 Common superclass ('mixin'?) for Chj::IO::Command and Chj::IO::CommandBidirectional.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 #'

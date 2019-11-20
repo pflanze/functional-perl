@@ -34,6 +34,10 @@ set_stoplist(list of methodnames not to return)
 set another list than BEGIN and Dumper.
 (It sets a new hashref at $Chj::Class::methodnames::stop.)
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

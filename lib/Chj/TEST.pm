@@ -61,6 +61,10 @@ required to hold the test code and results.
 
 L<Chj::noTEST>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

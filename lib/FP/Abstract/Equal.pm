@@ -57,6 +57,10 @@ Handle circular data structures.
 
 L<FP::Equal>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

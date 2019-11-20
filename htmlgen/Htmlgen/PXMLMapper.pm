@@ -18,6 +18,10 @@ Htmlgen::PXMLMapper - base class for PXML mappers
 Holding context that may be needed by mapping functions that change
 the PXML representing a page in htmlgen.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

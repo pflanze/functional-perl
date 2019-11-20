@@ -25,6 +25,10 @@ I'm pretty sure this is still re-inventing some wheel...
 
 L<FP::Repl::Stack>, L<PadWalker>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

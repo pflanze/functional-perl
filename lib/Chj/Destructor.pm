@@ -31,6 +31,10 @@ Util to help debug or test memory deallocation.
 End.pm, but that one does not type-check the destructor argument
 early, nor does it localize error variables in its DESTROY method.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

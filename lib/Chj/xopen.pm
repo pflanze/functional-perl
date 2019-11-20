@@ -69,6 +69,10 @@ Stuff like >&1 not yet really supported by the above xopen_* functions.
 
 L<Chj::IO::File>, L<Chj::xsysopen>, L<Chj::xopendir>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

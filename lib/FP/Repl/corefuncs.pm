@@ -17,6 +17,10 @@ FP::Repl::corefuncs
 
 Returns a list of all perl CORE functions
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

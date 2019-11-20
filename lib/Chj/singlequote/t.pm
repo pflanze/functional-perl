@@ -18,6 +18,10 @@ Chj::singlequote::t -- tests for Chj::singlequote
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

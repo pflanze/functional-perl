@@ -30,6 +30,10 @@ is a Chj::IO::Command (which is a Chj::IO::Pipe which is a Chj::IO::File) object
 
 L<Chj::IO::File>, L<Chj::xsysopen>, L<Chj::xopendir>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

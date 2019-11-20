@@ -18,6 +18,10 @@ Chj::Package::OfPath
 (Taken from chj-bin's perl_path2namespace.)
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

@@ -16,6 +16,10 @@ Add backtrace to all string based exceptions (those thrown by die
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

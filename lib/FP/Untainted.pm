@@ -35,6 +35,10 @@ regex match instead of XS to do so, though.)
 
 Should this module stay? Vote your opinion if you like.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

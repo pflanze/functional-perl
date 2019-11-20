@@ -20,6 +20,10 @@ Chj::IO::Tempfile
 If you kill the program i.e. using Ctl-C, it will not clean up
 its temp file.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

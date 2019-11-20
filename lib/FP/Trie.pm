@@ -71,6 +71,10 @@ updatable pure (hash) table datastructure yet.
 Are the method names ok? What names are other common implementations
 using? (todo: check Hoogle etc.)
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

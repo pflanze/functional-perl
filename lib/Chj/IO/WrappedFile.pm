@@ -27,6 +27,10 @@ Chj::IO::WrappedFile
 This is a type wrapper to provide the Chj::IO::File methods for all
 kinds of Perl filehandles.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

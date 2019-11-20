@@ -37,6 +37,10 @@ take HOME if set (with assertments), otherwise xeffectiveuserhome
 
 =back
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

@@ -73,6 +73,10 @@ Implements: L<FP::Abstract::Sequence>.
 
 L<FP::MutableArray>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

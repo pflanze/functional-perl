@@ -927,5 +927,9 @@ Christian Jaeger <copying@christianjaeger.ch>.
 
 L<constant>, L<enum>, L<Class::Class>, L<Class::ArrayObjects>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 

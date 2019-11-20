@@ -50,6 +50,10 @@ or if the comparison function already exists:
 
 L<FP::Ops>, L<FP::Combinators>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

@@ -16,6 +16,10 @@ Chj::Linux::LmSensors
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

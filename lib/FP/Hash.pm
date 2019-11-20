@@ -48,6 +48,10 @@ much about interoperability with other Perl code, perhaps port a
 functional hash tables implementation (like the one used by Clojure)?)
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

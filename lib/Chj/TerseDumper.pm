@@ -22,6 +22,10 @@ Chj::TerseDumper
 
 Runs Data::Dumper's Dumper with $Data::Dumper::Terse set to 1.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

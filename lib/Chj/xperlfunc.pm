@@ -189,6 +189,10 @@ xlink's $frompath to $topath but
 
 =back
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 #'

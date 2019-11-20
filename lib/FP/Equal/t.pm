@@ -17,6 +17,10 @@ FP::Equal::t -- tests for FP::Equal
 
 run by test suite
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

@@ -91,6 +91,10 @@ is issued upon errors in that case.)
 
 L<Chj::xopen>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 #'

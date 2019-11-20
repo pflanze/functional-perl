@@ -81,6 +81,10 @@ L<FP::DumperEqual> for a non-class controlled alternative
 
 L<FP::Show>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

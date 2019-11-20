@@ -25,6 +25,10 @@ Chj::CPAN::ModulePODUrl - get module POD url on metacpan
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

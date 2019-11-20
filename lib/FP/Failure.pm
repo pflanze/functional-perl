@@ -127,6 +127,10 @@ Perl booleans, and a little bit faster).
 Instead of using `FP::Failure::Failure` as base class, create a
 failure protocol (FP::Abstract::Failure) instead?
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

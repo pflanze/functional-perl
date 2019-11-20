@@ -34,6 +34,10 @@ L<PXML::Element>, L<PXML::Tags>, L<PXML::SVG>, L<PXML::XHTML>,
 L<PXML::HTML5>, L<PXML::Util>, L<PXML::Serialize>,
 L<http://functional-perl/>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

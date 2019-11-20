@@ -86,6 +86,10 @@ Completion:
 
 L<FP::Repl>: easy wrapper
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

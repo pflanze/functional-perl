@@ -48,6 +48,10 @@ less confusing (true?).
 L<Chj::IO::CommandBidirectional>, L<Chj::IO::CommandCommon>, L<Chj::IO::Pipe>,
 L<Chj::IO::CommandStandalone>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

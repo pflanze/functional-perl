@@ -151,6 +151,10 @@ cloning?)).)
 
 <FP::Show::Base::FP_Struct>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

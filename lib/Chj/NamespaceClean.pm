@@ -19,6 +19,10 @@ Chj::NamespaceClean
 
 L<Chj::NamespaceCleanAbove>, L<FP::Struct>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

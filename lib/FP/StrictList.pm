@@ -66,6 +66,10 @@ Implements: L<FP::Abstract::Sequence>.
 
 L<FP::List>, L<FP::Ops>, L<FP::Array>, L<FP::PureArray>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

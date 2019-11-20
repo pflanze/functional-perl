@@ -32,6 +32,10 @@ its arguments."
 
 L<FP::Optional>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

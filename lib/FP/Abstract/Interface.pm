@@ -38,6 +38,10 @@ implement the interface.  This method is called once at load time of
 each module that defines such a class.
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

@@ -18,6 +18,10 @@ Htmlgen::PathTranslate
 Configurable source path (.md suffix) to website path (.xhtml suffix
 or similar, index instead of README etc.) mapper.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

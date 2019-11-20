@@ -172,6 +172,10 @@ on OP_DOR.) Example code: `pass($foo->perhaps_name %% $myname)`.
 Perl 6 error values (which are false in conditional context but carry
 an error message)
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

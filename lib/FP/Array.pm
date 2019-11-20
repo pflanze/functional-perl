@@ -33,6 +33,10 @@ These are also used as methods for `FP::PureArray` objects.
 
 L<FP::Array_sort>, L<FP::PureArray>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

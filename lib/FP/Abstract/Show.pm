@@ -54,6 +54,10 @@ Configuration for whether to force promises
 
 L<FP::Show>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

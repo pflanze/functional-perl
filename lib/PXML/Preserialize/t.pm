@@ -17,6 +17,10 @@ PXML::Preserialize::t -- tests for PXML::Preserialize
 
  # is tested by `t/require_and_run_tests`
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

@@ -42,6 +42,10 @@ if available and the result escaped, otherwise an exception is thrown.
 
 =back
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

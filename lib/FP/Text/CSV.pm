@@ -61,6 +61,10 @@ FP::Text::CSV - functional interface to Text::CSV
 Handle CSV input and output in the form of functional streams (lazily
 computed linked lists).
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

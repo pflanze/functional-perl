@@ -48,6 +48,10 @@ the point of the handler call and the point of the handler
 installation (or n frames back from there, as per the argument to
 `push_withrepl`).
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

@@ -26,6 +26,10 @@ numbering added to the hX section headers.
 
 This is a L<Htmlgen::PXMLMapper>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

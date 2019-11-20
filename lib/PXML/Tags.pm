@@ -26,6 +26,10 @@ PXML::Tags
 Creates tag wrappers that return PXML elements. The names of the
 wrappers are all uppercase, and "-" is replaced with "_".
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

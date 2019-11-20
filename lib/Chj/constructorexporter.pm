@@ -54,6 +54,10 @@ sensible or pure evil, the creator of this module isn't sure yet. If
 you don't like this, either override 'import' in the subclass, or ask
 for this to be changed.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

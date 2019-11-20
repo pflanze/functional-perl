@@ -45,6 +45,10 @@ No locking whatsoever is currently being done.
 Also, serializes twice in different ways, for the key and the actual
 storage. Could Storable be used for the key as well?
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

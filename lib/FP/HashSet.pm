@@ -51,6 +51,10 @@ use the stringification).
 Note that hashset_to_array will use the *values* of the hashes, not the
 keys.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

@@ -48,6 +48,10 @@ Provide `string_to_path` constructor function?
 
 L<FP::Path::t> for the test suite
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

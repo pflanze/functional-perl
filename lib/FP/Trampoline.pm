@@ -62,6 +62,10 @@ The trampoline that bounces back as long as it receives a trampolining
 continuation: if so, the continuation is run, and the result passed to
 the `trampoline` again, otherwise it is returned directly.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

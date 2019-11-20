@@ -16,6 +16,10 @@ FP::Git::Repository
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

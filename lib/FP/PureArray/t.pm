@@ -11,6 +11,10 @@
 
 FP::PureArray::t -- tests for FP::PureArray
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

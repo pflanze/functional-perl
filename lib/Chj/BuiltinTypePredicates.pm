@@ -22,6 +22,10 @@ tree. Also, to avoid circular dependency on Chj::TEST.
 
 L<FP::Predicates>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

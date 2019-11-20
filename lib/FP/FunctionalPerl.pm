@@ -20,6 +20,10 @@ FP::FunctionalPerl - functional programming on Perl
 
 Currently just embeds the version variable.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

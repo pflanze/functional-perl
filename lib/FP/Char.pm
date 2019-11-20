@@ -21,6 +21,10 @@ FP::Char. (Creating references and blessing them for the sake of
 type safety seemed excessive.)
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

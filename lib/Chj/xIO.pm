@@ -30,6 +30,10 @@ Oh, but there's Capture::Tiny ! Even uses the same names. TODO: move
 to that. Although, Capture::Tiny might be using 'dup', which would not
 be thread safe. Shrug.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

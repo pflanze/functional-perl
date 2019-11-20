@@ -34,6 +34,10 @@ I'm pretty sure this is re-inventing some wheel..
 
 L<FP::Repl::StackPlus>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

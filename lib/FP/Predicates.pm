@@ -77,6 +77,10 @@ alternatively, modifying the functions to compose messages themselves
 when they fail (still mostly automatic), e.g. using message objects
 that are false.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

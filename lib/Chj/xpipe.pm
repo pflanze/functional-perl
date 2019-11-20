@@ -31,6 +31,10 @@ is thrown.
 
 L<Chj::IO::Pipe>, L<Chj::IO::File>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

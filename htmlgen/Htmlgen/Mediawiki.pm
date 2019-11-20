@@ -17,6 +17,10 @@ Htmlgen::Mediawiki
 
 Expand `[[ ]]` in markdown source text into standard markdown format.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

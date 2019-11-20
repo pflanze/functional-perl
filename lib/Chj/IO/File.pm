@@ -130,6 +130,10 @@ Not yet fully tested.
 
 L<Chj::xopen>, L<Chj::IO::SysFile>, L<Chj::xsysopen>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 # '}

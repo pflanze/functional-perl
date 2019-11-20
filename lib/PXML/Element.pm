@@ -16,6 +16,10 @@ PXML::Element - base class for PXML elements
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

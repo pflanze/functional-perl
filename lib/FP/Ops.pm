@@ -50,6 +50,10 @@ argument. CAREFUL: make sure the strings given as the first argument
 to these are secured, as they are passed to eval and there is no
 safety check!
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

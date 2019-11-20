@@ -43,6 +43,10 @@ CPU wise. Please give feedback about your experiences!
 
 L<FP::Lazy>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

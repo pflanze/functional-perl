@@ -32,6 +32,10 @@ returned.
 
 Delete this and use something else?
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

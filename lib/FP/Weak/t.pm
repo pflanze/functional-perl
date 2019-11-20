@@ -18,6 +18,10 @@ FP::Weak::t - tests for FP::Weak
 =head1 DESCRIPTION
 
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

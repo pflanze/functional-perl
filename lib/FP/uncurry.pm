@@ -47,6 +47,10 @@ CPAN.
 
 `the_method` and `cut_method` in L<FP::Ops>.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

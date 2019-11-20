@@ -30,6 +30,10 @@ Lazy IO (well, input), by reading items lazily as stream items.
 approaches nowadays. But it's still a nice way to do things if you're
 careful.)
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

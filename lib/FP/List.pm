@@ -116,6 +116,10 @@ Implements: L<FP::Abstract::Sequence>.
 
 L<FP::Stream>, L<FP::Array>, L<FP::PureArray>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

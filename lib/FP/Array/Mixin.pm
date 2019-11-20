@@ -23,6 +23,10 @@ L<FP::PureArray>, L<FP::MutableArray>
 
 L<FP::Array> -- definition of most functions used here
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

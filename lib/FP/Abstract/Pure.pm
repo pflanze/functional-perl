@@ -37,6 +37,10 @@ ordinary programs), i.e. are persistent (1).
 More precisely, those objects that don't have methods that when called
 make other methods non-functions.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

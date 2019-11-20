@@ -30,6 +30,10 @@ field values of the object it is being called on, and reconstructs a
 constructor call based on this information. Meaning, for the typical
 `FP::Struct` based class, it will do the right thing.
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

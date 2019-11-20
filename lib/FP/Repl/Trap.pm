@@ -28,6 +28,10 @@ NOTE: the name is not set in stone yet, also, perhaps it should be
 
 L<FP::Repl::WithRepl>, L<FP::Repl::AutoTrap>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

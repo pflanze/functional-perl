@@ -76,6 +76,10 @@ Turn weakening on and off (unscoped, 'persistently').
 
 =back
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

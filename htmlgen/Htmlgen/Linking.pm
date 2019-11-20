@@ -29,6 +29,10 @@ Adding/changing links, currently:
 
 This is a L<Htmlgen::PXMLMapper>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

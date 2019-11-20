@@ -97,6 +97,10 @@ L<http://www.functional-perl.org/docs/intro.xhtml> for the mentioned intro.
 
 L<FP::Equal>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 

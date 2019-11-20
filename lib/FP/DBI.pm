@@ -53,6 +53,10 @@ error in this case.
 
 L<DBI>, L<FP::Stream>
 
+=head1 NOTE
+
+This is alpha software! Read the package README.
+
 =cut
 
 
