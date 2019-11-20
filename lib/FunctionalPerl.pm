@@ -9,12 +9,16 @@
 
 =head1 NAME
 
-FP::FunctionalPerl - functional programming on Perl
+FunctionalPerl - functional programming on Perl
 
 =head1 SYNOPSIS
 
- use FP::FunctionalPerl;
- FP::FunctionalPerl->VERSION # or $FP::FunctionalPerl::VERSION
+ use FunctionalPerl;
+ FunctionalPerl->VERSION # or $FunctionalPerl::VERSION
+
+ # But all the actual modules are under FP::*, like:
+ use FP::List;
+ # etc.
 
 =head1 DESCRIPTION
 
@@ -27,7 +31,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package FP::FunctionalPerl;
+package FunctionalPerl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw();
