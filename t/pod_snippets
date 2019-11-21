@@ -13,7 +13,7 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Test::Requires qw(Test::Pod::Snippets Function::Parameters);
+use Test::Requires qw(Test::Pod::Snippets);
 use Test::More;
 
 use lib "./lib";
