@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,14 +13,31 @@ FP::Struct::Show
 
 =head1 SYNOPSIS
 
- {
-     package Foo;
+ package FP_Struct_Show_Example::Foo {
+
      use FP::Struct ["a","b"],
        'FP::Struct::Show';
+
      _END_
  }
+
+ FP_Struct_Show_Example::Foo::constructors->import;
  use FP::Show;
- show (Foo->new(1,2)) # => "Foo(1,2)"
+ is( show(Foo(1,1+1)),
+     "Foo(1, 2)" );
+
+ # Whereas the default:
+ package FP_Struct_Show_Example::Bar {
+
+     use FP::Struct ["a","b"];
+
+     _END_
+ }
+
+ FP_Struct_Show_Example::Bar::constructors->import;
+ use FP::Show;
+ is( show(Bar(1, 2)),
+     "bless(+{a => 1, b => 2}, 'FP_Struct_Show_Example::Bar')" );
 
 =head1 DESCRIPTION
 
