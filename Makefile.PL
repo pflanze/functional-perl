@@ -8,6 +8,7 @@ WriteMakefile (
     NAME              => 'FunctionalPerl',
     VERSION_FROM      => 'lib/FunctionalPerl.pm',
     MIN_PERL_VERSION => $MIN_PERL_VERSION,
+    LICENSE=> "perl_5", # including HTTP::Daemon which has the same
     PREREQ_PM         => {
         # e.g., Module::Name => 1.1
         "Scalar::Util"=> 0,
