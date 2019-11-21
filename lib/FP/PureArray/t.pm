@@ -137,8 +137,8 @@ TEST { require FP::Ops;
 }
 
 TEST {
-    my $empty= FP::PureArray::_Test->empty;
-    $empty->set (1,5)
+    my $null= FP::PureArray::_Test->null;
+    $null->set (1,5)
 }
   bless [undef, 5], 'FP::PureArray::_Test';
 

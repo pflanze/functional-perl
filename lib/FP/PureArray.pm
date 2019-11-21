@@ -132,11 +132,11 @@ package FP::_::PureArray {
 
     # emptyness constructor that works for subclassing (using singletons
     # for performance (perhaps))
-    my %empties;
-    sub empty {
+    my %null;
+    sub null {
         my $proto=shift;
         my $class= ref($proto) || $proto;
-        $empties{$class} ||= $class->new_from_array([]) 
+        $null{$class} ||= $class->new_from_array([]) 
     }
 
     sub constructor_name {

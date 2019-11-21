@@ -85,6 +85,13 @@ package FP::_::MutableArray {
         bless $a, $class
     }
 
+    sub null {
+        my $proto=shift;
+        my $class= ref($proto) || $proto;
+        # can't cache this since mutation is allowed!:
+        $class->new_from_array([]) 
+    }
+
     sub constructor_name {
         "mutablearray"
     }
