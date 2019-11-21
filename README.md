@@ -75,22 +75,23 @@ functional way, and benefit from the decreased coupling and improved
 testability and debuggability that this brings.
 
 
-## Status: experimental
+## Status: alpha
 
-There are several reasons that this project should be considered
-experimental at this time:
+This project is in an alpha status because:
 
-* there are some remaining issues which appear to be in the perl
+* There are some remaining issues which appear to be in the perl
   interpreter that, in some cases, lead to memory being retained for
-  longer than necessary when using lazy lists
+  longer than necessary when using lazy lists. This has to be examined
+  and tested extensively, or a workaround (delete value out of promise
+  instead of deleting promise from its holder?) to be implemented.
 
-* also in the area of lazy lists, the current need in some situations
+* Also in the area of lazy lists, the current need in some situations
   to use `Keep` and `weaken` to guide deallocation of list elements is
   unfortunate; ideally the perl interpreter is extended with a pragma
   that, when enabled, makes it automatically let go of unused list
   elements (lexical lifetimes).
 
-* the project is currently using some modules which the author
+* The project is currently using some modules which the author
   developed a long time ago and could be replaced with other existing
   ones from CPAN (e.g. `Chj::xperlfunc`, `Chj::IO::`).
 
@@ -103,12 +104,12 @@ experimental at this time:
   deprecated in favour of extending existing class generators where
   needed and using them instead.
 
-* the namespaces are not fixed yet (in particular, everything in
+* The namespaces are not fixed yet (in particular, everything in
   `Chj::` should probably be renamed); also, the interfaces should be
-  treated as alpha. More abstract types (like
+  treated as alpha. More abstract types (similar to
   `FP::Abstract::Sequence`) should be defined.
 
-* get it working correctly first, then fast: some operations aren't
+* Get it working correctly first, then fast: some operations aren't
   efficient yet. There is no functional sequence data structure yet
   that allows efficient random access, and none for functional
   hashmaps with efficient updates, but the author has plans to address

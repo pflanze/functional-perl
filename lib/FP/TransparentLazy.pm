@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -31,8 +31,8 @@ automatically upon access (and writes their result back to the place
 they are forced from, like FP::Lazy's `FORCE` does). Otherwise the two
 are fully interchangeable.
 
-NOTE: this is even more EXPERIMENTAL than the remainder of the FP
-project. Also, should this be merged with Data::Thunk ?
+NOTE: this is EXPERIMENTAL. Also, should this be merged with
+Data::Thunk ?
 
 The drawback of transparency might be more confusion, as it's not
 directly visible anymore (neither in the debugger nor the source code)
