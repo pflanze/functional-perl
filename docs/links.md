@@ -45,7 +45,7 @@ Note: most of these links are from 2015 and 2016. Please submit new ones if you'
 
     * [Functional Programming HOWTO](https://docs.python.org/2.7/howto/functional.html)
 
-* [Functional programming in C++](http://gamasutra.com/view/news/169296/Indepth_Functional_programming_in_C.php) ([John Carmack](https://en.wikipedia.org/wiki/John_Carmack)) ([alternative link](https://web.archive.org/web/20130819160454/http://www.altdevblogaday.com/2012/04/26/functional-programming-in-c/))
+* [Functional programming in C++](https://gamasutra.com/view/news/169296/Indepth_Functional_programming_in_C.php) ([John Carmack](https://en.wikipedia.org/wiki/John_Carmack)) ([alternative link](https://web.archive.org/web/20130819160454/http://www.altdevblogaday.com/2012/04/26/functional-programming-in-c/))
 
 * [Lua Functional](https://github.com/rtsisyk/luafun)
   ([docs](http://rtsisyk.github.io/luafun/index.html),
