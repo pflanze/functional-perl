@@ -10,8 +10,6 @@ WriteMakefile (
     MIN_PERL_VERSION => $MIN_PERL_VERSION,
     LICENSE=> "perl_5", # including HTTP::Daemon which has the same
     PREREQ_PM         => {
-        # e.g., Module::Name => 1.1
-        "Scalar::Util"=> 0,
         #  These are from perl-modules in Debian, can they be assumed
         #  to be present? Seems that perl-modules is generated from
         #  core, thus yes:
@@ -24,6 +22,11 @@ WriteMakefile (
         # "Digest"=> 0,
         # "warnings"=> 0,
         # "Test::More"=> 0,
+        
+        #  Thile Debian provides this in package
+        #  libscalar-list-utils-perl (newer version), it also is in
+        #  core:
+        # "Scalar::Util"=> 0,
     },
     TEST_REQUIRES => {
         "Test::Requires"=> 0,
