@@ -24,15 +24,13 @@ FP::Abstract::Pure - functional purity protocol
 
  # but usually:
  use FP::Predicates;
- is_pure ($v) # true if $v is (officially) immutable, detectable from
-              # inheritance of FP::Abstract::Pure or other means
+ is_pure ($v) # true if $v does (officially) not support mutation
 
 =head1 DESCRIPTION
 
 Base class for all data structures that don't allow mutation (by
-ordinary programs), i.e. are persistent (1).
-
-(1) as in https://en.wikipedia.org/wiki/Persistent_data_structure
+ordinary programs), i.e. are
+L<persistent|https://en.wikipedia.org/wiki/Persistent_data_structure>.
 
 More precisely, those objects that don't have methods that when called
 make other methods non-functions.
