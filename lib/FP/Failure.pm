@@ -60,7 +60,7 @@ FP::Failure - failure values
  # request recorded backtrace to be shown
  is_equal $v->message(1),
           join("\n", "failure: 666 at lib/FP/Failure.pm line 54",
-                     "    (eval) at t/pod_snippets line 126",
+                     "    (eval) at t/pod_snippets line 132",
                      "  because:",
                      "  failure: 'not good'\n");
 

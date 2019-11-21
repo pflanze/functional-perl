@@ -19,7 +19,8 @@ use Test::More;
 use lib "./lib";
 use lib "./meta";
 use FunctionalPerl::ModuleList;
-use Chj::Backtrace;
+use FunctionalPerl::Dependencies 'module_needs';
+ use Chj::Backtrace;
 
 use lib "./htmlgen";
 
@@ -111,30 +112,36 @@ sub numfailures {
 
 my $namespacenum= 0;
 
-for (@$modules) {
-    if ($ignore{$_}) {
-        print "=== Ignoring pod snippets in $_.\n";
-    } else {
-        print "=== Running pod snippets in $_ ..\n";
-
-        my $tps_direct = Test::Pod::Snippets->new();
-        my $fail_before= numfailures;
-        my $code= $tps_direct->generate_test( module => $_ );
-        $code=~ s/(;\s*)no warnings;/${1};/;
-        $code=~ s/(;\s*)no strict;/${1}use strict;/;
-        $namespacenum++;
-        if (eval "package t_pod_snippets_$namespacenum; $code; \n1") {
-            my $fail_after= numfailures;
-            if ($fail_after == $fail_before) {
-                # done_testing("snippets in $_") but that's part of $code
-            } else {
-                fail("pod snippets in $_");
-                save $_, $code;
-            }
+for my $module (@$modules) {
+  SKIP: {
+        if ($ignore{$module}) {
+            print "=== Ignoring pod snippets in $module.\n";
         } else {
-            warn "Exception: $@\n";
-            fail("pod snippets in $_");
-            save $_, $code;
+            if (my @needs= module_needs $module) {
+                skip "test pod snippets in $module - don't have @needs", 1;
+            }
+
+            print "=== Running pod snippets in $module ..\n";
+
+            my $tps_direct = Test::Pod::Snippets->new();
+            my $fail_before= numfailures;
+            my $code= $tps_direct->generate_test( module => $module );
+            $code=~ s/(;\s*)no warnings;/${1};/;
+            $code=~ s/(;\s*)no strict;/${1}use strict;/;
+            $namespacenum++;
+            if (eval "package t_pod_snippets_$namespacenum; $code; \n1") {
+                my $fail_after= numfailures;
+                if ($fail_after == $fail_before) {
+                    # done_testing("snippets in $module") but that's part of $code
+                } else {
+                    fail("pod snippets in $module");
+                    save $module, $code;
+                }
+            } else {
+                warn "Exception: $@\n";
+                fail("pod snippets in $module");
+                save $module, $code;
+            }
         }
     }
 }
