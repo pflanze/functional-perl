@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -40,15 +40,17 @@ use lib "$mydir/../lib";
 
 
 # specify dependency when running through test suite
-use Chj::TEST
-  use=> 'FP::Repl::Dependencies';
+use Chj::TEST;
 
 # for development/debugging
 #use Chj::ruse; # get the 'ruse' procedure which will reload modules;
                 # since we're putting the meat of the program into the
                 # main file, this won't help us here.
 use Chj::Backtrace; # show backtraces when an error happens
-use FP::Repl; # get the 'repl' procedure.
+#use FP::Repl; # get the 'repl' procedure.
+# -- we're instead loading it via require at the bottom of this file,
+#    so that we can also run this file via the test suite even
+#    when dependencies of FP::Repl are not installed.
 
 
 # ------------------------------------------------------------------
@@ -524,4 +526,6 @@ sub square {
 # run TEST forms if called as part of test suite, otherwise enter the
 # repl for your experiments, see (0) above:
 
-perhaps_run_tests "main" or repl;
+perhaps_run_tests "main" or do {
+    require FP::Repl; FP::Repl::repl();
+}
