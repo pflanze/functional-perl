@@ -149,7 +149,7 @@ cloning?)).)
 
 =head1 ALSO SEE
 
-<FP::Show::Base::FP_Struct>
+<FP::Struct::Show>
 
 =head1 NOTE
 

@@ -166,7 +166,7 @@ package FP::Failure::Failure {
          ],
         "maybe_trace", # [[caller(0)],...]
         ],
-        'FP::Show::Base::FP_Struct';
+        'FP::Struct::Show';
 
     use overload
         bool=> sub { undef },
@@ -260,7 +260,7 @@ sub fails ($;$) {
 
 package FP::Failure::Abstract::Message {
     use FP::Struct [],
-        'FP::Show::Base::FP_Struct';
+        'FP::Struct::Show';
     _END_
 }
 

@@ -73,7 +73,7 @@ use Chj::TEST;
                     "URL",
                     "locations",
                     "maybe_process"],
-      'FP::Show::Base::FP_Struct';
+      'FP::Struct::Show';
 
     method remote () {
         $self->locations->any (fun ($str) { $str=~ /\bRemote\b/i })

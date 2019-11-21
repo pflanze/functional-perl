@@ -48,7 +48,7 @@ use Chj::TEST;
     use FP::Struct [
                     [*is_string, 'groupname'],
                     [*is_string, 'sensorname'],
-                   ], 'FP::Show::Base::FP_Struct';
+                   ], 'FP::Struct::Show';
     _END_
 }
 
@@ -58,7 +58,7 @@ use Chj::TEST;
     package Chj::Linux::LmSensors::ValueBase;
     use FP::Struct [
                     'name', # string
-                   ], 'FP::Show::Base::FP_Struct';
+                   ], 'FP::Struct::Show';
     _END_
 }
 
@@ -70,7 +70,7 @@ use Chj::TEST;
                     'high_crit', # maybe string
                    ],
                      'Chj::Linux::LmSensors::ValueBase',
-                       'FP::Show::Base::FP_Struct';
+                       'FP::Struct::Show';
 
     sub maybe_value {
         shift->value
@@ -88,7 +88,7 @@ use Chj::TEST;
     use FP::Struct [
                    ],
                      'Chj::Linux::LmSensors::ValueBase',
-                       'FP::Show::Base::FP_Struct';
+                       'FP::Struct::Show';
 
     sub maybe_value {
         undef
@@ -107,7 +107,7 @@ use Chj::TEST;
     use FP::Struct [
                     'name', # string
                     'values', # list of ::Value
-                   ], 'FP::Show::Base::FP_Struct';
+                   ], 'FP::Struct::Show';
     _END_
 }
 
@@ -125,7 +125,7 @@ use Chj::TEST;
     use FP::Struct [
                     'time', # unixtime value, ok?
                     'groups', # list of ::ValueGroup
-                   ], 'FP::Show::Base::FP_Struct';
+                   ], 'FP::Struct::Show';
 
     # "expecting 1 element, got 0" meaning the field doesn't exist.
     sub select {

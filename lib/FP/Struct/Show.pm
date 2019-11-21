@@ -9,14 +9,14 @@
 
 =head1 NAME
 
-FP::Show::Base::FP_Struct
+FP::Struct::Show
 
 =head1 SYNOPSIS
 
  {
      package Foo;
      use FP::Struct ["a","b"],
-       'FP::Show::Base::FP_Struct';
+       'FP::Struct::Show';
      _END_
  }
  use FP::Show;
@@ -37,7 +37,7 @@ This is alpha software! Read the package README.
 =cut
 
 
-package FP::Show::Base::FP_Struct;
+package FP::Struct::Show;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
