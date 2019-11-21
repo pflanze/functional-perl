@@ -1,30 +1,11 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-# find modules from functional-perl working directory (not installed)
-use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
-}
-use lib "$mydir/../lib";
-use lib "$mydir/../meta";
-
-# avoid dependency on Sub::Call::Tail:
-use lib "./lib";
-use Chj::xperlfunc qw(xxsystem);
-xxsystem "meta/tail-expand";
-use lib "$mydir/../.htmlgen";
-
-use FunctionalPerl::ModuleList;
-
-our $modules= modulenamelist;
 
 # ------------------------------------------------------------------
 # Non-core dependencies of modules to decide whether to skip testing
@@ -71,17 +52,47 @@ our %dependencies=
 # ------------------------------------------------------------------
 
 
-use Test::More;
+# find modules from functional-perl working directory (not installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+use lib "$mydir/../meta";
 
-for (@$modules) {
+# avoid dependency on Sub::Call::Tail:
+use lib "./lib";
+use Chj::xperlfunc qw(xxsystem);
+xxsystem "meta/tail-expand";
+use lib "$mydir/../.htmlgen";
+
+use Test::More;
+use FunctionalPerl::ModuleList;
+
+my %have_module;
+sub have_module {
+    my ($modulename)=@_;
+    return $have_module{$modulename}
+      if exists $have_module{$modulename};
+    $have_module{$modulename}= do {
+        eval "require $modulename; 1" or 0
+    }
+}
+
+our $modules= modulenamelist;
+
+for my $module (@$modules) {
   SKIP: {
-        if (0 and #no need anymore? ?
-            my $ds= $dependencies{$_}) {
+        my $ds= $dependencies{$module};
+        if ($ds) {
             for my $d (@$ds) {
-                eval "require $d; 1" or skip "failed to use $d", 1
+                skip "- don't have $d", 1
+                  if not have_module $d;
             }
         }
-        require_ok $_
+        require_ok $module;
     }
 }
 
