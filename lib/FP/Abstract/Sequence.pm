@@ -38,7 +38,7 @@ FP::Abstract::Sequence - functional sequence protocol
 =head1 DESCRIPTION
 
 This is a functional protocol, i.e. its use does not exert any side
-effects. It does *not* imply `FP::Sequence::Pure`, though; impure data
+effects. It does *not* imply `FP::Abstract::Pure`, though; impure data
 structure might like to implement it all the same.
 
 XX This is a work in progress. More base implementations should be
@@ -53,7 +53,7 @@ implementations.
 
 =head1 SEE ALSO
 
-L<FP::Sequence::Pure>
+L<FP::Abstract::Pure>
 
 =head1 NOTE
 
