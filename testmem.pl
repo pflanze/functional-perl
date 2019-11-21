@@ -6,10 +6,9 @@ sub MB ($) {
 }
 
 my $RLIMIT_KIND=
-    # At least OpenBSD does not have RLIMIT_VMEM:
-    $^O =~ /bsd/i ? RLIMIT_DATA() # openbsd, freebsd, netbsd?
-    # others, including Linux:
-    : RLIMIT_VMEM();
+    # At least OpenBSD does not have RLIMIT_VMEM; RLIMIT_DATA is the
+    # memory limit it supports. Linux does, too, so just use that one
+    RLIMIT_DATA;
     
 sub setlimit_mem_MB ($) {
     my ($limit_MB)=@_;
