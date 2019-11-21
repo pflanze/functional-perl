@@ -108,6 +108,7 @@ package FP::_::MutableArray {
 
     FP::Interfaces::implemented qw(
         FP::Abstract::Sequence
+        FP::Abstract::Equal
         FP::Abstract::Show);
 }
 

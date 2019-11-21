@@ -44,6 +44,7 @@ package FP::Array;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(array
+              array_equal
               array_first
               array_maybe_first
               array_rest
@@ -96,9 +97,22 @@ use Carp;
 use Chj::TEST;
 use FP::Div qw(min);
 use FP::Ops 'add';
+use FP::Equal 'equal';
 
 sub array {
     [@_]
+}
+
+sub array_equal {
+    my ($a, $b)= @_;
+    @$a == @$b and do {
+        my $len= @$a;
+        for (my $i=0; $i< $len; $i++) {
+            equal($$a[$i], $$b[$i])
+                or return 0;
+        }
+        1
+    }
 }
 
 sub array_maybe_first ($) {

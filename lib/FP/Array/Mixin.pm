@@ -71,6 +71,8 @@ sub FP_Show_show {
     $s->constructor_name."(".join(", ", @{array_map($show,$s)}).")"
 }
 
+*FP_Equal_equal= *array_equal;
+
 # de-import array from FP::Array to avoid redefinition warning
 BEGIN {undef *array }
 

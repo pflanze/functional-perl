@@ -139,7 +139,6 @@ package FP::_::PureArray {
         $empties{$class} ||= $class->new_from_array([]) 
     }
 
-
     sub constructor_name {
         "purearray"
     }
@@ -166,8 +165,9 @@ package FP::_::PureArray {
     _END_; # Chj::NamespaceCleanAbove
 
     FP::Interfaces::implemented qw(
-        FP::Abstract::Sequence
         FP::Abstract::Pure
+        FP::Abstract::Sequence
+        FP::Abstract::Equal
         FP::Abstract::Show);
 }
 
