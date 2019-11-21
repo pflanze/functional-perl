@@ -12,17 +12,18 @@ WriteMakefile (
     PREREQ_PM         => {
         # e.g., Module::Name => 1.1
         "Scalar::Util"=> 0,
-        # These are from perl-modules in Debian, can they be assumed
-        # to be present?
-        "Getopt::Long"=> 0,
-        "base"=> 0,
-        "NEXT"=> 0,
-        "Symbol"=> 0,
-        "utf8"=> 0,
-        "overload"=> 0,
-        "Digest"=> 0,
-        "warnings"=> 0,
-        "Test::More"=> 0,
+        #  These are from perl-modules in Debian, can they be assumed
+        #  to be present? Seems that perl-modules is generated from
+        #  core, thus yes:
+        # "Getopt::Long"=> 0,
+        # "base"=> 0,
+        # "NEXT"=> 0,
+        # "Symbol"=> 0,
+        # "utf8"=> 0,
+        # "overload"=> 0,
+        # "Digest"=> 0,
+        # "warnings"=> 0,
+        # "Test::More"=> 0,
     },
     TEST_REQUIRES => {
         "Test::Requires"=> 0,
