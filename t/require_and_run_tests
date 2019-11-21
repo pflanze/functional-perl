@@ -7,51 +7,6 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
-# ------------------------------------------------------------------
-# Non-core dependencies of modules to decide whether to skip testing
-# them.  XX: keep these updated!
-
-our %dependencies=
-  (
-   # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
-   'FP::Text::CSV'=> ['Text::CSV'],
-   'FP::url_'=> ['URI'],
-   'Chj::CPAN::ModulePODUrl'=> ['LWP::UserAgent'],
-   'FP::DBI'=> ['DBI'],
-   'Htmlgen::UriUtil'=> ['Function::Parameters', 'URI'],
-   'Htmlgen::Toc'=> ['Function::Parameters'],
-   'Htmlgen::PXMLMapper'=> ['Function::Parameters'],
-   'Htmlgen::PathUtil'=> ['Function::Parameters', 'File::Spec'],
-   'Htmlgen::PathTranslate'=> ['Function::Parameters', 'Htmlgen::PathUtil'],
-   'Htmlgen::Mediawiki'=> ['Function::Parameters', 'Encode', 'URI'],
-   'Htmlgen::MarkdownPlus'=> ['Function::Parameters', 'Htmlgen::Htmlparse',
-                              'Text::Markdown', 'Htmlgen::Mediawiki'],
-   'Htmlgen::Linking'=> ['Function::Parameters', 'Htmlgen::PathUtil',
-                         'Chj::CPAN::ModulePODUrl', 'Htmlgen::UriUtil',
-                        ],
-   'Htmlgen::Htmlparse'=> ['Function::Parameters', 'HTML::TreeBuilder'],
-   'Htmlgen::FileUtil'=> ['Function::Parameters' ],
-   'Htmlgen::default_config'=> ['Function::Parameters' ],
-   'Htmlgen::Cost'=> ['Function::Parameters' ],
-   'Htmlgen::Nav'=> ['Function::Parameters'],
-   'Chj::HTTP::Daemon'=> ['HTTP::Request'],
-   map { $_ => ['FP::Repl::Dependencies'] }
-   qw(
-         FP::Repl::Dependencies
-         FP::Repl::Repl
-         FP::Repl::StackPlus
-         Chj::Serialize
-         FP::Repl::Trap
-         FP::Repl::WithRepl
-         FP::Repl
-         FP::Trie::t
-    ),
-  );
-
-
-# ------------------------------------------------------------------
-
-
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
@@ -64,33 +19,21 @@ use lib "$mydir/../meta";
 
 # avoid dependency on Sub::Call::Tail:
 use lib "./lib";
+use lib "./meta";
 use Chj::xperlfunc qw(xxsystem);
 xxsystem "meta/tail-expand";
 use lib "$mydir/../.htmlgen";
 
 use Test::More;
 use FunctionalPerl::ModuleList;
-
-my %have_module;
-sub have_module {
-    my ($modulename)=@_;
-    return $have_module{$modulename}
-      if exists $have_module{$modulename};
-    $have_module{$modulename}= do {
-        eval "require $modulename; 1" or 0
-    }
-}
+use FunctionalPerl::Dependencies 'module_needs';
 
 our $modules= modulenamelist;
 
 for my $module (@$modules) {
   SKIP: {
-        my $ds= $dependencies{$module};
-        if ($ds) {
-            for my $d (@$ds) {
-                skip "- don't have $d", 1
-                  if not have_module $d;
-            }
+        if (my @needs= module_needs $module) {
+            skip "require $module - don't have @needs", 1;
         }
         require_ok $module;
     }
