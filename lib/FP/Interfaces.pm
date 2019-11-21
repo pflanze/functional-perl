@@ -46,6 +46,9 @@ FP::Interfaces - implement interfaces
 
 =head1 DESCRIPTION
 
+=head1 SEE ALSO
+
+This implements: L<FP::Abstract::Interface>
 
 =head1 NOTE
 

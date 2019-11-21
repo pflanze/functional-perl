@@ -37,6 +37,22 @@ return a list of the names of the set of methods that is required to
 implement the interface.  This method is called once at load time of
 each module that defines such a class.
 
+=head1 FUTURE / TODO
+
+Not only declare and check the method names, but also the arity (how
+many arguments it takes), argument names, and, once FP::Types is done,
+optionally types.
+
+At that point, offer more methods for introspection (IDE support).
+
+Extend to generic functions that support the same "methods" on
+unblessed references or non-reference values.
+
+Perhaps (given some reason) rename FP::Abstract::* to FP::Protocol::*.
+
+=head1 SEE ALSO
+
+L<FP::Interfaces>
 
 =head1 NOTE
 
