@@ -187,6 +187,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   anymore? But I'm setting an env var and define the ordering there,
   how?
 
+* Perhaps do not use all-lowercase namings like `FP::uncurry` (rename
+  to `FP::Uncurry` while still exporting `uncurry` and other
+  functions.)
+
 ## Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
