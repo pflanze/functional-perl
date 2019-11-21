@@ -67,6 +67,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   decide that have to, or otherwise appropriately (handling of
   promises, should it let methods shine through via can?)
 
+* Consistently `use Scalar::Util qw(reftype)`? What was the point
+  again of using this over `ref`?
+
 * die vs. croak: die is nice since `FP::Repl::Trap` will go to the real
   location, how is the situation with croak? (Also, `Chj::Backtrace`?)
   In `FP::Repl`, skip call frames within `Carp` and similar like
