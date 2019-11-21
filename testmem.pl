@@ -1,5 +1,5 @@
 use Test::Requires qw(BSD::Resource);
-use BSD::Resource;
+import BSD::Resource;
 
 sub MB ($) {
     $_[0]* 1048576

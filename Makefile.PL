@@ -8,6 +8,24 @@ WriteMakefile (
     NAME              => 'FunctionalPerl',
     VERSION_FROM      => 'lib/FunctionalPerl.pm',
     MIN_PERL_VERSION => $MIN_PERL_VERSION,
+    PREREQ_PM         => {
+        # e.g., Module::Name => 1.1
+        "Scalar::Util"=> 0,
+        # These are from perl-modules in Debian, can they be assumed
+        # to be present?
+        "Getopt::Long"=> 0,
+        "base"=> 0,
+        "NEXT"=> 0,
+        "Symbol"=> 0,
+        "utf8"=> 0,
+        "overload"=> 0,
+        "Digest"=> 0,
+        "warnings"=> 0,
+        "Test::More"=> 0,
+    },
+    TEST_REQUIRES => {
+        "Test::Requires"=> 0,
+    },
     META_MERGE => {
         'meta-spec'=> {
             version => '2',
@@ -15,18 +33,32 @@ WriteMakefile (
         prereqs=> {
             runtime=> {
                 recommends=> {
-                    'Term::ReadLine::Gnu'=> 0,
-                    'PadWalker'=> 0,
-                    'Eval::WithLexicals'=> 0,
-                    'Capture::Tiny'=> 0,
-                    # d'oh, ExtUtils::MakeMaker *drops* those
-                    # silently, so don't bother or figure out how to
-                    # make them end up in MYMETA.json
-                    # (https://metacpan.org/pod/CPAN::Meta::Spec)
+                    "Term::ReadLine::Gnu"=> 0,
+                    "PadWalker"=> 0,
+                    "B::Deparse"=> 0,
+                    "Eval::WithLexicals"=> 0,
+                    "Capture::Tiny"=> 0,
+                    #"Sub::Call::Tail"=> 0, currently broken
+                    "Sub::Util"=> 0,
+                    "Method::Signatures"=> 0,
+                    "Function::Parameters"=> 0,
+
+                        # for some tests:
+                    "BSD::Resource"=> 0,
+                    "DBI"=> 0,
+                    "DBD::CSV"=> 0,
+                    "Text::CSV"=> 0,
+                    "Test::Pod::Snippets"=> 0,
+                    "URI"=> 0,
+
+                        # for running htmlgen
+                    "Encode"=> 0,
+                    "LWP::UserAgent"=> 0,
+                    "Clone"=> 0,
+                    "Text::Markdown"=> 0,
                 },
             },
             test=> {
-                # etc., but see note above
             },
         },
         no_index=> {
@@ -39,11 +71,6 @@ WriteMakefile (
         },
 
     },
-    PREREQ_PM         => {
-        # e.g., Module::Name => 1.1
-        "Scalar::Util"=> 0,
-    },
-    TEST_REQUIRES => {'Test::Requires'=> 0},
     ($] >= 5.005 ?
       (ABSTRACT  => 'FunctionalPerl - functional programming on Perl',
        AUTHOR         => 'Christian Jaeger <copying@christianjaeger.ch>') : ()),
