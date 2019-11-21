@@ -41,6 +41,6 @@ package FunctionalPerl;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our $VERSION= "0.72.2";
+our $VERSION= "0.72.3";
 
 1

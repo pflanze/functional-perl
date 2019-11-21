@@ -1,9 +1,17 @@
 Revision history for FunctionalPerl
 
+0.72.3 2019-11-21
+    - renames for better names of packages, config and settings files
+    - fix skipping over tests that require missing dependencies
+    - fix some warnings at testing time
+    - Makefile.PL improvements
+    - more improvements for CPAN indexing
+
 0.72.2 2019-11-20
     - rename some modules to fix unauthorized namespace use
     - other improvements for CPAN indexing incl. POD fixes
 
 0.72.1 2019-11-20
-    - first release to CPAN
+    - first release to CPAN (deleted again to avoid allocating
+      namespaces that weren't intended to be allocated)
 
