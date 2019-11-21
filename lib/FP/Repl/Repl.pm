@@ -16,7 +16,7 @@ FP::Repl::Repl - read-eval-print loop
  my $repl= new FP::Repl::Repl;
  $repl->set_prompt("foo> ");
  # ^ if left undefined, "$package$perhapslevel> " is used
- $repl->set_historypath("somefile"); # default is ~/.perl-repl_history
+ $repl->set_historypath("somefile"); # default is ~/.fp-repl_history
  $repl->set_env_PATH ($safe_PATH); # default in taint mode is
    # '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
    # $ENV{PATH} otherwise.
@@ -144,7 +144,7 @@ sub xone_nonwhitespace {
 
 
 my $HOME=xeffectiveuserhome;
-our $maybe_historypath= "$HOME/.perl-repl_history";
+our $maybe_historypath= "$HOME/.fp-repl_history";
 our $maybe_settingspath= "$HOME/.fp-repl_settings";
 our $maxHistLen= 100;
 our $doCatchINT= 1;
