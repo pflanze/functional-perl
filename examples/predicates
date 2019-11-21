@@ -16,10 +16,8 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 
-use Chj::TEST
-  use=> 'FP::Repl::Dependencies';
+use Chj::TEST;
 use Chj::Backtrace;
-use FP::Repl;
 
 
 {
@@ -106,5 +104,6 @@ TEST { is_pure( FP::OrderedCollection->new_from_array($a) ) }
   1; # this copies the array, hence is always safe
 
 
-perhaps_run_tests "main" or repl;
-
+perhaps_run_tests "main" or do {
+    require FP::Repl; FP::Repl::repl();
+}

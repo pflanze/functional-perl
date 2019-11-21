@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -16,14 +16,12 @@ our ($mydir, $myname); BEGIN {
 use lib "$mydir/../lib";
 
 use Chj::TEST
-  use=> 'FP::Repl::Dependencies',
   use=> "DBD::CSV",
   use=> "FP::DBI"; # 'DBI' really, indirectly
 use PXML::XHTML ":all";
 use FP::Weak;
 
 use Chj::Backtrace;
-use FP::Repl;
 
 
 our $db= FP::DBI->connect ("dbi:CSV:");
@@ -77,4 +75,6 @@ TEST_EXCEPTION {
 # XX leak tests?
 
 
-perhaps_run_tests __PACKAGE__ or repl;
+perhaps_run_tests __PACKAGE__ or do {
+    require FP::Repl; FP::Repl::repl();
+}

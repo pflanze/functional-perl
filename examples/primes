@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -20,10 +20,8 @@ use lib "$mydir/../lib";
 # gracefully fail when run as a test and Method::Signatures is not
 # available
 use Chj::TEST
-  use=> 'FP::Repl::Dependencies',
   use=> 'Method::Signatures';
 use Chj::Backtrace;
-use FP::Repl;
 use FP::List ":all";
 use FP::Ops ":all";
 use FP::Lazy ":all";
@@ -205,4 +203,6 @@ t_primes \&primes;
 
 # ------------------------------------------------------------------
 # for the test suite:
-perhaps_run_tests "main" or repl;
+perhaps_run_tests "main" or do {
+    require FP::Repl; FP::Repl::repl();
+}
