@@ -21,35 +21,31 @@ FP::Abstract::Sequence - functional sequence protocol
  use FP::Stream;
  use FP::Array 'array';
 
- use Chj::TEST;
+ use FP::Equal 'is_equal';
 
- TEST { list(purearray(3,4),
-             strictlist(3,4),
-             list(3,4),
-             stream(3,4),
-             cons(3,4), # ok this can't really count as a sequence,
-                        # what to do about it?
-             array(3,4), # Could `autobox` change this?
-             3,
-             {3=>4},
-        )->map(*is_sequence)->array }
-  [ 1,1,1,1,1,'','','' ];
+ is_equal list(purearray(3,4),
+               strictlist(3,4),
+               list(3,4),
+               stream(3,4),
+               cons(3,4), # ok this can't really count as a sequence,
+                          # what to do about it?
+               array(3,4), # Could `autobox` change this?
+               3,
+               {3=>4})->map(*is_sequence),
+          list(1,1,1,1,1,0,0,0);
+
+ my $ns= purearray(FP::Abstract::Sequence->fp_interface_method_names);
+ #  The methods you can count on being supported by sequences.
+
+ is_equal $ns->sort->take(5),
+          purearray('any', 'append', 'array', 'cons', 'drop');
 
 =head1 DESCRIPTION
 
 This is a functional protocol, i.e. its use does not exert any side
-effects. It does *not* imply `FP::Abstract::Pure`, though; impure data
-structure might like to implement it all the same.
-
-XX This is a work in progress. More base implementations should be
-moved here, etc.
-
-Also, methods that are only implemented here are inconsistent in that
-they can't be imported as functions from any module. Should we really
-move functions over as plain wrappers across method calls
-(only?). Although perhaps it's fair to (only) have those functions
-importable under a type specific name that have type specific
-implementations.
+effects (that are visible to the user). It does *not* imply
+`FP::Abstract::Pure`, though; impure data structures could implement
+it all the same (in addition to a mutation protocol).
 
 =head1 SEE ALSO
 
