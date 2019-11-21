@@ -33,6 +33,8 @@ FP::MutableArray
 
  is $a->sum, 14;
 
+ is( FP::_::MutableArray->null == FP::_::MutableArray->null, '' );
+
 =head1 DESCRIPTION
 
 Native Perl arrays but blessed so that they can follow the sequences

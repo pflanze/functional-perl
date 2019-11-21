@@ -31,6 +31,7 @@ FP::PureArray
     is ref($a), 'FP::_::MutableArray';
     # see FP::MutableArray
 
+    is( FP::_::PureArray->null == FP::_::PureArray->null, 1);
 
 =head1 DESCRIPTION
 
