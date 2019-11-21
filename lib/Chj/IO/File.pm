@@ -1164,19 +1164,21 @@ sub eof {
 
 
 if ($has_posix) {
-    my $base= do {
-        if (-d "/dev/fd") {
-            "/dev/fd"
-        } elsif (-d "/proc/self/fd") {
-            "/proc/self/fd"
-        } else {
-            warn "missing /dev/fd or /proc/self/fd, fd_dev_path method will not work";
-            undef
+    my $_base;
+    my $base= sub {
+        $_base //= do {
+            if (-d "/dev/fd") {
+                "/dev/fd"
+            } elsif (-d "/proc/self/fd") {
+                "/proc/self/fd"
+            } else {
+                die "missing /dev/fd or /proc/self/fd"
+            }
         }
     };
     *Fd_dev_path= sub {
         my ($fileno)=@_;
-        $base . "/" . $fileno
+        &$base() . "/" . $fileno
     };
     *fd_dev_path= sub {
         my $s=shift;
