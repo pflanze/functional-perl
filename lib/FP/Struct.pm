@@ -160,7 +160,7 @@ This is alpha software! Read the package README.
 
 package FP::Struct;
 
-use strict; use warnings; use warnings FATAL => 'all';
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::NamespaceClean;
 use FP::Show qw(show);
