@@ -44,23 +44,60 @@ our %dependencies=
    'FP::url_'=> ['URI'],
    'Chj::CPAN::ModulePODUrl'=> ['LWP::UserAgent'],
    'FP::DBI'=> ['DBI'],
-   'Htmlgen::UriUtil'=> ['Function::Parameters', 'URI'],
-   'Htmlgen::Toc'=> ['Function::Parameters'],
-   'Htmlgen::PXMLMapper'=> ['Function::Parameters'],
-   'Htmlgen::PathUtil'=> ['Function::Parameters', 'File::Spec'],
-   'Htmlgen::PathTranslate'=> ['Function::Parameters', 'Htmlgen::PathUtil'],
-   'Htmlgen::Mediawiki'=> ['Function::Parameters', 'Encode', 'URI'],
-   'Htmlgen::MarkdownPlus'=> ['Function::Parameters', 'Htmlgen::Htmlparse',
-                              'Text::Markdown', 'Htmlgen::Mediawiki'],
-   'Htmlgen::Linking'=> ['Function::Parameters', 'Htmlgen::PathUtil',
-                         'Chj::CPAN::ModulePODUrl', 'Htmlgen::UriUtil',
-                        ],
-   'Htmlgen::Htmlparse'=> ['Function::Parameters', 'HTML::TreeBuilder'],
-   'Htmlgen::FileUtil'=> ['Function::Parameters' ],
-   'Htmlgen::default_config'=> ['Function::Parameters' ],
-   'Htmlgen::Cost'=> ['Function::Parameters' ],
-   'Htmlgen::Nav'=> ['Function::Parameters'],
-   'Chj::HTTP::Daemon'=> ['HTTP::Request'],
+   'FunctionalPerl::Htmlgen::UriUtil'=> [
+       'Function::Parameters',
+       'URI'
+   ],
+   'FunctionalPerl::Htmlgen::Toc'=> [
+       'Function::Parameters'
+   ],
+   'FunctionalPerl::Htmlgen::PXMLMapper'=> [
+       'Function::Parameters'
+   ],
+   'FunctionalPerl::Htmlgen::PathUtil'=> [
+       'Function::Parameters',
+       'File::Spec'
+   ],
+   'FunctionalPerl::Htmlgen::PathTranslate'=> [
+       'Function::Parameters',
+       'FunctionalPerl::Htmlgen::PathUtil'
+   ],
+   'FunctionalPerl::Htmlgen::Mediawiki'=> [
+       'Function::Parameters',
+       'Encode',
+       'URI'
+   ],
+   'FunctionalPerl::Htmlgen::MarkdownPlus'=> [
+       'Function::Parameters',
+       'FunctionalPerl::Htmlgen::Htmlparse',
+       'Text::Markdown',
+       'FunctionalPerl::Htmlgen::Mediawiki'
+   ],
+   'FunctionalPerl::Htmlgen::Linking'=> [
+       'Function::Parameters',
+       'FunctionalPerl::Htmlgen::PathUtil',
+       'Chj::CPAN::ModulePODUrl',
+       'FunctionalPerl::Htmlgen::UriUtil',
+   ],
+   'FunctionalPerl::Htmlgen::Htmlparse'=> [
+       'Function::Parameters',
+       'HTML::TreeBuilder'
+   ],
+   'FunctionalPerl::Htmlgen::FileUtil'=> [
+       'Function::Parameters'
+   ],
+   'FunctionalPerl::Htmlgen::default_config'=> [
+       'Function::Parameters'
+   ],
+   'FunctionalPerl::Htmlgen::Cost'=> [
+       'Function::Parameters'
+   ],
+   'FunctionalPerl::Htmlgen::Nav'=> [
+       'Function::Parameters'
+   ],
+   'Chj::HTTP::Daemon'=> [
+       'HTTP::Request'
+   ],
    map { $_ => ['FP::Repl::Dependencies'] }
    qw(
          FP::Repl::Dependencies
