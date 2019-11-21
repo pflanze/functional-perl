@@ -41,4 +41,34 @@ our @t=
         perl-goto-leak
    );
 
-runtests(map {"t/$_"} @t);
+our %ignore_win= map { $_=>1 } (
+    # these are using the shell via 'readin', should find a way to
+    # rework these without using the shell:
+    qw(
+    skip
+    csv_to_xml
+    functional_XML-test
+    ),
+    'testlazy',  # uses checks for SIGPIPE
+    'testlazy10', # uses $ENV{TZ} etc.
+    # these are using BSD::Resource, so would need more work to get to
+    # run on Windows:
+    qw(
+    skip-leak
+    perl-goto-leak
+    perl-weaken-coderef
+    ),
+    );
+
+my $is_win= $^O=~ /win32/i;
+
+runtests(map {"t/$_"}
+         grep {
+             if ($is_win and $ignore_win{$_}) {
+                 warn "skipping test '$_' on windows";
+                 0
+             } else {
+                 1
+             }
+         }
+         @t);
