@@ -75,8 +75,8 @@ sub new_out {
     my ($r,$self)=xpipe;
     bless $self,$class;
     $self->xlaunch($r,0,@_); ## und wie gebe ich den Namen an?
-    # goto form: würd hier auch nix helfen da oben hard codiert. EBEN: ich brauch ein
-    # croak das den Ort der Herkunft anzeigen kann. à la mein DEBUG().
+    # goto form: wÃ¼rd hier auch nix helfen da oben hard codiert. EBEN: ich brauch ein
+    # croak das den Ort der Herkunft anzeigen kann. Ã  la mein DEBUG().
 }
 *new_writer= *new_out;
 *new_write= *new_out;

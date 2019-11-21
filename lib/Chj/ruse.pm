@@ -202,7 +202,7 @@ sub ruse {
 }
 
 sub import {
-    my $caller=caller;#mann ich döbel
+    my $caller=caller;#mann ich dÃ¶bel
     no strict 'refs';
     warn "Copying ruse function to '${caller}::ruse'" if $DEBUG>1;
     *{"${caller}::ruse"}= \&ruse;

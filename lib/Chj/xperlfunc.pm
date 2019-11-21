@@ -485,7 +485,7 @@ sub xxcarefulrename {
 sub xlinkreplace {
     @_==2 or croak "xlinkreplace: wrong number of arguments";
     my ($source,$dest)=@_;
-    ## schon wieder dieser temporary try mechanismus. sollte ich dringend eine generische func oder ein makro dafür haben theoretisch
+    ## schon wieder dieser temporary try mechanismus. sollte ich dringend eine generische func oder ein makro dafÃ¼r haben theoretisch
     # nun im gegensatz zu Tempfile.pm brauchen wir kein eval hier. Aber auch das waer ja per func/macro machbar
     my $path;
   TRY: {

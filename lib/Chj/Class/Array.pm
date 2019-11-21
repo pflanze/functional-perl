@@ -111,7 +111,7 @@ sub import {
             }
             $flag_base=1;
         } elsif ($_ eq '-namehash') {
-            $flag_namehash=1; ## wieso dieser hack?, warum nicht nächstes argument clobbern? Hmm.
+            $flag_namehash=1; ## wieso dieser hack?, warum nicht nÃ¤chstes argument clobbern? Hmm.
         } elsif ($_ eq '-pmixin') {
             $flag_pmixin=1; #dito
         } elsif (/^-/) {
@@ -146,8 +146,8 @@ sub import {
     #if ($flag_namehash && ! $namehash) {
     #   croak __PACKAGE__.": missing argument to -namehash option";
     #} els
-    # nein, es soll undef erlaubt sein für den Fall von fields/inherit, dann einfach kein alias kreieren?
-    # çç
+    # nein, es soll undef erlaubt sein fÃ¼r den Fall von fields/inherit, dann einfach kein alias kreieren?
+    # Ã§Ã§
     if ($flag_fields && defined $flag_base) {
         croak __PACKAGE__.": you can't give both -fields and -class options";
     } elsif ($flag_fields && $flag_extend) {
@@ -155,7 +155,7 @@ sub import {
     } elsif ($flag_fields and $flag_onlyfields) {
         croak __PACKAGE__.": you can't give both -fields and -onlyfields options";
     } elsif ($flag_fields) {  # set up $calling_class as base class
-        my $counter=0; ##PS. könnte bei 1 anfangen und ins arrayelement 0 was anderes stopfen...
+        my $counter=0; ##PS. kÃ¶nnte bei 1 anfangen und ins arrayelement 0 was anderes stopfen...
         create_fields_and_bless_class ($calling_class,
                                        $counter,
                                        \@newpublicfields,
@@ -256,7 +256,7 @@ sub alias_fields {
                             carp __PACKAGE__.": conflicting name `$_': ignoring and also removing existing entry (all of \*$_ !)" unless $flag_nowarn;
                             #delete *{"${calling_class}::$_"}{CODE}; ## geht nicht, muss undef?:
                             #undef *{"${calling_class}::$_"}{CODE}; ## geht auch nicht, Can't modify glob elem in undef operator
-                            #*{"${calling_class}::$_"}= undef; ## ist doch wüst weil es auch alle andern löscht.
+                            #*{"${calling_class}::$_"}= undef; ## ist doch wÃ¼st weil es auch alle andern lÃ¶scht.
                             #*{"${calling_class}::$_"}= *Chj::Class::Array::nonexistant{CODE}; ist genaudasselbe.
                             #*{"${calling_class}::$_"}= sub { print "SCheisse\n" };  #"
                             delete $ {"${calling_class}::"}{$_}; #"  OK! Works, but deletes all glob fields, not only CODE. Does anybody know how to do this correctly? In Perl?, in a C extension?
@@ -299,10 +299,10 @@ sub class_array_namehash_allprotected { # get all protected field definitions in
     if ($hashref= *{"${class}::_CLASS_ARRAY_NAMEHASHALLPROTECTED"}{HASH}) {
         #warn "reuse cached hash";
     } else {
-        $hashref={}; # könnte es ja sein dass gar nirgends protected fields sind!
+        $hashref={}; # kÃ¶nnte es ja sein dass gar nirgends protected fields sind!
         my $workclass=$class;
         do {
-            #warn "class_array_namehash_allprotected: werde über \@${workclass}::_CLASS_ARRAY_PROTECTED_FIELDS loopen..";
+            #warn "class_array_namehash_allprotected: werde Ã¼ber \@${workclass}::_CLASS_ARRAY_PROTECTED_FIELDS loopen..";
             for (@{"${workclass}::_CLASS_ARRAY_PROTECTED_FIELDS"}) {
                 $hashref->{$_}= eval "${workclass}::$_"; # XX security?
                 #warn "class_array_namehash_allprotected: did set name '$_' to $hashref->{$_}";
@@ -313,7 +313,7 @@ sub class_array_namehash_allprotected { # get all protected field definitions in
     return $hashref
 }
 
-sub class_array_namehash { #(cj 05/10/05: offensichtlich keine publica felder bekommbar so, egal was für flags.??)
+sub class_array_namehash { #(cj 05/10/05: offensichtlich keine publica felder bekommbar so, egal was fÃ¼r flags.??)
     my $class=shift;
     my ($hashname, $flag_inherit, $calling_class, $flag_cachehash, $incomplete_hashref) =@_;
     $calling_class= caller unless defined $calling_class;
@@ -334,7 +334,7 @@ sub class_array_namehash { #(cj 05/10/05: offensichtlich keine publica felder be
         my $superclass= $ {"${class}::_CLASS_ARRAY_SUPERCLASS"};
         if ($superclass) {
             warn "DEBUG: going to call $superclass->class_array_namehash(undef, $flag_inherit, $calling_class, 0, \$hashref) where hash has ".(keys %$hashref)." keys" if DEBUG;
-            $superclass->class_array_namehash(undef, $flag_inherit, $calling_class, 0, $hashref); ## eigentlich würd ein flag anstelle calling_class ja reichen.
+            $superclass->class_array_namehash(undef, $flag_inherit, $calling_class, 0, $hashref); ## eigentlich wÃ¼rd ein flag anstelle calling_class ja reichen.
             warn "DEBUG: now hash has ".(keys %$hashref)." keys" if DEBUG;
         }
 #       use Data::Dumper;
@@ -346,7 +346,7 @@ sub class_array_namehash { #(cj 05/10/05: offensichtlich keine publica felder be
              (($flag_inherit and $calling_class eq $class) ? @{"${class}::_CLASS_ARRAY_PRIVATE_FIELDS"}: ())
             ) {
             #if (exists $hashref->{$_}) {
-            #    warn "DUPLIKAT KEY für '$_' in '$class'";##
+            #    warn "DUPLIKAT KEY fÃ¼r '$_' in '$class'";##
             #} nope just overwrite it. since we first gathered the superclass'es values first, we have to.
             $hashref->{$_}= eval "${class}::$_"; # XX security?
         }
@@ -476,7 +476,7 @@ sub create_fields_and_bless_class {
         $class)=@_;
     no strict 'refs';
 #   if ($namehash and $class ne __PACKAGE__) { # last compare is needed (for -fields creation step) to stop from creating stuff in Chj::Class::Array itself
-# ##ç               defined ${"${class}::_CLASS_ARRAY_COUNTER"}) {
+# ##Ã§               defined ${"${class}::_CLASS_ARRAY_COUNTER"}) {
 # ##der scheiss ist   aber eigtl sollt ichs doch von oben von params her kriegen?
 #       # copy nameindex from inherited class.
 #       unless (*{"${class}::CLASS_ARRAY_NAMEHASH"}{HASH}) {
@@ -490,7 +490,7 @@ sub create_fields_and_bless_class {
         } else {
             my $scalar= $counter++;
             *{"${calling_class}::$_"}= sub () { $scalar };
-            # The following isn't any better. It's accelerated in both cases (perl5.00503). In both cases the constants are valid during global destruction. The following doesn't work if $_ eq 'ç' or some such.
+            # The following isn't any better. It's accelerated in both cases (perl5.00503). In both cases the constants are valid during global destruction. The following doesn't work if $_ eq 'Ã§' or some such.
             #eval "sub ${calling_class}::$_ () { $scalar }"; ## somewhat dangerous, maybe we should check vars
             #warn "Chj::Class::Array: $@ (`$_')" if $@;
 #           if ($namehash) {
@@ -592,9 +592,9 @@ sub DESTROY {
 #     #my $namehash= $s->class_array_namehash(undef,undef,$caller);
 #     # nope. mannn muss doch schon was geben?
 #     # all publicly available fields only?
-#     # oder soll ich echt einfach durch alle Felder gehen, sie dann nach priv/prot/publ zusammenfassen öh  unddann ausgeben regardless of feldname? fully qualified feldname geben?
+#     # oder soll ich echt einfach durch alle Felder gehen, sie dann nach priv/prot/publ zusammenfassen Ã¶h  unddann ausgeben regardless of feldname? fully qualified feldname geben?
 #     # eigentlich will ich ne darstellung  mit feld konstanten? non fully qual optional
-#     die "unfinishedç"
+#     die "unfinishedÃ§"
 # #    use Data::Dumper;
 # #    Dumper $namehash
 # }
@@ -612,7 +612,7 @@ sub class_array_publica_fields {
     unshift @$result,@$publica;
     # und MUSS ich noch hoch iterieren oder nicht? DOCH man muss.
     my $superclass= *{"${class}::_CLASS_ARRAY_SUPERCLASS"}{SCALAR};
-    if ($$superclass) {# auf $superclass prüfen geht eben nicht, das ist immer ein true ref. MANN. todo oben ist das wohl überall buggy.
+    if ($$superclass) {# auf $superclass prÃ¼fen geht eben nicht, das ist immer ein true ref. MANN. todo oben ist das wohl Ã¼berall buggy.
         #warn "superclass '$$superclass'\n";
         class_array_publica_fields($$superclass,$result)
     } else {

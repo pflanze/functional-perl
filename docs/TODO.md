@@ -22,9 +22,6 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 * Consistently use "{ package Foo; ... }" or "package Foo { ... }"
   (latter if compatible with the minimal required Perl version)
 
-* There is a bug (warning) with unicode in one of the build files,
-  track down and fix.
-
 * Rename `is_null` to `is_empty`? I'm torn. `null` to `empty`?
 
 * Should I or should I not move modules that implement functions to
