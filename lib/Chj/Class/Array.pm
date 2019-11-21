@@ -18,7 +18,7 @@ package Chj::Class::Array;
 # bundled with this file.
 
 
-$VERSION = '0.10pre1';
+#$VERSION = '0.10pre1';
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;

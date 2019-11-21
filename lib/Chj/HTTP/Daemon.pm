@@ -1,9 +1,9 @@
 package Chj::HTTP::Daemon;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
-use vars qw($VERSION @ISA $PROTO $DEBUG);
+use vars qw( @ISA $PROTO $DEBUG);
 
-$VERSION = "6.01";
+#$VERSION = "6.01";
 
 use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
 @ISA=qw(IO::Socket::INET);
