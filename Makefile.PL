@@ -30,6 +30,13 @@ WriteMakefile (
         'meta-spec'=> {
             version => '2',
         },
+        resources=> {
+            repository=> {
+                type=> 'git',
+                url=> "https://github.com/pflanze/functional-perl.git",
+                web=> "https://github.com/pflanze/functional-perl",
+            },
+        },
         prereqs=> {
             runtime=> {
                 recommends=> {
