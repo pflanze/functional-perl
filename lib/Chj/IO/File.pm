@@ -140,7 +140,9 @@ This is alpha software! Read the package README.
 
 package Chj::IO::File;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict; use warnings; use warnings FATAL => 'all';
+#use FP::Repl::Trap;
+use Chj::Backtrace;
 
 our @ISA=("IO");
 sub import { };
