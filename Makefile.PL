@@ -1,8 +1,13 @@
-use 5.014002;
+my $MIN_PERL_VERSION;
+BEGIN {
+    $MIN_PERL_VERSION= 5.014002;
+    eval "use $MIN_PERL_VERSION; 1" || die $@;
+}
 use ExtUtils::MakeMaker;
 WriteMakefile (
     NAME              => 'FunctionalPerl',
     VERSION_FROM      => 'lib/FunctionalPerl.pm',
+    MIN_PERL_VERSION => $MIN_PERL_VERSION,
     META_MERGE => {
         'meta-spec'=> {
             version => '2',
