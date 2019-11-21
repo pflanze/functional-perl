@@ -145,7 +145,7 @@ sub xone_nonwhitespace {
 
 my $HOME=xeffectiveuserhome;
 our $maybe_historypath= "$HOME/.perl-repl_history";
-our $maybe_settingspath= "$HOME/.perl-repl_settings";
+our $maybe_settingspath= "$HOME/.fp-repl_settings";
 our $maxHistLen= 100;
 our $doCatchINT= 1;
 our $doRepeatWhenEmpty= 1; 
