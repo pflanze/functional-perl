@@ -191,6 +191,8 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   to `FP::Uncurry` while still exporting `uncurry` and other
   functions.)
 
+* `Test::Needs` has been recommended over `Test::Requires` "for reasons specified in its documentation", look into it.
+
 ## Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
