@@ -5,8 +5,16 @@
 # with this file.
 
 
+# NOTE: there is now a more extensive intro in docs/intro.md; this
+# file was written before that intro existed. This file still has
+# useful info above that intro; you can probably choose one or the
+# other (and then check the other for completeness) without much
+# difference (to get a perfect didactic material, someone could work
+# on eliminating this duplication).
+
+
 # This file contains an intro to functions and the very basic parts of
-# functional programming, and to how to use `functional-perl`:
+# functional programming, and to how to use FunctionalPerl:
 #
 #  1. what is a "repl"?
 #  2. what are closures?
@@ -15,21 +23,28 @@
 #  5. what are linked lists, and why are they the list data structure
 #     of choice for functional programs?
 #
-# 1-3 won't use any of the *functional-perl* code; it's really just
-# using standard Perl. 4 will use the List module from
-# *functional-perl*.
+# 2-3 won't use any of the FunctionalPerl code; it's really just
+# using standard Perl. 5 will use the List module from
+# FunctionalPerl.
 
 
 # ------------------------------------------------------------------
 # (0) boilerplate (this will be familiar to Perlers)
 
 # This (together with the -w flag in the #! line at the top) is how to
-# set up Perl to treat undefined or ambiguous language into errors,
-# which is a good idea to always do.
+# set up Perl to treat undefined or ambiguous language use as errors,
+# which is a good idea to always do, since it leads to earlier
+# reporting of errors in the program flow, before invalid results are
+# used for real, and while still close to the context the issue is
+# originating from, making the problem easier to find.
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-# Find modules from the functional-perl working directory (not
-# installed)
+
+# Some setup that's required to have this script work well as part of
+# the project, you wouldn't need this in your own scripts.
+
+# Find modules from the functional-perl working directory (if not
+# installed, but checked out from Github)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
     my $location= (-l $0) ? abs_path ($0) : $0;
@@ -38,27 +53,45 @@ our ($mydir, $myname); BEGIN {
 }
 use lib "$mydir/../lib";
 
+# Specify FP::Repl's dependencies as a dependency when this file is
+# run through test suite (so that testing of this file will be skipped
+# instead of reported as a failure)
+use Chj::TEST
+    use=> 'FP::Repl::Dependencies';
 
-# specify dependency when running through test suite
-use Chj::TEST;
+# end of "Some setup".
 
-# for development/debugging
+
+# For development/debugging
+
 #use Chj::ruse; # get the 'ruse' procedure which will reload modules;
                 # since we're putting the meat of the program into the
-                # main file, this won't help us here.
-use Chj::Backtrace; # show backtraces when an error happens
-#use FP::Repl; # get the 'repl' procedure.
-# -- we're instead loading it via require at the bottom of this file,
-#    so that we can also run this file via the test suite even
-#    when dependencies of FP::Repl are not installed.
+                # main file here, this wouldn't help us in this case.
 
+use Chj::Backtrace; # show a backtrace when an error happens
+
+use FP::Repl; # get the 'repl' procedure, so we can call it at the
+              # end, but you can also put it anywhere in the code when
+              # you want to examine the state of the program at that
+              # point.
+
+use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
+                        # that opens a repl whenever there's an
+                        # uncaught exception in your program (and the
+                        # program is running on a tty). This is useful
+                        # if you're the programmer; it wouldn't be
+                        # useful if you hand your script to an end
+                        # user who is not a programmer, thus comment
+                        # out (or otherwise disable) this import when
+                        # you pass the script on. NOTE: this overrides
+                        # the handler from Chj::Backtrace above, thus
+                        # you could comment out that line above; or,
+                        # just leave it as is, and if you comment out
+                        # FP::Repl::AutoTrap, Chj::Backtrace will
+                        # automatically be active instead.
 
 # ------------------------------------------------------------------
 # (1) Demonstrating the repl, which stands for read-eval-print loop:
-
-#repl;  # commented out since we want the functions further down to be
-        # defined before entering it; it is put at the end of the file
-        # instead
 
 # The repl allows to evaluate expressions without restarting the
 # program. It shows a prompt, reads a line of input, evaluates it, and
@@ -71,6 +104,10 @@ use Chj::Backtrace; # show backtraces when an error happens
 
 # The 'main' at the prompt indicates the namespace, which is main::
 # here.
+
+# Run this script now, `intro/basics`, and you will get a repl prompt
+# (you can see the call to it at the bottom of this file), where you
+# can play with these examples.
 
 # Multiple values:
 
@@ -88,15 +125,102 @@ use Chj::Backtrace; # show backtraces when an error happens
 #          4
 #        ];
 
-# An exception:
+# Variables:
 
-#main> die "foo"
-#foo at (eval 84) line 1.
-#    (...and a back trace)
+# Strict mode is not active in the repl, so you can leave out the
+# otherwise obligatory "our " keyword and it will be understood as a
+# package variable and hence survive across entries.
 
-# This will be used below to show how to use the definitions in this
-# file. Run `intro/basics` and do your own experiments!
+# main> $x= 10
+# $VAR1 = 10;
+# main> $x++
+# $VAR1 = 10;
+# main> $x
+# $VAR1 = 11;
 
+# If you used "my ", it would be restricted to just the line you enter:
+
+# main> my $x= 100
+# $VAR1 = 100;
+# main> $x
+# $VAR1 = 11;
+
+# You can define new code:
+
+# main> sub hi { my (@names)= @_; "Hello ".join(" and ", @names) }
+# main> hi "Paul"
+# $VAR1 = 'Hello Paul';
+
+# main> hi "Stefan", undef
+# Exception: Use of uninitialized value $names[1] in join or string at (eval 146) line 1.
+# main 1> 
+
+# An exception has happened because of the "use warnings FATAL"
+# above. The "1" in the new prompt indicates that you're in a nested
+# repl: this is because FP::Repl::AutoTrap was loaded above (see
+# comments there). Whatever you enter in this nested repl is evaluated
+# in the context where the die happened. There are some meta commands
+# in the repl; enter ":?" or ",?" for help:
+
+# main 1> :?
+# Repl help:
+# If a command line starts with a ':' or ',', then the remainder of the
+# line is interpreted as follows:
+#     ...
+#     ...
+
+# Get a backtrace:
+
+# main 1> ,b
+# 0	FP::Repl::WithRepl::__ANON__('Use of uninitialized value $names[1] in join or string at (ev...') called at (eval 146) line 1
+# 1	main::hi('Stefan', undef) called at (eval 148) line 1
+# 2	main::__ANON__() called at intro//../lib/FP/Repl/Repl.pm line 556
+# 3	FP::Repl::Repl::__ANON__() called at intro//../lib/FP/Repl/Repl.pm line 107
+# ...
+
+# Look at the environment (variables):
+
+# main 1> ,e
+# \@names = ['Stefan', undef];
+
+# Run code within that environment:
+
+# main 1> $names[0]
+# $VAR1 = 'Stefan';
+
+# main 1> hi "there", undef, "again"
+# Exception: Use of uninitialized value $names[1] in join or string at (eval 146) line 1.
+# main 2> 
+
+# The "2" signifies that you've got 2 nested repls now.
+
+# main 2> ,e
+# \@names = ['there', undef, 'again'];
+# main 2> ,b
+# 0	FP::Repl::WithRepl::__ANON__('Use of uninitialized value $names[1] in join or string at (ev...') called at (eval 146) line 1
+# 1	main::hi('there', undef, 'again') called at (eval 160) line 1
+#     ...
+# 11	FP::Repl::WithRepl::__ANON__('Use of uninitialized value $names[1] in join or string at (ev...') called at (eval 146) line 1
+# 12	main::hi('Stefan', undef) called at (eval 148) line 1
+# 13	main::__ANON__() called at intro//../lib/FP/Repl/Repl.pm line 556
+
+# main 2/12> ,10
+#     ..
+# FP::Repl::WithRepl 2/10> ,e
+# \@names = ['Stefan', undef];
+# FP::Repl::WithRepl 2/10> $names[0]
+# $VAR1 = 'Stefan';
+
+#XXX buggy 1 off  TODO fix.
+
+# You can exit one level of repls by entering ctl-d. You'll be back at:
+
+# main 1> ,e
+# \@names = ['Stefan', undef];
+
+# And again ctl-d:
+
+# main> 
 
 
 # ------------------------------------------------------------------
@@ -128,8 +252,8 @@ sub f {
 # See how f returns a subroutine as the result (its body is shown as
 # "DUMMY" for simplicity):
 
-#main> f(2,3)
-#$VAR1 = sub { "DUMMY" };
+# main> f(2,3)
+# $VAR1 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 247' };
 
 # If we want to call that:
 
@@ -172,9 +296,10 @@ sub fact {
 # statement): not only is the only effect of calling fact its return
 # value (again except for the warning, please consider that a
 # debugging feature, outside of the scope of program behaviour), but
-# it's also not using anything else than pure functions (let's treat
-# operators like '*', '-', '<' as functions) and variable bindings
-# inside.
+# it's also not using anything else than pure functions (the operators
+# like '*', '-', '<' can be understood as functions in the
+# mathematical sense, even though they are not accessible as functions
+# in Perl) and variable bindings inside.
 
 # With the 'variable binding', my $n = ... is meant. In pure
 # functional languages, variables are only ever assigned once (and
@@ -185,9 +310,14 @@ sub fact {
 # doesn't vary (the same binding isn't variable). Note that this
 # doesn't mean that $n is constant: every invocation of 'fact' will
 # bind its own instance of $n to whatever argument was passed; but
-# that same instance of $n is never modified in this implementation of
-# the factorial.
+# that same instance of $n can never be modified in a purely
+# functional language, and in this implementation of the factorial we
+# don't do that either (voluntarily).
 
+# Try it out:
+
+# main> fact 10
+# ...
 
 # ------------------------------------------------------------------
 # (4) factorial using iteration:
@@ -276,10 +406,10 @@ sub imperative_fact {
 #main> imperative_fact 4
 #$VAR1 = 24;
 #main> @imperative_inspect
-#$VAR1 = sub { "DUMMY" };
-#$VAR2 = sub { "DUMMY" };
-#$VAR3 = sub { "DUMMY" };
-#$VAR4 = sub { "DUMMY" };
+# $VAR1 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 391' };
+# $VAR2 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 391' };
+# $VAR3 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 391' };
+# $VAR4 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 391' };
 #main> $imperative_inspect[0]->()
 #$VAR1 = 1;
 #$VAR2 = 24;
@@ -357,10 +487,10 @@ sub functional_fact_iter {
 #main> functional_fact 4
 #$VAR1 = 24;
 #main> @functional_inspect
-#$VAR1 = sub { "DUMMY" };
-#$VAR2 = sub { "DUMMY" };
-#$VAR3 = sub { "DUMMY" };
-#$VAR4 = sub { "DUMMY" };
+# $VAR1 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 458' };
+# $VAR2 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 458' };
+# $VAR3 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 458' };
+# $VAR4 = sub { 'DUMMY: main::__ANON__ at "intro/basics" line 458' };
 #main> $functional_inspect[0]->()
 #$VAR1 = 4;
 #$VAR2 = 1;
@@ -442,12 +572,23 @@ TEST { cons(1, cons(2, cons(5, null))) }
 # This becomes ugly fast, so, turn it back into an array that Perl
 # will show nicely:
 
-TEST { list_to_array cons(1, cons(2, cons(5, null))) }
-  [
-   1,
-   2,
-   5
-  ];
+# main> cons(1, cons(2, cons(5, null)))->array
+# $VAR1 = [1, 2, 5];
+
+# But, there's also a meta command in the repl that can show such
+# values nicely:
+
+# main> ,s
+# main> cons(1, cons(2, cons(5, null)))
+# $VAR1 = list(1, 2, 5);
+
+# `list` is a function from `FP::List` that turns the arguments given
+# to it into a linked list. The code shown by the repl in "s" mode is
+# actually Perl code that, when run, yields the value that the command
+# evaluated to.
+
+# main> list(1, 1+1, 2*2)
+# $VAR1 = list(1, 2, 4);
 
 
 # Let's build a list functionally, using recursion:
@@ -461,14 +602,8 @@ sub iota {
     }
 }
 
-# main> list_to_array (iota (3, 8))
-# $VAR1 = [
-#           3,
-#           4,
-#           5,
-#           6,
-#           7
-#         ];
+# main> iota (3, 8)
+# $VAR1 = list(3, 4, 5, 6, 7);
 
 # you could use write_sexpr to get Scheme-compatible formatting
 # instead (this needs the print to force a newline and hence flush the
@@ -487,6 +622,11 @@ use FP::Stream ":all";
 use FP::Lazy ":all";
 
 # main> stream_iota (4, 3)
+# $VAR1 = lazy { "DUMMY" };
+
+# or, back in Data::Dumper mode:
+
+# main> :d stream_iota (4, 3)
 # $VAR1 = bless( [
 #                  sub { "DUMMY" },
 #                  undef
@@ -520,12 +660,27 @@ sub square {
 # main> write_sexpr stream_take (stream_map (\&square, stream_iota 0), 10); print "\n"
 # ("0" "1" "4" "9" "16" "25" "36" "49" "64" "81")
 
+# It's usually nicer to use method calls, though: the same in "object
+# orientation" (still purely functional!):
+
+# main> stream_iota(0)->map(\&square)->take(10)->write_sexpr ; print "\n"
+# ("0" "1" "4" "9" "16" "25" "36" "49" "64" "81")
+# $VAR1 = 1;
+
+# But you can also just get a FunctionalPerl list:
+
+# main> :s stream_iota(0)->map(\&square)->take(10)->list
+# $VAR1 = list(0, 1, 4, 9, 16, 25, 36, 49, 64, 81);
+
+# Or, remember, a plain old array:
+
+# main> :s stream_iota(0)->map(\&square)->take(10)->array
+# $VAR1 = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81];
 
 # ------------------------------------------------------------------
 
 # run TEST forms if called as part of test suite, otherwise enter the
-# repl for your experiments, see (0) above:
+# repl for your experiments:
 
-perhaps_run_tests "main" or do {
-    require FP::Repl; FP::Repl::repl();
-}
+perhaps_run_tests "main" or repl;
+
