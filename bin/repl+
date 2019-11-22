@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -18,11 +18,11 @@ $repl \
  -M FP::Stream=:all \
  -M FP::StrictList=:all \
  -M FP::PureArray \
+ -M FP::MutableArray=:all \
  -M FP::Array=:all \
  -M FP::Div=:all \
  -M Chj::pp \
  -M FP::Predicates=:all \
- -M Chj::TerseDumper \
  -m Method::Signatures \
  -m Function::Parameters=:strict \
  -m Sub::Call::Tail \
@@ -40,6 +40,7 @@ $repl \
  -M FP::OrderedCollection \
  -M FP::Combinators=:all \
  -M FP::Equal=:all \
+ -M FP::Show \
  -M Chj::TEST=:all \
  -M Chj::time_this=:all \
  "$@"
