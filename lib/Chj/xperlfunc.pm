@@ -204,6 +204,7 @@ require Exporter;
            xfork
            xfork_
            xexec
+           xexec_safe
            xsystem
            xxsystem
            xsystem_safe
@@ -304,11 +305,17 @@ sub xfork_(&) {
 }
 
 sub xexec {
-    #local $^W;
     no warnings;
     exec @_;
     croak "xexec ".singlequote_many(@_).": $!";
 }
+
+sub xexec_safe {
+    no warnings;
+    exec { $_[0] } @_;
+    croak "xexec_safe ".singlequote_many(@_).": $!";
+}
+
 
 sub xspawn {
     croak "xspawn: too few arguments" unless @_;
