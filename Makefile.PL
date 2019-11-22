@@ -20,8 +20,11 @@ WriteMakefile (
         "warnings"=> 0,
         "Test::More"=> 0,
         "Scalar::Util"=> 0,
-    },
-    TEST_REQUIRES => {
+
+
+        # XXX is TEST_REQUIRES not working? Just move all dependencies
+        # required for testing here, for now:
+
         "Test::Requires"=> 0,
         # Now required; otherwise would have to make it optional in
         # FP::Show, but then tests looking at show output would
@@ -29,6 +32,8 @@ WriteMakefile (
         "Capture::Tiny"=> 0,
         # Now required, too, to ensure test outputs match:
         "Sub::Util"=> 0,
+    },
+    TEST_REQUIRES => {
     },
     META_MERGE => {
         'meta-spec'=> {
