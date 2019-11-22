@@ -13,7 +13,7 @@ FP::Failure - failure values
 
 =head1 SYNOPSIS
 
- use FP::Equal ':all'; use FP::Ops qw(the_method); use FP::List;
+ use FP::Equal ':all'; use FP::Ops qw(the_method regex_substitute); use FP::List;
  use FP::Failure;
  is_equal \@FP::Failure::EXPORT, [qw(failure is_failure)];
  # but there is more in EXPORT_OK...
@@ -58,9 +58,9 @@ FP::Failure - failure values
           "failure: 666\n  because:\n  failure: 'not good'\n";
 
  # request recorded backtrace to be shown
- is_equal $v->message(1),
-          join("\n", "failure: 666 at lib/FP/Failure.pm line 54",
-                     "    (eval) at t/pod_snippets line 131",
+ is_equal regex_substitute(sub{ s/line \d+/line .../g }, $v->message(1)),
+          join("\n", "failure: 666 at lib/FP/Failure.pm line ...",
+                     "    (eval) at t/pod_snippets line ...",
                      "  because:",
                      "  failure: 'not good'\n");
 
