@@ -7,4 +7,8 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Test::Requires qw(Function::Parameters);
-$ENV{RUN_TESTS}=1; exec "examples/sendprepare" or exit 1;
+
+use lib "./lib";
+use Chj::xperlfunc ":all";
+
+$ENV{RUN_TESTS}=1; xexec_safe "examples/sendprepare";

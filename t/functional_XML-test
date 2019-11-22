@@ -1,19 +1,20 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+ 
+use lib "./lib";
+use Chj::xperlfunc ":all";
+use Test::More;
 
 our $len= 672;
 require "./meta/test.pl";
 
-use Test::More;
+xxsystem_safe ("functional_XML/test", 10001000);
 
-system ("functional_XML/test 10001000") == 0
-  or die;
-
-is readin ("< out.xhtml"), readin ("< t/functional_XML-test.expected");
+is xslurp("out.xhtml"), xslurp("t/functional_XML-test.expected");
 
 done_testing;

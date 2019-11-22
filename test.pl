@@ -51,7 +51,6 @@ our %ignore_win= map { $_=>1 } (
     ),
     'testlazy',  # uses checks for SIGPIPE
     'testlazy10', # uses $ENV{TZ} etc.
-    'perl-weaken-coderef-correctness', # uses shell in 1-arg exec with env vars
     # these are using BSD::Resource, so would need more work to get to
     # run on Windows:
     qw(

@@ -1,13 +1,18 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+use lib "./lib";
+use Chj::xperlfunc ":all";
+
 # test t/perl-weaken-coderef without memory pressure, to check code
 # correctness aside memory behaviour
 
-exec "TEST_PERL=1 N=800 RES=320400 t/perl-weaken-coderef"
-  or exit 127;
+$ENV{TEST_PERL}=1;
+$ENV{N}=800;
+$ENV{RES}=320400;
+xexec_safe "t/perl-weaken-coderef";

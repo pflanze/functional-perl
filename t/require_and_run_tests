@@ -20,8 +20,8 @@ use lib "$mydir/../meta";
 # avoid dependency on Sub::Call::Tail:
 use lib "./lib";
 use lib "./meta";
-use Chj::xperlfunc qw(xxsystem);
-xxsystem "meta/tail-expand";
+use Chj::xperlfunc ":all";
+xxsystem_safe "meta/tail-expand";
 use lib "$mydir/../.htmlgen";
 
 use Test::More;

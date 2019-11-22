@@ -1,10 +1,13 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+use lib "./lib";
+use Chj::xperlfunc ":all";
 
 require "./testmem.pl";
 # bleadperl on 64bit system needs enormeously more memory than v5.14.2
@@ -20,13 +23,14 @@ use Test::Requires qw(Method::Signatures);
 
 if (eval {require Sub::Call::Tail; 1}) {
 
-    $ENV{RUN_TESTS}=1; exec "intro/more_tailcalls" or exit 1;
+    $ENV{RUN_TESTS}=1; xexec_safe "intro/more_tailcalls";
 
 } else {
     # hack to run it without Sub::Call::Tail, e.g. on bleadperl where
     # this can't be installed currently.
-    system ("bin/expand-tail intro/more_tailcalls intro/.expansion-more_tailcalls")
-      == 0 or exit 1;
+    xsystem_safe ("bin/expand-tail",
+                  "intro/more_tailcalls",
+                  "intro/.expansion-more_tailcalls");
 
-    $ENV{RUN_TESTS}=1; exec "intro/.expansion-more_tailcalls" or exit 1;
+    $ENV{RUN_TESTS}=1; xexec_safe "intro/.expansion-more_tailcalls";
 }
