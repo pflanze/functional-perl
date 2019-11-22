@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.6 2019-11-22
+    - attempt to fix CPAN testers issues missing even "Test::Requires"
+      itself
+
 0.72.5 2019-11-22
     - improved regex_*substitute, eliminate line numbers from tests
     - more Windows fixing
