@@ -23,6 +23,12 @@ WriteMakefile (
     },
     TEST_REQUIRES => {
         "Test::Requires"=> 0,
+        # Now required; otherwise would have to make it optional in
+        # FP::Show, but then tests looking at show output would
+        # fail:
+        "Capture::Tiny"=> 0,
+        # Now required, too, to ensure test outputs match:
+        "Sub::Util"=> 0,
     },
     META_MERGE => {
         'meta-spec'=> {
@@ -42,9 +48,7 @@ WriteMakefile (
                     "PadWalker"=> 0,
                     "B::Deparse"=> 0,
                     "Eval::WithLexicals"=> 0,
-                    "Capture::Tiny"=> 0,
                     #"Sub::Call::Tail"=> 0, currently broken
-                    "Sub::Util"=> 0,
                     "Method::Signatures"=> 0,
                     "Function::Parameters"=> 0,
 
