@@ -260,6 +260,7 @@ require Exporter;
               XLmtime
               min max
               fstype_for_device
+              xgetfile_utf8 xslurp
             );
               # would we really want to export these?:
               #caching_getpwuid
@@ -1429,6 +1430,22 @@ sub xprintln {
     print $fh @_,"\n"
       or die "printing to $fh: $!"
 }
+
+sub xgetfile_utf8 ($) {
+    my ($path)=@_;
+    open my $in, "<", $path
+        or die "xgetfile_utf8($path): open: $!";
+    binmode $in, ":encoding(UTF-8)" or die "binmode";
+    local $/;
+    my $cnt= <$in>
+        // die "xgetfile_utf8($path): read: $!";
+    close $in
+        or die "xgetfile_utf8($path): close: $!";
+    $cnt
+}
+
+sub xslurp ($);
+*xslurp= \&xgetfile_utf8;
 
 
 1;

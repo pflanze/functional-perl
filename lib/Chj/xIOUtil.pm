@@ -36,14 +36,7 @@ use Chj::xopen ":all";
 # ^ well, this voids the purpose of Chj::xIO (to avoid Chj::IO::*)
 use FP::Lazy;
 use FP::List;
-use Chj::xperlfunc qw(xxsystem xprint);
-
-sub xgetfile_utf8 ($) {
-    my ($path)=@_;
-    my $in= xopen_read ($path);
-    binmode $in, ":encoding(UTF-8)" or die "binmode";
-    $in->xcontent
-}
+use Chj::xperlfunc qw(xxsystem xprint xgetfile_utf8);
 
 # print, not write, i.e. flatten nested structures out, but don't
 # print parens for lists etc., just print the contained basic types.
