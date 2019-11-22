@@ -104,11 +104,15 @@ package FP::Ops;
                   regex_substitute_re_globally
                   regex_xsubstitute_re_globally
              ),
-            # The above overloaded into just two:
+            # The first 4 above overloaded into just two (globally
+            # variants see below):
             qw(
                  regex_substitute
                  regex_xsubstitute
-             ),
+            ),
+            # These are just aliases:
+            'regex_substitute_globally', # regex_substitute_re_globally
+            'regex_xsubstitute_globally', # regex_xsubstitute_re_globally
            );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -347,6 +351,7 @@ sub make_regex_substitute_coderef {
 *regex_xsubstitute_coderef= make_regex_substitute_coderef 0;
 
 sub make_regex_substitute_re {
+    @_==2 or die "wrong number of arguments";
     my ($allow_failures, $globally)=@_;
     my $name= do {
         my $x= $allow_failures ? "x" : "";
@@ -396,17 +401,19 @@ sub make_regex_substitute_re {
 
 
 sub make_regex_substitute {
-    my ($allow_failures, $globally)=@_;
+    @_==1 or die "wrong number of arguments";
+    my ($allow_failures)=@_;
     my $subst_coderef=
         make_regex_substitute_coderef($allow_failures);
     my $subst_re=
-        make_regex_substitute_re($allow_failures, $globally);
+        make_regex_substitute_re($allow_failures, 0);
+    my $name= $allow_failures ? "regex_substitute" : "regex_xsubstitute";
     sub {
         # overloading
-        @_ >= 1 or die "regex_substitute: need at least 1 argument";
+        @_ >= 1 or die "$name: need at least 1 argument";
         goto $subst_coderef
             if UNIVERSAL::isa($_[0], "CODE");
-        @_ >= 2 or die "regex_substitute: need at least 2 arguments".
+        @_ >= 2 or die "$name: need at least 2 arguments".
             " if the first is not a coderef";
         goto $subst_re;
     }
@@ -414,6 +421,8 @@ sub make_regex_substitute {
 
 *regex_substitute= make_regex_substitute 1;
 *regex_xsubstitute= make_regex_substitute 0;
+*regex_substitute_globally= *regex_substitute_re_globally;
+*regex_xsubstitute_globally= *regex_xsubstitute_re_globally;
 
 
 1
