@@ -16,7 +16,7 @@ require "./testmem.pl";
 setlimit_mem_MB ($^V->{version}[1] < 15 ? 30 : 80); # 14 is enough on 32bit Debian, 64bit will need more
 
 SKIP: {
-    if (1) {
+    if (0) {
         warn "todo: fix perl issue or functional-perl bug"; 
         skip "Perl issue or functional-perl bug?", 3; # XXX
     }
