@@ -23,7 +23,6 @@ use lib "$mydir/../lib";
 
 use Chj::TEST;
 use Chj::Backtrace;
-use FP::Repl;
 
 # This needs `Method::Signatures`, which is likely packaged
 # (libmethod-signatures-perl in Debian), and `Sub::Call::Tail` which
@@ -259,4 +258,7 @@ TEST { fix_even 60000 }
 # run tests if called as part of the test suite, or
 # enter the repl for your experiments, see (0) in `basics`
 
-perhaps_run_tests "main" or repl;
+perhaps_run_tests "main" or do {
+    require FP::Repl; FP::Repl::repl();
+};
+
