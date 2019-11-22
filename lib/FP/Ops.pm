@@ -60,7 +60,7 @@ This is alpha software! Read the package README.
 package FP::Ops;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(
+@EXPORT_OK=(qw(
                  add
                  subt
                  mult
@@ -93,9 +93,23 @@ package FP::Ops;
                  binary_operator
                  unary_operator
                  regex_match
+             ),
+            # Manual variants
+            qw(
+                  regex_substitute_coderef
+                  regex_xsubstitute_coderef
+
+                  regex_substitute_re
+                  regex_xsubstitute_re
+                  regex_substitute_re_globally
+                  regex_xsubstitute_re_globally
+             ),
+            # The above overloaded into just two:
+            qw(
                  regex_substitute
                  regex_xsubstitute
-            );
+             ),
+           );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -300,28 +314,106 @@ sub regex_match ($) {
     }
 }
 
-sub regex_substitute {
-    @_==2 or die "wrong number of arguments";
-    my ($re,$sub)=@_;
+
+sub make_regex_substitute_coderef {
+    @_==1 or die "wrong number of arguments";
+    my ($allow_failures)=@_;
+    my $name= do {
+        my $x= $allow_failures ? "x" : "";
+        "regex_${x}substitute_coderef"
+    };
     sub {
-        @_==1 or die "wrong number of arguments";
-        my ($str)=@_;
-        $str=~ s/$re/&$sub()/e;
-        $str
+        my $coderef= shift;
+        if (@_==0) {
+            sub {
+                @_==1 or die "expecting 1 argument, got ".@_;
+                local $_= $_[0];
+                &$coderef
+                    or $allow_failures || die "no match";
+                $_
+            }
+        } elsif (@_==1) {
+            local $_= $_[0];
+            &$coderef
+                or $allow_failures || die "no match";
+            $_
+        } else {
+            die "$name: expecting 1 or 2 arguments, got ".@_;
+        }
     }
 }
 
-sub regex_xsubstitute {
-    @_==2 or die "wrong number of arguments";
-    my ($re,$sub)=@_;
+*regex_substitute_coderef= make_regex_substitute_coderef 1;
+*regex_xsubstitute_coderef= make_regex_substitute_coderef 0;
+
+sub make_regex_substitute_re {
+    my ($allow_failures, $globally)=@_;
+    my $name= do {
+        my $x= $allow_failures ? "x" : "";
+        my $g= $globally ? "_globally" : "";
+        "regex_${x}substitute_re$g"
+    };
     sub {
-        @_==1 or die "wrong number of arguments";
-        my ($str)=@_;
-        $str=~ s/$re/&$sub()/e
-          or die "no match";
-        $str
+        if (@_==2) {
+            my ($re, $str_or_coderef)= @_;
+            sub {
+                @_==1 or die "expecting 1 argument, got ".@_;
+                my ($str)= @_;
+                ($globally ?
+                 (UNIVERSAL::isa($str_or_coderef, "CODE") ?
+                  $str=~ s/$re/&$str_or_coderef()/eg
+                  : $str=~ s/$re/$str_or_coderef/g)
+                 : (UNIVERSAL::isa($str_or_coderef, "CODE") ?
+                    $str=~ s/$re/&$str_or_coderef()/e
+                    : $str=~ s/$re/$str_or_coderef/))
+                    or $allow_failures || die "$name: no match";
+                $str
+            }
+        } elsif (@_==3) {
+            my ($re, $str_or_coderef, $str)= @_;
+            {
+                # copy-paste of above
+                ($globally ?
+                 (UNIVERSAL::isa($str_or_coderef, "CODE") ?
+                  $str=~ s/$re/&$str_or_coderef()/eg
+                  : $str=~ s/$re/$str_or_coderef/g)
+                 : (UNIVERSAL::isa($str_or_coderef, "CODE") ?
+                    $str=~ s/$re/&$str_or_coderef()/e
+                    : $str=~ s/$re/$str_or_coderef/))
+                    or $allow_failures || die "$name: no match";
+            }
+            $str
+        } else {
+            die "$name: expecting 2 or 3 arguments, got ".@_;
+        }
     }
 }
+
+*regex_substitute_re= make_regex_substitute_re 1, 0;
+*regex_xsubstitute_re= make_regex_substitute_re 0, 0;
+*regex_substitute_re_globally= make_regex_substitute_re 1, 1;
+*regex_xsubstitute_re_globally= make_regex_substitute_re 0, 1;
+
+
+sub make_regex_substitute {
+    my ($allow_failures, $globally)=@_;
+    my $subst_coderef=
+        make_regex_substitute_coderef($allow_failures);
+    my $subst_re=
+        make_regex_substitute_re($allow_failures, $globally);
+    sub {
+        # overloading
+        @_ >= 1 or die "regex_substitute: need at least 1 argument";
+        goto $subst_coderef
+            if UNIVERSAL::isa($_[0], "CODE");
+        @_ >= 2 or die "regex_substitute: need at least 2 arguments".
+            " if the first is not a coderef";
+        goto $subst_re;
+    }
+}
+
+*regex_substitute= make_regex_substitute 1;
+*regex_xsubstitute= make_regex_substitute 0;
 
 
 1
