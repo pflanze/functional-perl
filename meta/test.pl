@@ -1,3 +1,7 @@
+use Test::More ($^O=~ /win32/i ?
+                (skip_all=> "on Windows (no shell support)")
+                : ());
+
 our $len;
 
 sub readin {
