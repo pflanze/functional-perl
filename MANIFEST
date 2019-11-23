@@ -172,6 +172,7 @@ lib/FP/Untainted.pm
 lib/FP/Values.pm
 lib/FP/Weak.pm
 lib/FP/Weak/t.pm
+lib/FP/autobox.pm
 lib/FP/fix.pm
 lib/FP/uncurry.pm
 lib/FP/url_.pm

@@ -113,6 +113,20 @@ sub array_to_purearray ($) {
 }
 
 
+package FP::PureArray::autobox {
+    our $AUTOLOAD;
+    sub AUTOLOAD {
+        my $methodname= $AUTOLOAD;
+        $methodname =~ s/.*:://;
+        my $v= FP::_::PureArray->new_from_array($_[0]);
+        if (my $m= UNIVERSAL::can($v, $methodname)) {
+            goto $m
+        } else {
+            die "no method '$methodname' found for object: $v";
+        }
+    }
+}
+
 package FP::_::PureArray {
     use base qw(FP::Array::Mixin);
     use FP::Interfaces;
