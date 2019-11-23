@@ -13,17 +13,17 @@ FP::uncurry
 
 =head1 SYNOPSIS
 
- use FP::uncurry;
+    use FP::uncurry;
 
- my $mult= uncurry sub { my ($x)=@_; sub { my ($y)=@_; $x*$y }};
- &$mult(2,3) # -> 6
+    my $mult= uncurry sub { my ($x)=@_; sub { my ($y)=@_; $x*$y }};
+    &$mult(2,3) # -> 6
 
- # 'uncurry' is an alias to 'uncurry_1_1'
- my $mult= uncurry_1_1 sub { my ($x)=@_; sub { my ($y)=@_; $x*$y }};
- &$mult(2,3) # -> 6
+    # 'uncurry' is an alias to 'uncurry_1_1'
+    my $mult= uncurry_1_1 sub { my ($x)=@_; sub { my ($y)=@_; $x*$y }};
+    &$mult(2,3) # -> 6
 
- my $mult3= uncurry_2_1 sub { my ($x,$y)=@_; sub { my ($z)=@_; $x*$y*$z }};
- &$mult3(2,3,4) # -> 24
+    my $mult3= uncurry_2_1 sub { my ($x,$y)=@_; sub { my ($z)=@_; $x*$y*$z }};
+    &$mult3(2,3,4) # -> 24
 
 =head1 DESCRIPTION
 

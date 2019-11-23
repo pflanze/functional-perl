@@ -13,30 +13,30 @@ PXML::Preserialize - faster PXML templating through preserialization
 
 =head1 SYNOPSIS
 
- use PXML::Preserialize qw(pxmlfunc pxmlpre);
- use PXML::XHTML qw(A B);
+    use PXML::Preserialize qw(pxmlfunc pxmlpre);
+    use PXML::XHTML qw(A B);
 
- my $link_normal= sub {
-     my ($href,$body)=@_;
-     A {href=> $href}, $body
- };
+    my $link_normal= sub {
+        my ($href,$body)=@_;
+        A {href=> $href}, $body
+    };
 
- my $link_fast= pxmlfunc {
-     my ($href,$body)=@_; # can take up to 10[?] arguments.
-     A {href=> $href}, $body
- };
+    my $link_fast= pxmlfunc {
+        my ($href,$body)=@_; # can take up to 10[?] arguments.
+        A {href=> $href}, $body
+    };
 
- # the `2` is the number of arguments
- my $link_fast2= pxmlpre 2, $link_normal;
+    # the `2` is the number of arguments
+    my $link_fast2= pxmlpre 2, $link_normal;
 
- # these expressions are all returning the same result, but the second
- # and third are (supposedly) evaluated faster than the first:
- is $link_normal->("http://foo", [B("Foo"), "Bar"])->string,
-    '<a href="http://foo"><b>Foo</b>Bar</a>';
- is $link_fast->("http://foo", [B("Foo"), "Bar"])->string,
-    '<a href="http://foo"><b>Foo</b>Bar</a>';
- is $link_fast2->("http://foo", [B("Foo"), "Bar"])->string,
-    '<a href="http://foo"><b>Foo</b>Bar</a>';
+    # these expressions are all returning the same result, but the second
+    # and third are (supposedly) evaluated faster than the first:
+    is $link_normal->("http://foo", [B("Foo"), "Bar"])->string,
+       '<a href="http://foo"><b>Foo</b>Bar</a>';
+    is $link_fast->("http://foo", [B("Foo"), "Bar"])->string,
+       '<a href="http://foo"><b>Foo</b>Bar</a>';
+    is $link_fast2->("http://foo", [B("Foo"), "Bar"])->string,
+       '<a href="http://foo"><b>Foo</b>Bar</a>';
 
 
 =head1 DESCRIPTION

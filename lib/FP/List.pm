@@ -13,40 +13,40 @@ FP::List - singly linked (purely functional) lists
 
 =head1 SYNOPSIS
 
- use FP::Div qw(inc square); use FP::Ops qw(div); use FP::Equal 'is_equal';
- use FP::Combinators qw(flip);
- use FP::Predicates qw(is_pure);
+    use FP::Div qw(inc square); use FP::Ops qw(div); use FP::Equal 'is_equal';
+    use FP::Combinators qw(flip);
+    use FP::Predicates qw(is_pure);
 
- use FP::List ':all';
+    use FP::List ':all';
 
- my $l= cons("H", cons("e", cons("l", cons("l", cons("o", null)))));
- is_equal $l, list("H", "e", "l", "l", "o");
- is_equal list_to_string($l), "Hello";
- ok is_pure $l;
+    my $l= cons("H", cons("e", cons("l", cons("l", cons("o", null)))));
+    is_equal $l, list("H", "e", "l", "l", "o");
+    is_equal list_to_string($l), "Hello";
+    ok is_pure $l;
 
- is_equal list(1,2,3)->map(sub{ $_[0] * $_[0] }),
-          list (1,4,9);
- is_equal list(1,2,3)->map(*square)->array,
-          [1,4,9];
+    is_equal list(1,2,3)->map(sub{ $_[0] * $_[0] }),
+             list (1,4,9);
+    is_equal list(1,2,3)->map(*square)->array,
+             [1,4,9];
 
- is list(qw(a b c))->first, "a";
- is_equal list(qw(a b c))->rest,
-          list("b", "c");
+    is list(qw(a b c))->first, "a";
+    is_equal list(qw(a b c))->rest,
+             list("b", "c");
 
- is list(1,2,3,4)->sum, 1+2+3+4;
- is list(1,2,3,4)->product, 1*2*3*4;
- is list(2,4,6)->reduce(flip *div), 2/4/6;
- is list(2,4,6)->reduce_right(flip *div), 2/4/6;
- # etc.
+    is list(1,2,3,4)->sum, 1+2+3+4;
+    is list(1,2,3,4)->product, 1*2*3*4;
+    is list(2,4,6)->reduce(flip *div), 2/4/6;
+    is list(2,4,6)->reduce_right(flip *div), 2/4/6;
+    # etc.
 
- # The `cons` function checks whether its second argument is an object
- # with a `cons` method, if so, it invokes it, otherwise it creates an
- # FP::List::Pair object holding both values (there's also a `pair`
- # function that doesn't check for a method and always directly
- # creates the pair)
- is cons("a","b")->rest, "b";
- is cons("a","b")->cdr, "b";
- is list (5,6,7)->caddr, 7;
+    # The `cons` function checks whether its second argument is an object
+    # with a `cons` method, if so, it invokes it, otherwise it creates an
+    # FP::List::Pair object holding both values (there's also a `pair`
+    # function that doesn't check for a method and always directly
+    # creates the pair)
+    is cons("a","b")->rest, "b";
+    is cons("a","b")->cdr, "b";
+    is list (5,6,7)->caddr, 7;
 
 
 =head1 DESCRIPTION

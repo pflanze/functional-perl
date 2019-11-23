@@ -13,18 +13,18 @@ Chj::xopen
 
 =head1 SYNOPSIS
 
- use Chj::xopen;
- {
-     my $in= xopen_read "foo.txt";
-     my $out= glob_to_fh(*STDOUT,"utf-8");
-     local $_;
-     while (<$in>) { # default operation. (overload not possible :/)
-         $out->xprint($_); # print, throwing an exception on error
-     }
-     $out->xclose; # close explicitely, throwing an exception on error
- }
-   # $in and $out are closed automatically in any case
-   # (issuing a warning on error)
+    use Chj::xopen;
+    {
+        my $in= xopen_read "foo.txt";
+        my $out= glob_to_fh(*STDOUT,"utf-8");
+        local $_;
+        while (<$in>) { # default operation. (overload not possible :/)
+            $out->xprint($_); # print, throwing an exception on error
+        }
+        $out->xclose; # close explicitely, throwing an exception on error
+    }
+      # $in and $out are closed automatically in any case
+      # (issuing a warning on error)
 
 =head1 DESCRIPTION
 

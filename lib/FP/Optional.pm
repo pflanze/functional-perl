@@ -13,26 +13,26 @@ FP::Optional - dealing with optional values
 
 =head1 SYNOPSIS
 
- use FP::Optional qw(perhaps_to_maybe perhaps_to_x perhaps_to_or
-                     perhaps_to_exists
-                     optionally poptionally);
+    use FP::Optional qw(perhaps_to_maybe perhaps_to_x perhaps_to_or
+                        perhaps_to_exists
+                        optionally poptionally);
 
- sub perhaps_div {
-     my ($a, $b)=@_;
-     $b == 0 ? () : $a/$b
- }
- if (my ($r)= perhaps_div 10, 2) {
-     is $r, 5;
- }
- *maybe_div= perhaps_to_maybe *perhaps_div;
- is maybe_div(10, 2), 5;
- is maybe_div(10, 0), undef;
+    sub perhaps_div {
+        my ($a, $b)=@_;
+        $b == 0 ? () : $a/$b
+    }
+    if (my ($r)= perhaps_div 10, 2) {
+        is $r, 5;
+    }
+    *maybe_div= perhaps_to_maybe *perhaps_div;
+    is maybe_div(10, 2), 5;
+    is maybe_div(10, 0), undef;
 
- use FP::Div qw(square);
- # short-cutting evaluation for undef:
- *optionally_square= optionally(*square);
- is optionally_square(2), 4;
- is optionally_square(undef), undef;
+    use FP::Div qw(square);
+    # short-cutting evaluation for undef:
+    *optionally_square= optionally(*square);
+    is optionally_square(2), 4;
+    is optionally_square(undef), undef;
 
 
 =head1 DESCRIPTION
@@ -51,74 +51,74 @@ meaning.
 Example using undef:
 
 =for test ignore
- package Users;
- my %uid_to_username;
- sub maybe_uid_to_username {
-     my ($uid)=@_;
-     $uid_to_username{$uid}
- }
- package main;
- use Users;
- if (defined (my $user= maybe_uid_to_username (123))) {
-     ...
- } else {
-     ...
- }
- my @existing_usernames= map {
-     my $maybe_username= maybe_uid_to_username $_;
-     defined $maybe_uid_to_username ? $maybe_uid_to_username : ()
- } @uids;
+    package Users;
+    my %uid_to_username;
+    sub maybe_uid_to_username {
+        my ($uid)=@_;
+        $uid_to_username{$uid}
+    }
+    package main;
+    use Users;
+    if (defined (my $user= maybe_uid_to_username (123))) {
+        ...
+    } else {
+        ...
+    }
+    my @existing_usernames= map {
+        my $maybe_username= maybe_uid_to_username $_;
+        defined $maybe_uid_to_username ? $maybe_uid_to_username : ()
+    } @uids;
 
- # assume rename_user expects pairs of usernames:
- rename_users (map { maybe_uid_to_username $_ } @uidpairs)
+    # assume rename_user expects pairs of usernames:
+    rename_users (map { maybe_uid_to_username $_ } @uidpairs)
 
 Example using the empty list:
 
- package Users;
- my %uid_to_username;
- sub perhaps_uid_to_username {
-     my ($uid)=@_;
-     exists $uid_to_username{$uid} ? $uid_to_username{$uid} : ()
- }
- package main;
- use Users;
- if (my ($user)= perhaps_uid_to_username (123)) {
-     ...
- } else {
-     ...
- }
- my @existing_usernames= map { perhaps_uid_to_username $_ } @uids;
+    package Users;
+    my %uid_to_username;
+    sub perhaps_uid_to_username {
+        my ($uid)=@_;
+        exists $uid_to_username{$uid} ? $uid_to_username{$uid} : ()
+    }
+    package main;
+    use Users;
+    if (my ($user)= perhaps_uid_to_username (123)) {
+        ...
+    } else {
+        ...
+    }
+    my @existing_usernames= map { perhaps_uid_to_username $_ } @uids;
 
- # This would be *wrong*:
- # rename_users (map { perhaps_uid_to_username $_ } @uidpairs)
+    # This would be *wrong*:
+    # rename_users (map { perhaps_uid_to_username $_ } @uidpairs)
 
- # Instead this wordy version would need to be used:
- rename_users (map {
-     if (my ($name)= perhaps_uid_to_username $_) {
-          $name
-     } else {
-          undef
- } @uidpairs);
+    # Instead this wordy version would need to be used:
+    rename_users (map {
+        if (my ($name)= perhaps_uid_to_username $_) {
+             $name
+        } else {
+             undef
+    } @uidpairs);
 
 An alternative to optional values are exceptions:
 
- package Users;
- my %uid_to_username;
- sub x_uid_to_username {
-     my ($uid)=@_;
-     exists $uid_to_username{$uid} ? $uid_to_username{$uid}
-        : die "no such user"
- }
- package main;
- use Users;
- my $user= x_uid_to_username (123);
- ...
- my @existing_usernames= map {
-     my $name;
-     eval { $name= x_uid_to_username $_; 1 } ? $name : ()
- } @uids;
+    package Users;
+    my %uid_to_username;
+    sub x_uid_to_username {
+        my ($uid)=@_;
+        exists $uid_to_username{$uid} ? $uid_to_username{$uid}
+           : die "no such user"
+    }
+    package main;
+    use Users;
+    my $user= x_uid_to_username (123);
+    ...
+    my @existing_usernames= map {
+        my $name;
+        eval { $name= x_uid_to_username $_; 1 } ? $name : ()
+    } @uids;
 
- rename_users (map { x_uid_to_username $_ } @uidpairs);
+    rename_users (map { x_uid_to_username $_ } @uidpairs);
 
 
 The functional perl project *always* prefixes function names with

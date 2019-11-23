@@ -13,47 +13,47 @@ FP::Text::CSV - functional interface to Text::CSV
 
 =head1 SYNOPSIS
 
- use FP::Text::CSV qw(csv_line_xparser
-                      csv_fh_to_rows
-                      csv_file_to_rows
-                      rows_to_csv_fh
-                      rows_to_csv_file);
+    use FP::Text::CSV qw(csv_line_xparser
+                         csv_fh_to_rows
+                         csv_file_to_rows
+                         rows_to_csv_fh
+                         rows_to_csv_file);
 
- my $csvparams= +{sep_char=> ";", eol=> "\n"};
- # $csvparams and any of its entries are optional,
- #  defaults are taken from $FP::Text::CSV::defaults
+    my $csvparams= +{sep_char=> ";", eol=> "\n"};
+    # $csvparams and any of its entries are optional,
+    #  defaults are taken from $FP::Text::CSV::defaults
 
- use Method::Signatures; # func
- use Chj::xopen qw(xopen_read xopen_write);
- use FP::List; use FP::Stream; use FP::Equal 'is_equal';
- mkdir ".tmp";
+    use Method::Signatures; # func
+    use Chj::xopen qw(xopen_read xopen_write);
+    use FP::List; use FP::Stream; use FP::Equal 'is_equal';
+    mkdir ".tmp";
 
- # -- Output: ---
- my $rows=
-   cons [ "i", "i^2" ],
-     stream_iota->map(func ($i) {
-         [ $i, $i*$i ]
-     })->take(100);
- rows_to_csv_fh (Keep($rows), xopen_write(".tmp/a1.csv"),
-                 $csvparams);
- # or
- rows_to_csv_file ($rows, ".tmp/a2.csv", $csvparams);
+    # -- Output: ---
+    my $rows=
+      cons [ "i", "i^2" ],
+        stream_iota->map(func ($i) {
+            [ $i, $i*$i ]
+        })->take(100);
+    rows_to_csv_fh (Keep($rows), xopen_write(".tmp/a1.csv"),
+                    $csvparams);
+    # or
+    rows_to_csv_file ($rows, ".tmp/a2.csv", $csvparams);
 
 
- # -- Input: ---
- my $p= csv_line_xparser $csvparams;
- my @vals= &$p("1;2;3;4\n");
- is_equal \@vals, [1,2,3,4];
+    # -- Input: ---
+    my $p= csv_line_xparser $csvparams;
+    my @vals= &$p("1;2;3;4\n");
+    is_equal \@vals, [1,2,3,4];
 
- my $itemstream1=
-         csv_fh_to_rows(xopen_read(".tmp/a1.csv"), $csvparams);
- # or
- my $itemstream2= csv_file_to_rows(".tmp/a2.csv", $csvparams);
+    my $itemstream1=
+            csv_fh_to_rows(xopen_read(".tmp/a1.csv"), $csvparams);
+    # or
+    my $itemstream2= csv_file_to_rows(".tmp/a2.csv", $csvparams);
 
- is_equal $itemstream1, $itemstream2;
- is_equal $itemstream2->first, [ "i", "i^2" ];
- is_equal $itemstream2->second, [ 0, 0 ];
- is_equal $itemstream2->ref(10), [ 9, 81 ];
+    is_equal $itemstream1, $itemstream2;
+    is_equal $itemstream2->first, [ "i", "i^2" ];
+    is_equal $itemstream2->second, [ 0, 0 ];
+    is_equal $itemstream2->ref(10), [ 9, 81 ];
 
 
 =head1 DESCRIPTION

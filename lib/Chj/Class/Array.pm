@@ -641,62 +641,62 @@ Chj::Class::Array - array based perl objects (deprecated)
 
 =head1 SYNOPSIS
 
- package My::BaseClass;
- use strict;
- use Chj::Class::Array -fields=> -public=> qw(Name Firstname),
-                            -protected=> qw(Age),
-                            -private=> qw(Secret);
+    package My::BaseClass;
+    use strict;
+    use Chj::Class::Array -fields=> -public=> qw(Name Firstname),
+                               -protected=> qw(Age),
+                               -private=> qw(Secret);
 
- # Method example
- sub age {
-     my $self=shift;
-     if (@_) {
-         my $val=shift;
-         if ($val>=18) {
-             $self->[Age]=$val;
-         } else {
-             carp "not old enough";
-             $self->[Secret]=$val;
-         }
-     } else {
-         $self->[Age]
-     }
- }
- ----
- package My::DerivedClass;
- use strict;
- use My::BaseClass -extend=> -public=> qw(Nickname),
-                             -private=> qw(Fiancee);
+    # Method example
+    sub age {
+        my $self=shift;
+        if (@_) {
+            my $val=shift;
+            if ($val>=18) {
+                $self->[Age]=$val;
+            } else {
+                carp "not old enough";
+                $self->[Secret]=$val;
+            }
+        } else {
+            $self->[Age]
+        }
+    }
+    ----
+    package My::DerivedClass;
+    use strict;
+    use My::BaseClass -extend=> -public=> qw(Nickname),
+                                -private=> qw(Fiancee);
 
- # The best way to generate an object, if you want to 
- # initialize your objects but let parent classes 
- # initialize them too:
- sub new {
-     my $class=shift;
-     my $self= $class->SUPER::new;
-        # Chj::Class::Array::new will catch the above if 
-        # no one else does
-     # do initialization stuff of your own here
-     $self
- }
+    # The best way to generate an object, if you want to 
+    # initialize your objects but let parent classes 
+    # initialize them too:
+    sub new {
+        my $class=shift;
+        my $self= $class->SUPER::new;
+           # Chj::Class::Array::new will catch the above if 
+           # no one else does
+        # do initialization stuff of your own here
+        $self
+    }
 
- sub DESTROY {
-     my $self=shift;
-     # do some cleanup here
-     $self->SUPER::DESTROY; 
-        # can be called without worries, 
-        # Chj::Class::Array provides an empty default DESTROY method.
- }
- 
- ----
- # package main:
- use strict;
- use My::DerivedClass;
- my $v= new My::DerivedClass;
- $v->[Name]= "Bla";
- $v->age(19);
- $v->[Age]=20; # gives a compile time error since `Age' 
-               # does not exist here
+    sub DESTROY {
+        my $self=shift;
+        # do some cleanup here
+        $self->SUPER::DESTROY; 
+           # can be called without worries, 
+           # Chj::Class::Array provides an empty default DESTROY method.
+    }
+
+    ----
+    # package main:
+    use strict;
+    use My::DerivedClass;
+    my $v= new My::DerivedClass;
+    $v->[Name]= "Bla";
+    $v->age(19);
+    $v->[Age]=20; # gives a compile time error since `Age' 
+                  # does not exist here
 
 
 =head1 DESCRIPTION

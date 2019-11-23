@@ -13,10 +13,10 @@ Chj::xpipe
 
 =head1 SYNOPSIS
 
- use Chj::xpipe;
- my ($read,$write)=xpipe; # or xpipe READ,WRITE ? hmmm. not yet.
- $read->xclose;
- $write->xprint("Hello");
+    use Chj::xpipe;
+    my ($read,$write)=xpipe; # or xpipe READ,WRITE ? hmmm. not yet.
+    $read->xclose;
+    $write->xprint("Hello");
 
 =head1 DESCRIPTION
 

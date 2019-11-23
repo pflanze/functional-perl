@@ -13,34 +13,34 @@ FP::Trie - purely functional prefix tree
 
 =head1 SYNOPSIS
 
- use FP::Trie;
+    use FP::Trie;
 
- my $t= empty_trie->set(string_to_list ("Hello"), "World");
- $t->perhaps_ref(string_to_list("Hell")); # ()
- if (my ($subt)= $t->perhaps_skip(string_to_list("Hell"))) {
-     print $subt->sublevels_length;
-     if (my ($v)= $subt->perhaps_ref(string_to_list("o"))) {
-         print $v;
-     }
- }
- # -> prints "1World"
+    my $t= empty_trie->set(string_to_list ("Hello"), "World");
+    $t->perhaps_ref(string_to_list("Hell")); # ()
+    if (my ($subt)= $t->perhaps_skip(string_to_list("Hell"))) {
+        print $subt->sublevels_length;
+        if (my ($v)= $subt->perhaps_ref(string_to_list("o"))) {
+            print $v;
+        }
+    }
+    # -> prints "1World"
 
- $t->maybe_ref ($keylist)
- $t->ref ($keylist)
- $t->ref_or ($keylist, $alternativevalue)
- $t->exists ($keylist) # boolean
+    $t->maybe_ref ($keylist)
+    $t->ref ($keylist)
+    $t->ref_or ($keylist, $alternativevalue)
+    $t->exists ($keylist) # boolean
 
- $t->xdelete(string_to_list("Hello"))
-   ->delete(string_to_list("Hello"))  # silently does not change anything;
-   ->xdelete(string_to_list("Hello")) # throws "key not found" exception
+    $t->xdelete(string_to_list("Hello"))
+      ->delete(string_to_list("Hello"))  # silently does not change anything;
+      ->xdelete(string_to_list("Hello")) # throws "key not found" exception
 
- $t->keys   # stream of keys
- $t->values # stream of values
- $t->alist  # stream of [ key, value ]
+    $t->keys   # stream of keys
+    $t->values # stream of values
+    $t->alist  # stream of [ key, value ]
 
- $t->update($keylist, $fn) # $fn receives () if no such value is in
-                           # the trie; if it returns (), the entry
-                           # will be deleted
+    $t->update($keylist, $fn) # $fn receives () if no such value is in
+                              # the trie; if it returns (), the entry
+                              # will be deleted
 
 
 =head1 DESCRIPTION

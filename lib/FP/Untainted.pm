@@ -13,19 +13,19 @@ FP::Untainted - functional untainting
 
 =head1 SYNOPSIS
 
- use FP::Untainted;
- exec untainted($ENV{CMD}); # doesn't change the taint flag on $ENV{CMD}
+    use FP::Untainted;
+    exec untainted($ENV{CMD}); # doesn't change the taint flag on $ENV{CMD}
 
- use FP::Untainted qw(untainted_with);
- exec untainted_with($ENV{CMD}, qr/^\w+$/s); # dito
- # NOTE that the ^ and $ anchors are essential if you want to make
- # sure the whole string matches!
+    use FP::Untainted qw(untainted_with);
+    exec untainted_with($ENV{CMD}, qr/^\w+$/s); # dito
+    # NOTE that the ^ and $ anchors are essential if you want to make
+    # sure the whole string matches!
 
- # or, (but this doesn't force the /s flag)
- exec untainted_with($ENV{CMD}, '^\w+$');
+    # or, (but this doesn't force the /s flag)
+    exec untainted_with($ENV{CMD}, '^\w+$');
 
- use FP::Untainted qw(is_untainted);
- # complement of Scalar::Util's 'tainted'
+    use FP::Untainted qw(is_untainted);
+    # complement of Scalar::Util's 'tainted'
 
 =head1 DESCRIPTION
 

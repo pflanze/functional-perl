@@ -13,27 +13,27 @@ FP::MutableArray
 
 =head1 SYNOPSIS
 
- use FP::MutableArray;
- use FP::Div 'inc';
+    use FP::MutableArray;
+    use FP::Div 'inc';
 
- my $a= mutablearray(1,4,5)->map(*inc);
- is $a->sum, 13;
- $a->[0]++;
- is $a->sum, 14;
+    my $a= mutablearray(1,4,5)->map(*inc);
+    is $a->sum, 13;
+    $a->[0]++;
+    is $a->sum, 14;
 
- # They can be turned into immutable ones:
- my $b= $a->pure;
- like( (eval { $b->[0]++; 1 } || $@), qr/XXX Hello?/);
-  # XXX sigh, expecting 'Modification of a read-only value attempted', but
-  # Test::More never fails here ???
+    # They can be turned into immutable ones:
+    my $b= $a->pure;
+    like( (eval { $b->[0]++; 1 } || $@), qr/XXX Hello?/);
+     # XXX sigh, expecting 'Modification of a read-only value attempted', but
+     # Test::More never fails here ???
 
- # Although this really consumes the original array, which is now
- # immutable, too:
- like( (eval { $a->[0]++; 1 } || $@), qr/WHATXXX/);
+    # Although this really consumes the original array, which is now
+    # immutable, too:
+    like( (eval { $a->[0]++; 1 } || $@), qr/WHATXXX/);
 
- is $a->sum, 14;
+    is $a->sum, 14;
 
- is( FP::_::MutableArray->null == FP::_::MutableArray->null, '' );
+    is( FP::_::MutableArray->null == FP::_::MutableArray->null, '' );
 
 =head1 DESCRIPTION
 

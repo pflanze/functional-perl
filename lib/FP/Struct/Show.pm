@@ -13,31 +13,31 @@ FP::Struct::Show
 
 =head1 SYNOPSIS
 
- package FP_Struct_Show_Example::Foo {
+    package FP_Struct_Show_Example::Foo {
 
-     use FP::Struct ["a","b"],
-       'FP::Struct::Show';
+        use FP::Struct ["a","b"],
+          'FP::Struct::Show';
 
-     _END_
- }
+        _END_
+    }
 
- FP_Struct_Show_Example::Foo::constructors->import;
- use FP::Show;
- is( show(Foo(1,1+1)),
-     "Foo(1, 2)" );
+    FP_Struct_Show_Example::Foo::constructors->import;
+    use FP::Show;
+    is( show(Foo(1,1+1)),
+        "Foo(1, 2)" );
 
- # Whereas the default:
- package FP_Struct_Show_Example::Bar {
+    # Whereas the default:
+    package FP_Struct_Show_Example::Bar {
 
-     use FP::Struct ["a","b"];
+        use FP::Struct ["a","b"];
 
-     _END_
- }
+        _END_
+    }
 
- FP_Struct_Show_Example::Bar::constructors->import;
- use FP::Show;
- is( show(Bar(1, 2)),
-     "bless(+{a => 1, b => 2}, 'FP_Struct_Show_Example::Bar')" );
+    FP_Struct_Show_Example::Bar::constructors->import;
+    use FP::Show;
+    is( show(Bar(1, 2)),
+        "bless(+{a => 1, b => 2}, 'FP_Struct_Show_Example::Bar')" );
 
 =head1 DESCRIPTION
 

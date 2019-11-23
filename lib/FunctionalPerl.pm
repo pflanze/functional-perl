@@ -13,12 +13,12 @@ FunctionalPerl - functional programming on Perl
 
 =head1 SYNOPSIS
 
- use FunctionalPerl;
- FunctionalPerl->VERSION # or $FunctionalPerl::VERSION
+    use FunctionalPerl;
+    FunctionalPerl->VERSION # or $FunctionalPerl::VERSION
 
- # But all the actual modules are under FP::*, like:
- use FP::List;
- # etc.
+    # But all the actual modules are under FP::*, like:
+    use FP::List;
+    # etc.
 
 =head1 DESCRIPTION
 

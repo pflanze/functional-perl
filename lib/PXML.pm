@@ -13,15 +13,15 @@ PXML - functional XML handling, general functions
 
 =head1 SYNOPSIS
 
- use PXML qw(is_pxml_element);
- use PXML::XHTML qw(P);
+    use PXML qw(is_pxml_element);
+    use PXML::XHTML qw(P);
 
- ok is_pxml_element P();
- is P("Hi <there>")->string, '<p>Hi &lt;there&gt;</p>';
+    ok is_pxml_element P();
+    is P("Hi <there>")->string, '<p>Hi &lt;there&gt;</p>';
 
- use PXML ":all";
+    use PXML ":all";
 
- is(pxmlbody("foo")->string, "foo");
+    is(pxmlbody("foo")->string, "foo");
 
 
 =head1 DESCRIPTION

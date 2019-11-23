@@ -13,43 +13,43 @@ Chj::TEST
 
 =head1 SYNOPSIS
 
- use Chj::TEST;
- # or
- use Chj::TEST use=> 'Method::Signatures'
-     #, use=> ['Foo::Bar', qw(bar baz)],
-     #, require=> 'CGI'
-     ;
- # ^ this will use or require the indicated modules, and if RUN_TESTS
- # is set and they fail, will gracefully fail with a SKIP testing message
- # (if RUN_TESTS is not set, it will die as normally).
+    use Chj::TEST;
+    # or
+    use Chj::TEST use=> 'Method::Signatures'
+        #, use=> ['Foo::Bar', qw(bar baz)],
+        #, require=> 'CGI'
+        ;
+    # ^ this will use or require the indicated modules, and if RUN_TESTS
+    # is set and they fail, will gracefully fail with a SKIP testing message
+    # (if RUN_TESTS is not set, it will die as normally).
 
- TEST { 1+1 } 2; # success
- TEST { 1+1 } "2"; # fails,
-     # because equality is compared on the result of Data::Dumper
+    TEST { 1+1 } 2; # success
+    TEST { 1+1 } "2"; # fails,
+        # because equality is compared on the result of Data::Dumper
 
- # compute also result lazily:
- TEST { 1+1 } GIVES {3-1}; # success
+    # compute also result lazily:
+    TEST { 1+1 } GIVES {3-1}; # success
 
- TEST_STDOUT { print "Hello" } "Hello";
- TEST_EXCEPTION { die "Hello" } "Hello"; # " at .. line .." and
-                                         # backtrace are cut off
+    TEST_STDOUT { print "Hello" } "Hello";
+    TEST_EXCEPTION { die "Hello" } "Hello"; # " at .. line .." and
+                                            # backtrace are cut off
 
 
- use Chj::TEST ':all';
+    use Chj::TEST ':all';
 
- is run_tests(__PACKAGE__), 0; # 0 failures
+    is run_tests(__PACKAGE__), 0; # 0 failures
 
- #run_tests;
- #  or
- #run_tests __PACKAGE__, "Another::Package";
- #  or
- #run_tests_ packages=> __PACKAGE__, numbers=>[2..4];
- #   aliases package, number, no also accepted
+    #run_tests;
+    #  or
+    #run_tests __PACKAGE__, "Another::Package";
+    #  or
+    #run_tests_ packages=> __PACKAGE__, numbers=>[2..4];
+    #   aliases package, number, no also accepted
 
- #  For conditional running the tests as part of a global test suite:
- #perhaps_run_tests "main" or do_something_else;
- #  This will run run_tests("main") iff the RUN_TESTS environment
- #  variable is true, otherwise run do_something_else.
+    #  For conditional running the tests as part of a global test suite:
+    #perhaps_run_tests "main" or do_something_else;
+    #  This will run run_tests("main") iff the RUN_TESTS environment
+    #  variable is true, otherwise run do_something_else.
 
 =head1 DESCRIPTION
 

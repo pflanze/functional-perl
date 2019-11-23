@@ -13,26 +13,26 @@ FP::Repl::WithRepl
 
 =head1 SYNOPSIS
 
- use FP::Repl::WithRepl;
- withrepl { die "foo"; };  # shows the exception, then runs a repl
-                           # within the exception context
+    use FP::Repl::WithRepl;
+    withrepl { die "foo"; };  # shows the exception, then runs a repl
+                              # within the exception context
 
- push_withrepl (0); # turn on using a repl globally, but storing the
-                    # previous handler on a stack; the argument says
-                    # how many levels from the current one to go back
-                    # for the search of 'eval' (the WORKAROUND, see
-                    # below)
+    push_withrepl (0); # turn on using a repl globally, but storing the
+                       # previous handler on a stack; the argument says
+                       # how many levels from the current one to go back
+                       # for the search of 'eval' (the WORKAROUND, see
+                       # below)
 
- WithRepl_eval ...; # like `eval` but transparent for WithRepl
-                    # handlers (takes an optional package argument, by
-                    # default the caller's package is used)
+    WithRepl_eval ...; # like `eval` but transparent for WithRepl
+                       # handlers (takes an optional package argument, by
+                       # default the caller's package is used)
 
- my ($v,$e,$is_error)= WithRepl_eval_e("code",$maybe_package);
-                    # unlike WithRepl_eval and eval, this safely
-                    # returns the result of the given code, or $e==$@
-                    # and $is_error==1 in case of an exception/error.
+    my ($v,$e,$is_error)= WithRepl_eval_e("code",$maybe_package);
+                       # unlike WithRepl_eval and eval, this safely
+                       # returns the result of the given code, or $e==$@
+                       # and $is_error==1 in case of an exception/error.
 
- pop_withrepl; # restore the handler that was pushed last.
+    pop_withrepl; # restore the handler that was pushed last.
 
 
 =head1 DESCRIPTION

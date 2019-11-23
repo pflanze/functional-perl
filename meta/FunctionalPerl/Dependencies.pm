@@ -13,11 +13,11 @@ FunctionalPerl::Dependencies
 
 =head1 SYNOPSIS
 
- use FunctionalPerl::Dependencies 'module_needs';
- 
- #  if (my @needs= module_needs $module) {
- #      skip "- don't have @needs", 1;
- #  }
+    use FunctionalPerl::Dependencies 'module_needs';
+
+    #  if (my @needs= module_needs $module) {
+    #      skip "- don't have @needs", 1;
+    #  }
 
 =head1 DESCRIPTION
 

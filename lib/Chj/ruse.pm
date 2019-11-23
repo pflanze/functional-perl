@@ -13,15 +13,15 @@ Chj::ruse - reload modules
 
 =head1 SYNOPSIS
 
- use FP::Repl;
- use Foo;
- use Chj::ruse;
- use Bar qw(biz bim);
- repl;
- # edit the Foo.pm or Bar.pm files, then (possibly from the repl):
- > ruse; # reloads all changed modules, and re-does all imports
-         # which have happened for those modules since Chj::ruse has
-         # been loaded.
+    use FP::Repl;
+    use Foo;
+    use Chj::ruse;
+    use Bar qw(biz bim);
+    repl;
+    # edit the Foo.pm or Bar.pm files, then (possibly from the repl):
+    > ruse; # reloads all changed modules, and re-does all imports
+            # which have happened for those modules since Chj::ruse has
+            # been loaded.
 
 =head1 DESCRIPTION
 

@@ -13,13 +13,13 @@ PXML::Tags
 
 =head1 SYNOPSIS
 
- use PXML::Tags qw(records
-     protocol-version
-     record);
- my $xml= RECORDS(PROTOCOL_VERSION("1.0"),
-                  RECORD("Hi"), RECORD("there!"));
- is ref($xml), "PXML::Element";
- is $xml->string, '<records><protocol-version>1.0</protocol-version><record>Hi</record><record>there!</record></records>';
+    use PXML::Tags qw(records
+        protocol-version
+        record);
+    my $xml= RECORDS(PROTOCOL_VERSION("1.0"),
+                     RECORD("Hi"), RECORD("there!"));
+    is ref($xml), "PXML::Element";
+    is $xml->string, '<records><protocol-version>1.0</protocol-version><record>Hi</record><record>there!</record></records>';
 
 =head1 DESCRIPTION
 

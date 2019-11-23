@@ -13,16 +13,16 @@ Chj::xIO - some IO utilities
 
 =head1 SYNOPSIS
 
- use Chj::xIO qw(
-    capture_stdout capture_stdout_
-    capture_stderr capture_stderr_
-    );
+    use Chj::xIO qw(
+       capture_stdout capture_stdout_
+       capture_stderr capture_stderr_
+       );
 
- is capture_stdout { print "Hi!" }, "Hi!";
- is substr(capture_stderr { warn "nah" }, 0,3), "nah";
+    is capture_stdout { print "Hi!" }, "Hi!";
+    is substr(capture_stderr { warn "nah" }, 0,3), "nah";
 
- # if you want to avoid the '&' prototype:
- is capture_stdout_(sub { print "Hi!" }), "Hi!";
+    # if you want to avoid the '&' prototype:
+    is capture_stdout_(sub { print "Hi!" }), "Hi!";
 
 =head1 DESCRIPTION
 

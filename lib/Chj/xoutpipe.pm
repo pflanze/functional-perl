@@ -13,13 +13,13 @@ Chj::xoutpipe
 
 =head1 SYNOPSIS
 
- use Chj::xoutpipe;
- {
-     my $p= xoutpipe "sendmail","-t";
-     $p->xprint("From: $from\n");
-     my $rv= $p->xfinish; # does close and waitpid, returns $?
-     # see Chj::IO::Command for more methods.
- }
+    use Chj::xoutpipe;
+    {
+        my $p= xoutpipe "sendmail","-t";
+        $p->xprint("From: $from\n");
+        my $rv= $p->xfinish; # does close and waitpid, returns $?
+        # see Chj::IO::Command for more methods.
+    }
 
 =head1 DESCRIPTION
 

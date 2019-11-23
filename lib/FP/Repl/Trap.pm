@@ -13,8 +13,8 @@ FP::Repl::Trap
 
 =head1 SYNOPSIS
 
- use FP::Repl::Trap;
- die "fun"; # opens a repl from FP::Repl
+    use FP::Repl::Trap;
+    die "fun"; # opens a repl from FP::Repl
 
 =head1 DESCRIPTION
 

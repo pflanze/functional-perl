@@ -13,20 +13,20 @@ FP::Abstract::Show - equality protocol
 
 =head1 SYNOPSIS
 
- package FPShowExample::Foo {
-     sub new { my $class= shift; bless [@_], $class }
-     sub FP_Show_show {
-         my ($self, $show)=@_;
-         # $show is for recursive use
-         "FPShowExample::Foo->new(".join(", ",
-              map { $show->($_) } @$self).")"
-     }
- }
+    package FPShowExample::Foo {
+        sub new { my $class= shift; bless [@_], $class }
+        sub FP_Show_show {
+            my ($self, $show)=@_;
+            # $show is for recursive use
+            "FPShowExample::Foo->new(".join(", ",
+                 map { $show->($_) } @$self).")"
+        }
+    }
 
- use FP::Show;
+    use FP::Show;
 
- is show(FPShowExample::Foo->new("hey", new FPShowExample::Foo 5+5)),
-    "FPShowExample::Foo->new('hey', FPShowExample::Foo->new(10))";
+    is show(FPShowExample::Foo->new("hey", new FPShowExample::Foo 5+5)),
+       "FPShowExample::Foo->new('hey', FPShowExample::Foo->new(10))";
 
 =head1 DESCRIPTION
 

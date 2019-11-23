@@ -13,14 +13,14 @@ Chj::NamespaceCleanAbove
 
 =head1 SYNOPSIS
 
- sub foo { }
- use Bar;
- use Chj::NamespaceCleanAbove; # imports `_END_`
- sub baz {
-    bar foo
- }
- _END_; # deletes `foo` and everything imported by `Bar`, but still lets
-        # `baz` access them.
+    sub foo { }
+    use Bar;
+    use Chj::NamespaceCleanAbove; # imports `_END_`
+    sub baz {
+       bar foo
+    }
+    _END_; # deletes `foo` and everything imported by `Bar`, but still lets
+           # `baz` access them.
 
 =head1 DESCRIPTION
 

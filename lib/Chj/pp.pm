@@ -13,11 +13,11 @@ Chj::pp -- pretty printing as a debugging help
 
 =head1 SYNOPSIS
 
- use Chj::pp;
+    use Chj::pp;
 
- print pp (1/2) + 1, "\n"; # prints "0.5\n" to stderr then "1.5\n" to stdout
+    print pp (1/2) + 1, "\n"; # prints "0.5\n" to stderr then "1.5\n" to stdout
 
- print pp_ ("x", 1/2) + 1, "\n"; # prints "x: 0.5\n" to stderr then see above
+    print pp_ ("x", 1/2) + 1, "\n"; # prints "x: 0.5\n" to stderr then see above
 
 =head1 DESCRIPTION
 

@@ -13,14 +13,14 @@ FP::IOStream
 
 =head1 SYNOPSIS
 
- use FP::IOStream ':all'; # xdirectory_items, xdirectory_paths
- use FP::Stream; # stream_map
- use FP::List ':all'; # first
- my $paths= stream_map sub { my ($item)= @_; "$base/$item" },
-                       xdirectory_items $base;
- # which is the same as: my $paths= xdirectory_paths $base;
- my $firstpath= first $paths;
- # ...
+    use FP::IOStream ':all'; # xdirectory_items, xdirectory_paths
+    use FP::Stream; # stream_map
+    use FP::List ':all'; # first
+    my $paths= stream_map sub { my ($item)= @_; "$base/$item" },
+                          xdirectory_items $base;
+    # which is the same as: my $paths= xdirectory_paths $base;
+    my $firstpath= first $paths;
+    # ...
 
 =head1 DESCRIPTION
 

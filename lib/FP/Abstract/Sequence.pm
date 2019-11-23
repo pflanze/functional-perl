@@ -13,32 +13,32 @@ FP::Abstract::Sequence - functional sequence protocol
 
 =head1 SYNOPSIS
 
- use FP::Predicates "is_sequence"; # since we can't have it in
-                                   # FP::Abstract::Sequence
- use FP::PureArray;
- use FP::StrictList;
- use FP::List;
- use FP::Stream;
- use FP::Array 'array';
+    use FP::Predicates "is_sequence"; # since we can't have it in
+                                      # FP::Abstract::Sequence
+    use FP::PureArray;
+    use FP::StrictList;
+    use FP::List;
+    use FP::Stream;
+    use FP::Array 'array';
 
- use FP::Equal 'is_equal';
+    use FP::Equal 'is_equal';
 
- is_equal list(purearray(3,4),
-               strictlist(3,4),
-               list(3,4),
-               stream(3,4),
-               cons(3,4), # ok this can't really count as a sequence,
-                          # what to do about it?
-               array(3,4), # Could `autobox` change this?
-               3,
-               {3=>4})->map(*is_sequence),
-          list(1,1,1,1,1,0,0,0);
+    is_equal list(purearray(3,4),
+                  strictlist(3,4),
+                  list(3,4),
+                  stream(3,4),
+                  cons(3,4), # ok this can't really count as a sequence,
+                             # what to do about it?
+                  array(3,4), # Could `autobox` change this?
+                  3,
+                  {3=>4})->map(*is_sequence),
+             list(1,1,1,1,1,0,0,0);
 
- my $ns= purearray(FP::Abstract::Sequence->fp_interface_method_names);
- #  The methods you can count on being supported by sequences.
+    my $ns= purearray(FP::Abstract::Sequence->fp_interface_method_names);
+    #  The methods you can count on being supported by sequences.
 
- is_equal $ns->sort->take(5),
-          purearray('any', 'append', 'array', 'cons', 'drop');
+    is_equal $ns->sort->take(5),
+             purearray('any', 'append', 'array', 'cons', 'drop');
 
 =head1 DESCRIPTION
 

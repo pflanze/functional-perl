@@ -15,7 +15,7 @@ PXML::Preserialize::t -- tests for PXML::Preserialize
 
 =head1 DESCRIPTION
 
- # is tested by `t/require_and_run_tests`
+    # is tested by `t/require_and_run_tests`
 
 =head1 NOTE
 
@@ -31,24 +31,24 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use PXML qw(pxmlbody);
 
- use PXML::Preserialize qw(pxmlfunc pxmlpre);
- use PXML::XHTML qw(A B);
+use PXML::Preserialize qw(pxmlfunc pxmlpre);
+use PXML::XHTML qw(A B);
 
- my $link_normal= sub {
-     my ($href,$body)=@_;
-     A {href=> $href}, $body
- };
+my $link_normal= sub {
+    my ($href,$body)=@_;
+    A {href=> $href}, $body
+};
 
- my $link_fast= pxmlfunc {
-     my ($href,$body)=@_; # can take up to 10[?] arguments.
-     A {href=> $href}, $body
- };
+my $link_fast= pxmlfunc {
+    my ($href,$body)=@_; # can take up to 10[?] arguments.
+    A {href=> $href}, $body
+};
 
- # the `2` is the number of arguments
- my $link_fast2= pxmlpre 2, $link_normal;
+# the `2` is the number of arguments
+my $link_fast2= pxmlpre 2, $link_normal;
 
- # these expressions are all returing the same result, but the first
- # is slower then the others:
+# these expressions are all returing the same result, but the first
+# is slower then the others:
 my $res= '<a href="http://foo"><b>Foo</b>Bar</a>';
 TEST{ &$link_normal("http://foo", [B("Foo"), "Bar"])->string } $res;
 

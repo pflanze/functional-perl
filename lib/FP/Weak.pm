@@ -13,15 +13,15 @@ FP::Weak - utilities to weaken references
 
 =head1 SYNOPSIS
 
- use FP::Weak;
+    use FP::Weak;
 
- sub foo {
-     my $f; $f= sub { my ($n,$tot)=@_; $n < 100 ? &$f($n+1, $tot+$n) : $tot };
-     Weakened $f
- }
+    sub foo {
+        my $f; $f= sub { my ($n,$tot)=@_; $n < 100 ? &$f($n+1, $tot+$n) : $tot };
+        Weakened $f
+    }
 
- is foo->(10, 0), 4905;
- # the subroutine returned from foo will not be leaked.
+    is foo->(10, 0), 4905;
+    # the subroutine returned from foo will not be leaked.
 
 
 =head1 DESCRIPTION

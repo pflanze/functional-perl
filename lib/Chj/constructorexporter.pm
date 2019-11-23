@@ -13,32 +13,32 @@ Chj::constructorexporter
 
 =head1 SYNOPSIS
 
- {
-     package Foo;
-     use Chj::constructorexporter;
-     *import= constructorexporter new=> "Foo", new_from_string=> "foo";
-     sub new { ... }
- }
- use Foo "foo", "foo"; # or ":all"; 'use Foo;' would not import anything
- foo("abc") # calls Foo->new_from_string("abc")
- Foo(1,2) # calls Foo->new(1,2)
+    {
+        package Foo;
+        use Chj::constructorexporter;
+        *import= constructorexporter new=> "Foo", new_from_string=> "foo";
+        sub new { ... }
+    }
+    use Foo "foo", "foo"; # or ":all"; 'use Foo;' would not import anything
+    foo("abc") # calls Foo->new_from_string("abc")
+    Foo(1,2) # calls Foo->new(1,2)
 
- {
-     package Bar;
-     our @ISA="Foo";
- }
- use Bar "foo"; # this exports a different "foo"!
- foo("def") # calls Bar->new("def")
+    {
+        package Bar;
+        our @ISA="Foo";
+    }
+    use Bar "foo"; # this exports a different "foo"!
+    foo("def") # calls Bar->new("def")
 
- # to import both (avoiding conflict):
- use Foo qw(foo);
- use Bar qw(foo -prefix bar_); # imports 'bar_foo'
- # The position of the -prefix argument and its value within the
- # import list is irrelevant.
+    # to import both (avoiding conflict):
+    use Foo qw(foo);
+    use Bar qw(foo -prefix bar_); # imports 'bar_foo'
+    # The position of the -prefix argument and its value within the
+    # import list is irrelevant.
 
- # Note that the exported constructor functions cannot be reached by
- # full qualification: in this example Foo::foo is undefined (or it
- # might instead be an unrelated method definition)!
+    # Note that the exported constructor functions cannot be reached by
+    # full qualification: in this example Foo::foo is undefined (or it
+    # might instead be an unrelated method definition)!
 
 
 =head1 DESCRIPTION

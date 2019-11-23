@@ -13,20 +13,20 @@ Chj::IO::Command
 
 =head1 SYNOPSIS
 
- use Chj::IO::Command;
- # my $mail= Chj::IO::Command->new_out("sendmail","-t");  or:
- # my $mail= Chj::IO::Command->new_writer("sendmail","-t"); or:
- my $mail= Chj::IO::Command->new_receiver("sendmail","-t");
- warn "sendmail has pid ".$mail->pid;
- $mail->xprint("From:..\nTo:..\n\n...");
- my $exitcode= $mail->xfinish;
- # my $date= Chj::IO::Command->new_in("date")->xcontent;
- # my $date= Chj::IO::Command->new_reader("date")->xcontent;
- my $date= Chj::IO::Command->new_sender("date")->xcontent;
- # there's also ->new_err, which allows to gather errors
+    use Chj::IO::Command;
+    # my $mail= Chj::IO::Command->new_out("sendmail","-t");  or:
+    # my $mail= Chj::IO::Command->new_writer("sendmail","-t"); or:
+    my $mail= Chj::IO::Command->new_receiver("sendmail","-t");
+    warn "sendmail has pid ".$mail->pid;
+    $mail->xprint("From:..\nTo:..\n\n...");
+    my $exitcode= $mail->xfinish;
+    # my $date= Chj::IO::Command->new_in("date")->xcontent;
+    # my $date= Chj::IO::Command->new_reader("date")->xcontent;
+    my $date= Chj::IO::Command->new_sender("date")->xcontent;
+    # there's also ->new_err, which allows to gather errors
 
- # or catch stdout and stderr both together:
- my $str= Chj::IO::Command->new_combinedsender("foo","bar","baz")->xcontent;
+    # or catch stdout and stderr both together:
+    my $str= Chj::IO::Command->new_combinedsender("foo","bar","baz")->xcontent;
 
 
 =head1 DESCRIPTION

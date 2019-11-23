@@ -13,10 +13,10 @@ FP::Show - give (nice) code representation for debugging purposes
 
 =head1 SYNOPSIS
 
- use FP::Show; # exports 'show'
- use FP::List;
+    use FP::Show; # exports 'show'
+    use FP::List;
 
- is show(list(3, 4)->map(sub{$_[0]*10})), "list(30, 40)";
+    is show(list(3, 4)->map(sub{$_[0]*10})), "list(30, 40)";
 
 
 =head1 DESCRIPTION
@@ -53,27 +53,27 @@ returning 'plain' strings, not perl code (or so it seems, is there any
 spec that defines exactly what it means?) Code couldn't know whether
 to quote the result:
 
- sub foo2 {
-     my ($l)=@_;
-     # this is quoting safe:
-     die "not what we wanted: ".show($l)
-     # this would not be:
-     #die "not what we wanted: $l"
- }
+    sub foo2 {
+        my ($l)=@_;
+        # this is quoting safe:
+        die "not what we wanted: ".show($l)
+        # this would not be:
+        #die "not what we wanted: $l"
+    }
 
- eval { foo2 list 100-1, "bottles"; };
- like $@, qr/\Qnot what we wanted: list(99, 'bottles')/;
- eval { foo2 "list(99, 'bottles')"; };
- like $@, qr/\Qnot what we wanted: 'list(99, \'bottles\')'/;
- # so how would you tell which value foo2 really got in each case,
- # just from looking at the message?
+    eval { foo2 list 100-1, "bottles"; };
+    like $@, qr/\Qnot what we wanted: list(99, 'bottles')/;
+    eval { foo2 "list(99, 'bottles')"; };
+    like $@, qr/\Qnot what we wanted: 'list(99, \'bottles\')'/;
+    # so how would you tell which value foo2 really got in each case,
+    # just from looking at the message?
 
- # also:
- eval { foo2 +{a=> 1, b=>10}; };
- like $@, qr/\Qnot what we wanted: +{a => 1, b => 10}/;
-   # would die with something like:
-   #   not what we wanted: HASH(0xEADBEEF)
-   # which isn't very informative
+    # also:
+    eval { foo2 +{a=> 1, b=>10}; };
+    like $@, qr/\Qnot what we wanted: +{a => 1, b => 10}/;
+      # would die with something like:
+      #   not what we wanted: HASH(0xEADBEEF)
+      # which isn't very informative
 
 Embedding pointer values in the output also means that it can't be
 used for automatic testing. (Even with a future implementation of

@@ -13,73 +13,73 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
 
 =head1 SYNOPSIS
 
- use FP::Lazy;
+    use FP::Lazy;
 
- my $a = lazy { 1 / 0 };
- eval {
-     print force $a
- };
- like $@, qr/division by zero/;
+    my $a = lazy { 1 / 0 };
+    eval {
+        print force $a
+    };
+    like $@, qr/division by zero/;
 
- my $count= 0;
- my $b = lazy { $count++; 1 / 2 };
- is is_promise($b), 1;
- is $count, 0;
- is force($b), 1/2; # increments $count
- is $count, 1;
- # $b is still a promise at this point (although an evaluated one):
- is is_promise($b), 1;
- is force($b), 1/2; # does not increment $count anymore
- is $count, 1;
+    my $count= 0;
+    my $b = lazy { $count++; 1 / 2 };
+    is is_promise($b), 1;
+    is $count, 0;
+    is force($b), 1/2; # increments $count
+    is $count, 1;
+    # $b is still a promise at this point (although an evaluated one):
+    is is_promise($b), 1;
+    is force($b), 1/2; # does not increment $count anymore
+    is $count, 1;
 
- # The following stores result of `force $b` back into $b
- FORCE $b;
- is is_promise($b), '';
- is $b, 1/2;
- is $count, 1;
+    # The following stores result of `force $b` back into $b
+    FORCE $b;
+    is is_promise($b), '';
+    is $b, 1/2;
+    is $count, 1;
 
- # Note that lazy evaluation and mutation usually doesn't mix well -
- # lazy programs better be purely functional. Here $tot depends not
- # just on the inputs, but also on how many elements were evaluated:
- use FP::Stream qw(stream_map); # uses `lazy` internally
- use FP::List;
- my $tot=0;
- my $l= stream_map sub {
-     my ($x)=@_;
-     $tot+=$x;
-     $x*$x
- }, list (5,7,8);
- is $tot, 0;
- is $l->first, 25;
- is $tot, 5;
- is $l->length, 3;
- is $tot, 20;
+    # Note that lazy evaluation and mutation usually doesn't mix well -
+    # lazy programs better be purely functional. Here $tot depends not
+    # just on the inputs, but also on how many elements were evaluated:
+    use FP::Stream qw(stream_map); # uses `lazy` internally
+    use FP::List;
+    my $tot=0;
+    my $l= stream_map sub {
+        my ($x)=@_;
+        $tot+=$x;
+        $x*$x
+    }, list (5,7,8);
+    is $tot, 0;
+    is $l->first, 25;
+    is $tot, 5;
+    is $l->length, 3;
+    is $tot, 20;
 
- # Also note that `local` does mutation (even if in a somewhat
- # controlled way):
- our $foo= "";
- sub moo {
-     my ($bar)=@_;
-     local $foo= "Hello";
-     lazy { "$foo $bar" }
- }
- is moo("you")->force, " you";
+    # Also note that `local` does mutation (even if in a somewhat
+    # controlled way):
+    our $foo= "";
+    sub moo {
+        my ($bar)=@_;
+        local $foo= "Hello";
+        lazy { "$foo $bar" }
+    }
+    is moo("you")->force, " you";
 
- # runtime conditional lazyness:
+    # runtime conditional lazyness:
 
- sub condprom($) {
-     my ($cond)= @_;
-     lazy_if { 1 / 0 } $cond
- }
+    sub condprom($) {
+        my ($cond)= @_;
+        lazy_if { 1 / 0 } $cond
+    }
 
- is is_promise(condprom 1), 1;
+    is is_promise(condprom 1), 1;
 
- eval {
-     # immediate division by zero exception (still pays
-     # the overhead of two subroutine calls, though)
-     condprom 0
- };
- like $@, qr/division by zero/;
+    eval {
+        # immediate division by zero exception (still pays
+        # the overhead of two subroutine calls, though)
+        condprom 0
+    };
+    like $@, qr/division by zero/;
 
 
 =head1 DESCRIPTION
@@ -90,19 +90,19 @@ only ever evaluated once, after which point its result is saved in the
 promise, and subsequent requests for evaluation are simply returning
 the saved value.
 
- my $p = lazy { "......" }; # returns a promise that represents the computation
-                            # given in the block of code
+    my $p = lazy { "......" }; # returns a promise that represents the computation
+                               # given in the block of code
 
- force $p;  # runs the block of code and stores the result within the
-            # promise and also returns it
+    force $p;  # runs the block of code and stores the result within the
+               # promise and also returns it
 
- FORCE $p; # or FORCE $p,$q,$r;
-           # in addition to running force, stores back the resulting
-           # value into the variable given as argument ($p, $q, and $r
-           # respectively (the commented example forces 3 (possibly)
-           # separate values))
+    FORCE $p; # or FORCE $p,$q,$r;
+              # in addition to running force, stores back the resulting
+              # value into the variable given as argument ($p, $q, and $r
+              # respectively (the commented example forces 3 (possibly)
+              # separate values))
 
- is is_promise($p), ''; # returns true iff $x holds a promise
+    is is_promise($p), ''; # returns true iff $x holds a promise
 
 
 =head1 NOTE

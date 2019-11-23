@@ -13,26 +13,26 @@ FP::Memoizing - a functional memoize
 
 =head1 SYNOPSIS
 
- use FP::Memoizing qw(memoizing memoizing_to_dir);
- use Chj::tempdir;
- my $tmp= do{ mkdir ".tmp"; tempdir ".tmp/" };
+    use FP::Memoizing qw(memoizing memoizing_to_dir);
+    use Chj::tempdir;
+    my $tmp= do{ mkdir ".tmp"; tempdir ".tmp/" };
 
- my $count=0;
- sub f { $count++; $_[0] * 5 }
+    my $count=0;
+    sub f { $count++; $_[0] * 5 }
 
- *fm= memoizing *f; # memoize in process memory
- *fm2= memoizing_to_dir $tmp, *f; # memoize to files in ".foo/"
+    *fm= memoizing *f; # memoize in process memory
+    *fm2= memoizing_to_dir $tmp, *f; # memoize to files in ".foo/"
 
- is fm(3), 15;
- is $count, 1;
- is fm(3), 15;
- is $count, 1;
- is fm(2), 10;
- is $count, 2;
- is fm2(3), 15;
- is $count, 3;
- is fm2(3), 15;
- is $count, 3;
+    is fm(3), 15;
+    is $count, 1;
+    is fm(3), 15;
+    is $count, 1;
+    is fm(2), 10;
+    is $count, 2;
+    is fm2(3), 15;
+    is $count, 3;
+    is fm2(3), 15;
+    is $count, 3;
 
 
 =head1 DESCRIPTION

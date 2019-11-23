@@ -13,16 +13,16 @@ Chj::IO::PipelessCommand
 
 =head1 SYNOPSIS
 
- use Chj::IO::PipelessCommand;
- use Chj::xopen qw(xopen_read);
- use Chj::xtmpfile;
+    use Chj::IO::PipelessCommand;
+    use Chj::xopen qw(xopen_read);
+    use Chj::xtmpfile;
 
- my $in= xopen_read $inpath;
- my $out= xtmpfile $outpath;
- my $c= Chj::IO::PipelessCommand
-            ->new_with_in_out ($in,$out, $path, @args);
- # $c can't be read from or written to.
- $c->xxfinish;
+    my $in= xopen_read $inpath;
+    my $out= xtmpfile $outpath;
+    my $c= Chj::IO::PipelessCommand
+               ->new_with_in_out ($in,$out, $path, @args);
+    # $c can't be read from or written to.
+    $c->xxfinish;
 
 =head1 DESCRIPTION
 

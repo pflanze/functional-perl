@@ -13,7 +13,7 @@ FP::Abstract::Sequence::t -- tests for FP::Abstract::Sequence
 
 =head1 SYNOPSIS
 
- # is tested by `t/require_and_run_tests`
+    # is tested by `t/require_and_run_tests`
 
 =head1 DESCRIPTION
 
@@ -31,27 +31,27 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # from SYNOPSIS:
 
- use FP::Predicates "is_sequence"; # since we can't have it in
-                                   # FP::Abstract::Sequence
- use FP::PureArray;
- use FP::StrictList;
- use FP::List;
- use FP::Stream;
- use FP::Array 'array';
+use FP::Predicates "is_sequence"; # since we can't have it in
+                                  # FP::Abstract::Sequence
+use FP::PureArray;
+use FP::StrictList;
+use FP::List;
+use FP::Stream;
+use FP::Array 'array';
 
- use Chj::TEST;
+use Chj::TEST;
 
- TEST { list(purearray(3,4),
-             strictlist(3,4),
-             list(3,4),
-             stream(3,4),
-             cons(3,4), # ok this can't really count as a sequence,
-                        # what to do about it?
-             array(3,4), # Could `autobox` change this?
-             3,
-             {3=>4},
-        )->map(*is_sequence)->array }
-  [ 1,1,1,1,1,0,0,0 ];
+TEST { list(purearray(3,4),
+            strictlist(3,4),
+            list(3,4),
+            stream(3,4),
+            cons(3,4), # ok this can't really count as a sequence,
+                       # what to do about it?
+            array(3,4), # Could `autobox` change this?
+            3,
+            {3=>4},
+       )->map(*is_sequence)->array }
+ [ 1,1,1,1,1,0,0,0 ];
 
 
 # more tests:

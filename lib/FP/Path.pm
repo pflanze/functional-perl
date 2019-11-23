@@ -13,19 +13,19 @@ FP::Path
 
 =head1 SYNOPSIS
 
- use FP::Equal;
- use FP::Path;
+    use FP::Equal;
+    use FP::Path;
 
- my $p= FP::Path->new_from_string ("a/../b/C")
-        ->add(FP::Path->new_from_string("../d/../e"), 0);
- is $p->string, 'a/../b/C/../d/../e';
- is $p->xclean->string, 'b/e';
- ok not equal($p->xclean, $p);
- ok equal($p->xclean, $p->xclean); # obviously, assuming purity
+    my $p= FP::Path->new_from_string ("a/../b/C")
+           ->add(FP::Path->new_from_string("../d/../e"), 0);
+    is $p->string, 'a/../b/C/../d/../e';
+    is $p->xclean->string, 'b/e';
+    ok not equal($p->xclean, $p);
+    ok equal($p->xclean, $p->xclean); # obviously, assuming purity
 
- # or use the (evil?) constructor function export feature:
- use FP::Path "path";
- is path("a/../b/C")->xclean->string, "b/C";
+    # or use the (evil?) constructor function export feature:
+    use FP::Path "path";
+    is path("a/../b/C")->xclean->string, "b/C";
 
 =head1 DESCRIPTION
 

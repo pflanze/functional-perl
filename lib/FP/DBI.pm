@@ -13,27 +13,27 @@ FP::DBI - DBI with results as lazy lists
 
 =head1 SYNOPSIS
 
- use FP::DBI;
+    use FP::DBI;
 
- $dbh = FP::DBI->connect($data_source, $username, $auth, \%attr);
+    $dbh = FP::DBI->connect($data_source, $username, $auth, \%attr);
 
- # same as `DBI`:
- ..
- $sth = $dbh->prepare($statement);
- ..
- $rv = $sth->execute;
+    # same as `DBI`:
+    ..
+    $sth = $dbh->prepare($statement);
+    ..
+    $rv = $sth->execute;
 
- # then:
- my $s= $sth->row_stream;    # purearrays blessed to FP::DBI::Row
- # or
- #my $s= $sth->array_stream; # arrays
- # or
- #my $s= $sth->hash_stream;  # hashes
+    # then:
+    my $s= $sth->row_stream;    # purearrays blessed to FP::DBI::Row
+    # or
+    #my $s= $sth->array_stream; # arrays
+    # or
+    #my $s= $sth->hash_stream;  # hashes
 
- use PXML::XHTML;
- TABLE
-   (TH($s->first->map (*TD)),
-    $s->rest->take (10)->map (sub {TR($_[0]->map (*TD))}))
+    use PXML::XHTML;
+    TABLE
+      (TH($s->first->map (*TD)),
+       $s->rest->take (10)->map (sub {TR($_[0]->map (*TD))}))
 
 =head1 DESCRIPTION
 

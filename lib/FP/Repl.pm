@@ -13,19 +13,19 @@ FP::Repl - read-eval-print loop
 
 =head1 SYNOPSIS
 
- use FP::Repl;
- repl;
+    use FP::Repl;
+    repl;
 
- # pass parameters (any fields of the FP::Repl::Repl class):
- repl (skip=> 3, # skip 3 caller frames (when the repl call is nested
-                 # within something you dont't want the user to see)
-       tty=> $fh, # otherwise repl tries to open /dev/tty, or if that fails,
-                  # uses readline defaults (which is somewhat broken?)
-       # also, any fields of the FP::Repl::Repl class are possible:
-       maxHistLen=> 100, maybe_prompt=> "foo>", maybe_package=> "Foo::Bar",
-       maybe_historypath=> ".foo_history", pager=> "more"
-       # etc.
-      );
+    # pass parameters (any fields of the FP::Repl::Repl class):
+    repl (skip=> 3, # skip 3 caller frames (when the repl call is nested
+                    # within something you dont't want the user to see)
+          tty=> $fh, # otherwise repl tries to open /dev/tty, or if that fails,
+                     # uses readline defaults (which is somewhat broken?)
+          # also, any fields of the FP::Repl::Repl class are possible:
+          maxHistLen=> 100, maybe_prompt=> "foo>", maybe_package=> "Foo::Bar",
+          maybe_historypath=> ".foo_history", pager=> "more"
+          # etc.
+         );
 
 =head1 DESCRIPTION
 

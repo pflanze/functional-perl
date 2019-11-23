@@ -13,14 +13,14 @@ Chj::IO::WrappedFile
 
 =head1 SYNOPSIS
 
- use Chj::xopen 'fh_to_fh';
- my $fh= fh_to_fh ($some_pty_or_so);
- # which is the same as:
- my $fh2= Chj::IO::WrappedFile->new ($some_pty_or_so);
+    use Chj::xopen 'fh_to_fh';
+    my $fh= fh_to_fh ($some_pty_or_so);
+    # which is the same as:
+    my $fh2= Chj::IO::WrappedFile->new ($some_pty_or_so);
 
- # $fh and $fh2 are Chj::IO::WrappedFile objects *containing*
- # $some_pty_or_so
- $fh->dup2(0) # etc., all Chj::IO::File methods
+    # $fh and $fh2 are Chj::IO::WrappedFile objects *containing*
+    # $some_pty_or_so
+    $fh->dup2(0) # etc., all Chj::IO::File methods
 
 =head1 DESCRIPTION
 

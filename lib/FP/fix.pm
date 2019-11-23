@@ -13,17 +13,17 @@ FP::fix -- recurse with the fix point combinator
 
 =head1 SYNOPSIS
 
- use FP::fix;
+    use FP::fix;
 
- sub fact {
-     my ($z)= @_;
-     my $f= fix sub {
-         my ($f,  $x, $y)=@_;
-         $x > 0 ? $f->($x-1, $x*$y) : $y
-     };
-     $f->($z, 1)
- }
- is fact(5), 120;
+    sub fact {
+        my ($z)= @_;
+        my $f= fix sub {
+            my ($f,  $x, $y)=@_;
+            $x > 0 ? $f->($x-1, $x*$y) : $y
+        };
+        $f->($z, 1)
+    }
+    is fact(5), 120;
 
 
 =head1 DESCRIPTION
@@ -38,18 +38,18 @@ closures would run into.
 
 The example from the synopsis is equivalent to:
 
- use Scalar::Util 'weaken';
+    use Scalar::Util 'weaken';
 
- sub fact2 {
-     my ($z)= @_;
-     my $f; $f= sub {
-         my ($x, $y)=@_;
-         $x > 0 ? $f->($x-1, $x*$y) : $y
-     };
-     my $_f= $f; weaken $f;
-     $f->($z, 1)
- }
- is fact2(5), 120;
+    sub fact2 {
+        my ($z)= @_;
+        my $f; $f= sub {
+            my ($x, $y)=@_;
+            $x > 0 ? $f->($x-1, $x*$y) : $y
+        };
+        my $_f= $f; weaken $f;
+        $f->($z, 1)
+    }
+    is fact2(5), 120;
 
 
 =head1 NOTE

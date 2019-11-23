@@ -13,10 +13,10 @@ FP::url_
 
 =head1 SYNOPSIS
 
- use FP::url_;
- my $u= url_ path=> "index.html", fragment=> "foo#bar";
- # $u is an URI object
- is "$u", 'index.html#foo%23bar';
+    use FP::url_;
+    my $u= url_ path=> "index.html", fragment=> "foo#bar";
+    # $u is an URI object
+    is "$u", 'index.html#foo%23bar';
 
 =head1 DESCRIPTION
 

@@ -13,18 +13,18 @@ FP::StrictList - an FP::List that enforces list semantics
 
 =head1 SYNOPSIS
 
- use FP::StrictList;
- use FP::Div 'inc'; use FP::List;
+    use FP::StrictList;
+    use FP::Div 'inc'; use FP::List;
 
- my $l= strictlist (4,5)->map(*inc);
- ok is_strictlist $l; # O(1)
+    my $l= strictlist (4,5)->map(*inc);
+    ok is_strictlist $l; # O(1)
 
- use FP::Equal qw(equal is_equal); use FP::List 'null';
- is_equal strictnull->cons(1), cons (1, strictnull);
- ok not equal strictnull->cons(1), cons (1, null);
-   # false: `cons` from `FP::List` and `FP::StrictList` are the same
-   # function but it takes the type of their second argument into
-   # consideration.
+    use FP::Equal qw(equal is_equal); use FP::List 'null';
+    is_equal strictnull->cons(1), cons (1, strictnull);
+    ok not equal strictnull->cons(1), cons (1, null);
+      # false: `cons` from `FP::List` and `FP::StrictList` are the same
+      # function but it takes the type of their second argument into
+      # consideration.
 
 
 =head1 DESCRIPTION

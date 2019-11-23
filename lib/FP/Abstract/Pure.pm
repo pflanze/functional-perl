@@ -13,18 +13,18 @@ FP::Abstract::Pure - functional purity protocol
 
 =head1 SYNOPSIS
 
- use FP::List;
- my $v= list(1); # or any other data structure that implements
-                 # FP::Abstract::Pure
- is UNIVERSAL::isa($v, "FP::Abstract::Pure"), 1;
- # Or use Safe::Isa instead of UNIVERSAL::isa, but I don't understand
- # why overriding isa is useful (why fake inherit as opposed to real
- # inheriting but then shadowing what needs to be shadowed? NEXT method
- # and that needs to be supported in mock classes? TODO figure out.)
+    use FP::List;
+    my $v= list(1); # or any other data structure that implements
+                    # FP::Abstract::Pure
+    is UNIVERSAL::isa($v, "FP::Abstract::Pure"), 1;
+    # Or use Safe::Isa instead of UNIVERSAL::isa, but I don't understand
+    # why overriding isa is useful (why fake inherit as opposed to real
+    # inheriting but then shadowing what needs to be shadowed? NEXT method
+    # and that needs to be supported in mock classes? TODO figure out.)
 
- # but usually:
- use FP::Predicates;
- is_pure ($v) # true if $v does (officially) not support mutation
+    # but usually:
+    use FP::Predicates;
+    is_pure ($v) # true if $v does (officially) not support mutation
 
 =head1 DESCRIPTION
 

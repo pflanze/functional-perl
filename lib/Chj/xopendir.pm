@@ -13,13 +13,13 @@ Chj::xopendir
 
 =head1 SYNOPSIS
 
- use Chj::xopendir;
- {
-     my $dir= xopendir "/foo";
-     while (defined(my $item=$dir->read)) {
-         print $item;
-     }
- } # $dir is closed automatically (issuing a warning on error)
+    use Chj::xopendir;
+    {
+        my $dir= xopendir "/foo";
+        while (defined(my $item=$dir->read)) {
+            print $item;
+        }
+    } # $dir is closed automatically (issuing a warning on error)
 
 =head1 DESCRIPTION
 

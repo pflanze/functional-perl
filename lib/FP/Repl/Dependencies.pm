@@ -13,7 +13,7 @@ FP::Repl::Dependencies - hack to load Repl dependencies
 
 =head1 SYNOPSIS
 
- use Chj::TEST use=> 'FP::Repl::Dependencies';
+    use Chj::TEST use=> 'FP::Repl::Dependencies';
 
 =head1 DESCRIPTION
 

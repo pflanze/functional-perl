@@ -13,83 +13,83 @@ FP::Failure - failure values
 
 =head1 SYNOPSIS
 
- use FP::Equal ':all'; use FP::Ops qw(the_method regex_substitute); use FP::List;
- use FP::Failure;
- is_equal \@FP::Failure::EXPORT, [qw(failure is_failure)];
- # but there is more in EXPORT_OK...
- use FP::Failure '*trace_failures';
+    use FP::Equal ':all'; use FP::Ops qw(the_method regex_substitute); use FP::List;
+    use FP::Failure;
+    is_equal \@FP::Failure::EXPORT, [qw(failure is_failure)];
+    # but there is more in EXPORT_OK...
+    use FP::Failure '*trace_failures';
 
- my $vals= do {
-     local $trace_failures = 0;
-     list(failure("not good"),
-          failure(666),
-          failure(undef),
-          666,
-          0,
-          undef)
- };
+    my $vals= do {
+        local $trace_failures = 0;
+        list(failure("not good"),
+             failure(666),
+             failure(undef),
+             666,
+             0,
+             undef)
+    };
 
- is_equal $vals->map(*is_failure),
-          list(1, 1, 1, undef, undef, undef);
+    is_equal $vals->map(*is_failure),
+             list(1, 1, 1, undef, undef, undef);
 
- is_equal $vals->map(sub { my ($v)= @_; $v ? "t" : "f" }),
-          list("f", "f", "f", "t", "f", "f");
+    is_equal $vals->map(sub { my ($v)= @_; $v ? "t" : "f" }),
+             list("f", "f", "f", "t", "f", "f");
 
- # failure dies when called in void context (for safety, failures have
- # to be ignored *explicitly*):
- is((eval { failure("hello"); 1 } || ref $@),
-    'FP::Failure::Failure');
+    # failure dies when called in void context (for safety, failures have
+    # to be ignored *explicitly*):
+    is((eval { failure("hello"); 1 } || ref $@),
+       'FP::Failure::Failure');
 
- # get the wrapped value
- is_equal $vals->filter(*is_failure)->map(the_method "value"),
-          list("not good", 666, undef);
+    # get the wrapped value
+    is_equal $vals->filter(*is_failure)->map(the_method "value"),
+             list("not good", 666, undef);
 
- # get a nice message
- is_equal $vals->first->message,
-          "failure: 'not good'\n";
+    # get a nice message
+    is_equal $vals->first->message,
+             "failure: 'not good'\n";
 
- # record backtraces
- my $v= do {
-     local $trace_failures = 1;
-     failure(666, [$vals->first])
- };
- 
- is_equal $v->message,
-          "failure: 666\n  because:\n  failure: 'not good'\n";
+    # record backtraces
+    my $v= do {
+        local $trace_failures = 1;
+        failure(666, [$vals->first])
+    };
 
- # request recorded backtrace to be shown
- is_equal regex_substitute(sub{ s/line \d+/line .../g }, $v->message(1)),
-          join("\n", "failure: 666 at lib/FP/Failure.pm line ...",
-                     "    (eval) at t/pod_snippets line ...",
-                     "  because:",
-                     "  failure: 'not good'\n");
+    is_equal $v->message,
+             "failure: 666\n  because:\n  failure: 'not good'\n";
 
-
- # Wrapper that just returns 0 unless configured to create a failure
- # object:
-
- use FP::Failure qw(*use_failure fails);
- use FP::Show;
-
- is show(do { local $use_failure=0; fails("hi") }),
-    0;
- is show(do { local $use_failure=1; fails("hi") }),
-    "Failure('hi', undef, undef)";
+    # request recorded backtrace to be shown
+    is_equal regex_substitute(sub{ s/line \d+/line .../g }, $v->message(1)),
+             join("\n", "failure: 666 at lib/FP/Failure.pm line ...",
+                        "    (eval) at t/pod_snippets line ...",
+                        "  because:",
+                        "  failure: 'not good'\n");
 
 
- # Utility container for holding both a message and values:
+    # Wrapper that just returns 0 unless configured to create a failure
+    # object:
 
- use FP::Failure qw(message messagefmt);
+    use FP::Failure qw(*use_failure fails);
+    use FP::Show;
 
- is failure(message "Hi", "foo", 9)->message,
-    "failure: Hi: 'foo', 9\n";
- is failure(message "Hi")->message,
-    "failure: Hi\n";
+    is show(do { local $use_failure=0; fails("hi") }),
+       0;
+    is show(do { local $use_failure=1; fails("hi") }),
+       "Failure('hi', undef, undef)";
 
- # messagefmt is currently still passing everything through FP::Show;
- # what should it do, implement another fmt character?
- is failure(messagefmt "Hi %s %d", "foo", 9)->message,
-    "failure: Hi 'foo' 9\n";
+
+    # Utility container for holding both a message and values:
+
+    use FP::Failure qw(message messagefmt);
+
+    is failure(message "Hi", "foo", 9)->message,
+       "failure: Hi: 'foo', 9\n";
+    is failure(message "Hi")->message,
+       "failure: Hi\n";
+
+    # messagefmt is currently still passing everything through FP::Show;
+    # what should it do, implement another fmt character?
+    is failure(messagefmt "Hi %s %d", "foo", 9)->message,
+       "failure: Hi 'foo' 9\n";
 
 
 =head1 DESCRIPTION

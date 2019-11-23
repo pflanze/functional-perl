@@ -13,24 +13,24 @@ FP::Abstract::Equal - equality protocol
 
 =head1 SYNOPSIS
 
- package FPEqualExample::Foo {
-     sub new { my $class= shift; bless [@_], $class }
-     sub FP_Equal_equal {
-         my ($a, $b)=@_;
-         # If you know you've got numbers in here only:
-         $$a[0] == $$b[0]
-         # For generic values, you would instead:
-         #use FP::Equal;
-         #equal($$a[0], $$b[0])
-     }
- }
+    package FPEqualExample::Foo {
+        sub new { my $class= shift; bless [@_], $class }
+        sub FP_Equal_equal {
+            my ($a, $b)=@_;
+            # If you know you've got numbers in here only:
+            $$a[0] == $$b[0]
+            # For generic values, you would instead:
+            #use FP::Equal;
+            #equal($$a[0], $$b[0])
+        }
+    }
 
- use FP::Equal qw(equal); use FP::List;
+    use FP::Equal qw(equal); use FP::List;
 
- ok equal( list(10,20,30)->map
-               (sub{ equal(FPEqualExample::Foo->new(20),
-                           FPEqualExample::Foo->new($_[0])) }),
-           list('', 1, ''));
+    ok equal( list(10,20,30)->map
+                  (sub{ equal(FPEqualExample::Foo->new(20),
+                              FPEqualExample::Foo->new($_[0])) }),
+              list('', 1, ''));
 
 =head1 DESCRIPTION
 

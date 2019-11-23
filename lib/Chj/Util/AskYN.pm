@@ -13,13 +13,13 @@ Chj::Util::AskYN
 
 =head1 SYNOPSIS
 
- use Chj::Util::AskYN;
+    use Chj::Util::AskYN;
 
- LP: {
-     if (maybe_askyn "Do you want to retry?") {
-         redo LP;
-     }
- }
+    LP: {
+        if (maybe_askyn "Do you want to retry?") {
+            redo LP;
+        }
+    }
 
 =head1 DESCRIPTION
 
