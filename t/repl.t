@@ -106,7 +106,7 @@ my $filterHOME= sub {
 
 # To analyze test failures, install 'tkdiff' and run:
 #
-#  SHOWDIFF=1 t/repl
+#  SHOWDIFF=1 t/repl.t
 
 # When adding new tests, make sure to pass any special filters
 # where necessary (the arguments to `t` after the first two).
@@ -131,7 +131,7 @@ $inw = bless( \*Symbol::GEN1, 'Chj::IO::Pipe' );
 $output = 'DUMMY';
 $outr = bless( \*Symbol::GEN2, 'Chj::IO::Pipe' );
 $outw = bless( \*Symbol::GEN3, 'Chj::IO::Pipe' );
-\@filters = [sub { 'DUMMY: main::__ANON__ at "t/repl" line 0' }, sub { 'DUMMY: main::__ANON__ at "t/repl" line 1' }];
+\@filters = [sub { 'DUMMY: main::__ANON__ at "t/repl.t" line 0' }, sub { 'DUMMY: main::__ANON__ at "t/repl.t" line 1' }];
 },
   sub { s/(\$output = ').*(';\s*\$outr)/${1}DUMMY$2/s },
   $filterHOME;
@@ -170,8 +170,8 @@ main 1> ,b
 7	FP::Repl::Repl::__ANON__() called at lib/FP/Repl/Repl.pm line 6
 8	FP::Repl::Repl::__ANON__() called at lib/FP/Repl/Repl.pm line 7
 9	FP::Repl::Repl::__ANON__() called at lib/FP/Repl/Repl.pm line 8
-10	FP::Repl::Repl::run('FP::Repl::Repl=ARRAY(0x12)', undef) called at t/repl line 9
-11	main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl line 10
+10	FP::Repl::Repl::run('FP::Repl::Repl=ARRAY(0x12)', undef) called at t/repl.t line 9
+11	main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl.t line 10
 main 1> 
 fun at (eval 0) line 1.
 +;

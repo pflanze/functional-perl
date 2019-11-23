@@ -15,4 +15,4 @@ use Chj::xperlfunc ":all";
 $ENV{TEST_PERL}=1;
 $ENV{N}=800;
 $ENV{RES}=320400;
-xexec_safe "t/perl-weaken-coderef";
+xexec_safe "t/perl-weaken-coderef.t";

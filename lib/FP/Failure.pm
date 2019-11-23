@@ -60,7 +60,7 @@ FP::Failure - failure values
     # request recorded backtrace to be shown
     is_equal regex_substitute(sub{ s/line \d+/line .../g }, $v->message(1)),
              join("\n", "failure: 666 at lib/FP/Failure.pm line ...",
-                        "    (eval) at t/pod_snippets line ...",
+                        "    (eval) at t/pod_snippets.t line ...",
                         "  because:",
                         "  failure: 'not good'\n");
 
