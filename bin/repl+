@@ -11,36 +11,8 @@ repl=$(dirname "$0")/repl
 
 $repl \
  -t \
- -M Chj::ruse \
- -M FP::Repl \
- -M FP::TransparentLazy \
- -M FP::List=:all \
- -M FP::Stream=:all \
- -M FP::StrictList=:all \
- -M FP::PureArray \
- -M FP::MutableArray=:all \
- -M FP::Array=:all \
- -M FP::Div=:all \
- -M Chj::pp \
- -M FP::Predicates=:all \
  -m Method::Signatures \
  -m Function::Parameters=:strict \
  -m Sub::Call::Tail \
- -M FP::IOStream=:all \
- -M FP::Array_sort \
- -M FP::Ops=:all \
- -M FP::Div=:all \
- -M FP::Struct \
- -M Chj::xopen=:all \
- -M FP::Path \
- -M Chj::xperlfunc=:all \
- -M PXML::Util=:all \
- -M PXML::XHTML=:all \
- -M PXML::Serialize \
- -M FP::OrderedCollection \
- -M FP::Combinators=:all \
- -M FP::Equal=:all \
- -M FP::Show \
- -M Chj::TEST=:all \
- -M Chj::time_this=:all \
+ -M FunctionalPerl=:all \
  "$@"
