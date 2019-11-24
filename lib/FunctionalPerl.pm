@@ -139,7 +139,7 @@ our $export_desc=
 
     ":stream"=> [qw(FP::Stream FP::IOStream FP::Weak)],
     ":lazy"=> [qw(FP::Lazy :stream FP::Weak)],
-    ":transparentlazy"=> [qw(FP::TransparentLazy :stream)],
+    ":transparentlazy"=> [qw(FP::TransparentLazy :stream FP::Weak)],
     ":failure"=> [qw(FP::Failure)],
 
     ":show"=> [qw(FP::Show)],
@@ -155,7 +155,7 @@ our $export_desc=
                        FP::Untainted
                        :show :equal :failure)],
     ":git"=> [qw(FP::Git::Repository)],
-    ":pxml"=> [qw (PXML::Util PXML::XHTML PXML::Serialize)],
+    ":pxml"=> [qw(PXML::Util PXML::XHTML PXML::Serialize)],
 
     ":chars"=> [qw(FP::Char)],
     ":sequences"=> [qw(FP::List FP::StrictList FP::MutableArray
