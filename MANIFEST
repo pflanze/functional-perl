@@ -199,7 +199,6 @@ meta/tail-expand
 meta/test.pl
 meta/update-manifest
 t-slow/csvstreams.t
-t-slow/website.t
 t/csv_to_xml.expected
 t/csv_to_xml.t
 t/dbi.t
@@ -211,6 +210,7 @@ t/fp-struct.t
 t/functional_XML-t-div.t
 t/functional_XML-test.expected
 t/functional_XML-test.t
+t/htmlgen.t
 t/intro-basics.t
 t/perl-goto-leak.t
 t/perl-weaken-coderef-correctness.t
