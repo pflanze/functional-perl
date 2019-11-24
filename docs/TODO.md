@@ -39,10 +39,6 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   blessed into some base packages (like `ARRAY`), then install methods
   there?
 
-* Change `FP::Array` to offer a base class for mutable (but still
-  blessed) arrays (keeping `FP::PureArray` for immutable ones). Use
-  `autobox` with it?
-
 * Immutable and mutable blessed strings?
 
 * Currently `purearray(3,4)->cons(2)->map(*inc)` is broken. Figure out
@@ -275,11 +271,6 @@ usefully listed first).
 - disable stringification and numerification lexically using "no
   stringification"? But it currently doesn't work with bleadperl
   anymore. -> Just suggest in docs?
-
-- change `FP::Array` to use `autobox`? (But that's lexically scoped, how
-  will that 'scale'? Or, what about blessing and then providing an
-  overload for dumping? Not exist, right. What about writing an
-  alternative Dump?)
 
 - extend Data::Dumper (or alternative dumper(s)) to show a simpler
   syntax for linked lists, and streams (and perhaps more) (mostly for
