@@ -254,8 +254,20 @@ sub import {
         my $path= $module;
         $path=~ s/::/\//sg;
         $path.= ".pm";
-        require $path;
-        $module->import::into($caller, @tags)
+        # Do not die right away in an attempt at making this more
+        # usable for users where some of the modules don't work:
+        if (eval {
+            require $path;
+            1
+        }) {
+            $module->import::into($caller, @tags)
+        } else {
+            my $e= $@;
+            my $estr= "$e";
+            $estr=~ s/\n.*//s
+                unless $ENV{FUNCTIONALPERL_VERBOSE};
+            warn "NOTE: can't load $module: $estr";
+        }
     }
 }
 
