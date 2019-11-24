@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -23,7 +23,6 @@ use FP::Lazy ":all";
 use FP::Stream ":all";
 
 use Chj::Backtrace;
-use FP::Repl;
 
 # fibs :: [Integer]
 # fibs = 1:1:zipWith (+) fibs (tail fibs)
@@ -180,4 +179,7 @@ TEST {
   1;
 
 
-perhaps_run_tests "main" or repl;
+perhaps_run_tests "main" or do {
+    require FP::Repl::Trap;
+    FP::Repl::repl();
+};

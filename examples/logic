@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -29,7 +29,8 @@ use FP::Array ":all";
 use FP::Predicates qw(complement);
 use FP::Stream ":all"; # incl. F
 use FP::Ops ":all";
-use Chj::TEST ":all";
+use Chj::TEST ":all",
+    use=> 'FP::Repl::Dependencies';
 use FP::Equal;
 use FP::Repl::Stack;
 use FP::Repl::Trap; # or Chj::Backtrace
