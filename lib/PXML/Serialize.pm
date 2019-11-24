@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -18,18 +18,18 @@ PXML::Serialize
 
 =head1 SPECIAL VALUES
 
-There are a number of special values that the serializer will force (evaluate)
+There are some special values that the serializer will evaluate
 transparently:
 
 =over 4
 
 =item promises from FP::Lazy
 
-will be force'd
+are C<force>d
 
-=item thunks (CODE values)
+=item code references
 
-will be called with no arguments
+are called with no arguments
 
 =item objects
 
