@@ -37,7 +37,9 @@ Chj::TEST
 
     use Chj::TEST ':all';
 
-    is run_tests(__PACKAGE__), 0; # 0 failures
+    my $result= run_tests(__PACKAGE__);
+    is $result->fail, 0; # 0 failures
+    is $result->success > 0, 1;
 
     #run_tests;
     #  or
@@ -250,6 +252,15 @@ sub unify_values {
     $maybe_values
 }
 
+package Chj::TEST::Result {
+    my $accessor= sub {
+        my ($field)= @_;
+        sub { my $s=shift; $$s{$field} }
+    };
+    *fail= $accessor->("fail");
+    *success= $accessor->("success");
+}
+
 sub run_tests_ {
     @_ % 2 and die "need even number of arguments";
     my $args= +{@_};
@@ -260,7 +271,7 @@ sub run_tests_ {
         delete $$args{no};
     for (keys %$args) { warn "run_tests_: unknown argument '$_'" }
 
-    my $stat= {success=>0, fail=>0};
+    my $stat= bless {success=>0, fail=>0}, "Chj::TEST::Result";
     if (defined $maybe_packages and @$maybe_packages) {
         run_tests_for_package $_,$stat,$maybe_testnumbers
           for @$maybe_packages;
@@ -270,7 +281,7 @@ sub run_tests_ {
     }
     print "===\n";
     print "=> $$stat{success} success(es), $$stat{fail} failure(s)\n";
-    $$stat{fail}
+    $stat
 }
 
 sub run_tests {
@@ -289,7 +300,7 @@ sub perhaps_run_tests {
 
         require Test::More;
         import Test::More;
-        is( eval { run_tests(@_) } // do { diag ($@); undef},
+        is( eval { run_tests(@_)->fail } // do { diag ($@); undef},
             0,
             "run_tests" );
         done_testing();

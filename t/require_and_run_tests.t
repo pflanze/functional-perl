@@ -41,7 +41,10 @@ for my $module (@$modules) {
     }
 }
 
-is( eval { Chj::TEST::run_tests() } // do { diag $@; undef}, 0, "run_tests");
+is( eval { Chj::TEST::run_tests()->fail }
+    // do { diag $@; undef},
+    0,
+    "run_tests");
 
 done_testing;
 

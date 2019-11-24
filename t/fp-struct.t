@@ -78,7 +78,7 @@ is $bar->b_update(\&inc)->div, 1/3;
 
 is $bar->hum, "Franz hums 1 over 2";
 
-is Chj::TEST::run_tests("Bar"), 0;
+is Chj::TEST::run_tests("Bar")->fail, 0;
 
 is (Bar->can("TEST"), undef);
 
