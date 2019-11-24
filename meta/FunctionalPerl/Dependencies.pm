@@ -40,6 +40,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 our %dependencies=
   (
    # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
+
+   'FP::autobox'=> ['autobox'],
    'FP::Text::CSV'=> ['Text::CSV'],
    'FP::url_'=> ['URI'],
    'Chj::CPAN::ModulePODUrl'=> ['LWP::UserAgent'],
