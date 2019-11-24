@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.8 2019-11-24
+    - FunctionalPerl.pm: use proper pod formatting with links
+
 0.72.7 2019-11-24
     - add FP::autobox
     - clean up Windows skipping, eliminate top-level test.pl script
