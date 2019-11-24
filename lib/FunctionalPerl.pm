@@ -38,66 +38,6 @@ Note that the tags and the sets of modules are very much alpha. If you
 want to have a better chance of code not breaking, import the modules
 you want directly.
 
-The following export tags are currently supported:
-
-=for test ignore
-
-    # Export tag to modules and/or other tags; each module will be
-    # imported with ":all" by default. Where a module name contains "=",
-    # the part after the "=" is the comma-separated list of tag names to
-    # import.
-    our $export_desc=
-      +{
-        ":autobox"=> [qw(FP::autobox=)],
-
-        ":stream"=> [qw(FP::Stream FP::IOStream FP::Weak)],
-        ":lazy"=> [qw(FP::Lazy :stream FP::Weak)],
-        ":transparentlazy"=> [qw(FP::TransparentLazy :stream)],
-        ":failure"=> [qw(FP::Failure)],
-
-        ":show"=> [qw(FP::Show)],
-        ":equal"=> [qw(FP::Equal)],
-        ":debug"=> [qw(:show :equal Chj::Backtrace Chj::time_this Chj::pp)],
-        ":test"=> [qw(Chj::TEST)],
-        ":repl"=> [qw(FP::Repl FP::Repl::AutoTrap)],
-        ":dev"=> [qw(:repl :test :debug Chj::ruse)],
-
-        ":functions"=> [qw(FP::Combinators FP::Ops FP::Div
-                           FP::Optional FP::Values
-                           FP::Memoizing FP::uncurry
-                           FP::Untainted
-                           :show :equal :failure)],
-        ":git"=> [qw(FP::Git::Repository)],
-        ":pxml"=> [qw (PXML::Util PXML::XHTML PXML::Serialize)],
-
-        ":chars"=> [qw(FP::Char)],
-        ":sequences"=> [qw(FP::List FP::StrictList FP::MutableArray
-                           FP::Array FP::Array_sort
-                           FP::PureArray
-                           :stream)],
-        ":maps"=> [qw(FP::Hash)],
-        ":sets"=> [qw(FP::HashSet FP::OrderedCollection)],
-        ":tries"=> [qw(FP::Trie)],
-        ":datastructures"=> [qw(:chars :sequences :maps :sets :tries)],
-
-        ":io"=> [qw(Chj::xIO Chj::xopen Chj::xtmpfile= Chj::tempdir
-                    Chj::xpipe= Chj::xoutpipe= Chj::xopendir= Chj::xperlfunc
-                    Chj::xhome
-                    FP::IOStream)],
-        ":dbi"=> [qw(FP::DBI=)],
-        ":csv"=> [qw(FP::Text::CSV)],
-
-        ":fix"=> [qw(FP::fix)],
-        ":trampoline"=> [qw(FP::Trampoline)],
-        ":path"=> [qw(FP::Path)],
-
-        ":most"=> [qw(:lazy :datastructures :equal :show :functions :failure :debug
-                      :autobox)],
-        ":rare"=> [qw(:csv :path :git :dbi  :trampoline :fix)],
-        ":all"=> [qw(:most :rare :io :dev)],
-       };
-
-
 Tags can be expanded via:
 
 =for test
@@ -107,6 +47,68 @@ Tags can be expanded via:
     use FP::Equal 'is_equal';
     is_equal $unused_tags,
              [':all', ':csv', ':dbi', ':fix', ':git', ':io', ':path', ':pxml', ':rare', ':trampoline', ':transparentlazy'];
+
+=head1 SEE ALSO
+
+This is the list of supported import tags and the modules that they import:
+
+C<:all>: C<:dev>, C<:io>, C<:most>, C<:rare>
+
+C<:autobox>: L<FP::autobox>
+
+C<:chars>: L<FP::Char>
+
+C<:csv>: L<FP::Text::CSV>
+
+C<:datastructures>: C<:chars>, C<:maps>, C<:sequences>, C<:sets>, C<:tries>
+
+C<:dbi>: L<FP::DBI>
+
+C<:debug>: C<:equal>, C<:show>, L<Chj::Backtrace>, L<Chj::pp>, L<Chj::time_this>
+
+C<:dev>: C<:debug>, C<:repl>, C<:test>, L<Chj::ruse>
+
+C<:equal>: L<FP::Equal>
+
+C<:failure>: L<FP::Failure>
+
+C<:fix>: L<FP::fix>
+
+C<:functions>: C<:equal>, C<:failure>, C<:show>, L<FP::Combinators>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Untainted>, L<FP::Values>, L<FP::uncurry>
+
+C<:git>: L<FP::Git::Repository>
+
+C<:io>: L<Chj::tempdir>, L<Chj::xIO>, L<Chj::xhome>, L<Chj::xopen>, L<Chj::xopendir>, L<Chj::xoutpipe>, L<Chj::xperlfunc>, L<Chj::xpipe>, L<Chj::xtmpfile>, L<FP::IOStream>
+
+C<:lazy>: C<:stream>, L<FP::Lazy>, L<FP::Weak>
+
+C<:maps>: L<FP::Hash>
+
+C<:most>: C<:autobox>, C<:datastructures>, C<:debug>, C<:equal>, C<:failure>, C<:functions>, C<:lazy>, C<:show>
+
+C<:path>: L<FP::Path>
+
+C<:pxml>: L<PXML::Serialize>, L<PXML::Util>, L<PXML::XHTML>
+
+C<:rare>: C<:csv>, C<:dbi>, C<:fix>, C<:git>, C<:path>, C<:trampoline>
+
+C<:repl>: L<FP::Repl>, L<FP::Repl::AutoTrap>
+
+C<:sequences>: C<:stream>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>, L<FP::StrictList>
+
+C<:sets>: L<FP::HashSet>, L<FP::OrderedCollection>
+
+C<:show>: L<FP::Show>
+
+C<:stream>: L<FP::IOStream>, L<FP::Stream>, L<FP::Weak>
+
+C<:test>: L<Chj::TEST>
+
+C<:trampoline>: L<FP::Trampoline>
+
+C<:transparentlazy>: C<:stream>, L<FP::TransparentLazy>, L<FP::Weak>
+
+C<:tries>: L<FP::Trie>
 
 
 =head1 NOTE
@@ -213,6 +215,30 @@ sub expand {
      [sort keys %{FP::HashSet::hashset_difference($export_desc, $seen_tags)}])
 }
 
+sub split_moduledesc {
+    my ($module_and_perhaps_tags)= @_;
+    my ($module, $maybe_tags)=
+        $module_and_perhaps_tags=~ m{^([^=]+)(?:=(.*))?} or die "no match";
+    ($module, $maybe_tags)
+}
+
+sub export_desc2pod {
+    print
+    join("",
+         map {
+             my $a= $$export_desc{$_};
+             "C<$_>: ".
+                 join(", ",
+                      map {
+                          if (/^:/) {
+                              "C<$_>"
+                          } else {
+                              my ($module, $maybe_tags)= split_moduledesc $_;
+                              "L<$module>"
+                          }
+                      } sort @$a)."\n\n"
+         } (sort keys %$export_desc))
+}
 
 sub import {
     my $pack= shift;
@@ -223,8 +249,7 @@ sub import {
     require Import::Into;
 
     for my $module_and_perhaps_tags (sort keys %$modules) {
-        my ($module, $maybe_tags)=
-          $module_and_perhaps_tags=~ m{^([^=]+)(?:=(.*))?} or die "no match";
+        my ($module, $maybe_tags)= split_moduledesc $module_and_perhaps_tags;
         my @tags= split /,/, $maybe_tags // ":all";
         my $path= $module;
         $path=~ s/::/\//sg;
