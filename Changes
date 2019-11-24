@@ -1,5 +1,13 @@
 Revision history for FunctionalPerl
 
+0.72.9 2019-11-24
+    - fix handling of autobox dependency (both making it optional in
+      tests as well as making it a hard dependency for now)
+    - hopefully fix "Bug #131047 for FunctionalPerl: Some tests run
+      with the wrong perl"
+    - do not use tail-expanded files from meta/ in t/pod-snippets.t
+      (there might be more such breakage, todo check)
+
 0.72.8 2019-11-24
     - FunctionalPerl.pm: use proper pod formatting with links
 
