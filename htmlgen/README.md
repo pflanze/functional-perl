@@ -151,7 +151,7 @@ The output is written to `website/www/`.
   also contains the former.
 
 * its TEST forms are run as [part of the functional-perl test
-  suite](../t/htmlgen) (if the necessary dependencies are available)
+  suite](../t/htmlgen.t) (if the necessary dependencies are available)
 
 
 </with_toc>
