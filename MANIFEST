@@ -207,7 +207,6 @@ t/examples-fibs.t
 t/examples-logic.t
 t/examples-primes.t
 t/examples-sendprepare
-t/fp-struct.t
 t/functional_XML-t-div.t
 t/functional_XML-test.expected
 t/functional_XML-test.t
