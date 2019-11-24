@@ -31,7 +31,8 @@ way; but this doesn't apply to current Perl 5.</small>
 E.g. avoiding the use of `Sub::Call::Tail`, `Method::Signatures`,
 `MooseX::MultiMethods` or `autobox` in the core modules. (Some tests,
 [examples](../examples/README.md) and [Htmlgen](../htmlgen/README.md)
-use them.)
+use them.) Declaring dependencies in `FunctionalPerl::Dependencies` so
+that tests can skip modules with such dependencies.
 
 ### Generally provide functionality both as functions and methods.
 
