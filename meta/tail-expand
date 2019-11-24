@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -15,7 +15,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
 use Chj::xopen 'xopen_read';
-use Chj::xperlfunc qw(dirname xxsystem xLmtime XLmtime xmkdir_p);
+use Chj::xperlfunc qw(dirname xxsystem_safe xLmtime XLmtime xmkdir_p);
 
 mkdir ".htmlgen";
 
@@ -30,7 +30,7 @@ while (<$manif>) {
 
     my $t_from= xLmtime $from;
     my $expand= sub {
-        xxsystem ("bin/expand-tail", $from, $to);
+        xxsystem_safe ("bin/expand-tail", $from, $to);
     };
     if (my $t_to= XLmtime $to) {
         if ($t_from >= $t_to) {
