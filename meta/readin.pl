@@ -2,6 +2,8 @@ use Test::More ($^O=~ /win32/i ?
                 (skip_all=> "on Windows (no shell support)")
                 : ());
 
+require "./meta/test.pl";
+
 our $len;
 
 sub readin {

@@ -1,3 +1,4 @@
+require "./meta/test.pl";
 
 my $path= $^X;
 
