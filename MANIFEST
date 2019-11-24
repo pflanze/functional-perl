@@ -194,6 +194,7 @@ meta/FunctionalPerl/ModuleList.pm
 meta/_critic.out
 meta/critic
 meta/dependencycheck
+meta/find-perl.pl
 meta/tail-expand
 meta/test.pl
 meta/update-manifest
