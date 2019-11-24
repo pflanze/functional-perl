@@ -24,7 +24,8 @@ use Test::Requires qw(Test::Pod::Snippets);
 use Test::More;
 
 use lib "./lib";
-use lib "./.meta";
+#use lib "./.meta"; NO, do not! We're using them via use and those
+#   do not use Sub::Call::Tail
 use lib "./.htmlgen";
 use FunctionalPerl::ModuleList;
 use FunctionalPerl::Dependencies 'module_needs';
