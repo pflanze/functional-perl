@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.7 2019-11-24
+    - add FP::autobox
+    - clean up Windows skipping, eliminate top-level test.pl script
+    - add group import feature to FunctionalPerl module
+    - fix in Array: report out of range errors (todo: there are more of these)
+
 0.72.6 2019-11-22
     - attempt to fix CPAN testers issues missing even "Test::Requires"
       itself
