@@ -26,6 +26,7 @@ use Test::More;
 use lib "./lib";
 #use lib "./.meta"; NO, do not! We're using them via use and those
 #   do not use Sub::Call::Tail
+use lib "./meta";
 use lib "./.htmlgen";
 use FunctionalPerl::ModuleList;
 use FunctionalPerl::Dependencies 'module_needs';
