@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# XX replace with Perl script if this were to be added to (activated
+# in) the test suite!
+
 set -eu
 
 ulimit -S -v 20000
