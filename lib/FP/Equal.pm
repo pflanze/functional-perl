@@ -264,13 +264,13 @@ sub equaln {
 sub is_equal ($$;$) {
     my ($a, $b, $maybe_name)= @_;
     require Test::More;
-    require FP::Show;
     my $tb = Test::More->builder;
 
     if (equal $a, $b) {
         $tb->ok(1,
                 $maybe_name ? $maybe_name : ())
     } else {
+        require FP::Show;
         $tb->is_eq(FP::Show::show($a),
                    FP::Show::show($b),
                    $maybe_name ? $maybe_name : ())
