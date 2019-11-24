@@ -11,6 +11,6 @@ use Chj::xperlfunc ":all";
 
 require "./meta/find-perl.pl";
 
-$ENV{RUN_TESTS}=1; xexec_safe "functional_XML/t/div";
+$ENV{RUN_TESTS}=1; xexec_safe $^X, "functional_XML/t/div";
 
 # XX run functional_XML/t/stream as well? That one is slow, though.

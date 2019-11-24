@@ -20,7 +20,7 @@ require "./meta/find-perl.pl";
 # avoid dependency on Sub::Call::Tail:
 use lib "./lib";
 use Chj::xperlfunc ":all";
-xxsystem_safe "meta/tail-expand";
+xxsystem_safe $^X, "meta/tail-expand";
 $ENV{HTMLGEN_}=1;
 
-$ENV{RUN_TESTS}=1; xexec_safe "website/gen";
+$ENV{RUN_TESTS}=1; xexec_safe $^X, "website/gen";

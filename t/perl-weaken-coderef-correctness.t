@@ -17,4 +17,4 @@ require "./meta/find-perl.pl";
 $ENV{TEST_PERL}=1;
 $ENV{N}=800;
 $ENV{RES}=320400;
-xexec_safe "perl", "t/perl-weaken-coderef.t";
+xexec_safe $^X, "t/perl-weaken-coderef.t";

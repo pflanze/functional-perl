@@ -11,4 +11,4 @@ use Chj::xperlfunc ":all";
 
 require "./meta/find-perl.pl";
 
-$ENV{RUN_TESTS}=1; xexec_safe "examples/primes";
+$ENV{RUN_TESTS}=1; xexec_safe $^X, "examples/primes";

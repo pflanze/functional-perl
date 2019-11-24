@@ -8,7 +8,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
 use Chj::xperlfunc ":all";
-
+require "./meta/find-perl.pl"; # I'm still doing this just to be sure..
 require "./testmem.pl";
 # bleadperl on 64bit system needs enormeously more memory than v5.14.2
 # on 32bit. FIXME for the right combinations (or/and increase
@@ -23,14 +23,15 @@ use Test::Requires qw(Method::Signatures);
 
 if (eval {require Sub::Call::Tail; 1}) {
 
-    $ENV{RUN_TESTS}=1; xexec_safe "intro/more_tailcalls";
+    $ENV{RUN_TESTS}=1; xexec_safe $^X, "intro/more_tailcalls";
 
 } else {
     # hack to run it without Sub::Call::Tail, e.g. on bleadperl where
     # this can't be installed currently.
-    xxsystem_safe ("bin/expand-tail",
+    xxsystem_safe ($^X,
+                   "bin/expand-tail",
                    "intro/more_tailcalls",
                    "intro/.expansion-more_tailcalls");
 
-    $ENV{RUN_TESTS}=1; xexec_safe "intro/.expansion-more_tailcalls";
+    $ENV{RUN_TESTS}=1; xexec_safe $^X, "intro/.expansion-more_tailcalls";
 }

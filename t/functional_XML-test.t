@@ -14,7 +14,7 @@ require "./meta/find-perl.pl";
 
 our $len= 672;
 
-xxsystem_safe ("functional_XML/test", 10001000);
+xxsystem_safe ($^X, "functional_XML/test", 10001000);
 
 is xslurp("out.xhtml"), xslurp("t/functional_XML-test.expected");
 

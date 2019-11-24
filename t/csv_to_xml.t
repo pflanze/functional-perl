@@ -13,7 +13,7 @@ require "./meta/find-perl.pl";
 use Test::Requires qw(Text::CSV);
 use Test::More;
 
-is readin ("examples/csv_to_xml examples/csv_to_xml-example.csv|"),
+is readin ("perl examples/csv_to_xml examples/csv_to_xml-example.csv|"),
    readin ("< t/csv_to_xml.expected");
 
 done_testing;

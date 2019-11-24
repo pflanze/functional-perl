@@ -18,7 +18,7 @@ setlimit_mem_MB (30);
 SKIP: {
     skip "Perl issue", 1 unless $ENV{TEST_PERL};
 
-    is readin("t/perl/goto-leak 100000 1 |"),
+    is readin("perl t/perl/goto-leak 100000 1 |"),
       "5000050000\n";
 }
 

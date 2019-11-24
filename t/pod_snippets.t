@@ -23,6 +23,7 @@ use FunctionalPerl::ModuleList;
 use FunctionalPerl::Dependencies 'module_needs';
 use Chj::Backtrace;
 use Chj::xperlfunc ":all";
+require "./meta/find-perl.pl";
 
 my %ignore= map{ $_=> 1}
   qw(
@@ -97,7 +98,7 @@ sub save {
 
     if ($ENV{DEBUG}) {
         print "=== Running again as expanded file '$file' and with FP::Repl::Trap..\n";
-        xxsystem_safe("perl", "-Mlib=./lib", "-MFP::Repl::Trap", $file);
+        xxsystem_safe($^X, "-Mlib=./lib", "-MFP::Repl::Trap", $file);
     }
 }
 

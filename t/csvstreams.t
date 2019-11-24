@@ -23,14 +23,14 @@ SKIP: {
         skip "Perl issue or functional-perl bug?", 3; # XXX
     }
 
-    is xsystem_safe (qw"examples/gen-csv t/test-a.csv 40000"),
+    is xsystem_safe ($^X, qw"examples/gen-csv t/test-a.csv 40000"),
         0;
     # 20000 pass on 32bit Debian even with bug
 
-    is xsystem_safe (qw"examples/csv_to_xml_short t/test-a.csv t/test-a.xml"),
+    is xsystem_safe ($^X, qw"examples/csv_to_xml_short t/test-a.csv t/test-a.xml"),
         0;
 
-    is xsystem_safe (qw"examples/csv_to_xml t/test-a.csv -o t/test-a.xml"),
+    is xsystem_safe ($^X, qw"examples/csv_to_xml t/test-a.csv -o t/test-a.xml"),
         0;
 }
 
