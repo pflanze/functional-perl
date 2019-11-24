@@ -195,8 +195,8 @@ meta/_critic.out
 meta/critic
 meta/dependencycheck
 meta/find-perl.pl
+meta/readin.pl
 meta/tail-expand
-meta/test.pl
 meta/update-manifest
 t-extra/evil-env.t
 t-slow/csvstreams.t

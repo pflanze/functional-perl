@@ -7,7 +7,7 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 our $len= 1000;
-require "./meta/test.pl";
+require "./meta/readin.pl";
 require "./meta/find-perl.pl";
 use Test::More;
 

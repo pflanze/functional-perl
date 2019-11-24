@@ -6,7 +6,7 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-require "./meta/test.pl";
+require "./meta/readin.pl";
 
 use Test::More;
 
