@@ -44,7 +44,7 @@ GetOptions("verbose"=> \$verbose,
 use FP::IOStream qw(xdirectory_paths);
 use FP::List qw(list cons);
 use FP::Stream qw(Keep);
-use Chj::xperlfunc qw(xstat xxsystem xunlink basename dirname);
+use Chj::xperlfunc qw(xstat xxsystem_safe xunlink basename dirname);
 use FP::Combinators qw(compose_scalar);
 use FP::Ops qw(the_method number_cmp regex_match regex_xsubstitute);
 use PXML::XHTML ':all';
@@ -132,7 +132,7 @@ fun possibly_do_pdf2svg ($infile,$outdir) {
 
     if ($outfiles->is_null or &$t_in >= &$t_oldest) {
         $outfiles->for_each(*xunlink);
-        xxsystem "pdf2svg", $infile, "$outdir/$svgfile_template", 'all';
+        xxsystem_safe "pdf2svg", $infile, "$outdir/$svgfile_template", 'all';
         1
     } else {
         0

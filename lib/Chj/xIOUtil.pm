@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -36,7 +36,7 @@ use Chj::xopen ":all";
 # ^ well, this voids the purpose of Chj::xIO (to avoid Chj::IO::*)
 use FP::Lazy;
 use FP::List;
-use Chj::xperlfunc qw(xxsystem xprint xgetfile_utf8);
+use Chj::xperlfunc qw(xxsystem_safe xprint xgetfile_utf8);
 
 # print, not write, i.e. flatten nested structures out, but don't
 # print parens for lists etc., just print the contained basic types.
@@ -77,7 +77,7 @@ sub xcopyfile ($$) {
     my ($src,$dest)=@_;
     # yes, giving up here. XX write something else or just use
     # Filecopy or whatever from CPAN.
-    xxsystem "cp", "-a", "--", $src, $dest
+    xxsystem_safe "cp", "-a", "--", $src, $dest
 }
 
 
