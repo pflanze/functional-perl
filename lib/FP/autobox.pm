@@ -40,7 +40,8 @@ Wouldn't it be cool if an ordinary Perl array could be used as an
 L<FP::Abstract::Sequence>? Autobox delivers that.
 
 This uses L<autobox> underneath. This module does bless the arrays, so
-that method calls other than the literal one work, too.
+that method calls other than in the lexical scope of the autobox
+import work, too.
 
 =head1 TODO
 
