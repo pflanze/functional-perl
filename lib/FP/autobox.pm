@@ -14,13 +14,13 @@ FP::autobox
 =head1 SYNOPSIS
 
     use FP::autobox;
-    use FP::Div ":all"; use FP::Ops ":all";
 
     is [12,4,2]->product, 96;
 
     my $arr= [55,10];
     is ref($arr), "ARRAY";
 
+    use FP::Div ":all"; use FP::Ops ":all";
     is $arr->map(*inc)->reduce(*add), 67;
 
     # Calling methods on arrays 'consumes' the arrays, i.e. makes them
