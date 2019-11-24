@@ -117,11 +117,11 @@ for my $module (@$modules) {
         if ($ignore{$module}) {
             print "=== Ignoring pod snippets in $module.\n";
         } else {
+            print "=== Running pod snippets in $module ..\n";
+
             if (my @needs= module_needs $module) {
                 skip "test pod snippets in $module - don't have @needs", 1;
             }
-
-            print "=== Running pod snippets in $module ..\n";
 
             my $tps_direct = Test::Pod::Snippets->new();
             my $fail_before= numfailures;
