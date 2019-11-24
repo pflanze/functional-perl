@@ -85,6 +85,7 @@ WriteMakefile (
                 "examples", # ?
                 "meta",
                 "htmlgen",
+                "t-slow",
             ],
         },
 
