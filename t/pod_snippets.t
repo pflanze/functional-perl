@@ -13,13 +13,6 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
-}
-
 use Test::Requires qw(Test::Pod::Snippets);
 use Test::More;
 
@@ -33,14 +26,6 @@ use FunctionalPerl::Dependencies 'module_needs';
 use Chj::Backtrace;
 use Chj::xperlfunc ":all";
 require "./meta/find-perl.pl";
-
-# avoid dependency on Sub::Call::Tail:
-use lib "./lib";
-use lib "./meta";
-use Chj::xperlfunc ":all";
-xxsystem_safe $^X, "meta/tail-expand";
-use lib "$mydir/../.htmlgen";
-
 
 my %ignore= map{ $_=> 1}
   qw(
