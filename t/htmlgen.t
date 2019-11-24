@@ -14,6 +14,9 @@ use Test::Requires
     'HTML::TreeBuilder'=> 0,
    };
 
+
+require "./meta/find-perl.pl";
+
 # avoid dependency on Sub::Call::Tail:
 use lib "./lib";
 use Chj::xperlfunc ":all";

@@ -9,5 +9,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use lib "./lib";
 use Chj::xperlfunc ":all";
 
+require "./meta/find-perl.pl";
+
 $ENV{RUN_TESTS}=1; xexec_safe "examples/fibs";
 

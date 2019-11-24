@@ -12,6 +12,8 @@ use Test::More;
 use lib "./lib";
 use Chj::xperlfunc ":all";
 
+require "./meta/find-perl.pl";
+
 require "./testmem.pl";
 setlimit_mem_MB ($^V->{version}[1] < 15 ? 30 : 80); # 14 is enough on 32bit Debian, 64bit will need more
 
