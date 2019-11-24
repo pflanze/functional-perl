@@ -41,10 +41,19 @@ for my $module (@$modules) {
     }
 }
 
-is( eval { Chj::TEST::run_tests()->fail }
-    // do { diag $@; undef},
-    0,
-    "run_tests");
+my $res;
+if (eval {
+    $res= Chj::TEST::run_tests();
+    1
+    }) {
+
+    is $res->fail, 0, "run_tests";
+    # XX wanted to add the ->success results to Test::More's
+    # statistics; but, no even halfway decent way to do this?
+} else {
+    diag $@;
+    ok 0;
+}
 
 done_testing;
 
