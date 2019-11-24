@@ -268,7 +268,8 @@ sub is_equal ($$;$) {
     my $tb = Test::More->builder;
 
     if (equal $a, $b) {
-        $tb->ok(1)
+        $tb->ok(1,
+                $maybe_name ? $maybe_name : ())
     } else {
         $tb->is_eq(FP::Show::show($a),
                    FP::Show::show($b),
