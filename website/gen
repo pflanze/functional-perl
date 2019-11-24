@@ -1,31 +1,34 @@
-#!/bin/bash
+#!/usr/bin/env perl
 
 # Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-set -eu
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-mydir=`dirname "$0"`
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
 
-cd "$mydir"
+chdir $mydir
+    or die "chdir $mydir: $!";
 
-inbase=".."
-outbase="www"
-configpath="./gen-config.pl"
+my $inbase= "..";
+my $outbase= "www";
+my $configpath= "./gen-config.pl";
+
 
 # make it work by default without Sub::Call::Tail:
-if [ "${SUB_CALL_TAIL-}" == 1 ]; then
-    prefix=""
-else
-    prefix="."
-fi
+my $prefix= $ENV{SUB_CALL_TAIL} ? "" : ".";
 
-gen="../${prefix}htmlgen/gen"
+my $gen= "../${prefix}htmlgen/gen";
 
-if [ -e "$gen" ]; then
-    "$gen" "$configpath" "$inbase" "$outbase" "$@"
-else
-    echo "Missing $gen, run 'meta/tail-expand' (or simply 'make test') first"
-fi
+if ( -e "$gen" ) {
+    exec $gen, $configpath, $inbase, $outbase, @ARGV
+} else {
+    die "Missing '$gen', run 'meta/tail-expand' (or simply 'make test') first"
+}
 
