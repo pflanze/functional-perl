@@ -29,6 +29,12 @@ use FP::Predicates 'is_pure';
 use FP::PureArray ":all";
 
 
+sub clean {
+    use FP::Ops qw(regex_substitute);
+    regex_substitute sub {s/\s+at .*//s}, $_[0]
+}
+
+
 TEST {
     is_pure (purearray (4,5))
 }
@@ -39,12 +45,7 @@ TEST {
                    # inline
         my ($th)=@_;
         my $res;
-        eval { $res= $th->(); 1 } ? $res
-            : do {
-                my $e= "$@";
-                $e=~ s/ at .*//s;
-                $e
-        }
+        eval { $res= $th->(); 1 } ? $res : clean $@
     };
     my $a= purearray (1,4,5);
     my $a2= $a->set (2,7)->set (0,-1);
@@ -66,17 +67,18 @@ TEST {
     my @a= ($a->sub (0,2),
             $a->sub (1,3));
     push @a, $a->sub (2,4);
-    # throw out of range errors or what?
-    push @a, $a->sub (3,5);
-    # XX and what about negative positions?
-    push @a, $a->sub (-1,1);
+    # throwing out of range errors
+    push @a, (eval { $a->sub (3,5) } || clean $@);
+    # same for negative positions
+    push @a, (eval { $a->sub (-1,1) } || clean $@);;
     # XX and about this case? Should this be an error, or revert the
     # range, or?
-    push @a, $a->sub (3,1);
+    push @a, (eval { $a->sub (3,1) } || clean $@);
 
-    array_map sub{$_[0]->array}, \@a
+    array_map sub{ref $_[0] ? $_[0]->array : $_[0]}, \@a
 }
-  [[1,4], [4,5], [5,7], [7,undef], [7,1], []];
+[[1,4], [4,5], [5,7], 'to out of range: 5', 'from out of range: -1',
+ []];
 
 TEST {
     purearray (1,4,5)->map (*inc)->sum
