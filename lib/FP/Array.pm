@@ -241,6 +241,10 @@ sub array_unshift {
 
 sub array_sub {
     my ($a,$from,$to)=@_; # incl $from, excl $to
+    (0 <= $from and $from <= @$a)
+        or die "from out of range: $from";
+    (0 <= $to and $to <= @$a)
+        or die "to out of range: $to";
     bless [@$a[$from..$to-1]], ref $a
 }
 
