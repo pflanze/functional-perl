@@ -21,6 +21,7 @@ WriteMakefile (
         "Test::More"=> 0,
         "Scalar::Util"=> 0,
         "Import::Into"=> 0,
+        "autobox"=> 0,
 
 
         # XXX is TEST_REQUIRES not working? Just move all dependencies
