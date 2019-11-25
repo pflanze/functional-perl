@@ -269,7 +269,7 @@ sub run_tests_ {
     my $maybe_testnumbers=
       unify_values delete $$args{numbers}, delete $$args{number},
         delete $$args{no};
-    for (keys %$args) { warn "run_tests_: unknown argument '$_'" }
+    for (sort keys %$args) { warn "run_tests_: unknown argument '$_'" }
 
     my $stat= bless {success=>0, fail=>0}, "Chj::TEST::Result";
     if (defined $maybe_packages and @$maybe_packages) {
@@ -277,7 +277,7 @@ sub run_tests_ {
           for @$maybe_packages;
     } else {
         run_tests_for_package $_,$stat,$maybe_testnumbers
-          for keys %$tests_by_package;
+          for sort keys %$tests_by_package;
     }
     print "===\n";
     print "=> $$stat{success} success(es), $$stat{fail} failure(s)\n";
