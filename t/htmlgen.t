@@ -21,6 +21,5 @@ require "./meta/find-perl.pl";
 use lib "./lib";
 use Chj::xperlfunc ":all";
 xxsystem_safe $^X, "meta/tail-expand";
-$ENV{HTMLGEN_}=1;
 
 $ENV{RUN_TESTS}=1; xexec_safe $^X, "website/gen";
