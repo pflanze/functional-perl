@@ -15,11 +15,10 @@ use Test::Requires
    };
 
 
-require "./meta/find-perl.pl";
-
-# avoid dependency on Sub::Call::Tail:
-use lib "./lib";
+use lib "./meta";
+use FunctionalPerl::TailExpand;
 use Chj::xperlfunc ":all";
-xxsystem_safe $^X, "meta/tail-expand";
+
+require "./meta/find-perl.pl";
 
 $ENV{RUN_TESTS}=1; xexec_safe $^X, "website/gen";
