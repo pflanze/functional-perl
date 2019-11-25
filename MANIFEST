@@ -201,6 +201,7 @@ meta/tail-expand
 meta/test.pl
 meta/update-manifest
 t-extra/evil-env.t
+t-extra/out-of-order.t
 t-slow/csvstreams.t
 t/csv_to_xml.expected
 t/csv_to_xml.t
