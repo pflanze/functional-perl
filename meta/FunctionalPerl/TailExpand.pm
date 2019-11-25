@@ -46,7 +46,7 @@ xxsystem_safe $^X, "meta/tail-expand";
 
 use lib "./.htmlgen";
 
-# no need; XX skip in meta/tail-expand
+# no need; skipped in meta/tail-expand
 # use lib "./.lib";
 # use lib "./.meta";
 
