@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env perl
 
 # Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
@@ -7,12 +7,25 @@
 # load repl with most of the more interesting functional-perl packages
 # loaded
 
-repl=$(dirname "$0")/repl
+use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-$repl \
- -t \
- -m Method::Signatures \
- -m Function::Parameters=:strict \
- -m Sub::Call::Tail \
- -M FunctionalPerl=:all \
- "$@"
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+
+my $repl= "$mydir/repl";
+
+exec $^X,
+  $repl,
+  qw(
+        -t
+        -m Method::Signatures
+        -m Function::Parameters=:strict
+        -m Sub::Call::Tail
+        -M FunctionalPerl=:all
+   ), @ARGV
+  or exit 127;
+
