@@ -14,15 +14,15 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
-use Chj::xopen 'xopen_read';
 use Chj::xperlfunc qw(dirname xxsystem_safe xLmtime XLmtime xmkdir_p);
 
-my $manif= xopen_read "MANIFEST";
+open my $manif, "<", "MANIFEST"
+    or die "$!";
 
 local $_;
 while (<$manif>) {
     chomp;
-    next unless m|\.pm$| or -x $_;
+    next unless m|\.pm$|; # or -x $_;
     my $from= $_;
     my $to= ".".$from;
 
@@ -40,4 +40,6 @@ while (<$manif>) {
     }
 }
 
-$manif->xclose;
+close $manif
+    or die $!;
+
