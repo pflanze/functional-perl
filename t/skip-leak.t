@@ -13,7 +13,10 @@ use Test::More;
 require "./testmem.pl";
 setlimit_mem_MB (50);
 
-is readin("head -c 200000000 /dev/zero | perl examples/skip --leaktest 10000000 1 | wc -c |"),
-  "189999999\n";
+use lib "./lib";
+use Chj::chompspace;
+
+is chompspace(readin("head -c 200000000 /dev/zero | perl examples/skip --leaktest 10000000 1 | wc -c |")),
+  "189999999";
 
 done_testing;
