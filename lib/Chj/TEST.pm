@@ -218,7 +218,6 @@ sub eval_test ($$) {
 sub run_tests_for_package {
     my ($package,$stat,$maybe_testnumbers)=@_;
     if (my $tests= $$tests_by_package{$package}) {
-        local $|=1;
         if (defined $maybe_testnumbers) {
             print "=== running selected tests in package '$package'\n";
             for my $number (@$maybe_testnumbers) {
@@ -270,6 +269,8 @@ sub run_tests_ {
       unify_values delete $$args{numbers}, delete $$args{number},
         delete $$args{no};
     for (sort keys %$args) { warn "run_tests_: unknown argument '$_'" }
+
+    local $|= 1;
 
     my $stat= bless {success=>0, fail=>0}, "Chj::TEST::Result";
     if (defined $maybe_packages and @$maybe_packages) {
