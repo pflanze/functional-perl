@@ -22,8 +22,8 @@ open my $manif, "<", "MANIFEST"
 local $_;
 while (<$manif>) {
     chomp;
-    next if m{^(?:lib|meta)/};
-    next unless m|\.pm$|; # or -x $_;
+    next unless m{^htmlgen/}; # if m{^(?:lib|meta)/};
+    next unless m|\.pm$| or -x $_;
     my $from= $_;
     my $to= ".".$from;
 
