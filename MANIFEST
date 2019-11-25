@@ -191,6 +191,7 @@ lib/PXML/XHTML.pm
 licenses/artistic_license_2.0.md
 meta/FunctionalPerl/Dependencies.pm
 meta/FunctionalPerl/ModuleList.pm
+meta/FunctionalPerl/TailExpand.pm
 meta/_critic.out
 meta/critic
 meta/dependencycheck

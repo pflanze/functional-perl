@@ -14,21 +14,15 @@ our ($mydir, $myname); BEGIN {
     $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
     ($mydir, $myname)=($1,$2);
 }
-use lib "$mydir/../lib";
-use lib "$mydir/../meta";
+
+use Test::More;
+use lib "./meta";
+use FunctionalPerl::TailExpand;
+use FunctionalPerl::ModuleList;
+use FunctionalPerl::Dependencies 'module_needs';
 
 require "./meta/find-perl.pl";
 
-# avoid dependency on Sub::Call::Tail:
-use lib "./lib";
-use lib "./meta";
-use Chj::xperlfunc ":all";
-xxsystem_safe $^X, "meta/tail-expand";
-use lib "$mydir/../.htmlgen";
-
-use Test::More;
-use FunctionalPerl::ModuleList;
-use FunctionalPerl::Dependencies 'module_needs';
 
 our $modules= modulenamelist;
 
