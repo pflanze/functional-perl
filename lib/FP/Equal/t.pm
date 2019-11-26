@@ -99,16 +99,17 @@ my $inf= $^V->{version}[1] > 20 ?
 
 TEST{tequals 1e+20000, $inf} 1;
 TEST{ 1e+20000 == "inf" } 1;
-TEST{tequals 1/(-1e+2000), 1/(1e+2000) } 1;
-TEST{ 1/(-1e+2000) == 1/(1e+2000) } 1;
+TEST{tequals 1/(-1e+20000), 1/(1e+20000) } 1;
+TEST{ 1/(-1e+20000) == 1/(1e+20000) } 1;
 # so, no need to have both eq and == for those cases!
 
 # but that's not the case here, of course:
 TEST{ -1e1000 == "-1e1000" } 1;
 TEST{ -1e1000 eq "-1e1000" } '';
-TEST{ tequals -1e1000, "-1e1000" } '';
-TEST{ tequals -1e1000, "-$inf" } 1;
-TEST{ -1e1000 == "-inf" } 1;
+TEST{ tequals -1e100, "-1e100" } '';
+TEST{ tequals -1e10000, "-1e10000" } '';
+TEST{ tequals -1e10000, "-$inf" } 1;
+TEST{ -1e10000 == "-inf" } 1;
 
 TEST{tequals 2, 2.0} 1;    # those are converted to the same value at
                            # compile time.
