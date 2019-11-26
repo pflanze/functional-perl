@@ -85,7 +85,7 @@ TEST { $addc=0; local *add=*addc; [fibs2->ref(80), $addc] }
 
 
 
-TEST { stream_to_array stream_take Keep($fibs), 10 }
+TEST { Keep($fibs)->take(10)->array }
         [
           1,
           1,
