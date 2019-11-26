@@ -39,7 +39,9 @@ subtest "require"=> sub {
 };
 
 subtest "run_tests"=> sub {
-    $ENV{RUN_TESTS}=1; # to switch to TAP style testing
+    # switch to TAP style testing (unless requested 'old'):
+    $ENV{RUN_TESTS} ||= 1;
+    # already loaded by require_ok above:
     Chj::TEST::run_tests();
 };
 
