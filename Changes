@@ -1,5 +1,13 @@
 Revision history for FunctionalPerl
 
+0.72.11 2019-11-26
+    - reimplement repl+ in Perl for Windows
+    - clean up tail expansion dependencies during testing, hopefully
+      fixes test failures when run out of alphabetic order
+    - fix for #131081 (t/skip-leak.t fails on BSD systems)
+    - change Chj::TEST to use TAP so that subtest failure details can
+      be seen in CPAN tester reports
+
 0.72.10 2019-11-24
     - fix #131073 (Can't exec /bin/bash at website/gen line 1.)
     - fixes for Windows (find-perl.pl; more system calls)
