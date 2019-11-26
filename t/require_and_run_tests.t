@@ -23,25 +23,25 @@ use FunctionalPerl::Dependencies 'module_needs';
 
 require "./meta/find-perl.pl";
 
+plan tests=> 2;
 
-our $modules= modulenamelist;
+subtest "require"=> sub {
+    my $modules= modulenamelist;
 
-for my $module (@$modules) {
-  SKIP: {
-        if (my @needs= module_needs $module) {
-            skip "require $module - don't have @needs", 1;
+    for my $module (@$modules) {
+      SKIP: {
+            if (my @needs= module_needs $module) {
+                   skip "require $module - don't have @needs", 1;
+            }
+            require_ok $module;
         }
-        require_ok $module;
     }
-}
+};
 
-is( eval { Chj::TEST::run_tests()->fail }
-    // do { diag $@; undef},
-    0,
-    "run_tests");
-
-done_testing;
-
+subtest "run_tests"=> sub {
+    $ENV{RUN_TESTS}=1; # to switch to TAP style testing
+    Chj::TEST::run_tests();
+};
 
 #use Chj::ruse;
 #use Chj::Backtrace;
