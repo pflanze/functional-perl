@@ -21,6 +21,7 @@ use FP::List ":all";
 use FP::Ops ":all";
 use FP::Lazy ":all";
 use FP::Stream ":all";
+use FP::BigInt;
 
 use Chj::Backtrace;
 
@@ -29,7 +30,9 @@ use Chj::Backtrace;
 # fib n = fibs!!n
 
 our $fibs; $fibs=
-  cons 1, cons 1, lazy { stream_zip_with \&add, Keep($fibs), rest $fibs };
+    cons bigint(1),
+    cons bigint(1),
+    lazy { stream_zip_with \&add, Keep($fibs), rest $fibs };
 
 sub fib {
     my ($n)=@_;
@@ -51,7 +54,9 @@ sub fib {
 
 sub fibs {
     my $fibs; $fibs=
-      cons 1, cons 1, lazy { stream_zip_with *add, $fibs, rest $fibs };
+      cons bigint(1),
+      cons bigint(1),
+      lazy { stream_zip_with *add, $fibs, rest $fibs };
     $fibs
 }
 
@@ -63,8 +68,10 @@ sub fibs {
 # package variable) instead of mutating a lexical variable:
 
 sub fibs2 {
-    cons 1, cons 1, lazy { my $fibs= fibs2();
-                           stream_zip_with *add, $fibs, rest $fibs };
+    cons bigint(1),
+    cons bigint(1),
+    lazy { my $fibs= fibs2();
+           stream_zip_with *add, $fibs, rest $fibs }
 }
 
 # But it's less efficient: it recalculates parts multiple times, as
@@ -81,11 +88,11 @@ sub counting_add {
 
 TEST { $addcount=0; local *add=*counting_add;
        [ fibs->ref(80), $addcount ] }
-  ['37889062373143906', 79];
+  [bigint('37889062373143906'), 79];
 
 TEST { $addcount=0; local *add=*counting_add;
        [ fibs2->ref(80), $addcount ] }
-  ['37889062373143906', 3160]; # 3160 == 79*80/2
+  [bigint('37889062373143906'), 3160]; # 3160 == 79*80/2
 
 # This is because the recursive call to `fibs2` is creating a second,
 # independently calculated sequence, which itself at the second
@@ -94,17 +101,17 @@ TEST { $addcount=0; local *add=*counting_add;
 # which `fibs` achieves.
 
 
-TEST { Keep($fibs)->take(10)->array }
+TEST { Keep($fibs)->take(10)->map(*string)->array }
   [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
 
 TEST { fib 30 }
-  1346269;
+  bigint(1346269);
 
 TEST { fibs->ref(30) }
-  1346269;
+  bigint(1346269);
 
 TEST { fibs2->ref(30) }
-  1346269;
+  bigint(1346269);
 
 # ------------------------------------------------------------------
 
@@ -124,9 +131,10 @@ TEST { fibs2->ref(30) }
 
 sub _fib {
     my ($n)=@_;
-    ($n == 0) ? (0, 1)
+    ($n == 0) ? (bigint(0), bigint(1))
       : do {
-          my ($a,$b)= _fib(int $n / 2);
+          no warnings 'recursion';
+          my ($a,$b)= _fib($n / 2);
           my $c= $a * ($b * 2 - $a);
           my $d= $a * $a + $b * $b;
           ($n % 2) == 0 ? ($c, $d)
@@ -145,36 +153,21 @@ sub fibonacci {
 }
 
 TEST { fibonacci 30 }
-  1346269;
+  bigint(1346269);
 
 
 # With bigger inputs:
-
-# we're not using a bignum library, thus we're restricted by Perl's
-# floating point range and precision.
 
 use Chj::time_this;
 
 my $a= lazy{time_this{ fib (1400) } "fib"};
 my $b= lazy{time_this{ fibonacci (1400) } "fibonacci"};
 
-TEST {
-    # Hack: stringify to drop invisible but different digits
-    FORCE($a).""
-}
-  "2.7682097123729e+292";
+TEST { FORCE($a)."" }
+  "27682097123729003105677626449505746191732174241149462650923690069660131404640833946850969379619575819465246124164576690629246144675379393573106211382631761722558988596174542778374560842981861789646519389087106627252306193512024601313327314953992743800841043870569935864482663072626507327493026";
 
-TEST {
-    # same hack
-    $a."" == FORCE($b).""
-}
-  1;
+TEST { FORCE($b) } $a;
 
-TEST {
-    # same as above but more properly:
-    abs(($a - $b) / $b) < 1e-14
-}
-  1;
 
 
 perhaps_run_tests "main" or do {
