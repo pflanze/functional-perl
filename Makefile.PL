@@ -18,7 +18,7 @@ WriteMakefile (
         "overload"=> 0,
         "Digest"=> 0,
         "warnings"=> 0,
-        "Test::More"=> 0,
+        "Test::More"=> "0.96", # for ~proper subtest support
         "Scalar::Util"=> 0,
         "Import::Into"=> 0,
 
