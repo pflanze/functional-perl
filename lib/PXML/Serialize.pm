@@ -193,7 +193,7 @@ sub _pxml_print_fragment_fast {
         ## working on the code, please undo them first by using git
         ## revert.
         if (my $ref= ref $v) {
-            if ($ref eq "PXML::Element" or $ref eq "PXML::PXHTML_") {
+            if ($ref eq "PXML::Element" or $ref eq "PXML::_::XHTML") {
               PXML:
                 my $n= $v->name;
                 print $fh "<$n" or die $!;
