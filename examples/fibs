@@ -63,41 +63,34 @@ sub fibs {
 # package variable) instead of mutating a lexical variable:
 
 sub fibs2 {
-    cons 1, cons 1, lazy { my $fibs= fibs2 ();
+    cons 1, cons 1, lazy { my $fibs= fibs2();
                            stream_zip_with *add, $fibs, rest $fibs };
 }
 
 # But it's less efficient: it recalculates parts multiple times, as
 # can be seen with CPU timings, or with the number of times that it
 # calls *add; you can check for the latter by replacing *add with
-# *addc and look at $addc before and after the calculation:
+# *counting_add and look at $addcount before and after the
+# calculation:
 
-my $addc=0;
-sub addc {
-    $addc++;
-    $_[0]+$_[1]
+my $addcount=0;
+sub counting_add {
+    $addcount++;
+    $_[0] + $_[1]
 }
 
-TEST { $addc=0; local *add=*addc; [fibs->ref(80), $addc] }
+TEST { $addcount=0; local *add=*counting_add;
+       [ fibs->ref(80), $addcount ] }
   ['37889062373143906', 79];
-TEST { $addc=0; local *add=*addc; [fibs2->ref(80), $addc] }
+
+TEST { $addcount=0; local *add=*counting_add;
+       [ fibs2->ref(80), $addcount ] }
   ['37889062373143906', 3160]; # 3160 == 79*80/2
 
 
 
 TEST { Keep($fibs)->take(10)->array }
-        [
-          1,
-          1,
-          2,
-          3,
-          5,
-          8,
-          13,
-          21,
-          34,
-          55
-        ];
+  [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
 
 TEST { fib 30 }
   1346269;
