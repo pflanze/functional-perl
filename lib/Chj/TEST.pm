@@ -238,7 +238,7 @@ package Chj::TEST::Test::Builder {
 }
 
 
-use FP::DumperEqual;
+use FP::Equal;
 use FP::Show;
 
 sub eval_test ($$) {
@@ -275,8 +275,7 @@ sub eval_test ($$) {
 
     my $location= "at $filename line $line";
     my $nicelocation= "line $line";
-    if (! $maybe_e and
-        dumperequal($got, $res) or dumperequal_utf8($got, $res)) {
+    if (! $maybe_e and equal($got, $res)) {
         style_switch +{
             old=> sub {
                 print "ok\n";
