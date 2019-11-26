@@ -87,6 +87,11 @@ TEST { $addcount=0; local *add=*counting_add;
        [ fibs2->ref(80), $addcount ] }
   ['37889062373143906', 3160]; # 3160 == 79*80/2
 
+# This is because the recursive call to `fibs2` is creating a second,
+# independently calculated sequence, which itself at the second
+# position again is creating another (third), independently calculated
+# sequence, etc. We want to calculate the same sequence only once,
+# which `fibs` achieves.
 
 
 TEST { Keep($fibs)->take(10)->array }
