@@ -157,6 +157,7 @@ our $export_desc=
     ":git"=> [qw(FP::Git::Repository)],
     ":pxml"=> [qw(PXML::Util PXML::XHTML PXML::Serialize)],
 
+    ":numbers"=> [qw(FP::BigInt)],
     ":chars"=> [qw(FP::Char)],
     ":sequences"=> [qw(FP::List FP::StrictList FP::MutableArray
                        FP::Array FP::Array_sort
@@ -165,7 +166,7 @@ our $export_desc=
     ":maps"=> [qw(FP::Hash)],
     ":sets"=> [qw(FP::HashSet FP::OrderedCollection)],
     ":tries"=> [qw(FP::Trie)],
-    ":datastructures"=> [qw(:chars :sequences :maps :sets :tries)],
+    ":datastructures"=> [qw(:chars :numbers :sequences :maps :sets :tries)],
 
     ":io"=> [qw(Chj::xIO Chj::xopen Chj::xtmpfile= Chj::tempdir
                 Chj::xpipe= Chj::xoutpipe= Chj::xopendir= Chj::xperlfunc

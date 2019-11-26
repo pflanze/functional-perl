@@ -123,6 +123,7 @@ lib/FP/Abstract/Show.pm
 lib/FP/Array.pm
 lib/FP/Array/Mixin.pm
 lib/FP/Array_sort.pm
+lib/FP/BigInt.pm
 lib/FP/Char.pm
 lib/FP/Combinators.pm
 lib/FP/DBI.pm

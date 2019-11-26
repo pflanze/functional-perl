@@ -21,6 +21,7 @@ WriteMakefile (
         "Test::More"=> "0.96", # for ~proper subtest support
         "Scalar::Util"=> 0,
         "Import::Into"=> 0,
+        "Math::BigInt"=> 0,
 
         # could be optional (tests should skip if not available):
         "autobox"=> 0,

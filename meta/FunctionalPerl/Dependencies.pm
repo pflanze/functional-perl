@@ -41,6 +41,7 @@ our %dependencies=
   (
    # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
 
+   'FP::BigInt'=> ['Math::BigInt'],
    'FP::autobox'=> ['autobox'],
    'FP::Text::CSV'=> ['Text::CSV'],
    'FP::url_'=> ['URI'],
