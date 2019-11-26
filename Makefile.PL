@@ -22,6 +22,7 @@ WriteMakefile (
         "Scalar::Util"=> 0,
         "Import::Into"=> 0,
         "Math::BigInt"=> 0,
+        "File::Path"=> 0,
 
         # could be optional (tests should skip if not available):
         "autobox"=> 0,

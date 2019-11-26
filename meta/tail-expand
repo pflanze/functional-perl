@@ -29,7 +29,7 @@ while (<$manif>) {
 
     my $t_from= xLmtime $from;
     my $expand= sub {
-        xxsystem_safe ("bin/expand-tail", $from, $to);
+        xxsystem_safe ($^X, "bin/expand-tail", $from, $to);
     };
     if (my $t_to= XLmtime $to) {
         if ($t_from >= $t_to) {
