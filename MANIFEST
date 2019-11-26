@@ -138,6 +138,7 @@ lib/FP/HashSet.pm
 lib/FP/IOStream.pm
 lib/FP/Interfaces.pm
 lib/FP/Lazy.pm
+lib/FP/Lazy/t.pm
 lib/FP/List.pm
 lib/FP/Memoizing.pm
 lib/FP/MutableArray.pm

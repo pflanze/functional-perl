@@ -332,18 +332,5 @@ sub FORCE {
     }
 }
 
-use Chj::TEST;
-
-TEST {
-    our $foo= "";
-    sub moo {
-        my ($bar)=@_;
-        local $foo= "Hello";
-        lazy { "$foo $bar" }
-    }
-    moo ("you")->force
-}
-  " you";
-
 
 1
