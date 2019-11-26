@@ -310,7 +310,11 @@ sub eval_test ($$) {
                 # *remains* blessed!
                 local $Chj::TEST::Test::Builder::fake_caller=
                     [$package, $filename, $line];
-                $tb->ok( 0, $nicelocation);
+                #$tb->ok( 0, $nicelocation);
+                # On some systems (Test::Builder versions?), the above
+                # hackery doesn't work (sigh, move to Test2::*?), thus
+                # provide the full location info anyway:
+                $tb->ok( 0, $location);
 
                 if (defined $maybe_e) {
                     diag("Exception: $$maybe_e[0]");
