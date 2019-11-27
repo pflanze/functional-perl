@@ -424,7 +424,21 @@ sub run_tests_ {
         delete $$args{no};
     for (sort keys %$args) { warn "run_tests_: unknown argument '$_'" }
 
+    local $run_tests_style //= run_tests_style;
+
     local $|= 1;
+
+    style_switch +{
+        old=> sub {
+            print "==== run_tests in $run_tests_style style ====\n";
+        },
+        tap=> sub {
+            # if run_tests is called from perhaps_run_tests this was
+            # already done but can't count on that:
+            require Test::More;
+            import Test::More;
+        },
+    };
 
     my $stat= bless {success=>0, fail=>0}, "Chj::TEST::Result";
 
@@ -458,21 +472,8 @@ sub run_tests_ {
 
 
 sub run_tests {
-    local $run_tests_style //= run_tests_style;
     my $packages= [@_];
-    style_switch +{
-        old=> sub {
-            print "==== run_tests in $run_tests_style style ====\n";
-            run_tests_ packages=> $packages;
-        },
-        tap=> sub {
-            # if run_tests is called from perhaps_run_tests this was
-            # already done but can't count on that:
-            require Test::More;
-            import Test::More;
-            run_tests_ packages=> $packages;
-        },
-    };
+    run_tests_ packages=> $packages;
 }
 
 # run tests for test suite:
