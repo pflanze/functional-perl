@@ -20,6 +20,7 @@ use lib "./meta";
 use FunctionalPerl::TailExpand;
 use FunctionalPerl::ModuleList;
 use FunctionalPerl::Dependencies 'module_needs';
+use Chj::Backtrace;
 
 require "./meta/find-perl.pl";
 
