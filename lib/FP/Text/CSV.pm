@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -23,7 +23,6 @@ FP::Text::CSV - functional interface to Text::CSV
     # $csvparams and any of its entries are optional,
     #  defaults are taken from $FP::Text::CSV::defaults
 
-    use Method::Signatures; # func
     use Chj::xopen qw(xopen_read xopen_write);
     use FP::List; use FP::Stream; use FP::Equal 'is_equal';
     mkdir ".tmp";
@@ -31,7 +30,8 @@ FP::Text::CSV - functional interface to Text::CSV
     # -- Output: ---
     my $rows=
       cons [ "i", "i^2" ],
-        stream_iota->map(func ($i) {
+        stream_iota->map(sub {
+            my ($i)=@_;
             [ $i, $i*$i ]
         })->take(100);
     rows_to_csv_fh (Keep($rows), xopen_write(".tmp/a1.csv"),
