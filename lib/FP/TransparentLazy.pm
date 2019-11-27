@@ -85,15 +85,13 @@ BEGIN {
        fallback=> 1);
 }
 
-{
-    package FP::TransparentLazy::Promise;
+package FP::TransparentLazy::Promise {
     our @ISA= qw(FP::Lazy::Promise);
 
     use overload @overload;
 }
 
-{
-    package FP::TransparentLazy::PromiseLight;
+package FP::TransparentLazy::PromiseLight {
     our @ISA= qw(FP::Lazy::PromiseLight);
 
     use overload @overload;
