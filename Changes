@@ -1,5 +1,16 @@
 Revision history for FunctionalPerl
 
+0.72.12 2019-11-26
+    - More Windows support work
+    - add relaxedequal to FP::Equal
+    - change Chj::TEST to use FP::Equal'relaxedequal instead of
+      dumperequal
+    - add `string` function to Ops
+    - create FP::BigInt
+    - change examples/fib to bigint to solve test failures due to
+      unreliable number implementation in base Perl
+    - workaround for failed TEST TAP location hack
+
 0.72.11 2019-11-26
     - reimplement repl+ in Perl for Windows
     - clean up tail expansion dependencies during testing, hopefully
