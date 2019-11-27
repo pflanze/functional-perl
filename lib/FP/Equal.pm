@@ -47,7 +47,7 @@ FP::Equal - generic equality comparison
     is_equal list(1+1), list(2);
 
     # `equal` is giving an exception if 2 objects of the (~)same class
-    # are given, but the class doesn't implement the protocol.
+    # are given, but the class doesn't implement the protocol:
     is_equal [ scalar eval {
                   equal bless([1+1], 'FP::Equal::EXAMPLE'),
                         bless([2], 'FP::Equal::EXAMPLE')
@@ -55,6 +55,8 @@ FP::Equal - generic equality comparison
                length("$@")>5 ],
              [undef, 1];
 
+    # `relaxedequal` does not throw exceptions, it falls back to
+    # FP::DumperEqual if a class doesn't implement the protocol:
     use FP::Equal qw(relaxedequal);
     is_equal [ scalar eval {
                   relaxedequal
@@ -66,20 +68,23 @@ FP::Equal - generic equality comparison
 
 =head1 DESCRIPTION
 
-Deep, generic (but class controlled) structure equality comparison.
+Deep, generic (class controlled) structure equality comparison.
 
 Non-objects are hard coded in this module. Objects are expected to
 have an `FP_Equal_equal` method that is able to take an argument of
-the same class as the object to compare (if it doesn't have such an
-object, it simply can't be compared using this module).
+the same class as the object to compare. If it doesn't have such an
+object, it simply can't be compared using the C<equal*> functions,
+they will give "no such method" exceptions; C<relaxedequal> falls back
+to using L<FP::DumperEqual> (which uses L<Data::Dumper>) in such
+cases.
 
 This does *name based* type comparison: structurally equivalent
 objects do not count as equal if they do not have the same class (or
-more general, reference name), the `FP_Equal_equal` method is not
-even called; the equal function returns undef in this case. This
-might be subject to change: certain pairs of types will be fine to
-compare; let the classes provide a method that checks whether a type
-is ok to compare?
+more general, reference name); the `FP_Equal_equal` method is not even
+called in this case, and the functions return undef. This might be
+subject to change: certain pairs of types will be fine to compare; let
+the classes provide a method that checks whether a type is ok to
+compare?
 
 =head1 TODO
 
