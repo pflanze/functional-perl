@@ -10,6 +10,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 ## Work on the code
 
+* rename "hidden" methods like `FP_Equal_equal` to all-uppercase like
+  `FP_EQUAL__EQUAL` as that seems to be preferred (`TO_JSON` was given
+  as an example)
+
 * Finish unmerged work on FP::Repl (see note from this commit in
   [intro])
 
