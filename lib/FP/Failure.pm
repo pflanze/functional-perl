@@ -58,11 +58,18 @@ FP::Failure - failure values
              "failure: 666\n  because:\n  failure: 'not good'\n";
 
     # request recorded backtrace to be shown
-    is_equal regex_substitute(sub{ s/line \d+/line .../g }, $v->message(1)),
+    is_equal regex_substitute(sub { # cleaning up bt
+                                  s/line \d+/line .../g;
+                                  my $btlines=0;
+                                  $_= join("\n",
+                                           grep { not /^    \S/ or ++$btlines < 2 }
+                                           split /\n/)
+                              },
+                              $v->message(1)),
              join("\n", "failure: 666 at lib/FP/Failure.pm line ...",
                         "    (eval) at t/pod_snippets.t line ...",
                         "  because:",
-                        "  failure: 'not good'\n");
+                        "  failure: 'not good'");
 
 
     # Wrapper that just returns 0 unless configured to create a failure
