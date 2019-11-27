@@ -84,7 +84,7 @@ use Chj::singlequote;
 # get the style
 sub run_tests_style { # "old" or "tap"
     if (my $rt= $ENV{RUN_TESTS}) {
-        ($rt=~ /old/i ? "old" :
+        ($rt=~ /(old|pod_snippets)/i ? "old" :
          #$rt=~ /(new|tap)/i ? "tap" :
          "tap")
     } else {
@@ -138,7 +138,7 @@ sub import {
                 # ok
             } else {
                 if (my $rt= $ENV{RUN_TESTS}) {
-                    if ($rt=~ /pod.*snippets/i) {
+                    if ($rt=~ /pod_snippets/i) {
                         die "TEST use<$module> failed: $smallcode";
                     } else {
                         #carp "RUN_TESTS is set and we failed to $smallcode";
