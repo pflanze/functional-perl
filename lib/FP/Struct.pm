@@ -95,8 +95,6 @@ FP::Struct - classes for functional perl
 
     is $bar->hum, "Franz hums 1 over 2";
 
-    local $ENV{RUN_TESTS}; # (uh XX ugly sorry, have to turn this off
-                           # for pod snippet testing to work)
     is Chj::TEST::run_tests("FPStructExample::Bar2")->success, 1;
     is (FPStructExample::Bar2->can("TEST"), undef);
     # ^ it was removed by namespace cleaning
