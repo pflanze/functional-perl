@@ -270,8 +270,8 @@ sub FORCE {
     wantarray ? @_ : $_[-1]
 }
 
-{
-    package FP::Lazy::Promise;
+
+package FP::Lazy::Promise {
     *force= *FP::Lazy::force;
     sub FORCE {
         $_[0] = force ($_[0]);
@@ -322,8 +322,7 @@ sub FORCE {
     }
 }
 
-{
-    package FP::Lazy::PromiseLight;
+package FP::Lazy::PromiseLight {
     our @ISA= qw(FP::Lazy::Promise);
 
     sub FP_Show_show {
