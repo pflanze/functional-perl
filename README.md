@@ -35,7 +35,7 @@ This is an example of the kind of code this project aims to make possible:
     # The functions are generated in all-uppercase so as to minimize
     # the chances for naming conflicts and to let them stand apart.
 
-    print RECORD(A("hi"),B("there"))->string; 
+    print RECORD(A("hi"), B("there"))->string; 
     # prints: <record><a>hi</a><b>there</b></record>
 
     # Now create a bigger document, with its inner parts built from
@@ -242,9 +242,8 @@ howto/design documents.
     was written long before the functional-perl project was started, and
     does various details differently.
 
-Please ask [me](http://leafpair.com/contact) or on the
-[[mailing_list]] if you'd like to meet up in London, Berlin or
-Switzerland to get an introduction in person.
+Please ask [me](http://leafpair.com/contact) if you'd like to meet up
+in London, Berlin or Switzerland to get an introduction in person.
 
 
 ## Dependencies
@@ -300,6 +299,19 @@ To install, run the usual `perl Makefile.PL; make test && make install`.
 packages (or even repositories?) in the future, thus don't rely too
 much on the installation process continuing to work the way it is
 right now.)
+
+
+## Reporting bugs, finding help, contributing
+
+* Report bugs via either:
+
+    * the [Github project](https://github.com/pflanze/functional-perl)
+
+    * the "Issues" link on the the distribution's
+      [CPAN page](https://metacpan.org/pod/FunctionalPerl).
+
+* Find IRC and contact details on the [[mailing_list]] and [[contact]]
+  pages.
 
 
 </with_toc>
