@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.13 2019-11-27
+    - documentation improvements
+    - fix for Windows
+    - Chj::TEST run_tests_ fix
+    - handle missing module dependencies in pod snippets correctly
+
 0.72.12 2019-11-26
     - More Windows support work
     - add relaxedequal to FP::Equal
