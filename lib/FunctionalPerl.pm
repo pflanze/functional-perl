@@ -60,7 +60,7 @@ C<:chars>: L<FP::Char>
 
 C<:csv>: L<FP::Text::CSV>
 
-C<:datastructures>: C<:chars>, C<:maps>, C<:sequences>, C<:sets>, C<:tries>
+C<:datastructures>: C<:chars>, C<:maps>, C<:numbers>, C<:sequences>, C<:sets>, C<:tries>
 
 C<:dbi>: L<FP::DBI>
 
@@ -85,6 +85,8 @@ C<:lazy>: C<:stream>, L<FP::Lazy>, L<FP::Weak>
 C<:maps>: L<FP::Hash>
 
 C<:most>: C<:autobox>, C<:datastructures>, C<:debug>, C<:equal>, C<:failure>, C<:functions>, C<:lazy>, C<:show>
+
+C<:numbers>: L<FP::BigInt>
 
 C<:path>: L<FP::Path>
 
