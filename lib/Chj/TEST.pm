@@ -141,7 +141,7 @@ sub import {
                     #carp "RUN_TESTS is set and we failed to $smallcode";
                     require Test::More;
                     Test::More::plan (skip_all=> "failed to $smallcode");
-                    exit 1; # necessary?
+                    exit 0; # necessary?
                 } else {
                     die $@
                 }
