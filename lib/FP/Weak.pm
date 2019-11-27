@@ -78,7 +78,8 @@ Turn weakening on and off (unscoped, 'persistently').
 
 =head1 NOTE
 
-This is alpha software! Read the package README.
+This is alpha software! Read the status section in the package README
+or on the L<website|http://functional-perl.org/>.
 
 =cut
 
