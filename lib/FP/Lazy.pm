@@ -272,13 +272,17 @@ sub FORCE {
 
 
 package FP::Lazy::Promise {
+
     *force= *FP::Lazy::force;
+
     sub FORCE {
         $_[0] = force ($_[0]);
     }
+
     sub DESTROY {
         # nothing, catch this to prevent it from entering AUTOLOAD
     }
+
     our $AUTOLOAD; # needs to be declared even though magical
     sub AUTOLOAD {
         my $methodname= $AUTOLOAD;
