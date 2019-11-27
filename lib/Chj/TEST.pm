@@ -137,11 +137,15 @@ sub import {
             if (eval $code) {
                 # ok
             } else {
-                if ($ENV{RUN_TESTS}) {
-                    #carp "RUN_TESTS is set and we failed to $smallcode";
-                    require Test::More;
-                    Test::More::plan (skip_all=> "failed to $smallcode");
-                    exit 1; # necessary?
+                if (my $rt= $ENV{RUN_TESTS}) {
+                    if ($rt=~ /pod.*snippets/i) {
+                        die "TEST use<$module> failed: $smallcode";
+                    } else {
+                        #carp "RUN_TESTS is set and we failed to $smallcode";
+                        require Test::More;
+                        Test::More::plan (skip_all=> "failed to $smallcode");
+                        exit 1; # necessary?
+                    }
                 } else {
                     die $@
                 }

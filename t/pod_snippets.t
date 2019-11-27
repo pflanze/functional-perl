@@ -109,6 +109,9 @@ sub numfailures {
     scalar @failures
 }
 
+# to make Chj::TEST use=> feature die instead of exit:
+$ENV{RUN_TESTS}= "pod_snippets";
+
 my $namespacenum= 0;
 
 for my $module (@$modules) {
@@ -137,9 +140,14 @@ for my $module (@$modules) {
                     save $module, $code;
                 }
             } else {
-                warn "Exception: $@\n";
-                fail("pod snippets in $module");
-                save $module, $code;
+                my $e= $@;
+                if (my ($use_module)= $e=~ /^TEST use<(.*?)> failed:/) {
+                    skip "test pod snippets in $module - use $use_module failed", 1;
+                } else {
+                    warn "Exception: $@\n";
+                    fail("pod snippets in $module");
+                    save $module, $code;
+                }
             }
         }
     }
