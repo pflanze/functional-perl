@@ -23,13 +23,13 @@ FP::MutableArray
 
     # They can be turned into immutable ones:
     my $b= $a->pure;
-    like( (eval { $b->[0]++; 1 } || $@), qr/XXX Hello?/);
-     # XXX sigh, expecting 'Modification of a read-only value attempted', but
-     # Test::More never fails here ???
+    like( (eval { $b->[0]++; 1 } || $@),
+          qr/^Modification of a read-only value attempted/);
 
     # Although this really consumes the original array, which is now
     # immutable, too:
-    like( (eval { $a->[0]++; 1 } || $@), qr/WHATXXX/);
+    like( (eval { $a->[0]++; 1 } || $@),
+          qr/^Modification of a read-only value attempted/);
 
     is $a->sum, 14;
 

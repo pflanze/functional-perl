@@ -20,8 +20,10 @@ FP::PureArray
     is $a->sum, 13;
 
     # can't mutate it:
-    like( (eval { $a->[0]++; 1 } || $@), qr/XXX Hello?/);
-    like( (eval { push @$a, 123; 1 } || $@), qr/XXX Hello?/);
+    like( (eval { $a->[0]++; 1 } || $@),
+          qr/^Modification of a read-only value attempted/);
+    like( (eval { push @$a, 123; 1 } || $@),
+          qr/^Modification of a read-only value attempted/);
 
     is $a->sum, 13;
 

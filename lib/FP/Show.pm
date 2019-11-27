@@ -62,15 +62,15 @@ to quote the result:
     }
 
     eval { foo2 list 100-1, "bottles"; };
-    like $@, qr/\Qnot what we wanted: list(99, 'bottles')/;
+    like $@, qr/^\Qnot what we wanted: list(99, 'bottles')/;
     eval { foo2 "list(99, 'bottles')"; };
-    like $@, qr/\Qnot what we wanted: 'list(99, \'bottles\')'/;
+    like $@, qr/^\Qnot what we wanted: 'list(99, \'bottles\')'/;
     # so how would you tell which value foo2 really got in each case,
     # just from looking at the message?
 
     # also:
     eval { foo2 +{a=> 1, b=>10}; };
-    like $@, qr/\Qnot what we wanted: +{a => 1, b => 10}/;
+    like $@, qr/^\Qnot what we wanted: +{a => 1, b => 10}/;
       # would die with something like:
       #   not what we wanted: HASH(0xEADBEEF)
       # which isn't very informative

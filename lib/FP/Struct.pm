@@ -34,7 +34,7 @@ FP::Struct - classes for functional perl
     eval {
          new FPStructExample::Foo ("Tim", 0)
     };
-    like $@, qr/unacceptable value for field 'animals': 0 /;
+    like $@, qr/^unacceptable value for field 'animals': 0 /;
     is (new FPStructExample::Foo (undef, ["Struppi"])->animals->[0], "Struppi");
     is (new_ FPStructExample::Foo (animals=> ["Struppi"])->animals->[0], "Struppi");
 

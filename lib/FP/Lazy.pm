@@ -19,12 +19,12 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
     eval {
         print force $a
     };
-    like $@, qr/division by zero/;
+    like $@, qr/^Illegal division by zero/;
 
     eval {
         $a + 2
     };
-    like $@, qr/non-auto-forcing promise accessed via 0\+ operation/;
+    like $@, qr/^non-auto-forcing promise accessed via 0\+ operation/;
 
     my $count= 0;
     my $b = lazy { $count++; 1 / 2 };
@@ -84,7 +84,7 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
         # the overhead of two subroutine calls, though)
         condprom 0
     };
-    like $@, qr/division by zero/;
+    like $@, qr/^Illegal division by zero/;
 
 
 =head1 DESCRIPTION
