@@ -21,7 +21,13 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   cycles, `FP::Repl` bugs)
 
 * `FP::Failure`: add tests. Solve the `complement` issue (which would
-  mean, make FP::Result and use that)?
+  mean, make FP::Result and use that)? Also: `failure`, since it
+  overloads boolean, can basically only be used in boolean contexts,
+  where the non-failure case is just true, since otherwise (the
+  success case is itself a boolean) it would be dangerous in handling.
+
+* Add an Error data type, similar to `FP::Failure`, but which wraps
+  the success case as well?
 
 * Consistently use "{ package Foo; ... }" or "package Foo { ... }"
   (latter if compatible with the minimal required Perl version)
@@ -129,9 +135,6 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * Reference count based optimization: mutate if there's only a single
   holder.
-
-* Add an Error data type which auto-explodes in void context (or when
-  unhandled)?
 
 * Consistency check: any method/function that returns a maybe or
   perhaps type must be named appropriately, otherwise throw exceptions
