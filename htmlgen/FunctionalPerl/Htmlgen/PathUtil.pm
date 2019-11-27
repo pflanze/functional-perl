@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -61,7 +61,10 @@ TEST_EXCEPTION {path_add ".", "../zoo/loo" }
 
 fun path_diff ($path0from,$path0to) {
     my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
-    File::Spec->abs2rel($path0to, $from);
+    my $res= File::Spec->abs2rel($path0to, $from);
+    # XX HACK for Windows (why is this using File::Spec, anyway?):
+    $res=~ s{\\}{/}sg;
+    $res
 }
 
 TEST{path_diff "foo/", "bar.css"} '../bar.css';
