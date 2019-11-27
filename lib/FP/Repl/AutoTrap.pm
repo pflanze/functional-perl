@@ -40,14 +40,17 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # sense. So this is the "non-forcing" way to check:
 use POSIX qw(isatty);
 
-if (isatty(0) and isatty(1)) {
-    require FP::Repl::WithRepl;
-    import FP::Repl::WithRepl;
-    push_withrepl (0);
+if (($ENV{RUN_TESTS}//'') eq '1') {
+    warn "not activating since running in test mode";
 } else {
-    require Chj::Backtrace;
-    import Chj::Backtrace;
+    if (isatty(0) and isatty(1)) {
+        require FP::Repl::WithRepl;
+        import FP::Repl::WithRepl;
+        push_withrepl (0);
+    } else {
+        require Chj::Backtrace;
+        import Chj::Backtrace;
+    }
 }
-
 
 1

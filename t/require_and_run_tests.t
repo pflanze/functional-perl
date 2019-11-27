@@ -23,6 +23,11 @@ use FunctionalPerl::Dependencies 'module_needs';
 
 require "./meta/find-perl.pl";
 
+# switch Chj::TEST to TAP style testing (unless requested 'old'), and
+# disable FP::Repl::Trap / FP::Repl::AutoTrap (unless requested
+# otherwise by another setting than "1"):
+$ENV{RUN_TESTS} ||= 1;
+
 plan tests=> 2;
 
 subtest "require"=> sub {
@@ -39,8 +44,6 @@ subtest "require"=> sub {
 };
 
 subtest "run_tests"=> sub {
-    # switch to TAP style testing (unless requested 'old'):
-    $ENV{RUN_TESTS} ||= 1;
     # already loaded by require_ok above:
     Chj::TEST::run_tests();
 };

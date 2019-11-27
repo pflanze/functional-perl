@@ -41,6 +41,10 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use FP::Repl::WithRepl;
 
-push_withrepl (0);
+if (($ENV{RUN_TESTS}//'') eq '1') {
+    warn "not activating since running in test mode";
+} else {
+    push_withrepl (0);
+}
 
 1
