@@ -115,14 +115,15 @@ $ENV{RUN_TESTS}= "pod_snippets";
 my $namespacenum= 0;
 
 for my $module (@$modules) {
-  SKIP: {
-        if ($ignore{$module}) {
-            print "=== Ignoring pod snippets in $module.\n";
-        } else {
-            print "=== Running pod snippets in $module ..\n";
+    if ($ignore{$module}) {
+        print "=== Ignoring pod snippets in $module.\n";
+    } else {
+        subtest "pod snippets in $module"=> sub {
 
             if (my @needs= module_needs $module) {
-                skip "test pod snippets in $module - don't have @needs", 1;
+                plan skip_all=>
+                    "test pod snippets in $module - don't have @needs", 1;
+                return;
             }
 
             my $tps_direct = Test::Pod::Snippets->new();
@@ -142,13 +143,16 @@ for my $module (@$modules) {
             } else {
                 my $e= $@;
                 if (my ($use_module)= $e=~ /^TEST use<(.*?)> failed:/) {
-                    skip "test pod snippets in $module - use $use_module failed", 1;
+                    plan skip_all=>
+                        "test pod snippets in $module - use $use_module failed", 1;
+                    return;
                 } else {
                     warn "Exception: $@\n";
                     fail("pod snippets in $module");
                     save $module, $code;
                 }
             }
+            done_testing()
         }
     }
 }
