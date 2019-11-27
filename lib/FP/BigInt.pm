@@ -46,14 +46,19 @@ package FP::BigInt;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Math::BigInt;
-use FP::Interfaces;
+#use FP::Interfaces;
 
 sub bigint ($) {
     Math::BigInt->new($_[0])
 }
 
-package Math::BigInt {
-    
+package # Monkey patching; but using long ucfirst (TODO: go all
+        # uppercase(?)) method names that should never conflict with
+        # anybody else's. Use case doesn't really allow for
+        # subclassing. Might look into implementing some sort of
+        # lexical extensions of classes at some point.
+  Math::BigInt {
+
     sub FP_Show_show {
         my $s=shift;
         "bigint('$s')"
@@ -64,8 +69,10 @@ package Math::BigInt {
         $a == $b
     }
 
-    FP::Interfaces::implemented qw(FP::Abstract::Show
-                                   FP::Abstract::Equal);
+    # commented out to not modify Math::BigInt's @ISA, although it
+    # would be good to have for consistency.
+    #FP::Interfaces::implemented qw(FP::Abstract::Show
+    #                               FP::Abstract::Equal);
 }
 
 1
