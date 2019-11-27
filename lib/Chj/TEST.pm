@@ -238,7 +238,7 @@ package Chj::TEST::Test::Builder {
 }
 
 
-use FP::Equal;
+use FP::Equal qw(relaxedequal);
 use FP::Show;
 
 sub eval_test ($$) {
@@ -275,7 +275,7 @@ sub eval_test ($$) {
 
     my $location= "at $filename line $line";
     my $nicelocation= "line $line";
-    if (! $maybe_e and equal($got, $res)) {
+    if (! $maybe_e and relaxedequal($got, $res)) {
         style_switch +{
             old=> sub {
                 print "ok\n";

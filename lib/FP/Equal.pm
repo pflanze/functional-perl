@@ -46,6 +46,23 @@ FP::Equal - generic equality comparison
     use FP::Equal qw(is_equal);
     is_equal list(1+1), list(2);
 
+    # `equal` is giving an exception if 2 objects of the (~)same class
+    # are given, but the class doesn't implement the protocol.
+    is_equal [ scalar eval {
+                  equal bless([1+1], 'FP::Equal::EXAMPLE'),
+                        bless([2], 'FP::Equal::EXAMPLE')
+               },
+               length("$@")>5 ],
+             [undef, 1];
+
+    use FP::Equal qw(relaxedequal);
+    is_equal [ scalar eval {
+                  relaxedequal
+                        bless([1+1], 'FP::Equal::EXAMPLE'),
+                        bless([2], 'FP::Equal::EXAMPLE')
+               },
+               length("$@") ],
+             [1, 0];
 
 =head1 DESCRIPTION
 
@@ -77,7 +94,7 @@ is ok to compare?
 
 L<FP::Abstract::Equal> for the protocol definition
 
-L<FP::DumperEqual> for a non-class controlled alternative
+L<FP::DumperEqual> used as fallback in C<relaxedequal>.
 
 L<FP::Show>
 
@@ -91,7 +108,7 @@ This is alpha software! Read the package README.
 package FP::Equal;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(equal);
-@EXPORT_OK=qw(equaln is_equal);
+@EXPORT_OK=qw(equaln is_equal relaxedequal);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -107,28 +124,28 @@ no warnings "recursion";
 our $primitive_equals=
   +{
     ARRAY=> sub {
-        my ($a,$b)=@_;
+        my ($a,$b, $equal)=@_;
         @$a == @$b and do {
             my $i=0;
           LP: {
-                $i < @$a ? (equal ($$a[$i], $$b[$i]) and do{$i++; redo LP})
+                $i < @$a ? (&$equal ($$a[$i], $$b[$i]) and do{$i++; redo LP})
                   : 1
             }
         }
     },
     HASH=> sub {
-        my ($a,$b)=@_;
+        my ($a,$b, $equal)=@_;
         keys %$a == keys %$b and do {
             for (keys %$a) {
-                my $v; $v= (exists $$b{$_} and equal ($$a{$_}, $$b{$_}))
+                my $v; $v= (exists $$b{$_} and &$equal($$a{$_}, $$b{$_}))
                   or return $v;
             }
             1
         }
     },
     REF=> sub { # references to references
-        my ($a,$b)=@_;
-        equal($$a, $$b)
+        my ($a,$b, $equal)=@_;
+        &$equal($$a, $$b)
     },
     # *references* to globs; direct globs are compared in equal directly
     GLOB=> sub {
@@ -139,7 +156,8 @@ our $primitive_equals=
            # already did it
     },
     SCALAR=> sub {
-        equal(${$_[0]}, ${$_[1]})
+        my ($a,$b, $equal)=@_;
+        &$equal(${$_[0]}, ${$_[1]})
     },
 
     # compare closures using XS? Existing module?
@@ -155,95 +173,123 @@ sub pointer_eq ($$) {
     refaddr($_[0]) == refaddr($_[1])
 }
 
-sub equal ($$) {
-    my ($a,$b)=@_;
-    if (!defined $a) {
-        if (!defined $b) {
-            1
-        } else {
-            if (length ref $b) {
-                if (is_promise $b) {
-                    @_=($a, force ($b)); goto \&equal;
-                } else {
-                    undef
-                }
-            } else {
-                undef
-            }
-        }
-    } else {
-        # $a is defined
-        if (!defined $b) {
-            if (length ref $a) {
-                if (is_promise $a) {
-                    @_=(force($a), $b); goto \&equal;
-                } else {
-                    undef
-                }
-            } else {
-                undef
-            }
-        } else {
-            # both are defined
-            if (length (my $ar= ref $a)) {
-                if (length (my $br= ref $b)) {
-                    pointer_eq ($a, $b) or
-                      do {
-                          if (is_promise $a or is_promise $b) {
-                              @_=(force ($a), force ($b)); goto \&equal;
-                          } elsif ($ar eq $br) {
-                              if (my $cmp= $$primitive_equals{$ar}) {
-                                  &$cmp (@_)
-                              } else {
-                                  $a->FP_Equal_equal ($b)
-                              }
+sub make_equal {
+    my ($relaxed)= @_;
+    my $equal; $equal= sub ($$) {
+        @_==2 or die "wrong number of arguments";
+      EQUAL: {
+          my ($a,$b)=@_;
+          if (!defined $a) {
+              if (!defined $b) {
+                  1
+              } else {
+                  if (length ref $b) {
+                      if (is_promise $b) {
+                          @_=($a, force ($b)); redo EQUAL;
+                      } else {
+                          undef
+                      }
+                  } else {
+                      undef
+                  }
+              }
+          } else {
+              # $a is defined
+              if (!defined $b) {
+                  if (length ref $a) {
+                      if (is_promise $a) {
+                          @_=(force($a), $b); redo EQUAL;
+                      } else {
+                          undef
+                      }
+                  } else {
+                      undef
+                  }
+              } else {
+                  # both are defined
+                  if (length (my $ar= ref $a)) {
+                      if (length (my $br= ref $b)) {
+                          pointer_eq ($a, $b) or
+                            do {
+                                if (is_promise $a or is_promise $b) {
+                                    @_=(force ($a), force ($b)); redo EQUAL;
+                                } elsif ($ar eq $br) {
+                                    if (my $cmp= $$primitive_equals{$ar}) {
+                                        &$cmp ($a, $b, $equal)
+                                    } else {
+                                        if ($relaxed) {
+                                            if (my $m= UNIVERSAL::can($a, "FP_Equal_equal")) {
+                                                #@_ $a and $b are still the original $a and $b
+                                                goto $m
+                                            } else {
+                                                # costly require?, but slow anyway.
+                                                require FP::DumperEqual;
+                                                # and, given that slow
+                                                # anyway, take the
+                                                # safe path via
+                                                # Useperl (_utf8
+                                                # variant)
+                                                FP::DumperEqual::dumperequal_utf8 ($a, $b)
+                                            }
+                                        } else {
+                                            $a->FP_Equal_equal ($b)
+                                        }
+                                    }
+                                } else {
+                                    # XXX allow subclasses of same
+                                    # hierarchy? Check whether $br isa $ar
+                                    # or vica versa and then call
+                                    # FP_Equal_equal on the one that's more?
+                                    # (or the less?) specialized?
+                                    undef
+                                }
+                            };
+                      } else {
+                          # $b is not a reference ($a is)
+                          if (is_promise $a) {
+                              @_=(force ($a), $b); redo EQUAL;
                           } else {
-                              # XXX allow subclasses of same
-                              # hierarchy? Check whether $br isa $ar
-                              # or vica versa and then call
-                              # FP_Equal_equal on the one that's more?
-                              # (or the less?) specialized?
                               undef
                           }
-                      };
-                } else {
-                    # $b is not a reference ($a is)
-                    if (is_promise $a) {
-                        @_=(force ($a), $b); goto \&equal;
-                    } else {
-                        undef
-                    }
-                }
-            } else {
-                # $a is not a reference
-                if (length ref $b) {
-                    if (is_promise $b) {
-                        @_=($a, force($b)); goto \&equal;
-                    } else {
-                        undef
-                    }
-                } else {
-                    # $b is not a reference either
-                    # make sure it's the same kind of non-reference values:
-                    if (ref (\$a) eq ref (\$b)) {
-                        # XX number comparison could optimize the case where both
-                        # values don't have string representations, compare using
-                        # == then.
+                      }
+                  } else {
+                      # $a is not a reference
+                      if (length ref $b) {
+                          if (is_promise $b) {
+                              @_=($a, force($b)); redo EQUAL;
+                          } else {
+                              undef
+                          }
+                      } else {
+                          # $b is not a reference either
+                          # make sure it's the same kind of non-reference values:
+                          if (ref (\$a) eq ref (\$b)) {
+                              # XX number comparison could optimize the case where both
+                              # values don't have string representations, compare using
+                              # == then.
 
-                        # XXX Also, on a slightly independent note, and not just
-                        # an optimization: in the other case (any of the
-                        # arguments also has a string representation) compare
-                        # both as string and as number?
+                              # XXX Also, on a slightly independent note, and not just
+                              # an optimization: in the other case (any of the
+                              # arguments also has a string representation) compare
+                              # both as string and as number?
 
-                        $a eq $b
-                    } else {
-                        undef
-                    }
-                }
-            }
+                              $a eq $b
+                          } else {
+                              undef
+                          }
+                      }
+                  }
+              }
+          }
         }
     }
-}
+};
+
+sub equal($$);
+*equal= make_equal(0);
+sub relaxedequal($$);
+*relaxedequal= make_equal(1);
+
 
 sub equaln {
     if (@_ == 2) {
@@ -276,6 +322,7 @@ sub is_equal ($$;$) {
                    $maybe_name ? $maybe_name : ())
     }
 }
+
 
 
 1
