@@ -256,6 +256,12 @@ Switzerland to get an introduction in person.
 
 ## Installation
 
+### From CPAN
+
+Use your preferred CPAN installer, for example: `cpan FunctionalPerl`
+
+### From the Git repository
+
     git clone https://github.com/pflanze/functional-perl.git
     cd functional-perl
 
@@ -274,11 +280,12 @@ locally, thus no installation is necessary. All modules are in the
 `lib/` directory, `export PERL5LIB=path/to/functional-perl/lib` is all
 that's needed.
 
-The normal `perl Makefile.PL; make test && make install` process
-should work as well. The repository is probably going to be split into
-or will produce several separate CPAN packages in the future, thus
-don't rely on the installation process working the way it is right
-now.
+To install, run the usual `perl Makefile.PL; make test && make install`.
+
+(The repository might be split into producing several separate CPAN
+packages (or even repositories?) in the future, thus don't rely too
+much on the installation process continuing to work the way it is
+right now.)
 
 
 </with_toc>
