@@ -92,11 +92,13 @@ TEST{equal "a", "a"} 1;
 TEST{tequals "2", 2} 1;
 TEST{tequals "2.0", 2.0} '';
 
-my $inf= $^V->{version}[1] > 20 ?
-  # XX where exactly was it changed?
-  # v5.14.2: inf
-  # v5.21.11-27-g57e8809: Inf
-  "Inf" : "inf";
+# Somewhere around version 5.20-5.21 Perl changed the formatting of
+# inf from "inf" to "Inf". Instead of trying to figure out which
+# version exactly changed it (if it's a precise version at all) try to
+# determine the right way automatically:
+my $inf= "inf"+0;
+lc($inf) eq "inf"
+    or die "bug";
 
 TEST{tequals 1e+20000, $inf} 1;
 TEST{ 1e+20000 == "inf" } 1;
