@@ -314,6 +314,13 @@ Project:
   because they are multiple, e.g. `FP::List` uses `FP::List::Pair`,
   `FP::List::Null`, but also a common base class `FP::List::List`.)
 
+- Where it is beneficial, unit tests written using `Chj::TEST` are
+  usually within the modules implementing a feature; but where they
+  aren't, because it's too many test cases and they clutter up more
+  than they document, they are in a separate module file, with `::t`
+  appended to the name of the module they are testing. E.g. tests for
+  `Foo/Bar.pm` are in `Foo/Bar/t.pm` in such a case. (Integration
+  tests are scripts in `t/` as usual.)
 
 ### Error handling
 
