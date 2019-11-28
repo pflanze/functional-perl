@@ -164,6 +164,8 @@ Alternative Scalar::Defer?
 
 L<FP::TransparentLazy>
 
+L<FP::Mixin::Utils> -- Lazy implements this as a fallback (lower priority than forcing the promise and finding the method on the result)
+
 =head1 NOTE
 
 This is alpha software! Read the status section in the package README
@@ -181,6 +183,7 @@ package FP::Lazy;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Carp;
+use FP::Mixin::Utils;
 
 
 our $debug= $ENV{DEBUG_FP_LAZY} ? 1 : '';
@@ -325,16 +328,13 @@ package FP::Lazy::AnyPromise {
         my $method=
           ($methodname=~ /^stream_/ ? UNIVERSAL::can($v, $methodname)
            : UNIVERSAL::can($v, "stream_$methodname")
-             // UNIVERSAL::can($v, $methodname));
+           // UNIVERSAL::can($v, $methodname)
+           // UNIVERSAL::can("FP::Mixin::Utils", $methodname));
         if ($method) {
             # can't change @_ or it would break 'env clearing' ability
             # of the method. Thus assign to $_[0], which will effect
             # our env, too, but so what? XX still somewhat bad.
             $_[0]= $v; goto &$method;
-        } elsif ($methodname eq "F") {
-            # utility for repl
-            require FP::Stream;
-            FP::Stream::F($v)
         } else {
             # XX imitate perl's ~exact error message?
             Carp::croak "no method '$methodname' found for object: $v";
