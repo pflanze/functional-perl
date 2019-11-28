@@ -1,6 +1,20 @@
 my $MIN_PERL_VERSION;
 BEGIN {
-    $MIN_PERL_VERSION= 5.014002;
+    # * Succeed:
+    # 5.18.1 http://matrix.cpantesters.org/?dist=FunctionalPerl%200.72.13;os=linux;perl=5.18.1;reports=1 http://www.cpantesters.org/cpan/report/e57320a4-10db-11ea-8681-47711f24ea8f
+    #
+    # * Failed test 'at lib/FP/Abstract/Sequence/t.pm line 133'
+    # 5.16.3 http://www.cpantesters.org/cpan/report/1342cff4-116b-11ea-8a8b-67481f24ea8f http://www.cpantesters.org/cpan/report/cf807ac8-10e8-11ea-946b-116a1f24ea8f http://www.cpantesters.org/cpan/report/ff1b318e-10d8-11ea-80e7-b93663a9c918 http://www.cpantesters.org/cpan/report/25f6f618-1010-11ea-80e7-b93663a9c918
+    # 5.14.4 (0.72.11) http://www.cpantesters.org/cpan/report/0619cd96-116b-11ea-8a8b-67481f24ea8f
+    # 5.14.2
+    #
+    # * Failed test at t/repl.t line 137.
+    # 5.16.3 http://www.cpantesters.org/cpan/report/15220aae-1091-11ea-ac3f-09121f24ea8f
+
+    # Let's try 5.16.4 to see if there are versions below 5.17.0 that
+    # work
+    $MIN_PERL_VERSION= 5.016004;
+    # 5.17.0 is older than 5.16.1!
     eval "use $MIN_PERL_VERSION; 1" || die $@;
 }
 use ExtUtils::MakeMaker;
