@@ -13,6 +13,8 @@ FunctionalPerl::TailExpand
 
 =head1 SYNOPSIS
 
+=for test ignore
+
     use lib "./meta";
     use FunctionalPerl::TailExpand;
     use FunctionalPerl::Htmlgen::Nav; # or whatever other modules use tail
