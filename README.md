@@ -3,7 +3,7 @@ properly formatted versions of these documents.
 
 ---
 
-# Functional programming on Perl
+# Functional programming in Perl
 
 This project aims to make it easier to reduce the number of places in
 Perl programs where side effects are being used, by providing
