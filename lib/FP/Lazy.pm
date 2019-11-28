@@ -180,6 +180,9 @@ package FP::Lazy;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+use Carp;
+
+
 our $debug= $ENV{DEBUG_FP_LAZY} ? 1 : '';
 
 # A promise is an array with two fields:
@@ -287,7 +290,7 @@ sub overloads {
         my $ctx= $_;
         $ctx=> sub {
             $allow_access ? $_[0] :
-                die "non-auto-forcing promise accessed via $ctx operation"
+                Carp::croak "non-auto-forcing promise accessed via $ctx operation"
         }
       }
       ($with_application_overload ? ("&{}") : ()),
@@ -330,7 +333,7 @@ package FP::Lazy::AnyPromise {
             $_[0]= $v; goto &$method;
         } else {
             # XX imitate perl's ~exact error message?
-            die "no method '$methodname' found for object: $v";
+            Carp::croak "no method '$methodname' found for object: $v";
         }
     }
 
