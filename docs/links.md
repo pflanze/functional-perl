@@ -20,17 +20,21 @@ Note: most of these links are from 2015 and 2016. Please submit new ones if you'
 
 ## Functional programming in X
 
-* [Professor Frisby's Mostly Adequate Guide to Functional Programming (in javascript)](https://github.com/DrBoolean/mostly-adequate-guide)
-  ([HN](https://news.ycombinator.com/item?id=9884616)).
-  Also see:
+* JavaScript:
 
-    * [ES6 Tail Call Optimization Explained](http://benignbemine.github.io/2015/07/19/es6-tail-calls/)
-    * [Trampolines in JavaScript](http://raganwald.com/2013/03/28/trampolines-in-javascript.html)
-        * (also [Paste from holmberd](http://paste.ubuntu.com/ 24568118/))
-    * [lemonad](http://fogus.github.io/lemonad/)
-    * [Rambda](http://ramdajs.com/)
-        * [Introducing Ramda](http://buzzdecafe.github.io/code/2014/05/16/introducing-ramda) <small>*" Ramda includes all of the favorite list-manipulation functions you expect, e.g. map, filter, reduce, find, etc. But Ramda is significantly different from libraries like Underscore and Lodash. ..."*</small>
-    * [All About Recursion, PTC, TCO and STC in JavaScript](http://lucasfcosta.com/2017/05/08/All-About-Recursion-PTC-TCO-and-STC-in-JavaScript.html)
+    * [Professor Frisby's Mostly Adequate Guide to Functional Programming (in javascript)](https://github.com/DrBoolean/mostly-adequate-guide)
+      ([HN](https://news.ycombinator.com/item?id=9884616)).
+      Also see:
+
+        * [ES6 Tail Call Optimization Explained](http://benignbemine.github.io/2015/07/19/es6-tail-calls/)
+        * [Trampolines in JavaScript](http://raganwald.com/2013/03/28/trampolines-in-javascript.html)
+            * (also [Paste from holmberd](http://paste.ubuntu.com/ 24568118/))
+        * [lemonad](http://fogus.github.io/lemonad/)
+        * [Rambda](http://ramdajs.com/)
+            * [Introducing Ramda](http://buzzdecafe.github.io/code/2014/05/16/introducing-ramda) <small>*" Ramda includes all of the favorite list-manipulation functions you expect, e.g. map, filter, reduce, find, etc. But Ramda is significantly different from libraries like Underscore and Lodash. ..."*</small>
+        * [All About Recursion, PTC, TCO and STC in JavaScript](http://lucasfcosta.com/2017/05/08/All-About-Recursion-PTC-TCO-and-STC-in-JavaScript.html)
+
+    * [Lodash](https://lodash.com/), [lodash/fp](https://github.com/lodash/lodash/wiki/FP-Guide)
 
 * Python:
 
