@@ -344,6 +344,8 @@ package FP::Lazy::AnyPromise {
     # should really have a maybe_ prefix, but since it's for debugging
     # purposes only (and in that case also likely always returns a
     # value) and we like short names for that, leave it at this, ok?
+    # XXX avoid spamming with such a short name; use FP_Lazy_bt [or
+    # de-priorize it like the FP::Mixin::Utils stuff?]
     sub bt {
         my $s=shift;
         $$s[2]
