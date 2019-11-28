@@ -69,7 +69,7 @@ package FP::Abstract::Equal;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-sub fp_interface_method_names {
+sub FP_Interface__method_names {
     ("FP_Equal_equal")
 }
 

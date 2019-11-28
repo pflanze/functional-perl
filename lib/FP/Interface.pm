@@ -17,7 +17,7 @@ Also see L<FP::Interfaces>.
 
  {
      package FP::Abstract::Sequence;
-     sub fp_interface_method_names {
+     sub FP_Interface__method_names {
          qw(fold)
      }
  }
@@ -25,9 +25,9 @@ Also see L<FP::Interfaces>.
  {
      package FP::Abstract::ExtendedSequence;
      use base qw(FP::Abstract::Sequence); 
-     sub fp_interface_method_names {
+     sub FP_Interface__method_names {
          my $class= shift;
-         (qw(sum), $class->SUPER::fp_interface_method_names)
+         (qw(sum), $class->SUPER::FP_Interface__method_names)
      }
  }
 
@@ -94,7 +94,7 @@ sub require_package ($) {
 sub package_check_possible_interface ($$) {
     my ($caller, $possible_interface_package)= @_;
     if (my $m= UNIVERSAL::can($possible_interface_package,
-                              "fp_interface_method_names")) {
+                              "FP_Interface__method_names")) {
         my @missing;
         for my $method (&$m($possible_interface_package)) {
             unless (UNIVERSAL::can($caller, $method)) {
@@ -119,7 +119,7 @@ sub implemented_with_caller {
     no strict 'refs';
     push @{"${caller_package}::ISA"}, $interface;
     package_check_possible_interface($caller_package, $interface)
-        // die "'$interface' does not have a 'fp_interface_method_names' method hence is not an interface at $caller_file line $caller_line.\n";
+        // die "'$interface' does not have a 'FP_Interface__method_names' method hence is not an interface at $caller_file line $caller_line.\n";
 }
 
 # called fully qualified, i.e. FP::Interface::implemented (to avoid

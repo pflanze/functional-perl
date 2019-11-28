@@ -31,7 +31,7 @@ purpose is:
 
 Point (2) is implemented by `FP::Struct`: when defining a class via
 `FP::Struct`, each given parent class is checked for the
-implementation of a method `fp_interface_method_names` via
+implementation of a method `FP_Interface__method_names` via
 `can()`. This method, if present, is supposed to ignore arguments and
 return a list of the names of the set of methods that is required to
 implement the interface.  This method is called once at load time of
@@ -66,11 +66,11 @@ package FP::Abstract::Interface;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-sub fp_interface_method_names {
+sub FP_Interface__method_names {
     my $class= shift;
     # If we're extending another interface (not the case here though),
     # we need to merge its interface definition with ours:
-    ((), $class->SUPER::fp_interface_method_names)
+    ((), $class->SUPER::FP_Interface__method_names)
 }
 
 1

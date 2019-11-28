@@ -34,7 +34,7 @@ FP::Abstract::Sequence - functional sequence protocol
                   {3=>4})->map(*is_sequence),
              list(1,1,1,1,1,0,0,0);
 
-    my $ns= purearray(FP::Abstract::Sequence->fp_interface_method_names);
+    my $ns= purearray(FP::Abstract::Sequence->FP_Interface__method_names);
     #  The methods you can count on being supported by sequences.
 
     is_equal $ns->sort->take(5),
@@ -71,7 +71,7 @@ use FP::Predicates qw(complement);
 
 use Chj::NamespaceCleanAbove;
 
-sub fp_interface_method_names {
+sub FP_Interface__method_names {
     my $class= shift;
     (# base definition in this file hence not necessary to specify
      # here except for the sake of safety in case the base implementation is
@@ -135,7 +135,7 @@ sub fp_interface_method_names {
      stream
      sort
      ),
-     # $class->SUPER::fp_interface_method_names
+     # $class->SUPER::FP_Interface__method_names
     )
 }
 #XXX different protocol for random access ones:

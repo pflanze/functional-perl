@@ -70,7 +70,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use base qw(FP::Mixin::Utils);
 
-sub fp_interface_method_names {
+sub FP_Interface__method_names {
     ("FP_Show_show")
 }
 
