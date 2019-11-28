@@ -169,8 +169,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::NamespaceClean;
 use FP::Show qw(show);
-use FP::Interfaces qw(require_package
-                      package_check_possible_interface);
+use FP::Interface qw(require_package package_check_possible_interface);
 
 
 sub all_fields {

@@ -136,6 +136,7 @@ lib/FP/Git/Repository.pm
 lib/FP/Hash.pm
 lib/FP/HashSet.pm
 lib/FP/IOStream.pm
+lib/FP/Interface.pm
 lib/FP/Interfaces.pm
 lib/FP/Lazy.pm
 lib/FP/Lazy/t.pm
