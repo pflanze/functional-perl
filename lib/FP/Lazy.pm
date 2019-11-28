@@ -21,6 +21,11 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
     };
     like $@, qr/division by zero/;
 
+    eval {
+        $a + 2
+    };
+    like $@, qr/non-auto-forcing promise accessed via 0\+ operation/;
+
     my $count= 0;
     my $b = lazy { $count++; 1 / 2 };
     is is_promise($b), 1;
@@ -208,7 +213,7 @@ sub lazyLight (&) {
 }
 
 sub is_promise ($) {
-    length ref $_[0] ? UNIVERSAL::isa ($_[0], "FP::Lazy::Promise") : ''
+    length ref $_[0] ? UNIVERSAL::isa ($_[0], "FP::Lazy::AnyPromise") : ''
 }
 
 sub delay (&);  *delay = \&lazy;
@@ -271,7 +276,29 @@ sub FORCE {
 }
 
 
-package FP::Lazy::Promise {
+# `use overload` arguments, to prevent from accidental use as if it
+# were FP::TransparentLazy
+
+our $allow_access= 0; # true 'turns off' the overload
+
+sub overloads {
+    my ($with_application_overload)= @_;
+    ((map {
+        my $ctx= $_;
+        $ctx=> sub {
+            $allow_access ? $_[0] :
+                die "non-auto-forcing promise accessed via $ctx operation"
+        }
+      }
+      ($with_application_overload ? ("&{}") : ()),
+      # (XX can't overload '@{}'?)
+      qw(0+ "" bool qr ${} %{} *{})
+     ),
+     fallback=> 1
+    )
+}
+
+package FP::Lazy::AnyPromise {
 
     *force= *FP::Lazy::force;
 
@@ -315,6 +342,13 @@ package FP::Lazy::Promise {
         $$s[2]
     }
 
+}
+
+package FP::Lazy::Promise {
+    our @ISA= 'FP::Lazy::AnyPromise';
+
+    use overload FP::Lazy::overloads(1);
+
     sub FP_Show_show {
         my ($s,$show)=@_;
         # do not force unforced promises
@@ -326,8 +360,11 @@ package FP::Lazy::Promise {
     }
 }
 
+
 package FP::Lazy::PromiseLight {
-    our @ISA= qw(FP::Lazy::Promise);
+    our @ISA= qw(FP::Lazy::AnyPromise);
+
+    use overload FP::Lazy::overloads(0);
 
     sub FP_Show_show {
         my ($s,$show)=@_;
