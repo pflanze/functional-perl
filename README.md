@@ -24,9 +24,17 @@ difficult.
 
 <with_toc>
 
-## Teaser
+## Examples
 
-This is an example of the kind of code this project aims to make possible:
+Work more comfortably with sequences:
+
+    use Test::More;
+    use FunctionalPerl ":all"; # includes autoboxing
+    
+    is [2, 3, 4]->reduce(\&add), 9; # the ->sum method does the same
+    is [2, 3, 4]->map(\&square)->sum, 29;
+
+Make a data structure that is only evaluated as needed (lazily):
 
     # Generate functions which construct PXML objects (objects that
     # can be serialized to XML) with the names given her as the XML
@@ -71,7 +79,8 @@ This is an example of the kind of code this project aims to make possible:
 See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
 complete script, and the [examples](examples/README.md) page for more.
 
-The above example shows the use of functions as a "template system".
+The latter example above shows the use of functions as a "template
+system".
 
 Note that the example assumes that steps have been taken so that the
 CSV file doesn't change until the serialization step has completed,
