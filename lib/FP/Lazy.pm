@@ -195,7 +195,7 @@ sub lazy (&) {
            undef,
            $debug && FP::Repl::Stack->get(1)->backtrace
           ], "FP::Lazy::Promise"
-      }
+}
 
 sub lazy_if (&$) {
     ($_[1] ?
