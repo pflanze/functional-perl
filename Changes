@@ -1,5 +1,14 @@
 Revision history for FunctionalPerl
 
+0.72.14 2019-11-28
+    - fix test failure with "Inf" vs. "inf"
+    - add FP::Mixin::Utils with a `F` utility method, added to Show
+      protocol and FP::Lazy-derived promises
+    - Makefile.PL: increase minimal Perl version to avoid Perl bugs
+    - Lazy: overload to error-describing exception to prevent
+      accidental use
+    - some docs
+
 0.72.13 2019-11-27
     - documentation improvements
     - fix for Windows
