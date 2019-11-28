@@ -331,6 +331,10 @@ package FP::Lazy::AnyPromise {
             # of the method. Thus assign to $_[0], which will effect
             # our env, too, but so what? XX still somewhat bad.
             $_[0]= $v; goto &$method;
+        } elsif ($methodname eq "F") {
+            # utility for repl
+            require FP::Stream;
+            FP::Stream::F($v)
         } else {
             # XX imitate perl's ~exact error message?
             Carp::croak "no method '$methodname' found for object: $v";
