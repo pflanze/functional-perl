@@ -58,7 +58,7 @@ use FP::Interface;
 # called fully qualified, i.e. FP::Interfaces::implemented (to avoid
 # namespace pollution in classes)
 sub implemented {
-    my $caller= caller;
+    my $caller= [caller];
     for my $interface (@_) {
         FP::Interface::implemented_with_caller($caller, $interface)
     }

@@ -114,11 +114,12 @@ sub package_check_possible_interface ($$) {
 sub implemented_with_caller {
     @_==2 or die "wrong number of arguments";
     my ($caller, $interface)= @_;
+    my ($caller_package, $caller_file, $caller_line)= @$caller;
     require_package $interface;
     no strict 'refs';
-    push @{"${caller}::ISA"}, $interface;
-    package_check_possible_interface($caller, $interface)
-        // croak "'$interface' does not have a 'fp_interface_method_names' method hence is not an interface";
+    push @{"${caller_package}::ISA"}, $interface;
+    package_check_possible_interface($caller_package, $interface)
+        // die "'$interface' does not have a 'fp_interface_method_names' method hence is not an interface at $caller_file line $caller_line.\n";
 }
 
 # called fully qualified, i.e. FP::Interface::implemented (to avoid
@@ -127,7 +128,7 @@ sub implemented {
     @_==1 or
         croak "FP::Interface::implemented: expecting 1 argument; ".
               "use FP::Interfaces (note the s) instead";
-    my $caller= caller;
+    my $caller= [caller];
     implemented_with_caller($caller, $_[0])
 }
 
