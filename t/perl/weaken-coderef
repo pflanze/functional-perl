@@ -53,7 +53,9 @@ my $start= rss;
 
 my $res;
 for (1..$N) {
+    warn "build up..\n";
     my $ns= naturals $n;
+    warn "summing..\n";
     $res= stream_sum $ns;
 }
 
