@@ -52,7 +52,9 @@ Configuration for whether to force promises
 
 =head1 SEE ALSO
 
-L<FP::Show>
+L<FP::Show> -- functions to access this protocol usefully
+
+L<FP::Mixin::Utils> -- implemented by this protocol
 
 =head1 NOTE
 
@@ -65,6 +67,8 @@ or on the L<website|http://functional-perl.org/>.
 package FP::Abstract::Show;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+use base qw(FP::Mixin::Utils);
 
 sub fp_interface_method_names {
     ("FP_Show_show")
