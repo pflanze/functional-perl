@@ -15,6 +15,8 @@ our ($mydir, $myname); BEGIN {
 }
 use lib "$mydir/../lib";
 
+use Test::Requires qw(Moo);
+
 
 # Comparison of imperative and functional approaches to some data
 # container:
