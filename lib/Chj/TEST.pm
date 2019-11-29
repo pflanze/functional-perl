@@ -142,9 +142,8 @@ sub import {
                     if ($rt=~ /pod_snippets/i) {
                         die "TEST use<$module> failed: $smallcode";
                     } else {
-                        #carp "RUN_TESTS is set and we failed to $smallcode";
                         require Test::More;
-                        Test::More::plan (skip_all=> "failed to $smallcode");
+                        Test::More::plan (skip_all=> "could not $smallcode");
                         exit 1; # necessary?
                     }
                 } else {
