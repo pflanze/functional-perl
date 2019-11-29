@@ -34,7 +34,7 @@ Work more comfortably with sequences:
     is [2, 3, 4]->reduce(\&add), 9; # the `sum` method does the same
     is [2, 3, 4]->map(\&square)->sum, 29;
 
-Make a data structure that is only evaluated as needed (lazily):
+Make some XML document:
 
     # Generate functions which construct PXML objects (objects that
     # can be serialized to XML) with the names given her as the XML
@@ -46,8 +46,9 @@ Make a data structure that is only evaluated as needed (lazily):
     is RECORD(A("hi"), B("<there>"))->string,
        '<record><a>hi</a><b>&lt;there&gt;</b></record>';
 
-    # Now create a bigger document, with its inner parts built from
-    # external inputs:
+Now create a bigger document, with its inner parts built from external
+inputs:
+
     MYEXAMPLE
       (PROTOCOL_VERSION ("0.123"),
        RECORDS
@@ -62,19 +63,18 @@ Make a data structure that is only evaluated as needed (lazily):
       # print XML document to disk
       ->xmlfile($outpath);
 
-    # Note that the MYEXAMPLE document above is built lazily:
-    # `csv_file_to_rows` returns a *lazy* list of rows, ->rest causes
-    # the first CSV row to be read and dropped and returns the
-    # remainder of the lazy list, ->map returns a new lazy list which
-    # is passed as argument to RECORDS, which returns a PXML object
-    # representing a 'records' XML element, that is then passed to
-    # MYEXAMPLE which returns a PXML object representing a 'myexample'
-    # XML element. PXML objects come with a xmlfile method which
-    # serializes the document to a file, and only while it runs, when
-    # it encounters the embedded lazy lists, it walks those evaluating
-    # the list items one at a time and dropping each item immediately
-    # after printing. This means that only one row of the CSV file
-    # needs to be held in memory at any given point.
+The `MYEXAMPLE` document above is built lazily: `csv_file_to_rows`
+returns a *lazy* list of rows, `->rest` causes the first CSV row to be
+read and dropped and returns the remainder of the lazy list, `->map`
+returns a new lazy list which is passed as argument to `RECORDS`,
+which returns a `PXML` object representing a 'records' XML element,
+that is then passed to `MYEXAMPLE` which returns a `PXML` object
+representing a 'myexample' XML element. `PXML` objects come with an
+`xmlfile` method which serializes the document to a file, and only
+while it runs, when it encounters the embedded lazy lists, it walks
+those evaluating the list items one at a time and dropping each item
+immediately after printing. This means that only one row of the CSV
+file needs to be held in memory at any given point.
 
 See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
 complete script, and the [examples](examples/README.md) page for more.
