@@ -315,7 +315,8 @@ right now.)
       [CPAN page](https://metacpan.org/pod/FunctionalPerl).
 
 * Find IRC and contact details on the [[mailing_list]] and [[contact]]
-  pages.
+  pages. Check the [[design]] page to get an idea about the design
+  principles if you'd like to write code to contribute.
 
 
 </with_toc>
