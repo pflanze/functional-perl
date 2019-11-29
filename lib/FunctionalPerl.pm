@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-FunctionalPerl - functional programming on Perl
+FunctionalPerl - functional programming in Perl
 
 =head1 SYNOPSIS
 

@@ -257,8 +257,8 @@ howto/design documents.
 
 * __Our howto and design documents__
 
-    * *[How to write functional programs on Perl 5](docs/howto.md)* is
-      describing the necessary techniques to use the functional style on
+    * *[How to write functional programs in Perl 5](docs/howto.md)* is
+      describing the necessary techniques to use the functional style in
       Perl. (Todo: this may be too difficult for someone who doesn't know
       anything about functional programming; what to do about it?)
 

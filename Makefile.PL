@@ -108,6 +108,6 @@ WriteMakefile (
 
     },
     ($] >= 5.005 ?
-      (ABSTRACT  => 'FunctionalPerl - functional programming on Perl',
+      (ABSTRACT  => 'FunctionalPerl - functional programming in Perl',
        AUTHOR         => 'Christian Jaeger <copying@christianjaeger.ch>') : ()),
 );

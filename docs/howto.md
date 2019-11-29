@@ -3,7 +3,7 @@ properly formatted versions of these documents.
 
 ---
 
-# How to write functional programs on Perl 5
+# How to write functional programs in Perl 5
 
 Perl 5 was not designed to write programs in a functional style. Yes,
 there are closures, and there are the `map` and `grep` builtins as
@@ -474,7 +474,7 @@ following:
         $s->for_each (sub { print "again: > ".$_[0]."\n" });
     }
 
-This is probably the ugliest part when programming functionally on
+This is probably the ugliest part when programming functionally in
 Perl.  Perhaps the interpreter could be changed (or a lowlevel module
 written) so that lexical variables are automatically cleared upon
 their last access (and something like @_=() is enough to clear it from

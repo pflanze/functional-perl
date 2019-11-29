@@ -54,7 +54,7 @@ my $email= "copying\@christianjaeger.ch"; # ? or ch@?
    },
   title=> fun ($filetitle) {
       ($filetitle eq "Readme" ?
-       "Functional programming on Perl"
+       "Functional programming in Perl"
        : $filetitle,
        " - functional-perl.org")
   },
