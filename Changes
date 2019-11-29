@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.15 2019-11-29
+    - documentation improvements, add functional-classes example
+    - fix test failure involving TailExpand's pod snippets
+    - rename method fp_interface_method_names ->
+      FP_Interface__method_names
+
 0.72.14 2019-11-28
     - fix test failure with "Inf" vs. "inf"
     - add FP::Mixin::Utils with a `F` utility method, added to Show
