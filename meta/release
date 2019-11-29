@@ -40,10 +40,11 @@ use Chj::xperlfunc;
 
 my ($maybe_version_argument)= @ARGV;
 
-my ($maybe_version)= $maybe_version_argument ?
-    ($maybe_version_argument=~ m/^v?(\d+\.\d+\.\d+)\z/s
-     or die "invalid version number")
-    : ();
+my ($maybe_version)= $maybe_version_argument ? do {
+    my @r= $maybe_version_argument=~ m/^v?(\d+\.\d+\.\d+)\z/s
+        or die "invalid version number";
+    @r
+} : ();
 
 sub version_inc {
     my ($v)= @_;
