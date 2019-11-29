@@ -17,10 +17,9 @@ use lib "$mydir/../lib";
 
 sub usage {
     print STDERR map{"$_\n"} @_ if @_;
-    print "$myname [vX.Y]
+    print "$myname [[v]X.Y.Z]
 
-  Make a new functional-perl release, or, without release number,
-  simply regenerate the website.
+  Prepare a new functional-perl release, setting the version number to the given
 
 ";
 exit (@_ ? 1 : 0);
@@ -38,28 +37,72 @@ use Chj::xopen qw(xopen_read);
 use Chj::xtmpfile;
 use Chj::xperlfunc;
 
-if (@ARGV) {
-    my ($tag)=@ARGV;
 
-    my ($version)= $tag=~ m/^v(\d.*)\z/s
-      or die "tag must start with 'v' and a digit";
+my ($maybe_version_argument)= @ARGV;
 
-    my $path= "lib/FP.pm";
+my ($maybe_version)= $maybe_version_argument ?
+    ($maybe_version_argument=~ m/^v?(\d+\.\d+\.\d+)\z/s
+     or die "invalid version number")
+    : ();
+
+sub version_inc {
+    my ($v)= @_;
+    my @v= split /\./, $v;
+    $v[-1]= $v[-1] + 1;
+    join '.', @v
+}
+
+xxsystem "meta/update-manifest";
+
+xxsystem "cj-git-status-is-clean";
+
+
+my $version;
+{
+    my $path= "lib/FunctionalPerl.pm";
 
     my $cnt= xopen_read ($path)->xcontent;
-    $cnt=~ s|(\$VERSION\s*=\s*)"[^"]+"|$1"$version"|s
+
+    $cnt=~ s|(\$VERSION\s*=\s*)"([^"]+)"|
+      $1 . '"' . ($version= ($maybe_version // version_inc($2))) . '"'|sxe
       or die "could not replace \$VERSION in $path";
 
     my $f= xtmpfile $path;
     $f->xprint($cnt);
     $f->xclose;
     $f->xputback;
-
-    xxsystem "git", "commit", "-a", "-m", "release $tag";
-    xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
 }
 
-xxsystem "website/gen", "--trap";
+print "Releasing version $version...";
 
-print "OK, now push to github and sync website\n";
+{
+    use FP::IOStream qw(xfile_replace_lines);
+    use FP::Weak 'Keep';
+    use FP::List;
+    use Chj::xperlfunc 'xlocaltime';
+
+    xfile_replace_lines "Changes", sub {
+        my ($lines)= @_;
+        my $lt= xlocaltime;
+        my $date= join("-", $lt->Year, $lt->Mon, $lt->mday);
+        Keep($lines)->take(2)->append
+            (cons "$version $date\n    - \n\n",
+             Keep($lines)->drop(2))
+    };
+
+}
+
+xxsystem "e", "Changes";
+
+xxsystem "git", "commit", "-a", "-m", "Release $version";
+#xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
+
+#xxsystem "website/gen", "--trap";
+
+xxsystem "perl", "Makefile.PL";
+xxsystem "make", "test";
+xxsystem "website/gen", "--trap";
+xxsystem "make", "dist";
+
+print "OK, ready to go.\n";
 
