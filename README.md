@@ -76,22 +76,54 @@ those evaluating the list items one at a time and dropping each item
 immediately after printing. This means that only one row of the CSV
 file needs to be held in memory at any given point.
 
-Note that the example assumes that steps have been taken so that the
-CSV file doesn't change until the serialization step has completed,
-otherwise functional purity is broken; the responsibility to ensure
-this assumption is left to the programmer (see
+<small>(Note that the example still assumes that steps have been taken
+so that the CSV file doesn't change until the serialization step has
+completed, otherwise functional purity is broken; the responsibility
+to ensure this assumption is left to the programmer (see
 [[howto#Pure_functions_versus_I/O_and_other_side-effects]] for more
-details about this).
+details about this).)</small>
+
+The core idea of functional programming is the avoidance of
+mutation. In the absense of mutation, a value, once calculated, stays
+the same, it is immutable. For example numbers: once a number is
+calculated you can't modify it in place; if you have multiple
+variables holding the same number, you can't (on purpose or
+accidentally) change them both at the same time:
+
+    my $x= 100; 
+    my $y= $x;
+    $x++;
+    is $y, 100; # still true, the number itself didn't change, only the variable
+
+The same isn't true for most other values in Perl; they let you modify
+their internal contents without giving you a new
+reference. [Here's an example](examples/functional-classes) with a
+simple object to show the difference.
+
+Code that doesn't mutate (pure functions or methods) can be combined
+easily into new functions, which are still pure and thus can be
+further combined. `compose` takes any number of function references
+(coderefs) and returns a new function (coderef) that applies those
+functions to its argument in turn:
+
+    # The function that adds all of its arguments together then
+    # squares the result:
+    *square_of_the_sum = compose \&square, \&add;
+    is square_of_the_sum(10,20,2), 1024;
+
+    # The same but takes the input items from a list instead of
+    # multiple function arguments:
+    *square_of_the_sequence_sum= compose(\&square, the_method "sum");
+    is square_of_the_sequence_sum(list(2, 3)), 25;
+
+Functional programming matters more in the large--with small programs
+it's easy to keep all places where mutation happens in the head,
+wheras with large ones the interactions can become unwieldy.
+
+See the [examples](examples/README.md) page for more examples.
 
 If you'd like to see a practical step-by-step introduction, read the
 [[intro]].
-
-Even if you're not interested in lazy evaluation like in the above,
-this project may help you write parts of programs in a purely
-functional way, and benefit from the decreased coupling and improved
-testability and debuggability that this brings.
-
-See the [examples](examples/README.md) page for more examples.
 
 
 ## Status: alpha

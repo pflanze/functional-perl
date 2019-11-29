@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+
+# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+
+use strict; use warnings; use warnings FATAL => 'uninitialized';
+
+# find modules from functional-perl working directory (non-installed)
+use Cwd 'abs_path';
+our ($mydir, $myname); BEGIN {
+    my $location= (-l $0) ? abs_path ($0) : $0;
+    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+use lib "$mydir/../lib";
+
+
+# Comparison of imperative and functional approaches to some data
+# container:
+
+package ImperativePerson {
+    use Moo;
+
+    has name=> is=> 'ro';
+    has todo_items=> is => 'ro'; # the array itself is the mutable part
+
+    sub add_todo {
+        my ($self, $item)= @_;
+        push @{$self->{todo_items}}, $item;
+    }
+    
+}
+
+package FunctionalPerson {
+
+    use FP::List;
+
+    use FP::Struct ["name", "todo_items"];
+
+    sub add_todo {
+        my ($self, $item)= @_;
+        $self->todo_items_update(sub { cons $item, $_[0] })
+    }
+    
+    _END_
+}
+
+use Test::More;
+
+sub testImperative {
+    my $p= ImperativePerson->new(name=> "Chris", todo_items=> []);
+    $p->add_todo ("buy bread");
+    $p->add_todo ("walk dog");
+    is_deeply $p->todo_items, ['buy bread', 'walk dog'];
+}
+
+use FP::Equal qw(is_equal); # using FP::Equal's `equal` but still
+                            # reporting via Test::More
+use FP::List;
+
+sub testFunctional {
+    my $p= FunctionalPerson->new("Chris", null);
+    my $p2= $p->add_todo ("buy bread");
+    my $p3= $p2->add_todo ("walk dog");
+    is_equal $p3->todo_items, list('walk dog', 'buy bread');
+    is_equal $p2->todo_items, list('buy bread');
+}
+
+
+if ($ENV{RUN_TESTS}) {
+    testImperative;
+    testFunctional;
+    done_testing;
+} else {
+    require FunctionalPerl; import FunctionalPerl ":repl";
+    repl();
+}
