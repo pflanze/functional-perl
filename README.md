@@ -100,19 +100,14 @@ testability and debuggability that this brings.
 
 ## Status: alpha
 
-This project is in an alpha status because:
+This project is in alpha status because:
 
-* There are some remaining issues which appear to be in the perl
-  interpreter that, in some cases, lead to memory being retained for
-  longer than necessary when using lazy lists. This has to be examined
-  and tested extensively, or a workaround (delete value out of promise
-  instead of deleting promise from its holder?) to be implemented.
-
-* Also in the area of lazy lists, the current need in some situations
-  to use `Keep` and `weaken` to guide deallocation of list elements is
-  unfortunate; ideally the perl interpreter is extended with a pragma
-  that, when enabled, makes it automatically let go of unused list
-  elements (lexical lifetimes).
+* Handling of streams (lazy lists) is currently unergonomic since the
+  user has to specify explicitly whether a stream is to be retained
+  (using of `Keep` function) or to be let go (default). Ideally the
+  perl interpreter is extended with a pragma that, when enabled, makes
+  it automatically keep or let go of a value, depending on whether a
+  variable is still used further down (lexical analysis).
 
 * The project is currently using some modules which the author
   developed a long time ago and could be replaced with other existing
