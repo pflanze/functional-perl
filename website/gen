@@ -26,9 +26,5 @@ my $prefix= $ENV{SUB_CALL_TAIL} ? "" : ".";
 
 my $gen= "../${prefix}htmlgen/gen";
 
-if ( -e "$gen" ) {
-    exec $gen, $configpath, $inbase, $outbase, @ARGV
-} else {
-    die "Missing '$gen', run 'meta/tail-expand' (or simply 'make test') first"
-}
-
+exec $gen, $configpath, $inbase, $outbase, @ARGV
+    or die "possibly missing '$gen', run 'meta/tail-expand' (or simply 'make test') first";
