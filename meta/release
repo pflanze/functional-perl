@@ -98,8 +98,6 @@ xxsystem "e", "Changes";
 xxsystem "git", "commit", "-a", "-m", "Release $version";
 #xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
 
-#xxsystem "website/gen", "--trap";
-
 xxsystem "perl", "Makefile.PL";
 xxsystem "make", "test";
 xxsystem "website/gen", "--trap";
