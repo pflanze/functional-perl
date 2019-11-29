@@ -29,9 +29,9 @@ difficult.
 Work more comfortably with sequences:
 
     use Test::More;
-    use FunctionalPerl ":all"; # includes autoboxing
+    use FunctionalPerl ":all"; # includes autoboxing (methods on arrays work)
     
-    is [2, 3, 4]->reduce(\&add), 9; # the ->sum method does the same
+    is [2, 3, 4]->reduce(\&add), 9; # the `sum` method does the same
     is [2, 3, 4]->map(\&square)->sum, 29;
 
 Make a data structure that is only evaluated as needed (lazily):
