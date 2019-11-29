@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -66,7 +66,6 @@ our ($configpath, $inbase, $outbase)= @ARGV;
 our $user_config= require $configpath;
 
 use Chj::Backtrace;
-use FP::Repl::Trap;#
 use Hash::Util 'lock_hash';
 use Chj::xperlfunc qw(basename dirname);
 use Chj::xIOUtil qw(xgetfile_utf8 xcopyfile);
@@ -94,6 +93,8 @@ use FP::Lazy;
 use FunctionalPerl::Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
                           mediawiki_rexpand);
 use PXML::Preserialize qw(pxmlpre);
+
+require FP::Repl::Trap if $opt_trap;
 
 
 our $config = hashset_union ($user_config, $default_config);
@@ -606,13 +607,9 @@ fun main () {
 
 perhaps_run_tests __PACKAGE__
   or do {
-      if ($opt_trap) {
-          require FP::Repl::WithRepl; &FP::Repl::WithRepl::push_withrepl (0);
-      }
-
       $opt_repl ? do {
           require FP::Repl;
-          require FP::Repl::WithRepl; &FP::Repl::WithRepl::push_withrepl (0);
+          require FP::Repl::Trap;
           FP::Repl::repl();
       } : main;
 };
