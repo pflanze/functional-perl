@@ -221,6 +221,7 @@ t/functional_XML-test.expected
 t/functional_XML-test.t
 t/htmlgen.t
 t/intro-basics.t
+t/maintainer/perhaps
 t/perl-goto-leak.t
 t/perl-weaken-coderef-correctness.t
 t/perl-weaken-coderef.t
