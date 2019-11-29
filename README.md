@@ -76,12 +76,6 @@ those evaluating the list items one at a time and dropping each item
 immediately after printing. This means that only one row of the CSV
 file needs to be held in memory at any given point.
 
-See [examples/csv_to_xml_short](examples/csv_to_xml_short) for the
-complete script, and the [examples](examples/README.md) page for more.
-
-The latter example above shows the use of functions as a "template
-system".
-
 Note that the example assumes that steps have been taken so that the
 CSV file doesn't change until the serialization step has completed,
 otherwise functional purity is broken; the responsibility to ensure
@@ -96,6 +90,8 @@ Even if you're not interested in lazy evaluation like in the above,
 this project may help you write parts of programs in a purely
 functional way, and benefit from the decreased coupling and improved
 testability and debuggability that this brings.
+
+See the [examples](examples/README.md) page for more examples.
 
 
 ## Status: alpha
