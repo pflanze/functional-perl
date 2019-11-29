@@ -43,8 +43,8 @@ Make a data structure that is only evaluated as needed (lazily):
     # The functions are generated in all-uppercase so as to minimize
     # the chances for naming conflicts and to let them stand apart.
 
-    print RECORD(A("hi"), B("there"))->string; 
-    # prints: <record><a>hi</a><b>there</b></record>
+    is RECORD(A("hi"), B("<there>"))->string,
+       '<record><a>hi</a><b>&lt;there&gt;</b></record>';
 
     # Now create a bigger document, with its inner parts built from
     # external inputs:
