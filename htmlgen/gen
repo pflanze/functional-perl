@@ -206,10 +206,9 @@ TEST { HTML( process_body  ([P("Hello"),
                               H1 ("for one"),
                               H2 ("more one"),
                               TABLE(TR
-                                    TD
-                                    P ("blah"),
-                                    H1 ("sub two"),
-                                    DIV ("bla")),
+                                    TD P ("blah")
+                                    ,  H1 ("sub two")
+                                    ,  DIV ("bla")),
                              ]]))->string }
   '<html><p>Hello</p>'.
   '<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#for_one">1. for one</a><li><dir class="toc"><a href="#more_one">1.1. more one</a></dir></li></dir></li><li><dir class="toc"><a href="#sub_two">2. sub two</a></dir></li></dir></div>'.
