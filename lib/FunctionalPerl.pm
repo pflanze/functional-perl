@@ -145,6 +145,7 @@ our $export_desc=
     ":transparentlazy"=> [qw(FP::TransparentLazy :stream FP::Weak)],
     ":failure"=> [qw(FP::Failure)],
 
+    ":doc"=> [qw(FP::Docstring)],
     ":show"=> [qw(FP::Show)],
     ":equal"=> [qw(FP::Equal)],
     ":debug"=> [qw(:show :equal Chj::Backtrace Chj::time_this Chj::pp)],
@@ -183,7 +184,7 @@ our $export_desc=
     ":path"=> [qw(FP::Path)],
 
     ":most"=> [qw(:lazy :datastructures :equal :show :functions :failure :debug
-                  :autobox)],
+                  :autobox :doc)],
     ":rare"=> [qw(:csv :path :git :dbi  :trampoline :fix)],
     ":all"=> [qw(:most :rare :io :dev)],
    };
