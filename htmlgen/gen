@@ -223,9 +223,51 @@ TEST { HTML( process_body  ([P("Hello"),
 
 
 
+
+# Note: the cost range feature is not used on the Functional Perl
+# website. It could be used to connect issues to a cost for budgeting.
+
+{
+    package FunctionalPerl::Htmlgen::_::Genfilestate;
+    use FP::Struct [qw(filesinfo
+                       groupedfiles
+                       nonbugfiles
+                       costranges)];
+
+    # it's ugly to use mutation here.
+    method set_costrange ($path0,$maybe_costrange) {
+        $$self{costranges}{$path0}= $maybe_costrange;
+    }
+    method costrange ($path0) {
+        $$self{costranges}{$path0}
+    }
+
+    _END_
+}
+
+
+
 {
     package FunctionalPerl::Htmlgen::_::Filesinfo;
     use FP::Hash "hash_perhaps_ref";
+    use FP::Array qw(array_to_hash_group_by);
+    use FunctionalPerl::Htmlgen::PathUtil qw(path_add path_diff path0);
+    use FP::PureArray;
+    use FP::Docstring;
+
+    fun groupkey ($path) {
+        __  'a string key for grouping this path amongst other files, to '.
+            'process them in an order that satisfies dependency on costranges';
+        my $p0= path0 $path;
+        if ($p0=~ m|^bugs/|) {
+            "bugs"
+        } elsif ($p0 =~ m|^docs/bugs.*\.md$|) {
+            "buglist"
+        } else {
+            "normal"
+        }
+    }
+
     use FP::Struct [qw(files
                        filename_to_path0
                        all_path0_exists
@@ -260,6 +302,23 @@ TEST { HTML( process_body  ([P("Hello"),
     method all_path0_used_inc ($path0) {
         $$self{all_path0_used}{$path0}++
     }
+
+    method new_genfilestate () {
+        my $groupedfiles= array_to_hash_group_by $self->files, \&groupkey;
+
+        my $nonbugfiles= purearray( @{$$groupedfiles{normal}},
+                                    @{$$groupedfiles{buglist}||[]} );
+
+        my $costranges={};
+        # path0 -> costrange-string; filled when processing non-buglist groups
+
+        FunctionalPerl::Htmlgen::_::Genfilestate->new
+            ($self, # just so as to bundle it up, too, ugly?
+             $groupedfiles,
+             $nonbugfiles,
+             $costranges)
+    }
+
     _END_
 }
 
@@ -308,7 +367,6 @@ fun get_filesinfo () {
 
 # Navigation:
 
-use FP::PureArray;
 use FP::Equal qw(equal);
 
 fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
@@ -342,56 +400,6 @@ sub nav {
 }
 # /for access from main:: by the code in the configuration file.
 
-
-# Note: the cost range feature is not used on the Functional Perl
-# website. It could be used to connect issues to a cost for budgeting.
-
-fun groupkey ($path) {
-    __  'a string key for grouping this path amongst other files, to '.
-        'process them in an order that satisfies dependency on costranges';
-    my $p0= path0 $path;
-    if ($p0=~ m|^bugs/|) {
-        "bugs"
-    } elsif ($p0 =~ m|^docs/bugs.*\.md$|) {
-        "buglist"
-    } else {
-        "normal"
-    }
-}
-
-{
-    package FunctionalPerl::Htmlgen::_::Genfilestate;
-    use FP::Struct [qw(filesinfo
-                       groupedfiles
-                       nonbugfiles
-                       costranges)];
-
-    # it's ugly to use mutation here.
-    method set_costrange ($path0,$maybe_costrange) {
-        $$self{costranges}{$path0}= $maybe_costrange;
-    }
-    method costrange ($path0) {
-        $$self{costranges}{$path0}
-    }
-
-    _END_
-}
-
-fun get_genfilestate ($filesinfo) {
-    my $groupedfiles= array_to_hash_group_by $filesinfo->files, \&groupkey;
-
-    my $nonbugfiles= purearray( @{$$groupedfiles{normal}},
-                                @{$$groupedfiles{buglist}||[]} );
-
-    my $costranges={};
-    # path0 -> costrange-string; filled when processing non-buglist groups
-
-    FunctionalPerl::Htmlgen::_::Genfilestate->new
-        ($filesinfo, # just so as to bundle it up, too, ugly?
-         $groupedfiles,
-         $nonbugfiles,
-         $costranges)
-}
 
 our $HEAD= pxmlpre 3, fun ($title, $csspath, $user_additions) {
     HEAD (TITLE ($title),
@@ -576,7 +584,7 @@ fun genfile ($path, $groupname, $genfilestate) {
 
 
 fun genfiles ($filesinfo) {
-    my $genfilestate= get_genfilestate ($filesinfo);
+    my $genfilestate= $filesinfo->new_genfilestate;
     for my $groupname (qw(bugs normal buglist)) {
         for (@{$genfilestate->groupedfiles->{$groupname}}) {
             genfile $_,$groupname,$genfilestate
