@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -13,7 +13,29 @@ FunctionalPerl::Htmlgen::MarkdownPlus
 
 =head1 SYNOPSIS
 
+    use FunctionalPerl::Htmlgen::MarkdownPlus qw(markdownplus_parse);
+    use PXML::XHTML qw(BODY);
+
+    my $mediawikitoken= rand;
+    # passed to mediawiki_prepare from FunctionalPerl::Htmlgen::Mediawiki
+    my ($h1,$body1)= markdownplus_parse(
+          "# Hi\n\nHello [World](http://world).\n", # markdownplusstr
+          "Hi too", # alternative_title
+          $mediawikitoken);
+    is $h1->string, '<h1>Hi</h1>';
+    is BODY($body1)->string,
+       '<body><p>Hello <a href="http://world">World</a>.</p></body>';
+
+
 =head1 DESCRIPTION
+
+MarkdownPlus supports what L<Text::Markdown> supports plus:
+
+C<[[foo]]> (mediawiki style) document link syntax (via
+L<FunctionalPerl::Htmlgen::Mediawiki>).
+
+C<<with_toc>...</with_toc>> tags to span across text that should
+generate a table of contents.
 
 
 =head1 NOTE
@@ -55,13 +77,13 @@ fun pxml_body_split_h1 ($body) {
     }
 }
 
-TEST{ [pxml_body_split_h1 ["foo"]] }
+TEST { [pxml_body_split_h1 ["foo"]] }
   [ undef, ['foo']];
 
-TEST{ [pxml_body_split_h1 [H1 ("x"), "foo"]]->[0] }
+TEST { [pxml_body_split_h1 [H1 ("x"), "foo"]]->[0] }
   H1 ("x");
 
-TEST{
+TEST {
     my ($h1,$rest)=
       pxml_body_split_h1 [H1 ("x", "y"), "foo", B ("bar")];
     [ $h1->string, BODY($rest)->string ]
@@ -72,8 +94,7 @@ TEST{
 fun markdownplus_parse ($str, $alternative_title, $mediawikitoken) {
     # -> ($h1,$body1)
 
-    my ($str1, $table)=
-      mediawiki_prepare ($str, $mediawikitoken);
+    my ($str1, $table)= mediawiki_prepare ($str, $mediawikitoken);
 
     my $htmlstr= markdown ($str1);
 
@@ -88,9 +109,10 @@ fun markdownplus_parse ($str, $alternative_title, $mediawikitoken) {
 
     my $body= $bodyelement->body;
     my ($maybe_h1, $rest)= pxml_body_split_h1 ($body);
-    ((defined $maybe_h1 ? ($maybe_h1, $rest)
-      : (H1(force ($alternative_title)), $body)),
-     $table)
+    ((defined $maybe_h1
+      ? ($maybe_h1, $rest)
+      : (H1(force ($alternative_title)), $body))
+     , $table)
 }
 
 1
