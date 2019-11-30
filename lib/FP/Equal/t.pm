@@ -96,11 +96,21 @@ TEST{tequals "2.0", 2.0} '';
 # inf from "inf" to "Inf". Instead of trying to figure out which
 # version exactly changed it (if it's a precise version at all) try to
 # determine the right way automatically:
-my $inf= "inf"+0;
-lc($inf) eq "inf"
-    or die "bug";
+sub positive_inf {
+    my $inf= "inf"+0;
+    $inf=~ /^\+?inf$/i
+        or warn "positive_inf: got '$inf'";
+    $inf
+}
+sub negative_inf {
+    my $inf= -positive_inf;
+    $inf=~ /^-inf$/i
+        or warn "negative_inf: got '$inf'";
+    $inf
+}
 
-TEST{tequals 1e+20000, $inf} 1;
+
+TEST{tequals 1e+20000, positive_inf} 1;
 TEST{ 1e+20000 == "inf" } 1;
 TEST{tequals 1/(-1e+20000), 1/(1e+20000) } 1;
 TEST{ 1/(-1e+20000) == 1/(1e+20000) } 1;
@@ -111,7 +121,7 @@ TEST{ -1e1000 == "-1e1000" } 1;
 TEST{ -1e1000 eq "-1e1000" } '';
 TEST{ tequals -1e100, "-1e100" } '';
 TEST{ tequals -1e10000, "-1e10000" } '';
-TEST{ tequals -1e10000, "-$inf" } 1;
+TEST{ tequals -1e10000, negative_inf } 1;
 TEST{ -1e10000 == "-inf" } 1;
 
 TEST{tequals 2, 2.0} 1;    # those are converted to the same value at
