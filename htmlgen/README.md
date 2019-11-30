@@ -147,7 +147,7 @@ The output is written to `website/www/`.
   is a `FunctionalPerl::Htmlgen::_::Filesinfo` object, mutated to add information
   (remember that I said it was not meant as a functional programming
   demo), maintains information about all the files that make up the website.
-  Likewise, `$genfilestate` is a `PFLANZE::Genfilestate` object, which
+  Likewise, `$genfilestate` is a `FunctionalPerl::Htmlgen::_::Genfilestate` object, which
   also contains the former.
 
 * its TEST forms are run as [part of the functional-perl test

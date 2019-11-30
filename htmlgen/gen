@@ -349,7 +349,7 @@ fun groupkey ($path) {
 
 
 {
-    package PFLANZE::Genfilestate;
+    package FunctionalPerl::Htmlgen::_::Genfilestate;
     use FP::Struct [qw(filesinfo
                         groupedfiles
                         nonbugfiles
@@ -373,7 +373,7 @@ fun get_genfilestate ($filesinfo) {
     my $costranges={};
     # path0 -> costrange-string; filled when processing non-buglist groups
 
-    PFLANZE::Genfilestate->new
+    FunctionalPerl::Htmlgen::_::Genfilestate->new
         ($filesinfo, # just so as to bundle it up, too, ugly?
          $groupedfiles,
          $nonbugfiles,
