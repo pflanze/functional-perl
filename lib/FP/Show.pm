@@ -129,38 +129,44 @@ sub keyshow ($) {
     ) ? $str : terseDumper($str)
 }
 
+our $show_details= $ENV{RUN_TESTS} ? 0 : 1;
+
 sub subprefix_to_show_coderef {
     my ($subprefix)= @_;
     sub {
         my ($v,$show)=@_;
-        my $info= capture_stderr { DumpWithOP($v) };
-        my @FILE= $info=~ m/\bFILE *= *("[^"]*"|\S+) *\n/g;
-        my @LINE= $info=~ m/\bLINE *= *(\d+) *\n/g; # col?..
-        my $location= do {
-            if (@FILE) {
-                my $filestr= $FILE[-1];
-                if (@LINE) {
-                    my $line= $LINE[0];
-                    "at $filestr line $line"
+        if ($show_details) {
+            my $info= capture_stderr { DumpWithOP($v) };
+            my @FILE= $info=~ m/\bFILE *= *("[^"]*"|\S+) *\n/g;
+            my @LINE= $info=~ m/\bLINE *= *(\d+) *\n/g; # col?..
+            my $location= do {
+                if (@FILE) {
+                    my $filestr= $FILE[-1];
+                    if (@LINE) {
+                        my $line= $LINE[0];
+                        "at $filestr line $line"
+                    } else {
+                        "at $filestr (line unknown)"
+                    }
                 } else {
-                    "at $filestr (line unknown)"
+                    "(no location found)"
                 }
-            } else {
-                "(no location found)"
-            }
-        };
+            };
 
-        my ($name, $maybe_prototype)=
-          eval { require Sub::Util; 1 } ?
-          (Sub::Util::subname($v),
-           Sub::Util::prototype($v))
-          : ("(for name, install Sub::Util)",
-             undef);
+            my ($name, $maybe_prototype)=
+              eval { require Sub::Util; 1 } ?
+              (Sub::Util::subname($v),
+               Sub::Util::prototype($v))
+              : ("(for name, install Sub::Util)",
+                 undef);
 
-        my $prototypestr= defined $maybe_prototype ? "($maybe_prototype) " : "";
+            my $prototypestr= defined $maybe_prototype ? "($maybe_prototype) " : "";
 
-        my $dummystr= "DUMMY: $name $location";
-        $subprefix.$prototypestr."{ ".show($dummystr)." }"
+            my $dummystr= "DUMMY: $name $location";
+            $subprefix.$prototypestr."{ ".show($dummystr)." }"
+        } else {
+            $subprefix.'{ "DUMMY" }'
+        }
     }
 }
 
