@@ -65,7 +65,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 
 
-sub __ { }
+sub __ ($) { }
 # optimization would be to make it syntax...
 
 my %endquote= ('['=> ']',
