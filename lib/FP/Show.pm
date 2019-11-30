@@ -162,8 +162,14 @@ sub subprefix_to_show_coderef {
 
             my $prototypestr= defined $maybe_prototype ? "($maybe_prototype) " : "";
 
+            my $maybe_docstring= do {
+                require FP::Docstring;
+                FP::Docstring::docstring($v)
+            };
+            my $docstr= defined($maybe_docstring) ? "; __ ".show($maybe_docstring) : ""; 
+
             my $dummystr= "DUMMY: $name $location";
-            $subprefix.$prototypestr."{ ".show($dummystr)." }"
+            $subprefix.$prototypestr."{ ".show($dummystr)."$docstr }"
         } else {
             $subprefix.'{ "DUMMY" }'
         }
