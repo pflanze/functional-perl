@@ -32,8 +32,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # from SYNOPSIS:
 
-use FP::Predicates "is_sequence"; # since we can't have it in
-                                  # FP::Abstract::Sequence
+use FP::Predicates; # qw(is_sequence is_seq);
+# ^ since we can't have those in FP::Abstract::Sequence
 use FP::PureArray;
 use FP::StrictList;
 use FP::List;
@@ -42,17 +42,33 @@ use FP::Array 'array';
 
 use Chj::TEST;
 
-TEST { list(purearray(3,4),
-            strictlist(3,4),
-            list(3,4),
-            stream(3,4),
-            cons(3,4), # ok this can't really count as a sequence,
-                       # what to do about it?
-            array(3,4), # Could `autobox` change this?
-            3,
-            {3=>4},
-       )->map(*is_sequence)->array }
- [ 1,1,1,1,1,0,0,0 ];
+sub t_fn {
+    my ($fn)= @_;
+    list(purearray(3,4),
+         strictlist(3,4),
+         list(3,4),
+         stream(3,4),
+
+         purearray(),
+         strictlist(),
+         list(),
+         stream(),
+         
+         cons(3,4), # ok this can't really count as a sequence,
+         # what to do about it?
+         array(3,4), # Could `autobox` change this?
+         array(),
+         3,
+         "character sequence",
+         {3=>4},
+        )->map($fn)->array
+}
+
+TEST { t_fn *is_sequence }
+ [ 1,1,1,1, 1,1,1,1, 1,0,0,0,0,0 ];
+
+TEST { t_fn *is_seq }
+ [ 1,1,1,1, 0,0,0,0, 1,0,0,0,0,0 ];
 
 
 # more tests:
