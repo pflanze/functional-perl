@@ -108,7 +108,7 @@ or on the L<website|http://functional-perl.org/>.
 package FP::Show;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(show);
-@EXPORT_OK=qw(show_many);
+@EXPORT_OK=qw(show_many subprefix_to_show_coderef);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -127,6 +127,41 @@ sub keyshow ($) {
      # string
      $str=~ /[a-zA-Z]/s
     ) ? $str : terseDumper($str)
+}
+
+sub subprefix_to_show_coderef {
+    my ($subprefix)= @_;
+    sub {
+        my ($v,$show)=@_;
+        my $info= capture_stderr { DumpWithOP($v) };
+        my @FILE= $info=~ m/\bFILE *= *("[^"]*"|\S+) *\n/g;
+        my @LINE= $info=~ m/\bLINE *= *(\d+) *\n/g; # col?..
+        my $location= do {
+            if (@FILE) {
+                my $filestr= $FILE[-1];
+                if (@LINE) {
+                    my $line= $LINE[0];
+                    "at $filestr line $line"
+                } else {
+                    "at $filestr (line unknown)"
+                }
+            } else {
+                "(no location found)"
+            }
+        };
+
+        my ($name, $maybe_prototype)=
+          eval { require Sub::Util; 1 } ?
+          (Sub::Util::subname($v),
+           Sub::Util::prototype($v))
+          : ("(for name, install Sub::Util)",
+             undef);
+
+        my $prototypestr= defined $maybe_prototype ? "($maybe_prototype) " : "";
+
+        my $dummystr= "DUMMY: $name $location";
+        $subprefix.$prototypestr."{ ".show($dummystr)." }"
+    }
 }
 
 our $primitive_show=
@@ -157,37 +192,8 @@ our $primitive_show=
         my ($v,$show)=@_;
         (terseDumper($v), 1)
     },
-    CODE=> sub {
-        my ($v,$show)=@_;
-        my $info= capture_stderr { DumpWithOP($v) };
-        my @FILE= $info=~ m/\bFILE *= *("[^"]*"|\S+) *\n/g;
-        my @LINE= $info=~ m/\bLINE *= *(\d+) *\n/g; # col?..
-        my $location= do {
-            if (@FILE) {
-                my $filestr= $FILE[-1];
-                if (@LINE) {
-                    my $line= $LINE[0];
-                    "at $filestr line $line"
-                } else {
-                    "at $filestr (line unknown)"
-                }
-            } else {
-                "(no location found)"
-            }
-        };
+    CODE=> subprefix_to_show_coderef("sub "),
 
-        my ($name, $maybe_prototype)=
-          eval { require Sub::Util; 1 } ?
-          (Sub::Util::subname($v),
-           Sub::Util::prototype($v))
-          : ("(for name, install Sub::Util)",
-             undef);
-
-        my $prototypestr= defined $maybe_prototype ? "($maybe_prototype) " : "";
-
-        my $dummystr= "DUMMY: $name $location";
-        "sub ".$prototypestr."{ ".show($dummystr)." }"
-    },
     # Don't really have any sensible serialization for these either,
     # but at least prevent them from hitting Data::Dumper which issues
     # warnings and returns invalid syntax in XS mode and gives plain
