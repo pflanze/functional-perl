@@ -41,6 +41,7 @@ our %dependencies=
   (
    # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
 
+   'Chj::Serialize'=> ['FP::Repl::Dependencies', 'B::Deparse'],
    'FP::Docstring'=> ['B::Deparse'],
    'FP::BigInt'=> ['Math::BigInt'],
    'FP::autobox'=> ['autobox'],
@@ -107,7 +108,6 @@ our %dependencies=
          FP::Repl::Dependencies
          FP::Repl::Repl
          FP::Repl::StackPlus
-         Chj::Serialize
          FP::Repl::Trap
          FP::Repl::WithRepl
          FP::Repl
