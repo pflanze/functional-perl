@@ -217,7 +217,7 @@ TEST { HTML( process_body  ([P("Hello"),
 
 
 {
-    package PFLANZE::Filesinfo;
+    package FunctionalPerl::Htmlgen::_::Filesinfo;
     use FP::Hash "hash_perhaps_ref";
     use FP::Struct [qw(files
                         filename_to_path0
@@ -288,7 +288,7 @@ fun get_filesinfo () {
 
     my $all_path0_used= {};
 
-    PFLANZE::Filesinfo->new($files,
+    FunctionalPerl::Htmlgen::_::Filesinfo->new($files,
                         $filename_to_path0,
                         $all_path0_exists,
                         $path0_exists,

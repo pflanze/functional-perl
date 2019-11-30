@@ -144,7 +144,7 @@ The output is written to `website/www/`.
   the site root.
 
 * `$filesinfo` (passed around explicitely for no particular reason?),
-  is a `PFLANZE::Filesinfo` object, mutated to add information
+  is a `FunctionalPerl::Htmlgen::_::Filesinfo` object, mutated to add information
   (remember that I said it was not meant as a functional programming
   demo), maintains information about all the files that make up the website.
   Likewise, `$genfilestate` is a `PFLANZE::Genfilestate` object, which
