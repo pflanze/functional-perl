@@ -75,7 +75,10 @@ my %endquote= ('['=> ']',
 my $warned;
 
 sub docstring ($) {
-    my ($fn)= @_;
+    my ($fn_or_glob)= @_;
+    my $fn= UNIVERSAL::isa($fn_or_glob, "CODE") ? $fn_or_glob :
+        UNIVERSAL::isa(\$fn_or_glob, "GLOB") ? \&$fn_or_glob :
+        die "not a coderef nor glob: $fn_or_glob";
     if (eval { require B::Deparse; 1 }) {
         my $str= B::Deparse->new->coderef2text($fn);
         #warn "str='$str'";
