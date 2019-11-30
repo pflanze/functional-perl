@@ -413,19 +413,15 @@ sub is_filename ($) {
         or fail "is_filename", $v
 }
 
+
 # can't be in `FP::Abstract::Sequence` since that package is for OO, well, what
 # to do about it?
 use FP::Lazy; # sigh dependency, too.
-sub is_sequence ($);
+
 sub is_sequence ($) {
-    (length ref $_[0] ?
-     (UNIVERSAL::isa($_[0], "FP::Abstract::Sequence")
-      or
-      # XX evil: inlined `is_promise`
-      UNIVERSAL::isa($_[0], "FP::Lazy::Promise")
-      && is_sequence (force $_[0]))
-     : '')
-        or fail "is_sequence", $_[0]
+    my $v= force $_[0];
+    UNIVERSAL::isa($v, "FP::Abstract::Sequence")
+        or fail "is_sequence", $v
 }
 
 
