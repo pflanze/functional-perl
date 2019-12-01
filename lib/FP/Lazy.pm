@@ -154,6 +154,24 @@ to implement them safely, correct?)
 FP_Show_show: instead of "DUMMY", show file/line of the thunk's
 definition?
 
+=head1 DEBUGGING
+
+Lazy code can be difficult to debug because the context in which the
+code that evaluates a promise runs is not the same context in which
+the promise was captured. There are two approaches to make this
+easier:
+
+C<$ENV{DEBUG_FP_LAZY}="1"> or C<local $FP::Lazy::debug=1> -- captures
+a backtrace in every promise (slow, of course!). Use the optionally
+exported C<lazy_backtrace> function to get the backtrace (or look at
+it via the repl's :d (Data::Dumper) mode).
+
+C<$ENV{DEBUG_FP_LAZY}="eager"> or C<local $FP::Lazy::eager=1> --
+completely turns of any lazyness (except for lazyLight, currently);
+easy stack traces and flow logic but of course the program behaves
+differently; beware of infinite lists!
+
+
 =head1 SEE ALSO
 
 https://en.wikipedia.org/wiki/Futures_and_promises
@@ -177,31 +195,42 @@ or on the L<website|http://functional-perl.org/>.
 package FP::Lazy;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(lazy lazy_if lazyLight force FORCE is_promise);
-@EXPORT_OK=qw(delay force_noeval);
+@EXPORT_OK=qw(delay force_noeval lazy_backtrace);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Carp;
 use FP::Mixin::Utils;
+use FP::Show;
 
 
-our $debug= $ENV{DEBUG_FP_LAZY} ? 1 : '';
+our $eager= ($ENV{DEBUG_FP_LAZY} and $ENV{DEBUG_FP_LAZY}=~ /^eager$/i);
+our $debug= $ENV{DEBUG_FP_LAZY} ? (not $eager) : '';
 
 # A promise is an array with two fields:
 # index 0: thunk when unevaluated, undef once evaluated
 # index 1: value once evaluated
 # index 2: backtrace if $debug is true
 
+sub lazy_backtrace ($) { # not a method to avoid shadowing any
+                         # 'contained' method
+    my ($v)=@_;
+    UNIVERSAL::isa($v, "FP::Lazy::Promise") # not working for Light ones*!*
+        or die "not a FP::Lazy::Promise: ".show($v);
+    $$v[2]
+}
+
 sub lazy (&) {
-    bless [$_[0],
-           undef,
-           $debug && FP::Repl::Stack->get(1)->backtrace
-          ], "FP::Lazy::Promise"
+    $eager ? goto $_[0] :
+        bless [$_[0],
+               undef,
+               $debug && FP::Repl::Stack->get(1)->backtrace
+        ], "FP::Lazy::Promise"
 }
 
 sub lazy_if (&$) {
-    ($_[1] ?
+    (($_[1] and not $eager) ?
      bless ([$_[0],
              undef,
              $debug && FP::Repl::Stack->get(1)->backtrace
@@ -215,7 +244,8 @@ sub lazy_if (&$) {
 
 # not providing for caching (1-time-only evaluation)
 sub lazyLight (&) {
-    bless $_[0], "FP::Lazy::PromiseLight"
+    $eager ? goto $_[0] :
+        bless $_[0], "FP::Lazy::PromiseLight"
 }
 
 sub is_promise ($) {
