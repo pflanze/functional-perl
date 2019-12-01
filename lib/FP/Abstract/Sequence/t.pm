@@ -166,4 +166,8 @@ TEST {
 } [80, -20000, -20000, 80];
 
 
+TEST { [ list(qw(a b c d e f g))->split_at(3) ] }
+       [list('a', 'b', 'c'), list('d', 'e', 'f', 'g')];
+
+
 1

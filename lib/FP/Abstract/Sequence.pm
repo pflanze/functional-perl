@@ -318,5 +318,12 @@ sub none {
     $s->every (complement $pred)
 }
 
+sub split_at {
+    @_==2 or die "wrong number of arguments";
+    my ($s, $pos)=@_;
+    # XXX weaken as all of them.
+    ($s->take($pos),
+     $s->drop($pos))
+}
 
 _END_
