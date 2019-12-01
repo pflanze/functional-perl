@@ -61,6 +61,7 @@ htmlgen/FunctionalPerl/Htmlgen/PXMLMapper.pm
 htmlgen/FunctionalPerl/Htmlgen/PathTranslate.pm
 htmlgen/FunctionalPerl/Htmlgen/PathUtil.pm
 htmlgen/FunctionalPerl/Htmlgen/PerlTidy.pm
+htmlgen/FunctionalPerl/Htmlgen/Sourcelang.pm
 htmlgen/FunctionalPerl/Htmlgen/Toc.pm
 htmlgen/FunctionalPerl/Htmlgen/UriUtil.pm
 htmlgen/FunctionalPerl/Htmlgen/default_config.pm
