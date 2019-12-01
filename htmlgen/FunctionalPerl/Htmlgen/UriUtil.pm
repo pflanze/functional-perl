@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -33,21 +33,24 @@ package FunctionalPerl::Htmlgen::UriUtil;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
-
+use FP::Docstring;
 use Chj::TEST;
 use URI;
 
 fun uri_add ($base,$rel) {
+    __  '($basestr,$relstr) -> $str '.
+        '-- (via URI.pm)';
     URI->new($rel)->abs(URI->new($base)).""
 }
 
-TEST{uri_add "http://bar.com/baz/", "/zoo#hm"} "http://bar.com/zoo#hm";
-TEST{uri_add "http://bar.com/baz/", "zoo"} "http://bar.com/baz/zoo";
-TEST{uri_add "http://bar.com/baz", "zoo"} "http://bar.com/zoo";
-TEST{uri_add "http://bar.com/baz/#ax", "#bx"} "http://bar.com/baz/#bx";
+TEST { uri_add "http://bar.com/baz/", "/zoo#hm" } "http://bar.com/zoo#hm";
+TEST { uri_add "http://bar.com/baz/", "zoo" } "http://bar.com/baz/zoo";
+TEST { uri_add "http://bar.com/baz", "zoo" } "http://bar.com/zoo";
+TEST { uri_add "http://bar.com/baz/#ax", "#bx" } "http://bar.com/baz/#bx";
 
 
-# avoid monkey-patching by prefixing instead
+# Instead of monkey-patching into the URI package, use a local
+# name. (We're in need of lexical method definitions!)
 method URI_is_internal () {
     not defined $self->scheme
 }
