@@ -70,7 +70,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
     }
 
     method subnodes_add ($node) {
-        is_instance_of $node, "PFLANZE::TocNode"
+        is_instance_of $node, "FunctionalPerl::Htmlgen::Toc::TocNode"
           or die "wrong type";
         # (^ XX so poor, neither do I have a TypedList yet, nor the
         # syntax to add it to the method declaration)
@@ -137,7 +137,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
 }
 
 {
-    package PFLANZE::TocNode;
+    package FunctionalPerl::Htmlgen::Toc::TocNode;
     use FP::Predicates "is_string";
     use PXML "is_pxml_element";
     use FP::List;
@@ -180,7 +180,7 @@ our $empty_toc= PFLANZE::TocRootNode->new
 
 sub tocnode ($$) {
     my ($name,$header)=@_;
-    PFLANZE::TocNode->new(strictnull, $name, $header);
+    FunctionalPerl::Htmlgen::Toc::TocNode->new(strictnull, $name, $header);
 }
 
 our $ttoc;
