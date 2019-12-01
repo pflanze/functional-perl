@@ -35,7 +35,7 @@ use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 
 {
-    package PFLANZE::Cost;
+    package FunctionalPerl::Htmlgen::Cost::_::Cost;
     use FP::Array ":all";
     use FP::Struct [qw(name is_purchaseable basecosts val)];
     method cost ($index) {

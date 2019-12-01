@@ -468,7 +468,7 @@ fun genfile ($path, $groupname, $genfilestate) {
             my $name= &$possibly_nameplus_to_name($nameplus);
             my @basecosts= map { &$possibly_nameplus_to_name($_) }
               split /\s*\+\s*/, $basecosts;
-            push @$costs, new PFLANZE::Cost ($name,
+            push @$costs, new FunctionalPerl::Htmlgen::Cost::_::Cost ($name,
                                          (not $nameplus
                                           or not($nameplus=~ /^\(/)),
                                          \@basecosts,
