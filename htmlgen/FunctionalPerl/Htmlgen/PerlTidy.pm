@@ -36,6 +36,7 @@ use FP::Docstring;
 use FP::Show;
 use Perl::Tidy;
 use FunctionalPerl::Htmlgen::Htmlparse ":all";
+use FunctionalPerl::Htmlgen::Sourcelang;
 
 use FunctionalPerl ":all";##xx
 
@@ -63,14 +64,20 @@ method map_element ($e, $uplist) {
     #warn "hm: ".show($e->name). ", uplist= ".show($uplist->map(the_method "name"));
     if (not $uplist->is_null and $uplist->first->lcname eq "pre") {
         my $txt= $e->text;
-        my $pre= tidyhtml $txt;
-        #use FP::Repl;repl;
-        $pre->body
+        if (sourcelang ($txt) eq "Perl") {
+            my $pre= tidyhtml $txt;
+            #use FP::Repl;repl;
+            $pre->body
+        } else {
+            # do not handle this element, leave up to pointer_eq to
+            # detect that
+            $e
+        }
     } else {
-        # do not handle this element
-        #()XXX
+        # do not handle this element, leave up to pointer_eq to detect
+        # that
         $e
     }
 }
 
-_END__ # XXX dev
+_END_ # _END__ for dev
