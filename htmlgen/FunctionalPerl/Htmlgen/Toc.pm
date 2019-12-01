@@ -57,7 +57,7 @@ TEST { rindices_numberstring (list ()) }     "";
 TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
 
 {
-    package PFLANZE::TocNodeBase;
+    package FunctionalPerl::Htmlgen::Toc::TocNodeBase;
     use FP::StrictList;
     use FP::Predicates;
     use FP::List;
@@ -146,7 +146,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
                                           # already in the document
                     [*is_pxml_element, "header"]
                    ],
-                     "PFLANZE::TocNodeBase";
+                     "FunctionalPerl::Htmlgen::Toc::TocNodeBase";
 
     method header_pxml_for_toc () {
         # XX keep some formatting?
@@ -161,7 +161,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
     use FP::List;
     use PXML::XHTML ":all";
 
-    use FP::Struct ["header_pxml_for_toc"], "PFLANZE::TocNodeBase";
+    use FP::Struct ["header_pxml_for_toc"], "FunctionalPerl::Htmlgen::Toc::TocNodeBase";
 
     method name () { undef }
 
