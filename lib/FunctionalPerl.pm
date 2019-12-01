@@ -16,9 +16,8 @@ FunctionalPerl - functional programming in Perl
     use FunctionalPerl;
     FunctionalPerl->VERSION # or $FunctionalPerl::VERSION
 
-    # But all the actual modules are under FP::*, like:
+    # The actual modules are in the FP:: namespace hierarchy, like:
     use FP::List;
-    # etc.
 
     # But you can also import sets of modules from here, e.g.:
     use FunctionalPerl qw(:sequences :repl);
