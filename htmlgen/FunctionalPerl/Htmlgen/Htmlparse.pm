@@ -15,7 +15,7 @@ FunctionalPerl::Htmlgen::Htmlparse
 
     use FunctionalPerl::Htmlgen::Htmlparse qw(htmlparse);
     my $b= htmlparse '<p>hi</p>', 'body';
-    is ref($b), 'PXML::Element';
+    is ref($b), 'PXML::_::XHTML';
     is $b->string, '<body><p>hi</p></body>';
 
 =head1 DESCRIPTION
@@ -40,7 +40,8 @@ use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 use FP::Docstring;
 use HTML::TreeBuilder;
-use PXML::Element;
+#use PXML::Element;
+use PXML::XHTML;
 use Chj::TEST;
 
 fun htmlparse_raw ($htmlstr, $whichtag) {
@@ -54,8 +55,8 @@ fun htmlparse_raw ($htmlstr, $whichtag) {
 
 
 fun htmlmap ($e) {
-    __  '(HTML::Element) -> PXML::Element '.
-        '-- convert output from HTML::TreeBuilder to PXML';
+    __  '(HTML::Element) -> PXML::_::XHTML '.
+        '-- convert output from HTML::TreeBuilder to PXML::XHTML (PXML::Element)';
     my $name= lc($e->tag);
     my $atts={};
     for ($e->all_external_attr_names) {
@@ -63,7 +64,10 @@ fun htmlmap ($e) {
         die "att name '$_'" unless /^\w+\z/s;
         $$atts{lc $_}= $e->attr($_);
     }
-    PXML::Element->new
+    # XX unsafe, if we don't check that a corresponding constructor
+    # exists! Could fall back to just PXML::Element (which
+    # PXML::_::XHTML is):
+    PXML::_::XHTML->new
         ($name,
          $atts,
          [
