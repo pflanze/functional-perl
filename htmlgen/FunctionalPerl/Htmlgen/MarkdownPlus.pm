@@ -29,14 +29,20 @@ FunctionalPerl::Htmlgen::MarkdownPlus
 
 =head1 DESCRIPTION
 
-MarkdownPlus supports what L<Text::Markdown> supports plus:
+C<markdownplus_parse> is a wrapper around L<Text::Markdown> that
+parses the latter's html string to L<PXML::XHTML> elements
+(C<PXML::_::XHTML> objects which are L<PXML::Element> objects). It
+replaces mediawiki style links with tokens as a hack to make it
+possible to implement those links without having to modify
+L<Text::Markdown>.
 
-C<[[foo]]> (mediawiki style) document link syntax (via
-L<FunctionalPerl::Htmlgen::Mediawiki>).
+(It also contains a hack to make C<<with_toc>...</with_toc>> tags
+possible, but the actual implementation of the toc is independent.)
 
-C<<with_toc>...</with_toc>> tags to span across text that should
-generate a table of contents.
+=head1 SEE ALSO
 
+L<FunctionalPerl::Htmlgen::PXMLMapper> -- a protocol to further
+process the parsed L<PXML>.
 
 =head1 NOTE
 
@@ -93,8 +99,9 @@ TEST {
 
 fun markdownplus_parse ($str, $alternative_title, $mediawikitoken) {
     __  '($str, $alternative_title, $tokenstr)-> ($h1, [$body_PXML_Elements], $hashtbl) '.
-        '-- markdown parsing to PXML, extracting title, and also'.
-        ' returning the mediawiki side channeled hack replacements';
+        '-- markdown parsing to PXML, extracting title, and replacing'.
+        ' mediawiki syntax with $tokenstr based replacements'.
+        ' (side channelling hack)';
 
     my ($str1, $table)= mediawiki_prepare ($str, $mediawikitoken);
 
