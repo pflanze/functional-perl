@@ -474,7 +474,7 @@ fun genfile ($path, $groupname, $genfilestate) {
                                          \@basecosts,
                                          $val);
         }
-        @$costs ? PFLANZE::Totalcost->new($costs)->range : undef
+        @$costs ? FunctionalPerl::Htmlgen::Cost::_::Totalcost->new($costs)->range : undef
     };
     if (defined $maybe_costrange) {
         $genfilestate->set_costrange($path0, $maybe_costrange);

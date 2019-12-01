@@ -50,7 +50,7 @@ use Sub::Call::Tail;
     _END_
 }
 {
-    package PFLANZE::Totalcost;
+    package FunctionalPerl::Htmlgen::Cost::_::Totalcost;
     use FP::Array_sort ":all";
     use FP::Struct [qw(costs)];
     method range () {
