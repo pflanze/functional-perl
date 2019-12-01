@@ -167,7 +167,7 @@ our $export_desc=
                        FP::Array FP::Array_sort
                        FP::PureArray
                        :stream)],
-    ":maps"=> [qw(FP::Hash)],
+    ":maps"=> [qw(FP::Hash FP::PureHash)],
     ":sets"=> [qw(FP::HashSet FP::OrderedCollection)],
     ":tries"=> [qw(FP::Trie)],
     ":datastructures"=> [qw(:chars :numbers :sequences :maps :sets :tries)],

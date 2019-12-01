@@ -117,6 +117,7 @@ lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/FP/Abstract/Equal.pm
 lib/FP/Abstract/Interface.pm
+lib/FP/Abstract/Map.pm
 lib/FP/Abstract/Pure.pm
 lib/FP/Abstract/Sequence.pm
 lib/FP/Abstract/Sequence/t.pm
@@ -154,6 +155,7 @@ lib/FP/Path/t.pm
 lib/FP/Predicates.pm
 lib/FP/PureArray.pm
 lib/FP/PureArray/t.pm
+lib/FP/PureHash.pm
 lib/FP/Repl.pm
 lib/FP/Repl/AutoTrap.pm
 lib/FP/Repl/Dependencies.pm
