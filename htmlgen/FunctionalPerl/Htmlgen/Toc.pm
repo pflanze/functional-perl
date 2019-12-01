@@ -157,7 +157,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
 }
 
 {
-    package PFLANZE::TocRootNode;
+    package FunctionalPerl::Htmlgen::Toc::TocRootNode;
     use FP::List;
     use PXML::XHTML ":all";
 
@@ -174,7 +174,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
 }
 
 
-our $empty_toc= PFLANZE::TocRootNode->new
+our $empty_toc= FunctionalPerl::Htmlgen::Toc::TocRootNode->new
   (strictnull,
    H3 ({class=> "toc_title"}, "Contents"));
 
