@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -56,8 +56,7 @@ fun rindices_numberstring ($rindices) {
 TEST { rindices_numberstring (list ()) }     "";
 TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
 
-{
-    package FunctionalPerl::Htmlgen::Toc::TocNodeBase;
+package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
     use FP::StrictList;
     use FP::Predicates;
     use FP::List;
@@ -136,8 +135,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
     _END_
 }
 
-{
-    package FunctionalPerl::Htmlgen::Toc::TocNode;
+package FunctionalPerl::Htmlgen::Toc::TocNode {
     use FP::Predicates "is_string";
     use PXML "is_pxml_element";
     use FP::List;
@@ -156,8 +154,7 @@ TEST { rindices_numberstring (list (2,1)) }  "1.2. ";
     _END_
 }
 
-{
-    package FunctionalPerl::Htmlgen::Toc::TocRootNode;
+package FunctionalPerl::Htmlgen::Toc::TocRootNode {
     use FP::List;
     use PXML::XHTML ":all";
 

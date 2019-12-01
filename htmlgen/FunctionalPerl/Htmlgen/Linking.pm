@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -44,8 +44,7 @@ use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 
 
-{
-    package FunctionalPerl::Htmlgen::Linking::Anchors;
+package FunctionalPerl::Htmlgen::Linking::Anchors {
     # add anchors
 
     use PXML::XHTML ":all";
@@ -63,9 +62,7 @@ use Sub::Call::Tail;
 }
 
 
-{
-    package FunctionalPerl::Htmlgen::Linking::code;
-
+package FunctionalPerl::Htmlgen::Linking::code {
     use FP::List;
     use FP::Predicates;
     use FunctionalPerl::Htmlgen::PathUtil qw(path_diff);
@@ -181,9 +178,8 @@ use Sub::Call::Tail;
     _END_
 }
 
-{
-    package FunctionalPerl::Htmlgen::Linking::a_href;
 
+package FunctionalPerl::Htmlgen::Linking::a_href {
     use FunctionalPerl::Htmlgen::UriUtil qw(URI_is_internal);
     use Chj::xperlfunc qw(dirname);
     use FunctionalPerl::Htmlgen::PathUtil qw(path_add path_diff);

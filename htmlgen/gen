@@ -230,8 +230,7 @@ TEST { HTML( process_body  ([P("Hello"),
 # Note: the cost range feature is not used on the Functional Perl
 # website. It could be used to connect issues to a cost for budgeting.
 
-{
-    package FunctionalPerl::Htmlgen::_::Genfilestate;
+package FunctionalPerl::Htmlgen::_::Genfilestate {
     use FP::Docstring;
 
     use FP::Struct ['filesinfo',
@@ -255,8 +254,7 @@ TEST { HTML( process_body  ([P("Hello"),
 
 
 
-{
-    package FunctionalPerl::Htmlgen::_::Filesinfo;
+package FunctionalPerl::Htmlgen::_::Filesinfo {
     use FP::Hash "hash_perhaps_ref";
     use FP::Array qw(array_to_hash_group_by);
     use FunctionalPerl::Htmlgen::PathUtil qw(path_add path_diff path0);
