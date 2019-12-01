@@ -15,8 +15,7 @@ use Test::Requires
    };
 
 
-use lib "./meta";
-use FunctionalPerl::TailExpand;
+use lib "./lib";
 use Chj::xperlfunc ":all";
 
 require "./meta/find-perl.pl";

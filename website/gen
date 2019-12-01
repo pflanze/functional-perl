@@ -13,6 +13,11 @@ our ($mydir, $myname); BEGIN {
     ($mydir, $myname)=($1,$2);
 }
 
+unless ($ENV{SUB_CALL_TAIL}) {
+    use lib "./meta";
+    require FunctionalPerl::TailExpand;
+}
+
 chdir $mydir
     or die "chdir $mydir: $!";
 
