@@ -50,7 +50,7 @@ Now create a bigger document, with its inner parts built from external
 inputs:
 
     MYEXAMPLE
-      (PROTOCOL_VERSION ("0.123"),
+      (PROTOCOL_VERSION("0.123"),
        RECORDS
        (csv_file_to_rows($inpath, {eol=> "\n", sep_char=> ";"})
         # skip the header row
