@@ -154,6 +154,7 @@ our $export_desc=
     ":dev"=> [qw(:repl :test :debug Chj::ruse)],
 
     ":functions"=> [qw(FP::Combinators FP::Ops FP::Div
+                       FP::Predicates
                        FP::Optional FP::Values
                        FP::Memoizing FP::uncurry
                        FP::Untainted
