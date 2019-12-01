@@ -67,13 +67,15 @@ C<:debug>: C<:equal>, C<:show>, L<Chj::Backtrace>, L<Chj::pp>, L<Chj::time_this>
 
 C<:dev>: C<:debug>, C<:repl>, C<:test>, L<Chj::ruse>
 
+C<:doc>: L<FP::Docstring>
+
 C<:equal>: L<FP::Equal>
 
 C<:failure>: L<FP::Failure>
 
 C<:fix>: L<FP::fix>
 
-C<:functions>: C<:equal>, C<:failure>, C<:show>, L<FP::Combinators>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Untainted>, L<FP::Values>, L<FP::uncurry>
+C<:functions>: C<:equal>, C<:failure>, C<:show>, L<FP::Combinators>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>, L<FP::uncurry>
 
 C<:git>: L<FP::Git::Repository>
 
@@ -81,9 +83,9 @@ C<:io>: L<Chj::tempdir>, L<Chj::xIO>, L<Chj::xhome>, L<Chj::xopen>, L<Chj::xopen
 
 C<:lazy>: C<:stream>, L<FP::Lazy>, L<FP::Weak>
 
-C<:maps>: L<FP::Hash>
+C<:maps>: L<FP::Hash>, L<FP::PureHash>
 
-C<:most>: C<:autobox>, C<:datastructures>, C<:debug>, C<:equal>, C<:failure>, C<:functions>, C<:lazy>, C<:show>
+C<:most>: C<:autobox>, C<:datastructures>, C<:debug>, C<:doc>, C<:equal>, C<:failure>, C<:functions>, C<:lazy>, C<:show>
 
 C<:numbers>: L<FP::BigInt>
 
@@ -110,7 +112,6 @@ C<:trampoline>: L<FP::Trampoline>
 C<:transparentlazy>: C<:stream>, L<FP::TransparentLazy>, L<FP::Weak>
 
 C<:tries>: L<FP::Trie>
-
 
 =head1 NOTE
 
