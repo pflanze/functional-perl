@@ -345,7 +345,7 @@ TEST{ stream_iota->map(sub{ $_[0]*$_[0]})->take(5)->sum }
 #  5000050000;
 
 
-sub stream_append ($$) {
+sub stream_append2 ($$) {
     @_==2 or die "wrong number of arguments";
     my ($l1,$l2)=@_;
     weaken $_[0];
@@ -356,11 +356,73 @@ sub stream_append ($$) {
     }
 }
 
+sub stream_append {
+    if (@_==0) {
+        null
+    } elsif (@_==1) {
+        $_[0]
+    } elsif (@_==2) {
+        goto \&stream_append2
+    } else {
+        my $ss= list(reverse @_);
+        weaken $_ for @_;
+        # ^ WHEN is this even needed, I think it is when calling a
+        # stream consumer afterwards, right?
+        $ss->rest->fold(
+            sub {
+                my ($s, $rest)= @_;
+                lazy {
+                    stream_append2($s, $rest)
+                }
+            },
+            $ss->first)
+    }
+}
+
 *FP::List::List::stream_append= *stream_append;
 
 TEST{ stream_to_string (stream_append string_to_stream("Hello"),
                                       string_to_stream(" World")) }
   'Hello World';
+
+# F is defined further down, thus call with parens
+TEST { F(stream_append list(qw(a b)), list(qw(c d)), list(qw(e f))) }
+  GIVES{ list('a', 'b', 'c', 'd', 'e', 'f') };
+TEST { F(stream_append list(qw(a b)), list(qw(c d))) }
+  GIVES{ list('a', 'b', 'c', 'd') };
+TEST { F(stream_append list(qw(a b))) }
+  GIVES{ list('a', 'b') };
+TEST { F(stream_append) }
+  list();
+
+TEST {
+    my @a;
+    my $s= stream_append(
+        lazy { push @a, "a"; list(qw(a b)) },
+        lazy { push @a, "b"; list(qw(c d)) },
+        lazy { push @a, "c"; list(qw(e f)) });
+    my @r;
+    F(Keep($s)->take(1));
+    push @r, ["take 1", @a];
+    F(Keep($s)->take(2));
+    push @r, ["take 2", @a];
+    F(Keep($s)->take(3));
+    push @r, ["take 3", @a];
+    F(Keep($s)->take(4));
+    push @r, ["take 4", @a];
+    F(Keep($s)->take(5));
+    push @r, ["take 5", @a];
+    F(Keep($s)->take(6));
+    push @r, ["take 6", @a];
+    \@r
+} [ [ "take 1", "a"],
+    [ "take 2", "a"],
+    [ "take 3", "a", "b"],
+    [ "take 4", "a", "b"],
+    [ "take 5", "a", "b", "c"],
+    [ "take 6", "a", "b", "c"]
+  ];
+
 
 sub stream_map ($ $);
 sub stream_map ($ $) {
