@@ -36,7 +36,6 @@ Using 'tag functions' for shorter code:
 
     use PXML::XHTML;
     my $element= A({href=> "http://myserver.com"}, "my server");
-    my 
 
 See [`test`](test) and [`testlazy`](testlazy) for complete examples,
 and [`examples/csv_to_xml`](../examples/csv_to_xml) for a simple real
