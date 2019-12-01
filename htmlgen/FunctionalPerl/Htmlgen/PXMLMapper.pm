@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -31,7 +31,7 @@ package FunctionalPerl::Htmlgen::PXMLMapper;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
-
+use FP::Docstring;
 use FP::Predicates;
 
 use FP::Struct [
@@ -42,8 +42,14 @@ use FP::Struct [
                 [instance_of("FunctionalPerl::Htmlgen::PathTranslate"), "pathtranslate"],
                ];
 
-method match_element_names ()
-  { die "need implementation that returns an element name" }
+method match_element_names () {
+    __  'method () -> [string] -- array of element names';
+    die "abstract class, missing implementation";
+}
 
+method map_element ($e, $uplist) {
+    __  'method ($e: PXML::Element, $uplist: list_of PXML::Element) -> PXML::Element';
+    die "abstract class, missing implementation";
+}
 
 _END_
