@@ -55,6 +55,8 @@ sub version_inc {
 
 xxsystem "meta/update-manifest";
 
+xxsystem "meta/update-pod";
+
 xxsystem "cj-git-status-is-clean";
 
 
