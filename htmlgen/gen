@@ -77,6 +77,8 @@ use FP::Array ":all";
 use File::Spec;
 use FP::Array_sort;
 use FP::Ops qw(string_cmp number_cmp the_method cut_method);
+use FP::Equal qw(equal);
+use FP::autobox;
 use Chj::TEST ":all";
 use FP::List qw(is_pair list);
 use PXML::Util qw(pxml_map_elements_exhaustively);
@@ -94,6 +96,8 @@ use FP::Lazy;
 use FunctionalPerl::Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
                           mediawiki_rexpand);
 use PXML::Preserialize qw(pxmlpre);
+use FP::PureHash;
+use FP::Equal qw(pointer_eq);
 
 require FP::Repl::Trap if $opt_trap;
 
@@ -120,26 +124,54 @@ fun path0_to_outpath ($path0) {
 
 use FunctionalPerl::Htmlgen::Toc;
 use FunctionalPerl::Htmlgen::Linking;
+use FunctionalPerl::Htmlgen::PerlTidy;
 
 # XX make configurable
 our $pxml_mappers=
-    # These implement FunctionalPerl::Htmlgen::PXMLMapper
+    # These implement FunctionalPerl::Htmlgen::PXMLMapper; subarray
+    # for those that match on the same tagname, in order of preference
+    # (the chain exits once an element has been replaced).
     ["FunctionalPerl::Htmlgen::Linking::Anchors",
      "FunctionalPerl::Htmlgen::Toc", # <with_toc>
-     "FunctionalPerl::Htmlgen::Linking::code",
-     "FunctionalPerl::Htmlgen::Linking::a_href"];
+     ["FunctionalPerl::Htmlgen::PerlTidy",
+      "FunctionalPerl::Htmlgen::Linking::code"],
+     "FunctionalPerl::Htmlgen::Linking::a_href",
+    ];
 
 fun pxml_name_to_mapper (@PXMLMapper_args) {
-  +{
-      map {
-          # instantiate a mapper
-          my $m= $_->new_(@PXMLMapper_args);
-          # register it for all the element names it wants to see
-          map {
-              ($_, sub { $m->map_element(@_)})
-          } @{$m->match_element_names}
-      } @$pxml_mappers
-  }
+    purehash(
+        map {
+            if (ref $_) { # subarray given (autobox coming into play)
+                my $ms= $_->map(the_method "new_", @PXMLMapper_args);
+                my $elnames= $ms->first->match_element_names;
+                $ms->rest->every(fun ($v) { equal $elnames, $v->match_element_names})
+                    or die "not all have the same elnames";
+                # chain element $e through them until it was processed:
+                my $fn= $ms->fold_right (
+                    fun ($m, $prev) {
+                        fun ($e, $uplist) {
+                            #warn "checking out $m..";
+                            my $e2= $m->map_element($e, $uplist);
+                            if (pointer_eq $e, $e2) {
+                                &$prev($e, $uplist)
+                            } else {
+                                $e2
+                            }
+                        }
+                    },
+                    fun ($e, $uplist) { $e });
+                map {
+                    ($_, $fn)
+                } @$elnames
+            } else {
+                # instantiate a mapper
+                my $m= $_->new_(@PXMLMapper_args);
+                # register it for all the element names it wants to see
+                map {
+                    ($_, sub { $m->map_element(@_)})
+                } @{$m->match_element_names}
+            }
+        } @$pxml_mappers)
 }
 
 fun default_pxml_name_to_mapper() {
@@ -371,8 +403,6 @@ fun get_filesinfo () {
 
 
 # Navigation:
-
-use FP::Equal qw(equal);
 
 fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
     UL({class=> "menu"},
