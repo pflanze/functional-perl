@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -33,8 +33,10 @@ package FunctionalPerl::Htmlgen::Mediawiki;
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
+use FP::Docstring;
 use Chj::chompspace;
 use Chj::TEST ":all";
 use PXML::XHTML ":all";
@@ -63,6 +65,9 @@ fun squarebracked_escape ($str) {
 # table and the used token for mediawiki_expand.
 
 fun mediawiki_prepare ($str, $token) {
+    __ '($str, $tokenstr) -> ($str, $hashtable) '.
+        '-- replace "[[...]]" syntax in $str with replacement tokens '.
+        'which use $tokenstr as prefix';
     my $table= {};
     my $n=0;
     $str=~ s%(^|.)\[\[(.*?[^\\])\]\]%
@@ -85,7 +90,10 @@ TEST {[mediawiki_prepare 'foo [[bar]] [[baz]].', 'LO']}
 
 # possibly should build PXML directly from here instead of string
 # replace, but I'm lazy right now.
+
 fun mediawiki_replace ($str, $token, $table) {
+    __ '($str, $token, {tokenargument=>$value,..}) -> $str '.
+        '-- re-insert hidden parts';
     $str=~ s%\Q$token\E-(\d+)-%
        '[['.$$table{$1}.']]'
     %sge;
@@ -94,13 +102,17 @@ fun mediawiki_replace ($str, $token, $table) {
 
 # here's the version that returns PXML, through the indirection of a
 # string, which XXX may very well be unsafe.
+
 fun mediawiki_rexpand ($str, $token, $table) {
+    __ '($str, $token, $table) -> [PXML::Element] '.
+        '-- mediawiki_replace then _expand';
     mediawiki_expand (mediawiki_replace ($str, $token, $table))
 }
 
 
-# text-segment -> PXML
 fun mediawiki_expand ($str) {
+    __ '($text_segment_str) -> [string|PXML::Element] '.
+        '-- expand "[[...]]" in $text_segment_str to link elements';
     my $res=[];
     my $lastpos= 0;
     while ($str=~ m%(^|.)\[\[(.*?[^\\])\]\]%sg) {

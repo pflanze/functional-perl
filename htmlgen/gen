@@ -65,6 +65,7 @@ our ($configpath, $inbase, $outbase)= @ARGV;
 
 our $user_config= require $configpath;
 
+use FP::Docstring;
 use Chj::Backtrace;
 use Hash::Util 'lock_hash';
 use Chj::xperlfunc qw(basename dirname);
@@ -78,7 +79,7 @@ use FP::Array_sort;
 use FP::Ops qw(string_cmp number_cmp the_method cut_method);
 use Chj::TEST ":all";
 use FP::List qw(is_pair list);
-use PXML::Util ":all";
+use PXML::Util qw(pxml_map_elements_exhaustively);
 use FP::Hash ":all";
 use PXML::Tags qw(with_toc);
 use FP::Predicates qw(complement);
@@ -122,8 +123,10 @@ use FunctionalPerl::Htmlgen::Linking;
 
 # XX make configurable
 our $pxml_mappers=
-  ["FunctionalPerl::Htmlgen::Linking::Anchors", "FunctionalPerl::Htmlgen::Toc",
-   "FunctionalPerl::Htmlgen::Linking::code", "FunctionalPerl::Htmlgen::Linking::a_href"];
+    ["FunctionalPerl::Htmlgen::Linking::Anchors",
+     "FunctionalPerl::Htmlgen::Toc", # <with_toc>
+     "FunctionalPerl::Htmlgen::Linking::code",
+     "FunctionalPerl::Htmlgen::Linking::a_href"];
 
 fun pxml_name_to_mapper (@PXMLMapper_args) {
   +{
@@ -136,17 +139,20 @@ fun pxml_name_to_mapper (@PXMLMapper_args) {
    }
 }
 
+fun default_pxml_name_to_mapper() {
+    # fake instance for tests only
+    pxml_name_to_mapper(path0=> "NOPATH",
+                        maybe_have_path0=> sub{die"NOIMPL"},
+                        perhaps_filename_to_path0=> sub{die"NOIMPL"},
+                        pathtranslate=> $pathtranslate)
+}
+
 fun process_body ($v,
-                  $pxml_name_to_mapper=
-                  # fake instance for tests only:
-                  pxml_name_to_mapper
-                  (path0=> "NOPATH",
-                   maybe_have_path0=> sub{die"NOIMPL"},
-                   perhaps_filename_to_path0=> sub{die"NOIMPL"},
-                   pathtranslate=> $pathtranslate),
+                  $pxml_name_to_mapper=default_pxml_name_to_mapper(),
                   $mediawikitoken="NOTOKEN",
-                  $mediawikitable={},
-                 ) {
+                  $mediawikitable={}) {
+    __  "([PXML::Element],..) -> [PXML::Element] ".
+        "-- applies the transformations in $pxml_mappers";
 
     # HACK: can't mediawiki_expand the whole document in string format
     # before the markdown parsing, since it would expand examples in
@@ -155,20 +161,21 @@ fun process_body ($v,
     # then map it (and here comes the hacky part, you will forget to
     # update here when prepending another mapping phase or so, right?) 
     # the same way the rest of the document is treated.
-    my $map_text_mediawiki= fun ($v,$uplist) {
-        if (is_pair $uplist # tests may not have it!
-            and $uplist->first->name eq "code") {
+
+    my $map_text_mediawiki= fun ($v, $uplist) {
+        # ($uplist might be empty in tests)
+        if (is_pair $uplist and $uplist->first->name eq "code") {
             # don't expand it in code segments
             mediawiki_replace($v, $mediawikitoken, $mediawikitable)
         } else {
-            my $body= mediawiki_rexpand
-              ($v, $mediawikitoken, $mediawikitable);
+            my $body=
+                mediawiki_rexpand($v, $mediawikitoken, $mediawikitable);
             array_map (
-                       fun ($e) {
-                           pxml_map_elements_exhaustively
-                             ($e, $pxml_name_to_mapper, undef);
-                       },
-                       $body)
+                fun ($e) {
+                    pxml_map_elements_exhaustively
+                        ($e, $pxml_name_to_mapper, undef);
+                },
+                $body)
         }
     };
 
@@ -220,11 +227,11 @@ TEST { HTML( process_body  ([P("Hello"),
     package FunctionalPerl::Htmlgen::_::Filesinfo;
     use FP::Hash "hash_perhaps_ref";
     use FP::Struct [qw(files
-                        filename_to_path0
-                        all_path0_exists
-                        path0_exists
-                        all_path0_used
-                      )];
+                       filename_to_path0
+                       all_path0_exists
+                       path0_exists
+                       all_path0_used
+                     )];
     method filename_to_path0 ($filename) {
         $$self{filename_to_path0}{$filename}
           // die "no mapping for filename '$filename'"
@@ -257,6 +264,9 @@ TEST { HTML( process_body  ([P("Hello"),
 }
 
 fun get_filesinfo () {
+    __  '() -> Filesinfo '.
+        '-- read info about files from disk as immutable struct';
+
     my $all_files= $gitrepository->ls_files->array;
 
     my $files= array_filter (cut_method($pathtranslate,"is_md"),
@@ -324,19 +334,21 @@ fun nav_bar ($items_in_level, $item_selected, $viewed_at_item) {
         }))
 }
 
-# For access from main:: by the code in the configuration file:
+# For access from main:: by the code in the configuration file (hacky):
 use FunctionalPerl::Htmlgen::Nav qw(_nav entry);
 
 sub nav {
     _nav (list(@_), \&nav_bar)
 }
+# /for access from main:: by the code in the configuration file.
 
 
-
-# group $files, to process them in an order that satisfies dependency
-# on $costranges
+# Note: the cost range feature is not used on the Functional Perl
+# website. It could be used to connect issues to a cost for budgeting.
 
 fun groupkey ($path) {
+    __  'a string key for grouping this path amongst other files, to '.
+        'process them in an order that satisfies dependency on costranges';
     my $p0= path0 $path;
     if ($p0=~ m|^bugs/|) {
         "bugs"
@@ -347,20 +359,21 @@ fun groupkey ($path) {
     }
 }
 
-
 {
     package FunctionalPerl::Htmlgen::_::Genfilestate;
     use FP::Struct [qw(filesinfo
-                        groupedfiles
-                        nonbugfiles
-                        costranges)];
-    # ugly to keep that costranges state here ? well call it Genfilestate then?
+                       groupedfiles
+                       nonbugfiles
+                       costranges)];
+
+    # it's ugly to use mutation here.
     method set_costrange ($path0,$maybe_costrange) {
         $$self{costranges}{$path0}= $maybe_costrange;
     }
     method costrange ($path0) {
         $$self{costranges}{$path0}
     }
+
     _END_
 }
 
@@ -381,16 +394,18 @@ fun get_genfilestate ($filesinfo) {
 }
 
 our $HEAD= pxmlpre 3, fun ($title, $csspath, $user_additions) {
-    HEAD (
-          TITLE ($title),
+    HEAD (TITLE ($title),
           LINK ({rel=> "stylesheet",
                  href=> $csspath,
                  type=> "text/css"}),
-          $user_additions,
-         )
+          $user_additions)
 };
 
-fun genfile ($path,$groupname,$genfilestate) {
+fun genfile ($path, $groupname, $genfilestate) {
+    __ '($path, $groupname, $genfilestate) -> () '.
+        '-- convert markdown file at $path to xhtml file at '.
+        'corresponding output path';
+
     my $path0= path0 $path;
     my $outpath= path0_to_outpath($path0);
     mkdir dirname( $outpath);
@@ -452,9 +467,9 @@ fun genfile ($path,$groupname,$genfilestate) {
 
     my $mediawikitoken= rand; # not fork safe!
     my ($h1,$body,$mediawikitable)=
-      markdownplus_parse ($str, lazy{ $pathtranslate->path0_to_title
-                                        ($path0) },
-                          $mediawikitoken);
+        markdownplus_parse ($str,
+                            lazy { $pathtranslate->path0_to_title($path0) },
+                            $mediawikitoken);
 
     my $maybe_buglist= $groupname eq "buglist" && do {
         my $bugs=

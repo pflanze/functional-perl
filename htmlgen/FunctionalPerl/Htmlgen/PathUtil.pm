@@ -36,7 +36,7 @@ package FunctionalPerl::Htmlgen::PathUtil;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
-
+use FP::Docstring;
 
 # move to lib
 use File::Spec;
@@ -44,7 +44,9 @@ use FP::Path;
 use Chj::xperlfunc qw(dirname);
 use Chj::TEST ":all";
 
-fun path_add ($base,$rel) {
+fun path_add ($base, $rel) {
+    __ '($basestr, $relstr) -> $str '.
+        '-- throws exception if $relstr goes above all of $basestr (via FP::Path)';
     FP::Path->new_from_string($base)->add
         (FP::Path->new_from_string($rel), 1)
           ->string
@@ -60,7 +62,9 @@ TEST_EXCEPTION {path_add ".", "../zoo/loo" }
   "can't take '..' of root directory"; # well, ok?
 
 
-fun path_diff ($path0from,$path0to) {
+fun path_diff ($path0from, $path0to) {
+    __ '($path0from, $path0to) -> $patstr '.
+        '-- (via File::Spec with Windows hack)';
     my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
     my $res= File::Spec->abs2rel($path0to, $from);
     # XX HACK for Windows (why is this using File::Spec, anyway?):
@@ -78,15 +82,15 @@ TEST{path_diff "foo", "bar.css"} 'bar.css';
 
 
 fun path0 ($path) {
-    ## ugly way to strip path prefix
+    __ 'delete "(../)*" prefix, just a hacky way to strip path prefix';
     my $path0= $path;
     while ($path0=~ s|^\.\./||){}; die if $path0=~ /\.\./;
     $path0
 }
 
 
-# a path-append that doesn't output leading './'
-fun path_path0_append ($dir,$relpath0) {
+fun path_path0_append ($dir, $relpath0) {
+    __ "a path-append that doesn't result in a leading './'";
     my $p= "$dir/$relpath0";
     $p=~ s|^\./||;
     $p

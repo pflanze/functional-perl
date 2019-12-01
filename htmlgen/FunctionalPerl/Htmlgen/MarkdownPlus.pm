@@ -55,7 +55,7 @@ package FunctionalPerl::Htmlgen::MarkdownPlus;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
-
+use FP::Docstring;
 use Chj::TEST;
 use PXML qw(is_pxml_element);
 use PXML::XHTML ":all";
@@ -92,7 +92,9 @@ TEST {
 
 
 fun markdownplus_parse ($str, $alternative_title, $mediawikitoken) {
-    # -> ($h1,$body1)
+    __  '($str, $alternative_title, $tokenstr)-> ($h1, [$body_PXML_Elements], $hashtbl) '.
+        '-- markdown parsing to PXML, extracting title, and also'.
+        ' returning the mediawiki side channeled hack replacements';
 
     my ($str1, $table)= mediawiki_prepare ($str, $mediawikitoken);
 
