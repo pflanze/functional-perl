@@ -228,7 +228,6 @@ sub split_moduledesc {
 }
 
 sub export_desc2pod {
-    print
     join("",
          map {
              my $a= $$export_desc{$_};
