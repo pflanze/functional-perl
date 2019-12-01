@@ -120,6 +120,9 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
+#   **NOTE**  there is no need to keep SEE ALSO in sync with the definitions,
+#   **NOTE**  running meta/update-pod (at release time) will take care of it.
+
 
 package FunctionalPerl;
 @ISA="Exporter"; require Exporter;
@@ -136,6 +139,8 @@ our $VERSION= "0.72.16";
 # imported with ":all" by default. Where a module name contains "=",
 # the part after the "=" is the comma-separated list of tag names to
 # import.
+# NOTE: the documentation in "SEE ALSO" is auto-generated from this,
+# you do not need to keep it in sync manually.
 our $export_desc=
   +{
     ":autobox"=> [qw(FP::autobox=)],
