@@ -177,7 +177,7 @@ package PXML::_::XHTML {
         my $b= $s->body;
         (uc($s->name)."(".
          join(", ",
-              defined $a ? &$show($a) : (),
+              (defined($a) and keys %$a) ? &$show($a) : (),
               ref($b) eq "ARRAY" ? join(", ",map { &$show($_) } @$b)
               : &$show($b)).
          ")")
