@@ -58,7 +58,7 @@ inputs:
         # map rows to XML elements
         ->map(sub {
                   my ($a,$b,$c,$d)= @{$_[0]};
-                  RECORD A($a), B($b), C($c), D($d)
+                  RECORD(A($a), B($b), C($c), D($d))
               })))
       # print XML document to disk
       ->xmlfile($outpath);
