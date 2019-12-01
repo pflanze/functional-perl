@@ -582,7 +582,7 @@ sub _completion_function {
                 # need to know the class of that thing
                 no strict 'refs';
                 my $r;
-                if (my $val=
+                my $val=
                     (
                      # try to get the value, or at least the package.
 
@@ -614,7 +614,8 @@ sub _completion_function {
                          } else {
                              0
                          }
-                     })) {
+                     });
+                if ($val) {
                     #warn "got value from \$$varnam";
                     if ($r||=ref($val)) {
                         if ($r eq 'HASH'
