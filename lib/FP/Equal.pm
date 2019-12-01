@@ -114,7 +114,7 @@ or on the L<website|http://functional-perl.org/>.
 package FP::Equal;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(equal);
-@EXPORT_OK=qw(equaln is_equal relaxedequal);
+@EXPORT_OK=qw(equaln is_equal relaxedequal pointer_eq);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
