@@ -123,6 +123,7 @@ use FunctionalPerl::Htmlgen::Linking;
 
 # XX make configurable
 our $pxml_mappers=
+    # These implement FunctionalPerl::Htmlgen::PXMLMapper
     ["FunctionalPerl::Htmlgen::Linking::Anchors",
      "FunctionalPerl::Htmlgen::Toc", # <with_toc>
      "FunctionalPerl::Htmlgen::Linking::code",
@@ -130,13 +131,15 @@ our $pxml_mappers=
 
 fun pxml_name_to_mapper (@PXMLMapper_args) {
   +{
-    map {
-        my $m= $_->new_(@PXMLMapper_args);
-        map {
-            ($_, sub { $m->map_element(@_)})
-        } @{$m->match_element_names}
-    } @$pxml_mappers
-   }
+      map {
+          # instantiate a mapper
+          my $m= $_->new_(@PXMLMapper_args);
+          # register it for all the element names it wants to see
+          map {
+              ($_, sub { $m->map_element(@_)})
+          } @{$m->match_element_names}
+      } @$pxml_mappers
+  }
 }
 
 fun default_pxml_name_to_mapper() {
@@ -229,13 +232,18 @@ TEST { HTML( process_body  ([P("Hello"),
 
 {
     package FunctionalPerl::Htmlgen::_::Genfilestate;
-    use FP::Struct [qw(filesinfo
-                       groupedfiles
-                       nonbugfiles
-                       costranges)];
+    use FP::Docstring;
 
-    # it's ugly to use mutation here.
+    use FP::Struct ['filesinfo',
+                    'groupedfiles',
+                    'nonbugfiles',
+                    'costranges', # path0 -> costrange-string; filled
+                                  # in by mutation when processing
+                                  # non-buglist groups
+        ];
+
     method set_costrange ($path0,$maybe_costrange) {
+        __ '~ugly, mutates';
         $$self{costranges}{$path0}= $maybe_costrange;
     }
     method costrange ($path0) {
@@ -268,12 +276,12 @@ TEST { HTML( process_body  ([P("Hello"),
         }
     }
 
-    use FP::Struct [qw(files
-                       filename_to_path0
-                       all_path0_exists
-                       path0_exists
-                       all_path0_used
-                     )];
+    use FP::Struct ['files',
+                    'filename_to_path0',
+                    'all_path0_exists',
+                    'path0_exists', # path0=> ()
+                    'all_path0_used', # path0 => usecount, mutated
+        ];
     method filename_to_path0 ($filename) {
         $$self{filename_to_path0}{$filename}
           // die "no mapping for filename '$filename'"
@@ -300,6 +308,7 @@ TEST { HTML( process_body  ([P("Hello"),
         defined $$self{path0_exists}{$path0}
     }
     method all_path0_used_inc ($path0) {
+        __ '~ugly, mutates';
         $$self{all_path0_used}{$path0}++
     }
 
@@ -309,14 +318,12 @@ TEST { HTML( process_body  ([P("Hello"),
         my $nonbugfiles= purearray( @{$$groupedfiles{normal}},
                                     @{$$groupedfiles{buglist}||[]} );
 
-        my $costranges={};
-        # path0 -> costrange-string; filled when processing non-buglist groups
-
         FunctionalPerl::Htmlgen::_::Genfilestate->new
             ($self, # just so as to bundle it up, too, ugly?
              $groupedfiles,
              $nonbugfiles,
-             $costranges)
+             {} # costranges (mutated)
+            )
     }
 
     _END_
@@ -355,13 +362,13 @@ fun get_filesinfo () {
           path0($_)=>1
       } @$files};
 
-    my $all_path0_used= {};
-
-    FunctionalPerl::Htmlgen::_::Filesinfo->new($files,
-                        $filename_to_path0,
-                        $all_path0_exists,
-                        $path0_exists,
-                        $all_path0_used)
+    FunctionalPerl::Htmlgen::_::Filesinfo->new(
+        $files,
+        $filename_to_path0,
+        $all_path0_exists,
+        $path0_exists,
+        {}, # all_path0_used
+        )
 }
 
 
