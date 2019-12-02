@@ -14,9 +14,9 @@ FunctionalPerl::Htmlgen::Htmlparse
 =head1 SYNOPSIS
 
     use FunctionalPerl::Htmlgen::Htmlparse qw(htmlparse);
-    my $b= htmlparse '<p>hi</p>', 'body';
+    my $b= htmlparse '<p>hi</p> <p>there!', 'body';
     is ref($b), 'PXML::_::XHTML';
-    is $b->string, '<body><p>hi</p></body>';
+    is $b->string, '<body><p>hi</p><p>there!</p></body>';
 
 =head1 DESCRIPTION
 
