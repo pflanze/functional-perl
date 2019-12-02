@@ -29,7 +29,9 @@ FP::Docstring
 
 A docstring is a (short) string used to document subroutines that is
 part of the code at runtime and hence retrievable at runtime,
-e.g. from a debugger or L<FP::Repl>.
+e.g. from a debugger or L<FP::Repl>. It is currently also shown by
+L<FP::Show> (it makes the display verbose, though, thus this might
+change).
 
 =head1 BUGS
 
