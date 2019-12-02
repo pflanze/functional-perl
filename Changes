@@ -1,5 +1,25 @@
 Revision history for FunctionalPerl
 
+0.72.17 2019-12-2
+    - tests: avoid the word 'failed' in messages checking dependencies
+    - tests: fix(?) for Windows: do not use -x
+    - tests: more "make Inf properly version independent"
+    - dependencies: htmlgen/gen: depend on Trap only if --trap given
+    - documentation improvements (markdown files)
+    - Predicates: fix: remove hand inlining of 'force'; add `is_seq`
+    - Repl fix accessing values in boolean context
+    - Show,Lazy: show location information in unevaluated promises
+    - Show: do not show sub/promise details when running in test suite
+    - avoid using PFLANZE:: namespaces (there are still some in meta)
+    - create (beginnings of) FP::PureHash, FP::Abstract::Map
+    - export `pointer_eq`
+    - create FP::Docstring
+    - htmlgen: cleanups, docstrings, pod snippets, use PXML::XHTML
+      (making code more worthy to look at)
+    - htmlgen: add capability to use PerlTidy
+    - Sequence: add `split_at`; Stream: make `append` n-ary
+    - create meta/update-pod
+
 0.72.16 2019-11-29
     - declare dependency on new example script (d'oh)
 
