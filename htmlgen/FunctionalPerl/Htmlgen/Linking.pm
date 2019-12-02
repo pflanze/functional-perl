@@ -67,10 +67,10 @@ package FunctionalPerl::Htmlgen::Linking::code {
     use FP::Predicates;
     use FunctionalPerl::Htmlgen::PathUtil qw(path_diff);
     use PXML::XHTML ":all";
-
     use Chj::CPAN::ModulePODUrl 'perhaps_module_pod_url';
-    our $podurl_cache= ".ModulePODUrl-cache"; mkdir $podurl_cache;
     use FP::Memoizing 'memoizing_to_dir';
+    
+    our $podurl_cache= ".ModulePODUrl-cache"; mkdir $podurl_cache;
     *xmaybe_module_pod_url=
         memoizing_to_dir $podurl_cache, sub {
             print STDERR "perhaps_module_pod_url(@_)..";
