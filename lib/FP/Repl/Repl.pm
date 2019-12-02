@@ -582,40 +582,36 @@ sub _completion_function {
                 # need to know the class of that thing
                 no strict 'refs';
                 my $r;
-                my $val=
-                    (
-                     # try to get the value, or at least the package.
-
-                     do {
-                         if (my $ref= $$lexicals{'$'.$varnam}) {
-                             $$ref
-                         } else {
-                             undef
-                         }
-                     }
-
-                     or $ { $package."::".$varnam }
-
-                     or do {
-                         # (if I could run code side-effect free... or
-                         # compile-only and disassemble....)  Try to
-                         # parse the perl myself
-                         if ($part=~ /.* # force latest possible match (ok?)
-                                      (?:^|;)\s*
-                                      (?:(?:my|our)\s+)?
-                                      # ^ optional for no 'use strict'
-                                      \$$varnam
-                                      \s*=\s*
-                                      (?:new\w*\s+($PACKAGE)
-                                      |($PACKAGE)\s*->\s*new)
-                                     /sx) {
-                             $r=$1;
-                             1
-                         } else {
-                             0
-                         }
-                     });
-                if ($val) {
+                # try to get the value, or at least the package.
+                my $val= do {
+                    if (my $ref= $$lexicals{'$'.$varnam}) {
+                        $$ref
+                    } else {
+                        my $v= $ { $package."::".$varnam };
+                        if (defined $v) {
+                            $v
+                        } else {
+                            # (if I could run code side-effect free... or
+                            # compile-only and disassemble....)  Try to
+                            # parse the perl myself
+                            if ($part=~ /.* # force latest possible match (ok?)
+                                (?:^|;)\s*
+                                (?:(?:my|our)\s+)?
+                                # ^ optional for no 'use strict'
+                                \$$varnam
+                                \s*=\s*
+                                (?:new\w*\s+($PACKAGE)
+                                |($PACKAGE)\s*->\s*new)
+                                /sx) {
+                                $r=$1;
+                                1
+                            } else {
+                                0
+                            }
+                        }
+                    }
+                };
+                if (defined $val) {
                     #warn "got value from \$$varnam";
                     if ($r||=ref($val)) {
                         if ($r eq 'HASH'
@@ -671,7 +667,7 @@ sub _completion_function {
                         ()
                     }
                 } else {
-                    #warn "no value von \$$varnam";
+                    #warn "no value from \$$varnam";
                     ()
                 }
             } elsif ($part=~ tr/"/"/ % 2) {
