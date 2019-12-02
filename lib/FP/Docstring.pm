@@ -31,8 +31,6 @@ A docstring is a (short) string used to document subroutines that is
 part of the code at runtime and hence retrievable at runtime,
 e.g. from a debugger or L<FP::Repl>.
 
-Documentation 
-
 =head1 BUGS
 
 Using single-quoted strings directly after C<__> is giving an "Bad
