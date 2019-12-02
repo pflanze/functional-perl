@@ -16,7 +16,7 @@ FP::Docstring
     use FP::Docstring; # imports `__` (which does nothing) and `docstring`
 
     sub foo {
-        __"bars the foo out of the list";
+        __ "bars the foo out of the list";
         my ($l)= @_;
         $l->filter(sub{not $_[0]=~ /foo/})
     }
@@ -27,9 +27,9 @@ FP::Docstring
 
 =head1 DESCRIPTION
 
-Docstrings are short documentation for subroutines that is (in this
-case, similarly to Common Lisp) attached to the subroutine at runtime
-and hence retrievable at runtime, e.g. from a debugger or L<FP::Repl>.
+A docstring is a (short) string used to document subroutines that is
+part of the code at runtime and hence retrievable at runtime,
+e.g. from a debugger or L<FP::Repl>.
 
 Documentation 
 
