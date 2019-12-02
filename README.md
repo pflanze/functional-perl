@@ -95,10 +95,17 @@ accidentally) change them both at the same time:
     $x++;
     is $y, 100; # still true, the number itself didn't change, only the variable
 
-The same isn't true for most other values in Perl; they let you modify
-their internal contents without giving you a new
-reference. [Here's an example](examples/functional-classes) with a
-simple object to show the difference.
+There is no number operation that modifies numbers in place, they all
+return a new number instance. The same isn't true for most other
+values in Perl; they let you modify their internal contents without
+giving you a new reference, and it's usually the default way how
+things are done. Strings and sometimes arrays are often copied
+instead, which for large instances becomes inefficient. Setters on
+objects usually just modify an object in place (they mutate it). This
+project helps both with efficiency (minimizing copying) and ergonomy
+(automatically creates functional setters for class fields).
+[Here's an example](examples/functional-classes) with a simple class
+to show the difference.
 
 Code that doesn't mutate (pure functions or methods) can be combined
 easily into new functions, which are still pure and thus can be
