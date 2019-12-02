@@ -92,6 +92,7 @@ package FP::Predicates;
               is_pure_object
               is_pure_class
               is_string
+              is_string_not_number
               is_nonnullstring
               is_natural0
               is_natural
@@ -139,6 +140,8 @@ use Chj::TEST;
 use FP::Abstract::Pure;
 use Chj::BuiltinTypePredicates 'is_filehandle';
 # ^ should probably move more lowlevel predicates there
+use Scalar::Util qw(looks_like_number);
+
 
 # Only use `FP::Failure` features if $FP::Failure::use_failure is
 # true--which means that FP::Failure should be loaded, no need to
@@ -192,6 +195,14 @@ sub is_string ($) {
     my ($v)=@_;
     (defined $v
      and not ref $v) # relax?
+        or fail "is_string", $v
+}
+
+sub is_string_not_number ($) {
+    my ($v)=@_;
+    (defined $v
+     and not ref $v # relax?
+     and not looks_like_number($v))
         or fail "is_string", $v
 }
 
