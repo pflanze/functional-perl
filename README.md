@@ -111,7 +111,8 @@ Code that doesn't mutate (pure functions or methods) can be combined
 easily into new functions, which are still pure and thus can be
 further combined. `compose` takes any number of function references
 (coderefs) and returns a new function (coderef) that applies those
-functions to its argument in turn:
+functions to its argument in turn (it is a combinator function, there
+are more in`FP::Combinators`):
 
     # The function that adds all of its arguments together then
     # squares the result:
@@ -131,6 +132,9 @@ See the [examples](examples/README.md) page for more examples.
 
 If you'd like to see a practical step-by-step introduction, read the
 [[intro]].
+
+For an index into all modules, see the "see also" section in
+`FunctionalPerl`.
 
 
 ## Status: alpha
