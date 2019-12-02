@@ -1,5 +1,12 @@
 Revision history for FunctionalPerl
 
+0.72.18 2019-12-2
+    - some doc improvements
+    - website: link modules to CPAN url (over Github) if available;
+      fix bug due to sub prototype
+    - Predicates: add `is_string_not_number`, but is probably of no
+      use
+
 0.72.17 2019-12-2
     - tests: avoid the word 'failed' in messages checking dependencies
     - tests: fix(?) for Windows: do not use -x
