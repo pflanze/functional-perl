@@ -42,7 +42,6 @@ package Chj::CPAN::ModulePODUrl;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use LWP::UserAgent;
-use FP::Predicates qw(is_string_not_number);
 use FP::Show;
 
 our $ua = LWP::UserAgent->new; # reuse to speed up HTTPS handling?
@@ -75,8 +74,6 @@ sub if_get ($&&&) {
 
 sub perhaps_module_pod_url {
     my ($module_name)= @_;
-    is_string_not_number $module_name
-        or die "not a string: ".show($module_name);
 
     my $url= "https://metacpan.org/pod/$module_name";
 
