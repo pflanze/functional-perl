@@ -161,12 +161,14 @@ package FunctionalPerl::Htmlgen::Linking::code {
                     my ($url)=@_;
                     A {href=> $url}, $e
                 };
-                if (defined $maybe_path) {
+
+                my $maybe_cpan_url= ignore_module_name ($t) ? undef
+                    : maybe_module_pod_url ($t);
+
+                if (defined $maybe_cpan_url) {
+                    &$wrap_with_link ($maybe_cpan_url)
+                } elsif (defined $maybe_path) {
                     &$wrap_with_link (path_diff $self->path0, $maybe_path)
-                } elsif (ignore_module_name $t) {
-                    &$mapped_e()
-                } elsif (my $url= maybe_module_pod_url ($t)) {
-                    &$wrap_with_link ($url)
                 } else {
                     &$mapped_e()
                 }
