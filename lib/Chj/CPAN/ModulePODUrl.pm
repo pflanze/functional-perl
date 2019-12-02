@@ -73,7 +73,7 @@ sub if_get ($&&&) {
 # better for caching (also perhaps in general): return error object? 
 # Or even just plain old die.
 
-sub perhaps_module_pod_url ($) {
+sub perhaps_module_pod_url {
     my ($module_name)= @_;
     is_string_not_number $module_name
         or die "not a string: ".show($module_name);
