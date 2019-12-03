@@ -85,6 +85,10 @@ our %dependencies=
    'Chj::HTTP::Daemon'=> [
        'HTTP::Request',
    ],
+   'FunctionalPerl::Htmlgen::PerlTidy'=> [
+       'Function::Parameters',
+       'Perl::Tidy',
+   ],
    (map { $_ => [ 'Function::Parameters' ] }
     qw(
          FunctionalPerl::Htmlgen::Toc
@@ -94,7 +98,6 @@ our %dependencies=
          FunctionalPerl::Htmlgen::Cost
          FunctionalPerl::Htmlgen::Nav
          FunctionalPerl::Htmlgen::Sourcelang
-         FunctionalPerl::Htmlgen::PerlTidy
     )),
    (map { $_ => ['FP::Repl::Dependencies'] }
     qw(
