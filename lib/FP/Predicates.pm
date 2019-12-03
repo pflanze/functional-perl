@@ -92,7 +92,7 @@ package FP::Predicates;
               is_pure_object
               is_pure_class
               is_string
-              is_string_not_number
+              is_nonnumeric_string
               is_nonnullstring
               is_natural0
               is_natural
@@ -198,7 +198,7 @@ sub is_string ($) {
         or fail "is_string", $v
 }
 
-sub is_string_not_number ($) {
+sub is_nonnumeric_string ($) {
     my ($v)=@_;
     (defined $v
      and not ref $v # relax?
