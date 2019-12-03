@@ -53,12 +53,6 @@ our %dependencies=
        'Function::Parameters',
        'URI'
    ],
-   'FunctionalPerl::Htmlgen::Toc'=> [
-       'Function::Parameters'
-   ],
-   'FunctionalPerl::Htmlgen::PXMLMapper'=> [
-       'Function::Parameters'
-   ],
    'FunctionalPerl::Htmlgen::PathUtil'=> [
        'Function::Parameters',
        'File::Spec'
@@ -88,21 +82,20 @@ our %dependencies=
        'Function::Parameters',
        'HTML::TreeBuilder'
    ],
-   'FunctionalPerl::Htmlgen::FileUtil'=> [
-       'Function::Parameters'
-   ],
-   'FunctionalPerl::Htmlgen::default_config'=> [
-       'Function::Parameters'
-   ],
-   'FunctionalPerl::Htmlgen::Cost'=> [
-       'Function::Parameters'
-   ],
-   'FunctionalPerl::Htmlgen::Nav'=> [
-       'Function::Parameters'
-   ],
    'Chj::HTTP::Daemon'=> [
        'HTTP::Request'
    ],
+   map { $_ => [ 'Function::Parameters' ] }
+   qw(
+         FunctionalPerl::Htmlgen::Toc
+         FunctionalPerl::Htmlgen::PXMLMapper
+         FunctionalPerl::Htmlgen::FileUtil
+         FunctionalPerl::Htmlgen::default_config
+         FunctionalPerl::Htmlgen::Cost
+         FunctionalPerl::Htmlgen::Nav
+         FunctionalPerl::Htmlgen::Sourcelang
+         FunctionalPerl::Htmlgen::PerlTidy
+   ),
    map { $_ => ['FP::Repl::Dependencies'] }
    qw(
          FP::Repl::Dependencies
