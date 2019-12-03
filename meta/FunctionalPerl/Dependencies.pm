@@ -55,7 +55,7 @@ our %dependencies=
    ],
    'FunctionalPerl::Htmlgen::PathUtil'=> [
        'Function::Parameters',
-       'File::Spec'
+       'File::Spec',
    ],
    'FunctionalPerl::Htmlgen::PathTranslate'=> [
        'Function::Parameters',
@@ -64,7 +64,7 @@ our %dependencies=
    'FunctionalPerl::Htmlgen::Mediawiki'=> [
        'Function::Parameters',
        'Encode',
-       'URI'
+       'URI',
    ],
    'FunctionalPerl::Htmlgen::MarkdownPlus'=> [
        'Function::Parameters',
@@ -80,10 +80,10 @@ our %dependencies=
    ],
    'FunctionalPerl::Htmlgen::Htmlparse'=> [
        'Function::Parameters',
-       'HTML::TreeBuilder'
+       'HTML::TreeBuilder',
    ],
    'Chj::HTTP::Daemon'=> [
-       'HTTP::Request'
+       'HTTP::Request',
    ],
    (map { $_ => [ 'Function::Parameters' ] }
     qw(
