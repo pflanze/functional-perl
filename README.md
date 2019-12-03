@@ -49,19 +49,19 @@ Make some XML document:
 Now create a bigger document, with its inner parts built from external
 inputs:
 
-    MYEXAMPLE
-      (PROTOCOL_VERSION("0.123"),
-       RECORDS
-       (csv_file_to_rows($inpath, {eol=> "\n", sep_char=> ";"})
-        # skip the header row
-        ->rest
-        # map rows to XML elements
-        ->map(sub {
-                  my ($a,$b,$c,$d)= @{$_[0]};
-                  RECORD(A($a), B($b), C($c), D($d))
-              })))
-      # print XML document to disk
-      ->xmlfile($outpath);
+    MYEXAMPLE(
+        PROTOCOL_VERSION("0.123"),
+        RECORDS(
+            csv_file_to_rows($inpath, {eol=> "\n", sep_char=> ";"})
+            # skip the header row
+            ->rest
+            # map rows to XML elements
+            ->map(sub {
+                      my ($a,$b,$c,$d)= @{$_[0]};
+                      RECORD(A($a), B($b), C($c), D($d))
+                  })))
+        # print XML document to disk
+        ->xmlfile($outpath);
 
 The `MYEXAMPLE` document above is built lazily: `csv_file_to_rows`
 returns a *lazy* list of rows, `->rest` causes the first CSV row to be
