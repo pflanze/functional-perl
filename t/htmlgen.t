@@ -12,6 +12,7 @@ use Test::Requires
     #'Sub::Call::Tail'=> 0,
     'Text::Markdown'=> 0,
     'HTML::TreeBuilder'=> 0,
+    'Perl::Tidy'=> 0,
    };
 
 
