@@ -85,8 +85,8 @@ our %dependencies=
    'Chj::HTTP::Daemon'=> [
        'HTTP::Request'
    ],
-   map { $_ => [ 'Function::Parameters' ] }
-   qw(
+   (map { $_ => [ 'Function::Parameters' ] }
+    qw(
          FunctionalPerl::Htmlgen::Toc
          FunctionalPerl::Htmlgen::PXMLMapper
          FunctionalPerl::Htmlgen::FileUtil
@@ -95,9 +95,9 @@ our %dependencies=
          FunctionalPerl::Htmlgen::Nav
          FunctionalPerl::Htmlgen::Sourcelang
          FunctionalPerl::Htmlgen::PerlTidy
-   ),
-   map { $_ => ['FP::Repl::Dependencies'] }
-   qw(
+    )),
+   (map { $_ => ['FP::Repl::Dependencies'] }
+    qw(
          FP::Repl::Dependencies
          FP::Repl::Repl
          FP::Repl::StackPlus
@@ -105,7 +105,7 @@ our %dependencies=
          FP::Repl::WithRepl
          FP::Repl
          FP::Trie::t
-    ),
+    )),
   );
 
 
