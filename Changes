@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.20 2019-12-3
+    - fix "fix tests: add the new htmlgen modules to ::Dependencies"
+    - fix dependency on Perl::Tidy
+
 0.72.19 2019-12-3
     - fix tests: add the new htmlgen modules to ::Dependencies
     - Rename `is_string_not_number` -> `is_nonnumeric_string`
