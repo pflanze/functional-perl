@@ -963,6 +963,12 @@ sub run {
                                 my ($maybe_frameno)=
                                   $rest=~ /^\s*(\d+)?\s*\z/
                                     or die "expecting digits or no argument, got '$cmd'";
+                                local $FP::Lazy::allow_access= 1;
+                                # ^ XX should be generalized, not just
+                                # for FP::Lazy; or alternatively, use
+                                # overload::StrVal instead of
+                                # stringification in the backtrace
+                                # library.
                                 print $OUTPUT $stack->backtrace ($maybe_frameno
                                                                  // $frameno);
                                 $rest=""; # XX HACK; also, really
