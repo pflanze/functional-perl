@@ -1,5 +1,13 @@
 Revision history for FunctionalPerl
 
+0.72.21 2019-12-4
+    - fix: avoid running into an error when reporting an error in Lazy
+    - fix Repl,WithRepl to use show when showing a backtrace or exception
+    - Sequence,Predicates: add is_proper_sequence
+    - fix List's ->stream (oh; that could use a compile time warning)
+    - Stream,Sequence: add chunks_of and strictly_chunks_of
+    - update docs, more exahhhmples in README
+
 0.72.20 2019-12-3
     - fix "fix tests: add the new htmlgen modules to ::Dependencies"
     - fix dependency on Perl::Tidy
