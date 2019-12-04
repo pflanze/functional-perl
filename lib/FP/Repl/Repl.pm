@@ -407,7 +407,7 @@ sub formatter {
                  $res= Data::Dumper::Dumper(@v);
                  1
              } || do {
-                 warn "Data::Dumper: $@";
+                 warn "Data::Dumper: ".show($@);
              };
              $res
          }
@@ -447,10 +447,10 @@ sub viewers {
                 $o->xfinish;
                 1
             } || do {
-                my $e= $@;
-                unless ($e=~ /broken pipe/i) {
+                my $estr= show($@);
+                unless ($estr=~ /broken pipe/i) {
                     print $ERROR "error piping to pager ".
-                      "$pagercmd: $e\n"
+                      "$pagercmd: $estr\n"
                         or die $!;
                 }
             };
@@ -919,7 +919,7 @@ sub run {
                   $maybe_lexical_persistence->prelude("");
                 1
             } || do {
-                print $ERROR "Could not enable lexical persistence: $@";
+                print $ERROR "Could not enable lexical persistence: ".show($@);
                 0
             }
         };
@@ -1112,7 +1112,7 @@ sub run {
 
                             1
                         } || do {
-                            print $ERROR "$@";
+                            print $ERROR "error handling command $cmd: ".show($@);
                             redo READ;
                         }
                     }
@@ -1215,7 +1215,7 @@ sub run {
                 $f->xputback(0600);
             };
             if (ref $@ or $@) {
-                warn "could not write history file: $@"
+                warn "could not write history file: ".show($@)
             }
         }
         $SIG{INT}= defined($oldsigint)? $oldsigint : "DEFAULT";
