@@ -97,6 +97,7 @@ sub WithRepl_eval_e (&;$) {
 use FP::Repl;
 use FP::Repl::Stack;
 use Chj::TEST;
+use FP::Show;
 
 
 # PROBLEM: even exceptions within contexts that catch exceptions
@@ -210,8 +211,7 @@ sub handler_for ($$) {
             }
         } else {
             my $err= $FP::Repl::Repl::maybe_output // *STDERR{IO};
-            my $estr= "$e"; chomp $estr;
-            print $err "Exception: $estr\n";
+            print $err "Exception: ".show($e)."\n";
             # then what to do upon exiting it? return the value of the
             # repl?  XX repl needs new feature, a "quit this context
             # with this value". Although not helping anyway since Perl
