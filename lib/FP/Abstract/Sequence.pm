@@ -14,7 +14,8 @@ FP::Abstract::Sequence - functional sequence protocol
 =head1 SYNOPSIS
 
     use FP::Predicates qw(is_sequence is_proper_sequence);
-    # ^ here since we can't have functions in FP::Abstract::Sequence
+    # ^ placed here because we can't export functions from
+    #     FP::Abstract::Sequence
     use FP::PureArray;
     use FP::StrictList;
     use FP::List;
