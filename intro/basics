@@ -152,7 +152,8 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 # $VAR1 = 'Hello Paul';
 
 # main> hi "Stefan", undef
-# Exception: Use of uninitialized value $names[1] in join or string at (eval 146) line 1.
+# Exception: 'Use of uninitialized value $names[1] in join or string at (eval 146) line 1.
+# '
 # main 1> 
 
 # An exception has happened because of the "use warnings FATAL"
@@ -189,7 +190,8 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 # $VAR1 = 'Stefan';
 
 # main 1> hi "there", undef, "again"
-# Exception: Use of uninitialized value $names[1] in join or string at (eval 146) line 1.
+# Exception: 'Use of uninitialized value $names[1] in join or string at (eval 146) line 1.
+# '
 # main 2> 
 
 # The "2" signifies that you've got 2 nested repls now.

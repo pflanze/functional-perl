@@ -73,7 +73,8 @@ enter, you will be in a sub-repl, indicated by the level number `1`
 here:
 
     repl> foo()
-    Exception: Undefined subroutine &repl::foo called at (eval 143) line 1.
+    Exception: 'Undefined subroutine &repl::foo called at (eval 143) line 1.
+    '
     repl 1> 
 
 In that case, you can return to the parent repl by pressing ctl-d. It
@@ -446,7 +447,8 @@ means for example that we get this behaviour:
     repl> fun inverse ($x) { 1 / $x }
     repl> fun or_square ($x,$y) { $x || $y * $y }
     repl> or_square 2, inverse 0
-    Exception: Illegal division by zero at (eval 137) line 1.
+    Exception: 'Illegal division by zero at (eval 137) line 1.
+    '
     repl 1> 
 
 Of course, `inverse` fails. But note that the result of `inverse` is
@@ -460,7 +462,8 @@ using `lazy` from `FP::TransparentLazy` (`repl+` loads it already):
 Only when `$y` is actually used, we get the exception:
 
     repl> or_square 0, lazy { inverse 0 }
-    Exception: Illegal division by zero at (eval 139) line 1.
+    Exception: 'Illegal division by zero at (eval 139) line 1.
+    '
     repl 1> 
 
 Alternatively we could redefine inverse to evaluate its body lazily:
@@ -470,7 +473,8 @@ Alternatively we could redefine inverse to evaluate its body lazily:
     repl> or_square 2, inverse 0
     $VAR1 = 2;
     repl> or_square 0, inverse 0
-    Exception: Illegal division by zero at (eval 137) line 1.
+    Exception: 'Illegal division by zero at (eval 137) line 1.
+    '
     repl 1> 
 
 This is usually better since the knowledge about the need for lazy
@@ -514,7 +518,8 @@ exception). `FP::Lazy::Promise` objects need to be forced explicitely:
     repl> lazy { 1 / 2 }->force + 1
     $VAR1 = '1.5';
     repl> lazy { 1 / 0 }->force + 1
-    Exception: Illegal division by zero at (eval 146) line 1.
+    Exception: 'Illegal division by zero at (eval 146) line 1.
+    '
     repl 1> 
 
 There's a `force` *function*, too, which will not die when its
@@ -578,7 +583,8 @@ There's a function `F` which returns a deep copy of its argument with
 all the promises forced:
 
     repl> F $l
-    Exception: Illegal division by zero at (eval 137) line 1.
+    Exception: 'Illegal division by zero at (eval 137) line 1.
+    '
     repl 1> 
 
 Yes, it will fail here; but we can still see how far it went, since
@@ -633,9 +639,9 @@ Well, we need a termination condition.
     repl> F $l->drop(4)
     $VAR1 = list('-1');
     repl> F $l
-    Exception: Illegal division by zero at (eval 136) line 1.
+    Exception: 'Illegal division by zero at (eval 136) line 1.
+    '
     repl 1> (ctl-d)
-    Illegal division by zero at (eval 136) line 1.
     repl> $l
     $VAR1 = list('0.333333333333333', '0.5', '1', lazy { "DUMMY" }, '-1');
 
@@ -681,9 +687,9 @@ all promises on its way, regardless whether they are in value or rest
 slots:
 
     repl> F $l
-    Exception: Illegal division by zero at (eval 136) line 1.
+    Exception: 'Illegal division by zero at (eval 136) line 1.
+    '
     repl 1> 
-    Illegal division by zero at (eval 136) line 1.
     repl> F $l->drop(4)
     $VAR1 = list('-1');
     repl> $l
@@ -722,7 +728,8 @@ or functional streams as they are also called. The functional-perl
 project provides functions/methods to work with these, too:
 
     repl> $l->drop(10)
-    Exception: Illegal division by zero at (eval 136) line 1.
+    Exception: 'Illegal division by zero at (eval 136) line 1.
+    '
 
 Ok, to be able to skip over that, we'd have to go back to our second
 definition of `inverse`. But anyway, we could also start at a safer
@@ -845,7 +852,8 @@ holding the head of the stream, then it becomes undef. This means when
 you try to run the same expression again, you get:
 
     repl> $l->drop(1000)->first
-    Exception: Can't call method "drop" on an undefined value at (eval 147) line 1.
+    Exception: 'Can\'t call method "drop" on an undefined value at (eval 147) line 1.
+    '
     repl 1> 
 
 You can prevent this manually by protecting `$l` using the `Keep` function:
