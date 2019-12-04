@@ -312,6 +312,18 @@ sub FORCE {
 }
 
 
+# XX because show did lead to endless loop, (why?) sgh
+sub strshow {
+    my ($v)=@_;
+    if (defined $v) {
+        require overload;
+        overload::StrVal($v)
+    } else {
+        "undef"
+    }
+}
+
+
 # `use overload` arguments, to prevent from accidental use as if it
 # were FP::TransparentLazy
 
@@ -367,7 +379,8 @@ package FP::Lazy::AnyPromise {
             $_[0]= $v; goto &$method;
         } else {
             # XX imitate perl's ~exact error message?
-            Carp::croak "no method '$methodname' found for object: ".show($v);
+            Carp::croak "no method '$methodname' found for object: "
+                .FP::Lazy::strshow($v);
         }
     }
 
