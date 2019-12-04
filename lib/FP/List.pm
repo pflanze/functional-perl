@@ -213,7 +213,8 @@ our $immutable= 1; # whether pairs are to be made immutable
 
     sub stream {
         @_==1 or die "wrong number of arguments";
-        lazy { $_[0] }
+        my ($l)= @_;
+        lazy { $l }
     }
 
     sub preferred_fold {

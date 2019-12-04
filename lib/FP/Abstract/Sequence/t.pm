@@ -39,7 +39,7 @@ use FP::StrictList;
 use FP::List;
 use FP::Stream;
 use FP::Array 'array';
-
+use FP::Ops qw(the_method);
 use Chj::TEST;
 
 my $t_vals=
@@ -75,6 +75,21 @@ TEST { t_fn *is_proper_sequence }
 
 TEST { t_fn *is_seq }
  [ 1,1,1,1, 0,0,0,0, 1,0,0,0,0,0 ];
+
+my $t_seqs= $t_vals->filter(*is_proper_sequence);
+TEST { $t_seqs->map(the_method "stream")->map(the_method "list") } GIVES {
+    list (list(3,4),
+         list(3,4),
+         list(3,4),
+         list(3,4),
+
+         list(),
+         list(),
+         list(),
+         list(),
+        )
+};
+
 
 
 # more tests:
