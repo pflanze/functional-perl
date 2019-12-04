@@ -124,6 +124,8 @@ use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
 use FP::Repl::StackPlus;
 use FP::Lazy;
+use FP::Show;
+
 
 sub maybe_tty {
     my $path= "/dev/tty";
@@ -381,7 +383,6 @@ sub formatter {
              )
          },
          s=> sub {
-             require FP::Show;
              my $z=1;
              (
               join "",
@@ -389,7 +390,7 @@ sub formatter {
                   my $VARX= ($$self[DoKeepResultsInVARX] and not $terse) ?
                     '$VAR'.$z++.' = '
                       : '';
-                  $VARX . FP::Show::show($_). ";\n"
+                  $VARX . show($_). ";\n"
               } @_
              )
          },
@@ -1162,15 +1163,12 @@ sub run {
 
                         &$view_string(do {
                             if (ref $error or $error) {
-                                # XX todo: only do can in the case of
-                                # ref; but, remove this code anyway,
-                                # use FP::Show now?
                                 my $err= (UNIVERSAL::can($error,"plain") ?
                                           # error in plaintext; XX:
                                           # change to better
                                           # thought-out protocol?
                                           $error->plain
-                                          : "$error");
+                                          : show($error));
                                 chomp $err;
                                 $err."\n"; # no prefix? no safe way to differentiate.
                             } else {
