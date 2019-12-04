@@ -367,7 +367,7 @@ package FP::Lazy::AnyPromise {
             $_[0]= $v; goto &$method;
         } else {
             # XX imitate perl's ~exact error message?
-            Carp::croak "no method '$methodname' found for object: $v";
+            Carp::croak "no method '$methodname' found for object: ".show($v);
         }
     }
 
