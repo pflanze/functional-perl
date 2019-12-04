@@ -112,6 +112,7 @@ package FP::Predicates;
 
               is_filename
               is_sequence
+              is_proper_sequence
               is_seq
 
               less_than
@@ -433,6 +434,13 @@ use FP::Lazy; # sigh dependency, too.
 sub is_sequence ($) {
     my $v= force $_[0];
     UNIVERSAL::isa($v, "FP::Abstract::Sequence")
+        or fail "is_sequence", $v
+}
+
+sub is_proper_sequence ($) {
+    my $v= force $_[0];
+    (UNIVERSAL::isa($v, "FP::Abstract::Sequence")
+     and $v->is_proper_sequence)
         or fail "is_sequence", $v
 }
 

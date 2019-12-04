@@ -42,8 +42,7 @@ use FP::Array 'array';
 
 use Chj::TEST;
 
-sub t_fn {
-    my ($fn)= @_;
+my $t_vals=
     list(purearray(3,4),
          strictlist(3,4),
          list(3,4),
@@ -61,11 +60,18 @@ sub t_fn {
          3,
          "character sequence",
          {3=>4},
-        )->map($fn)->array
+    );
+
+sub t_fn {
+    my ($fn)= @_;
+    $t_vals->map($fn)->array
 }
 
 TEST { t_fn *is_sequence }
  [ 1,1,1,1, 1,1,1,1, 1,0,0,0,0,0 ];
+
+TEST { t_fn *is_proper_sequence }
+ [ 1,1,1,1, 1,1,1,1, 0,0,0,0,0,0 ];
 
 TEST { t_fn *is_seq }
  [ 1,1,1,1, 0,0,0,0, 1,0,0,0,0,0 ];

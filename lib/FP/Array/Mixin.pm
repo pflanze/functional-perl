@@ -74,6 +74,9 @@ sub FP_Show_show {
 
 *FP_Equal_equal= *array_equal;
 
+sub is_proper_sequence { 1 }
+
+
 # de-import array from FP::Array to avoid redefinition warning
 BEGIN {undef *array }
 

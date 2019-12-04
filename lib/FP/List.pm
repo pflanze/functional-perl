@@ -555,6 +555,7 @@ sub is_list ($) {
       }
       : ''))
 }
+*FP::List::List::is_proper_sequence= \&is_list;
 
 TEST { is_list cons 1, cons 2, null } 1;
 TEST { is_list cons 1, cons 2, 3 } '';

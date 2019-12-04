@@ -13,8 +13,8 @@ FP::Abstract::Sequence - functional sequence protocol
 
 =head1 SYNOPSIS
 
-    use FP::Predicates "is_sequence"; # since we can't have it in
-                                      # FP::Abstract::Sequence
+    use FP::Predicates qw(is_sequence is_proper_sequence);
+    # ^ here since we can't have functions in FP::Abstract::Sequence
     use FP::PureArray;
     use FP::StrictList;
     use FP::List;
@@ -27,12 +27,14 @@ FP::Abstract::Sequence - functional sequence protocol
                   strictlist(3,4),
                   list(3,4),
                   stream(3,4),
-                  cons(3,4), # ok this can't really count as a sequence,
-                             # what to do about it?
-                  array(3,4), # Could `autobox` change this?
+                  cons(3,4),
+                  array(3,4), # Should we change this given `FP::autobox`?
                   3,
                   {3=>4})->map(*is_sequence),
              list(1,1,1,1,1,0,0,0);
+
+    is is_sequence(cons 3, 4), 1;
+    is is_proper_sequence(cons 3, 4), 0; # improper list
 
     my $ns= purearray(FP::Abstract::Sequence->FP_Interface__method_names);
     #  The methods you can count on being supported by sequences.
@@ -77,6 +79,7 @@ sub FP_Interface__method_names {
      # here except for the sake of safety in case the base implementation is
      # removed:
      qw(
+     is_proper_sequence
      flatten
      join
      extreme
