@@ -26,13 +26,27 @@ difficult.
 
 ## Examples
 
-Work more comfortably with sequences:
+Work more easily with sequences:
 
     use Test::More;
     use FunctionalPerl ":all"; # includes autoboxing (methods on arrays work)
     
     is [2, 3, 4]->reduce(\&add), 9; # the `sum` method does the same
     is [2, 3, 4]->map(\&square)->sum, 29;
+
+There are short constructor functions like `list` for non-native data
+structures; `equal` knows how to deal with all comparable data
+structures:
+
+    use FP::Equal;
+    ok equal( ["a".."z"]->chunks_of(2)->take(3)->list,
+              list(purearray('a', 'b'), purearray('c', 'd'), purearray('e', 'f')) );
+
+`purearray`s (`FP::PureArray`) are arrays but immutable to prevent
+accidental mutation. You could request mutable ones:
+
+    ok equal( ["a".."z"]->chunks_of(2)->take(3)->map(the_method "array")->array,
+              [['a', 'b'], ['c', 'd'], ['e', 'f']] );
 
 Make some XML document:
 
