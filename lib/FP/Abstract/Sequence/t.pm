@@ -191,4 +191,13 @@ TEST { [ list(qw(a b c d e f g))->split_at(3) ] }
        [list('a', 'b', 'c'), list('d', 'e', 'f', 'g')];
 
 
+TEST { purearray(qw(a b c d e f))->chunks_of(4)->array }
+   [purearray('a', 'b', 'c', 'd'), purearray('e', 'f')];
+# XX chunks_of returns a stream in this case; fine? Make up some rules
+# about this...
+
+TEST_EXCEPTION { purearray(qw(a b c d e f))->strictly_chunks_of(4)->array }
+    'premature end of input';
+
+
 1

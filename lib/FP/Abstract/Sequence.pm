@@ -329,4 +329,18 @@ sub split_at {
      $s->drop($pos))
 }
 
+sub chunks_of {
+    @_==2 or die "wrong number of arguments";
+    my ($s, $chunklen)=@_;
+    # XXX weaken as all of them.
+    $s->stream->chunks_of($chunklen)
+}
+
+sub strictly_chunks_of {
+    @_==2 or die "wrong number of arguments";
+    my ($s, $chunklen)=@_;
+    # XXX weaken as all of them.
+    $s->stream->strictly_chunks_of($chunklen)
+}
+
 _END_

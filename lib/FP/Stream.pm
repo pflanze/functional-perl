@@ -1175,6 +1175,68 @@ TEST{ F stream(1,2)->cartesian_product(list 3,4) }
   list(list(1, 3), list(1, 4), list(2, 3), list(2, 4));
 
 
+# chunksOf from Haskell's Data.List.Split, but returns `purearray`s
+# instead of lists.
+
+sub make_chunks_of {
+    my ($strictly, $lazy)= @_;
+    sub {
+        @_==2 or die "wrong number of arguments";
+        my ($s, $chunklen)=@_;
+        $chunklen >= 1 or die "invalid chunklen: $chunklen";
+        weaken $_[0] if $lazy; # although tie down is only chunk sized
+        require FP::PureArray;
+        my $rec; $rec= sub {
+            my ($s)= @_;
+            weaken $_[0] if $lazy; # although tie down is only chunk sized
+            lazy_if {
+                return null if $s->is_null;
+                my @v;
+                for my $i (1..$chunklen) {
+                    if ($s->is_null) {
+                        die "premature end of input"
+                            if $strictly;
+                    } else {
+                        push @v, $s->first;
+                        $s= $s->rest;
+                    }
+                }
+                cons FP::PureArray::array_to_purearray(\@v),
+                    &$rec($s)
+            } $lazy
+        };
+        my $_rec= $rec;
+        #XXX weaken $rec;
+        &$rec($s)
+    }
+}
+# Do we still want functions?
+#*stream_chunks_of= flip make_chunks_of(0);
+#*stream_strictly_chunks_of= flip make_chunks_of(0);
+
+*FP::List::List::chunks_of= make_chunks_of (0, 0);
+*FP::List::List::strictly_chunks_of= make_chunks_of (1, 0);
+*FP::List::List::stream_chunks_of= make_chunks_of (0, 1);
+*FP::List::List::stream_strictly_chunks_of= make_chunks_of (1, 1);
+
+
+TEST { list(qw(a b c d e f))->chunks_of(2) } GIVES {
+    require FP::PureArray; import FP::PureArray;
+    list(purearray('a', 'b'), purearray('c', 'd'), purearray('e', 'f'))
+};
+TEST { stream(qw(a b c d e f))->chunks_of(3)->F } GIVES {
+    list(purearray('a', 'b', 'c'), purearray('d', 'e', 'f'))
+};
+TEST { list(qw(a b c d e f))->chunks_of(4) } GIVES {
+    list(purearray('a', 'b', 'c', 'd'), purearray('e', 'f'))
+};
+TEST { list(qw(a b c d e f))->chunks_of(40) } GIVES {
+    list(purearray('a', 'b', 'c', 'd', 'e', 'f'))
+};
+TEST_EXCEPTION { list(qw(a b c d e f))->strictly_chunks_of(4)->F }
+    'premature end of input';
+
+
 # ----- Tests ----------------------------------------------------------
 
 TEST{ stream_any sub { $_[0] % 2 }, array_to_stream [2,4,8] }
