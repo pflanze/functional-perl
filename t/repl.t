@@ -143,12 +143,14 @@ do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 ,e',
   '
 main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
-Exception: fun at (eval 132) line 1.
+Exception: \'fun at (eval 132) line 1.
+\'
 main 1> ,e
 $x = 99;
 $z = undef;
 main 1> 
-fun at (eval 132) line 1.
+\'fun at (eval 132) line 1.
+\'
 ';
 
 
@@ -158,7 +160,8 @@ do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
 ,b',
   q+
 main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
-Exception: fun at (eval 0) line 1.
+Exception: 'fun at (eval 0) line 1.
+'
 main 1> ,b
 0	FP::Repl::WithRepl::__ANON__('fun at (eval 0) line 1.\x{a}') called at (eval 0) line 1
 1	main::__ANON__('99') called at (eval 0) line 1
@@ -173,7 +176,8 @@ main 1> ,b
 10	FP::Repl::Repl::run('FP::Repl::Repl=ARRAY(0x12)', undef) called at t/repl.t line 9
 11	main::t('\x{a}do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a},b', '\x{a}main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)\x{a}Ex...') called at t/repl.t line 10
 main 1> 
-fun at (eval 0) line 1.
+'fun at (eval 0) line 1.
+'
 +;
 
 
@@ -235,7 +239,8 @@ $x
 ',
   q+
 main> do {my $z=123; sub { my ($x)=@_; die "fun" }}->(99)
-Exception: fun at (eval 0) line 1.
+Exception: 'fun at (eval 0) line 1.
+'
 main 1> $FP::Repl::Repl::argsn
 $VAR1 = ['fun at (eval 0) line 1.
 '];
@@ -252,7 +257,8 @@ $z = undef;
 main 1> $x
 $VAR1 = 99;
 main 1> 
-fun at (eval 0) line 1.
+'fun at (eval 0) line 1.
+'
 +,
   $filterHOME;
 
