@@ -176,6 +176,7 @@ use Chj::TEST;
 use FP::Weak;
 use FP::Predicates 'is_natural0';
 use FP::Show;
+use FP::fix;
 
 sub stream_iota {
     @_ <= 2 or die "wrong number of arguments";
@@ -1186,8 +1187,8 @@ sub make_chunks_of {
         $chunklen >= 1 or die "invalid chunklen: $chunklen";
         weaken $_[0] if $lazy; # although tie down is only chunk sized
         require FP::PureArray;
-        my $rec; $rec= sub {
-            my ($s)= @_;
+        fix(sub {
+            my ($rec, $s)= @_;
             weaken $_[0] if $lazy; # although tie down is only chunk sized
             lazy_if {
                 return null if $s->is_null;
@@ -1204,10 +1205,7 @@ sub make_chunks_of {
                 cons FP::PureArray::array_to_purearray(\@v),
                     &$rec($s)
             } $lazy
-        };
-        my $_rec= $rec;
-        #XXX weaken $rec;
-        &$rec($s)
+        })->($s)
     }
 }
 # Do we still want functions?
