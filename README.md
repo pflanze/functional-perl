@@ -85,7 +85,7 @@ which returns a `PXML` object representing a 'records' XML element,
 that is then passed to `MYEXAMPLE` which returns a `PXML` object
 representing a 'myexample' XML element. `PXML` objects come with an
 `xmlfile` method which serializes the document to a file, and only
-while it runs, when it encounters the embedded lazy lists, it walks
+while it runs, when it encounters the embedded lazy lists, does it walk
 those evaluating the list items one at a time and dropping each item
 immediately after printing. This means that only one row of the CSV
 file needs to be held in memory at any given point.
