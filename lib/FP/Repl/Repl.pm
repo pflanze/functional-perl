@@ -200,6 +200,24 @@ sub new {
     $self
 }
 
+my $maybe_setter= sub {
+    my ($method)=@_;
+    sub {
+        @_== 2 or die "wrong number of arguments";
+        my ($self, $v)= @_;
+        my $set_maybe_method= "set_maybe_${method}";
+        defined $v
+            or die "set_${method} does not accept undef, use $set_maybe_method instead";
+        $self->$set_maybe_method($v);
+    }
+};
+for my $method (qw(historypath settingspath prompt package keepResultIn
+                input output env_PATH)) {
+    no strict 'refs';
+    my $var= "set_$method";
+    *$var= &$maybe_setter($method);
+}
+
 sub use_lexical_persistence {
     my $self=shift;
     hash_xref(+{m=>1, M=>1, x=>0, X=>0}, $self->mode_lexical_persistence)
