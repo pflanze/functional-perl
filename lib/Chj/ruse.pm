@@ -206,8 +206,8 @@ sub ruse {
 }
 
 sub import {
-    my $class=shift;
-    my $caller=caller;#mann ich döbel
+    my $class= shift;
+    my $caller= caller;
     no strict 'refs';
     warn "Copying ruse function to '${caller}::ruse'" if $DEBUG>1;
     if (@_) {
