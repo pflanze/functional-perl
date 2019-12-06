@@ -1,5 +1,17 @@
 Revision history for FunctionalPerl
 
+0.72.22 2019-12-6
+    - FP::Repl::Repl: ,p as shortcut for ,package (,P for print)
+    - FP::Repl::Repl: alias `set_package` for `set_maybe_package`
+      etc. (so that `repl package=> 'Foo::Bar'` works instead of just
+      `repl maybe_package=> 'Foo::Bar'`)
+    - FP::Repl::Repl: transparently try to force promises then getting
+      completions on values
+    - Chj::ruse: export "p" as shortcut
+    - Chj::ruse: fix %INC iteration (make copy)
+    - Chj::Backtrace: detect when loaded after FP::Repl::Trace
+      etc. and inactivate
+
 0.72.21 2019-12-4
     - fix: avoid running into an error when reporting an error in Lazy
     - fix Repl,WithRepl to use show when showing a backtrace or exception
