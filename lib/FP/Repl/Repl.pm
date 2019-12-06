@@ -631,6 +631,13 @@ sub _completion_function {
                         }
                     }
                 };
+
+                # force any potential promises, since we want to
+                # complete methods on the resulting value, OK? TODO
+                # once typing framework is ready (FP::Type): mark type
+                # in promise, thus no need to force it.
+                $val= force $val;
+
                 if (defined $val) {
                     #warn "got value from \$$varnam";
                     if ($r||=ref($val)) {
