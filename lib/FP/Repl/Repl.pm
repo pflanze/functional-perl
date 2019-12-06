@@ -851,7 +851,7 @@ sub run {
     # both perl 5.6 and 5.8:
     sigaction SIGINT,
       new POSIX::SigAction __PACKAGE__.'::__signalhandler'
-        or die "Error setting SIGALRM handler: $!\n";
+        or die "Error setting SIGINT handler: $!\n";
 
     {
         local $SIG{__DIE__};
