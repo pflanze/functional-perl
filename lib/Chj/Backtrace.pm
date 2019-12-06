@@ -54,6 +54,11 @@ our $only_confess_if_not_already=1;
 our $do_confess_objects=0;
 
 sub import {
+
+    # Do not override any handler that a previous FP::Repl::Trap may
+    # have installed (HACKY):
+    return if UNIVERSAL::isa($SIG{__DIE__}, "FP::Repl::WithRepl::Handler");
+
     $SIG{__DIE__} = sub {
         $DB::single=1 if $singlestep;
         if ($only_confess_if_not_already) {

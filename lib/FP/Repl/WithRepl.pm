@@ -191,7 +191,7 @@ sub have_eval_since_frame ($) {
 
 sub handler_for ($$) {
     my ($startframe, $orig_handler)=@_;
-    sub {
+    bless sub {
         my ($e)=@_;
         # to show local errors with backtrace:
         # require Chj::Backtrace; import Chj::Backtrace;
@@ -219,7 +219,7 @@ sub handler_for ($$) {
             push_withrepl(0); # XX correct? Argument?
             repl(skip=> 1)
         }
-    }
+    }, "FP::Repl::WithRepl::Handler" # just to mark, for Chj::Backtrace ugh
 }
 
 sub handler ($) {
