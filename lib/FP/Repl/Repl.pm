@@ -316,6 +316,7 @@ If a command line starts with a ':' or ',', then the remainder of the
 line is interpreted as follows:
 
   package \$package    use \$package as new compilation package
+  p \$package          shortcut for package
   DIGITS              shorthand for 'f n', see below
   -                   same as 'f n' where n is the current frameno - 1
   +                   same as 'f n' where n is the current frameno + 1
@@ -339,7 +340,7 @@ previously used mode (indicated on the left):
 $L 1  use scalar context
 $l l  use list context (default)
   formatter:
-$p p  print stringification
+$p P  print stringification
 $s s  show from FP::Show (experimental, does not show data sharing)
 $d d  Data::Dumper (default)
   viewer:
@@ -1023,9 +1024,10 @@ sub run {
                                                     $frameno + 1 : undef)
                                  },
                                  package=> $set_package,
+                                 p=> $set_package,
                                  1=> saving ($self, sub { $$self[Mode_context]="1" }),
                                  l=> saving ($self, sub { $$self[Mode_context]="l" }),
-                                 p=> saving ($self, sub { $$self[Mode_formatter]="p" }),
+                                 P=> saving ($self, sub { $$self[Mode_formatter]="p" }),
                                  s=> saving ($self, sub { $$self[Mode_formatter]="s" }),
                                  d=> saving ($self, sub { $$self[Mode_formatter]="d" }),
                                  V=> saving ($self, sub { $$self[Mode_viewer]="V" }),
