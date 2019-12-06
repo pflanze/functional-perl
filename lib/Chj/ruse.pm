@@ -23,6 +23,8 @@ Chj::ruse - reload modules
             # which have happened for those modules since Chj::ruse has
             # been loaded.
 
+    use Chj::ruse 'r'; # imports alias `r` for `ruse` (shorter to type)
+
 =head1 DESCRIPTION
 
 Extended copy of Module::Reload which modifies Exporter.pm so
@@ -204,10 +206,26 @@ sub ruse {
 }
 
 sub import {
+    my $class=shift;
     my $caller=caller;#mann ich döbel
     no strict 'refs';
     warn "Copying ruse function to '${caller}::ruse'" if $DEBUG>1;
-    *{"${caller}::ruse"}= \&ruse;
+    if (@_) {
+        for my $name (@_) {
+            if ($name eq 'r') {
+                *{"${caller}::r"}= \&ruse;
+            } elsif ($name eq 'ruse') {
+                *{"${caller}::ruse"}= \&ruse;
+            } elsif ($name eq ':all') {
+                *{"${caller}::r"}= \&ruse;
+                *{"${caller}::ruse"}= \&ruse;
+            } else {
+                die "no such export: $name";
+            }
+        }
+    } else {
+        *{"${caller}::ruse"}= \&ruse;
+    }
 }
 
 
