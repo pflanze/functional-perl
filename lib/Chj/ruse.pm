@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2014 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -126,7 +126,8 @@ sub new_import {
             }
             0
         };
-        while (my ($key, $file) = each %INC) {
+        my %inc= %INC;
+        while (my ($key, $file) = each %inc) {
             my $reload= sub {
                 delete $INC{$key};
                 wipeout_namespace($key);
