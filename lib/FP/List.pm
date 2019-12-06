@@ -1380,7 +1380,7 @@ sub list_map ($ $) {
     is_null $l ? $l : cons(&$fn(car $l), list_map ($fn,cdr $l))
 }
 
-TEST { list_to_array list_map sub{$_[0]*$_[0]}, list 1,2,-3 }
+TEST { list_to_array list_map sub { $_[0] * $_[0] }, list 1,2,-3 }
   [1,4,9];
 
 
