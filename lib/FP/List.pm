@@ -112,7 +112,8 @@ conflict with `Sub::Call::Tail`, hence those are not used here.
 
 =head1 SEE ALSO
 
-Implements: L<FP::Abstract::Sequence>.
+Implements: L<FP::Abstract::Pure>, L<FP::Abstract::Sequence>,
+L<FP::Abstract::Equal>, L<FP::Abstract::Show>
 
 L<FP::Stream>, L<FP::Array>, L<FP::PureArray>
 

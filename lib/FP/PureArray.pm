@@ -72,7 +72,8 @@ arrays (perhaps to be called FP::Vec, but to be interoperable).
 
 =head1 SEE ALSO
 
-Implements: L<FP::Abstract::Sequence>.
+Implements: L<FP::Abstract::Pure>, L<FP::Abstract::Sequence>,
+L<FP::Abstract::Equal>, L<FP::Abstract::Show>
 
 L<FP::MutableArray>
 

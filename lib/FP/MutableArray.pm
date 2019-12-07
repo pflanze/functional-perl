@@ -42,7 +42,8 @@ protocol.
 
 =head1 SEE ALSO
 
-Implements: L<FP::Abstract::Sequence>.
+Implements: L<FP::Abstract::Sequence>, L<FP::Abstract::Equal>,
+L<FP::Abstract::Show>
 
 L<FP::PureArray>, L<FP::Array>
 
