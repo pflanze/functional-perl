@@ -68,6 +68,8 @@ package FP::Struct::Show;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+use base 'FP::Abstract::Show';
+
 sub FP_Show_show {
     my ($self,$show)=@_;
     my $class= ref ($self);

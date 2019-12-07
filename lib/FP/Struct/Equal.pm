@@ -55,6 +55,7 @@ package FP::Struct::Equal;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+use base 'FP::Abstract::Equal';
 use FP::Equal ();
 
 sub FP_Equal_equal {
