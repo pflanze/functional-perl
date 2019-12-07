@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2016 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2016-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -15,6 +15,10 @@ Chj::Linux::LmSensors
 
 =head1 DESCRIPTION
 
+
+=head1 SEE ALSO
+ 
+Implements: L<FP::Struct::Show>, L<FP::Abstract::Pure>
 
 =head1 NOTE
 
@@ -49,7 +53,7 @@ use Chj::TEST;
     use FP::Struct [
                     [*is_string, 'groupname'],
                     [*is_string, 'sensorname'],
-                   ], 'FP::Struct::Show';
+                   ], 'FP::Struct::Show', 'FP::Abstract::Pure';
     _END_
 }
 
@@ -59,7 +63,7 @@ use Chj::TEST;
     package Chj::Linux::LmSensors::ValueBase;
     use FP::Struct [
                     'name', # string
-                   ], 'FP::Struct::Show';
+                   ], 'FP::Struct::Show', 'FP::Abstract::Pure';
     _END_
 }
 
@@ -70,8 +74,7 @@ use Chj::TEST;
                     'unit', # °C etc.
                     'high_crit', # maybe string
                    ],
-                     'Chj::Linux::LmSensors::ValueBase',
-                       'FP::Struct::Show';
+        'Chj::Linux::LmSensors::ValueBase';
 
     sub maybe_value {
         shift->value
@@ -88,8 +91,7 @@ use Chj::TEST;
     package Chj::Linux::LmSensors::ValueNA;
     use FP::Struct [
                    ],
-                     'Chj::Linux::LmSensors::ValueBase',
-                       'FP::Struct::Show';
+        'Chj::Linux::LmSensors::ValueBase';
 
     sub maybe_value {
         undef
@@ -108,7 +110,7 @@ use Chj::TEST;
     use FP::Struct [
                     'name', # string
                     'values', # list of ::Value
-                   ], 'FP::Struct::Show';
+                   ], 'FP::Struct::Show', 'FP::Abstract::Pure';
     _END_
 }
 
@@ -126,7 +128,7 @@ use Chj::TEST;
     use FP::Struct [
                     'time', # unixtime value, ok?
                     'groups', # list of ::ValueGroup
-                   ], 'FP::Struct::Show';
+                   ], 'FP::Struct::Show', 'FP::Abstract::Pure';
 
     # "expecting 1 element, got 0" meaning the field doesn't exist.
     sub select {
