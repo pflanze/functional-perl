@@ -134,7 +134,7 @@ package FunctionalPerl;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our $VERSION= "0.72.22";
+our $VERSION= "0.72.23";
 
 
 # Export tag to modules and/or other tags; each module will be

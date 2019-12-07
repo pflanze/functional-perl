@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.23 2019-12-7
+    - Ops: rename `string` to `stringify`
+    - create FP::Struct::Equal
+    - create (the beginnings of) FP::AST::Perl
+    - some doc improvements
+
 0.72.22 2019-12-6
     - FP::Repl::Repl: ,p as shortcut for ,package (,P for print)
     - FP::Repl::Repl: alias `set_package` for `set_maybe_package`
