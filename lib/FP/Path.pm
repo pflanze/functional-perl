@@ -46,6 +46,8 @@ Provide `string_to_path` constructor function?
 
 =head1 SEE ALSO
 
+Implements: L<FP::Abstract::Show>, L<FP::Abstract::Pure>
+
 L<FP::Path::t> for the test suite
 
 =head1 NOTE
@@ -111,7 +113,9 @@ use FP::Struct
    typed(*is_boolean,
          'is_absolute'), # bool
   ],
-    'FP::Abstract::Equal';
+    'FP::Struct::Show',
+    'FP::Abstract::Equal',
+    'FP::Abstract::Pure';
 
 *import= constructorexporter new_from_string=> "path";
 
