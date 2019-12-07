@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-FP::Struct::Show
+FP::Struct::Show -- automatic Show protocol implementation
 
 =head1 SYNOPSIS
 
@@ -41,11 +41,20 @@ FP::Struct::Show
 
 =head1 DESCRIPTION
 
-This class simply provides an `FP_Show_show` method that uses
-inspection specific to FP::Struct classes to get to know the public
-field values of the object it is being called on, and reconstructs a
-constructor call based on this information. Meaning, for the typical
-`FP::Struct` based class, it will do the right thing.
+This class, when listed as a superclass of an L<FP::Struct>,
+automatically implements the L<FP::Abstract::Show> protocol
+(i.e. generates an `FP_Show_show` method that uses inspection specific
+to FP::Struct classes to get to know the public field values of the
+object it is being called on, and reconstructs a constructor call
+based on this information.) For the typical `FP::Struct` based class
+that don't have a preferred custom constructor this will be the right
+thing.
+
+=head1 SEE ALSO
+
+Creates implementations for: L<FP::Abstract::Show>
+
+L<FP::Struct::Equal>
 
 =head1 NOTE
 

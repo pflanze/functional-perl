@@ -172,6 +172,7 @@ lib/FP/Show/t.pm
 lib/FP/Stream.pm
 lib/FP/StrictList.pm
 lib/FP/Struct.pm
+lib/FP/Struct/Equal.pm
 lib/FP/Struct/Show.pm
 lib/FP/Text/CSV.pm
 lib/FP/Trampoline.pm
