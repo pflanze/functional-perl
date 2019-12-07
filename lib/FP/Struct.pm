@@ -151,6 +151,10 @@ the calculation of the cached value to clean the cache (TODO: provide
 option to turn off generation of setters, and/or provide hook (for
 cloning?)).)
 
+If C<$FP::Struct::immutable> is true (default), then if
+L<FP::Abstract::Pure> is inherited (even if automatically, see above)
+the objects are made immutable to ensure purity.
+
 =head1 ALSO SEE
 
 L<FP::Abstract::Pure>, <FP::Struct::Show>, <FP::Struct::Equal>
@@ -212,6 +216,8 @@ sub field_has_predicate ($) {
 }
 
 
+our $immutable= 1; # only used if also is_pure
+
 sub import {
     my $_importpackage= shift;
     return unless @_;
@@ -232,6 +238,9 @@ sub import {
     require_package $_ for @isa;
     no strict 'refs';
     *{"${package}::ISA"}= \@isa;
+
+    my %isa= map {$_=>1} @isa;
+    my $is_pure= $isa{"FP::Abstract::Pure"};
 
     my $allfields=[ all_fields (\@isa), @$fields ];
     # (^ ah, could store them in the package as well; but well, no
@@ -268,13 +277,19 @@ sub import {
         }
         my %s;
         for (my $i=0; $i< @_; $i++) {
-            $s{ $$allfields_name[$i] }= $_[$i];
+            my $fieldname= $$allfields_name[$i];
+            $s{$fieldname}= $_[$i];
+            Internals::SvREADONLY $s{$fieldname}, 1
+                if $is_pure && $immutable;
         }
-        bless \%s, $class
+        my $s= bless \%s, $class;
+        Internals::SvREADONLY %$s, 1
+            if $is_pure && $immutable;
+        $s
     };
-    # XX bah, almost copy-paste, because want to avoid sub call
-    # overhead (inlining please finally?):
     *{"${package}::c::${package_lastpart}"}= my $constructor= sub {
+        # XX bah, almost copy-paste, because want to avoid sub call
+        # overhead (inlining please finally?):
         @_ <= @$allfields
           or croak "too many arguments to ${package}::new";
         for (@$allfields_i_with_predicate) {
@@ -284,9 +299,15 @@ sub import {
         }
         my %s;
         for (my $i=0; $i< @_; $i++) {
-            $s{ $$allfields_name[$i] }= $_[$i];
+            my $fieldname= $$allfields_name[$i];
+            $s{$fieldname}= $_[$i];
+            Internals::SvREADONLY $s{$fieldname}, 1
+                if $is_pure && $immutable;
         }
-        bless \%s, $package
+        my $s= bless \%s, $package;
+        Internals::SvREADONLY %$s, 1
+            if $is_pure && $immutable;
+        $s
     };
 
 
@@ -318,13 +339,18 @@ sub import {
           or croak "too many arguments to ${package}::new_";
         for (keys %$s) {
             exists $$allfields_h{$_} or die "unknown field '$_'";
+            Internals::SvREADONLY $$s{$_}, 1
+                if $is_pure && $immutable;
         }
         for (@$allfields_with_predicate) {
             my ($pred,$name)=@$_;
             &$pred ($$s{$name})
               or die "unacceptable value for field '$name': ".show($$s{$name});
         }
-        bless $s, $class
+        bless $s, $class;
+        Internals::SvREADONLY %$s, 1
+            if $is_pure && $immutable;
+        $s
     };
 
     # constructor exports: -- XX why did I decide to not use ::c:: for this? historic?
