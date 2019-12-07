@@ -77,7 +77,8 @@ sub git_dir_from_work_tree {
 
 sub git_dir {
     my $self=shift;
-    $$self{git_dir} // $self->git_dir_from_work_tree
+    (exists $$self{git_dir} ? $$self{git_dir} : undef)
+        // $self->git_dir_from_work_tree
 }
 
 
