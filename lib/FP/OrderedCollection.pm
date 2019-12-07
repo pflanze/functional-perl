@@ -13,8 +13,25 @@ FP::OrderedCollection
 
 =head1 SYNOPSIS
 
-=head1 DESCRIPTION
+    use FP::Equal 'is_equal'; use FP::Stream;
+    use FP::OrderedCollection;
 
+    my $c= FP::OrderedCollection->new_from_values(qw(a b c f));
+    ok $c->contains("a");
+    ok not $c->contains("q");
+    is $c->maybe_position("1"), undef;
+    is $c->maybe_position("f"), 3;
+    is_equal [ $c->perhaps_following ("xx")], [];
+    is_equal $c->perhaps_following("c"), stream('f');
+    is_equal $c->perhaps_following("b"), stream('c', 'f');
+    is_equal $c->perhaps_previous("c"), stream('b', 'a');
+    is $c->maybe_prev("c"), 'b';
+    is $c->maybe_prev("a"), undef;
+    is $c->maybe_prev("xx"), undef;
+    is $c->maybe_next("a"), 'b';
+    is $c->maybe_next("f"), undef;
+
+=head1 DESCRIPTION
 
 =head1 SEE ALSO
 
@@ -32,7 +49,6 @@ package FP::OrderedCollection;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::TEST;
 use FP::Predicates;
 use FP::Stream qw(subarray_to_stream subarray_to_stream_reverse  stream_to_array);
 use FP::Lazy;
@@ -106,44 +122,6 @@ sub maybe_prev {
     $l= force ($l);
     is_null $l ? undef : car $l
 }
-
-
-TEST {
-    our $c= FP::OrderedCollection->new_from_values(qw(a b c f));
-    $c->contains ("a")
-} 1;
-
-TEST {
-    our $c->contains ("q")
-} '';
-
-TEST {
-    our $c->maybe_position ("1")
-} undef;
-
-TEST {
-    our $c->maybe_position ("f")
-} 3;
-
-TEST { [ our $c->perhaps_following ("xx")] }
-  [];
-TEST { stream_to_array( our $c->perhaps_following ("c")) }
-  [ 'f' ];
-TEST { stream_to_array( our $c->perhaps_following ("b")) }
-  [ 'c', 'f' ];
-TEST { stream_to_array( our $c->perhaps_previous ("c")) }
-  [ 'b', 'a' ];
-
-TEST { our $c->maybe_prev("c") }
-  'b';
-TEST { our $c->maybe_prev("a") }
-  undef;
-TEST { our $c->maybe_prev("xx") }
-  undef;
-TEST { our $c->maybe_next("a") }
-  'b';
-TEST { our $c->maybe_next("f") }
-  undef;
 
 
 _END_
