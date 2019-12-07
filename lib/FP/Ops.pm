@@ -76,7 +76,7 @@ package FP::Ops;
                  string_le
                  string_gt
                  string_ge
-                 string
+                 stringify
                  string_lc
                  string_uc
                  string_lcfirst
@@ -197,7 +197,7 @@ sub string_ge ($ $) {
     $_[0] ge $_[1]
 }
 
-sub string ($) {
+sub stringify ($) {
     "$_[0]"
 }
 

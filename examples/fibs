@@ -101,7 +101,7 @@ TEST { $addcount=0; local *add=*counting_add;
 # which `fibs` achieves.
 
 
-TEST { Keep($fibs)->take(10)->map(*string)->array }
+TEST { Keep($fibs)->take(10)->map(*stringify)->array }
   [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
 
 TEST { fib 30 }
