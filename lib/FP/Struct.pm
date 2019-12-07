@@ -239,8 +239,7 @@ sub import {
     no strict 'refs';
     *{"${package}::ISA"}= \@isa;
 
-    my %isa= map {$_=>1} @isa;
-    my $is_pure= $isa{"FP::Abstract::Pure"};
+    my $is_pure= UNIVERSAL::isa($package, "FP::Abstract::Pure");
 
     my $allfields=[ all_fields (\@isa), @$fields ];
     # (^ ah, could store them in the package as well; but well, no
