@@ -32,6 +32,8 @@ I'm pretty sure this is re-inventing some wheel..
 
 =head1 SEE ALSO
 
+Implements: L<FP::Abstract::Show>, L<FP::Abstract::Pure>
+
 L<FP::Repl::StackPlus>
 
 =head1 NOTE
@@ -58,7 +60,9 @@ our @fields; BEGIN { @fields= qw(args
     use Chj::singlequote qw(singlequote_many with_maxlen);
     use FP::Show;
 
-    use FP::Struct [@fields];
+    use FP::Struct [@fields],
+        'FP::Struct::Show',
+        'FP::Abstract::Pure';
 
     sub args_text {
         my $s=shift;
@@ -193,7 +197,9 @@ our $make_perhaps_frame_accessor= sub {
 };
 
 
-use FP::Struct ["frames"];
+use FP::Struct ["frames"],
+    'FP::Struct::Show',
+    'FP::Abstract::Pure';
 
 sub get {
     my $class=shift;
