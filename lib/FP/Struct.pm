@@ -138,22 +138,13 @@ respective modules that define them, like C<is_pair> in L<FP::List>).
 
 =head1 PURITY
 
-FP::Struct uses L<FP::Abstract::Pure> as default base class (i.e. when no other
-base class is given). This means objects from classes based on
-FP::Struct are automatically treated as pure by C<is_pure> from
-L<FP::Predicates>.
-
-To hold this promise true, your code must not mutate any object fields
-except when it's impossible for the outside world to detect
-(e.g. using a hash key to hold a cached result is fine as long as you
-also override all the functional setters for fields that are used for
-the calculation of the cached value to clean the cache (TODO: provide
-option to turn off generation of setters, and/or provide hook (for
-cloning?)).)
+It is recommended to use L<FP::Abstract::Pure> as a base class. This
+means objects from classes based on FP::Struct are automatically
+treated as pure by C<is_pure> from L<FP::Predicates>.
 
 If C<$FP::Struct::immutable> is true (default), then if
-L<FP::Abstract::Pure> is inherited (even if automatically, see above)
-the objects are made immutable to ensure purity.
+L<FP::Abstract::Pure> is inherited the objects are made immutable to
+ensure purity.
 
 =head1 ALSO SEE
 
@@ -165,6 +156,18 @@ This is alpha software! Read the status section in the package README
 or on the L<website|http://functional-perl.org/>.
 
 =cut
+
+
+# XX todo: solve mutable private fields (which would leave those
+#    mutable, but still allow to inherit Pure). Deal with these thoughts:
+# "To hold this promise true, your code must not mutate any object fields
+# except when it's impossible for the outside world to detect
+# (e.g. using a hash key to hold a cached result is fine as long as you
+# also override all the functional setters for fields that are used for
+# the calculation of the cached value to clean the cache (TODO: provide
+# option to turn off generation of setters, and/or provide hook (for
+# cloning?)).)"
+
 
 
 package FP::Struct;
@@ -234,7 +237,6 @@ sub import {
       $perhaps_isa[0]
         : @perhaps_isa;
 
-    @isa= "FP::Abstract::Pure" unless @isa;
     require_package $_ for @isa;
     no strict 'refs';
     *{"${package}::ISA"}= \@isa;
