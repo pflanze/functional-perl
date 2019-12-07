@@ -45,13 +45,15 @@ Tags can be expanded via:
     is $$modules{"FP::Failure"}, 2; # number of times used.
     use FP::Equal 'is_equal';
     is_equal $unused_tags,
-             [':all', ':csv', ':dbi', ':fix', ':git', ':io', ':path', ':pxml', ':rare', ':trampoline', ':transparentlazy'];
+             [':all', ':ast', ':csv', ':dbi', ':fix', ':git', ':io', ':path', ':pxml', ':rare', ':trampoline', ':transparentlazy'];
 
 =head1 SEE ALSO
 
 This is the list of supported import tags and the modules that they import:
 
 C<:all>: C<:dev>, C<:io>, C<:most>, C<:rare>
+
+C<:ast>: L<FP::AST::Perl>
 
 C<:autobox>: L<FP::autobox>
 
@@ -166,6 +168,7 @@ our $export_desc=
                        :show :equal :failure)],
     ":git"=> [qw(FP::Git::Repository)],
     ":pxml"=> [qw(PXML::Util PXML::XHTML PXML::Serialize)],
+    ":ast"=> [qw(FP::AST::Perl)],
 
     ":numbers"=> [qw(FP::BigInt)],
     ":chars"=> [qw(FP::Char)],
