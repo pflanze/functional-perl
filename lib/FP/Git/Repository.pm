@@ -18,7 +18,7 @@ FP::Git::Repository
 
 =head1 SEE ALSO
  
-Implements: L<FP::Abstract::Show>, L<FP::Abstract::Pure>
+Implements: L<FP::Abstract::Show>
 
 =head1 NOTE
 
@@ -58,8 +58,8 @@ sub make_perhaps_VAR {
 use FP::Struct [[maybe(\&is_nonnullstring), "git_dir"],
                 [maybe(\&is_nonnullstring), "work_tree"],
                 [maybe(\&is_nonnullstring), "chdir"]],
-    'FP::Struct::Show',
-    'FP::Abstract::Pure';
+    # 'FP::Abstract::Pure', can't, setting _git_dir_from_work_tree
+    'FP::Struct::Show';
 
 sub git_dir_from_work_tree {
     my $self=shift;
