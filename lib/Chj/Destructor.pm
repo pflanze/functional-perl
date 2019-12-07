@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -48,7 +48,7 @@ package Chj::Destructor;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 {
-    package Chj::Destructor::_;
+    package Chj::_::Destructor;
     use FP::Predicates ":all";
     use FP::Struct [[*is_procedure, "thunk"]];
     sub DESTROY {
@@ -59,8 +59,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     _END_
 }
 
+# Chj::_::Destructor::constructors->import -- no, special prototype:
 sub Destructor (&) {
-    Chj::Destructor::_->new ($_[0])
+    Chj::_::Destructor->new ($_[0])
 }
 
 use Chj::TEST;
