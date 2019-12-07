@@ -117,6 +117,7 @@ lib/Chj/xoutpipe.pm
 lib/Chj/xperlfunc.pm
 lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
+lib/FP/AST/Perl.pm
 lib/FP/Abstract/Equal.pm
 lib/FP/Abstract/Interface.pm
 lib/FP/Abstract/Map.pm
