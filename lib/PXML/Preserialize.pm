@@ -145,7 +145,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 {
     package PXML::Preserialize::Argument;
-    use FP::Struct ["effecter","n"];
+    use FP::Struct ["effecter","n"],
+        'FP::Struct::Show',
+        'FP::Abstract::Pure';
 
     # Prevent erroneous usage:
     use overload ('""'=> 'err',
