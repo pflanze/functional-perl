@@ -91,6 +91,7 @@ our %dependencies=
    ],
    (map { $_ => [ 'Function::Parameters' ] }
     qw(
+         FP::AST::Perl
          FunctionalPerl::Htmlgen::Toc
          FunctionalPerl::Htmlgen::PXMLMapper
          FunctionalPerl::Htmlgen::FileUtil
