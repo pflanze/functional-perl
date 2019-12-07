@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -15,6 +15,10 @@ FP::OrderedCollection
 
 =head1 DESCRIPTION
 
+
+=head1 SEE ALSO
+
+Implements: L<FP::Abstract::Pure>
 
 =head1 NOTE
 
@@ -36,7 +40,8 @@ use FP::List;
 
 use FP::Struct
   [[\&is_array, "array"],
-   [\&is_hash, "hash"]];
+   [\&is_hash, "hash"]],
+    'FP::Abstract::Pure';
 
 
 # Unsafe: assumes that the given array is never mutated after
