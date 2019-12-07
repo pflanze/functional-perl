@@ -28,6 +28,8 @@ Util to help debug or test memory deallocation.
 
 =head1 SEE ALSO
 
+Implements: L<FP::Struct::Show>, L<FP::Abstract::Pure>
+
 End.pm, but that one does not type-check the destructor argument
 early, nor does it localize error variables in its DESTROY method.
 
@@ -50,7 +52,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 {
     package Chj::_::Destructor;
     use FP::Predicates ":all";
-    use FP::Struct [[*is_procedure, "thunk"]];
+    use FP::Struct [[*is_procedure, "thunk"]],
+        'FP::Struct::Show', 'FP::Abstract::Pure';
     sub DESTROY {
         my ($self)=@_;
         local ($@,$!,$?,$^E,$.);
