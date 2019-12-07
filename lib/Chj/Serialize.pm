@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -36,7 +36,9 @@ use Chj::TEST;
 
 {
     package Chj::Serializable::Closure;
-    use FP::Struct ["env","code_id"];
+    use FP::Struct ["env","code_id"],
+        'FP::Struct::Show',
+        'FP::Abstract::Pure';
     _END_
 }
 
@@ -54,7 +56,8 @@ use Chj::TEST;
     use FP::Struct [[*is_hash, "_closure_generator_code_to_id"],
                     [*is_hash, "_id_to_closure_generator_code"],
                     [*is_hash, "_id_to_closure_generator"],
-                    [*is_natural0, "current_id"]];
+                    [*is_natural0, "current_id"]],
+        'FP::Struct::Show';
 
     sub next_id {
         my ($self)=@_;
