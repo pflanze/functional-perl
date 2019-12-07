@@ -64,10 +64,12 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   like POD snippets for markdown and change the docs to use examples
   and then automatically check that they are up to date.
 
-* Make `FP::Struct` immutable, unless requested by user (using similar
-  approach like taken in `FP::List`); like wise for StrictList etc.;
-  and them to `FP::Abstract::Pure`. Change `FP::Struct` to only
-  implement purity if there are no mutable fields.
+* Make the remaining pure datastructures immutable, unless requested
+  by user (using similar approach like taken in `FP::List`),
+  e.g. StrictList; and them to `FP::Abstract::Pure`.
+  
+* Change `FP::Struct` to allow mutable private fields that don't
+  impede `FP::Abstract::Pure` (see comments in FP::Struct)?
 
 * Think through UNIVERSAL::isa and UNIVERSAL::can, use `Safe::Isa` if
   decide that have to, or otherwise appropriately (handling of
