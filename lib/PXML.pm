@@ -31,7 +31,7 @@ General Functions for the PXML libraries.
 =head1 SEE ALSO
 
 L<PXML::Element>, L<PXML::Tags>, L<PXML::SVG>, L<PXML::XHTML>,
-L<PXML::HTML5>, L<PXML::Util>, L<PXML::Serialize>,
+L<PXML::HTML5>, L<PXML::Util>, L<PXML::Serialize>, L<PXML::Preserialize>,
 L<http://functional-perl/>
 
 =head1 NOTE

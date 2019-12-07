@@ -54,7 +54,7 @@ strings.
 This overhead can be eliminated by pre-serializing the segments of the
 tree that don't change.
 
-This module offers `pxmlpre`, a function that takes a user supplied
+This module offers C<pxmlpre>, a function that takes a user supplied
 function which maps some number of arguments to a PXML tree with those
 arguments inserted, and returns a function that maps those same
 arguments to an array with preserialized fragments and the (escaped)
@@ -65,8 +65,8 @@ With the example from the synopsis:
 
  &$link_normal("foo","bar")
 
-returns a PXML element with name "a", a hash `{href=> "foo"}` as
-attributes, and "bar" as the body. `->string` walks over the element
+returns a PXML element with name "a", a hash C<{href=> "foo"}> as
+attributes, and "bar" as the body. C<<->string>> walks over the element
 and hash and body and turns all parts into the proper XML syntax.
 
  &$link_fast2("foo","bar")
@@ -76,8 +76,8 @@ returns
  bless [ $fragment1, "foo", $fragment2, "$bar", $fragment3 ], "PXML::Body"
 
 where $fragment1 is the string '<a href="' blessed to
-`PXML::Preserialize::Serialized`, which has a
-`pxml_serialized_body_string` method that returns the unmodified
+C<PXML::Preserialize::Serialized>, which has a
+C<pxml_serialized_body_string> method that returns the unmodified
 string, which the serializer finds and calls (this is the currently
 implemented way to add fragments to a PXML data structure and have the
 serializer output them unescaped).
@@ -111,9 +111,13 @@ preserialization step throw an error if they are stringified etc.
 
 =back
 
-Also, the values returned by `pxmlpre`'d functions can not be
-processed with e.g. functions in `PXML::Util`, or at least those won't
+Also, the values returned by C<pxmlpre>'d functions can not be
+processed with e.g. functions in L<PXML::Util>, or at least those won't
 find the elements in the parts that have been pre-serialized.
+
+=head1 SEE ALSO
+
+L<PXML>
 
 =head1 NOTE
 
