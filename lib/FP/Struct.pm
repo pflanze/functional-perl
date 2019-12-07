@@ -108,40 +108,40 @@ object so as to leave the original unharmed), take predicate functions
 (not magic strings) for dynamic type checking, simpler than
 Class::Struct.
 
-Also creates constructor methods: `new` that takes positional
-arguments, `new_` which takes name=> value pairs, `new__` which takes
+Also creates constructor methods: C<new> that takes positional
+arguments, C<new_> which takes name=> value pairs, C<new__> which takes
 a hash with name=> value pairs as a single argument, and
-`unsafe_new__` which does the same as `new__` but reuses the given
+C<unsafe_new__> which does the same as C<new__> but reuses the given
 hash (unsafe if the latter is modified later on).
 
 Also creates constructor functions (i.e. subroutine instead of method
-calling interface) `Foo::Bar::c::Bar()` for positional and
-`Foo::Bar::c::Bar_()` for named arguments for package Foo::Bar. These
-are also in `Foo::Bar::constructors::` and can be imported using
+calling interface) C<Foo::Bar::c::Bar()> for positional and
+C<Foo::Bar::c::Bar_()> for named arguments for package Foo::Bar. These
+are also in C<Foo::Bar::constructors::> and can be imported using
 (without arguments, it imports both):
 
     import Foo::Bar::constructors qw(Bar Bar_);
 
-_END_ does namespace cleaning: any sub that was defined before the use
-FP::Struct call is removed by the _END_ call (those that are not the
+C<_END_> does namespace cleaning: any sub that was defined before the C<use
+FP::Struct> call is removed by the C<_END_> call (those that are not the
 same sub ref anymore, i.e. have been redefined, are left
-unchanged). This means that if the 'use FP::Struct' statement is put
+unchanged). This means that if the C<use FP::Struct> statement is put
 after any other (procedure-importing) 'use' statement, but before the
 definition of the methods, that the imported procedures can be used
 from within the defined methods, but are not around afterwards,
 i.e. they will not shadow super class methods. (Thanks to Matt S Trout
 for pointing out the idea.) To avoid the namespace cleaning, write
-_END__ instead of _END_.
+C<_END__> instead of C<_END_>.
 
-See FP::Predicates for some useful predicates (others are in the
-respective modules that define them, like `is_pair` in `FP::List`).
+See L<FP::Predicates> for some useful predicates (others are in the
+respective modules that define them, like C<is_pair> in L<FP::List>).
 
 =head1 PURITY
 
-FP::Struct uses `FP::Abstract::Pure` as default base class (i.e. when no other
+FP::Struct uses L<FP::Abstract::Pure> as default base class (i.e. when no other
 base class is given). This means objects from classes based on
-FP::Struct are automatically treated as pure by `is_pure` from
-`FP::Predicates`.
+FP::Struct are automatically treated as pure by C<is_pure> from
+L<FP::Predicates>.
 
 To hold this promise true, your code must not mutate any object fields
 except when it's impossible for the outside world to detect
@@ -153,7 +153,7 @@ cloning?)).)
 
 =head1 ALSO SEE
 
-<FP::Struct::Show>
+L<FP::Abstract::Pure>, <FP::Struct::Show>, <FP::Struct::Equal>
 
 =head1 NOTE
 
