@@ -71,6 +71,10 @@ updatable pure (hash) table datastructure yet.
 Are the method names ok? What names are other common implementations
 using? (todo: check Hoogle etc.)
 
+=head1 SEE ALSO
+ 
+Implements: L<FP::Abstract::Show>, L<FP::Abstract::Pure>
+
 =head1 NOTE
 
 This is alpha software! Read the status section in the package README
@@ -90,7 +94,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 {
     package FP::Trie::KeyNotFoundException;
-    use FP::Struct [];
+    use FP::Struct [],
+        'FP::Struct::Show',
+        'FP::Abstract::Pure';
     use overload '""'=> 'string';
     sub string {"key not found"}
     _END_
@@ -99,7 +105,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 {
     package FP::Trie::Trie;
-    use FP::Struct [];
+    use FP::Struct [],
+        'FP::Struct::Show',
+        'FP::Abstract::Pure';
     _END_
 }
 
