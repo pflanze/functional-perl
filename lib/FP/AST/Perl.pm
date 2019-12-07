@@ -21,20 +21,20 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
     is Get(PackVarArray "foo")->string, '@foo';
     is Get(PackVarHash "foo::bar")->string, '%foo::bar';
 
-    my $foo= PackVarCode("foo");
+    my $codefoo= PackVarCode("foo");
     my $arrayfoo= PackVarArray("foo");
     my $lexfoo= LexVar("foo");
-    is App(Get($foo), list())->string,
+    is App(Get($codefoo), list())->string,
        '&foo()';
-    is AppProto(Get($foo), list())->string,
+    is AppProto(Get($codefoo), list())->string,
        'foo()';
-    is AppProto(Get($lexfoo), list(Ref($foo)))->string,
+    is AppProto(Get($lexfoo), list(Ref($codefoo)))->string,
        '$foo->(\&foo)';
     is AppProto(Get($lexfoo), list(Get($lexfoo), Get($arrayfoo), Ref($arrayfoo)))->string,
        '$foo->($foo, @foo, \@foo)';
-    is AppProto(Get($foo), list(Get(LexVar 'foo'), Literal(Number 123)))->string,
+    is AppProto(Get($codefoo), list(Get(LexVar 'foo'), Literal(Number 123)))->string,
        'foo($foo, 123)';
-    is AppProto(Get($foo), list(Get($lexfoo), Literal(String 123)))->string,
+    is AppProto(Get($codefoo), list(Get($lexfoo), Literal(String 123)))->string,
        'foo($foo, \'123\')';
 
 
