@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -70,24 +70,36 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # (`FP::Repl::WithRepl::WithRepl_eval`) that the handler can test for:
 
 sub WithRepl_eval (&;$) {
-    my ($arg, $maybe_package)=@_;
-    if (ref $arg) {
+    # my ($arg, $maybe_package)=@_;
+    if (ref $_[0]) {
+        @_==1 or die "wrong number of arguments";
+        my ($arg)=@_;
         eval { &$arg() }
     } else {
-        my $package= $maybe_package // caller;
-        eval "package $package; $arg"
+        eval do {
+            @_==1 or @_==2 or die "wrong number of arguments";
+            my ($arg, $maybe_package)=@_;
+            my $package= $maybe_package // caller;
+            "package $package; $arg"
+        }
     }
 }
 
-sub WithRepl_eval_e (&;$) {
-    my ($arg, $maybe_package)=@_;
-    if (ref $arg) {
+sub WithRepl_eval_e ($;$$) {
+    # my ($arg, $maybe_package, $wantarray)=@_;
+    if (ref $_[0]) {
         die "WithRepl_eval_e only supports string eval";
     } else {
-        my $package= $maybe_package // caller;
-        my $res;
-        if (eval "package $package; \$res= do { $arg }; 1") {
-            ($res, $@, '')
+        my $success= eval do {
+            (@_>=1 and @_<=3) or die "wrong number of arguments";
+            my ($arg, $maybe_package, $wantarray)=@_;
+            my $package= $maybe_package // caller;
+            my $scalar= $wantarray ? "" : "scalar";
+            "[ $scalar do { package $package; $arg } ]"
+        };
+        my ($arg, $maybe_package, $wantarray)=@_; # now can have the lexicals
+        if ($success) {
+            ($wantarray ? $success : $$success[0], $@, '')
         } else {
             (undef, $@, 1)
         }
@@ -98,6 +110,23 @@ use FP::Repl;
 use FP::Repl::Stack;
 use Chj::TEST;
 use FP::Show;
+
+# test that 'no' variables are seen (yeah, could do better)
+TEST { &WithRepl_eval('"Hello $arg"') } ();
+TEST { my ($res,$e,$is_err)= WithRepl_eval_e('"Hello $arg"'); $is_err } 1;
+TEST { my ($res,$e,$is_err)= WithRepl_eval_e('[ $res ]'); $is_err } 1;
+
+TEST { my ($res,$e,$is_err)= WithRepl_eval_e q{
+       my @a= (qw(a b c));
+       @a
+       }, "foo";
+       $res } 3;
+TEST { my ($res,$e,$is_err)= WithRepl_eval_e q{
+       my @a= (qw(a b c));
+       @a
+       }, "foo", 1;
+       $res } [qw(a b c)];
+
 
 
 # PROBLEM: even exceptions within contexts that catch exceptions
