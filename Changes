@@ -1,5 +1,15 @@
 Revision history for FunctionalPerl
 
+0.72.24 2019-12-8
+    - proper POD formatting in some modules, move tests to POD
+    - Struct: make immutable if is_pure
+    - Struct: do not automatically inherit FP::Abstract::Pure anymore,
+      update other modules
+    - update/implement Show, Pure etc. in various modules
+    - rename Chj::Destructor::_ to Chj::_::Destructor
+    - Create FP::Combinators2
+    - FP::AST::Perl: semicolons, Let
+
 0.72.23 2019-12-7
     - Ops: rename `string` to `stringify`
     - create FP::Struct::Equal
