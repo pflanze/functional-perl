@@ -37,11 +37,23 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
     is AppProto(Get($codefoo), list(Get($lexfoo), Literal(String 123)))->string,
        'foo($foo, \'123\')';
 
+    # Semicolons are like a compile time (AST level) operator:
+    is Semicolon(Get(LexVar "a"), Get(LexVar "b"))->string, '$a; $b';
+    # to end with a semicolon you could use:
+    is Semicolon(Get(LexVar "a"), Noop)->string, '$a; ';
+
+    # The n-ary `semicolons` function builds a Semicolon chain for
+    # you (right-associated):
     is_equal semicolons(), Noop;
-    is_equal semicolons(Noop), Noop;
-    is_equal semicolons(Noop, Noop, Noop),
-             Semicolon(Noop(), Semicolon(Noop(), Noop()));
-    is semicolons(Noop, Noop, Noop)->string, '; ; ';
+    is_equal semicolons("x"), "x";
+        # ^ no `Semicolon` instantiation thus no type failure because
+        #   of the string
+    my $sems= semicolons(map {Get LexVar $_} qw(a b c));
+    is_equal $sems,
+             Semicolon(Get(LexVar('a')),
+                       Semicolon(Get(LexVar('b')),
+                                 Get(LexVar('c'))));
+    is $sems->string, '$a; $b; $c';
 
     is Let(list(LexVar("foo"), LexVar("bar")),
            Get(PackVarArray "baz"),
