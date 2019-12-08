@@ -272,6 +272,14 @@ way of checking for a '(&' method?))
   the field name, then the operation), and hints that it's different
   from imperative code.)
 
+* Functions and methods ending in an underscore are used to indicate
+  those taking key => value parameter pairs (as in the generated
+  constructor methods and functions from `FP::Struct`), or which are
+  curried, i.e. will return a parametrized function
+  (e.g. `left_associate_` and `right_associate_` from
+  `FP::Combinators2`) (this latter naming is experimental, is there a
+  better idea?).
+
 * Procedures and methods which are not safe, i.e. can lead to delayed
   failures instead of reporting an exception right away or lead to
   other violations of the intended behaviour, are prefixed with (or
