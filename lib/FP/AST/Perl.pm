@@ -14,7 +14,7 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
 =head1 SYNOPSIS
 
     use FP::AST::Perl ":all";
-    use FP::List;
+    use FP::List; use FP::Equal ":all";
 
     is Get(LexVar('foo'))->string, '$foo';
     is Get(PackVarScalar "foo")->string, '$foo';
@@ -36,6 +36,12 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
        'foo($foo, 123)';
     is AppProto(Get($codefoo), list(Get($lexfoo), Literal(String 123)))->string,
        'foo($foo, \'123\')';
+
+    is_equal semicolons(), Noop;
+    is_equal semicolons(Noop), Noop;
+    is_equal semicolons(Noop, Noop, Noop),
+             Semicolon(Noop(), Semicolon(Noop(), Noop()));
+    is semicolons(Noop, Noop, Noop)->string, ';;';
 
 
 =head1 DESCRIPTION
@@ -70,13 +76,26 @@ package FP::AST::Perl;
     is_expr
     App AppProto Get Ref
     Number String
-    Literal);
+    Literal
+    Semicolon Noop semicolons);
+
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use FP::Predicates ":all";
 use Chj::TEST;
+use FP::List;
+
+# import the constructors of the classes defined below
+for my $name (qw(
+              LexVar PackVarScalar PackVarCode PackVarHash PackVarArray PackVarGlob
+              App AppProto Get Ref
+              Number String
+              Literal
+              Semicolon Noop)) {
+    "FP::AST::Perl::${name}::constructors"->import()
+}
 
 
 package FP::AST::_::Perl {
@@ -361,14 +380,33 @@ package FP::AST::Perl::Literal {
 }
 
 
+package FP::AST::Perl::Semicolon {
+    use FP::Struct [
+        [*FP::AST::Perl::is_expr, 'a'],
+        [*FP::AST::Perl::is_expr, 'b'],
+        ] => "FP::AST::Perl::Expr";
 
+    method string () {
+        $self->a->string . ";" . $self->b->string
+    }
+    _END_
+}
 
-for my $name (qw(
-              LexVar PackVarScalar PackVarCode PackVarHash PackVarArray PackVarGlob
-              App AppProto Get Ref
-              Number String
-              Literal)) {
-    "FP::AST::Perl::${name}::constructors"->import()
+package FP::AST::Perl::Noop {
+    use FP::Struct [
+        ] => "FP::AST::Perl::Expr";
+
+    method string () {
+        ""
+    }
+    _END_
+}
+
+sub semicolons {
+    @_ ? do {
+        my ($a, $r)= list(@_)->reverse->first_and_rest;
+        $r->fold(*Semicolon, $a)
+    } : Noop()
 }
 
 
