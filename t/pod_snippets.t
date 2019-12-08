@@ -13,6 +13,10 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
+sub myeval ($) {
+    eval $_[0]
+}
+
 use Test::Requires qw(Test::Pod::Snippets);
 use Test::More;
 use lib "./meta";
@@ -132,7 +136,7 @@ for my $module (@$modules) {
             $code=~ s/(;\s*)no warnings;/${1};/;
             $code=~ s/(;\s*)no strict;/${1}use strict;/;
             $namespacenum++;
-            if (eval "package t_pod_snippets_$namespacenum; $code; \n1") {
+            if (myeval "package t_pod_snippets_$namespacenum; $code; \n1") {
                 my $fail_after= numfailures;
                 if ($fail_after == $fail_before) {
                     # done_testing("snippets in $module") but that's part of $code
