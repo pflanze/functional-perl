@@ -67,7 +67,7 @@ FP::Failure - failure values
                               },
                               $v->message(1)),
              join("\n", "failure: 666 at lib/FP/Failure.pm line ...",
-                        "    (eval) at t/pod_snippets.t line ...",
+                        "    (eval) at lib/FP/Repl/WithRepl.pm line ...",
                         "  because:",
                         "  failure: 'not good'");
 
