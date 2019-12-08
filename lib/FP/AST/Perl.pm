@@ -150,7 +150,7 @@ package FP::AST::Perl::Var {
     _END_
 }
 
-*is_var= my $is_var= instance_of "FP::AST::Perl::Var"; ## XX Are those not all auto generated MAN ???
+*is_var= our $is_var= instance_of "FP::AST::Perl::Var"; ## XX Are those not all auto generated MAN ???
 
 
 # XX move to FP::Predicates? Or FP::Parser::Perl ?
@@ -173,7 +173,7 @@ package FP::AST::Perl::LexVar {
     _END_
 }
 
-*is_lexvar= my $is_lexvar= instance_of "FP::AST::Perl::LexVar";
+*is_lexvar= our $is_lexvar= instance_of "FP::AST::Perl::LexVar";
 
 
 package FP::AST::Perl::PackVar {
@@ -188,7 +188,7 @@ package FP::AST::Perl::PackVar {
     _END_
 }
 
-*is_packvar= my $is_packvar= instance_of "FP::AST::Perl::PackVar";
+*is_packvar= our $is_packvar= instance_of "FP::AST::Perl::PackVar";
 
 package FP::AST::Perl::PackVarScalar {
     use FP::Struct [] => "FP::AST::Perl::PackVar";
@@ -236,8 +236,8 @@ package FP::AST::Perl::Expr {
     _END_
 }
 
-*is_expr= my $is_expr= instance_of "FP::AST::Perl::Expr";
-*is_nonnoop_expr= my $is_nonnoop_expr= both \&is_expr, complement \&is_noop;
+*is_expr= our $is_expr= instance_of "FP::AST::Perl::Expr";
+*is_nonnoop_expr= our $is_nonnoop_expr= both \&is_expr, complement \&is_noop;
 
 # Do we need to distinguish context (list vs. scalar [vs. void]),
 # really? No, since the *dynamic* context determines this!
@@ -353,7 +353,7 @@ package FP::AST::Perl::Value {
     _END_
 }
 
-*is_value= my $is_value= instance_of "FP::AST::Perl::Value";
+*is_value= our $is_value= instance_of "FP::AST::Perl::Value";
 
 package FP::AST::Perl::Number {
     use FP::Predicates ":all";
@@ -425,7 +425,7 @@ package FP::AST::Perl::Noop {
     _END_
 }
 
-*is_noop= my $is_noop= instance_of "FP::AST::Perl::Noop";
+*is_noop= our $is_noop= instance_of "FP::AST::Perl::Noop";
 
 
 *semicolons= right_associate_ *Semicolon, Noop();
