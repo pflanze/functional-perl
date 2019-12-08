@@ -13,18 +13,27 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-sub myeval ($) {
-    eval $_[0]
-}
-
-use Test::Requires qw(Test::Pod::Snippets);
-use Test::More;
 use lib "./meta";
 use FunctionalPerl::TailExpand;
 use FunctionalPerl::ModuleList;
 use FunctionalPerl::Dependencies 'module_needs';
 use Chj::Backtrace;
 use Chj::xperlfunc ":all";
+use Test::Requires qw(Test::Pod::Snippets);
+use Test::More;
+
+use FP::Repl::AutoTrap;
+use FP::Repl::WithRepl qw(withrepl WithRepl_eval);
+sub myeval ($) {
+    my ($str)=@_;
+    if (FP::Repl::AutoTrap::possibly_activate) {
+        withrepl {
+            &WithRepl_eval($str)
+        }
+    } else {
+        &WithRepl_eval($str)
+    }
+}
 
 require "./meta/find-perl.pl";
 
