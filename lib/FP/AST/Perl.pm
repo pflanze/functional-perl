@@ -236,7 +236,7 @@ package FP::AST::Perl::Expr {
 }
 
 *is_expr= instance_of "FP::AST::Perl::Expr";
-*is_nonnoop_expr= both *is_expr, complement *is_noop;
+*is_nonnoop_expr= both \&is_expr, complement \&is_noop;
 
 # Do we need to distinguish context (list vs. scalar [vs. void]),
 # really? No, since the *dynamic* context determines this!
