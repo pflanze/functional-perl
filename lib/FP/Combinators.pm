@@ -30,7 +30,7 @@ its arguments."
 
 =head1 SEE ALSO
 
-L<FP::Optional>
+L<FP::Optional>, L<FP::Combinators2>, L<FP::Predicates>, L<FP::Ops>
 
 =head1 NOTE
 
