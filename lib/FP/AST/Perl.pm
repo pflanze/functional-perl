@@ -41,7 +41,16 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
     is_equal semicolons(Noop), Noop;
     is_equal semicolons(Noop, Noop, Noop),
              Semicolon(Noop(), Semicolon(Noop(), Noop()));
-    is semicolons(Noop, Noop, Noop)->string, ';;';
+    is semicolons(Noop, Noop, Noop)->string, '; ; ';
+
+    is Let(list(LexVar("foo"), LexVar("bar")),
+           Get(PackVarArray "baz"),
+           semicolons(
+               AppProto(Get(PackVarCode "print"),
+                        list Literal String "Hello"),
+               Get(LexVar("bar"))))->string,
+       'my ($foo, $bar) = @baz; print(\'Hello\'); $bar';
+    # Yes, how should print, map etc. be handled?
 
 
 =head1 DESCRIPTION
@@ -68,16 +77,19 @@ or on the L<website|http://functional-perl.org/>.
 package FP::AST::Perl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(
-    is_packvar_type
-    is_var
+my @classes=qw(
     LexVar PackVarScalar PackVarCode PackVarHash PackVarArray PackVarGlob
-    is_lexvar is_packvar
-    is_expr
     App AppProto Get Ref
     Number String
     Literal
-    Semicolon Noop semicolons);
+    Semicolon Noop Let);
+@EXPORT_OK=(
+    @classes, qw(
+    is_packvar_type
+    is_var
+    is_lexvar is_packvar
+    is_expr is_nonnoop_expr is_noop
+    semicolons));
 
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -88,12 +100,7 @@ use Chj::TEST;
 use FP::List;
 
 # import the constructors of the classes defined below
-for my $name (qw(
-              LexVar PackVarScalar PackVarCode PackVarHash PackVarArray PackVarGlob
-              App AppProto Get Ref
-              Number String
-              Literal
-              Semicolon Noop)) {
+for my $name (@classes) {
     "FP::AST::Perl::${name}::constructors"->import()
 }
 
@@ -216,7 +223,7 @@ package FP::AST::Perl::Expr {
 }
 
 *is_expr= instance_of "FP::AST::Perl::Expr";
-
+*is_nonnoop_expr= both *is_expr, complement *is_noop;
 
 # Do we need to distinguish context (list vs. scalar [vs. void]),
 # really? No, since the *dynamic* context determines this!
@@ -387,7 +394,7 @@ package FP::AST::Perl::Semicolon {
         ] => "FP::AST::Perl::Expr";
 
     method string () {
-        $self->a->string . ";" . $self->b->string
+        $self->a->string . "; " . $self->b->string
     }
     _END_
 }
@@ -402,6 +409,8 @@ package FP::AST::Perl::Noop {
     _END_
 }
 
+*is_noop= instance_of "FP::AST::Perl::Noop";
+
 sub semicolons {
     @_ ? do {
         my ($a, $r)= list(@_)->reverse->first_and_rest;
@@ -410,11 +419,43 @@ sub semicolons {
 }
 
 
+package FP::AST::Perl::Let {
+    use FP::Predicates;
+    use FP::List;
+    use FP::Ops ":all";
+
+    use FP::Struct [
+        [list_of *FP::AST::Perl::is_var, 'vars'],
+        [*FP::AST::Perl::is_nonnoop_expr, 'expr'],
+        [*FP::AST::Perl::is_expr, 'body'],
+        ] => "FP::AST::Perl::Expr";
+
+    method string () {
+        my $vars= $self->vars;
+        my $multiple= $vars->length > 1;
+        "my "
+            . ($multiple ? "(" : "")
+            . $vars->map(the_method "string")->strings_join(", ")
+            . ($multiple ? ")" : "")
+            . " = "
+            . $self->expr->string
+            . "; " # XX like Semicolon! But not the same *?* Q
+            . $self->body->string
+    }
+    _END_
+}
+
+
 TEST_EXCEPTION {
     LexVar('foo::bar')
 } 'unacceptable value for field \'name\': \'foo::bar\'';
 
+sub String;
+sub Literal;
+sub PackVarArray;
+sub PackVarCode;
 
-
+sub t{
+}
 
 1
