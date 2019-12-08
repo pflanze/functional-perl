@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -21,6 +21,10 @@ This checks whether stdin and stdout are going to a tty, if so, then
 activate FP::Repl::Trap to trap errors in a repl, otherwise just activate
 Chj::Backtrace.
 
+This is activated at load time unless C<$ENV{RUN_TESTS}> is true. It
+can be activated expicitly by calling
+C<FP::Repl::AutoTrap::possibly_activate>.
+
 =head1 SEE ALSO
 
 L<FP::Repl::Trap>, L<Chj::Backtrace>
@@ -41,17 +45,23 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # sense. So this is the "non-forcing" way to check:
 use POSIX qw(isatty);
 
-if (($ENV{RUN_TESTS}//'') eq '1') {
-    warn "not activating since running in test mode";
-} else {
+sub possibly_activate {
     if (isatty(0) and isatty(1)) {
         require FP::Repl::WithRepl;
         import FP::Repl::WithRepl;
         push_withrepl (0);
+        1
     } else {
         require Chj::Backtrace;
         import Chj::Backtrace;
+        0
     }
+}
+
+if (($ENV{RUN_TESTS}//'') eq '1') {
+    warn "not activating since running in test mode";
+} else {
+    possibly_activate
 }
 
 1
