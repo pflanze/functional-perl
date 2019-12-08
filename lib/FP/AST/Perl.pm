@@ -150,20 +150,21 @@ package FP::AST::Perl::Var {
     _END_
 }
 
-*is_var= instance_of "FP::AST::Perl::Var"; ## XX Are those not all auto generated MAN ???
+*is_var= my $is_var= instance_of "FP::AST::Perl::Var"; ## XX Are those not all auto generated MAN ???
 
 
 # XX move to FP::Predicates? Or FP::Parser::Perl ?
 sub is_lexvar_string ($) {
     my ($str)=@_;
     $str=~ /^\w+\z/
-}
+} my $is_lexvar_string= \&is_lexvar_string;
+
 
 package FP::AST::Perl::LexVar {
     use FP::Predicates ":all";
     
     use FP::Struct [
-        [*FP::AST::Perl::is_lexvar_string, 'name']
+        [$is_lexvar_string, 'name']
         ] => "FP::AST::Perl::Var";
 
     method sigil () { '$' }
@@ -172,7 +173,7 @@ package FP::AST::Perl::LexVar {
     _END_
 }
 
-*is_lexvar= instance_of "FP::AST::Perl::LexVar";
+*is_lexvar= my $is_lexvar= instance_of "FP::AST::Perl::LexVar";
 
 
 package FP::AST::Perl::PackVar {
@@ -187,7 +188,7 @@ package FP::AST::Perl::PackVar {
     _END_
 }
 
-*is_packvar= instance_of "FP::AST::Perl::PackVar";
+*is_packvar= my $is_packvar= instance_of "FP::AST::Perl::PackVar";
 
 package FP::AST::Perl::PackVarScalar {
     use FP::Struct [] => "FP::AST::Perl::PackVar";
@@ -235,8 +236,8 @@ package FP::AST::Perl::Expr {
     _END_
 }
 
-*is_expr= instance_of "FP::AST::Perl::Expr";
-*is_nonnoop_expr= both \&is_expr, complement \&is_noop;
+*is_expr= my $is_expr= instance_of "FP::AST::Perl::Expr";
+*is_nonnoop_expr= my $is_nonnoop_expr= both \&is_expr, complement \&is_noop;
 
 # Do we need to distinguish context (list vs. scalar [vs. void]),
 # really? No, since the *dynamic* context determines this!
@@ -245,7 +246,7 @@ package FP::AST::Perl::Get {
     use FP::Predicates ":all";
     
     use FP::Struct [
-        [*FP::AST::Perl::is_var, 'var'],
+        [$is_var, 'var'],
         ] => "FP::AST::Perl::Expr";
 
     # XX problem is, for CODE vars, Get is only valid in App proc
@@ -276,7 +277,7 @@ package FP::AST::Perl::Ref {
     use FP::Predicates ":all";
     
     use FP::Struct [
-        [*FP::AST::Perl::is_var, 'var'],
+        [$is_var, 'var'],
         ] => "FP::AST::Perl::Expr";
 
     method string () {
@@ -306,8 +307,8 @@ package FP::AST::Perl::App {
     use FP::Ops ":all";
     
     use FP::Struct [
-        [*FP::AST::Perl::is_expr, 'proc'],
-        [list_of *FP::AST::Perl::is_expr, 'argexprs'],
+        [$is_expr, 'proc'],
+        [list_of $is_expr, 'argexprs'],
         # ^ yes, proc is also an expr, but only yielding one (usable)
         # value, as opposed to argexprs which may yield more used
         # values than there are exprs (at least here; not
@@ -352,7 +353,7 @@ package FP::AST::Perl::Value {
     _END_
 }
 
-*is_value= instance_of "FP::AST::Perl::Value";
+*is_value= my $is_value= instance_of "FP::AST::Perl::Value";
 
 package FP::AST::Perl::Number {
     use FP::Predicates ":all";
@@ -391,7 +392,7 @@ package FP::AST::Perl::Literal {
     use FP::Ops ":all";
     
     use FP::Struct [
-        [*FP::AST::Perl::is_value, 'value'],
+        [$is_value, 'value'],
         ] => "FP::AST::Perl::Expr";
 
     method string () {
@@ -404,8 +405,8 @@ package FP::AST::Perl::Literal {
 
 package FP::AST::Perl::Semicolon {
     use FP::Struct [
-        [*FP::AST::Perl::is_expr, 'a'],
-        [*FP::AST::Perl::is_expr, 'b'],
+        [$is_expr, 'a'],
+        [$is_expr, 'b'],
         ] => "FP::AST::Perl::Expr";
 
     method string () {
@@ -424,7 +425,7 @@ package FP::AST::Perl::Noop {
     _END_
 }
 
-*is_noop= instance_of "FP::AST::Perl::Noop";
+*is_noop= my $is_noop= instance_of "FP::AST::Perl::Noop";
 
 
 *semicolons= right_associate_ *Semicolon, Noop();
@@ -436,9 +437,9 @@ package FP::AST::Perl::Let {
     use FP::Ops ":all";
 
     use FP::Struct [
-        [list_of *FP::AST::Perl::is_var, 'vars'],
-        [*FP::AST::Perl::is_nonnoop_expr, 'expr'],
-        [*FP::AST::Perl::is_expr, 'body'],
+        [list_of $is_var, 'vars'],
+        [$is_nonnoop_expr, 'expr'],
+        [$is_expr, 'body'],
         ] => "FP::AST::Perl::Expr";
 
     method string () {
