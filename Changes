@@ -1,5 +1,12 @@
 Revision history for FunctionalPerl
 
+0.72.25 2019-12-8
+    - t/pod_snippets.t: Trap to repl if running test in a terminal
+    - AutoTrap: add possibly_activate (used for the above)
+    - WithRepl: WithRepl_eval*: avoid lexical variable capture
+    (An attempt at moving away from globs in FP::AST::Perl failed (see
+    Git history).)
+
 0.72.24 2019-12-8
     - proper POD formatting in some modules, move tests to POD
     - Struct: make immutable if is_pure
