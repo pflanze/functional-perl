@@ -332,7 +332,6 @@ package FP::AST::Perl::Value {
     use FP::Predicates ":all";
     
     use FP::Struct [
-        'perlvalue' # native Perl value
         ] => "FP::AST::_::Perl";
 
     # missing string method  XX interface
@@ -344,8 +343,10 @@ package FP::AST::Perl::Value {
 
 package FP::AST::Perl::Number {
     use FP::Predicates ":all";
-    
+    use Scalar::Util qw(looks_like_number);
+
     use FP::Struct [
+        [*looks_like_number, 'perlvalue'],
         ] => "FP::AST::Perl::Value";
 
     method string () {
@@ -360,6 +361,7 @@ package FP::AST::Perl::String {
     use Chj::singlequote;
 
     use FP::Struct [
+        'perlvalue',
         ] => "FP::AST::Perl::Value";
 
     method string () {
