@@ -77,7 +77,7 @@ C<:failure>: L<FP::Failure>
 
 C<:fix>: L<FP::fix>
 
-C<:functions>: C<:equal>, C<:failure>, C<:show>, L<FP::Combinators>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>, L<FP::uncurry>
+C<:functions>: C<:equal>, C<:failure>, C<:show>, L<FP::Combinators>, L<FP::Combinators2>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>, L<FP::uncurry>
 
 C<:git>: L<FP::Git::Repository>
 
@@ -160,7 +160,8 @@ our $export_desc=
     ":repl"=> [qw(FP::Repl FP::Repl::AutoTrap)],
     ":dev"=> [qw(:repl :test :debug Chj::ruse)],
 
-    ":functions"=> [qw(FP::Combinators FP::Ops FP::Div
+    ":functions"=> [qw(FP::Combinators FP::Combinators2
+                       FP::Ops FP::Div
                        FP::Predicates
                        FP::Optional FP::Values
                        FP::Memoizing FP::uncurry
