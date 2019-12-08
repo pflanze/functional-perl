@@ -268,12 +268,16 @@ package FP::AST::Perl::App {
     
     use FP::Struct [
         [*FP::AST::Perl::is_expr, 'proc'],
-        [list_of *FP::AST::Perl::is_expr, 'args'],
+        [list_of *FP::AST::Perl::is_expr, 'argexprs'],
+        # ^ yes, proc is also an expr, but only yielding one (usable)
+        # value, as opposed to argexprs which may yield more used
+        # values than there are exprs (at least here; not
+        # (necessarily) in AppProto).
         ] => "FP::AST::Perl::Expr";
 
     method string () {
         $self->proc_string . $self->proc->callderef . "(" .
-            $self->args->map(the_method "string")->strings_join (", ") .
+            $self->argexprs->map(the_method "string")->strings_join (", ") .
             # ^ XX are parens needed around arguments?
             ")"
     }
