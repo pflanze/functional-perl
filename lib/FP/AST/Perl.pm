@@ -110,6 +110,7 @@ use Function::Parameters qw(:strict);
 use FP::Predicates ":all";
 use Chj::TEST;
 use FP::List;
+use FP::Combinators2 qw(right_associate_);
 
 # import the constructors of the classes defined below
 for my $name (@classes) {
@@ -425,12 +426,8 @@ package FP::AST::Perl::Noop {
 
 *is_noop= instance_of "FP::AST::Perl::Noop";
 
-sub semicolons {
-    @_ ? do {
-        my ($a, $r)= list(@_)->reverse->first_and_rest;
-        $r->fold(*Semicolon, $a)
-    } : Noop()
-}
+
+*semicolons= right_associate_ *Semicolon, Noop();
 
 
 package FP::AST::Perl::Let {
