@@ -24,7 +24,7 @@ FunctionalPerl - functional programming in Perl
 
 =head1 DESCRIPTION
 
-Allow Perl programs to be written with fewer side effects.
+Allows Perl programs to be written with fewer side effects.
 
 See the L<Functional Perl|http://functional-perl.org/> home page.
 
