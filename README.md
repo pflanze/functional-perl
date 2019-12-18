@@ -364,7 +364,7 @@ right now.)
     * the [Github project](https://github.com/pflanze/functional-perl)
 
     * the "Issues" link on the the distribution's
-      [CPAN page](https://metacpan.org/pod/FunctionalPerl).
+      [metacpan page](https://metacpan.org/pod/FunctionalPerl).
 
 * Find IRC and contact details on the [[mailing_list]] and [[contact]]
   pages. Check the [[design]] page to get an idea about the design
