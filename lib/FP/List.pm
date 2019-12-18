@@ -127,7 +127,7 @@ or on the L<website|http://functional-perl.org/>.
 
 package FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons is_pair null is_null is_pair_of is_pair_or_null
+@EXPORT=qw(cons cons_ is_pair null is_null is_pair_of is_pair_or_null
            list_of  is_null_or_pair_of null_or_pair_of is_list
            car cdr first rest
            car_and_cdr first_and_rest perhaps_first_and_rest
@@ -391,6 +391,23 @@ sub cons ($$) {
         goto \&unsafe_cons
     }
 }
+
+sub cons_ ($) {
+    @_==1 or die "wrong number of arguments";
+    my ($item)=@_;
+    sub {
+        @_==1 or die "wrong number of arguments";
+        if (my $f= UNIVERSAL::can ($_[0], "cons")) {
+            push @_, $item; goto &$f;
+        } else {
+            unsafe_cons($item, $_[0])
+        }
+    }
+}
+
+TEST { cons_(1)->(list(2)) } GIVES { list(1, 2) };
+TEST { cons_(1)->(2) } GIVES { cons 1, 2 };
+    
 
 sub pair ($$) {
     @_==2 or die "wrong number of arguments";

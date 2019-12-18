@@ -36,7 +36,7 @@ package ImperativePerson {
 
 package FunctionalPerson {
 
-    use FP::List;
+    use FP::List; # for `cons`, `cons_`
 
     use FP::Struct ["name", "todo_items"];
 
@@ -44,7 +44,10 @@ package FunctionalPerson {
         my ($self, $item)= @_;
         # The sub receives the old todo_items list, and returns a new
         # list with $item prepended:
-        $self->todo_items_update(sub { cons $item, $_[0] })
+        #$self->todo_items_update(sub { cons $item, $_[0] })
+        # Or use `cons_` which returns a function that prepends
+        # cons_'s argument to its own argument:
+        $self->todo_items_update(cons_ $item)
     }
     
     _END_
