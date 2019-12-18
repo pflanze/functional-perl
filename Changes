@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.26 2019-12-18
+    - List: add `cons_`; use it in `examples/functional-classes`
+
 0.72.25 2019-12-8
     - t/pod_snippets.t: Trap to repl if running test in a terminal
     - AutoTrap: add possibly_activate (used for the above)
