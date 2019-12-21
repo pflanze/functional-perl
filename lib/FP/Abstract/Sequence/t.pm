@@ -133,6 +133,8 @@ TEST { F list(qw(a b))->intersperse("-") }
 TEST { F list(qw(a b c))->intersperse("-") }
   list('a', '-', 'b', '-', 'c');
 
+TEST { stream(1,44,2)->join("-") }
+  '1-44-2';
 
 sub is_pair_purearray ($) {
     my ($v)=@_;

@@ -94,6 +94,7 @@ sub FP_Interface__method_names {
      sum
      product
      none
+     join
      ),
      # virtual methods:
      grep {
@@ -338,6 +339,23 @@ sub strictly_chunks_of {
     my ($s, $chunklen)=@_;
     # XXX weaken as all of them.
     $s->stream->strictly_chunks_of($chunklen)
+}
+
+
+# join in Haskell is doing "++" on the items, should probably choose a
+# protocol for this as well; for now, hard-code to strings_join:
+sub join {
+    my ($s)= @_;
+    # Tail-call, please, for 'weakening maintenance'.
+
+    # XX only AUTOLOAD is defined, not `can`! But $s was already
+    # forced by the AUTOLOAD thus nothing more is needed here. But
+    # this might change!
+    my $m= $s->can("strings_join")
+        # bug since it's requested by the interface
+        or die "bug: missing strings_join method on: $s";
+
+    goto $m
 }
 
 _END_
