@@ -49,71 +49,71 @@ Tags can be expanded via:
 
 =head1 SEE ALSO
 
-This is the list of supported import tags and the modules that they import:
+This is the list of supported import tags and the modules and other tags that they import:
 
-C<:all>: C<:dev>, C<:io>, C<:most>, C<:rare>
+C<:all> -> C<:dev>, C<:io>, C<:most>, C<:rare>
 
-C<:ast>: L<FP::AST::Perl>
+C<:ast> -> L<FP::AST::Perl>
 
-C<:autobox>: L<FP::autobox>
+C<:autobox> -> L<FP::autobox>
 
-C<:chars>: L<FP::Char>
+C<:chars> -> L<FP::Char>
 
-C<:csv>: L<FP::Text::CSV>
+C<:csv> -> L<FP::Text::CSV>
 
-C<:datastructures>: C<:chars>, C<:maps>, C<:numbers>, C<:sequences>, C<:sets>, C<:tries>
+C<:datastructures> -> C<:chars>, C<:maps>, C<:numbers>, C<:sequences>, C<:sets>, C<:tries>
 
-C<:dbi>: L<FP::DBI>
+C<:dbi> -> L<FP::DBI>
 
-C<:debug>: C<:equal>, C<:show>, L<Chj::Backtrace>, L<Chj::pp>, L<Chj::time_this>
+C<:debug> -> C<:equal>, C<:show>, L<Chj::Backtrace>, L<Chj::pp>, L<Chj::time_this>
 
-C<:dev>: C<:debug>, C<:repl>, C<:test>, L<Chj::ruse>
+C<:dev> -> C<:debug>, C<:repl>, C<:test>, L<Chj::ruse>
 
-C<:doc>: L<FP::Docstring>
+C<:doc> -> L<FP::Docstring>
 
-C<:equal>: L<FP::Equal>
+C<:equal> -> L<FP::Equal>
 
-C<:failure>: L<FP::Failure>
+C<:failure> -> L<FP::Failure>
 
-C<:fix>: L<FP::fix>
+C<:fix> -> L<FP::fix>
 
-C<:functions>: C<:equal>, C<:failure>, C<:show>, L<FP::Combinators>, L<FP::Combinators2>, L<FP::Currying>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>
+C<:functions> -> C<:equal>, C<:failure>, C<:show>, L<FP::Combinators>, L<FP::Combinators2>, L<FP::Currying>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>
 
-C<:git>: L<FP::Git::Repository>
+C<:git> -> L<FP::Git::Repository>
 
-C<:io>: L<Chj::tempdir>, L<Chj::xIO>, L<Chj::xhome>, L<Chj::xopen>, L<Chj::xopendir>, L<Chj::xoutpipe>, L<Chj::xperlfunc>, L<Chj::xpipe>, L<Chj::xtmpfile>, L<FP::IOStream>
+C<:io> -> L<Chj::tempdir>, L<Chj::xIO>, L<Chj::xhome>, L<Chj::xopen>, L<Chj::xopendir>, L<Chj::xoutpipe>, L<Chj::xperlfunc>, L<Chj::xpipe>, L<Chj::xtmpfile>, L<FP::IOStream>
 
-C<:lazy>: C<:stream>, L<FP::Lazy>, L<FP::Weak>
+C<:lazy> -> C<:stream>, L<FP::Lazy>, L<FP::Weak>
 
-C<:maps>: L<FP::Hash>, L<FP::PureHash>
+C<:maps> -> L<FP::Hash>, L<FP::PureHash>
 
-C<:most>: C<:autobox>, C<:datastructures>, C<:debug>, C<:doc>, C<:equal>, C<:failure>, C<:functions>, C<:lazy>, C<:show>
+C<:most> -> C<:autobox>, C<:datastructures>, C<:debug>, C<:doc>, C<:equal>, C<:failure>, C<:functions>, C<:lazy>, C<:show>
 
-C<:numbers>: L<FP::BigInt>
+C<:numbers> -> L<FP::BigInt>
 
-C<:path>: L<FP::Path>
+C<:path> -> L<FP::Path>
 
-C<:pxml>: L<PXML::Serialize>, L<PXML::Util>, L<PXML::XHTML>
+C<:pxml> -> L<PXML::Serialize>, L<PXML::Util>, L<PXML::XHTML>
 
-C<:rare>: C<:csv>, C<:dbi>, C<:fix>, C<:git>, C<:path>, C<:trampoline>
+C<:rare> -> C<:csv>, C<:dbi>, C<:fix>, C<:git>, C<:path>, C<:trampoline>
 
-C<:repl>: L<FP::Repl>, L<FP::Repl::AutoTrap>
+C<:repl> -> L<FP::Repl>, L<FP::Repl::AutoTrap>
 
-C<:sequences>: C<:stream>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>, L<FP::StrictList>
+C<:sequences> -> C<:stream>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>, L<FP::StrictList>
 
-C<:sets>: L<FP::HashSet>, L<FP::OrderedCollection>
+C<:sets> -> L<FP::HashSet>, L<FP::OrderedCollection>
 
-C<:show>: L<FP::Show>
+C<:show> -> L<FP::Show>
 
-C<:stream>: L<FP::IOStream>, L<FP::Stream>, L<FP::Weak>
+C<:stream> -> L<FP::IOStream>, L<FP::Stream>, L<FP::Weak>
 
-C<:test>: L<Chj::TEST>
+C<:test> -> L<Chj::TEST>
 
-C<:trampoline>: L<FP::Trampoline>
+C<:trampoline> -> L<FP::Trampoline>
 
-C<:transparentlazy>: C<:stream>, L<FP::TransparentLazy>, L<FP::Weak>
+C<:transparentlazy> -> C<:stream>, L<FP::TransparentLazy>, L<FP::Weak>
 
-C<:tries>: L<FP::Trie>
+C<:tries> -> L<FP::Trie>
 
 =head1 NOTE
 
@@ -241,7 +241,7 @@ sub export_desc2pod {
     join("",
          map {
              my $a= $$export_desc{$_};
-             "C<$_>: ".
+             "C<$_> -> ".
                  join(", ",
                       map {
                           if (/^:/) {

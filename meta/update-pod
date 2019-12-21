@@ -51,7 +51,7 @@ xfile_replace_lines $file, sub {
     my ($lines)=@_;
     my ($top,$rest)= Keep($lines)->take_while_and_rest(
         complement *is_see_also);
-    $rest->ref(2) eq "This is the list of supported import tags and the modules that they import:\n"
+    $rest->ref(2) eq "This is the list of supported import tags and the modules and other tags that they import:\n"
         or die "no match";
     my ($top2,$rest2)= $rest->split_at(4);
     $top2->last eq "\n"
