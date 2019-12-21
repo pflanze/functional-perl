@@ -100,7 +100,7 @@ TEST{ purearray(3,4)->fold (sub{[@_]}, 's') }
 TEST { (purearray 3,4)->zip([qw(a b c)]) }
   bless [[3,"a"], [4,"b"]], 'FP::_::PureArray';
 
-TEST { (purearray 2,3)->join("a") }
+TEST { (purearray 2,3)->intersperse("a") }
   bless [2, "a", 3], 'FP::_::PureArray';
 
 TEST{ purearray(1,2,3)->strings_join("-") }

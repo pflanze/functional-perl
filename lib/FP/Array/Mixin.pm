@@ -183,7 +183,7 @@ sub FP_Sequence_length {
 *fold= rot3left \&array_fold;
 *fold_right= rot3left \&array_fold_right;
 *preferred_fold= *fold; # ?
-*join= blessing \&array_join;
+*intersperse= blessing \&array_intersperse;
 *strings_join= \&array_strings_join;
 *every= flip \&array_every;
 *any= flip \&array_any;

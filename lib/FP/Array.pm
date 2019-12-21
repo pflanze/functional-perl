@@ -83,7 +83,7 @@ package FP::Array;
               array_zip
               array_fold
               array_fold_right
-              array_join
+              array_intersperse
               array_strings_join
               array_every
               array_any
@@ -478,7 +478,7 @@ TEST{ require FP::List;
   [1,2,3];
 
 
-sub array_join ($$) {
+sub array_intersperse ($$) {
     my ($ary,$val)=@_;
     my @res;
     for (@$ary) {
@@ -488,7 +488,7 @@ sub array_join ($$) {
     \@res
 }
 
-TEST{ array_join [1,2,3],"a" }
+TEST{ array_intersperse [1,2,3],"a" }
         [
           1,
           'a',
@@ -496,7 +496,7 @@ TEST{ array_join [1,2,3],"a" }
           'a',
           3
         ];
-TEST{ array_join [],"a" } [];
+TEST{ array_intersperse [],"a" } [];
 
 sub array_strings_join ($$) {
     @_==2 or croak "wrong number of arguments";

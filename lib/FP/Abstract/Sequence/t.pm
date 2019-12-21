@@ -124,13 +124,13 @@ TEST { [list([3, "a"],
   [[-1, "d"], [5, "c"]];
 
 
-TEST { F list(qw())->join("-") }
+TEST { F list(qw())->intersperse("-") }
   null;
-TEST { F list(qw(a))->join("-") }
+TEST { F list(qw(a))->intersperse("-") }
   list('a');
-TEST { F list(qw(a b))->join("-") }
+TEST { F list(qw(a b))->intersperse("-") }
   list('a', '-', 'b');
-TEST { F list(qw(a b c))->join("-") }
+TEST { F list(qw(a b c))->intersperse("-") }
   list('a', '-', 'b', '-', 'c');
 
 

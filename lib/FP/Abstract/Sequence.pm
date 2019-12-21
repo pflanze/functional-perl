@@ -82,7 +82,7 @@ sub FP_Interface__method_names {
      qw(
      is_proper_sequence
      flatten
-     join
+     intersperse
      extreme
      min
      max
@@ -129,7 +129,6 @@ sub FP_Interface__method_names {
      perhaps_one
      zip
      for_each
-     join
      strings_join
      length
      second
@@ -179,14 +178,10 @@ sub flatten {
 # XXX and on top of that, these return a lazy result even if the input
 # isn't; related to the above issue. Find solution for both.
 
-# unlike strings_join which returns a single string, this builds a new
-# sequence with the given value between all elements of the original
-# sequence
-
 # (XX only works computationally efficient for *some* sequences;
 # introduce an FP::Abstract::IterativeSequence or so and move it
 # there?)
-sub join {
+sub intersperse {
     @_==2 or die "wrong number of arguments";
     my ($self, $value)=@_;
     # (should we recurse locally like most sequence functions? Or is
@@ -199,7 +194,8 @@ sub join {
               my ($v,$rest)= $self->first_and_rest;
               $rest->is_null ? $self
                 : FP::List::cons($v,
-                                 FP::List::cons($value, $rest->join($value)))
+                                 FP::List::cons($value,
+                                                $rest->intersperse($value)))
           }
     }
 }
