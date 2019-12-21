@@ -87,6 +87,8 @@ Note: most of these links are from 2015 and 2016. Please submit new ones if you'
 
 * [in which we plot an escape from the quagmire of equality](http://technomancy.us/159), nice citation: *(...) referential transparency allows you to have much greater confidence that your code is correct. Without it, the best you can say is "as long as the rest of this program behaves itself, this function should work". This works a lot like older OSes with cooperative multitasking and no process memory isolation*; also discusses equality, and proposes adding immutable data types to Emacs.
 
+* [The Problem With Single-threaded Shared Mutability](https://manishearth.github.io/blog/2015/05/17/the-problem-with-shared-mutability/), including the citation: *My intuition is that code far away from my code might as well be in another thread, for all I can reason about what it will do to shared mutable state.*
+
 
 ## Testing
 
