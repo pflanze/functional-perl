@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.27 2019-12-21
+    - Rename FP::uncurry module to FP::Currying
+    - add `curry` (in spite of other CPAN modules offering it)
+    - Sequence: rename `join` to `intersperse`
+    - Sequence: add new `join` base method as alias to strings_join
+
 0.72.26 2019-12-18
     - List: add `cons_`; use it in `examples/functional-classes`
 
