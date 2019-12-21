@@ -192,9 +192,7 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   anymore? But I'm setting an env var and define the ordering there,
   how?
 
-* Perhaps do not use all-lowercase namings like `FP::uncurry` (rename
-  to `FP::Uncurry` while still exporting `uncurry` and other
-  functions.)
+* Perhaps do not use all-lowercase module namings
 
 * `Test::Needs` has been recommended over `Test::Requires` "for reasons specified in its documentation", look into it.
 

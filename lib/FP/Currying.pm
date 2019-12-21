@@ -9,11 +9,11 @@
 
 =head1 NAME
 
-FP::uncurry
+FP::Currying
 
 =head1 SYNOPSIS
 
-    use FP::uncurry;
+    use FP::Currying;
 
     my $mult= uncurry sub { my ($x)=@_; sub { my ($y)=@_; $x*$y }};
     &$mult(2,3) # -> 6
@@ -55,7 +55,7 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 
-package FP::uncurry;
+package FP::Currying;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
               uncurry

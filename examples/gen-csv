@@ -44,7 +44,7 @@ use FP::Lazy ":all";
 use FP::Stream ":all";
 use FP::Ops qw(add);
 use FP::fix;
-use FP::uncurry;
+use FP::Currying;
 
 fun fibs () {
     # (Also see the [[fibs]] example script; unlike there, where
