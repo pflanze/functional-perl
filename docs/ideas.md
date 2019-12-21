@@ -78,6 +78,16 @@ Also see [[TODO]].
   `FP::Repl` namespace is that it's "related". But perhaps that's a
   bad justification.
 
+* Should various of the more central modules be coalesced into a
+  `FP::Core` module (like
+  [clojure/core](https://github.com/clojure/clojure/blob/master/src/clj/clojure/core.clj)
+  or Haskell's
+  [Prelude](https://hackage.haskell.org/package/base-4.12.0.0/docs/Prelude.html))?
+  (These tend to be disappointing over time... so perhaps not? There's
+  the re-export feature of the `FunctionalPerl` module, maybe just use
+  `:core` there and maintain that to be equivalent. Does that make the
+  situation any different?)
+
 ## Website
 
 * improve website layout
