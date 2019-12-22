@@ -88,6 +88,7 @@ our %dependencies=
    'FunctionalPerl::Htmlgen::PerlTidy'=> [
        'Function::Parameters',
        'Perl::Tidy',
+       'FunctionalPerl::Htmlgen::Htmlparse',
    ],
    (map { $_ => [ 'Function::Parameters' ] }
     qw(
