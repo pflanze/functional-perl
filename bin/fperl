@@ -19,13 +19,14 @@ our ($mydir, $myname); BEGIN {
 my $repl= "$mydir/repl";
 
 exec $^X,
-  $repl,
-  qw(
-        -t
-        -m Method::Signatures
-        -m Function::Parameters=:strict
-        -m Sub::Call::Tail
-        -M FunctionalPerl=:all
-   ), @ARGV
-  or exit 127;
+    $repl,
+    qw(
+    --name fperl
+    -t
+    -m Method::Signatures
+    -m Function::Parameters=:strict
+    -m Sub::Call::Tail
+    -M FunctionalPerl=:all
+    ), @ARGV
+    or exit 127;
 
