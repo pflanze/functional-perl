@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.29 2019-12-22
+    - work on FP::AST::Perl
+    - rename bin/repl+ to bin/fperl, bin/repl to bin/perlrepl, and
+      make bin/fperl use the "fperl" namespace (including updates
+      everywhere)
+
 0.72.28 2019-12-22
     - Dependencies: hopefully fixes #131217 on rt.cpan.org
     - POD formatting and doc fixes
