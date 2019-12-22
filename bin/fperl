@@ -16,7 +16,7 @@ our ($mydir, $myname); BEGIN {
     ($mydir, $myname)=($1,$2);
 }
 
-my $repl= "$mydir/repl";
+my $repl= "$mydir/perlrepl";
 
 exec $^X,
     $repl,

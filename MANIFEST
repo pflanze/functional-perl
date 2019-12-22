@@ -6,7 +6,7 @@ README.md
 bench/globs
 bin/expand-tail
 bin/fperl
-bin/repl
+bin/perlrepl
 docs/HACKING.md
 docs/TODO.md
 docs/contact.md
