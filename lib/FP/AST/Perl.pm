@@ -14,7 +14,7 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
 =head1 SYNOPSIS
 
     use FP::AST::Perl ":all";
-    use FP::List; use FP::Equal ":all";
+    use FP::List; use FP::Equal ":all"; use FP::Ops qw(regex_substitute);
 
     is Get(ScalarVar "foo")->string, '$foo';
     is Get(ArrayVar "foo")->string, '@foo';
@@ -30,6 +30,9 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
        'foo()';
     is AppP(Get($lexfoo), list(Ref($codefoo)))->string,
        '$foo->(\&foo)';
+    is eval { App(Get(HashVar "foo"), list())->string } ||
+            regex_substitute(sub{s/ at .*//s}, $@),
+       'HASH var can\'t be called';
     is AppP(Get($lexfoo), list(Get($lexfoo), Get($arrayfoo), Ref($arrayfoo)))->string,
        '$foo->($foo, @foo, \@foo)';
     is AppP(Get($codefoo), list(Get(ScalarVar 'foo'), Literal(Number 123)))->string,
@@ -149,7 +152,7 @@ package FP::AST::Perl::Var {
     method string () {
         $self->sigil . $self->name
     }
-    method callderef () { die $self->type_name." can't be called" }
+    method callderef () { die $self->type_name." var can't be called" }
 
     _END_
 }
