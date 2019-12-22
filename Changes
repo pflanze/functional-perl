@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.28 2019-12-22
+    - Dependencies: hopefully fixes #131217 on rt.cpan.org
+    - POD formatting and doc fixes
+
 0.72.27 2019-12-21
     - Rename FP::uncurry module to FP::Currying
     - add `curry` (in spite of other CPAN modules offering it)
