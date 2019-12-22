@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-FP::Abstract::Show - equality protocol
+FP::Abstract::Show - data constructor protocol
 
 =head1 SYNOPSIS
 
@@ -32,7 +32,7 @@ FP::Abstract::Show - equality protocol
 
 For an introduction, see L<FP::Show>.
 
-The reason that `FP_Show_show` is getting a `$show` argument is to
+The reason that C<FP_Show_show> is getting a C<$show> argument is to
 provide for (probably evil, though) context sensitive formatting, but
 more importantly to hopefully enable to do pretty-printing and cut-off
 features (this is *alpha* though, see whether this works out).
@@ -42,7 +42,8 @@ features (this is *alpha* though, see whether this works out).
 
 Handle circular data structures.
 
-Pretty-printing
+Pretty-printing -- for this, probably move to returning FP::AST::Perl
+nodes instead of strings.
 
 Declare that non-pretty-printing show must only print one line?
 
