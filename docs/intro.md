@@ -977,7 +977,7 @@ iterations. But perl also offers a solution for this:
     fperl> fun build ($i,$l) { if ($i > 0) { @_=($i-1, cons fun () { $i }, $l); goto &build } else { $l }}
 
 Sorry for the one-line formatting here, our examples are starting to
-get a big long for the repl, here is the same with line breaks:
+get a bit long for the repl, here is the same with line breaks:
 
     fun build ($i,$l) {
         if ($i > 0) {
