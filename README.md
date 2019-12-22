@@ -304,11 +304,12 @@ in London, Berlin or Switzerland to get an introduction in person.
 
 ## Dependencies
 
-* to use `bin/perlrepl` or the repl in the intro and examples scripts
-  interactively, `Term::ReadLine::Gnu` and `PadWalker` (and optionally
-  `Eval::WithLexicals` if you want to use the :m/:M modes, and
-  `Capture::Tiny` to see code definition location information and
-  `Sub::Util` to see function names when displaying code refs.)
+* to use `bin/perlrepl`, `bin/fperl` or the repl in the intro and
+  examples scripts interactively, `Term::ReadLine::Gnu` and
+  `PadWalker` (and optionally `Eval::WithLexicals` if you want to use
+  the :m/:M modes, and `Capture::Tiny` to see code definition location
+  information and `Sub::Util` to see function names when displaying
+  code refs.)
 
 * to run the test suite: `Test::Requires`
 
