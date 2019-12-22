@@ -26,15 +26,15 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
     my $lexfoo= LexVar("foo");
     is App(Get($codefoo), list())->string,
        '&foo()';
-    is AppProto(Get($codefoo), list())->string,
+    is AppP(Get($codefoo), list())->string,
        'foo()';
-    is AppProto(Get($lexfoo), list(Ref($codefoo)))->string,
+    is AppP(Get($lexfoo), list(Ref($codefoo)))->string,
        '$foo->(\&foo)';
-    is AppProto(Get($lexfoo), list(Get($lexfoo), Get($arrayfoo), Ref($arrayfoo)))->string,
+    is AppP(Get($lexfoo), list(Get($lexfoo), Get($arrayfoo), Ref($arrayfoo)))->string,
        '$foo->($foo, @foo, \@foo)';
-    is AppProto(Get($codefoo), list(Get(LexVar 'foo'), Literal(Number 123)))->string,
+    is AppP(Get($codefoo), list(Get(LexVar 'foo'), Literal(Number 123)))->string,
        'foo($foo, 123)';
-    is AppProto(Get($codefoo), list(Get($lexfoo), Literal(String 123)))->string,
+    is AppP(Get($codefoo), list(Get($lexfoo), Literal(String 123)))->string,
        'foo($foo, \'123\')';
 
     # Semicolons are like a compile time (AST level) operator:
@@ -58,7 +58,7 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
     is Let(list(LexVar("foo"), LexVar("bar")),
            Get(PackVarArray "baz"),
            semicolons(
-               AppProto(Get(PackVarCode "print"),
+               AppP(Get(PackVarCode "print"),
                         list Literal String "Hello"),
                Get(LexVar("bar"))))->string,
        'my ($foo, $bar) = @baz; print(\'Hello\'); $bar';
@@ -91,7 +91,7 @@ package FP::AST::Perl;
 @EXPORT=qw();
 my @classes=qw(
     LexVar PackVarScalar PackVarCode PackVarHash PackVarArray PackVarGlob
-    App AppProto Get Ref
+    App AppP Get Ref
     Number String
     Literal
     Semicolon Noop Let);
@@ -127,7 +127,7 @@ package FP::AST::_::Perl {
         "FP::Struct::Show";
 
     method string_proto () {
-        __  "stringification when used as the callee in AppProto";
+        __  "stringification when used as the callee in AppP";
         $self->string
     }
 
@@ -311,7 +311,7 @@ package FP::AST::Perl::App {
         # ^ yes, proc is also an expr, but only yielding one (usable)
         # value, as opposed to argexprs which may yield more used
         # values than there are exprs (at least here; not
-        # (necessarily) in AppProto).
+        # (necessarily) in AppP).
         ] => "FP::AST::Perl::Expr";
 
     method string () {
@@ -326,7 +326,7 @@ package FP::AST::Perl::App {
     _END_
 }
 
-package FP::AST::Perl::AppProto {
+package FP::AST::Perl::AppP {
     # App with exposure to prototypes
     use FP::Struct [
         ] => "FP::AST::Perl::App";
