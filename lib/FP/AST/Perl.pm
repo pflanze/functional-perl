@@ -58,6 +58,9 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
                                  Get(ScalarVar('c'))));
     is $sems->string, '$a; $b; $c';
 
+    is commas(map {Get ScalarVar $_} qw(a b c))->string,
+       '$a, $b, $c';
+
     is Let(list(ScalarVar("foo"), ScalarVar("bar")),
            Get(ArrayVar "baz"),
            semicolons(
@@ -97,13 +100,13 @@ my @classes=qw(
     App AppP Get Ref
     Number String
     Literal
-    Semicolon Noop Let);
+    Semicolon Comma Noop Let);
 @EXPORT_OK=(
     @classes, qw(
     is_packvar_type
     is_var
     is_expr is_nonnoop_expr is_noop
-    semicolons));
+    semicolons commas));
 
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -391,6 +394,19 @@ package FP::AST::Perl::Semicolon {
     _END_
 }
 
+# mostly-copy-paste of above
+package FP::AST::Perl::Comma {
+    use FP::Struct [
+        [*FP::AST::Perl::is_expr, 'a'],
+        [*FP::AST::Perl::is_expr, 'b'],
+        ] => "FP::AST::Perl::Expr";
+
+    method string () {
+        $self->a->string . ", " . $self->b->string
+    }
+    _END_
+}
+
 package FP::AST::Perl::Noop {
     use FP::Struct [
         ] => "FP::AST::Perl::Expr";
@@ -405,6 +421,7 @@ package FP::AST::Perl::Noop {
 
 
 *semicolons= right_associate_ *Semicolon, Noop();
+*commas= right_associate_ *Comma, Noop();
 
 
 package FP::AST::Perl::Let {
