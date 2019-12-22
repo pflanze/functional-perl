@@ -63,7 +63,7 @@ sub sourcelang {
     do { $perl+= 0.5; $sh+= 0.5 } if $str=~ /\$\w+/;
     $perl+= 1 if $str=~ /(?:^|\n|;)\s*push\s+\@\w+\s*,\s*/;
     $perl+= 1 if $str=~ /\$VAR\d+\b/;
-    $perl+= 1 if $str=~ /repl>.*\bF\b/;
+    $perl+= 1 if $str=~ /(?:perlrepl|fperl)(?: *\d+)?>.*\bF\b/;
     $perl+= 1 if $str=~ /\blazy\s*\{/;
     $sh+=2 if $str=~ /(?:^|\n)\s*(?:#\s*)?(?:git|gpg|ls|chmod|cd) /;
     ($perl>=1 and $perl>$sh) ? "Perl" : "shell"
