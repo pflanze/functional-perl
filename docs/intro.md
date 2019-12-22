@@ -42,14 +42,14 @@ There are three ways to run the functional-perl REPL:
    by adding `use FP::Repl::Trap;` somewhere to your code.
  - Run the [bin/repl](../bin/repl) script, which takes the `-M` option
    like perl itself to load modules of your choice. Or
-   [bin/repl+](../bin/repl+) which calls the repl with the most
+   [bin/fperl](../bin/fperl) which calls the repl with the most
    interesting modules preloaded.
 
 You need to install `Term::ReadLine::Gnu` and `PadWalker` to use the
 repl. Once you've done that, from the shell run:
 
     $ cd functional-perl
-    $ bin/repl+
+    $ bin/fperl
     repl> 
 
 The string left of the ">" indicates the current namespace, "repl" in
@@ -84,7 +84,7 @@ is under way to improve this):
     repl> 
 
 (In case you really don't like this nesting feature, you can omit the
-`-t` flag to the `repl` script (adapt the `repl+` wrapper script).)
+`-t` flag to the `repl` script (adapt the `fperl` wrapper script).)
 
 
 ## Lists the functional way
@@ -93,7 +93,7 @@ One of the most basic features of functional programming are singly
 linked lists. Those can be extended and shrunk in a purely functional
 way, i.e. without changing existing list references. Lists can be
 created using the `list` function from `FP::List`, which is preloaded
-in repl+:
+in fperl:
 
     repl> list()
     $VAR1 = bless( [], 'FP::List::Null' );
@@ -164,7 +164,7 @@ Note how we create an anonymous subroutine to simply use the `+`
 operator. We can't pass `+` directly, Perl does not have a way to pass
 an operator as a subroutine (CODE ref) directly. To ease this pain,
 Perl's operators are wrapped as functions (subroutines) in `FP::Ops`,
-which is imported by `bin/repl+` already. The subroutine wrapping `+`
+which is imported by `bin/fperl` already. The subroutine wrapping `+`
 is called `add`.
 
     repl> add(1,2)
@@ -223,7 +223,7 @@ ordering is relevant, for example division (`/` is wrapped as `div` by
 
 (For another easy to try example, experiment with the `array` function
 from `FP::Array`, which is a wrapper for `[@_]`. It too is already
-imported by `repl+`.)
+imported by `fperl`.)
 
 You can get the first element of a list using the `first` method, and
 the rest of the list using the `rest` method. There's also a combined
@@ -290,7 +290,7 @@ original stays unmodified:
 
 This works, and it can be hidden in pure functions, in fact
 functional-perl provides them already (part of `FP::Array` and
-imported by `repl+`):
+imported by `fperl`):
 
     repl> $a= [3,4,5]
     $VAR1 = [3, 4, 5];
@@ -314,12 +314,12 @@ functional-perl yet.)
 
 If one of the following modules, which modify the Perl syntax, is
 loaded, then the repl automatically makes them available to the
-entered code.  Also, [bin/repl+](../bin/repl+) automatically tries to
+entered code.  Also, [bin/fperl](../bin/fperl) automatically tries to
 load them if present on the system: `Function::Parameters`,
 `Method::Signatures`, `Sub::Call::Tail`. Since Function::Parameters
 simplifies writing functions a lot and works better in some ways than
 Method::Signatures, we're going to use it from now on. If you don't
-have it installed, do that now and then restart the repl+ (first exit
+have it installed, do that now and then restart the fperl (first exit
 it by typing ctl-d, or :q -- note that currently :q prevents it from
 saving the history (todo)). Now you can type the nicer:
 
@@ -454,7 +454,7 @@ means for example that we get this behaviour:
 Of course, `inverse` fails. But note that the result of `inverse` is
 not even used in this case. If Perl would evaluate the `inverse 0`
 expression lazily, there would be no failure. This can be changed by
-using `lazy` from `FP::TransparentLazy` (`repl+` loads it already):
+using `lazy` from `FP::TransparentLazy` (`fperl` loads it already):
 
     repl> or_square 2, lazy { inverse 0 }
     $VAR1 = 2;
@@ -497,7 +497,7 @@ The `Data::Dumper` mode shows:
                      undef
                    ], 'FP::TransparentLazy::Promise' );
 
-`repl+` imports `lazy` from `FP::TransparentLazy`. There's also
+`fperl` imports `lazy` from `FP::TransparentLazy`. There's also
 `FP::Lazy`, which works the same way except it does not use overload
 to force terms transparently:
 
@@ -989,7 +989,7 @@ get a big long for the repl, here is the same with line breaks:
     }
 
 That still looks pretty ugly, though. But there's also a solution for
-*that*: if you install `Sub::Call::Tail` (`repl+` automatically loads
+*that*: if you install `Sub::Call::Tail` (`fperl` automatically loads
 it on start), then you can instead simply prepend the `tail` keyword
 to the recursive function call to achieve the same:
 

@@ -5,8 +5,8 @@ Makefile.PL
 README.md
 bench/globs
 bin/expand-tail
+bin/fperl
 bin/repl
-bin/repl+
 docs/HACKING.md
 docs/TODO.md
 docs/contact.md
