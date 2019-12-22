@@ -35,19 +35,19 @@ FP::Abstract::Equal - equality protocol
 =head1 DESCRIPTION
 
 Objects implementing this protocol can be compared using the functions
-from `FP::Equal`, primarily `equal`.
+from L<FP::Equal>, primarily C<equal>.
 
-`equal` forces promises before doing further comparisons or passing
-them to `FP_Equal_equal` (only the immediate layer, not
-deeply). `FP_Equal_equal` is only ever called with the two arguments
-(self and one method argument) being references of, currently, the
-same type (`equal` handles the other cases internally) (TODO: how to
-handle subtypes?). In better(?) words, `FP_Equal_equal`
+The C<equal> function forces promises before doing further comparisons
+or passing them to the C<FP_Equal_equal> method (only the immediate
+layer, not deeply). C<FP_Equal_equal> is only ever called with the two
+arguments (self and one method argument) being references of,
+currently, the same type (C<equal> handles the other cases internally)
+(TODO: how to handle subtypes?). In better(?) words, C<FP_Equal_equal>
 implementations can rely on the second argument supporting the same
 operations that the first one does (TODO: even into the future once
-accepting subtyping?  This is *alpha*.) Likewise, `FP_Equal_equal` is
+accepting subtyping?  This is *alpha*.) Likewise, C<FP_Equal_equal> is
 not called if the arguments are both the same reference (in this case
-`equal` simply returns true).
+C<equal> simply returns true).
 
 =head1 TODO
 
