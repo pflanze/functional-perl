@@ -40,31 +40,31 @@ There are three ways to run the functional-perl REPL:
    calling `repl;`.
  - Register the repl to be run upon encountering uncaught exceptions
    by adding `use FP::Repl::Trap;` somewhere to your code.
- - Run the [bin/repl](../bin/repl) script, which takes the `-M` option
-   like perl itself to load modules of your choice. Or
-   [bin/fperl](../bin/fperl) which calls the repl with the most
-   interesting modules preloaded.
+ - Run the [bin/perlrepl](../bin/perlrepl) script, which takes the
+   `-M` option like perl itself to load modules of your choice. Or
+   [bin/fperl](../bin/fperl) which calls the repl with most Functional
+   Perl modules preloaded.
 
 You need to install `Term::ReadLine::Gnu` and `PadWalker` to use the
 repl. Once you've done that, from the shell run:
 
     $ cd functional-perl
     $ bin/fperl
-    repl> 
+    fperl> 
 
-The string left of the ">" indicates the current namespace, "repl" in
+The string left of the ">" indicates the current namespace, "fperl" in
 this case. Let's try:
 
-    repl> 1+2
+    fperl> 1+2
     $VAR1 = 3;
 
 You can refer to the given $VAR1 etc. variables in subsequent entries:
 
-    repl> $VAR1*2
+    fperl> $VAR1*2
     $VAR1 = 6;
-    repl> $VAR1*2
+    fperl> $VAR1*2
     $VAR1 = 12;
-    repl> $VAR1*2, $VAR1+1
+    fperl> $VAR1*2, $VAR1+1
     $VAR1 = 24;
     $VAR2 = 13;
 
@@ -72,16 +72,16 @@ If you happen to produce an error at run time of the code that you
 enter, you will be in a sub-repl, indicated by the level number `1`
 here:
 
-    repl> foo()
-    Exception: 'Undefined subroutine &repl::foo called at (eval 143) line 1.
+    fperl> foo()
+    Exception: 'Undefined subroutine &fperl::foo called at (eval 143) line 1.
     '
-    repl 1> 
+    fperl 1> 
 
 In that case, you can return to the parent repl by pressing ctl-d. It
 will then show (XX: currently it also shows the exception again; work
 is under way to improve this):
 
-    repl> 
+    fperl> 
 
 (In case you really don't like this nesting feature, you can omit the
 `-t` flag to the `repl` script (adapt the `fperl` wrapper script).)
@@ -95,24 +95,24 @@ way, i.e. without changing existing list references. Lists can be
 created using the `list` function from `FP::List`, which is preloaded
 in fperl:
 
-    repl> list()
+    fperl> list()
     $VAR1 = bless( [], 'FP::List::Null' );
 
 The given answer is the object that represents the empty list. It is
 unique across the system, i.e. a singleton:
 
-    repl> use Scalar::Util qw(refaddr);  refaddr(list()) == refaddr(list())
+    fperl> use Scalar::Util qw(refaddr);  refaddr(list()) == refaddr(list())
     $VAR1 = 1;
 
 The empty list can also be gotten from the `null` function:
 
-    repl> null
+    fperl> null
     $VAR1 = bless( [], 'FP::List::Null' );
 
 You can prepend new items to an existing list using the `cons`
 function, which pairs up its two arguments:
 
-    repl> cons 3, null
+    fperl> cons 3, null
     $VAR1 = bless( [
                      3,
                      bless( [], 'FP::List::Null' )
@@ -122,8 +122,8 @@ Now these `Data::Dumper` style printouts don't look very nice, you'll
 agree. The repl can do better, just tell it so with a repl meta
 command:
 
-    repl> :s
-    repl> cons 3, null
+    fperl> :s
+    fperl> cons 3, null
     $VAR1 = list(3);
 
 To see a list of all repl commands enter `:?`. You can also use the
@@ -139,9 +139,9 @@ functions. (How the repl knows how to print data structures is via the
 As you've already seen above, linked lists are objects, and they come
 with a broad set of useful methods, for example:
 
-    repl> list(2,3,4)->map(sub { $_[0] * $_[0] })
+    fperl> list(2,3,4)->map(sub { $_[0] * $_[0] })
     $VAR1 = list(4, 9, 16);
-    repl> list(2,3,4)->filter(sub { $_[0] % 2 })
+    fperl> list(2,3,4)->filter(sub { $_[0] % 2 })
     $VAR1 = list(3);
 
 You may be asking why `filter` is not called `grep`; the answer is
@@ -151,7 +151,7 @@ programming languages.
 Here's a function/method that does not have a pendant as a Perl
 builtin, but is common to functional programming: 
 
-    repl> list(2,3,4)->fold(sub { $_[0] + $_[1] }, 0)
+    fperl> list(2,3,4)->fold(sub { $_[0] + $_[1] }, 0)
     $VAR1 = 9;
 
 Fold takes a subroutine and an initial value, then for each value in
@@ -167,12 +167,12 @@ Perl's operators are wrapped as functions (subroutines) in `FP::Ops`,
 which is imported by `bin/fperl` already. The subroutine wrapping `+`
 is called `add`.
 
-    repl> add(1,2)
+    fperl> add(1,2)
     $VAR1 = 3;
 
 Thus we can write the following, equivalent to what we had above:
 
-    repl> list(2,3,4)->fold(\&add, 0)
+    fperl> list(2,3,4)->fold(\&add, 0)
     $VAR1 = 9;
 
 Or we can pass the glob entry instead of taking a reference--this is
@@ -181,18 +181,18 @@ subroutine is redefined the glob will call the new definition, which
 is usually what you want, thus we're going to use this style from now
 on:
 
-    repl> list(2,3,4)->fold(*add, 0)
+    fperl> list(2,3,4)->fold(*add, 0)
     $VAR1 = 9;
 
 What if you would use `cons` instead of `+`? 
 
-    repl> list(2,3,4)->fold(sub { cons $_[0], $_[1] }, null)
+    fperl> list(2,3,4)->fold(sub { cons $_[0], $_[1] }, null)
     $VAR1 = list(4, 3, 2);
 
 The anonymous subroutine wrapper here is truly unnecessary, of course,
 the following is getting rid of it:
 
-    repl> list(2,3,4)->fold(*cons, null)
+    fperl> list(2,3,4)->fold(*cons, null)
     $VAR1 = list(4, 3, 2);
 
 As you can see, this prepended the value 2 to the empty list, then
@@ -205,7 +205,7 @@ ordering is preserved there's also `fold_right`, which reverses the
 order of the call chain (it begins at the right of the list,
 i.e. calling `cons(4, null)` first):
 
-    repl> list(2,3,4)->fold_right(*cons, null)
+    fperl> list(2,3,4)->fold_right(*cons, null)
     $VAR1 = list(2, 3, 4);
 
 i.e. this simply copies the list, which is actually pointless: lists
@@ -216,9 +216,9 @@ copying is irrelevant. Of course there are other operations where the
 ordering is relevant, for example division (`/` is wrapped as `div` by
 `FP::Ops`):
 
-    repl> list(10,20)->fold(*div, 1)
+    fperl> list(10,20)->fold(*div, 1)
     $VAR1 = '2';
-    repl> list(10,20)->fold_right(*div, 1)
+    fperl> list(10,20)->fold_right(*div, 1)
     $VAR1 = '0.5';
 
 (For another easy to try example, experiment with the `array` function
@@ -230,11 +230,11 @@ the rest of the list using the `rest` method. There's also a combined
 `first_and_rest` method which is basically the inverse of the `cons`
 function:
 
-    repl> list(2,3,4)->first
+    fperl> list(2,3,4)->first
     $VAR1 = 2;
-    repl> list(2,3,4)->rest
+    fperl> list(2,3,4)->rest
     $VAR1 = list(3, 4);
-    repl> list(2,3,4)->first_and_rest
+    fperl> list(2,3,4)->first_and_rest
     $VAR1 = 2;
     $VAR2 = list(3, 4);
 
@@ -243,30 +243,30 @@ assigning values to package variables (globals), by default the repl
 does not 'use strict "vars"' thus we don't need to prefix them with
 "our":
 
-    repl> $a= list 3,4,5
+    fperl> $a= list 3,4,5
     $VAR1 = list(3, 4, 5);
-    repl> $b= $a->rest
+    fperl> $b= $a->rest
     $VAR1 = list(4, 5);
-    repl> $c= cons 2, $b
+    fperl> $c= cons 2, $b
     $VAR1 = list(2, 4, 5);
-    repl> $b
+    fperl> $b
     $VAR1 = list(4, 5);
-    repl> $a
+    fperl> $a
     $VAR1 = list(3, 4, 5);
 
 As you can see, $a and $b still contain the elements they were
 originally assigned. Compare this with using arrays:
 
-    repl> $a= [3,4,5]
+    fperl> $a= [3,4,5]
     $VAR1 = [3, 4, 5];
 
 Now to drop the first element, you could use shift, but:
 
-    repl> $b=$a
+    fperl> $b=$a
     $VAR1 = [3, 4, 5];
-    repl> shift @$b
+    fperl> shift @$b
     $VAR1 = 3;
-    repl> $a
+    fperl> $a
     $VAR1 = [4, 5];
 
 `shift` is not a (pure) function, but what would be called a
@@ -279,24 +279,24 @@ in-memory data structure, is also modified. You'd have to first create
 a full copy of the array so that when you modify it with shift the
 original stays unmodified:
 
-    repl> $a= [3,4,5]
+    fperl> $a= [3,4,5]
     $VAR1 = [3, 4, 5];
-    repl> $b=[@$a]
+    fperl> $b=[@$a]
     $VAR1 = [3, 4, 5];
-    repl> shift @$b
+    fperl> shift @$b
     $VAR1 = 3;
-    repl> $a
+    fperl> $a
     $VAR1 = [3, 4, 5];
 
 This works, and it can be hidden in pure functions, in fact
 functional-perl provides them already (part of `FP::Array` and
 imported by `fperl`):
 
-    repl> $a= [3,4,5]
+    fperl> $a= [3,4,5]
     $VAR1 = [3, 4, 5];
-    repl> $b= array_rest $a
+    fperl> $b= array_rest $a
     $VAR1 = [4, 5];
-    repl> $a
+    fperl> $a
     $VAR1 = [3, 4, 5];
 
 `array_rest` internally does the copy and shift thing. The problem
@@ -323,20 +323,20 @@ have it installed, do that now and then restart the fperl (first exit
 it by typing ctl-d, or :q -- note that currently :q prevents it from
 saving the history (todo)). Now you can type the nicer:
 
-    repl> list(3,4,5)->map(fun($x){ $x*$x })
+    fperl> list(3,4,5)->map(fun($x){ $x*$x })
     $VAR1 = list(9, 16, 25);
 
 Another module which might make life better in the repl is
 `Eval::WithLexicals` (a former version of the code used
 `Lexical::Persistence`). If you install it and then enter
 
-    repl> :m
+    fperl> :m
 
 then it will carry over lexical variables from one entry to the next:
 
-    repl> my $x=10
+    fperl> my $x=10
     $VAR1 = 10;
-    repl> $x
+    fperl> $x
     $VAR1 = 10;
 
 This also enables `use strict "vars"` as well as
@@ -351,9 +351,9 @@ instead (TODO: check that this is working).
 second argument, and failing that, builds an `FP::List::Pair`. This
 means that these expressions are equivalent:
 
-    repl> cons 2, cons 3, null
+    fperl> cons 2, cons 3, null
     $VAR1 = list(2, 3);
-    repl> null->cons(3)->cons(2)
+    fperl> null->cons(3)->cons(2)
     $VAR1 = list(2, 3);
 
 but the cons *function* can also be used to build pairs holding
@@ -363,9 +363,9 @@ non-lists as their rest value: those are called "improper lists".
 callable", or do I mean "non-method subroutine"? Those are
 orthogonal. Find better terminology.)</small>
 
-    repl> cons 2, 3
+    fperl> cons 2, 3
     $VAR1 = improper_list(2, 3);
-    repl> cons 1, cons 2, 3
+    fperl> cons 1, cons 2, 3
     $VAR1 = improper_list(1, 2, 3);
 
 The `improper_list` function creates such a linked list that contains
@@ -373,7 +373,7 @@ its last argument directly as the rest value in the last cell. If
 you're still unsure what this means, try turning to `:d` mode to see
 the list's cells:
 
-    repl> :d improper_list(1, 2, 3)
+    fperl> :d improper_list(1, 2, 3)
     $VAR1 = bless( [
                      1,
                      bless( [
@@ -384,7 +384,7 @@ the list's cells:
 
 versus
 
-    repl> :d list(1, 2, 3)
+    fperl> :d list(1, 2, 3)
     $VAR1 = bless( [
                      1,
                      bless( [
@@ -402,9 +402,9 @@ see later (streams) why it is a feature and not a bug.
 The functional-perl project provides other sequence data structures,
 too. Here's one (turning `:s` back on):
 
-    repl> :s cons 1, cons 2, strictnull
+    fperl> :s cons 1, cons 2, strictnull
     $VAR1 = strictlist(1, 2);
-    repl> is_strictlist $VAR1
+    fperl> is_strictlist $VAR1
     $VAR1 = 1;
 
 All functional-perl data structures come with a predicate function,
@@ -444,38 +444,38 @@ expressions in argument position of a subroutine or method call are
 evaluated before the statements in the subroutine are evaluated. This
 means for example that we get this behaviour:
 
-    repl> fun inverse ($x) { 1 / $x }
-    repl> fun or_square ($x,$y) { $x || $y * $y }
-    repl> or_square 2, inverse 0
+    fperl> fun inverse ($x) { 1 / $x }
+    fperl> fun or_square ($x,$y) { $x || $y * $y }
+    fperl> or_square 2, inverse 0
     Exception: 'Illegal division by zero at (eval 137) line 1.
     '
-    repl 1> 
+    fperl 1> 
 
 Of course, `inverse` fails. But note that the result of `inverse` is
 not even used in this case. If Perl would evaluate the `inverse 0`
 expression lazily, there would be no failure. This can be changed by
 using `lazy` from `FP::TransparentLazy` (`fperl` loads it already):
 
-    repl> or_square 2, lazy { inverse 0 }
+    fperl> or_square 2, lazy { inverse 0 }
     $VAR1 = 2;
 
 Only when `$y` is actually used, we get the exception:
 
-    repl> or_square 0, lazy { inverse 0 }
+    fperl> or_square 0, lazy { inverse 0 }
     Exception: 'Illegal division by zero at (eval 139) line 1.
     '
-    repl 1> 
+    fperl 1> 
 
 Alternatively we could redefine inverse to evaluate its body lazily:
 
-    repl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> fun inverse ($x) { lazy { 1 / $x } }
     Subroutine inverse redefined at (eval 143) line 1.
-    repl> or_square 2, inverse 0
+    fperl> or_square 2, inverse 0
     $VAR1 = 2;
-    repl> or_square 0, inverse 0
+    fperl> or_square 0, inverse 0
     Exception: 'Illegal division by zero at (eval 137) line 1.
     '
-    repl 1> 
+    fperl 1> 
 
 This is usually better since the knowledge about the need for lazy
 evaluation is kept locally, near the expression in question, and the
@@ -484,14 +484,14 @@ evaluation is kept locally, near the expression in question, and the
 Lazy terms are represented by a data structure called a *promise*. The
 `:s` pretty-printing in the repl shows them like this:
 
-    repl> inverse 2
+    fperl> inverse 2
     $VAR1 = lazy { "DUMMY" };
-    repl> $VAR1 + 1
+    fperl> $VAR1 + 1
     $VAR1 = '1.5';
 
 The `Data::Dumper` mode shows:
 
-    repl> :d inverse 2
+    fperl> :d inverse 2
     $VAR1 = bless( [
                      sub { "DUMMY" },
                      undef
@@ -501,13 +501,13 @@ The `Data::Dumper` mode shows:
 `FP::Lazy`, which works the same way except it does not use overload
 to force terms transparently:
 
-    repl> use FP::Lazy; lazy { 1 / 0 }
+    fperl> use FP::Lazy; lazy { 1 / 0 }
     $VAR1 = bless( [
                      sub { "DUMMY" },
                      undef,
                      ''
                    ], 'FP::Lazy::Promise' );
-    repl> $VAR1 + 1
+    fperl> $VAR1 + 1
     $VAR1 = 159389673;
 
 The `159389673` value comes from adding 1 to the pointer address. Perl
@@ -515,19 +515,19 @@ can be pretty dangerous (this is a more general problem, thus it's not
 being addressed here e.g. by overloading to an
 exception). `FP::Lazy::Promise` objects need to be forced explicitely:
 
-    repl> lazy { 1 / 2 }->force + 1
+    fperl> lazy { 1 / 2 }->force + 1
     $VAR1 = '1.5';
-    repl> lazy { 1 / 0 }->force + 1
+    fperl> lazy { 1 / 0 }->force + 1
     Exception: 'Illegal division by zero at (eval 146) line 1.
     '
-    repl 1> 
+    fperl 1> 
 
 There's a `force` *function*, too, which will not die when its
 argument is not a promise:
 
-    repl> force 3
+    fperl> force 3
     $VAR1 = 3;
-    repl> force lazy { 3 }
+    fperl> force lazy { 3 }
     $VAR1 = 3;
 
 The reason that functional-perl offers `FP::Lazy` (and actually
@@ -543,16 +543,16 @@ everywhere.
 To end this section, let's see what happens to promises when they are
 evaluated:
 
-    repl> our $v= do { my $x= 4; lazy { warn "evaluating"; 1 / $x } }
+    fperl> our $v= do { my $x= 4; lazy { warn "evaluating"; 1 / $x } }
     $VAR1 = bless( [
                      sub { "DUMMY" },
                      undef,
                      ''
                    ], 'FP::Lazy::Promise' );
-    repl> force $v
+    fperl> force $v
     evaluating at (eval 152) line 1.
     $VAR1 = '0.25';
-    repl> $v
+    fperl> $v
     $VAR1 = bless( [
                      undef,
                      '0.25',
@@ -565,41 +565,41 @@ gone, and instead the result is stored in its second field. This is to
 enforce that the lazy term is at most evaluated once. As you can see,
 there's no "evaluating" warning when forcing it again:
 
-    repl> force $v
+    fperl> force $v
     $VAR1 = '0.25';
 
 Let's switch back to the `:s` view mode:
 
-    repl> :s $v
+    fperl> :s $v
     $VAR1 = '0.25';
 
 It shows evaluated promises as their value directly. This is useful
 when dealing with bigger, lazily evaluated data structures.
 
-    repl> our $l= list(3,2,1,0,-1)->map(*inverse)
+    fperl> our $l= list(3,2,1,0,-1)->map(*inverse)
     $VAR1 = list(lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" });
 
 There's a function `F` which returns a deep copy of its argument with
 all the promises forced:
 
-    repl> F $l
+    fperl> F $l
     Exception: 'Illegal division by zero at (eval 137) line 1.
     '
-    repl 1> 
+    fperl 1> 
 
 Yes, it will fail here; but we can still see how far it went, since
 the promises in the original data structure are the same that are
 being forced:
 
-    repl> $l
+    fperl> $l
     $VAR1 = list('0.333333333333333', '0.5', '1', lazy { "DUMMY" }, lazy { "DUMMY" });
 
 For an example of using `F` that finishes, let's skip (drop) past the
 element of the list that gives the error:
 
-    repl> $l->drop(4)
+    fperl> $l->drop(4)
     $VAR1 = list(lazy { "DUMMY" });
-    repl> F $VAR1
+    fperl> F $VAR1
     $VAR1 = list('-1');
 
 
@@ -627,22 +627,22 @@ So, the first cell is going to hold `inverse(3)` as its value, and the
 remainder of the list (i.e. holding `inverse(2)` etc.) as its
 rest. Let's see how we can state this recursively:
 
-    repl> fun inverse ($x) { lazy { 1 / $x } }
-    repl> fun ourlist ($i) { cons inverse($i), ourlist($i-1) }
+    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> fun ourlist ($i) { cons inverse($i), ourlist($i-1) }
 
 Well, we need a termination condition.
 
-    repl> fun inverse ($x) { lazy { 1 / $x } }
-    repl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), ourlist($i-1) : null }
-    repl> our $l= ourlist 3
+    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), ourlist($i-1) : null }
+    fperl> our $l= ourlist 3
     $VAR1 = list(lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" });
-    repl> F $l->drop(4)
+    fperl> F $l->drop(4)
     $VAR1 = list('-1');
-    repl> F $l
+    fperl> F $l
     Exception: 'Illegal division by zero at (eval 136) line 1.
     '
-    repl 1> (ctl-d)
-    repl> $l
+    fperl 1> (ctl-d)
+    fperl> $l
     $VAR1 = list('0.333333333333333', '0.5', '1', lazy { "DUMMY" }, '-1');
 
 There we are.
@@ -660,9 +660,9 @@ also called the "spine".)
 What if we made the rest slot contain a lazily evaluated term as well?
 Well, let's simply try:
 
-    repl> fun inverse ($x) { lazy { 1 / $x } }
-    repl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
-    repl> our $l= ourlist 3
+    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
+    fperl> our $l= ourlist 3
     $VAR1 = improper_list(lazy { "DUMMY" }, lazy { "DUMMY" });
 
 The 'improper_list' here is really just a single cons cell (pair)
@@ -671,28 +671,28 @@ for.
 
 Will it evaluate to the correct values?
 
-    repl> $l->first->force
+    fperl> $l->first->force
     $VAR1 = '0.333333333333333';
-    repl> $l->rest->force
+    fperl> $l->rest->force
     $VAR1 = improper_list(lazy { "DUMMY" }, lazy { "DUMMY" });
 
 The rest element, when forced, is again a cell holding lazy terms, of
 course. This time it's the cell holding:
 
-    repl> $VAR1->first->force
+    fperl> $VAR1->first->force
     $VAR1 = '0.5';
 
 Let's apply `F` to the whole thing: as mentioned above, it will force
 all promises on its way, regardless whether they are in value or rest
 slots:
 
-    repl> F $l
+    fperl> F $l
     Exception: 'Illegal division by zero at (eval 136) line 1.
     '
-    repl 1> 
-    repl> F $l->drop(4)
+    fperl 1> 
+    fperl> F $l->drop(4)
     $VAR1 = list('-1');
-    repl> $l
+    fperl> $l
     $VAR1 = list('0.333333333333333', '0.5', '1', lazy { "DUMMY" }, '-1');
 
 We're getting the same thing as before--unsurprisingly, since all we
@@ -702,9 +702,9 @@ evaluate lazily is interesting, though: our list generation now might
 survive with our original definition of `inverse`, if we're only
 forcing the first few cells:
 
-    repl> fun inverse ($x) { 1 / $x }
-    repl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
-    repl> our $l= ourlist 3
+    fperl> fun inverse ($x) { 1 / $x }
+    fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
+    fperl> our $l= ourlist 3
     $VAR1 = improper_list('0.333333333333333', lazy { "DUMMY" });
 
 See how the first value is evaluated right away now; but we still
@@ -716,8 +716,8 @@ Feel free to do your forcing of the above to see how it behaves.
 Another interesting observation we can make is that we don't really
 need the termination condition anymore now:
 
-    repl> fun ourlist ($i) { cons inverse($i), lazy{ ourlist($i-1) } }
-    repl> our $l= ourlist 3
+    fperl> fun ourlist ($i) { cons inverse($i), lazy{ ourlist($i-1) } }
+    fperl> our $l= ourlist 3
     $VAR1 = improper_list('0.333333333333333', lazy { "DUMMY" });
 
 Since we'll be bombing out at 1/0 anyway before reaching 1/-1, the end
@@ -727,7 +727,7 @@ But we have "invented" a new data structure here: lazy linked lists,
 or functional streams as they are also called. The functional-perl
 project provides functions/methods to work with these, too:
 
-    repl> $l->drop(10)
+    fperl> $l->drop(10)
     Exception: 'Illegal division by zero at (eval 136) line 1.
     '
 
@@ -735,9 +735,9 @@ Ok, to be able to skip over that, we'd have to go back to our second
 definition of `inverse`. But anyway, we could also start at a safer
 location:
 
-    repl> our $l= ourlist -1
+    fperl> our $l= ourlist -1
     $VAR1 = improper_list('-1', lazy { "DUMMY" });
-    repl> $l->take(10)
+    fperl> $l->take(10)
     $VAR1 = list('-1', '-0.5', '-0.333333333333333', '-0.25', '-0.2', '-0.166666666666667', '-0.142857142857143', '-0.125', '-0.111111111111111', '-0.1');
 
 Note that `take` worked eagerly here. This is because the cell that it
@@ -751,17 +751,17 @@ simply move the lazy keyword to enclose the whole cell generation
 instead only its rest slot (the rest slot will be lazy itself, too,
 since recursing into ourlist will again return a lazy term):
 
-    repl> fun ourlist ($i) { lazy { cons inverse($i), ourlist($i-1) } }
+    fperl> fun ourlist ($i) { lazy { cons inverse($i), ourlist($i-1) } }
     Subroutine ourlist redefined at (eval 145) line 1.
-    repl> our $l= ourlist -1
+    fperl> our $l= ourlist -1
     $VAR1 = lazy { "DUMMY" };
-    repl> $l->take(10)
+    fperl> $l->take(10)
     $VAR1 = lazy { "DUMMY" };
 
 Now the direct result of ourlist is lazy, too, and the take method
 returned a lazy term, as well. Let's force it:
 
-    repl> F $VAR1
+    fperl> F $VAR1
     $VAR1 = list('-1', '-0.5', '-0.333333333333333', '-0.25', '-0.2', '-0.166666666666667', '-0.142857142857143', '-0.125', '-0.111111111111111', '-0.1');
 
 This is, incidentally, basically how Haskell's evaluation strategy
@@ -797,14 +797,14 @@ gives.)
 
 Example:
 
-    repl> system("echo 'Hello\nWorld.\n' > ourtestfile.txt")
+    fperl> system("echo 'Hello\nWorld.\n' > ourtestfile.txt")
     $VAR1 = 0;
-    repl> our $l= xfile_lines("ourtestfile.txt")
+    fperl> our $l= xfile_lines("ourtestfile.txt")
     $VAR1 = lazy { "DUMMY" };
-    repl> $l->first
+    fperl> $l->first
     $VAR1 = 'Hello
     ';
-    repl> $l->rest
+    fperl> $l->rest
     $VAR1 = lazy { "DUMMY" };
 
 At this point it might still not have read the second line from the
@@ -813,11 +813,11 @@ bigger blocks. But in any case, you could do something like the
 following without making the perl try to read infinitely much into
 process memory:
 
-    repl> our $l= fh_to_chunks xopen_read("/dev/zero"), 10
+    fperl> our $l= fh_to_chunks xopen_read("/dev/zero"), 10
     $VAR1 = lazy { "DUMMY" };
-    repl> $l->first
+    fperl> $l->first
     $VAR1 = '^@^@^@^@^@^@^@^@^@^@';
-    repl> $l->drop(1000)->first
+    fperl> $l->drop(1000)->first
     $VAR1 = '^@^@^@^@^@^@^@^@^@^@';
 
 (Or replace /dev/zero with /dev/urandom.)
@@ -851,18 +851,18 @@ concretely, this means that after calling `drop` in the example above,
 holding the head of the stream, then it becomes undef. This means when
 you try to run the same expression again, you get:
 
-    repl> $l->drop(1000)->first
+    fperl> $l->drop(1000)->first
     Exception: 'Can\'t call method "drop" on an undefined value at (eval 147) line 1.
     '
-    repl 1> 
+    fperl 1> 
 
 You can prevent this manually by protecting `$l` using the `Keep` function:
 
-    repl> our $l= fh_to_chunks xopen_read("/dev/urandom"), 10
+    fperl> our $l= fh_to_chunks xopen_read("/dev/urandom"), 10
     $VAR1 = lazy { "DUMMY" };
-    repl> Keep($l)->drop(1000)->first
+    fperl> Keep($l)->drop(1000)->first
     $VAR1 = '<94> )&m^C<8C>ESC<AB>A';
-    repl> Keep($l)->drop(1000)->first
+    fperl> Keep($l)->drop(1000)->first
     $VAR1 = '<94> )&m^C<8C>ESC<AB>A';
 
 There is hope that we might find a better way to deal with this
@@ -875,12 +875,12 @@ promises here!
 Let's get a better understanding of functions, and first try the
 following:
 
-    repl> our ($f1,$f2)= do { our $a= 10; my $f1= sub { $a }; $a=11; my $f2= sub { $a }; ($f1,$f2) }
+    fperl> our ($f1,$f2)= do { our $a= 10; my $f1= sub { $a }; $a=11; my $f2= sub { $a }; ($f1,$f2) }
     $VAR1 = sub { "DUMMY" };
     $VAR2 = sub { "DUMMY" };
-    repl> &$f1
+    fperl> &$f1
     $VAR1 = 11;
-    repl> &$f2
+    fperl> &$f2
     $VAR1 = 11;
 
 The two subroutines are both referring to the same instance of a
@@ -896,10 +896,10 @@ lifetime).
 
 Let's try a lexical variable instead (`my $a`):
 
-    repl> our ($f1,$f2)= do { my $a= 10; my $f1= sub { $a }; $a=11; my $f2= sub { $a }; ($f1,$f2) }
+    fperl> our ($f1,$f2)= do { my $a= 10; my $f1= sub { $a }; $a=11; my $f2= sub { $a }; ($f1,$f2) }
     $VAR1 = sub { "DUMMY" };
     $VAR2 = sub { "DUMMY" };
-    repl> &$f1
+    fperl> &$f1
     $VAR1 = 11;
 
 Still the same result: the two subroutines are still referring to the
@@ -912,12 +912,12 @@ data structure).
 Now let's use a fresh lexical variable for the second value (11)
 instead:
 
-    repl> our ($f1,$f2)= do { my $a= 10; my $f1= sub { $a }; { my $a=11; my $f2= sub { $a }; ($f1,$f2) }}
+    fperl> our ($f1,$f2)= do { my $a= 10; my $f1= sub { $a }; { my $a=11; my $f2= sub { $a }; ($f1,$f2) }}
     $VAR1 = sub { "DUMMY" };
     $VAR2 = sub { "DUMMY" };
-    repl> &$f1
+    fperl> &$f1
     $VAR1 = 10;
-    repl> &$f2
+    fperl> &$f2
     $VAR1 = 11;
 
 This way we didn't change what `$f1`, including its indirect
@@ -937,10 +937,10 @@ is supposed to vary, no? But notice that each function call (even of
 the same function) opens a new scope, and the variables introduced in
 it are hence fresh instances every time it is called:
 
-    repl> fun f ($x) { fun ($y) { [$x,$y] }}
-    repl> our $f1= f(12); our $f2= f(14); &$f1("f1")
+    fperl> fun f ($x) { fun ($y) { [$x,$y] }}
+    fperl> our $f1= f(12); our $f2= f(14); &$f1("f1")
     $VAR1 = [12, 'f1'];
-    repl> &$f2("f2")
+    fperl> &$f2("f2")
     $VAR1 = [14, 'f2'];
 
 You can see that a new instance of `$x` is introduced for every call
@@ -959,14 +959,14 @@ the relevant pieces of information (remainder of the work, accumulated
 result), checks to see if the work is done and if it isn't, calls
 itself with the remainder and new result.
 
-    repl> fun build ($i,$l) { if ($i > 0) { build($i-1, cons fun () { $i }, $l) } else { $l }}
-    repl> build(3, null)
+    fperl> fun build ($i,$l) { if ($i > 0) { build($i-1, cons fun () { $i }, $l) } else { $l }}
+    fperl> build(3, null)
     $VAR1 = list(sub { "DUMMY" }, sub { "DUMMY" }, sub { "DUMMY" });
 
 This uses a new instance of `$i` in each iteration, as you can see
 from this:
 
-    repl> $VAR1->map(fun ($v) { &$v() })
+    fperl> $VAR1->map(fun ($v) { &$v() })
     $VAR1 = list(1, 2, 3);
 
 There's one potential problem with this, though, which is that perl
@@ -974,7 +974,7 @@ allocates a new frame on the call stack for every nested call to
 `build`, which means it needs memory proportional to the number of
 iterations. But perl also offers a solution for this:
 
-    repl> fun build ($i,$l) { if ($i > 0) { @_=($i-1, cons fun () { $i }, $l); goto &build } else { $l }}
+    fperl> fun build ($i,$l) { if ($i > 0) { @_=($i-1, cons fun () { $i }, $l); goto &build } else { $l }}
 
 Sorry for the one-line formatting here, our examples are starting to
 get a big long for the repl, here is the same with line breaks:
@@ -993,7 +993,7 @@ That still looks pretty ugly, though. But there's also a solution for
 it on start), then you can instead simply prepend the `tail` keyword
 to the recursive function call to achieve the same:
 
-    repl> fun build ($i,$l) { if ($i > 0) { tail build($i-1, cons fun () { $i }, $l) } else { $l }}
+    fperl> fun build ($i,$l) { if ($i > 0) { tail build($i-1, cons fun () { $i }, $l) } else { $l }}
 
 i.e.
 
@@ -1210,9 +1210,9 @@ In 'Writing a list-generating function' we have written a function
 goes through. Let's turn that into a reusable function by making it
 higher-order:
 
-    repl> fun inverse ($x) { lazy { 1 / $x } }
-    repl> fun ourlist ($f, $from, $to) { $from >= $to ? cons &$f($from), ourlist($f, $from - 1, $to) : null }
-    repl> F ourlist (*inverse, 4, 1)
+    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> fun ourlist ($f, $from, $to) { $from >= $to ? cons &$f($from), ourlist($f, $from - 1, $to) : null }
+    fperl> F ourlist (*inverse, 4, 1)
     $VAR1 = list('0.25', '0.333333333333333', '0.5', '1');
 
 It would now better be renamed, perhaps to something like
@@ -1221,7 +1221,7 @@ downwards_iota and map parts if we're using lazy evaluation, then we
 could use those separately. In fact both are already available in
 functional-perl:
 
-    repl> F stream_step_range(-1, 4, 1)->map(*inverse)
+    fperl> F stream_step_range(-1, 4, 1)->map(*inverse)
     $VAR1 = list('0.25', '0.333333333333333', '0.5', '1');
 
 (The naming of these more exotic functions like `stream_step_range` is
@@ -1246,12 +1246,12 @@ each original function in turn (from the right to left) on the
 original arguments, or the result(s) from the previous call). See how
 flip behaves:
 
-    repl> *div= fun($x,$y) { $x / $y }; *rdiv= flip *div
-    Subroutine repl::div redefined at (eval 136) line 1.
-    $VAR1 = *repl::rdiv;
-    repl> div 1,2
+    fperl> *div= fun($x,$y) { $x / $y }; *rdiv= flip *div
+    Subroutine fperl::div redefined at (eval 136) line 1.
+    $VAR1 = *fperl::rdiv;
+    fperl> div 1,2
     $VAR1 = '0.5';
-    repl> rdiv 2,1
+    fperl> rdiv 2,1
     $VAR1 = '0.5';
 
 The "subroutine redefined" warning above is because `div` was already
@@ -1259,12 +1259,12 @@ defined (equivalently) in `FP::Ops`. This module provides subroutine
 wrappers around Perl operators, so that they can be easily passed as
 arguments to other functions like `flip` or the `map` methods.
 
-    repl> fun inverse ($x) { lazy { 1 / $x } }
-    repl> *add_then_invert= compose *inverse, *add
-    $VAR1 = *repl::add_then_invert;
-    repl> add_then_invert 1,2
+    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> *add_then_invert= compose *inverse, *add
+    $VAR1 = *fperl::add_then_invert;
+    fperl> add_then_invert 1,2
     $VAR1 = lazy { "DUMMY" };
-    repl> F $VAR1
+    fperl> F $VAR1
     $VAR1 = '0.333333333333333';
 
 i.e. `compose *inverse, *add` is equivalent to:
@@ -1298,11 +1298,11 @@ setting the TEST environment variable to 0 or ''.
 
 You can use it without leaving the repl:
 
-    repl> fun inverse ($x) { lazy { 1 / $x } }
-    repl> TEST { F inverse 2 } 0.5;
+    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> TEST { F inverse 2 } 0.5;
     $VAR1 = 1;
-    repl> run_tests "repl"
-    === running tests in package 'repl'
+    fperl> run_tests "fperl"
+    === running tests in package 'fperl'
     running test 1..ok
     ===
     => 1 success(es), 0 failure(s)
