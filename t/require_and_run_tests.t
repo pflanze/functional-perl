@@ -39,7 +39,7 @@ subtest "require"=> sub {
     for my $module (@$modules) {
       SKIP: {
             if (my @needs= module_needs $module) {
-                   skip "require $module - don't have @needs", 1;
+                   skip "require $module - can't use @needs", 1;
             }
             require_ok $module;
         }

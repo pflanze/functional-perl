@@ -135,7 +135,7 @@ for my $module (@$modules) {
 
             if (my @needs= module_needs $module) {
                 plan skip_all=>
-                    "test pod snippets in $module - don't have @needs", 1;
+                    "test pod snippets in $module - can't use @needs", 1;
                 return;
             }
 
