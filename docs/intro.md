@@ -45,8 +45,10 @@ There are three ways to run the functional-perl REPL:
    [bin/fperl](../bin/fperl) which calls the repl with most Functional
    Perl modules preloaded.
 
-You need to install `Term::ReadLine::Gnu` and `PadWalker` to use the
-repl. Once you've done that, from the shell run:
+You need to install `Term::ReadLine::Gnu` and `PadWalker` (and
+`Capture::Tiny` to see code definition location information and
+`Sub::Util` to see function names when displaying code refs) to use
+the repl. Once you've done that, from the shell run:
 
     $ cd functional-perl
     $ bin/fperl
