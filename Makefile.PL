@@ -23,6 +23,7 @@ WriteMakefile (
     VERSION_FROM      => 'lib/FunctionalPerl.pm',
     MIN_PERL_VERSION => $MIN_PERL_VERSION,
     LICENSE=> "perl_5", # including HTTP::Daemon which has the same
+    EXE_FILES=> [qw(bin/perlrepl bin/fperl)],
     PREREQ_PM         => {
         "Getopt::Long"=> 0,
         "base"=> 0,
