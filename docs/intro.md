@@ -1347,7 +1347,10 @@ try out things faster and might give new ideas. He also likes some of
 the advantages of the taken approach: passing field definitions as
 array allows to build up the array programmatically easily. And using
 optional predicate functions to check types looked like a simple and
-good match.
+good match. That doesn't mean that adapting one of the other object
+systems to add what's missing isn't still the right way to go from
+now--remember, this is still alpha software and open for changes and
+feedback.
 
 Update the examples/introexample script with the following:
 
