@@ -1305,7 +1305,7 @@ heaviest tested modules (todo: find tests again?)), but `Chj::TEST`
 can also be instructed to drop the tests at module load time by
 setting the TEST environment variable to 0 or ''.
 
-You can use it without leaving the repl:
+You can in principle use it without leaving the repl:
 
     fperl> fun inverse ($x) { lazy { 1 / $x } }
     fperl> TEST { F inverse 2 } 0.5;
@@ -1316,6 +1316,10 @@ You can use it without leaving the repl:
     ===
     => 1 success(es), 0 failure(s)
     $VAR1 = bless(+{fail => 0, success => 1}, 'Chj::TEST::Result');
+
+Although it will only ever accumulate test cases, never delete old
+ones; might add some way to improve that? But it's of course meant to
+be used in files.
 
 
 ## Objects
