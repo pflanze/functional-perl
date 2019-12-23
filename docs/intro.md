@@ -231,11 +231,11 @@ i.e. calling `cons(4, null)` first):
 
 i.e. this simply copies the list, which is actually pointless: lists
 are a purely functional data structure, i.e. they do not offer a way
-to mutate parts destructively (unless if going evil and forgoing
-object accessors, which is discouraged), hence this possible use of
-copying is irrelevant. Of course there are other operations where the
-ordering is relevant, for example division (`/` is wrapped as `div` by
-`FP::Ops`):
+to mutate contents destructively, so there's no reason to ever make an
+identical copy of them.
+
+Of course there are other operations where the ordering is relevant,
+for example division (`/` is wrapped as `div` by `FP::Ops`):
 
     fperl> list(10,20)->fold(*div, 1)
     $VAR1 = '2';
