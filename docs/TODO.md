@@ -10,6 +10,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 ## Work on the code
 
+* In bin/perlrepl and bin/fperl, use the proper perl version in the
+  shebang line; yet, still allow them to be run locally (project not
+  installed). How?
+
 * rename "hidden" methods like `FP_Equal_equal` to all-uppercase like
   `FP_EQUAL__EQUAL` as that seems to be preferred (`TO_JSON` was given
   as an example)
