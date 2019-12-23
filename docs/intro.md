@@ -171,10 +171,11 @@ all the values in the list.
 
 Note how we create an anonymous subroutine to simply use the `+`
 operator. We can't pass `+` directly, Perl does not have a way to pass
-an operator as a subroutine (CODE ref) directly. To ease this pain,
-Perl's operators are wrapped as functions (subroutines) in `FP::Ops`,
-which is imported by `bin/fperl` already. The subroutine wrapping `+`
-is called `add`.
+an operator as a subroutine (CODE ref) directly. To make this easier
+(and consistent in the ability to pass operations as so-called
+first-class values), Perl's operators are wrapped as subroutines in
+`FP::Ops`, which is imported by `bin/fperl` already. The subroutine
+wrapping `+` is called `add`.
 
     fperl> add(1,2)
     $VAR1 = 3;
