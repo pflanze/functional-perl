@@ -84,7 +84,7 @@ is under way to improve this):
     fperl> 
 
 (In case you really don't like this nesting feature, you can omit the
-`-t` flag to the `repl` script (adapt the `fperl` wrapper script).)
+`-t` flag to the `perlrepl` script (adapt the `fperl` wrapper script).)
 
 
 ## Lists the functional way
