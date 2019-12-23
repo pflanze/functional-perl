@@ -328,7 +328,15 @@ in London, Berlin or Switzerland to get an introduction in person.
 
 ### From CPAN
 
-Use your preferred CPAN installer, for example: `cpan FunctionalPerl`
+Use your preferred CPAN installer, for example: `cpan
+FunctionalPerl`. Note that this one installs the "runtime recommends"
+dependencies as well, which is a lot (like e.g. DBI), so you may want
+to look through the `Makefile.PL` or the list below and install what
+you can from your Linux distribution or other binary package
+repository first. Or if you don't want the recommends, set
+`recommends_policy` in `$ENV{HOME}/.cpan/CPAN/MyConfig.pm` to 0, or
+install the cpanminus tool and run `cpanm FunctionalPerl` which skips
+recommends unless you pass the `--with-recommends` option.
 
 ### From the Git repository
 
