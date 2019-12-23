@@ -1315,7 +1315,7 @@ You can use it without leaving the repl:
     running test 1..ok
     ===
     => 1 success(es), 0 failure(s)
-    $VAR1 = 0;
+    $VAR1 = bless(+{fail => 0, success => 1}, 'Chj::TEST::Result');
 
 
 ## Objects
