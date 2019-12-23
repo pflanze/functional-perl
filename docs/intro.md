@@ -52,6 +52,13 @@ the repl. Once you've done that, from the shell run:
 
     $ cd functional-perl
     $ bin/fperl
+
+Or if you installed the project, just
+
+    $ fperl
+
+This will show a prompt:
+
     fperl> 
 
 The string left of the ">" indicates the current namespace, "fperl" in
