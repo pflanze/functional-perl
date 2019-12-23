@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.30 2019-12-23
+    - doc fixes, and document "recommends" handling
+    - install the `fperl` and `perlrepl` scripts
+
 0.72.29 2019-12-22
     - work on FP::AST::Perl
     - rename bin/repl+ to bin/fperl, bin/repl to bin/perlrepl, and
