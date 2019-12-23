@@ -106,3 +106,5 @@ Note: most of these links are from 2015 and 2016. Please submit new ones if you'
   (by mjd, author of *[Higher-Order Perl](http://hop.perl.plover.com/)*)
   ([HN](https://news.ycombinator.com/item?id=10002173))
 
+* [Perlude](https://metacpan.org/pod/distribution/perlude/lib/Perlude.pod)
+
