@@ -21,6 +21,16 @@ produce failures) or be calculating different values when re-run,
 which prevents its use in an interactive way, like from a read-eval
 print loop or debugger, and makes writing tests more difficult.
 
+Functional programming is often associated with strong static typing
+(as in Haskell or Scala). Those two complement each other because the
+side-effect free model simplifies the description of what a piece of
+code does via its types, and types can guarantee that a particular
+piece of code is pure. But the same advantages that functional
+programs have for machines to reason about are also valid for
+humans. Thus you can still benefit from functional programming in a
+dynamically typed language like Perl--and you get some additional
+interactivity benefits on top.
+
 <with_toc>
 
 ## Examples
