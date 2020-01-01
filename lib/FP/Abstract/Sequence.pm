@@ -108,6 +108,7 @@ sub FP_Interface__method_names {
      perhaps_first perhaps_rest
      perhaps_first_and_rest
      map
+     map_with_index
      map_with_islast
      filter
      TODO_filter_with_tail
