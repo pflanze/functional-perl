@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -114,57 +114,58 @@ or on the L<website|http://functional-perl.org/>.
 package FP::Stream;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw(
-              is_null
-              Keep
-              Weakened
-              stream_iota
-              stream_range
-              stream_step_range
-              stream_length
-              stream_append
-              stream_map
-              stream_map_with_tail
-              stream_filter
-              stream_filter_with_tail
-              stream_fold
-              stream_foldr1
-              stream_fold_right
-              stream_state_fold_right
-              stream__array_fold_right
-              stream__string_fold_right
-              stream__subarray_fold_right stream__subarray_fold_right_reverse
-              stream_sum
-              array_to_stream stream
-              subarray_to_stream subarray_to_stream_reverse
-              string_to_stream
-              stream_to_string
-              stream_strings_join
-              stream_for_each
-              stream_drop
-              stream_take
-              stream_take_while
-              stream_slice
-              stream_drop_while
-              stream_ref
-              stream_zip2
-              stream_zip
-              stream_zip_with
-              stream_to_array
-              stream_to_purearray
-              stream_to_list
-              stream_sort
-              stream_group
-              stream_mixed_flatten
-              stream_mixed_fold_right
-              stream_mixed_state_fold_right
-              stream_any
-              stream_show
-         );
-@EXPORT_OK=qw(F weaken
-              cons car cdr first rest
-              stream_cartesian_product
-              stream_cartesian_product_2
-            );
+    is_null
+    Keep
+    Weakened
+    stream_iota
+    stream_range
+    stream_step_range
+    stream_length
+    stream_append
+    stream_map
+    stream_map_with_tail
+    stream_filter
+    stream_filter_with_tail
+    stream_fold
+    stream_foldr1
+    stream_fold_right
+    stream_state_fold_right
+    stream__array_fold_right
+    stream__string_fold_right
+    stream__subarray_fold_right stream__subarray_fold_right_reverse
+    stream_sum
+    array_to_stream stream
+    subarray_to_stream subarray_to_stream_reverse
+    string_to_stream
+    stream_to_string
+    stream_strings_join
+    stream_for_each
+    stream_drop
+    stream_take
+    stream_take_while
+    stream_slice
+    stream_drop_while
+    stream_ref
+    stream_zip2
+    stream_zip
+    stream_zip_with
+    stream_to_array
+    stream_to_purearray
+    stream_to_list
+    stream_sort
+    stream_group
+    stream_mixed_flatten
+    stream_mixed_fold_right
+    stream_mixed_state_fold_right
+    stream_any
+    stream_show
+    );
+@EXPORT_OK=qw(
+    F weaken
+    cons car cdr first rest
+    stream_cartesian_product
+    stream_cartesian_product_2
+    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
