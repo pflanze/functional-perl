@@ -103,6 +103,10 @@ sub stream {
     FP::Stream::array_to_stream ($s)
 }
 
+sub string {
+    @_==1 or die "wrong number of arguments";
+    array_to_string $_[0]
+}
 
 sub is_null {
     @_==1 or die "wrong number of arguments";

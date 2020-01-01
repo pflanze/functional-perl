@@ -202,4 +202,7 @@ TEST_EXCEPTION { purearray(qw(a b c d e f))->strictly_chunks_of(4)->array }
     'premature end of input';
 
 
+# XX TODO change most of the tests in this file to test ~all sequences.
+TEST { purearray(qw(a bc d e))->string } 'abcde';
+
 1

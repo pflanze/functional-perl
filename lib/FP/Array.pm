@@ -85,6 +85,7 @@ package FP::Array;
               array_fold_right
               array_intersperse
               array_strings_join
+              array_to_string
               array_every
               array_any
               array_sum
@@ -506,6 +507,15 @@ sub array_strings_join ($$) {
 
 TEST{ array_strings_join [1,2,3], "-" }
   "1-2-3";
+
+sub array_to_string ($) {
+    @_==1 or croak "wrong number of arguments";
+    my ($ary)=@_;
+    join "", @$ary
+}
+
+TEST{ array_to_string [1,2,3] }
+  "123";
 
 
 sub array_every ($$) {

@@ -138,6 +138,7 @@ sub FP_Interface__method_names {
      list
      stream
      sort
+     string
      ),
      # $class->SUPER::FP_Interface__method_names
     )
