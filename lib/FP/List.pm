@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -145,6 +145,7 @@ package FP::List;
     array_to_list array_to_list_reverse mixed_flatten
     list_strings_join list_strings_join_reverse
     list_filter list_map list_mapn list_map_with_islast
+    list_map_with_index_ list_map_with_index
     list_fold list_fold_right list_to_perlstring
     unfold unfold_right
     list_pair_fold_right
@@ -1430,6 +1431,35 @@ sub FP::List::List::map {
     my $fn=shift;
     @_ ? list_mapn ($fn, $l, @_) : list_map ($fn, $l)
 }
+
+
+sub list_map_with_index_ {
+    my $i=shift;
+    my $fn=shift;
+    for (@_) {
+        return $_ if is_null $_
+    }
+    cons(&$fn($i,
+              map {car $_} @_),
+         list_map_with_index_ ($i+1,
+                               $fn,
+                               map {cdr $_} @_))
+}
+
+sub list_map_with_index {
+    @_>=2 or die "not enough arguments";
+    list_map_with_index_(0, @_) 
+}
+
+sub FP::List::List::map_with_index {
+    @_>=2 or die "not enough arguments";
+    my $l=shift;
+    my $fn=shift;
+    list_map_with_index($fn, $l, @_)
+}
+
+TEST { list(1,2,20)->map_with_index(sub {[ @_ ]})->array }
+  [ [0,1], [1,2], [2,20] ];
 
 
 sub list_map_with_islast {
