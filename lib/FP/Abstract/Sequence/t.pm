@@ -166,7 +166,7 @@ TEST { $b->ref(2) }
 
 # XX add more interesting tests
 TEST {
-    my $s= purearray(3,4,4,5,6,8,5,5)->map_with_i(*array)->stream;
+    my $s= purearray(3,4,4,5,6,8,5,5)->map_with_index(*array)->stream;
     my $r= $s->group(on *array_second, *number_eq)->array;
     [$s, $r]
 } [undef,

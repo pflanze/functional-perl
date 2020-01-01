@@ -422,7 +422,7 @@ fun _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
                basename(svgpath_to_htmlpath($svgpaths->first)),
                "$outdir/index.html"
               ],
-              $svgpaths->map_with_i
+              $svgpaths->map_with_index
               (fun ($i, $svgpath) {
                   [
                    *puthtmlfile,

@@ -87,7 +87,7 @@ TEST {
   13;
 
 TEST {
-    purearray (3,4,5)->rest->map_with_i (sub{[@_]})
+    purearray (3,4,5)->rest->map_with_index (sub{[@_]})
 }
   bless [[0,4], [1,5]], 'FP::_::PureArray';
 

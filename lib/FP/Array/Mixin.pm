@@ -180,7 +180,7 @@ sub FP_Sequence_length {
 *zip2= blessing \&array_zip2;
 *for_each= flip \&array_for_each;
 *map= blessing flip \&array_map;
-*map_with_i= blessing flip \&array_map_with_i;
+*map_with_index= blessing flip \&array_map_with_index;
 *map_with_islast= blessing flip \&array_map_with_islast;
 *filter= blessing flip \&array_filter;
 *zip= blessing \&array_zip;
