@@ -127,53 +127,55 @@ or on the L<website|http://functional-perl.org/>.
 
 package FP::List;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(cons cons_ is_pair null is_null is_pair_of is_pair_or_null
-           list_of  is_null_or_pair_of null_or_pair_of is_list
-           car cdr first rest
-           car_and_cdr first_and_rest perhaps_first_and_rest
-           list);
-@EXPORT_OK=qw(pair improper_list
-              first_set first_update
-              is_pair_noforce is_null_noforce
-              unsafe_cons unsafe_car unsafe_cdr
-              string_to_list list_length list_reverse list_reverse_with_tail
-              list_to_string list_to_array rlist_to_array
-              list_to_values rlist_to_values
-              write_sexpr
-              array_to_list array_to_list_reverse mixed_flatten
-              list_strings_join list_strings_join_reverse
-              list_filter list_map list_mapn list_map_with_islast
-              list_fold list_fold_right list_to_perlstring
-              unfold unfold_right
-              list_pair_fold_right
-              list_butlast list_drop_while list_rtake_while list_take_while
-              list_rtake_while_and_rest list_take_while_and_rest
-              list_append
-              list_zip2
-              list_alist
-              list_last
-              list_every list_all list_any list_none
-              list_perhaps_find_tail list_perhaps_find
-              list_find_tail list_find
-              is_charlist ldie
-              cddr
-              cdddr
-              cddddr
-              cadr
-              caddr
-              cadddr
-              caddddr
-              c_r
-              list_ref
-              list_perhaps_one
-              list_sort
-              list_drop
-              list_take
-              list_slice
-              list_group
-              circularlist
-              weaklycircularlist
-            );
+@EXPORT=qw(
+    cons cons_ is_pair null is_null is_pair_of is_pair_or_null
+    list_of  is_null_or_pair_of null_or_pair_of is_list
+    car cdr first rest
+    car_and_cdr first_and_rest perhaps_first_and_rest
+    list);
+@EXPORT_OK=qw(
+    pair improper_list
+    first_set first_update
+    is_pair_noforce is_null_noforce
+    unsafe_cons unsafe_car unsafe_cdr
+    string_to_list list_length list_reverse list_reverse_with_tail
+    list_to_string list_to_array rlist_to_array
+    list_to_values rlist_to_values
+    write_sexpr
+    array_to_list array_to_list_reverse mixed_flatten
+    list_strings_join list_strings_join_reverse
+    list_filter list_map list_mapn list_map_with_islast
+    list_fold list_fold_right list_to_perlstring
+    unfold unfold_right
+    list_pair_fold_right
+    list_butlast list_drop_while list_rtake_while list_take_while
+    list_rtake_while_and_rest list_take_while_and_rest
+    list_append
+    list_zip2
+    list_alist
+    list_last
+    list_every list_all list_any list_none
+    list_perhaps_find_tail list_perhaps_find
+    list_find_tail list_find
+    is_charlist ldie
+    cddr
+    cdddr
+    cddddr
+    cadr
+    caddr
+    cadddr
+    caddddr
+    c_r
+    list_ref
+    list_perhaps_one
+    list_sort
+    list_drop
+    list_take
+    list_slice
+    list_group
+    circularlist
+    weaklycircularlist
+    );
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
