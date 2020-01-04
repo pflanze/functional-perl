@@ -54,6 +54,11 @@ implemented L<FP::Abstract::HashMap> protocol.
 L<FP::PureArray>, which is transparently loaded to provide the
 methods.
 
+=head1 NOTE
+
+This is alpha software! Read the status section in the package README
+or on the L<website|http://functional-perl.org/>.
+
 =cut
 
 
