@@ -297,7 +297,7 @@ howto/design documents.
       anything about functional programming; what to do about it?)
 
     * *[The design principles used in the functional-perl
-      library](docs/design.md)* is descibing the organization and ideas
+      library](docs/design.md)* is describing the organization and ideas
       behind the code that the functional-perl project offers.
 
 * __Book__
