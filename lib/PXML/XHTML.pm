@@ -34,7 +34,7 @@ use PXML::Element;
 our $nbsp= "\xa0";
 
 our $tags=
-     [
+    [
           'a',
           'abbr',
           'acronym',
@@ -105,6 +105,7 @@ our $tags=
           'script',
           'select',
           'small',
+          'source', # not XHTML?, hack
           'span',
           'strike',
           'strong',
@@ -123,7 +124,8 @@ our $tags=
           'tt',
           'u',
           'ul',
-          'var'
+          'var',
+          'video', # not XHTML?, hack
      ];
 
 our $funcs=
