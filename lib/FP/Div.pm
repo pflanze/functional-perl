@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -27,7 +27,7 @@ or on the L<website|http://functional-perl.org/>.
 package FP::Div;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(inc dec square
+@EXPORT_OK=qw(inc dec square average
               identity
               min max minmax
               Chomp
@@ -58,6 +58,11 @@ sub dec ($) {
 sub square ($) {
     @_==1 or die "wrong number of arguments";
     $_[0] * $_[0]
+}
+
+sub average($$) {
+    @_==2 or die "wrong number of arguments";
+    ($_[0] + $_[1]) / 2
 }
 
 sub min {
