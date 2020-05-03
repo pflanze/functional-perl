@@ -1000,6 +1000,14 @@ sub list_sort ($;$) {
 
 *FP::List::List::sort= *list_sort;
 
+sub list_sortCompare ($) {
+    @_==1 or die "wrong number of arguments";
+    my ($l)= @_;
+    list_to_purearray($l)->sortCompare
+}
+
+*FP::List::List::sortCompare= *list_sortCompare;
+
 TEST { require FP::Ops;
        list (5,3,8,4)->sort (\&FP::Ops::number_cmp)->array }
   [3,4,5,8];

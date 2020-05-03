@@ -63,7 +63,7 @@ or on the L<website|http://functional-perl.org/>.
 
 package FP::Array_sort;
 @ISA="Exporter"; require Exporter;
-@EXPORT=qw(array_sort on on_maybe cmp_complement);
+@EXPORT=qw(array_sort array_sortCompare on on_maybe cmp_complement);
 @EXPORT_OK=qw();
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -83,8 +83,21 @@ sub array_sort ($;$) {
      ]
      :
      [
+      # To use the FP::Abstract::Compare protocol, use
+      # array_sortCompare instead--we need to be backwards compatible
+      # here.
       sort @$in
      ])
+}
+
+sub array_sortCompare ($) {
+    @_==1 or die "wrong number of arguments";
+    my ($in)=@_;
+    [
+     sort {
+         $a->FP_Compare_compare($b)
+     } @$in
+    ]
 }
 
 sub on ($ $) {

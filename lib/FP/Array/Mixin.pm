@@ -38,7 +38,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use FP::Optional qw(perhaps_to_maybe);
 use FP::Combinators qw (flip flip2of3 rot3right rot3left);
 use FP::Array ":all";
-use FP::Array_sort "array_sort";
+use FP::Array_sort qw(array_sort array_sortCompare);
 
 sub blessing ($) {
     my ($m)= @_;
@@ -195,6 +195,7 @@ sub FP_Sequence_length {
 *hash_group_by= \&array_to_hash_group_by;
 
 *sort= blessing \&array_sort;
+*sortCompare= blessing \&array_sortCompare;
 
 # XX provide them as functions, too? (prefixed with `purearray_`) (to
 # avoid requiring the user to use `the_method` [and perhaps missing
