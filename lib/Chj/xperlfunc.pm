@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -827,7 +827,9 @@ sub fstype_for_device($) {
     sub checkaccess_for_submask_by_uid_gids {
         my $s=shift;
         my ($mod,$uid,$gids)=@_; # the latter being an array ref!
-        return 1 if $uid==0;
+        #return 1 if $uid==0;
+        #  ^ this is not correct for say, is_executable with uid 0;
+        #    XXX how should it behave in other cases?
         if ($s->[4] == $uid) {
             return !!($s->[2] & (00100 * $mod))
         } else {
