@@ -69,8 +69,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 require FP::List; # "use"ing it would create a circular dependency
 use FP::Array_sort qw(on_maybe);
 use FP::Lazy;
-use FP::Ops qw(add mult);
-use FP::Predicates qw(complement);
+use FP::Ops qw(add mult number_cmp);
+use FP::Predicates qw(complement is_even);
+use FP::Div qw(average);
 
 use Chj::NamespaceCleanAbove;
 
@@ -92,6 +93,8 @@ sub FP_Interface__method_names {
      reduce
      reduce_right
      sum
+     mean
+     median
      product
      none
      join
@@ -309,6 +312,26 @@ sub reduce_right;
 sub sum {
     @_==1 or die "wrong number of arguments";
     $_[0]->reduce(*add)
+}
+
+sub mean {
+    @_==1 or die "wrong number of arguments";
+    my ($s)= @_;
+    # XX imprecise for large numbers of items
+    $s->sum / $s->length
+}
+
+sub median {
+    @_==1 or die "wrong number of arguments";
+    my ($s)= @_;
+    my $sorted= $s->sort(\&number_cmp);
+    my $len= $s->length;
+    my $mid= int($len/2);
+    if (is_even $len) {
+        average($sorted->ref($mid-1), $sorted->ref($mid));
+    } else {
+        $sorted->ref($mid)
+    }
 }
 
 sub product {
