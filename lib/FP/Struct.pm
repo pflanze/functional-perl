@@ -369,7 +369,9 @@ sub import {
         for my $_field (@$fields) {
             my ($maybe_predicate,$name)=
                 field_maybe_predicate_and_name($_field)
-                or croak "type predicate given but undef for field "
+                or croak "type predicate given but undef (this can happen "
+                ."due to phasing, e.g. referring to a lexical variable "
+                ."defined in the same file) for field "
                 .(defined($$_field[1]) ? "'$$_field[1]'" : "undef");
 
             # accessors
