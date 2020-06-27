@@ -209,8 +209,9 @@ sub field_name ($) {
 }
 
 sub field_maybe_predicate_and_name ($) {
+    # returns nothing at all if a predicate was given but is undef
     my ($s)=@_;
-    (ref $s) ? @$s : (undef, $s)
+    (ref $s) ? (defined($$s[0]) ? @$s : ()) : (undef, $s)
 }
 
 sub field_has_predicate ($) {
@@ -367,7 +368,9 @@ sub import {
         #warn "_END_ called for package '$package'";
         for my $_field (@$fields) {
             my ($maybe_predicate,$name)=
-              field_maybe_predicate_and_name $_field;
+                field_maybe_predicate_and_name($_field)
+                or croak "type predicate given but undef for field "
+                .(defined($$_field[1]) ? "'$$_field[1]'" : "undef");
 
             # accessors
             if (not $package->can($name)) {
