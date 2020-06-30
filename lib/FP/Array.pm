@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -66,6 +66,7 @@ package FP::Array;
               array_sub
               array_take
               array_take_while
+              array_take_while_and_rest
               array_drop
               array_drop_while
               array_append
@@ -268,6 +269,17 @@ sub array_take_while ($$) {
         $i++
     }
     [ @$s[0..$i-1] ]
+}
+
+sub array_take_while_and_rest ($$) {
+    my ($pred,$s)=@_;
+    my $i=0;
+    my $len= @$s;
+    while (!($i>= $len) and &$pred($$s[$i])) {
+        $i++
+    }
+    ([ @$s[0..$i-1] ],
+     [ @$s[$i..$len-1] ])
 }
 
 sub array_drop_while ($ $) {

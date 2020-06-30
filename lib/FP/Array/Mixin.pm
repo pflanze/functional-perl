@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -46,6 +46,19 @@ sub blessing ($) {
         my $class=ref $_[0];
         if (my ($v)= &$m (@_)) {
             $class->new_from_array($v)
+        } else {
+            ()
+        }
+    }
+}
+
+sub blessing2 ($) {
+    my ($m)= @_;
+    sub {
+        my $class=ref $_[0];
+        if (my ($v1, $v2)= &$m (@_)) {
+            ($class->new_from_array($v1),
+             $class->new_from_array($v2))
         } else {
             ()
         }
@@ -170,8 +183,9 @@ sub FP_Sequence_length {
 *sub= blessing \&array_sub;
 *take= blessing \&array_take;
 *drop= blessing \&array_drop;
-*drop_while= blessing \&array_drop_while;
-*take_while= blessing \&array_take_while;
+*drop_while= blessing flip \&array_drop_while;
+*take_while= blessing flip \&array_take_while;
+*take_while_and_rest= blessing2 flip \&array_take_while_and_rest;
 *append= blessing \&array_append;
 *reverse= blessing \&array_reverse;
 *xone= \&array_xone;

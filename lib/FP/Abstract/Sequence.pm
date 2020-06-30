@@ -121,7 +121,7 @@ sub FP_Interface__method_names {
      drop_while
      TODO_rtake_while_and_rest
      TODO_rtake_while
-     TODO_take_while_and_rest
+     take_while_and_rest
      take_while
      every
      any
