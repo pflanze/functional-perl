@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -60,6 +60,12 @@ use FP::Interface;
 sub implemented {
     my $caller= [caller];
     for my $interface (@_) {
+        my $subpath= $interface;
+        # forever.. (how?)
+        $subpath=~ s|::|/|sg;
+        $subpath.= ".pm";
+        require $subpath;
+        #/forever
         FP::Interface::implemented_with_caller($caller, $interface)
     }
 }
