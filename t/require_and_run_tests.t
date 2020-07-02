@@ -34,7 +34,13 @@ require "./meta/find-perl.pl";
 plan tests=> 2;
 
 subtest "require"=> sub {
-    my $modules= modulenamelist;
+    my $modules= do {
+        if (my $mnl = $ENV{MODULENAMELIST}) {
+            [split /\s+|,/, $mnl]
+        } else {
+            modulenamelist
+        }
+    };
 
     for my $module (@$modules) {
       SKIP: {
