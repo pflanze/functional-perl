@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -93,8 +93,7 @@ use FP::List;
 use Chj::TEST;
 use FP::Combinators qw(flip2of3 flip);
 
-{
-    package FP::StrictList::Null;
+package FP::StrictList::Null {
     our @ISA= qw(FP::List::Null FP::StrictList::List);
 
     sub pair_namespace { "FP::StrictList::Pair" }
@@ -119,8 +118,7 @@ use FP::Combinators qw(flip2of3 flip);
     FP::Interfaces::implemented qw(FP::Abstract::Equal);
 }
 
-{
-    package FP::StrictList::Pair;
+package FP::StrictList::Pair {
     our @ISA= qw(FP::List::Pair FP::StrictList::List);
 
     *null= \&FP::StrictList::strictnull;

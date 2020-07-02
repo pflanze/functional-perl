@@ -201,8 +201,7 @@ our $immutable= 1; # whether pairs are to be made immutable
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
 #(Chj::xIOUtil triggers it)
 
-{
-    package FP::List::List;
+package FP::List::List {
     use FP::Lazy;
 
     use Chj::NamespaceCleanAbove;
@@ -229,8 +228,7 @@ our $immutable= 1; # whether pairs are to be made immutable
     _END_
 }
 
-{
-    package FP::List::Null;
+package FP::List::Null {
     our @ISA= qw(FP::List::List);
 
     sub pair_namespace { "FP::List::Pair" }
@@ -284,8 +282,7 @@ our $immutable= 1; # whether pairs are to be made immutable
 
 }
 
-{
-    package FP::List::Pair;
+package FP::List::Pair {
     our @ISA= qw(FP::List::List);
 
     sub is_null { '' }
@@ -2151,15 +2148,13 @@ sub ldie {
 }
 
 
-{
-    package FP::List::Null;
+package FP::List::Null {
     FP::Interfaces::implemented qw(FP::Abstract::Pure
                                    FP::Abstract::Sequence
                                    FP::Abstract::Equal
                                    FP::Abstract::Show);
 }
-{
-    package FP::List::Pair;
+package FP::List::Pair {
     FP::Interfaces::implemented qw(FP::Abstract::Pure
                                    FP::Abstract::Sequence
                                    FP::Abstract::Equal
