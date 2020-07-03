@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -204,5 +204,40 @@ TEST_EXCEPTION { purearray(qw(a b c d e f))->strictly_chunks_of(4)->array }
 
 # XX TODO change most of the tests in this file to test ~all sequences.
 TEST { purearray(qw(a bc d e))->string } 'abcde';
+
+
+
+# Test across all sequence types
+our @sequencetypes= qw(
+    purearray
+    mutablearray
+    list
+    stream
+    strictlist
+    );
+# XX also test array with FP::autobox ?
+
+use FP::Equal;
+use FP::Show;
+# use FP::List;
+# use FP::Stream;
+use FP::PureArray;
+use FP::MutableArray;
+use FP::StrictList;
+
+for my $orig (@sequencetypes) {
+    my $constructor= eval '\&'.$orig; die $@ if $@;
+    for my $target (@sequencetypes) {
+        next if $orig eq $target; #XX TODO: make it always valid
+        next if ($orig eq "mutablearray" and $target eq "purearray"); #XXX
+        my $d1= $constructor->(qw(a b c d e));
+        my $d2= Keep($d1)->$target;
+        my $d3= $d2->$orig;
+        equal $d1,$d3
+            # XX what is the recommended way to make/format
+            # exceptions?
+            or die "not equal (from $orig to $target and back):", show($d1), show($d3);
+    }
+}
 
 1
