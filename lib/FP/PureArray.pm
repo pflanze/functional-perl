@@ -149,6 +149,18 @@ package FP::_::PureArray {
         $a
     }
 
+    sub purearray {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        $s
+    }
+
+    sub mutablearray {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        FP::_::MutableArray->new_from_array([@$s])
+    }
+
     # emptyness constructor that works for subclassing (using singletons
     # for performance (perhaps))
     my %null;

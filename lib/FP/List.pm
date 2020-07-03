@@ -220,6 +220,24 @@ package FP::List::List {
         lazy { $l }
     }
 
+    sub strictlist {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        FP::StrictList::strictlist($s->values)
+    }
+
+    sub purearray {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        FP::_::PureArray->new_from_array([$s->values])
+    }
+
+    sub mutablearray {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        FP::_::MutableArray->new_from_array([$s->values])
+    }
+
     sub preferred_fold {
         my $s=shift;
         $s->fold(@_)

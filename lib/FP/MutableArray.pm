@@ -89,6 +89,18 @@ package FP::_::MutableArray {
         bless $a, $class
     }
 
+    sub mutablearray {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        $s
+    }
+
+    sub purearray {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        FP::_::PureArray->new_from_array($s)
+    }
+
     sub null {
         my $proto=shift;
         my $class= ref($proto) || $proto;

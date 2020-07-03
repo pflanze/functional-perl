@@ -93,8 +93,39 @@ use FP::List;
 use Chj::TEST;
 use FP::Combinators qw(flip2of3 flip);
 
+
+package FP::StrictList::List {
+
+    sub strictlist {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        $s
+    }
+
+    sub list {
+        @_==1 or die "wrong number of arguments";
+        my $s=shift;
+        # Should it *really* convert to a non-strict list? This is
+        # just a list with the added information that it's proper,
+        # after all; equality should work just fine, in fact the
+        # current FP_Equal_equal for FP::List is not sensitive on
+        # subclasses (looks like has different issues though); *but*,
+        # `equal` itself will short cut to an `undef` if the types are
+        # not the same, so that won't work. XX should this change??
+        FP::List::list($s->values)
+    }
+
+    # sub stream {
+    #     @_==1 or die "wrong number of arguments";
+    #     my ($l)= @_;
+    #     # XX what should it be? OK?
+    #     lazy { $l }
+    # }
+    # if we use this, can simply fall back to FP::List::List::stream
+}
+
 package FP::StrictList::Null {
-    our @ISA= qw(FP::List::Null FP::StrictList::List);
+    our @ISA= qw(FP::StrictList::List FP::List::Null);
 
     sub pair_namespace { "FP::StrictList::Pair" }
     *null= \&FP::StrictList::strictnull;
@@ -119,7 +150,7 @@ package FP::StrictList::Null {
 }
 
 package FP::StrictList::Pair {
-    our @ISA= qw(FP::List::Pair FP::StrictList::List);
+    our @ISA= qw(FP::StrictList::List FP::List::Pair);
 
     *null= \&FP::StrictList::strictnull;
 

@@ -116,6 +116,14 @@ sub stream {
     FP::Stream::array_to_stream ($s)
 }
 
+sub strictlist {
+    @_==1 or die "wrong number of arguments";
+    my $s=shift;
+    # XX could be more efficient via an
+    # FP::StrictList::array_to_strictlist if it existed.
+    FP::StrictList::strictlist(@$s)
+}
+
 sub string {
     @_==1 or die "wrong number of arguments";
     array_to_string $_[0]
