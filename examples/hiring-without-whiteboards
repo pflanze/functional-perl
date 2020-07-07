@@ -64,8 +64,150 @@ use FP::Ops ":all";
 use FP::Combinators ":all";
 use FP::Show;
 use Chj::xperlfunc ":all";
+use FP::PureArray;
 
 use Chj::TEST;
+
+
+package CountryOrRemote {
+    use FP::Struct [],
+        'FP::Struct::Show';
+    use overload '""'=> sub {shift->string};
+    _END_
+}
+
+package Remote {
+    use FP::Struct [],
+        'CountryOrRemote';
+    method is_USA() { undef }
+    method is_remote() { 1 }
+    method string() { "Remote" }
+    _END_
+}
+import Remote::constructors;
+my $Remote = Remote();
+
+package Country {
+    use FP::Struct [],
+        'CountryOrRemote';
+    method is_remote() { 0 }
+    _END_
+}
+
+# https://en.wikipedia.org/wiki/List_of_U.S._state_abbreviations
+# Name => USPS
+
+my $states= "
+ Alabama        AL
+ Alaska         AK
+ Arizona        AZ
+ Arkansas       AR
+ California     CA
+ Colorado       CO
+ Connecticut    CT
+ Delaware       DE
+ Florida        FL
+ Georgia        GA
+ Hawaii         HI
+ Idaho          ID
+ Illinois       IL
+ Indiana        IN
+ Iowa           IA
+ Kansas         KS
+ Kentucky       KY
+ Louisiana      LA
+ Maine          ME
+ Maryland       MD
+ Massachusetts  MA
+ Michigan       MI
+ Minnesota      MN
+ Mississippi    MS
+ Missouri       MO
+ Montana        MT
+ Nebraska       NE
+ Nevada         NV
+ New Hampshire  NH
+ New Jersey     NJ
+ New Mexico     NM
+ New York       NY
+ North Carolina NC
+ North Dakota   ND
+ Ohio           OH
+ Oklahoma       OK
+ Oregon         OR
+ Pennsylvania   PA
+ Rhode Island   RI
+ South Carolina SC
+ South Dakota   SD
+ Tennessee      TN
+ Texas          TX
+ Utah           UT
+ Vermont        VT
+ Virginia       VA
+ Washington     WA
+ West Virginia  WV
+ Wisconsin      WI
+ Wyoming        WY ";
+
+my $nonstates= "
+ American Samoa                 AS
+ Guam                           GU
+ Northern Mariana Islands       MP
+ Puerto Rico                    PR
+ U.S. Virgin Islands            VI
+ Micronesia                     FM
+ Marshall Islands               MH
+ Palau                          PW
+ U.S. Armed Forces – Americas   AA
+ U.S. Armed Forces – Europe     AE
+ U.S. Armed Forces – Pacific    AP";
+
+package USPSCode {
+    use FP::Struct ["name", "code", "is_state"],
+        'Country';
+    method is_USA() { 1 }
+    method country_name() { "USA" }
+    method string() { "$$self{code} (USA)" }
+    _END_
+}
+import USPSCode::constructors;
+
+fun parse_USPS_segment($str, $is_state) {
+    $str=~ s/^\s+//;
+    purearray(split /\n/, $str)->map(fun($line) {
+        $line=~ s/^\s*(.*?)\s*\z/$1/s;
+        my ($name,$code)= $line=~ /^(\S.*?\S)\s+(\w{2})\z/
+            or die "no parse: '$line'";
+        USPSCode($name, $code, $is_state)
+    })
+}
+
+my $USPSCodes= parse_USPS_segment($states, 1)
+    ->append(parse_USPS_segment($nonstates, 0));
+my %USfromCode=
+    map { $_->code => $_ } $USPSCodes->values;
+
+package NonUSCountry {
+    use FP::Struct ["country_name"],
+        'Country';
+    method is_USA() { 0 }
+    method string() { $$self{country_name} }
+    _END_
+}
+import NonUSCountry::constructors;
+
+package City {
+    use FP::Struct ["city", "country"],
+        'FP::Struct::Show';
+    use overload '""'=> sub {shift->string};
+
+    method string() {
+        $self->city.", ".$self->country
+    }
+
+    _END_
+}
+import City::constructors;
 
 package Company {
     use FP::Struct ["name",
@@ -75,12 +217,13 @@ package Company {
       'FP::Struct::Show';
 
     method remote () {
-        $self->locations->any (fun ($str) { $str=~ /\bRemote\b/i })
+        # not calling it is_remote since has_remote might be more
+        # appropriate, and then just keep it short.
+        $self->locations->any (the_method("is_remote"))
     }
 
     _END_
 }
-
 import Company::constructors;
 
 
@@ -111,6 +254,26 @@ fun is_empty ($s) {
     $s=~ /^\s*$/
 }
 
+fun parse_country ($str) {
+    $USfromCode{$str} // NonUSCountry($str)
+}
+
+fun parse_location($str) {
+    if ($str=~ /^remote$/i) {
+        $Remote
+    } else {
+        my @s= split /\s*,\s*/, $str;
+        if (@s > 2) {
+            die "more than one comma in: '$str'"
+        } elsif (@s == 2) {
+            my ($city, $country)= @s;
+            City($city, parse_country($country))
+        } else {
+            parse_country($s[0])
+        }
+    }
+}
+
 fun parse_line ($line) {
     my $s=$line;
     $s=~ s/^-\s*//
@@ -125,7 +288,7 @@ fun parse_line ($line) {
     Company ($name,
              $url,
              # / and ; used inconsistently:
-             list(split m%\s*[/;]\s*%, $locations),
+             list(map { parse_location $_ } split m%\s*[/;]\s*%, $locations),
              $process)
 }
 
