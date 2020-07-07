@@ -1381,6 +1381,7 @@ sub make_filter {
             $l= force $l;
             is_null $l ? $l : do {
                 my ($a,$r)= $l->first_and_rest;
+                no warnings 'recursion';
                 my $r2= &$filter ($fn, $r);
                 &$fn($a) ? cons($a, $r2) : $r2
             }
