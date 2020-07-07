@@ -24,10 +24,10 @@ sub usage {
 
   Parse the $mainfile file of a check-out of
   https://github.com/poteto/hiring-without-whiteboards, present it in
-  a repl as an FP::Stream of Company objects in the \$cs variable. Now
+  a repl as an FP::Stream of Company objects via the `cs` function. Now
   you can do things like:
 
-     \$cs->filter(fun(\$r) { \$r->locations->any(fun(\$l) { \$l=~ /\\bUK\\b/ }) })->show_items
+     cs->filter(fun(\$r) { \$r->locations->any(fun(\$l) { \$l=~ /\\bUK\\b/ }) })->show_items
 
   Use tab completion to learn about the available methods, and read
   the (probably not-so-fine) docs on functional-perl.org .
@@ -164,9 +164,7 @@ fun FP::Abstract::Sequence::show_items ($l) {
     $l->for_each (*print_showln)
 }
 
-my $cs= companies;
-my $__cs_hold_on= $cs; # so that the stream won't be released in spite
-                       # of $cs being weakened by some methods
+fun cs() { companies() }
 
 # let the user play with the data
 repl;
