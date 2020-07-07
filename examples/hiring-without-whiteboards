@@ -29,8 +29,13 @@ sub usage {
 
      cs->filter(fun(\$r) { \$r->locations->any(fun(\$l) { \$l=~ /\\bUK\\b/ }) })->show_items
 
-  Use tab completion to learn about the available methods, and read
-  the (probably not-so-fine) docs on functional-perl.org .
+  The 'show_items' method shows the object structure. If you instead
+  use the 'print' method, it will serialize back to markdown.
+
+  Use tab completion to learn about the available methods on an object
+  in a variable (which you will have to introduce for this, sadly;
+  don't use 'our' or 'my' keywords), and read the (probably
+  not-so-fine) docs on functional-perl.org.
 
   See https://news.ycombinator.com/item?id=19290044 for a
   discussion.
@@ -167,7 +172,7 @@ package USPSCode {
         'Country';
     method is_USA() { 1 }
     method country_name() { "USA" }
-    method string() { "$$self{code} (USA)" }
+    method string() { $$self{code} }
     _END_
 }
 import USPSCode::constructors;
@@ -210,11 +215,27 @@ package City {
 import City::constructors;
 
 package Company {
+    use FP::Ops qw(the_method);
+
     use FP::Struct ["name",
                     "URL",
                     "locations",
                     "maybe_process"],
       'FP::Struct::Show';
+    use overload '""'=> sub {shift->string};
+
+    method string() {
+        # back to markdown
+        ("- [".$self->name."](".$self->URL.")"
+         ." | ".$self->locations->map(the_method("string"))->join("; ")
+         .do {
+             if (defined(my $p= $self->maybe_process)) {
+                 " | $p"
+             } else {
+                 ""
+             }
+         })
+    }
 
     method remote () {
         # not calling it is_remote since has_remote might be more
@@ -324,6 +345,9 @@ fun print_showln ($v) {
 # XX see above, and move?
 fun FP::Abstract::Sequence::show_items ($l) {
     $l->for_each (*print_showln)
+}
+fun FP::Abstract::Sequence::print ($l) {
+    $l->for_each (*xprintln)
 }
 
 fun cs() { companies() }
