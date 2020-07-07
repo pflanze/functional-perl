@@ -67,8 +67,7 @@ use Chj::xperlfunc ":all";
 
 use Chj::TEST;
 
-{
-    package Company;
+package Company {
     use FP::Struct ["name",
                     "URL",
                     "locations",
