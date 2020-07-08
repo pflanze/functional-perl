@@ -241,7 +241,9 @@ package Company {
     use overload (
         '""'=> sub {shift->string},
         cmp=> sub {
-            my @v= map { uc($_->name) } @_;
+            my ($a,$b)= @_;
+            # don't use @_ here as it contains a third value:
+            my @v= map { uc($_->name) } ($a,$b);
             my $order= $v[0] cmp $v[1];
             # Order numeric entries between X and Y (since that's what
             # the current hand sorted document does)
