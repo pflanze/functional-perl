@@ -75,19 +75,20 @@ use Chj::TEST;
 sub array_sort ($;$) {
     @_==1 or @_==2 or die "wrong number of arguments";
     my ($in,$maybe_cmp)=@_;
-    (defined $maybe_cmp ?
-     [
-      sort {
-          &$maybe_cmp($a,$b)
-      } @$in
-     ]
-     :
-     [
-      # To use the FP::Abstract::Compare protocol, use
-      # array_sortCompare instead--we need to be backwards compatible
-      # here.
-      sort @$in
-     ])
+    if (defined $maybe_cmp) {
+        [
+         sort {
+             &$maybe_cmp($a,$b)
+         } @$in
+        ]
+    } else {
+        [
+         # To use the FP::Abstract::Compare protocol, use
+         # array_sortCompare instead--we need to be backwards compatible
+         # here.
+         sort @$in
+        ]
+    }
 }
 
 sub array_sortCompare ($) {
