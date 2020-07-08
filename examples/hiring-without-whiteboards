@@ -69,9 +69,25 @@ use FP::Ops ":all";
 use FP::Combinators ":all";
 use FP::Show;
 use Chj::xperlfunc ":all";
-use FP::PureArray;
+use FP::PureArray ":all";
 
 use Chj::TEST;
+
+
+# XX lib
+sub triples {
+    my @out;
+    while (@_) {
+	my $k= shift;
+	@_ or die "wrong number of inputs";
+	my $v= shift;
+	@_ or die "wrong number of inputs";
+	my $v2= shift;
+	push @out, [$k,$v,$v2]
+    }
+    array_to_purearray \@out
+}
+
 
 
 package CountryOrRemote {
@@ -222,7 +238,12 @@ package Company {
                     "locations",
                     "maybe_process"],
       'FP::Struct::Show';
-    use overload '""'=> sub {shift->string};
+    use overload (
+        '""'=> sub {shift->string},
+        cmp=> sub {
+            my ($a,$b)=@_;
+            lc($a->name) cmp lc($b->name)
+        });
 
     method string() {
         # back to markdown
@@ -248,6 +269,68 @@ package Company {
 import Company::constructors;
 
 
+# ==================================================================
+# For re-grouping&sorting (I'm crazy to have considered writing that)
+
+# Oh, don't have ranges yet? Just code one up for us here, hacky
+# anyway.
+package InclusiveRange {
+    use FP::Struct ["from", "to"],
+        'FP::Struct::Show';
+    use overload (
+        '""'=> sub {shift->string},
+        cmp=> sub {
+            my ($a,$b)=@_;
+            ($a->from cmp $b->cmp
+             or
+             $a->to cmp $b->to)
+        });
+
+    method string() {
+        $self->from." - ".$self->to
+    }
+
+    method contains_item($v) {
+        # super HACK to accomodate for the '#' thing (should use a
+        # maybe type instead for ranges which are open above--except
+        # cmp is wrong for digits, too, so, dunno):
+        return 1 if $self->to eq '#' and $v=~ /^[0-9]$/;
+        (($self->from cmp $v) <= 0
+         and
+         ($v cmp $self->to) <= 0)
+    }
+    
+    _END_
+}
+import InclusiveRange::constructors;
+
+package Group {
+    use FP::Struct ["range", "items"],
+        'FP::Struct::Show';
+    _END_
+}
+import Group::constructors;
+
+
+my $ranges= triples('A'..'Z', '#')->map(
+    fun($a) { InclusiveRange( $$a[0],$$a[2] )})->list;
+
+fun sectionize ($l,$ranges) {
+    # sortedlist -> list_of(Group)
+    return null if $l->is_null;
+    return list(Group(undef, $l)) if $ranges->is_null; ## hack? ##doubly so, F needed list wont work  wll  dbg ever only ?
+    my $range= $ranges->first;
+    my ($groupitems, $rest)= $l->take_while_and_rest(
+        fun($company) {
+            $range->contains_item(uc substr($company->name, 0, 1))
+        });
+    no warnings "recursion";
+    cons(Group($range, $groupitems),
+         sectionize($rest, $ranges->rest))
+}
+
+
+# ==================================================================
 # markdown line parsing
 
 fun is_item ($s) {
@@ -327,12 +410,63 @@ fun FP::Abstract::Sequence::drop_over ($l, $pred) {
     $l->drop_while (complement $pred)->drop_while ($pred)
 }
 
-fun companies () {
+fun datalines () {
     xfile_lines_chomp ("$basedir/$mainfile")
-      ->drop_over (*is_hr)
-      ->take_while (complement *is_AlsoSee)
-      ->filter (complement either (*is_heading, *is_empty))
-      ->map (*parse_line)
+        ->drop_over (*is_hr)
+        ->take_while (complement *is_AlsoSee)
+        ->filter (complement *is_empty)
+}
+
+fun companies () {
+    # Simply ignore the grouping headings.
+    datalines
+        ->filter (complement *is_heading)
+        ->map (*parse_line)
+}
+
+fun parse_heading($str) {
+    my ($from,$to)= $str=~ /^#+\s+(\w)\s*-\s*(\w|\\?#)\s*$/
+        or die "not a heading: '$str'";
+    $to=~ s/^\\//;
+    InclusiveRange($from,$to)
+}
+
+fun grouped_companies_from ($datalines) {
+    # Capture the groupings as well, as the original file is badly
+    # grouping them, so to keep a diff minimal we first have to
+    # maintain the wrong grouping before re-grouping automatically.
+    if ($datalines->is_null) {
+        null
+    } else {
+        my ($heading,$r)= $datalines->first_and_rest;
+        if (is_heading ($heading)) {
+            my ($groupitems, $r)= $r->take_while_and_rest(
+                complement *is_heading);
+            cons(Group(parse_heading($heading),
+                       $groupitems->map(*parse_line)),
+                 grouped_companies_from $r)
+        } else {
+            die "expecting a header, got: '$heading'";
+        }
+    }
+}
+
+fun grouped_companies() {
+    grouped_companies_from datalines
+}
+
+fun print_groups ($s) {
+    $s->for_each(
+        fun ($group) {
+            my $range= $group->range->string;
+            $range=~ s/#/\\#/;
+            xprintln "## $range";
+            $group->items->for_each(
+                fun ($company) {
+                    xprintln $company;
+                });
+            xprintln;
+        })
 }
 
 
@@ -346,9 +480,14 @@ fun print_showln ($v) {
 fun FP::Abstract::Sequence::show_items ($l) {
     $l->for_each (*print_showln)
 }
+
 fun FP::Abstract::Sequence::print ($l) {
     $l->for_each (*xprintln)
 }
+
+
+# ==================================================================
+# main
 
 fun cs() { companies() }
 
