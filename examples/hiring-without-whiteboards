@@ -241,8 +241,20 @@ package Company {
     use overload (
         '""'=> sub {shift->string},
         cmp=> sub {
-            my ($a,$b)=@_;
-            lc($a->name) cmp lc($b->name)
+            my @v= map { uc($_->name) } @_;
+            my $order= $v[0] cmp $v[1];
+            # Order numeric entries between X and Y (since that's what
+            # the current hand sorted document does)
+            if ($order) {
+                my @vo = $order < 0 ? @v : reverse @v;
+                if ($vo[0]=~ /^[0-9]/ and $vo[1]=~ /^[A-X]/) {
+                    - $order
+                } else {
+                    $order
+                }
+            } else {
+                0
+            }
         });
 
     method string() {
@@ -315,7 +327,7 @@ import Group::constructors;
 my $ranges= triples('A'..'Z', '#')->map(
     fun($a) { InclusiveRange( $$a[0],$$a[2] )})->list;
 
-fun sectionize ($l,$ranges) {
+fun group_companies ($l,$ranges) {
     # sortedlist -> list_of(Group)
     return null if $l->is_null;
     return list(Group(undef, $l)) if $ranges->is_null; ## hack? ##doubly so, F needed list wont work  wll  dbg ever only ?
@@ -326,7 +338,7 @@ fun sectionize ($l,$ranges) {
         });
     no warnings "recursion";
     cons(Group($range, $groupitems),
-         sectionize($rest, $ranges->rest))
+         group_companies($rest, $ranges->rest))
 }
 
 
@@ -391,8 +403,8 @@ fun parse_line ($line) {
     my (undef, $locations, $process)= @p;
     Company ($name,
              $url,
-             # / and ; used inconsistently:
-             list(map { parse_location $_ } split m%\s*[/;]\s*%, $locations),
+             # /, ; and & used inconsistently:
+             list(map { parse_location $_ } split m%\s*[/;&]\s*%, $locations),
              $process)
 }
 
@@ -483,6 +495,11 @@ fun FP::Abstract::Sequence::show_items ($l) {
 
 fun FP::Abstract::Sequence::print ($l) {
     $l->for_each (*xprintln)
+}
+
+fun FP::Abstract::Sequence::print_grouped ($l,$please_sort=1) {
+    my $l= $please_sort ? $l->sort : $l;
+    print_groups(group_companies($l, $ranges));
 }
 
 
