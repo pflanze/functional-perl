@@ -5,6 +5,8 @@
 # with this file.
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
+use utf8;
+binmode *STDOUT{IO}, ":encoding(UTF-8)";
 use Function::Parameters qw(:strict);
 #use Sub::Call::Tail;
 
@@ -30,7 +32,9 @@ sub usage {
      cs->filter(fun(\$r) { \$r->locations->any(fun(\$l) { \$l=~ /\\bUK\\b/ }) })->show_items
 
   The 'show_items' method shows the object structure. If you instead
-  use the 'print' method, it will serialize back to markdown.
+  use the 'print' method, it will serialize back to markdown, although
+  without the grouping. `print_grouped` will re-sort and re-group and
+  show the group subtitles the same way as in the original markdown.
 
   Use tab completion to learn about the available methods on an object
   in a variable (which you will have to introduce for this, sadly;
@@ -230,6 +234,21 @@ package City {
 }
 import City::constructors;
 
+fun sortstring($str) {
+    my $s= lc($str);
+    # I'm sure there might be a library for this? Anyway, the
+    # rules used by this project may be too specific.
+    $s=~ s/[ä]/a/sg; # or ae ?
+    $s=~ s/[éế]/e/sg;
+    $s=~ s/[ï]/i/sg;
+    $s=~ s/[ōöô]/o/sg;
+    $s=~ s/[üû]/o/sg;
+    $s=~ s/[ç]/c/sg;
+    $s=~ s/[|]/0/sg; # hacky
+    $s=~ s/[:]//sg; # do *not* strip space, (), -
+    $s
+}
+
 package Company {
     use FP::Ops qw(the_method);
 
@@ -241,15 +260,15 @@ package Company {
     use overload (
         '""'=> sub {shift->string},
         cmp=> sub {
-            my ($a,$b)= @_;
-            # don't use @_ here as it contains a third value:
-            my @v= map { uc($_->name) } ($a,$b);
+            my ($a,$b,$inverted)= @_;
+            die if $inverted; ##
+            my @v= map { $_->sortstring } ($a,$b);
             my $order= $v[0] cmp $v[1];
             # Order numeric entries between X and Y (since that's what
             # the current hand sorted document does)
             if ($order) {
                 my @vo = $order < 0 ? @v : reverse @v;
-                if ($vo[0]=~ /^[0-9]/ and $vo[1]=~ /^[A-X]/) {
+                if ($vo[0]=~ /^[0-9]/ and $vo[1]=~ /^[a-x]/) {
                     - $order
                 } else {
                     $order
@@ -258,6 +277,10 @@ package Company {
                 0
             }
         });
+
+    method sortstring() {
+        main::sortstring($self->name)
+    }
 
     method string() {
         # back to markdown
@@ -318,21 +341,40 @@ package InclusiveRange {
 }
 import InclusiveRange::constructors;
 
+package CatchallRange {
+    # A bit of a hack, to catch numbers and whatever in the last one
+    # with the '#', as the letter '#' isn't actually covering over the
+    # digits so would otherwise have to hack InclusiveRange.
+    use FP::Struct [],
+        'InclusiveRange';
+    method contains_item($v) {
+        1
+    }
+    _END_
+}
+import CatchallRange::constructors;
+
+
+
 package Group {
-    use FP::Struct ["range", "items"],
+    use FP::Predicates qw(instance_of);
+    use FP::Struct [[instance_of("InclusiveRange"), "range"],
+                    "items"],
         'FP::Struct::Show';
     _END_
 }
 import Group::constructors;
 
 
-my $ranges= triples('A'..'Z', '#')->map(
-    fun($a) { InclusiveRange( $$a[0],$$a[2] )})->list;
+my $ranges= triples('A'..'Z', '#')->map_with_islast(
+    fun($islast,$a) {
+        ($islast ? \&CatchallRange : \&InclusiveRange)
+            ->( $$a[0],$$a[2] )
+    })->list;
 
 fun group_companies ($l,$ranges) {
     # sortedlist -> list_of(Group)
     return null if $l->is_null;
-    return list(Group(undef, $l)) if $ranges->is_null; ## hack? ##doubly so, F needed list wont work  wll  dbg ever only ?
     my $range= $ranges->first;
     my ($groupitems, $rest)= $l->take_while_and_rest(
         fun($company) {
@@ -425,7 +467,7 @@ fun FP::Abstract::Sequence::drop_over ($l, $pred) {
 }
 
 fun datalines () {
-    xfile_lines_chomp ("$basedir/$mainfile")
+    xfile_lines_chomp ("$basedir/$mainfile", "UTF-8")
         ->drop_over (*is_hr)
         ->take_while (complement *is_AlsoSee)
         ->filter (complement *is_empty)
