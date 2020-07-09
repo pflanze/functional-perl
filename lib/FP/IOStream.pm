@@ -196,29 +196,36 @@ sub fh_to_stream ($$$) {
 sub make_open_stream {
     my ($open,$read,$maybe_close)=@_;
     my $close= $maybe_close // the_method ("xclose");
-    sub ($) {
-        fh_to_stream(scalar &$open(@_),
-                  $read,
-                  $close)
+    sub {
+        my ($path, $maybe_encoding)= @_;
+        my $fh= &$open($path);
+        if ($maybe_encoding) {
+            binmode($fh, ":encoding($maybe_encoding)")
+                or die "binmode for :encoding($maybe_encoding): $!";
+        }
+        fh_to_stream($fh, $read, $close)
     }
 }
 
-sub xfile_lines ($);
+
+
+
+sub xfile_lines;
 *xfile_lines=
   make_open_stream(\&xopen_read,
                    the_method ("xreadline"));
 
-sub xfile_lines0 ($);
+sub xfile_lines0;
 *xfile_lines0=
   make_open_stream(\&xopen_read,
                    the_method ("xreadline0"));
 
-sub xfile_lines0chop ($);
+sub xfile_lines0chop;
 *xfile_lines0chop=
   make_open_stream(\&xopen_read,
                    the_method ("xreadline0chop"));
 
-sub xfile_lines_chomp ($);
+sub xfile_lines_chomp;
 *xfile_lines_chomp=
   make_open_stream(\&xopen_read,
                    the_method ("xreadline_chomp"));
