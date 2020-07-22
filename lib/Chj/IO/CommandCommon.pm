@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2014 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -62,58 +62,55 @@ sub quotedname {
 }
 
 sub _launch {
-    my ($subname,$otherendclose,$closeinchild)=@_;
-    sub {# curry unnecessary, but whatever
-        my $self=shift;
-        my ($cmd)=@_;
-        my $maybe_env;
-        if (ref($$cmd[0]) eq "HASH") {
-            # env settings (since with "use threads" $ENV does not work!)
-            $maybe_env= shift @$cmd;
+    my ($subname, $otherendclose, $closeinchild,
+        $self, $cmd)=@_;
+    my $maybe_env;
+    if (ref($$cmd[0]) eq "HASH") {
+        # env settings (since with "use threads" $ENV does not work!)
+        $maybe_env= shift @$cmd;
+    }
+    @$cmd or die "$subname: missing cmd arguments";
+    my ($readerr,$writeerr)=xpipe;
+    if (my $pid= xfork) {
+        $metadata{pack"I",$self}=
+          [$pid, $cmd];
+        &$otherendclose;
+        $writeerr->xclose; #" here it's clear that it's needed."
+        # close all handles that have been given for redirections? 
+        # or leave that to the user? the latter.
+        my $err= $readerr->xcontent;
+        if ($err) {
+            croak (__PACKAGE__."::$subname: could not execute "
+                   .join(" ",map{singlequote_sh $_}@$cmd)
+                   .": $err");
         }
-        @$cmd or die "$subname: missing cmd arguments";
-        my ($readerr,$writeerr)=xpipe;
-        if (my $pid= xfork) {
-            $metadata{pack"I",$self}=
-              [$pid, $cmd];
-            &$otherendclose;
-            $writeerr->xclose; #" here it's clear that it's needed."
-            # close all handles that have been given for redirections? 
-            # or leave that to the user? the latter.
-            my $err= $readerr->xcontent;
-            if ($err) {
-                croak (__PACKAGE__."::$subname: could not execute "
-                       .join(" ",map{singlequote_sh $_}@$cmd)
-                       .": $err");
+        return $self
+    } else {
+        &$closeinchild;
+        if (defined $maybe_env) {
+            my @newcmd= ("/usr/bin/env");
+            my $env= $maybe_env;
+            for my $k (keys %$env) {
+                die "invalid env key starting with '-': ".singlequote_sh($k)
+                  if $k=~ /^-/;
+                push @newcmd, "$k=$$env{$k}";
             }
-            return $self
+            push @newcmd, @$cmd;
+            $cmd= \@newcmd;
+        }
+        if (ref($$cmd[0]) eq "CODE") {
+            my $code= shift @$cmd;
+            eval {
+                $code->(@$cmd);
+                die "coderf did return";
+            };
+            $writeerr->xprint($@);# [well serialize it?..tja..]
         } else {
-            &$closeinchild;
-            if (defined $maybe_env) {
-                my @newcmd= ("/usr/bin/env");
-                my $env= $maybe_env;
-                for my $k (keys %$env) {
-                    die "invalid env key starting with '-': ".singlequote_sh($k)
-                      if $k=~ /^-/;
-                    push @newcmd, "$k=$$env{$k}";
-                }
-                push @newcmd, @$cmd;
-                $cmd= \@newcmd;
-            }
-            if (ref($$cmd[0]) eq "CODE") {
-                my $code= shift @$cmd;
-                eval {
-                    $code->(@$cmd);
-                    die "coderf did return";
-                };
-                $writeerr->xprint($@);# [well serialize it?..tja..]
-            } else {
-                no warnings;
-                exec @$cmd;
-                $writeerr->xprint($!);
-            }
-            exit;
+            no warnings;
+            exec @$cmd;
+            $writeerr->xprint($!);
         }
+        exit;
     }
 }
 
@@ -130,8 +127,9 @@ sub xlaunch {
        },
        sub {
            $otherend->xdup2($hdl);
-       })
-        ->($self,\@cmd);
+       },
+       $self,
+       \@cmd)
 }
 
 sub xlaunch3 {
@@ -144,8 +142,9 @@ sub xlaunch3 {
            $in->xdup2(0) if $in;
            $out->xdup2(1) if $out;
            $err->xdup2(2) if $err;
-       })
-        ->($self,\@cmd);
+       },
+       $self,
+       \@cmd)
 }
 
 
