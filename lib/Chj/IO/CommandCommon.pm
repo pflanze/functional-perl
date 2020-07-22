@@ -70,7 +70,10 @@ sub _launch {
         $maybe_env= shift @$cmd;
     }
     @$cmd or die "$subname: missing cmd arguments";
-    my ($readerr,$writeerr)=xpipe;
+    my ($readerr,$writeerr)= do {
+        local $^F = 0;
+        xpipe
+    };
     if (my $pid= xfork) {
         $metadata{pack"I",$self}=
           [$pid, $cmd];
