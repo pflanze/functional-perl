@@ -72,7 +72,6 @@ use Chj::xpipe;
 
 sub new_out {
     my $class=shift;
-    local $^F=0;
     my ($r,$self)=xpipe;
     bless $self,$class;
     $self->xlaunch($r,0,@_); ## und wie gebe ich den Namen an?
@@ -85,7 +84,6 @@ sub new_out {
 
 sub new_in {
     my $class=shift;
-    local $^F=0;
     my ($self,$w)=xpipe;
     bless $self,$class;
     $self->xlaunch($w,1,@_);
@@ -96,7 +94,6 @@ sub new_in {
 
 sub new_combinedsender {
     my $class=shift;
-    local $^F=0;
     my ($self,$w)=xpipe;
     bless $self,$class;
     $self->xlaunch3(undef,$w,$w,@_);
@@ -104,7 +101,6 @@ sub new_combinedsender {
 
 sub new_combinedsender_with_stdin {
     my $class=shift;
-    local $^F=0;
     my $stdin= shift;
     my ($self,$w)=xpipe;
     bless $self,$class;
@@ -118,14 +114,12 @@ sub assume_with_maybe_stdin_stdout_stderr {
     my $in= shift;
     my $out= shift;
     my $err= shift;
-    local $^F=0;
     bless $self,$class;
     $self->xlaunch3($in,$out,$err,@_);
 }
 
 sub new_err {
     my $class=shift;
-    local $^F=0;
     my ($self,$w)=xpipe;
     bless $self,$class;
     $self->xlaunch($w,2,@_);
@@ -134,7 +128,6 @@ sub new_err {
 sub new_receiver_with_stderr_to_fh {
     my $class=shift;
     my $errfh=shift;
-    local $^F=0;
     my ($r,$self)=xpipe;
     bless $self,$class;
     $self->xlaunch3($r,undef,$errfh,@_); ## ... (vgl oben)
@@ -143,7 +136,6 @@ sub new_receiver_with_stderr_to_fh {
 sub new_receiver_with_stdout_to_fh {
     my $class=shift;
     my $outfh=shift;
-    local $^F=0;
     my ($r,$self)=xpipe;
     bless $self,$class;
     $self->xlaunch3($r,$outfh,undef,@_);
