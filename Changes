@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.33 2020-09-20
+    - fix time zone (summer time) related bug in test suite
+
 0.72.32 2020-09-11
     - Sequences: rename map_with_i to map_with_index and add to
       Sequence interface
