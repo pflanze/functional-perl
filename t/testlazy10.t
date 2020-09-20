@@ -14,7 +14,7 @@ use Test::More;
 $ENV{N}= 10;
 $ENV{T}= 0;
 $ENV{TZ}= "MET";
-is readin ("LANG=C TZ=Europe/Zurich perl functional_XML/testlazy |"),
+is readin ("LANG=C TZ=UTC perl functional_XML/testlazy |"),
     readin ("< t/testlazy10.expected");
 
 done_testing;
