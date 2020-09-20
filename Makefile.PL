@@ -18,6 +18,9 @@ BEGIN {
     eval "use $MIN_PERL_VERSION; 1" || die $@;
 }
 use ExtUtils::MakeMaker;
+
+my $on_unix_like = $^O =~ /dragonfly|bsd|linux|darwin/i;
+
 WriteMakefile (
     NAME              => 'FunctionalPerl',
     VERSION_FROM      => 'lib/FunctionalPerl.pm',
@@ -79,7 +82,9 @@ WriteMakefile (
                     "Function::Parameters"=> 0,
 
                         # for some tests:
-                    "BSD::Resource"=> 0,
+                    $on_unix_like ? (
+                        "BSD::Resource"=> 0,
+                    ) : (),
                     "DBI"=> 0,
                     "DBD::CSV"=> 0,
                     "Text::CSV"=> 0,
