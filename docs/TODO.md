@@ -48,10 +48,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 * Make generic functions (for sequences) that work with both objects
   (which implement the method of the same name) and non-objects that
   are of the same kind; e.g. `first([3, 4])` and `first(list 3, 4)`
-  would both return `3`. (Will conflict for `map`, though.) Or
-  instead, hack the interpreter to have core types be implicitly
-  blessed into some base packages (like `ARRAY`), then install methods
-  there?
+  would both return `3`. (Will conflict in the case of `map` with the
+  built-in, though.) -- May not be useful enough any more given that
+  there's now `FP::autobox`.
 
 * Immutable and mutable blessed strings?
 
@@ -148,8 +147,8 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * Implement `FP::Vec`, a data structure with both efficient functional
   updates and efficient random access. RandomAccessSequence
-  protocol. Then hash maps with the same properties. Red-Black
-  trees. (Speed though, C?)
+  protocol. Then hash maps with the same properties. (In C for speed?
+  For algorithms, see Clojure.)
 
 * Add ->[$i] to RandomAccessSequence protocol. Move ref and set over
   to RandomAccessSequence protocol?
