@@ -58,6 +58,15 @@ WriteMakefile (
         "Sub::Util"=> 0,
     },
     TEST_REQUIRES => {
+        # for some tests:
+        ($on_unix_like ? (
+             "BSD::Resource"=> 0,
+         ) : ()),
+        "DBI"=> 0,
+        "DBD::CSV"=> 0,
+        "Text::CSV"=> 0,
+        "Test::Pod::Snippets"=> 0,
+        "URI"=> 0,
     },
     META_MERGE => {
         'meta-spec'=> {
@@ -80,16 +89,6 @@ WriteMakefile (
                     #"Sub::Call::Tail"=> 0, currently broken
                     "Method::Signatures"=> 0,
                     "Function::Parameters"=> 0,
-
-                        # for some tests:
-                    $on_unix_like ? (
-                        "BSD::Resource"=> 0,
-                    ) : (),
-                    "DBI"=> 0,
-                    "DBD::CSV"=> 0,
-                    "Text::CSV"=> 0,
-                    "Test::Pod::Snippets"=> 0,
-                    "URI"=> 0,
 
                         # for running htmlgen
                     "Encode"=> 0,
