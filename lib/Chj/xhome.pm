@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2010-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2010-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -14,6 +14,8 @@ Chj::xhome
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
+
+Get the user's home directory in a safe manner. 
 
 =over 4
 
