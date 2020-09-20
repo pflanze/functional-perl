@@ -31,5 +31,5 @@ my $prefix= $ENV{SUB_CALL_TAIL} ? "" : ".";
 
 my $gen= "../${prefix}htmlgen/gen";
 
-exec $gen, $configpath, $inbase, $outbase, @ARGV
+exec $^X, $gen, $configpath, $inbase, $outbase, @ARGV
     or die "possibly missing '$gen', run 'meta/tail-expand' (or simply 'make test') first";
