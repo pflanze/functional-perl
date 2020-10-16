@@ -77,7 +77,9 @@ use Chj::NamespaceCleanAbove;
 
 sub FP_Interface__method_names {
     my $class= shift;
-    (# base definition in this file hence not necessary to specify
+    (
+
+     # base definition in this file hence not necessary to specify
      # here except for the sake of safety in case the base implementation is
      # removed:
      qw(
@@ -99,6 +101,7 @@ sub FP_Interface__method_names {
      none
      join
      ),
+
      # virtual methods:
      grep {
          not /^TODO/
@@ -145,6 +148,7 @@ sub FP_Interface__method_names {
      sortCompare
      string
      ),
+
      # $class->SUPER::FP_Interface__method_names
     )
 }
