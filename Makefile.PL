@@ -44,11 +44,8 @@ WriteMakefile (
 
         # could be optional (tests should skip if not available):
         "autobox"=> 0,
-
-
-        # XXX is TEST_REQUIRES not working? Just move all dependencies
-        # required for testing here, for now:
-
+    },
+    TEST_REQUIRES => {
         "Test::Requires"=> 0,
         # Now required; otherwise would have to make it optional in
         # FP::Show, but then tests looking at show output would
@@ -56,9 +53,8 @@ WriteMakefile (
         "Capture::Tiny"=> 0,
         # Now required, too, to ensure test outputs match:
         "Sub::Util"=> 0,
-    },
-    TEST_REQUIRES => {
-        # for some tests:
+
+        # for *some* tests:
         ($on_unix_like ? (
              "BSD::Resource"=> 0,
          ) : ()),
