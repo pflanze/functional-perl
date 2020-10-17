@@ -60,14 +60,7 @@ use FP::Interface;
 sub implemented {
     my $caller= [caller];
     for my $interface (@_) {
-        unless (FP::Interface::package_is_populated($interface)) {
-            my $subpath= $interface;
-            # forever.. (how?)
-            $subpath=~ s|::|/|sg;
-            $subpath.= ".pm";
-            require $subpath;
-            #/forever
-        }
+        FP::Interface::require_package($interface);
         FP::Interface::implemented_with_caller($caller, $interface)
     }
 }
