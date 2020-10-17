@@ -236,7 +236,8 @@ for my $orig (@sequencetypes) {
         equal $d1,$d3
             # XX what is the recommended way to make/format
             # exceptions?
-            or die "not equal (from $orig to $target and back):", show($d1), show($d3);
+            or die("not equal (from $orig to $target and back): "
+                   .show($d1)." vs. ".show($d3));
     }
 }
 
