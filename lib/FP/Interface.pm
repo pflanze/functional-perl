@@ -72,8 +72,8 @@ package FP::Interface;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
 @EXPORT_OK=qw(
-    require_package
     package_is_populated
+    require_package
     package_check_possible_interface);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
@@ -81,6 +81,22 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Carp 'croak';
 
+
+sub package_is_populated {
+    my ($package)= @_;
+    my $st = do {
+        no strict 'refs';
+        *{$package . "::"}
+    };
+    for my $subst (values %$st) {
+        next if "$subst" =~ /::$/; # skip sub-packages
+        return 1 if defined $$subst{SCALAR};
+        return 1 if defined $$subst{CODE};
+        return 1 if defined $$subst{ARRAY};
+        return 1 if defined $$subst{HASH};
+    }
+    0
+}
 
 sub require_package ($) {
     my ($package)=@_;
@@ -110,22 +126,6 @@ sub package_check_possible_interface ($$) {
         # not an interface
         undef
     }
-}
-
-sub package_is_populated {
-    my ($package)= @_;
-    my $st = do {
-        no strict 'refs';
-        *{$package . "::"}
-    };
-    for my $subst (values %$st) {
-        next if "$subst" =~ /::$/; # skip sub-packages
-        return 1 if defined $$subst{SCALAR};
-        return 1 if defined $$subst{CODE};
-        return 1 if defined $$subst{ARRAY};
-        return 1 if defined $$subst{HASH};
-    }
-    0
 }
 
 sub implemented_with_caller {
