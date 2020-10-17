@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -71,8 +71,10 @@ or on the L<website|http://functional-perl.org/>.
 package FP::Interface;
 @ISA="Exporter"; require Exporter;
 @EXPORT=qw();
-@EXPORT_OK=qw(require_package
-              package_check_possible_interface);
+@EXPORT_OK=qw(
+    require_package
+    package_is_populated
+    package_check_possible_interface);
 %EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -110,7 +112,7 @@ sub package_check_possible_interface ($$) {
     }
 }
 
-sub _package_is_populated {
+sub package_is_populated {
     my ($package)= @_;
     my $st = do {
         no strict 'refs';
@@ -134,7 +136,7 @@ sub implemented_with_caller {
     no strict 'refs';
     push @{"${caller_package}::ISA"}, $interface;
     package_check_possible_interface($caller_package, $interface) // do {
-        my $suggestload = _package_is_populated($interface) ? ""
+        my $suggestload = package_is_populated($interface) ? ""
             : " (perhaps you forgot to load \"$interface\"?)";
         die "'$interface' does not have a 'FP_Interface__method_names' method hence is not an interface"
             . $suggestload
