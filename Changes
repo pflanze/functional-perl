@@ -1,5 +1,14 @@
 Revision history for FunctionalPerl
 
+0.72.34 2020-10-17
+    - more fix time zone; more "use $^X directly"
+    - attempts at fixing recommends in Makefile.PL
+    - add `take_while_and_rest`, fix `take_while` method
+    - Interfaces: make sure interface definitions are loaded
+    - sequences: implement missing type conversion methods, add test
+    - small improvements in Array_sort and IOStream
+    - extend examples/hiring-without-whiteboards
+
 0.72.33 2020-09-20
     - fix time zone (summer time) related bug in test suite
 
