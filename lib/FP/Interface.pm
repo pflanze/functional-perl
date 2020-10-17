@@ -110,6 +110,21 @@ sub package_check_possible_interface ($$) {
     }
 }
 
+sub _package_is_populated {
+    my ($package)= @_;
+    my $st = do {
+        no strict 'refs';
+        *{$package . "::"}
+    };
+    for my $subst (values %$st) {
+        next if "$subst" =~ /::$/; # skip sub-packages
+        return 1 if defined $$subst{SCALAR};
+        return 1 if defined $$subst{CODE};
+        return 1 if defined $$subst{ARRAY};
+        return 1 if defined $$subst{HASH};
+    }
+    0
+}
 
 sub implemented_with_caller {
     @_==2 or die "wrong number of arguments";
@@ -118,8 +133,13 @@ sub implemented_with_caller {
     require_package $interface;
     no strict 'refs';
     push @{"${caller_package}::ISA"}, $interface;
-    package_check_possible_interface($caller_package, $interface)
-        // die "'$interface' does not have a 'FP_Interface__method_names' method hence is not an interface at $caller_file line $caller_line.\n";
+    package_check_possible_interface($caller_package, $interface) // do {
+        my $suggestload = _package_is_populated($interface) ? ""
+            : " (perhaps you forgot to load \"$interface\"?)";
+        die "'$interface' does not have a 'FP_Interface__method_names' method hence is not an interface"
+            . $suggestload
+            ." at $caller_file line $caller_line.\n";
+    };
 }
 
 # called fully qualified, i.e. FP::Interface::implemented (to avoid
