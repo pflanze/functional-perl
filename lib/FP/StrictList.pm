@@ -115,13 +115,13 @@ package FP::StrictList::List {
         FP::List::list($s->values)
     }
 
-    # sub stream {
-    #     @_==1 or die "wrong number of arguments";
-    #     my ($l)= @_;
-    #     # XX what should it be? OK?
-    #     lazy { $l }
-    # }
-    # if we use this, can simply fall back to FP::List::List::stream
+    sub stream {
+        @_==1 or die "wrong number of arguments";
+        my ($l)= @_;
+        # XX isn't this stupid? Same as above. The current load test
+        # in FP::Abstract::Sequence::t requires this behaviour.
+        FP::Stream::stream($l->values)
+    }
 }
 
 package FP::StrictList::Null {
