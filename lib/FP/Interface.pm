@@ -81,21 +81,13 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Carp 'croak';
 
-
 sub package_is_populated {
     my ($package)= @_;
-    my $st = do {
+    my $pr = do {
         no strict 'refs';
         *{$package . "::"}
     };
-    for my $subst (values %$st) {
-        next if "$subst" =~ /::$/; # skip sub-packages
-        return 1 if defined $$subst{SCALAR};
-        return 1 if defined $$subst{CODE};
-        return 1 if defined $$subst{ARRAY};
-        return 1 if defined $$subst{HASH};
-    }
-    0
+    %$pr ? 1 : 0
 }
 
 sub require_package ($) {
