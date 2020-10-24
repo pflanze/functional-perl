@@ -1,0 +1,31 @@
+name: CI
+
+on: [push]
+
+jobs:
+  perl-job:
+    runs-on: ubuntu-latest
+    container:
+      image: perl:${{ matrix.perl-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        perl-version:
+          - '5.32'
+          - 'latest'
+    name: Perl ${{ matrix.perl-version }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Regular tests
+        run: |
+            cpanm --installdeps --notest .
+            perl Makefile.PL
+            make
+            make test
+      - name: Extended tests
+        run: |
+            cpanm --notest PadWalker FP::Repl::Dependencies Method::Signatures Function::Parameters Text::Markdown Moo Perl::Tidy Term::ReadLine::Gnu
+            perl Makefile.PL
+            make
+            make test
+
