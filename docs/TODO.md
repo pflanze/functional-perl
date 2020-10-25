@@ -3,12 +3,41 @@ properly formatted versions of these documents.
 
 ---
 
+<with_toc>
+
+## Guide
+
+This is to give a quick overview of what should be done next. If you'd
+like to scan through all possible work (or like to lose yourself), see
+"Items" below.
+
+* Finish `FP::AST::Perl` and rework `FP::Abstract::Show` to use it.
+* Find the people potentially interested in this project.
+* Collect and discuss open questions, perhaps via RFC processes,
+  including:
+    * General design and structure
+    * Plan automatic lexical lifetime and TCO analysis
+        * Perl AST in C to make it efficient?
+    * Decide where to go with the experimental approaches taken,
+      including:
+        * Preferred way to create functional classes (`FP::Struct`
+          or?)
+        * Preferred way to make abstract classes and/or protocols.
+        * Preferred way for equality (`FP::Abstract::Equal`) and
+          comparison (`FP::Abstract::Compare`)
+* Use for some (experimental) projects, gain experience, report/fix
+  bugs.
+* Videos (screen recordings), articles, talks.
+
+
+## Items
+
+This is an unsorted collection of items to work on.
+
 See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 "todo" markers in text (website / .md) files. Also, the [[names]] page.
 
-<with_toc>
-
-## Work on the code
+### Work on the code
 
 * In bin/perlrepl and bin/fperl, use the proper perl version in the
   shebang line; yet, still allow them to be run locally (project not
@@ -199,7 +228,7 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * `Test::Needs` has been recommended over `Test::Requires` "for reasons specified in its documentation", look into it.
 
-## Get rid of unnecessary home-grown code
+### Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
 order of most likely replacement (those replaced most easily or
@@ -223,7 +252,7 @@ usefully listed first).
 
 - maybe `FP::Path` is not general or useful enough to keep
 
-## Licensing
+### Licensing
 
 - should I move the licensing statements from the top of the files
   into the POD section of each file?
@@ -233,7 +262,7 @@ usefully listed first).
   website, "the project"?
 
 
-## Documentation and tests
+### Documentation and tests
 
 - document the change in recent (blead) perl with regards to lexical
   capture and weak references (e.g. see `FP::DBI` commit 8862338..) in
@@ -252,7 +281,7 @@ usefully listed first).
     etc. sequences. (etc.)
 
 
-## Other people's code
+### Other people's code
 
 - replace `FP::Lazy` with `Data::Thunk`? This would be cool from a
   transparency stand point, except that separate code by way of
@@ -293,7 +322,7 @@ usefully listed first).
   for lists?)
 
 
-## Code structure
+### Code structure
 
 - fix the now horrible hand-optimized-but-convoluted code in
   `PXML::Serialize` (and figure out an automatic way to make it fast).
@@ -333,12 +362,12 @@ usefully listed first).
   *or* `all`?) to `FP::Stream`, or to common base class.
 
 
-## Security, safety
+### Security, safety
 
 - check 'XX.*[Ss]ecurity' comments
 
 
-## Possibilities
+### Possibilities
 
 - port `PXML::Element` to `FP::Struct` (it was originally written
   before that existed, iirc). Create a version/extension of
