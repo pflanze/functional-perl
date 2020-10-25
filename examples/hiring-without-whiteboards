@@ -424,13 +424,25 @@ fun parse_location($str) {
         $Remote
     } else {
         my @s= split /\s*,\s*/, $str;
-        if (@s > 2) {
-            die "more than one comma in: '$str'"
+        if (@s == 1) {
+            parse_country($s[0])
         } elsif (@s == 2) {
             my ($city, $country)= @s;
             City($city, parse_country($country))
+        } elsif (@s == 3) {
+            my ($city, $state, $country)= @s;
+            if ($country eq "USA") {
+                my $s= parse_country($state);
+                if ($s->is_USA) {
+                    City($city, $s)
+                } else {
+                    die "presumed state '$state' is not a state in the USA";
+                }
+            } else {
+                die "don't know how to deal with presumed state '$state' in country '$country': don't know that country";
+            }
         } else {
-            parse_country($s[0])
+            die "more than two commas in: '$str'"
         }
     }
 }
