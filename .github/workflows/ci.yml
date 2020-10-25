@@ -1,3 +1,15 @@
+# This sets up the page shown at [1]--continuous integration via
+# GitHub's Actions[2]. Feel free to add particular environments you
+# feel worthy of testing and proving useful in addition to those from
+# CPAN Testers, but let's keep in mind that, unlike GitHub, CPAN
+# Testers is a community effort and probably valuable as a way to
+# remain independent from big companies. And please let's make sure
+# that nobody *has* to use GitHub to contribute to the project or
+# becomes a second class contributor if they refuse to use it.
+
+# [1] https://github.com/pflanze/functional-perl/actions
+# [2] https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+
 name: CI
 
 on: [push]
