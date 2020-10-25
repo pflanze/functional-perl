@@ -76,7 +76,7 @@ use FP::Show;
 use Chj::xperlfunc ":all";
 use FP::PureArray ":all";
 
-use Chj::TEST;
+use Chj::TEST ":all";
 
 
 # XX lib
@@ -470,7 +470,7 @@ TEST {
     parse_line "- [Accredible](https://www.accredible.com/careers) | Cambridge, UK / San Francisco, CA / Remote | Take home project, then a pair-programming and discussion onsite / Skype round."
 }
   Company ("Accredible", "https://www.accredible.com/careers",
-           list ("Cambridge, UK", "San Francisco, CA", "Remote"),
+           list (City('Cambridge', NonUSCountry('UK')), City('San Francisco', USPSCode('California', 'CA', 1)), Remote()),
            "Take home project, then a pair-programming and discussion onsite / Skype round.");
 
 
