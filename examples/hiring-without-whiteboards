@@ -54,7 +54,6 @@ our $verbose=0;
 GetOptions("verbose"=> \$verbose,
            "help"=> sub{usage},
            ) or exit 1;
-usage unless @ARGV==1;
 
 my ($basedir)= @ARGV;
 
@@ -565,5 +564,9 @@ fun FP::Abstract::Sequence::print_grouped ($l,$please_sort=1) {
 
 fun cs() { companies() }
 
-# let the user play with the data
-repl;
+
+perhaps_run_tests "main" or do {
+    usage unless @ARGV==1;
+    # let the user play with the data
+    repl;
+};
