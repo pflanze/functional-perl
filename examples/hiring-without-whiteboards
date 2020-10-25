@@ -24,22 +24,23 @@ my $mainfile= "README.md";
 sub usage {
     print "usage: $myname path/to/hiring-without-whiteboards/
 
-  Parse the $mainfile file of a check-out of
-  https://github.com/poteto/hiring-without-whiteboards, present it in
-  a repl as an FP::Stream of Company objects via the `cs` function. Now
-  you can do things like:
+  Starts an \`FP::Repl\` with access to a \`cs\` function which returns a
+  stream (\`FP::Stream\`) of \`Company\` objects representing the contents
+  of the $mainfile file of a check-out of
+  https://github.com/poteto/hiring-without-whiteboards
+
+  You can then enter 'queries' like:
 
      cs->filter(fun(\$r) { \$r->locations->any(fun(\$l) { \$l=~ /\\bUK\\b/ }) })->show_items
 
   The 'show_items' method shows the object structure. If you instead
   use the 'print' method, it will serialize back to markdown, although
-  without the grouping. `print_grouped` will re-sort and re-group and
+  without the grouping. \`print_grouped\` will re-sort and re-group and
   show the group subtitles the same way as in the original markdown.
 
-  Use tab completion to learn about the available methods on an object
-  in a variable (which you will have to introduce for this, sadly;
-  don't use 'our' or 'my' keywords), and read the (probably
-  not-so-fine) docs on functional-perl.org.
+  You can use tab completion to learn about the available methods on a
+  variable (don't use \`my\` for making variables, or they won't persist
+  to your next entry). Also see the docs on \`functional-perl.org\`.
 
   See https://news.ycombinator.com/item?id=19290044 for a
   discussion.
