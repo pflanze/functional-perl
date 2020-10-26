@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -118,7 +118,7 @@ use Chj::xtmpfile;
 use Chj::xperlfunc qw(xexec);
 use Chj::xopen qw(fh_to_fh perhaps_xopen_read);
 use POSIX;
-use Chj::xhome qw(xeffectiveuserhome);
+use Chj::xhome qw(xsafehome);
 use Chj::singlequote 'singlequote';
 use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
@@ -146,7 +146,7 @@ sub xone_nonwhitespace {
 }
 
 
-my $HOME=xeffectiveuserhome;
+my $HOME= xsafehome;
 our $maybe_historypath= "$HOME/.fp-repl_history";
 our $maybe_settingspath= "$HOME/.fp-repl_settings";
 our $maxHistLen= 100;
