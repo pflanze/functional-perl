@@ -21,21 +21,23 @@ Get the user's home directory in a safe manner.
 
 =item xHOME ()
 
-just the $HOME env var, dieing if not set, and also checked against a
-couple assertments
+Just the $HOME env var, dieing if not set, and also checked against a
+couple assertments.
 
 =item xeffectiveuserhome ()
 
-just the getpwuid setting
+Just the getpwuid setting. Throws unimplemented exception on Windows
+(Raspberry, not Cygwin Perl).
 
 =item xsafehome ()
 
-always take xeffectiveuserhome, but is asserting that HOME is the same
-if set
+Always take xeffectiveuserhome (unless on Windows, in which case this
+is currently the same as xhome), but is asserting that HOME is the
+same if set.
 
 =item xhome ()
 
-take HOME if set (with assertments), otherwise xeffectiveuserhome
+Take HOME if set (with assertments), otherwise xeffectiveuserhome.
 
 =back
 
@@ -84,13 +86,18 @@ sub xeffectiveuserhome () {
 }
 
 sub xsafehome () {
-    my $effectiveuserhome= xeffectiveuserhome;
-    if (my $e= $ENV{HOME}) {
-        $e eq $effectiveuserhome
-          or die "HOME environment variable is set to something other ".
-            "than the effective user home: '$e' vs. '$effectiveuserhome'";
+    if ($^O eq 'MSWin32') {
+        # XX or how to look it up on Windows again? If implemented, update pod.
+        xhome()
+    } else {
+        my $effectiveuserhome= xeffectiveuserhome;
+        if (my $e= $ENV{HOME}) {
+            $e eq $effectiveuserhome
+              or die "HOME environment variable is set to something other ".
+                "than the effective user home: '$e' vs. '$effectiveuserhome'";
+        }
+        $effectiveuserhome
     }
-    $effectiveuserhome
 }
 
 sub xhome () {
