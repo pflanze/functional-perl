@@ -64,8 +64,13 @@ sub xHOME () {
       or die "environment variable HOME is the empty string";
     $home
       or die "environment variable HOME is false";
-    $home=~ m|^/|
-      or die "environment variable HOME does not start with a slash: '$home'";
+    if ($^O eq 'MSWin32') {
+        $home=~ m|^[a-z]+:|i # XX correct letter syntax?
+            or die "environment variable HOME does not start with a drive designator: '$home'";
+    } else {
+        $home=~ m|^/|
+            or die "environment variable HOME does not start with a slash: '$home'";
+    }
     $home
 }
 
