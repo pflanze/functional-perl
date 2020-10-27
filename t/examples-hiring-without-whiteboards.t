@@ -7,6 +7,7 @@
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
+use Test::Requires qw(Function::Parameters);
 use Chj::xperlfunc ":all";
 
 require "./meta/find-perl.pl";
