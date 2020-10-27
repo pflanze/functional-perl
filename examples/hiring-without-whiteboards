@@ -82,12 +82,12 @@ use Chj::TEST ":all";
 sub triples {
     my @out;
     while (@_) {
-	my $k= shift;
-	@_ or die "wrong number of inputs";
-	my $v= shift;
-	@_ or die "wrong number of inputs";
-	my $v2= shift;
-	push @out, [$k,$v,$v2]
+        my $k= shift;
+        @_ or die "wrong number of inputs";
+        my $v= shift;
+        @_ or die "wrong number of inputs";
+        my $v2= shift;
+        push @out, [$k,$v,$v2]
     }
     array_to_purearray \@out
 }
