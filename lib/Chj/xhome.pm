@@ -109,5 +109,9 @@ sub xhome () {
     }
 }
 
+use File::HomeDir qw(home);
+use Chj::TEST;
+
+TEST { home eq xhome } 1;
 
 1
