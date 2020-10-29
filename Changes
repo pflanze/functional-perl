@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.35 2020-10-29
+    - test suite fixes for "Makefile.PL: move more things to
+      TEST_REQUIRES"
+    - fixes for Windows
+    - fixes in hiring-without-whiteboards, test
+
 0.72.34 2020-10-17
     - more fix time zone; more "use $^X directly"
     - attempts at fixing recommends in Makefile.PL
