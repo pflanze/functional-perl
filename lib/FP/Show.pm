@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -84,8 +84,13 @@ would implement the cut-off value as an optional parameter.)
 =head1 BUGS
 
 Show can't currently handle circular data structures (it will run out
-of stack space.) Not hard to fix (turtle and hare algo), just need to
-do it.
+of stack space), and it will not detect sharing.
+
+Show does not use code formatting, which can make complex output
+difficult to read.
+
+Both of these are planned to be fixed by using L<FP::AST::Perl> and
+changing the protocol.
 
 =head1 SEE ALSO
 
