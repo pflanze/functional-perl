@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -31,7 +31,8 @@ See the L<Functional Perl|http://functional-perl.org/> home page.
 =head1 EXPORTS
 
 L<FunctionalPerl> also acts as a convenience re-exporter, offering
-tags to load sets of modules.
+tags to load sets of modules. (It also has one normal export:
+`expand_import_tags`, see below.)
 
 Note that the tags and the sets of modules are very much alpha. If you
 want to have a better chance of code not breaking, import the modules
@@ -41,10 +42,12 @@ Tags can be expanded via:
 
 =for test
 
-    my ($modules, $unused_tags)= FunctionalPerl::expand(qw(:dev :most));
+    use FunctionalPerl qw(expand_import_tags);
+    my ($modules, $unused_tags, $nontags)= expand_import_tags(qw(:dev :most not_a_tag));
     is $$modules{"FP::Failure"}, 2; # number of times used.
     is_deeply $unused_tags,
               [':all', ':ast', ':csv', ':dbi', ':fix', ':git', ':io', ':path', ':pxml', ':rare', ':trampoline', ':transparentlazy'];
+    is_deeply $nontags, ['not_a_tag'];
 
 =head1 SEE ALSO
 
@@ -128,7 +131,7 @@ or on the L<website|http://functional-perl.org/>.
 package FunctionalPerl;
 @ISA="Exporter"; require Exporter;
 @EXPORT=();
-@EXPORT_OK=();
+@EXPORT_OK=(expand_import_tags);
 %EXPORT_TAGS=();
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
@@ -217,16 +220,19 @@ sub check_off {
     }
 }
 
-sub expand {
-    # arguments: tag names; returns which tag names are unused, and used modules
-    my $seen_tags= +{map {$_=> 1} @_};
+sub expand_import_tags {
+    # Arguments: tag names and other things. Returns (which tag names
+    # are unused, used modules, the other things).
+    my @tags= grep { /^:/ } @_;
+    my $seen_tags= +{map {$_=> 1} @tags};
     my $seen_modules= +{};
-    for my $tag (@_) {
+    for my $tag (@tags) {
         check_off $tag, $seen_tags, $seen_modules;
     }
     require FP::HashSet;
     ($seen_modules,
-     [sort keys %{FP::HashSet::hashset_difference($export_desc, $seen_tags)}])
+     [sort keys %{FP::HashSet::hashset_difference($export_desc, $seen_tags)}],
+     [grep { not /^:/ } @_])
 }
 
 sub split_moduledesc {
@@ -257,7 +263,9 @@ sub import {
     my $pack= shift;
     my $caller= caller;
 
-    my ($modules, $_unused_tags)= expand (@_);
+    my ($modules, $_unused_tags, $nontags)= expand_import_tags (@_);
+
+    $pack->export_to_level(1, $caller, @$nontags);
 
     require Import::Into;
 
