@@ -816,6 +816,20 @@ sub _completion_function {
     }
 }
 
+our $clear_history = do {
+    my $did= 0;
+    sub {
+        my ($term)= @_;
+        # Term::ReadLine::Perl does not have clear_history, so, wrap it.
+        if (my $m= $term->can("clear_history")) {
+            goto $m
+        } else {
+            warn "$term doesn't have clear_history, install Term::ReadLine::Gnu if you can"
+                unless $did++;
+        }
+    }
+};
+
 our ($maybe_input, $maybe_output); # dynamic parametrization of
                                    # filehandles
 
@@ -907,7 +921,7 @@ sub run {
         if (defined $$self[Maybe_historypath]) {
             # clean history of C based object before we re-add the
             # saved one:
-            $term->clear_history;
+            $clear_history->($term);
             if (open my $hist, "<", $$self[Maybe_historypath]){
                 @history= <$hist>;
                 close $hist;
@@ -1267,7 +1281,7 @@ sub run {
 
     # restore previous history, if any
     if ($current_history) {
-        $term->clear_history;
+        $clear_history->($term);
         for (@$current_history) {
             chomp;
             $term->addhistory($_);
