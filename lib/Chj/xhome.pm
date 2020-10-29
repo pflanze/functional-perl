@@ -37,7 +37,8 @@ same if set.
 
 =item xhome ()
 
-Take HOME if set (with assertments), otherwise xeffectiveuserhome.
+Tries $ENV{HOME} then glob "~" if exists (with assertments), otherwise
+xeffectiveuserhome.
 
 =back
 
@@ -59,9 +60,13 @@ package Chj::xhome;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-sub xHOME () {
-    defined (my $home=$ENV{HOME})
-      or die "environment variable HOME is not set";
+# use File::HomeDir qw(home);
+
+# But File::HomeDir is not installed with either Cygwin or Strawberry
+# Perl. Also, HomeDir's `home` returns undef for non-existing paths.
+
+sub xcheck_home {
+    my ($home)= @_;
     length ($home)
       or die "environment variable HOME is the empty string";
     $home
@@ -73,10 +78,17 @@ sub xHOME () {
         $home=~ m|^/|
             or die "environment variable HOME does not start with a slash: '$home'";
     }
+}
+
+sub xHOME () {
+    defined (my $home=$ENV{HOME})
+        or die "environment variable HOME is not set";
+    xcheck_home $home;
     $home
 }
 
 sub xeffectiveuserhome () {
+    # (Don't bother about caching, premature opt & dangerous.)
     my $uid= $>;
     my ($name,$passwd,$_uid,$gid,
         $quota,$comment,$gcos,$dir,$shell,$expire)
@@ -100,18 +112,42 @@ sub xsafehome () {
     }
 }
 
-sub xhome () {
-    if ($ENV{HOME}) {
-        xHOME
+
+our $warned = 0;
+
+sub xchecked_home ($$) {
+    my ($home, $what)= @_;
+    xcheck_home $home;
+    if (-d $home) {
+        $home
     } else {
-        # what about setting $ENV{HOME} in this case?
-        xeffectiveuserhome
+        warn "$what: dir '$home' does not exist, falling back to getpwuid"
+            unless $warned++;
+        undef
     }
 }
 
-use File::HomeDir qw(home);
-use Chj::TEST;
+sub maybe_HOME {
+    if (my $home= $ENV{HOME}) {
+        xchecked_home $home, '$ENV{HOME}'
+    } else {
+        undef
+    }
+}
 
-TEST { home eq xhome } 1;
+sub maybe_globhome {
+    my ($home)= glob "~";
+    if (defined $home) {
+        xchecked_home $home, "glob '~'";
+    } else {
+        undef
+    }
+}
+
+
+sub xhome () {
+    maybe_HOME() // maybe_globhome() // xeffectiveuserhome()
+}
+
 
 1
