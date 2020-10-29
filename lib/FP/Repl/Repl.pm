@@ -847,11 +847,22 @@ sub run {
     };
 
     my $oldsigint= $SIG{INT};
-    # It seems this is the only way to make signal handlers work in
-    # both perl 5.6 and 5.8:
-    sigaction SIGINT,
-      new POSIX::SigAction __PACKAGE__.'::__signalhandler'
-        or die "Error setting SIGINT handler: $!\n";
+    eval {
+        local $SIG{__DIE__};
+        # It seems this is the only way to make signal handlers work in
+        # both perl 5.6 and 5.8:
+        sigaction SIGINT,
+            new POSIX::SigAction __PACKAGE__.'::__signalhandler'
+            or die "Error setting SIGINT handler: $!\n";
+        1
+    } || do {
+        if ($^O eq 'MSWin32') {
+            # XX will that work?
+            $SIG{INT}= \&__signalhandler;
+        } else {
+            warn "could not set up signal handler: $@ ";
+        }
+    };
 
     {
         local $SIG{__DIE__};
