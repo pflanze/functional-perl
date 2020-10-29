@@ -826,7 +826,7 @@ our $clear_history = do {
             $term->clear_history;
             1
         } || do {
-            warn "$@"."install Term::ReadLine::Gnu if you can"
+            warn $@."install Term::ReadLine::Gnu if you can"
                 unless $did++;
         }
     }
