@@ -820,11 +820,13 @@ our $clear_history = do {
     my $did= 0;
     sub {
         my ($term)= @_;
-        # Term::ReadLine::Perl does not have clear_history, so, wrap it.
-        if (my $m= $term->can("clear_history")) {
-            goto $m
-        } else {
-            warn "$term doesn't have clear_history, install Term::ReadLine::Gnu if you can"
+        # Term::ReadLine::Perl does not have clear_history, so, wrap
+        # it. ->can doesn't work either (lazy loading?), so:
+        eval {
+            $term->clear_history;
+            1
+        } || do {
+            warn "$@"."install Term::ReadLine::Gnu if you can"
                 unless $did++;
         }
     }
