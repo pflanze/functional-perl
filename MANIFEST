@@ -1,3 +1,4 @@
+.github/workflows/ci.yml
 COPYING.md
 Changes
 MANIFEST
@@ -223,6 +224,7 @@ t/csv_to_xml.t
 t/dbi.t
 t/examples-fibs.t
 t/examples-functional-classes.t
+t/examples-hiring-without-whiteboards.t
 t/examples-logic.t
 t/examples-primes.t
 t/examples-sendprepare
