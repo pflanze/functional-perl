@@ -66,11 +66,11 @@ FP::Failure - failure values
                                            split /\n/)
                               },
                               $v->message(1)),
-             join("\n", "failure: 666 at lib/FP/Failure.pm line ...",
+             join("\n", "failure: 666 at ".NativePath("lib/FP/Failure.pm")." line ...",
                         "    (eval) at lib/FP/Repl/WithRepl.pm line ...",
                         "  because:",
                         "  failure: 'not good'");
-
+    sub NativePath { my ($s)=@_; $s=~ s|/|\\|sg if $^O eq "MSWin32"; $s }
 
     # Wrapper that just returns 0 unless configured to create a failure
     # object:
