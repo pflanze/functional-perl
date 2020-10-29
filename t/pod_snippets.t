@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -102,6 +102,8 @@ my $modules= modulenamelist;
 sub save {
     my ($module, $code)= @_;
     my $file= "tps-$module.pl";
+    # Older Strawberry Perl versions don't like "::" in paths, so:
+    $file=~ s/:/_/sg;
     unlink $file;
     # XX possibly remove line directives from $code.
     open my $out, ">", $file or die "$file: $!";
