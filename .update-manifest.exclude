@@ -2,3 +2,4 @@
 .update-manifest.exclude
 website/sync
 meta/release
+.github/workflows/ci.yml
