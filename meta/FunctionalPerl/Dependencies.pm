@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -45,6 +45,7 @@ our %dependencies=
    'FP::Docstring'=> ['B::Deparse'],
    'FP::BigInt'=> ['Math::BigInt'],
    'FP::autobox'=> ['autobox'],
+   'FP::Failure'=> ['Path::Tiny'],
    'FP::Text::CSV'=> ['Text::CSV'],
    'FP::url_'=> ['URI'],
    'Chj::CPAN::ModulePODUrl'=> ['LWP::UserAgent'],

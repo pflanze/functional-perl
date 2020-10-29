@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -58,6 +58,7 @@ FP::Failure - failure values
              "failure: 666\n  because:\n  failure: 'not good'\n";
 
     # request recorded backtrace to be shown
+    use Path::Tiny;
     is_equal regex_substitute(sub { # cleaning up bt
                                   s/line \d+/line .../g;
                                   my $btlines=0;
@@ -66,11 +67,11 @@ FP::Failure - failure values
                                            split /\n/)
                               },
                               $v->message(1)),
-             join("\n", "failure: 666 at ".NativePath("lib/FP/Failure.pm")." line ...",
+             join("\n", "failure: 666 at ".path("lib/FP/Failure.pm")->canonpath
+                        ." line ...",
                         "    (eval) at lib/FP/Repl/WithRepl.pm line ...",
                         "  because:",
                         "  failure: 'not good'");
-    sub NativePath { my ($s)=@_; $s=~ s|/|\\|sg if $^O eq "MSWin32"; $s }
 
     # Wrapper that just returns 0 unless configured to create a failure
     # object:
