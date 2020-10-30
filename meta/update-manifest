@@ -5,7 +5,9 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use lib "./lib";
+my ($mydir, $myname);
+BEGIN { ($mydir, $myname) = $0=~ /(.*?)([^\/]+)\z/s or die "?"; }
+use lib "$mydir/../lib";
 
 use Chj::IO::Command;
 use Chj::xopen qw(xopen_read xopen_write);
@@ -15,8 +17,6 @@ use FP::Repl::AutoTrap;
 
 our $excludepath= ".update-manifest.exclude";
 
-$0=~ /(.*?)([^\/]+)\z/s or die "?";
-my ($mydir, $myname)=($1,$2);
 sub usage {
     print STDERR map{"$_\n"} @_ if @_;
     print "$myname
