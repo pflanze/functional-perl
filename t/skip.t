@@ -11,7 +11,7 @@ require "./meta/find-perl.pl";
 use Test::More;
 
 # test non-seekable input
-is readin("echo -n hallo | perl examples/skip 1 1 |"), "all";
+is readin("echo hallo | perl examples/skip 1 2 |"), "all";
 
 sub t {
     my ($bufsiz)=@_;
