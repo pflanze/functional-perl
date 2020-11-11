@@ -25,14 +25,14 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Div;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(inc dec square average
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(inc dec square average
               identity
               min max minmax
               Chomp
               );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
@@ -41,52 +41,52 @@ use Chj::TEST;
 # `identity_scalar`? :
 
 sub identity ($) {
-    @_==1 or die "wrong number of arguments";
+    @_ == 1 or die "wrong number of arguments";
     $_[0]
 }
 
 sub inc ($) {
-    @_==1 or die "wrong number of arguments";
+    @_ == 1 or die "wrong number of arguments";
     $_[0] + 1
 }
 
 sub dec ($) {
-    @_==1 or die "wrong number of arguments";
+    @_ == 1 or die "wrong number of arguments";
     $_[0] - 1
 }
 
 sub square ($) {
-    @_==1 or die "wrong number of arguments";
+    @_ == 1 or die "wrong number of arguments";
     $_[0] * $_[0]
 }
 
 sub average($$) {
-    @_==2 or die "wrong number of arguments";
+    @_ == 2 or die "wrong number of arguments";
     ($_[0] + $_[1]) / 2
 }
 
 sub min {
-    my $x=shift;
+    my $x = shift;
     for (@_) {
-        $x= $_ if $_ < $x
+        $x = $_ if $_ < $x
     }
     $x
 }
 
 sub max {
-    my $x=shift;
+    my $x = shift;
     for (@_) {
-        $x= $_ if $_ > $x
+        $x = $_ if $_ > $x
     }
     $x
 }
 
 sub minmax {
-    my $min=shift;
-    my $max=$min;
+    my $min = shift;
+    my $max = $min;
     for (@_) {
-        $min= $_ if $_ < $min;
-        $max= $_ if $_ > $max;
+        $min = $_ if $_ < $min;
+        $max = $_ if $_ > $max;
     }
     ($min,$max)
 }
@@ -96,8 +96,8 @@ sub minmax {
 # is there any better idea than ucfirst to distinguish from the
 # builtin? `fchomp` ?
 sub Chomp ($) {
-    @_==1 or die "wrong number of arguments";
-    my ($str)=@_;
+    @_ == 1 or die "wrong number of arguments";
+    my ($str) = @_;
     chomp $str;
     $str
 }

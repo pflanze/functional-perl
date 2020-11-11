@@ -38,7 +38,7 @@ Also see [[TODO]].
 * Provide a 'recursive let' form that includes weakening or
   application of the fix point combinator, like:
   
-        my rec ($foo,$bar) = 
+        my rec ($foo,$bar) =
             sub { $bar->() },
             sub { $foo->() };
 

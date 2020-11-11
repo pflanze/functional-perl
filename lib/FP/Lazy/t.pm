@@ -28,10 +28,10 @@ use FP::Lazy;
 use Chj::TEST;
 
 TEST {
-    our $foo= "";
+    our $foo = "";
     sub moo {
-        my ($bar)=@_;
-        local $foo= "Hello";
+        my ($bar) = @_;
+        local $foo = "Hello";
         lazy { "$foo $bar" }
     }
     moo ("you")->force

@@ -13,7 +13,7 @@ BEGIN {
 
     # Let's try 5.16.4 to see if there are versions below 5.17.0 that
     # work
-    $MIN_PERL_VERSION= 5.016004;
+    $MIN_PERL_VERSION = 5.016004;
     # 5.17.0 is older than 5.16.1!
     eval "use $MIN_PERL_VERSION; 1" || die $@;
 }
@@ -24,80 +24,80 @@ my $on_unix_like = $^O =~ /dragonfly|bsd|linux|darwin/i;
 WriteMakefile (
     NAME              => 'FunctionalPerl',
     VERSION_FROM      => 'lib/FunctionalPerl.pm',
-    MIN_PERL_VERSION => $MIN_PERL_VERSION,
-    LICENSE=> "perl_5", # including HTTP::Daemon which has the same
-    EXE_FILES=> [qw(bin/perlrepl bin/fperl)],
+    MIN_PERL_VERSION  => $MIN_PERL_VERSION,
+    LICENSE => "perl_5", # including HTTP::Daemon which has the same
+    EXE_FILES => [qw(bin/perlrepl bin/fperl)],
     PREREQ_PM         => {
-        "Getopt::Long"=> 0,
-        "base"=> 0,
-        "NEXT"=> 0,
-        "Symbol"=> 0,
-        "utf8"=> 0,
-        "overload"=> 0,
-        "Digest"=> 0,
-        "warnings"=> 0,
-        "Test::More"=> "0.96", # for ~proper subtest support
-        "Scalar::Util"=> 0,
-        "Import::Into"=> 0,
-        "Math::BigInt"=> 0,
-        "File::Path"=> 0,
+        "Getopt::Long" => 0,
+        "base" => 0,
+        "NEXT" => 0,
+        "Symbol" => 0,
+        "utf8" => 0,
+        "overload" => 0,
+        "Digest" => 0,
+        "warnings" => 0,
+        "Test::More" => "0.96", # for ~proper subtest support
+        "Scalar::Util" => 0,
+        "Import::Into" => 0,
+        "Math::BigInt" => 0,
+        "File::Path" => 0,
 
         # could be optional (tests should skip if not available):
-        "autobox"=> 0,
+        "autobox" => 0,
     },
     TEST_REQUIRES => {
-        "Test::Requires"=> 0,
+        "Test::Requires" => 0,
         # Now required; otherwise would have to make it optional in
         # FP::Show, but then tests looking at show output would
         # fail:
-        "Capture::Tiny"=> 0,
+        "Capture::Tiny" => 0,
         # Now required, too, to ensure test outputs match:
-        "Sub::Util"=> 0,
+        "Sub::Util" => 0,
 
         # for *some* tests:
         ($on_unix_like ? (
-             "BSD::Resource"=> 0,
+             "BSD::Resource" => 0,
          ) : ()),
-        "DBI"=> 0,
-        "DBD::CSV"=> 0,
-        "Text::CSV"=> 0,
-        "Test::Pod::Snippets"=> 0,
-        "URI"=> 0,
+        "DBI" => 0,
+        "DBD::CSV" => 0,
+        "Text::CSV" => 0,
+        "Test::Pod::Snippets" => 0,
+        "URI" => 0,
     },
     META_MERGE => {
-        'meta-spec'=> {
+        'meta-spec' => {
             version => '2',
         },
-        resources=> {
-            repository=> {
-                type=> 'git',
-                url=> "https://github.com/pflanze/functional-perl.git",
-                web=> "https://github.com/pflanze/functional-perl",
+        resources => {
+            repository => {
+                type => 'git',
+                url => "https://github.com/pflanze/functional-perl.git",
+                web => "https://github.com/pflanze/functional-perl",
             },
         },
-        prereqs=> {
-            runtime=> {
-                recommends=> {
-                    "Term::ReadLine::Gnu"=> 0,
-                    "PadWalker"=> 0,
-                    "B::Deparse"=> 0,
-                    "Eval::WithLexicals"=> 0,
-                    #"Sub::Call::Tail"=> 0, currently broken
-                    "Method::Signatures"=> 0,
-                    "Function::Parameters"=> 0,
+        prereqs => {
+            runtime => {
+                recommends => {
+                    "Term::ReadLine::Gnu" => 0,
+                    "PadWalker" => 0,
+                    "B::Deparse" => 0,
+                    "Eval::WithLexicals" => 0,
+                    #"Sub::Call::Tail" => 0, currently broken
+                    "Method::Signatures" => 0,
+                    "Function::Parameters" => 0,
 
                         # for running htmlgen
-                    "Encode"=> 0,
-                    "LWP::UserAgent"=> 0,
-                    "Clone"=> 0,
-                    "Text::Markdown"=> 0,
+                    "Encode" => 0,
+                    "LWP::UserAgent" => 0,
+                    "Clone" => 0,
+                    "Text::Markdown" => 0,
                 },
             },
-            test=> {
+            test => {
             },
         },
-        no_index=> {
-            directory=> [
+        no_index => {
+            directory => [
                 # "t" and "inc" are added anyway.
                 "examples", # ?
                 "meta",
@@ -110,5 +110,5 @@ WriteMakefile (
     },
     ($] >= 5.005 ?
       (ABSTRACT  => 'FunctionalPerl - functional programming in Perl',
-       AUTHOR         => 'Christian Jaeger <copying@christianjaeger.ch>') : ()),
+       AUTHOR    => 'Christian Jaeger <copying@christianjaeger.ch>') : ()),
 );

@@ -16,13 +16,13 @@ FP::MutableArray
     use FP::MutableArray;
     use FP::Div 'inc';
 
-    my $a= mutablearray(1,4,5)->map(*inc);
+    my $a = mutablearray(1,4,5)->map(*inc);
     is $a->sum, 13;
     $a->[0]++;
     is $a->sum, 14;
 
     # They can be turned into immutable ones:
-    my $b= $a->pure;
+    my $b = $a->pure;
     like( (eval { $b->[0]++; 1 } || $@),
           qr/^Modification of a read-only value attempted/);
 
@@ -56,10 +56,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::MutableArray;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(is_mutablearray mutablearray array_to_mutablearray);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(is_mutablearray mutablearray array_to_mutablearray);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -84,26 +84,26 @@ package FP::_::MutableArray {
     use Chj::NamespaceCleanAbove;
 
     sub new_from_array {
-        @_==2 or die "wrong number of arguments";
-        my ($class, $a)=@_;
+        @_ == 2 or die "wrong number of arguments";
+        my ($class, $a) = @_;
         bless $a, $class
     }
 
     sub mutablearray {
-        @_==1 or die "wrong number of arguments";
-        my $s=shift;
+        @_ == 1 or die "wrong number of arguments";
+        my $s = shift;
         $s
     }
 
     sub purearray {
-        @_==1 or die "wrong number of arguments";
-        my $s=shift;
+        @_ == 1 or die "wrong number of arguments";
+        my $s = shift;
         FP::_::PureArray->new_from_array($s)
     }
 
     sub null {
-        my $proto=shift;
-        my $class= ref($proto) || $proto;
+        my $proto = shift;
+        my $class = ref($proto) || $proto;
         # can't cache this since mutation is allowed!:
         $class->new_from_array([]) 
     }
@@ -113,16 +113,16 @@ package FP::_::MutableArray {
     }
  
     sub pure {
-        @_==1 or die "wrong number of arguments";
+        @_ == 1 or die "wrong number of arguments";
         # same as `array_to_purearray`
         require FP::PureArray; # cost?
         FP::_::PureArray->new_from_array($_[0])
     }
 
-    our $unsafe_mutable_warned= 0;
+    our $unsafe_mutable_warned = 0;
     sub unsafe_mutable {
-        @_==1 or die "wrong number of arguments";
-        my $a=shift;
+        @_ == 1 or die "wrong number of arguments";
+        my $a = shift;
         carp "is already mutable" unless $unsafe_mutable_warned++;
         $a
     }

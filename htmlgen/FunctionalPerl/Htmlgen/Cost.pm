@@ -25,10 +25,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FunctionalPerl::Htmlgen::Cost;
-#@ISA="Exporter"; require Exporter;
-#@EXPORT=qw();
-#@EXPORT_OK=qw();
-#%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+#@ISA = "Exporter"; require Exporter;
+#@EXPORT = qw();
+#@EXPORT_OK = qw();
+#%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -60,13 +60,13 @@ package FunctionalPerl::Htmlgen::Cost::_::Totalcost {
         @{$$self{costs}} or die "no costs given";#
         my $index;
         for (@{$$self{costs}}) {
-            if (defined (my $name= $_->name)) {
-                $$index{$name}= $_
+            if (defined (my $name = $_->name)) {
+                $$index{$name} = $_
             }
         }
-        my $purchaseable= [grep { $_->is_purchaseable } @{$$self{costs}}];
+        my $purchaseable = [grep { $_->is_purchaseable } @{$$self{costs}}];
         @$purchaseable or die "no purchaseable costs";#
-        local our $all= array_sort
+        local our $all = array_sort
           ( $purchaseable,
             on the_method ("cost",$index), \&number_cmp );
         (@$all == 1

@@ -15,9 +15,9 @@ Chj::TEST
 
     use Chj::TEST;
     # or
-    use Chj::TEST use=> 'Method::Signatures'
-        #, use=> ['Foo::Bar', qw(bar baz)],
-        #, require=> 'CGI'
+    use Chj::TEST use => 'Method::Signatures'
+        #, use => ['Foo::Bar', qw(bar baz)],
+        #, require => 'CGI'
         ;
     # ^ this will use or require the indicated modules, and if RUN_TESTS
     # is set and they fail, will gracefully fail with a SKIP testing message
@@ -37,7 +37,7 @@ Chj::TEST
 
     use Chj::TEST ':all';
 
-    my $result= run_tests(__PACKAGE__);
+    my $result = run_tests(__PACKAGE__);
     is $result->fail, 0; # 0 failures
     is $result->success > 0, 1;
 
@@ -45,7 +45,7 @@ Chj::TEST
     #  or
     #run_tests __PACKAGE__, "Another::Package";
     #  or
-    #run_tests_ packages=> __PACKAGE__, numbers=>[2..4];
+    #run_tests_ packages => __PACKAGE__, numbers => [2..4];
     #   aliases package, number, no also accepted
 
     #  For conditional running the tests as part of a global test suite:
@@ -72,10 +72,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::TEST;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
-@EXPORT_OK=qw(run_tests run_tests_ no_tests);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
+@EXPORT_OK = qw(run_tests run_tests_ no_tests);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -84,9 +84,9 @@ use Chj::singlequote;
 
 # get the style
 sub run_tests_style { # "old" or "tap"
-    if (my $rt= $ENV{RUN_TESTS}) {
-        ($rt=~ /(old|pod_snippets)/i ? "old" :
-         #$rt=~ /(new|tap)/i ? "tap" :
+    if (my $rt = $ENV{RUN_TESTS}) {
+        ($rt =~ /(old|pod_snippets)/i ? "old" :
+         #$rt =~ /(new|tap)/i ? "tap" :
          "tap")
     } else {
         # Use from the repl can't run "tap" style as that one will
@@ -99,8 +99,8 @@ our $run_tests_style; # used internally only, see sub run_tests_style
                       # ($ENV{RUN_TESTS}) how to set it. OK?
 
 sub style_switch {
-    my $choices= shift;
-    my $handler= $choices->{$run_tests_style}
+    my $choices = shift;
+    my $handler = $choices->{$run_tests_style}
       or die "missing choice for style '$run_tests_style'";
     goto $handler
 }
@@ -111,16 +111,16 @@ sub style_switch {
 # then delegate to Exporter
 
 sub import {
-    my $class=shift;
-    my ($package, $filename, $line)= caller;
+    my $class = shift;
+    my ($package, $filename, $line) = caller;
     my @args;
-    for (my $i=0; $i < @_; $i++) {
-        my $v= $_[$i];
+    for (my $i = 0; $i < @_; $i++) {
+        my $v = $_[$i];
         if ($v eq "use" or $v eq "require") {
-            my $val= $_[$i+1];
+            my $val = $_[$i+1];
             defined $val
               or croak "undef given as 'require' parameter";
-            my ($module,@args)= do {
+            my ($module,@args) = do {
                 if (ref($val) eq "ARRAY") {
                     @$val
                 } elsif (length $val) {
@@ -129,21 +129,21 @@ sub import {
                     croak "value given as 'require' parameter must be a string or array";
                 }
             };
-            my $smallcode=
+            my $smallcode =
               ("$v $module "
                .join(",", map {singlequote $_} @args));
-            $filename=~ /[\r\n]/
+            $filename =~ /[\r\n]/
               and die "possible security issue"; # XXX: how to do it fully right?
-            my $code= "#line $line $filename\npackage $package; $smallcode; 1";
+            my $code = "#line $line $filename\npackage $package; $smallcode; 1";
             if (eval $code) {
                 # ok
             } else {
-                if (my $rt= $ENV{RUN_TESTS}) {
-                    if ($rt=~ /pod_snippets/i) {
+                if (my $rt = $ENV{RUN_TESTS}) {
+                    if ($rt =~ /pod_snippets/i) {
                         die "TEST use<$module> failed: $smallcode";
                     } else {
                         require Test::More;
-                        Test::More::plan (skip_all=> "could not $smallcode");
+                        Test::More::plan (skip_all => "could not $smallcode");
                         exit 1; # necessary?
                     }
                 } else {
@@ -155,26 +155,26 @@ sub import {
             push @args, $v
         }
     }
-    my $sub= $class->can("SUPER::import")
+    my $sub = $class->can("SUPER::import")
       or die "$class does not have an 'import' procedure";
-    @_=($class, @args); goto &$sub;
+    @_ = ($class, @args); goto &$sub;
 }
 
 
 
 use Chj::xIO 'capture_stdout_';
 
-our $tests_by_package={};
-our $num_by_package={};
+our $tests_by_package = {};
+our $num_by_package = {};
 
-our $dropped_tests=0;
+our $dropped_tests = 0;
 
 sub no_tests () {
     exists $ENV{TEST} and !$ENV{TEST}
 }
 
 sub _TEST {
-    my ($proc,$res)=@_;
+    my ($proc,$res) = @_;
     if (no_tests) {
         $dropped_tests++;
     } else {
@@ -190,12 +190,12 @@ sub TEST (&$) {
 }
 
 sub TEST_STDOUT (&$) {
-    my ($proc,$res)=@_;
+    my ($proc,$res) = @_;
     _TEST(sub{capture_stdout_($proc)}, $res);
 }
 
 sub TEST_EXCEPTION (&$) {
-    my ($proc,$res)=@_;
+    my ($proc,$res) = @_;
     _TEST(sub{
               if (eval {
                   &$proc();
@@ -203,8 +203,8 @@ sub TEST_EXCEPTION (&$) {
               }) {
                   undef
               } else {
-                  my $msg= "$@";
-                  $msg=~ s| at .*? line \d*.*||s;
+                  my $msg = "$@";
+                  $msg =~ s| at .*? line \d*.*||s;
                   $msg
               }
           },
@@ -212,13 +212,13 @@ sub TEST_EXCEPTION (&$) {
 }
 
 sub GIVES (&) {
-    my ($thunk)=@_;
+    my ($thunk) = @_;
     bless $thunk, "Chj::TEST::GIVES";
 }
 
 
 package Chj::TEST::Test::Builder {
-    our @ISA= qw(Test::Builder);
+    our @ISA = qw(Test::Builder);
     # sub level {
     #      my( $self, $level ) = @_;
     #      # original just sets $Level in Test::Builder to $level if
@@ -234,7 +234,7 @@ package Chj::TEST::Test::Builder {
         if ($fake_caller) {
             wantarray ? @$fake_caller : $$fake_caller[0]
         } else {
-            my $m= $self->can("SUPER::caller")
+            my $m = $self->can("SUPER::caller")
                 or die "bug";
             goto $m
         }
@@ -246,62 +246,62 @@ use FP::Equal qw(relaxedequal);
 use FP::Show;
 
 sub eval_test ($$) {
-    my ($t,$stat)=@_;
-    my ($proc,$res, $num, $package, $filename, $line)=@$t;
+    my ($t,$stat) = @_;
+    my ($proc,$res, $num, $package, $filename, $line) = @$t;
     style_switch +{
-        old=> sub {
+        old => sub {
             print "running test $num..";
         },
-        tap=> sub {
+        tap => sub {
             # say nothing, the ok at the end will say it; XXX: capture
             # output! then present that after the "not ok" output.
         },
     };
 
     my ($got, $maybe_e);
-    my $action= sub {
-        $got= &$proc;
+    my $action = sub {
+        $got = &$proc;
         if (ref ($res) eq 'Chj::TEST::GIVES') {
-            $res= &$res;
+            $res = &$res;
         }
     };
     style_switch +{
-        old=> $action,
-        tap=> sub {
+        old => $action,
+        tap => sub {
             eval {
                 &$action;
                 1
             } || do {
-                $maybe_e= [$@]; # box it to ensure not undef
+                $maybe_e = [$@]; # box it to ensure not undef
             }
         },
     };
 
-    my $location= "at $filename line $line";
-    my $nicelocation= "line $line";
+    my $location = "at $filename line $line";
+    my $nicelocation = "line $line";
     if (! $maybe_e and relaxedequal($got, $res)) {
         style_switch +{
-            old=> sub {
+            old => sub {
                 print "ok\n";
             },
-            tap=> sub {
+            tap => sub {
                 pass($nicelocation);
             },
         };
         $$stat{success}++
     } else {
-        my $gotstr= show $got;
-        my $resstr= show $res;
+        my $gotstr = show $got;
+        my $resstr = show $res;
 
         style_switch +{
-            old=> sub {
+            old => sub {
                 die "bug, shouldn't happen in this mode"
                     if defined $maybe_e;
                 print "FAIL $location:\n";
                 print "       got: $gotstr\n";
                 print "  expected: $resstr\n";
             },
-            tap=> sub {
+            tap => sub {
                 # fail($location);
                 # want to avoid it reporting this file as the location, thus use this:
                 my $tb = Test::More->builder;
@@ -332,41 +332,41 @@ sub eval_test ($$) {
 }
 
 sub run_tests_for_package {
-    my ($package,$stat,$maybe_testnumbers)=@_;
+    my ($package,$stat,$maybe_testnumbers) = @_;
 
-    my $action= sub {
-        if (my $tests= $$tests_by_package{$package}) {
+    my $action = sub {
+        if (my $tests = $$tests_by_package{$package}) {
             if (defined $maybe_testnumbers) {
                 style_switch +{
-                    old=> sub {
+                    old => sub {
                         print "=== running selected tests in package '$package'\n";
                     },
-                    tap=> sub {
+                    tap => sub {
                         # XX better?
                         warn "=== running selected tests in package '$package'\n";
                     },
                 };
                 for my $number (@$maybe_testnumbers) {
-                    if ($number=~ /^\d+\z/ and $number > 0
-                        and (my $test= $$tests[$number-1])) {
+                    if ($number =~ /^\d+\z/ and $number > 0
+                        and (my $test = $$tests[$number-1])) {
                         eval_test $test, $stat
                     } else {
                         warn "ignoring invalid test number '$number'";
                     }
                 }
             } else {
-                my $action= sub {
+                my $action = sub {
                     for my $test (@$tests) {
                         eval_test $test, $stat
                     }
                 };
                 style_switch +{
-                    old=> sub {
+                    old => sub {
                         print "=== running tests in package '$package'\n";
                         &$action;
                     },
-                    tap=> sub {
-                        plan(tests=> scalar @$tests);
+                    tap => sub {
+                        plan(tests => scalar @$tests);
                         &$action;
                         done_testing();
                     }
@@ -374,14 +374,14 @@ sub run_tests_for_package {
             }
         } else {
             style_switch +{
-                old=> sub {
+                old => sub {
                     print "=== no tests for package '$package'\n";
                 },
-                tap=> sub {
+                tap => sub {
                     # Can't do 0 tests, planning for it throws an
                     # exception right away, and not planning will fail
                     # in the upper level instead. Thus, fake test result:
-                    plan(tests=> 1);
+                    plan(tests => 1);
                     pass("no tests for package '$package'");
                     done_testing();
                 },
@@ -390,8 +390,8 @@ sub run_tests_for_package {
     };
 
     style_switch +{
-        old=> $action,
-        tap=> sub {
+        old => $action,
+        tap => sub {
             subtest("Package $package" => $action);
         },
     };
@@ -410,20 +410,20 @@ sub unify_values {
 }
 
 package Chj::TEST::Result {
-    my $accessor= sub {
-        my ($field)= @_;
-        sub { my $s=shift; $$s{$field} }
+    my $accessor = sub {
+        my ($field) = @_;
+        sub { my $s = shift; $$s{$field} }
     };
-    *fail= $accessor->("fail");
-    *success= $accessor->("success");
+    *fail = $accessor->("fail");
+    *success = $accessor->("success");
 }
 
 sub run_tests_ {
     @_ % 2 and die "need even number of arguments";
-    my $args= +{@_};
-    my $maybe_packages=
+    my $args = +{@_};
+    my $maybe_packages =
       unify_values delete $$args{packages}, delete $$args{package};
-    my $maybe_testnumbers=
+    my $maybe_testnumbers =
       unify_values delete $$args{numbers}, delete $$args{number},
         delete $$args{no};
     for (sort keys %$args) { warn "run_tests_: unknown argument '$_'" }
@@ -433,10 +433,10 @@ sub run_tests_ {
     local $|= 1;
 
     style_switch +{
-        old=> sub {
+        old => sub {
             print "==== run_tests in $run_tests_style style ====\n";
         },
-        tap=> sub {
+        tap => sub {
             # if run_tests is called from perhaps_run_tests this was
             # already done but can't count on that:
             require Test::More;
@@ -444,28 +444,28 @@ sub run_tests_ {
         },
     };
 
-    my $stat= bless {success=>0, fail=>0}, "Chj::TEST::Result";
+    my $stat = bless {success => 0, fail => 0}, "Chj::TEST::Result";
 
-    my $packages= do {
+    my $packages = do {
         if (defined $maybe_packages and @$maybe_packages) {
             $maybe_packages;
         } else {
             [ sort keys %$tests_by_package ]
         }
     };
-    my $action= sub {
+    my $action = sub {
         run_tests_for_package $_,$stat,$maybe_testnumbers
             for @$packages;
     };
 
     style_switch +{
-        old=> sub {
+        old => sub {
             &$action;
             print "===\n";
-            print "=> $$stat{success} success(es), $$stat{fail} failure(s)\n";
+            print " => $$stat{success} success(es), $$stat{fail} failure(s)\n";
         },
-        tap=> sub {
-            plan(tests=> scalar @$packages);
+        tap => sub {
+            plan(tests => scalar @$packages);
             &$action;
             done_testing();
         },
@@ -476,14 +476,14 @@ sub run_tests_ {
 
 
 sub run_tests {
-    my $packages= [@_];
-    run_tests_ packages=> $packages;
+    my $packages = [@_];
+    run_tests_ packages => $packages;
 }
 
 # run tests for test suite:
 
 sub perhaps_run_tests {
-    my $args= [@_];
+    my $args = [@_];
     if ($ENV{RUN_TESTS}) {
         # run TEST forms (called as part of test suite)
 
@@ -497,7 +497,7 @@ sub perhaps_run_tests {
         import Test::More;
 
         style_switch +{
-            old=> sub {
+            old => sub {
                 # Outer single TAP wrapper around the running of the
                 # whole test suite. # XX could still report individual
                 # failures by collecting them up, perhaps even simply
@@ -507,7 +507,7 @@ sub perhaps_run_tests {
                     "run_tests" );
                 done_testing();
             },
-            tap=> sub {
+            tap => sub {
                 # Run each test as a TAP test.
                 # Handle exceptions at each individual test, OK?
                 run_tests(@$args);

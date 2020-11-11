@@ -35,9 +35,9 @@ use Chj::TEST;
 # compare arguments both straight and swapped; if the results don't
 # match, return an array with both results
 sub tequals {
-    @_==2 or die "wrong num arg";
-    my $x= equaln (@_);
-    my $y= equaln (@_);
+    @_ == 2 or die "wrong num arg";
+    my $x = equaln (@_);
+    my $y = equaln (@_);
     if (defined $x) {
         if (defined $y) {
             if ($x eq $y) {
@@ -70,19 +70,19 @@ TEST{equal 0, 1} '';
 TEST{equal [], 0} undef;
 TEST{equal 0, []} undef;
 TEST{equal [], []} 1;
-TEST{my $v=[]; equal $v, $v} 1;
+TEST{my $v = []; equal $v, $v} 1;
 TEST{equal [], {}} undef;
 TEST{equal {}, {}} 1;
-TEST{equal {}, {a=>1}} '';
-TEST{equal {a=>2}, {a=>1}} '';
-TEST{equal {a=>1}, {b=>1}} '';
-TEST{equal {a=>1}, {a=>1}} 1;
-TEST{equal {a=>1,b=>2}, {a=>1}} '';
-TEST{equal {a=>1,b=>2}, {a=>1,b=>2}} 1;
-TEST{equal {a=>1,b=>2}, {a=>1,B=>2}} '';
-TEST{equal {a=>1,b=>2}, {a=>1,b=>3}} '';
-TEST{equal {a=>[1,3]}, {a=>[1,2+1]}} 1;
-TEST{equal {a=>[1,3]}, {a=>[1,2]}} '';
+TEST{equal {}, {a => 1}} '';
+TEST{equal {a => 2}, {a => 1}} '';
+TEST{equal {a => 1}, {b => 1}} '';
+TEST{equal {a => 1}, {a => 1}} 1;
+TEST{equal {a => 1,b => 2}, {a => 1}} '';
+TEST{equal {a => 1,b => 2}, {a => 1,b => 2}} 1;
+TEST{equal {a => 1,b => 2}, {a => 1,B => 2}} '';
+TEST{equal {a => 1,b => 2}, {a => 1,b => 3}} '';
+TEST{equal {a => [1,3]}, {a => [1,2+1]}} 1;
+TEST{equal {a => [1,3]}, {a => [1,2]}} '';
 
 TEST{equal "a", "b"} '';
 TEST{equal "a", "a"} 1;
@@ -97,14 +97,14 @@ TEST{tequals "2.0", 2.0} '';
 # version exactly changed it (if it's a precise version at all) try to
 # determine the right way automatically:
 sub positive_inf {
-    my $inf= "inf"+0;
-    $inf=~ /^\+?inf$/i
+    my $inf = "inf"+0;
+    $inf =~ /^\+?inf$/i
         or warn "positive_inf: got '$inf'";
     $inf
 }
 sub negative_inf {
-    my $inf= -positive_inf;
-    $inf=~ /^-inf$/i
+    my $inf = -positive_inf;
+    $inf =~ /^-inf$/i
         or warn "negative_inf: got '$inf'";
     $inf
 }
@@ -133,11 +133,11 @@ TEST{tequals "2", "2.0"} '';
 
 TEST{tequals \("foo"), \("f"."oo")} 1;
 TEST{tequals \("foo"), \("bar")} '';
-TEST{my $x= undef;
-     my $y= undef;
+TEST{my $x = undef;
+     my $y = undef;
      tequals \$x, \$y} 1;
-TEST{my $x= "foo";
-     my $y= undef;
+TEST{my $x = "foo";
+     my $y = undef;
      tequals \$x, \$y} undef;
 
 # globs
@@ -160,8 +160,8 @@ TEST_EXCEPTION {equal *STDIN{IO}, *STDOUT{IO}}
 use utf8;
 {
     my ($s1,$s2);
-    TEST{$s1= "Smørrebrød";
-         $s2= "Smørrebrød";
+    TEST{$s1 = "Smørrebrød";
+         $s2 = "Smørrebrød";
          equal $s1, $s2} 1;
     TEST{utf8::encode($s2);
          equal $s1, $s2} '';
@@ -190,16 +190,16 @@ TEST { tequals lazy { [2+1] }, 1+2 } undef;
 # does it force identical promises?
 
 my ($a,$b,$sideeffect);
-TEST { $sideeffect= 0;
-       $a= lazy { $sideeffect++; 33*3 };
-       $b= $a;
+TEST { $sideeffect = 0;
+       $a = lazy { $sideeffect++; 33*3 };
+       $b = $a;
        tequals $a, $b
    } 1;
 TEST { $sideeffect } 0;
 
-TEST { $sideeffect= 0;
-       $a= lazy { $sideeffect++; 33*3 };
-       $b= lazy { $sideeffect++; 33*3 };
+TEST { $sideeffect = 0;
+       $a = lazy { $sideeffect++; 33*3 };
+       $b = lazy { $sideeffect++; 33*3 };
        tequals $a, $b
    } 1;
 TEST { $sideeffect } 2;

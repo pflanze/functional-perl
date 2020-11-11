@@ -9,9 +9,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -24,7 +24,7 @@ use Chj::Backtrace;
     package Foo;
     use FP::Predicates;
 
-    BEGIN { *is_age= both *is_natural0, sub { $_[0] < 130 } }
+    BEGIN { *is_age = both *is_natural0, sub { $_[0] < 130 } }
 
     use FP::Struct [[*is_string, "name"],
                     [*is_age, "age"]];
@@ -41,18 +41,18 @@ use Chj::Backtrace;
 }
 
 sub test {
-    my ($class)=@_;
+    my ($class) = @_;
 
-    my $f= $class->new ("Heinz", 105);
+    my $f = $class->new ("Heinz", 105);
     TEST { $f->age }
       105;
     TEST {
         # check namespace cleaning
         $f->can("is_age")
     } undef;
-    TEST_EXCEPTION { $f= $class->new ("Maria", 1300) }
+    TEST_EXCEPTION { $f = $class->new ("Maria", 1300) }
       'unacceptable value for field \'age\': 1300';
-    TEST_EXCEPTION { $f= $class->new ("Maria", 104.5) }
+    TEST_EXCEPTION { $f = $class->new ("Maria", 104.5) }
       'unacceptable value for field \'age\': \'104.5\'';
 }
 
@@ -67,10 +67,10 @@ use FP::PureArray;
 TEST { is_pure 11 }
   1;
 
-TEST { my $x= 11; $x++; is_pure $x }
+TEST { my $x = 11; $x++; is_pure $x }
   1;
 
-TEST { my $x= 11; $x++; is_pure_object $x }
+TEST { my $x = 11; $x++; is_pure_object $x }
   0;
 
 TEST { is_pure cons 1,2 }
@@ -94,7 +94,7 @@ TEST { is_pure lazy { cons 1,2 } }
 
 use FP::OrderedCollection; # based on FP::Struct
 
-my $a=[1,2];
+my $a = [1,2];
 
 TEST { is_pure( FP::OrderedCollection->unsafe_new_from_array($a) ) }
   1; # this assumes that the array passed in is not mutated by the

@@ -49,14 +49,14 @@ package FunctionalPerl::Htmlgen::Linking::Anchors {
 
     use PXML::XHTML ":all";
 
-    use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
+    use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
     method match_element_names () { [qw(h1 h2 h3 h4)] }
 
     method map_element ($e, $uplist) {
-        my $text= $e->text;
-        $text=~ s/ /_/sg;
-        A({name=> $text}, $e)
+        my $text = $e->text;
+        $text =~ s/ /_/sg;
+        A({name => $text}, $e)
     }
     _END_
 }
@@ -70,11 +70,11 @@ package FunctionalPerl::Htmlgen::Linking::code {
     use Chj::CPAN::ModulePODUrl 'perhaps_module_pod_url';
     use FP::Memoizing 'memoizing_to_dir';
     
-    our $podurl_cache= ".ModulePODUrl-cache"; mkdir $podurl_cache;
-    *xmaybe_module_pod_url=
+    our $podurl_cache = ".ModulePODUrl-cache"; mkdir $podurl_cache;
+    *xmaybe_module_pod_url =
         memoizing_to_dir $podurl_cache, sub {
             print STDERR "perhaps_module_pod_url(@_)..";
-            my @res= perhaps_module_pod_url @_;
+            my @res = perhaps_module_pod_url @_;
             print STDERR "@res\n";
             wantarray ? @res : $res[-1]
         };
@@ -82,11 +82,11 @@ package FunctionalPerl::Htmlgen::Linking::code {
     fun maybe_module_pod_url ($v) {
         my $res;
         eval {
-            $res= xmaybe_module_pod_url ($v);
+            $res = xmaybe_module_pod_url ($v);
             1
         } || do {
-            my $e= $@;
-            my $firstline= "$e"; $firstline=~ s/\n.*//s;
+            my $e = $@;
+            my $firstline = "$e"; $firstline =~ s/\n.*//s;
             $firstline =~ m/Can't connect/i ? do {
                 warn "could not look up module '$v': $firstline";
                 return undef;
@@ -99,8 +99,8 @@ package FunctionalPerl::Htmlgen::Linking::code {
 
     # things that *do* exist as modules on CPAN but which we do not want
     # to link since those are a different thing. ("CPAN-exception")
-    our $ignore_module_name=
-      +{map {$_=>1}
+    our $ignore_module_name =
+      +{map {$_ => 1}
         qw(map tail grep fold car cdr first rest head join primes test
            all list Square Point),
         # these are not currently finding anything on CPAN, but let's
@@ -109,22 +109,22 @@ package FunctionalPerl::Htmlgen::Linking::code {
        };
     # XX most of those would simply go to local scripts and functions if
     # these were checked for.
-    $$ignore_module_name{"X"x3}=1; # avoid tripping search for to-do tags
+    $$ignore_module_name{"X"x3} = 1; # avoid tripping search for to-do tags
 
     fun ignore_module_name ($name) {
         $$ignore_module_name{$name}
     }
 
 
-    use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
+    use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
     method match_element_names () { [ "code" ] }
 
     method map_element ($e, $uplist) {
 
         # possibly *map contents* of inline code or code sections
-        my $mapped_e= fun () {
-            if (defined (my $f= $self->map_code_body)) {
+        my $mapped_e = fun () {
+            if (defined (my $f = $self->map_code_body)) {
                 # rely on code never containing markup, at least *as long
                 # as there's no other mapper that introduced any*. XX how
                 # to make sure? (add a xtext method that dies when
@@ -143,13 +143,13 @@ package FunctionalPerl::Htmlgen::Linking::code {
             # already linked
             &$mapped_e()
         } else {
-            my $t= $e->text;
+            my $t = $e->text;
             if (is_class_name ($t)) {
-                my $module_subpath= $t;
-                $module_subpath=~ s/::/\//sg;
-                $module_subpath.=".pm";
+                my $module_subpath = $t;
+                $module_subpath =~ s/::/\//sg;
+                $module_subpath .= ".pm";
 
-                my $maybe_path=
+                my $maybe_path =
                   # XX this should be moved to configuration of course.
                   ($self->maybe_have_path0->("lib/$module_subpath")
                    //
@@ -157,12 +157,12 @@ package FunctionalPerl::Htmlgen::Linking::code {
                    //
                    $self->maybe_have_path0->("htmlgen/$module_subpath"));
 
-                my $wrap_with_link= sub {
-                    my ($url)=@_;
+                my $wrap_with_link = sub {
+                    my ($url) = @_;
                     A {href=> $url}, $e
                 };
 
-                my $maybe_cpan_url= ignore_module_name ($t) ? undef
+                my $maybe_cpan_url = ignore_module_name ($t) ? undef
                     : maybe_module_pod_url ($t);
 
                 if (defined $maybe_cpan_url) {
@@ -187,7 +187,7 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
     use FunctionalPerl::Htmlgen::PathUtil qw(path_add path_diff);
     use FP::Show;
 
-    use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
+    use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
     method match_element_names () { ["a"] }
 
@@ -206,16 +206,16 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
 
                 # * fix internal .md links
 
-                my $selfpath0= $self->path0;
+                my $selfpath0 = $self->path0;
 
-                my ($path,$uri,$is_md)= do { # XX $uri can be
+                my ($path,$uri,$is_md) = do { # XX $uri can be
                                              # unmodified there,
                                              # right?
-                    my $path= $uri->path;
+                    my $path = $uri->path;
 
                     # '//' feature (see 'Formatting' section in htmlgen/README.md)
                     if ($href =~ m|^//|s) {
-                        my ($op)= $uri->opaque() =~ m|^//([^/].*)$|s
+                        my ($op) = $uri->opaque() =~ m|^//([^/].*)$|s
                           or die "bug";
                         $uri->opaque(""); # mutation
 
@@ -224,9 +224,9 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                         # times. XX: `perhaps_filename_to_path0`
                         # should still be improved to never silently
                         # give wrong results!
-                        my $path0_in_samedir= path_add dirname($selfpath0), $op;
-                        my $path0_docs= path_add "docs", $op;
-                        if (my $p0=
+                        my $path0_in_samedir = path_add dirname($selfpath0), $op;
+                        my $path0_docs = path_add "docs", $op;
+                        if (my $p0 =
                             # check as full path from root
                             ($op eq $selfpath0 ? undef
                              : $self->maybe_have_path0->($op)) //
@@ -248,8 +248,8 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                         }
                     }
                     elsif (length $path) {
-                        my $p0= path_add(dirname ($selfpath0), $path);
-                        $p0=~ s|^\./||;#hack. grr y
+                        my $p0 = path_add(dirname ($selfpath0), $path);
+                        $p0 =~ s|^\./||;#hack. grr y
                         unless ($self->maybe_have_path0->($p0)) {
                             warn "link target does not exist: ".show($p0).
                               "('$path' from '$selfpath0', link '$href')";
@@ -262,10 +262,10 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                     }
                 };
 
-                my $cont_uri= fun ($uri) {
+                my $cont_uri = fun ($uri) {
                     $e->attribute_set("href", "$uri")
                 };
-                my $cont_path= fun ($path) {
+                my $cont_path = fun ($path) {
                     $uri->path(
                         $self->pathtranslate->possibly_suffix_md_to_html(
                             $path));
@@ -277,7 +277,7 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                     if ($is_md) {
                         &$cont_path($path)
                     } else {
-                        if (length (my $p= $uri->path)) {
+                        if (length (my $p = $uri->path)) {
                             $uri->path(path_add (dirname($self->path0), $p));
                             # XX should use "/tree/master" instead of
                             # "/blob/master" Github url for

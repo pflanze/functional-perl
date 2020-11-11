@@ -28,16 +28,16 @@ package Chj::Unix::Signal;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-use Chj::Class::Array -fields=>
-  -publica=>
+use Chj::Class::Array -fields =>
+  -publica =>
   'number',
   ;
 
 
 sub new {
-    my $class=shift;
-    my $s= $class->SUPER::new;
-    ($$s[Number])=@_;
+    my $class = shift;
+    my $s = $class->SUPER::new;
+    ($$s[Number]) = @_;
     $s
 }
 
@@ -45,18 +45,18 @@ sub new {
 # and /bin/kill doesn't know all of them, bush eh bash is much better.
 # ah, man perlipc "Signals":
 
-our $inited=0;
+our $inited = 0;
 our $signo;
 our $signame;
 sub MaybeInit {
     $inited ||= do {
         require Config;
-        my $cfg= $Config::Config{sig_name};
+        my $cfg = $Config::Config{sig_name};
         defined $cfg or die "No sigs?";
-        my $i=0;
+        my $i = 0;
         foreach my $name (split(' ', $cfg)) {
-            $$signo{$name}= $i;
-            $$signame[$i]= $name;
+            $$signo{$name} = $i;
+            $$signame[$i] = $name;
             $i++
         }
         1
@@ -64,9 +64,9 @@ sub MaybeInit {
 }
 
 sub as_string {
-    my $s=shift;
+    my $s = shift;
     MaybeInit;
-    my $maybe_str= $$signame[$$s[Number]];
+    my $maybe_str = $$signame[$$s[Number]];
     defined $maybe_str ? $maybe_str : "<unknown signal (number $$s[Number])>"
 }
 

@@ -23,24 +23,24 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::tempdir;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(tempdir);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(tempdir);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings FATAL => 'uninitialized';
 
 sub tempdir ($) {
-    my ($base)=@_;
-    my $tries=0;
-    my $perhapsrnd= "";
+    my ($base) = @_;
+    my $tries = 0;
+    my $perhapsrnd = "";
   TRY: {
-        my $path= "$base-${$}${perhapsrnd}";
+        my $path = "$base-${$}${perhapsrnd}";
         if (mkdir $path, 0700) {
             return $path
         } else {
             $tries++;
-            $perhapsrnd= "-".substr(rand,2,7);
+            $perhapsrnd = "-".substr(rand,2,7);
             redo TRY if ($tries < 10);
             die "can't mkdir '$path': $!";
         }

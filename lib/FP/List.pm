@@ -19,7 +19,7 @@ FP::List - singly linked (purely functional) lists
 
     use FP::List ':all';
 
-    my $l= cons("H", cons("e", cons("l", cons("l", cons("o", null)))));
+    my $l = cons("H", cons("e", cons("l", cons("l", cons("o", null)))));
     is_equal $l, list("H", "e", "l", "l", "o");
     is_equal list_to_string($l), "Hello";
     ok is_pure $l;
@@ -126,14 +126,14 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::List;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(
     cons cons_ is_pair null is_null is_pair_of is_pair_or_null
     list_of  is_null_or_pair_of null_or_pair_of is_list
     car cdr first rest
     car_and_cdr first_and_rest perhaps_first_and_rest
     list);
-@EXPORT_OK=qw(
+@EXPORT_OK = qw(
     pair improper_list
     first_set first_update
     is_pair_noforce is_null_noforce
@@ -177,7 +177,7 @@ package FP::List;
     circularlist
     weaklycircularlist
     );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -195,7 +195,7 @@ use Scalar::Util "weaken";
 use FP::Weak qw(Weakened);
 use FP::Interfaces;
 
-our $immutable= 1; # whether pairs are to be made immutable
+our $immutable = 1; # whether pairs are to be made immutable
 
 
 #use FP::Array 'array_fold_right'; can't, recursive dependency XX (see copy below)
@@ -206,40 +206,40 @@ package FP::List::List {
 
     use Chj::NamespaceCleanAbove;
 
-    *null= \&FP::List::null;
+    *null = \&FP::List::null;
 
     # return this sequence as a list, i.e. identity
     sub list {
-        @_==1 or die "wrong number of arguments";
+        @_ == 1 or die "wrong number of arguments";
         $_[0]
     }
 
     sub stream {
-        @_==1 or die "wrong number of arguments";
-        my ($l)= @_;
+        @_ == 1 or die "wrong number of arguments";
+        my ($l) = @_;
         lazy { $l }
     }
 
     sub strictlist {
-        @_==1 or die "wrong number of arguments";
-        my $s=shift;
+        @_ == 1 or die "wrong number of arguments";
+        my $s = shift;
         FP::StrictList::strictlist($s->values)
     }
 
     sub purearray {
-        @_==1 or die "wrong number of arguments";
-        my $s=shift;
+        @_ == 1 or die "wrong number of arguments";
+        my $s = shift;
         FP::_::PureArray->new_from_array([$s->values])
     }
 
     sub mutablearray {
-        @_==1 or die "wrong number of arguments";
-        my $s=shift;
+        @_ == 1 or die "wrong number of arguments";
+        my $s = shift;
         FP::_::MutableArray->new_from_array([$s->values])
     }
 
     sub preferred_fold {
-        my $s=shift;
+        my $s = shift;
         $s->fold(@_)
     }
 
@@ -247,16 +247,16 @@ package FP::List::List {
 }
 
 package FP::List::Null {
-    our @ISA= qw(FP::List::List);
+    our @ISA = qw(FP::List::List);
 
     sub pair_namespace { "FP::List::Pair" }
 
     sub is_null { 1 }
 
     sub cons {
-        my $s=shift;
-        @_==1 or die "expecting 1 method argument";
-        my @p= ($_[0], $s);
+        my $s = shift;
+        @_ == 1 or die "expecting 1 method argument";
+        my @p = ($_[0], $s);
         bless \@p, $s->pair_namespace;
         if ($immutable) {
             Internals::SvREADONLY $p[0], 1;
@@ -270,15 +270,15 @@ package FP::List::Null {
         0
     }
 
-    my $mkexn= sub {
-        my ($method)=@_;
+    my $mkexn = sub {
+        my ($method) = @_;
         sub { die "can't take the $method of the empty list" }
     };
-    *first= &$mkexn("first");
-    *second= &$mkexn("second");
-    *rest= &$mkexn("rest");
-    *first_and_rest= &$mkexn("first_and_rest");
-    *butlast= &$mkexn("butlast");
+    *first = &$mkexn("first");
+    *second = &$mkexn("second");
+    *rest = &$mkexn("rest");
+    *first_and_rest = &$mkexn("first_and_rest");
+    *butlast = &$mkexn("butlast");
     sub maybe_first { undef }
     sub maybe_rest { undef }
     sub perhaps_first { () }
@@ -286,7 +286,7 @@ package FP::List::Null {
     sub perhaps_first_and_rest { () }
 
     sub FP_Equal_equal {
-        my ($a,$b)=@_;
+        my ($a,$b) = @_;
         FP::List::is_null($b)
             # XX well, this is, *currently*, guaranteed by FP::Equal,
             # thus always 1
@@ -294,21 +294,21 @@ package FP::List::Null {
 
     # for FP::Show:
     sub FP_Show_show {
-        my ($s,$show)=@_;
+        my ($s,$show) = @_;
         "list()"
     }
 
 }
 
 package FP::List::Pair {
-    our @ISA= qw(FP::List::List);
+    our @ISA = qw(FP::List::List);
 
     sub is_null { '' }
 
     sub cons {
-        my $s=shift;
-        @_==1 or die "expecting 1 method argument";
-        my @p= ($_[0], $s);
+        my $s = shift;
+        @_ == 1 or die "expecting 1 method argument";
+        my @p = ($_[0], $s);
         bless \@p, ref($s);
         if ($immutable) {
             Internals::SvREADONLY $p[0], 1;
@@ -321,33 +321,33 @@ package FP::List::Pair {
     sub car {
         $_[0][0]
     }
-    *first=*car;
+    *first = *car;
 
-    *maybe_first= *first;
-    *perhaps_first= *first;
+    *maybe_first = *first;
+    *perhaps_first = *first;
 
-    *first_set= *FP::List::first_set;
-    *first_update= *FP::List::first_update;
+    *first_set = *FP::List::first_set;
+    *first_update = *FP::List::first_update;
 
     sub cdr {
         $_[0][1]
     }
-    *rest= *cdr;
-    *maybe_rest= *rest;
-    *perhaps_rest= *rest;
+    *rest = *cdr;
+    *maybe_rest = *rest;
+    *perhaps_rest = *rest;
 
     sub car_and_cdr {
         @{$_[0]}
     }
-    *first_and_rest= *car_and_cdr;
-    *perhaps_first_and_rest= *car_and_cdr;
+    *first_and_rest = *car_and_cdr;
+    *perhaps_first_and_rest = *car_and_cdr;
 
     sub cddr { $_[0]->cdr->cdr }
     sub cdddr { $_[0]->cdr->cdr->cdr }
     sub cddddr { $_[0]->cdr->cdr->cdr->cdr }
 
     sub cadr { $_[0]->cdr->car }
-    *second= *cadr;
+    *second = *cadr;
     sub caddr { $_[0]->cdr->cdr->car }
     sub cadddr { $_[0]->cdr->cdr->cdr->car }
     sub caddddr { $_[0]->cdr->cdr->cdr->cdr->car }
@@ -357,18 +357,18 @@ package FP::List::Pair {
     # overhead of the then necessary DESTROY method.
 
     sub FP_Equal_equal {
-        my ($a,$b)=@_;
+        my ($a,$b) = @_;
         no warnings 'recursion';
         (FP::List::is_pair($b)
          and
          FP::Equal::equal($a->car, $b->car)
          and do {
-             @_=($a->cdr, $b->cdr); goto \&FP::Equal::equal
+             @_ = ($a->cdr, $b->cdr); goto \&FP::Equal::equal
          })
     }
 
     sub FP_Show_show {
-        my ($s,$show)=@_;
+        my ($s,$show) = @_;
 
         # If there were no improper or lazy lists, this would do:
         #  "list(".$s->map($show)->strings_join(", ").")"
@@ -376,9 +376,9 @@ package FP::List::Pair {
         my @v;
         my $v;
       LP: {
-            ($v,$s)= $s->first_and_rest;
+            ($v,$s) = $s->first_and_rest;
             push @v, &$show($v);
-            $s= FP::List::force_noeval ($s);
+            $s = FP::List::force_noeval ($s);
             if (FP::List::is_pair_noforce ($s)) {
                 redo LP;
             } elsif (FP::List::is_null_noforce ($s)) {
@@ -402,20 +402,20 @@ TEST {
 
 
 sub cons ($$) {
-    @_==2 or die "wrong number of arguments";
-    if (my $f= UNIVERSAL::can ($_[1], "cons")) {
-        @_=($_[1], $_[0]); goto &$f;
+    @_ == 2 or die "wrong number of arguments";
+    if (my $f = UNIVERSAL::can ($_[1], "cons")) {
+        @_ = ($_[1], $_[0]); goto &$f;
     } else {
         goto \&unsafe_cons
     }
 }
 
 sub cons_ ($) {
-    @_==1 or die "wrong number of arguments";
-    my ($item)=@_;
+    @_ == 1 or die "wrong number of arguments";
+    my ($item) = @_;
     sub {
-        @_==1 or die "wrong number of arguments";
-        if (my $f= UNIVERSAL::can ($_[0], "cons")) {
+        @_ == 1 or die "wrong number of arguments";
+        if (my $f = UNIVERSAL::can ($_[0], "cons")) {
             push @_, $item; goto &$f;
         } else {
             unsafe_cons($item, $_[0])
@@ -428,7 +428,7 @@ TEST { cons_(1)->(2) } GIVES { cons 1, 2 };
     
 
 sub pair ($$) {
-    @_==2 or die "wrong number of arguments";
+    @_ == 2 or die "wrong number of arguments";
     goto \&unsafe_cons
 }
 
@@ -440,7 +440,7 @@ sub pair ($$) {
 # the rest argument should never dictate the type of the result.
 
 sub unsafe_cons ($$) {
-    my @p= @_;
+    my @p = @_;
     bless \@p, "FP::List::Pair";
     if ($immutable) {
         Internals::SvREADONLY $p[0], 1;
@@ -461,8 +461,8 @@ sub unsafe_cdr ($) {
 
 sub is_pair ($);
 sub is_pair ($) {
-    my ($v)=@_;
-    my $r= ref $v;
+    my ($v) = @_;
+    my $r = ref $v;
     length $r ?
       (UNIVERSAL::isa($v, "FP::List::Pair")
        or
@@ -473,18 +473,18 @@ sub is_pair ($) {
 }
 
 sub is_pair_noforce ($) {
-    my ($v)=@_;
-    my $r= ref $v;
+    my ($v) = @_;
+    my $r = ref $v;
     length $r ?
       UNIVERSAL::isa($v, "FP::List::Pair")
           : '';
 }
 
 sub is_pair_of ($$) {
-    my ($p0,$p1)=@_;
+    my ($p0,$p1) = @_;
     sub {
-        @_==1 or die "expecting 1 argument";
-        my ($v)=@_;
+        @_ == 1 or die "expecting 1 argument";
+        my ($v) = @_;
         (is_pair($v)
          and &$p0($$v[0])
          and &$p1($$v[1]))
@@ -493,7 +493,7 @@ sub is_pair_of ($$) {
 
 # nil value
 
-my $null= do {
+my $null = do {
     my @null;
     bless \@null, "FP::List::Null";
     Internals::SvREADONLY @null, 1;
@@ -511,8 +511,8 @@ TEST { null ->cons(1)->cons(2)->array }
 
 sub is_null ($);
 sub is_null ($) {
-    my ($v)=@_;
-    my $r= ref $v;
+    my ($v) = @_;
+    my $r = ref $v;
     length $r ?
       (UNIVERSAL::isa($v, "FP::List::Null")
        or
@@ -522,8 +522,8 @@ sub is_null ($) {
 }
 
 sub is_null_noforce ($) {
-    my ($v)=@_;
-    my $r= ref $v;
+    my ($v) = @_;
+    my $r = ref $v;
     length $r ?
       UNIVERSAL::isa($v, "FP::List::Null")
           : '';
@@ -532,8 +532,8 @@ sub is_null_noforce ($) {
 
 sub is_pair_or_null ($);
 sub is_pair_or_null ($) {
-    my ($v)=@_;
-    my $r= ref $v;
+    my ($v) = @_;
+    my $r = ref $v;
     length $r ?
       (UNIVERSAL::isa($v, "FP::List::Pair")
        or
@@ -552,7 +552,7 @@ TEST { is_pair_or_null bless [], "NirvAna" } '';
 
 sub is_null_or_pair_of ($$$);
 sub is_null_or_pair_of ($$$) {
-    my ($v,$p0,$p1)=@_;
+    my ($v,$p0,$p1) = @_;
     FORCE $v;
     (is_null $v
      or
@@ -564,9 +564,9 @@ sub is_null_or_pair_of ($$$) {
 }
 
 sub null_or_pair_of ($$) {
-    my ($p0,$p1)= @_;
+    my ($p0,$p1) = @_;
     sub ($) {
-        my ($v)=@_;
+        my ($v) = @_;
         is_null_or_pair_of ($v,$p0,$p1)
     }
 }
@@ -581,13 +581,13 @@ TEST { require FP::Array;
 
 
 sub is_list ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     FORCE $v;
     (is_null $v ? 1
      :
      (is_pair $v ?
       do {
-          @_=unsafe_cdr $v;
+          @_ = unsafe_cdr $v;
           goto \&is_list;
       }
       : ''))
@@ -603,30 +603,30 @@ TEST { is_list cons 1, FP::Lazy::lazy { cons 2, 3 } } '';
 
 use Carp;
 sub not_a_pair ($) {
-    my ($v)= @_;
+    my ($v) = @_;
     croak "not a pair: ".show($v);
 }
 
 sub car ($) {
-    my ($v)=@_;
-    my $r= ref $v;
+    my ($v) = @_;
+    my $r = ref $v;
     if (length $r and UNIVERSAL::isa($v, "FP::List::Pair")) {
         $$v[0]
     } elsif (is_promise $v) {
-        @_=force $v; goto \&car;
+        @_ = force $v; goto \&car;
     } else {
         not_a_pair $v;
     }
 }
 
-sub first ($); *first=*car;
+sub first ($); *first = *car;
 
 # XX add maybe_first and perhaps_first wrappers here? Shouldn't this
 # be more structured/automatic, finally.
 
 
 sub first_set ($$) {
-    my ($p, $v)=@_;
+    my ($p, $v) = @_;
     cons ($v, $p->rest)
 }
 
@@ -634,20 +634,20 @@ TEST { cons (3,4)->first_set("a") } bless ["a",4], 'FP::List::Pair';
 
 
 sub first_update ($$) {
-    my ($p, $fn)=@_;
-    my ($v, $r)= $p->first_and_rest;
+    my ($p, $fn) = @_;
+    my ($v, $r) = $p->first_and_rest;
     cons (&$fn($v), $r)
 }
 
 TEST { cons (3,4)->first_update(sub{$_[0]*2}) } bless [6,4], 'FP::List::Pair';
 
 sub cdr ($) {
-    my ($v)=@_;
-    my $r= ref $v;
+    my ($v) = @_;
+    my $r = ref $v;
     if (length $r and UNIVERSAL::isa($v, "FP::List::Pair")) {
         $$v[1]
     } elsif (is_promise $v) {
-        @_=force $v; goto \&cdr;
+        @_ = force $v; goto \&cdr;
     } else {
         not_a_pair $v;
     }
@@ -660,7 +660,7 @@ TEST_EXCEPTION { car "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
 TEST_EXCEPTION { cdr "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
 
 
-sub rest ($); *rest= *cdr;
+sub rest ($); *rest = *cdr;
 
 sub cddr ($) { cdr cdr $_[0] }
 sub cdddr ($) { cdr cdr cdr $_[0] }
@@ -673,11 +673,11 @@ sub caddddr ($) { car cdr cdr cdr cdr $_[0] }
 
 
 sub c_r {
-    @_==2 or die "wrong number of arguments";
-    my ($s,$chain)=@_;
+    @_ == 2 or die "wrong number of arguments";
+    my ($s,$chain) = @_;
     my $c;
-    while (length ($c= chop $chain)) {
-        $s= $c eq "a" ? car ($s)
+    while (length ($c = chop $chain)) {
+        $s = $c eq "a" ? car ($s)
           : $c eq "d" ? cdr ($s)
             : die "only 'a' and 'd' acceptable in chain, have: '$chain'";
     }
@@ -691,25 +691,25 @@ TEST { list(1,list(4,7,9),5)->c_r("addad") }
 
 
 sub car_and_cdr ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     if (length ref $v and UNIVERSAL::isa($v, "FP::List::Pair")) {
         @{$_[0]}
     } elsif (is_promise $v) {
-        @_=force $v; goto \&car_and_cdr;
+        @_ = force $v; goto \&car_and_cdr;
     } else {
         not_a_pair $v;
     }
 }
 
-sub first_and_rest($); *first_and_rest= *car_and_cdr;
+sub first_and_rest($); *first_and_rest = *car_and_cdr;
 
 sub perhaps_first_and_rest ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     if (length ref $v) {
         if (UNIVERSAL::isa($v, "FP::List::Pair")) {
             @{$_[0]}
         } elsif (is_promise $v) {
-            @_=force $v; goto \&perhaps_first_and_rest;
+            @_ = force $v; goto \&perhaps_first_and_rest;
         } elsif (UNIVERSAL::isa($v, "FP::List::Null")) {
             ()
         } else {
@@ -729,10 +729,10 @@ TEST_EXCEPTION { [ perhaps_first_and_rest "FP::List::Null" ] }
 
 
 sub list_perhaps_one ($) {
-    my ($s)=@_;
+    my ($s) = @_;
     FORCE $s; # make work for stre
     if (is_pair ($s)) {
-        my ($a,$r)= first_and_rest $s;
+        my ($a,$r) = first_and_rest $s;
         if (is_null $r) {
             ($a)
         } else {
@@ -750,10 +750,10 @@ TEST{ [ list (8,9)->perhaps_one ] } [];
 TEST{ [ list ()->perhaps_one ] } [];
 
 sub list_xone ($) {
-    my ($s)=@_;
+    my ($s) = @_;
     FORCE $s; # make work for streams
     if (is_pair ($s)) {
-        my ($a,$r)= first_and_rest $s;
+        my ($a,$r) = first_and_rest $s;
         if (is_null $r) {
             $a
         } else {
@@ -773,27 +773,27 @@ TEST_EXCEPTION{ [ list ()->xone ] } "expected 1 value, got none";
 
 
 sub make_ref {
-    my ($is_stream)=@_;
-    my $liststream= $is_stream ? "stream" : "list";
+    my ($is_stream) = @_;
+    my $liststream = $is_stream ? "stream" : "list";
     sub ($ $) {
-        my ($s, $i)=@_;
+        my ($s, $i) = @_;
         weaken $_[0] if $is_stream;
         is_natural0 $i or die "invalid index: ".show($i);
-        my $orig_i= $i;
+        my $orig_i = $i;
       LP: {
-            $s= force $s;
+            $s = force $s;
             if (is_pair $s) {
                 if ($i <= 0) {
                     unsafe_car $s
                 } else {
-                    $s= unsafe_cdr $s;
+                    $s = unsafe_cdr $s;
                     $i--;
                     redo LP;
                 }
             } elsif (is_null $s) {
                 die "requested element $orig_i of $liststream of length ".($orig_i-$i)
-            } elsif (my $m= UNIVERSAL::can($s,"FP_Sequence_ref")) {
-                @_=($s,$i); goto $m
+            } elsif (my $m = UNIVERSAL::can($s,"FP_Sequence_ref")) {
+                @_ = ($s,$i); goto $m
             } else {
                 die "improper $liststream"
             }
@@ -802,14 +802,14 @@ sub make_ref {
 }
 
 sub list_ref ($$);
-*list_ref= make_ref (0);
+*list_ref = make_ref (0);
 *FP::List::List::ref= *list_ref;
 
 
 sub list {
-    my $res= null;
-    for (my $i= $#_; $i>=0; $i--) {
-        $res= cons ($_[$i],$res);
+    my $res = null;
+    for (my $i = $#_; $i >= 0; $i--) {
+        $res = cons ($_[$i],$res);
     }
     $res
 }
@@ -818,9 +818,9 @@ sub list {
 # of a 'null'. This shouldn't be used in normal circumstances. It's
 # mainly here to make the output of FP_Show_show valid code.
 sub improper_list {
-    my $res= pop;
-    for (my $i= $#_; $i>=0; $i--) {
-        $res= cons ($_[$i],$res);
+    my $res = pop;
+    for (my $i = $#_; $i >= 0; $i--) {
+        $res = cons ($_[$i],$res);
     }
     $res
 }
@@ -831,20 +831,20 @@ sub improper_list {
 # structure. Are they ok since they are constructors (the outside
 # world will never see mutation)? (Note that streams can be cyclic
 # already without mutating the cons cells, by way of using a recursive
-# binding (mutating the variable that holds it, "my $s; $s= cons 1,
+# binding (mutating the variable that holds it, "my $s; $s = cons 1,
 # lazy { $s };").)
 
 # WARNING: results of this function won't be deallocated
 # automatically. You have to break the reference cycle explicitely!
 sub circularlist {
-    my $l= list (@_);
-    my $last= $l->drop($#_);
+    my $l = list (@_);
+    my $last = $l->drop($#_);
     if ($immutable) {
         Internals::SvREADONLY $$last[1], 0;
-        $$last[1]=$l;
+        $$last[1] = $l;
         Internals::SvREADONLY $$last[1], 1;
     } else {
-        $$last[1]=$l;
+        $$last[1] = $l;
     }
     $l
 }
@@ -853,15 +853,15 @@ sub circularlist {
 # as soon as you let go of the front element.
 
 sub weaklycircularlist {
-    my $l= list (@_);
-    my $last= $l->drop($#_);
+    my $l = list (@_);
+    my $last = $l->drop($#_);
     if ($immutable) {
         Internals::SvREADONLY $$last[1], 0;
-        $$last[1]=$l;
+        $$last[1] = $l;
         weaken ($$last[1]);
         Internals::SvREADONLY $$last[1], 1;
     } else {
-        $$last[1]=$l;
+        $$last[1] = $l;
         weaken ($$last[1]);
     }
     $l
@@ -870,28 +870,28 @@ sub weaklycircularlist {
 use Chj::Destructor;
 
 TEST {
-    my $z=0;
-    my $v= do {
-        my $l= circularlist "a","b",Destructor{$z++},"d";
+    my $z = 0;
+    my $v = do {
+        my $l = circularlist "a","b",Destructor{$z++},"d";
         $l->ref (5)
     };
     [ $z, $v ]
 } [ 0, "b"]; # leaking the test list!
 
 TEST {
-    my $z=0;
-    my $v= do {
-        my $l= weaklycircularlist "a","b",Destructor{$z++},"d";
+    my $z = 0;
+    my $v = do {
+        my $l = weaklycircularlist "a","b",Destructor{$z++},"d";
         $l->ref (5)
     };
     [ $z, $v ]
 } [ 1, "b"]; # no leak.
 
 TEST_EXCEPTION {
-    my $z=0;
-    my $v= do {
-        my $l= weaklycircularlist "a","b",Destructor{$z++},"d";
-        $l= $l->rest;
+    my $z = 0;
+    my $v = do {
+        my $l = weaklycircularlist "a","b",Destructor{$z++},"d";
+        $l = $l->rest;
         $l->ref (4)
     };
     [ $z, $v ]
@@ -899,18 +899,18 @@ TEST_EXCEPTION {
 
 
 sub delayed (&) {
-    my ($thunk)=@_;
+    my ($thunk) = @_;
     sub {
         # evaluate thunk, expecting a function and pass our arguments
         # to that function
-        my $cont= &$thunk();
+        my $cont = &$thunk();
         goto &$cont
     }
 }
 
 sub list_of ($);
 sub list_of ($) {
-    my ($p)= @_;
+    my ($p) = @_;
     either \&is_null, is_pair_of ($p, delayed { list_of $p })
 }
 
@@ -921,19 +921,19 @@ TEST { list_of (\&is_natural) -> (1) } 0;
 
 
 sub make_length {
-    my ($is_stream)=@_;
-    my $liststream= $is_stream ? "stream" : "list";
+    my ($is_stream) = @_;
+    my $liststream = $is_stream ? "stream" : "list";
     sub ($) {
-        my ($l)=@_;
+        my ($l) = @_;
         weaken $_[0] if $is_stream;
-        my $len=0;
-        $l= force $l;
+        my $len = 0;
+        $l = force $l;
         while (!is_null $l) {
             if (is_pair $l) {
                 $len++;
-                $l= force unsafe_cdr $l;
-            } elsif (my $m= UNIVERSAL::can($l,"FP_Sequence_length")) {
-                @_=($l,$len); goto $m
+                $l = force unsafe_cdr $l;
+            } elsif (my $m = UNIVERSAL::can($l,"FP_Sequence_length")) {
+                @_ = ($l,$len); goto $m
             } else {
                 die "improper $liststream"
             }
@@ -943,7 +943,7 @@ sub make_length {
 }
 
 sub list_length ($);
-*list_length= make_length(0);
+*list_length = make_length(0);
 
 *FP::List::Pair::length= *list_length;
 # method on Pair not List, since we defined a length method for Null
@@ -955,17 +955,17 @@ TEST { list (4,5)->length } 2;
 
 
 sub list_to_string ($) {
-    my ($l)=@_;
-    my $len= list_length $l;
+    my ($l) = @_;
+    my $len = list_length $l;
     # preallocation for the case where $l consists only of single
     # characters (otherwise will extend dynamically):
-    my $res= " "x$len;
-    my $i=0;
+    my $res = " "x$len;
+    my $i = 0;
     while (!is_null $l) {
-        my $c= car $l;
-        substr($res,$i,1)= $c;
-        $l= cdr $l;
-        $i+= length $c;
+        my $c = car $l;
+        substr($res,$i,1) = $c;
+        $l = cdr $l;
+        $i += length $c;
     }
     $res
 }
@@ -979,12 +979,12 @@ TEST{ list("","","o")->string } 'o';
 TEST{ list("a","","o")->string } 'ao';
 
 sub list_to_array ($) {
-    my ($l)=@_;
-    my $res= [];
-    my $i=0;
+    my ($l) = @_;
+    my $res = [];
+    my $i = 0;
     while (!is_null $l) {
-        $$res[$i]= car $l;
-        $l= cdr $l;
+        $$res[$i] = car $l;
+        $l = cdr $l;
         $i++;
     }
     $res
@@ -993,8 +993,8 @@ sub list_to_array ($) {
 *FP::List::List::array= *list_to_array;
 
 sub list_to_purearray {
-    my ($l)=@_;
-    my $a= list_to_array $l;
+    my ($l) = @_;
+    my $a = list_to_array $l;
     require FP::PureArray;
     FP::PureArray::array_to_purearray ($a)
 }
@@ -1008,16 +1008,16 @@ TEST {
 
 
 sub list_sort ($;$) {
-    @_==1 or @_==2 or die "wrong number of arguments";
-    my ($l,$maybe_cmp)= @_;
+    @_ == 1 or @_ == 2 or die "wrong number of arguments";
+    my ($l,$maybe_cmp) = @_;
     list_to_purearray ($l)->sort ($maybe_cmp)
 }
 
 *FP::List::List::sort= *list_sort;
 
 sub list_sortCompare ($) {
-    @_==1 or die "wrong number of arguments";
-    my ($l)= @_;
+    @_ == 1 or die "wrong number of arguments";
+    my ($l) = @_;
     list_to_purearray($l)->sortCompare
 }
 
@@ -1042,14 +1042,14 @@ TEST { list (5,3,8,4)->sort (\&FP::Ops::number_cmp)->stream->car }
 
 
 sub rlist_to_array ($) {
-    my ($l)=@_;
-    my $res= [];
-    my $len= list_length $l;
-    my $i=$len;
+    my ($l) = @_;
+    my $res = [];
+    my $len = list_length $l;
+    my $i = $len;
     while (!is_null $l) {
         $i--;
-        $$res[$i]= car $l;
-        $l= cdr $l;
+        $$res[$i] = car $l;
+        $l = cdr $l;
     }
     $res
 }
@@ -1058,7 +1058,7 @@ sub rlist_to_array ($) {
 
 
 sub list_to_values ($) {
-    my ($l)=@_;
+    my ($l) = @_;
     @{list_to_array ($l)}
 }
 
@@ -1067,7 +1067,7 @@ sub list_to_values ($) {
 # XX naming inconsistency versus docs/design.md ? Same with
 # rlist_to_array.
 sub rlist_to_values ($) {
-    my ($l)=@_;
+    my ($l) = @_;
     @{rlist_to_array ($l)}
 }
 
@@ -1078,21 +1078,21 @@ TEST { [ list(3,4,5)->reverse_values ] }
 
 
 sub make_for_each {
-    my ($is_stream)=@_;
-    my $liststream= $is_stream ? "stream" : "list";
+    my ($is_stream) = @_;
+    my $liststream = $is_stream ? "stream" : "list";
     sub ($ $ ) {
-        my ($proc, $s)=@_;
+        my ($proc, $s) = @_;
         weaken $_[1] if $is_stream;
       LP: {
-            $s= force $s;
+            $s = force $s;
             if (is_pair $s) {
                 &$proc(car $s);
-                $s= cdr $s;
+                $s = cdr $s;
                 redo LP;
             } elsif (is_null $s) {
                 # drop out
-            } elsif (my $m= UNIVERSAL::can($s,"for_each")) {
-                @_=($s,$proc); goto $m
+            } elsif (my $m = UNIVERSAL::can($s,"for_each")) {
+                @_ = ($s,$proc); goto $m
             } else {
                 die "improper $liststream"
             }
@@ -1101,7 +1101,7 @@ sub make_for_each {
 }
 
 sub list_for_each ($ $ );
-*list_for_each= make_for_each(1);
+*list_for_each = make_for_each(1);
 
 *FP::List::List::for_each= flip \&list_for_each;
 
@@ -1116,11 +1116,11 @@ TEST_STDOUT {
 
 sub list_drop ($ $);
 sub list_drop ($ $) {
-    my ($s, $n)=@_;
+    my ($s, $n) = @_;
     while ($n > 0) {
-        $s= force $s;
+        $s = force $s;
         die "list too short" if is_null $s;
-        $s= cdr $s;
+        $s = cdr $s;
         $n--
     }
     $s
@@ -1131,9 +1131,9 @@ sub list_drop ($ $) {
 
 sub list_take ($ $);
 sub list_take ($ $) {
-    my ($s, $n)=@_;
+    my ($s, $n) = @_;
         if ($n > 0) {
-            $s= force $s;
+            $s = force $s;
             is_null $s ?
               $s
                 : cons(car $s, list_take( cdr $s, $n - 1));
@@ -1147,12 +1147,12 @@ sub list_take ($ $) {
 
 sub list_slice ($ $);
 sub list_slice ($ $) {
-    my ($start,$end)=@_;
-    $end= force $end;
-    my $rec; $rec= sub {
-        my ($s)=@_;
-        my $rec=$rec;
-        $s= force $s;
+    my ($start,$end) = @_;
+    $end = force $end;
+    my $rec; $rec = sub {
+        my ($s) = @_;
+        my $rec = $rec;
+        $s = force $s;
         if (is_null $s) {
             $s # null
         } else {
@@ -1163,7 +1163,7 @@ sub list_slice ($ $) {
             }
         }
     };
-    @_=($start); goto &{Weakened $rec};
+    @_ = ($start); goto &{Weakened $rec};
 }
 
 *FP::List::List::slice= *list_slice;
@@ -1173,11 +1173,11 @@ sub list_slice ($ $) {
 
 
 sub string_to_list ($;$) {
-    my ($str,$maybe_tail)=@_;
-    my $tail= $maybe_tail // null;
-    my $i= length($str)-1;
+    my ($str,$maybe_tail) = @_;
+    my $tail = $maybe_tail // null;
+    my $i = length($str)-1;
     while ($i >= 0) {
-        $tail= cons(substr ($str,$i,1), $tail);
+        $tail = cons(substr ($str,$i,1), $tail);
         $i--;
     }
     $tail
@@ -1193,26 +1193,26 @@ TEST{ list_to_string string_to_list "Hello" }
 
 # XX HACK, COPY from FP::Array to work around circular dependency
 sub array_fold_right ($$$) {
-    @_==3 or die "wrong number of arguments";
-    my ($fn,$tail,$a)=@_;
-    my $i= @$a - 1;
+    @_ == 3 or die "wrong number of arguments";
+    my ($fn,$tail,$a) = @_;
+    my $i = @$a - 1;
     while ($i >= 0) {
-        $tail= &$fn($$a[$i], $tail);
+        $tail = &$fn($$a[$i], $tail);
         $i--;
     }
     $tail
 }
 sub array_fold ($$$) {
-    my ($fn,$start,$ary)=@_;
+    my ($fn,$start,$ary) = @_;
     for (@$ary) {
-        $start= &$fn($_,$start);
+        $start = &$fn($_,$start);
     }
     $start
 }
 # /HACK
 
 sub array_to_list ($;$) {
-    my ($a,$maybe_tail)=@_;
+    my ($a,$maybe_tail) = @_;
     array_fold_right (\&cons, $maybe_tail // null, $a)
 }
 
@@ -1222,7 +1222,7 @@ TEST{ list_to_string array_to_list [1,2,3] }
 
 # XX naming correct?
 sub array_to_list_reverse ($;$) {
-    my ($a,$maybe_tail)=@_;
+    my ($a,$maybe_tail) = @_;
     array_fold (\&cons, $maybe_tail // null, $a)
 }
 
@@ -1231,16 +1231,16 @@ TEST{ list_to_string array_to_list_reverse [1,2,3] }
 
 
 sub list_reverse_with_tail ($$) {
-    my ($l, $tail)=@_;
+    my ($l, $tail) = @_;
     while (!is_null $l) {
-        $tail= cons car $l, $tail;
-        $l= cdr $l;
+        $tail = cons car $l, $tail;
+        $l = cdr $l;
     }
     $tail
 }
 
 sub list_reverse ($) {
-    my ($l)=@_;
+    my ($l) = @_;
     list_reverse_with_tail ($l, $l->null)
 }
 
@@ -1253,8 +1253,8 @@ TEST{ list_to_string list_reverse string_to_list "Hello" }
 
 
 sub list_strings_join ($$) {
-    @_==2 or die "wrong number of arguments";
-    my ($l,$val)=@_;
+    @_ == 2 or die "wrong number of arguments";
+    my ($l,$val) = @_;
     # now depend on FP::Array anyway. Lazily. XX hack~
     require FP::Array;
     FP::Array::array_strings_join( list_to_array ($l), $val);
@@ -1266,8 +1266,8 @@ TEST { list (1,2,3)->strings_join("-") }
   "1-2-3";
 
 sub list_strings_join_reverse ($$) {
-    @_==2 or die "wrong number of arguments";
-    my ($l,$val)=@_;
+    @_ == 2 or die "wrong number of arguments";
+    my ($l,$val) = @_;
     # now depend on FP::Array anyway. Lazily. XX hack~
     require FP::Array;
     FP::Array::array_strings_join( rlist_to_array ($l), $val);
@@ -1283,18 +1283,18 @@ TEST { list (1,2,3)->strings_join_reverse("-") }
 # write as a S-expr (trying to follow R5RS Scheme)
 sub _write_sexpr ($ $ $);
 sub _write_sexpr ($ $ $) {
-    my ($l,$fh, $already_in_a_list)=@_;
+    my ($l,$fh, $already_in_a_list) = @_;
   _WRITE_SEXPR: {
-        $l= force ($l,1);
+        $l = force ($l,1);
         if (is_pair $l) {
             xprint $fh, $already_in_a_list ? ' ' : '(';
             _write_sexpr car $l, $fh, 0;
-            my $d= force (cdr $l, 1);
+            my $d = force (cdr $l, 1);
             if (is_null $d) {
                 xprint $fh, ')';
             } elsif (is_pair $d) {
                 # tail-calling _write_sexpr $d, $fh, 1
-                $l=$d; $already_in_a_list=1; redo _WRITE_SEXPR;
+                $l = $d; $already_in_a_list = 1; redo _WRITE_SEXPR;
             } else {
                 xprint $fh, " . ";
                 _write_sexpr $d, $fh, 0;
@@ -1309,7 +1309,7 @@ sub _write_sexpr ($ $ $) {
                 die "don't know how to write_sexpr this: ".show($l);
             } else {
                 # assume string; there's nothing else left.
-                $l=~ s/"/\\"/sg;
+                $l =~ s/"/\\"/sg;
                 xprint $fh, '"',$l,'"';
             }
         }
@@ -1317,7 +1317,7 @@ sub _write_sexpr ($ $ $) {
 }
 sub write_sexpr ($ ; );
 sub write_sexpr ($ ; ) {
-    my ($l,$fh)=@_;
+    my ($l,$fh) = @_;
     _write_sexpr ($l, $fh || *STDOUT{IO}, 0)
 }
 
@@ -1338,51 +1338,51 @@ TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null))}
 
 sub list_zip2 ($$);
 sub list_zip2 ($$) {
-    @_==2 or die "expecting 2 arguments";
-    my ($l,$m)=@_;
+    @_ == 2 or die "expecting 2 arguments";
+    my ($l,$m) = @_;
     (is_null $l ? $l
      : is_null $m ? $m
      : cons([car $l, car $m], list_zip2 (cdr $l, cdr $m)))
 }
 
 TEST { list_to_array list_zip2 list(qw(a b c)), list(2,3) }
-  [[a=>2], [b=>3]];
+  [[a => 2], [b => 3]];
 
 TEST { list_to_array list_zip2 list(qw(a b)), list(2,3,4) }
-  [[a=>2], [b=>3]];
+  [[a => 2], [b => 3]];
 
 *FP::List::List::zip= *list_zip2; # XX make n-ary
 
 
 sub list_to_alist ($);
 sub list_to_alist ($) {
-    @_==1 or die "expecting 2 arguments";
-    my ($l)=@_;
+    @_ == 1 or die "expecting 2 arguments";
+    my ($l) = @_;
     is_null ($l) ? $l
       : do {
-          my ($k, $l2)= $l->first_and_rest;
-          my ($v, $l3)= $l2->first_and_rest;
+          my ($k, $l2) = $l->first_and_rest;
+          my ($v, $l3) = $l2->first_and_rest;
           cons (cons ($k, $v),
                 list_to_alist $l3)
       }
 }
 *FP::List::List::alist= *list_to_alist;
 
-TEST_STDOUT { list (a=> 10, b=>20)->alist->write_sexpr }
+TEST_STDOUT { list (a => 10, b => 20)->alist->write_sexpr }
   '(("a" . "10") ("b" . "20"))';
 
 
 sub make_filter {
-    my ($is_stream)=@_;
-    my $filter; $filter= sub ($$) {
-        my ($fn,$l)=@_;
+    my ($is_stream) = @_;
+    my $filter; $filter = sub ($$) {
+        my ($fn,$l) = @_;
         weaken $_[1] if $is_stream;
         lazy_if {
-            $l= force $l;
+            $l = force $l;
             is_null $l ? $l : do {
-                my ($a,$r)= $l->first_and_rest;
+                my ($a,$r) = $l->first_and_rest;
                 no warnings 'recursion';
-                my $r2= &$filter ($fn, $r);
+                my $r2 = &$filter ($fn, $r);
                 &$fn($a) ? cons($a, $r2) : $r2
             }
         } $is_stream;
@@ -1391,22 +1391,22 @@ sub make_filter {
 }
 
 sub list_filter ($ $);
-*list_filter= make_filter (0);
+*list_filter = make_filter (0);
 
 *FP::List::List::filter= flip \&list_filter;
 
 
 # almost-COPY of filter
 sub make_filter_with_tail {
-    my ($is_stream)=@_;
-    my $filter_with_tail; $filter_with_tail= sub ($$$) {
-        my ($fn,$l,$tail)=@_;
+    my ($is_stream) = @_;
+    my $filter_with_tail; $filter_with_tail = sub ($$$) {
+        my ($fn,$l,$tail) = @_;
         weaken $_[1] if $is_stream;
         lazy_if {
-            $l= force $l;
+            $l = force $l;
             is_null $l ? $tail : do {
-                my $a= car $l;
-                my $r= &$filter_with_tail ($fn, cdr $l, $tail);
+                my $a = car $l;
+                my $r = &$filter_with_tail ($fn, cdr $l, $tail);
                 &$fn($a) ? cons($a, $r) : $r
             }
         } $is_stream;
@@ -1415,13 +1415,13 @@ sub make_filter_with_tail {
 }
 
 sub list_filter_with_tail ($$$);
-*list_filter_with_tail= make_filter_with_tail(0);
+*list_filter_with_tail = make_filter_with_tail(0);
 *FP::List::List::filter_with_tail= flip2of3 *list_filter_with_tail;
 
 
 sub list_map ($ $);
 sub list_map ($ $) {
-    my ($fn,$l)=@_;
+    my ($fn,$l) = @_;
     is_null $l ? $l : cons(&$fn(car $l), list_map ($fn,cdr $l))
 }
 
@@ -1431,7 +1431,7 @@ TEST { list_to_array list_map sub { $_[0] * $_[0] }, list 1,2,-3 }
 
 # n-ary map
 sub list_mapn {
-    my $fn=shift;
+    my $fn = shift;
     for (@_) {
         return $_ if is_null $_
     }
@@ -1450,16 +1450,16 @@ TEST{ list_to_array list_mapn (sub { [@_] },
 
 
 sub FP::List::List::map {
-    @_>=2 or die "not enough arguments";
-    my $l=shift;
-    my $fn=shift;
+    @_ >= 2 or die "not enough arguments";
+    my $l = shift;
+    my $fn = shift;
     @_ ? list_mapn ($fn, $l, @_) : list_map ($fn, $l)
 }
 
 
 sub list_map_with_index_ {
-    my $i=shift;
-    my $fn=shift;
+    my $i = shift;
+    my $fn = shift;
     for (@_) {
         return $_ if is_null $_
     }
@@ -1471,14 +1471,14 @@ sub list_map_with_index_ {
 }
 
 sub list_map_with_index {
-    @_>=2 or die "not enough arguments";
+    @_ >= 2 or die "not enough arguments";
     list_map_with_index_(0, @_) 
 }
 
 sub FP::List::List::map_with_index {
-    @_>=2 or die "not enough arguments";
-    my $l=shift;
-    my $fn=shift;
+    @_ >= 2 or die "not enough arguments";
+    my $l = shift;
+    my $fn = shift;
     list_map_with_index($fn, $l, @_)
 }
 
@@ -1488,9 +1488,9 @@ TEST { list(1,2,20)->map_with_index(sub {[ @_ ]})->array }
 
 sub list_map_with_islast {
     @_>1 or die "wrong number of arguments";
-    my $fn=shift;
-    my @rest= map { is_null $_ ? return null : rest $_ } @_;
-    my $is_last='';
+    my $fn = shift;
+    my @rest = map { is_null $_ ? return null : rest $_ } @_;
+    my $is_last = '';
     # return *number* of ending streams, ok? XX this is unlike
     # array_map_with_islast
     for (@rest) { $is_last++ if is_null $_ }
@@ -1500,7 +1500,7 @@ sub list_map_with_islast {
 }
 
 sub FP::List::List::map_with_islast {
-    my ($l0, $fn, @l)= @_;
+    my ($l0, $fn, @l) = @_;
     list_map_with_islast($fn,$l0,@l)
 }
 
@@ -1517,12 +1517,12 @@ TEST { list(1,2,20)->map_with_islast(sub { [@_] },
 # left fold, sometimes called `foldl` or `reduce`
 # (XX adapted copy from Stream.pm)
 sub list_fold ($$$) {
-    my ($fn,$start,$l)=@_;
+    my ($fn,$start,$l) = @_;
     my $v;
   LP: {
         if (is_pair $l) {
-            ($v,$l)= first_and_rest $l;
-            $start= &$fn ($v, $start);
+            ($v,$l) = first_and_rest $l;
+            $start = &$fn ($v, $start);
             redo LP;
         }
     }
@@ -1539,10 +1539,10 @@ TEST { list(1,2,3)->map(sub{$_[0]+1})->fold(sub{ $_[0] + $_[1]},0) }
 
 sub list_fold_right ($ $ $);
 sub list_fold_right ($ $ $) {
-    my ($fn,$start,$l)=@_;
+    my ($fn,$start,$l) = @_;
     if (is_pair $l) {
         no warnings 'recursion';
-        my $rest= list_fold_right ($fn,$start,cdr $l);
+        my $rest = list_fold_right ($fn,$start,cdr $l);
         &$fn (car $l, $rest)
     } elsif (is_null $l) {
         $start
@@ -1552,15 +1552,15 @@ sub list_fold_right ($ $ $) {
 }
 
 TEST{ list_fold_right sub {
-          my ($v, $res)=@_;
+          my ($v, $res) = @_;
           [$v, @$res]
       }, [], list(4,5,9) }
   [4,5,9];
 
 sub FP::List::List::fold_right {
-    my $l=shift;
-    @_==2 or die "expecting 2 arguments";
-    my ($fn,$start)=@_;
+    my $l = shift;
+    @_ == 2 or die "expecting 2 arguments";
+    my ($fn,$start) = @_;
     list_fold_right($fn,$start,$l)
 }
 
@@ -1572,11 +1572,11 @@ TEST { list(1,2,3)->map(sub{$_[0]+1})->fold_right(sub{$_[0]+$_[1]},0) }
 # only the car to the function
 sub list_pair_fold_right ($$$);
 sub list_pair_fold_right ($$$) {
-    @_==3 or die "wrong number of arguments";
-    my ($fn,$start,$l)=@_;
+    @_ == 3 or die "wrong number of arguments";
+    my ($fn,$start,$l) = @_;
     if (is_pair $l) {
         no warnings 'recursion';
-        my $rest= list_pair_fold_right ($fn,$start,cdr $l);
+        my $rest = list_pair_fold_right ($fn,$start,cdr $l);
         &$fn ($l, $rest)
     } elsif (is_null $l) {
         $start
@@ -1610,8 +1610,8 @@ TEST_STDOUT { list(5,6,9)->pair_fold_right (*cons, null)->write_sexpr }
 
 sub unfold ($$$$;$);
 sub unfold ($$$$;$) {
-    @_==4 or @_==5 or die "wrong number of arguments";
-    my ($p, $f, $g, $seed, $maybe_tail_gen)= @_;
+    @_ == 4 or @_ == 5 or die "wrong number of arguments";
+    my ($p, $f, $g, $seed, $maybe_tail_gen) = @_;
     &$p ($seed) ?
       (defined $maybe_tail_gen ? &$maybe_tail_gen ($seed) : null)
         : cons (&$f ($seed), unfold ($p, $f, $g, &$g($seed), $maybe_tail_gen));
@@ -1625,14 +1625,14 @@ TEST { unfold (*is_zero, *inc, *dec, 5, *list)->array } [6, 5, 4, 3, 2, 0];
 
 sub unfold_right ($$$$;$);
 sub unfold_right ($$$$;$) {
-    @_==4 or @_==5 or die "wrong number of arguments";
-    my ($p, $f, $g, $seed, $maybe_tail)= @_;
-    my $tail= @_==5 ? $maybe_tail : null;
+    @_ == 4 or @_ == 5 or die "wrong number of arguments";
+    my ($p, $f, $g, $seed, $maybe_tail) = @_;
+    my $tail = @_ == 5 ? $maybe_tail : null;
   LP: {
         if (&$p ($seed)) {
             $tail
         } else {
-            ($seed,$tail)= (&$g ($seed),
+            ($seed,$tail) = (&$g ($seed),
                             cons (&$f ($seed), $tail));
             redo LP;
         }
@@ -1645,10 +1645,10 @@ TEST { unfold_right (*is_zero, *inc, *dec, 5, list 99)->array } [2, 3, 4, 5, 6, 
 
 
 sub list_append {
-    my $l= @_ ? shift : null;
+    my $l = @_ ? shift : null;
     while (@_) {
-        my $l2= shift;
-        $l= list_fold_right (\&cons, $l2, $l)
+        my $l2 = shift;
+        $l = list_fold_right (\&cons, $l2, $l)
     }
     $l
 }
@@ -1670,12 +1670,12 @@ TEST{ array_to_list (["a","b"]) ->append(array_to_list([1,2])) ->array }
 
 
 sub list_to_perlstring ($) {
-    my ($l)=@_;
+    my ($l) = @_;
     list_to_string
       cons ("'",
             list_fold_right sub {
-                my ($c,$rest)= @_;
-                my $out= cons ($c, $rest);
+                my ($c,$rest) = @_;
+                my $out = cons ($c, $rest);
                 if ($c eq "'") {
                     cons ("\\", $out)
                 } else {
@@ -1694,12 +1694,12 @@ TEST{ list_to_perlstring string_to_list  "Hello's" }
 
 sub list_butlast ($);
 sub list_butlast ($) {
-    my ($l)=@_;
+    my ($l) = @_;
     if (is_null ($l)) {
         die "butlast: got empty list"
         # XX could make use of OO for the distinction instead
     } else {
-        my ($a,$r)= $l->first_and_rest;
+        my ($a,$r) = $l->first_and_rest;
         is_null ($r) ? $r : cons($a, list_butlast $r)
     }
 }
@@ -1713,9 +1713,9 @@ TEST_EXCEPTION { list ()->butlast->array }
 
 
 sub list_drop_while ($ $) {
-    my ($pred,$l)=@_;
+    my ($pred,$l) = @_;
     while (!is_null $l and &$pred(car $l)) {
-        $l=cdr $l;
+        $l = cdr $l;
     }
     $l
 }
@@ -1736,12 +1736,12 @@ TEST { string_to_list("Hello World")
 
 
 sub list_rtake_while_and_rest ($ $) {
-    my ($pred,$l)=@_;
-    my $res= $l->null;
+    my ($pred,$l) = @_;
+    my $res = $l->null;
     my $c;
-    while (!is_null $l and &$pred($c= car $l)) {
-        $res= cons $c,$res;
-        $l=cdr $l;
+    while (!is_null $l and &$pred($c = car $l)) {
+        $res = cons $c,$res;
+        $l = cdr $l;
     }
     ($res,$l)
 }
@@ -1749,8 +1749,8 @@ sub list_rtake_while_and_rest ($ $) {
 *FP::List::List::rtake_while_and_rest= flip \&list_rtake_while_and_rest;
 
 sub list_rtake_while ($ $) {
-    my ($pred,$l)=@_;
-    my ($res,$rest)= list_rtake_while_and_rest ($pred,$l);
+    my ($pred,$l) = @_;
+    my ($res,$rest) = list_rtake_while_and_rest ($pred,$l);
     wantarray ? ($res,$rest) : $res
 }
 
@@ -1761,8 +1761,8 @@ TEST{ list_to_string list_reverse (list_rtake_while \&char_is_alphanumeric,
   'Hello';
 
 sub list_take_while_and_rest ($ $) {
-    my ($pred,$l)=@_;
-    my ($rres,$rest)= list_rtake_while ($pred,$l);
+    my ($pred,$l) = @_;
+    my ($rres,$rest) = list_rtake_while ($pred,$l);
     (list_reverse $rres,
      $rest)
 }
@@ -1770,8 +1770,8 @@ sub list_take_while_and_rest ($ $) {
 *FP::List::List::take_while_and_rest= flip \&list_take_while_and_rest;
 
 sub list_take_while ($ $) {
-    my ($pred,$l)=@_;
-    my ($res,$rest)= list_take_while_and_rest ($pred,$l);
+    my ($pred,$l) = @_;
+    my ($res,$rest) = list_take_while_and_rest ($pred,$l);
     wantarray ? ($res,$rest) : $res
 }
 
@@ -1790,13 +1790,13 @@ TEST { list_to_string list_take_while (sub{0}, string_to_list "Hello World") }
 
 
 sub list_last ($) {
-    my ($v)=@_;
+    my ($v) = @_;
   LIST_LAST: {
-        my ($a,$r)= $v->first_and_rest;
+        my ($a,$r) = $v->first_and_rest;
         if (is_null $r) {
             $a
         } else {
-            $v= $r;
+            $v = $r;
             redo LIST_LAST;
         }
     }
@@ -1815,11 +1815,11 @@ TEST_EXCEPTION { list(qw())->last }
 
 
 sub list_every ($$) {
-    my ($pred,$l)=@_;
+    my ($pred,$l) = @_;
   LP: {
         if (is_pair $l) {
             (&$pred (car $l)) and do {
-                $l= cdr $l;
+                $l = cdr $l;
                 redo LP;
             }
         } elsif (is_null $l) {
@@ -1838,7 +1838,7 @@ sub list_every ($$) {
 # XXX do we want this alias? Or do we just want to rename every to
 # all?
 sub list_all ($$);
-*list_all= *list_every;
+*list_all = *list_every;
 
 *FP::List::List::all= flip \&list_every;
 
@@ -1863,25 +1863,25 @@ TEST { string_to_list("Hello") ->none(\&char_is_alphanumeric) }
 TEST { string_to_list(" -()&") ->none(\&char_is_alphanumeric) }
   1;
 TEST {
-    my $z=0;
-    my $r=string_to_list(" -()&a")->none(sub { $z++; char_is_alphanumeric $_[0] });
+    my $z = 0;
+    my $r = string_to_list(" -()&a")->none(sub { $z++; char_is_alphanumeric $_[0] });
     [$z,$r]
 }
   [6, 0];
 TEST {
-    my $z=0;
-    my $r=string_to_list(" a-()&a")->none(sub { $z++; char_is_alphanumeric $_[0] });
+    my $z = 0;
+    my $r = string_to_list(" a-()&a")->none(sub { $z++; char_is_alphanumeric $_[0] });
     [$z,$r]
 }
   [2, 0];
 
 
 sub list_any ($ $) {
-    my ($pred,$l)=@_;
+    my ($pred,$l) = @_;
   LP: {
         if (is_pair $l) {
             (&$pred (car $l)) or do {
-                $l= cdr $l;
+                $l = cdr $l;
                 redo LP;
             }
         } elsif (is_null $l) {
@@ -1909,17 +1909,17 @@ TEST{ list_any sub { $_[0] % 2 }, array_to_list [7] }
 # carry `perhaps` in their name of this reason.
 
 sub list_perhaps_find_tail ($$) {
-    @_==2 or die "wrong number of arguments";
-    my ($fn, $l)=@_;
+    @_ == 2 or die "wrong number of arguments";
+    my ($fn, $l) = @_;
   LP: {
         if (is_null $l) {
             ()
         } else {
-            my ($v,$l1)= $l->first_and_rest;
+            my ($v,$l1) = $l->first_and_rest;
             if (&$fn ($v)) {
                 $l
             } else {
-                $l= $l1;
+                $l = $l1;
                 redo LP
             }
         }
@@ -1936,9 +1936,9 @@ TEST { [list(3,1,37,-5)->perhaps_find_tail (*is_even)] }
 
 
 sub list_perhaps_find ($$) {
-    @_==2 or die "wrong number of arguments";
-    my ($fn, $l)=@_;
-    if (my ($l)= list_perhaps_find_tail ($fn, $l)) {
+    @_ == 2 or die "wrong number of arguments";
+    my ($fn, $l) = @_;
+    if (my ($l) = list_perhaps_find_tail ($fn, $l)) {
         unsafe_car $l
     } else {
         ()
@@ -1958,11 +1958,11 @@ TEST { list(3,1,4,1,5,9)->perhaps_find(*is_even) }
 #sub list_find_tail ($$);
 #  sigh, can't retain the prototypes unless writing perhaps_to_maybe
 #  for every number of arguments.
-*list_find_tail= perhaps_to_maybe (\&list_perhaps_find_tail);
+*list_find_tail = perhaps_to_maybe (\&list_perhaps_find_tail);
 *FP::List::List::find_tail= flip \&list_find_tail;
 
 #sub list_find ($$);
-*list_find= perhaps_to_maybe (\&list_perhaps_find);
+*list_find = perhaps_to_maybe (\&list_perhaps_find);
 *FP::List::List::find= flip \&list_find;
 
 TEST { list(3,1,4,1,5,9)->find(*is_even) }
@@ -1976,30 +1976,30 @@ TEST { [list(3,1,37,-5)->find_tail (*is_even)] }
 # Grouping
 
 sub make_group {
-    my ($is_stream)=@_;
-    my $group= sub ($$;$) {
-        my ($equal,$s,$maybe_tail)=@_;
+    my ($is_stream) = @_;
+    my $group = sub ($$;$) {
+        my ($equal,$s,$maybe_tail) = @_;
         weaken $_[1] if $is_stream;
         lazy_if {
             FORCE $s;
             if (is_null $s) {
                 $maybe_tail // null
             } else {
-                my ($a,$r)= $s->first_and_rest;
-                my $rec; $rec= sub {
-                    my ($prev,$s)=@_;
+                my ($a,$r) = $s->first_and_rest;
+                my $rec; $rec = sub {
+                    my ($prev,$s) = @_;
                     lazy_if {
-                        my $s= $s;
-                        my $group= cons $prev, null;
+                        my $s = $s;
+                        my $group = cons $prev, null;
                       LP: {
                             FORCE $s;
                             if (is_null $s) {
                                 cons $group, ($maybe_tail // null)
                             } else {
-                                my ($a, $r)= $s->first_and_rest;
+                                my ($a, $r) = $s->first_and_rest;
                                 if (&$equal($prev, $a)) {
-                                    $s= $r;
-                                    $group= cons $a, $group;
+                                    $s = $r;
+                                    $group = cons $a, $group;
                                     redo LP;
                                 } else {
                                     cons $group, &$rec($a, $r)
@@ -2017,10 +2017,10 @@ sub make_group {
 }
 
 sub list_group ($$;$);
-*list_group= make_group(0);
+*list_group = make_group(0);
 sub FP::List::List::group {
-    @_>= 2 and @_<= 3 or die "wrong number of arguments";
-    my ($self,$equal,$maybe_tail)=@_;
+    @_ >= 2 and @_ <= 3 or die "wrong number of arguments";
+    my ($self,$equal,$maybe_tail) = @_;
     list_group($equal,$self,$maybe_tail)
 }
 
@@ -2038,30 +2038,30 @@ TEST {
 
 sub mixed_flatten ($;$$);
 sub mixed_flatten ($;$$) {
-    my ($v,$maybe_tail,$maybe_delay)=@_;
-    my $tail= $maybe_tail//null;
+    my ($v,$maybe_tail,$maybe_delay) = @_;
+    my $tail = $maybe_tail//null;
   LP: {
         if ($maybe_delay and is_promise $v) {
-            my $delay= $maybe_delay;
+            my $delay = $maybe_delay;
             &$delay
               (sub {
-                   @_=(force($v), $tail, $delay); goto \&mixed_flatten;
+                   @_ = (force($v), $tail, $delay); goto \&mixed_flatten;
                });
         } else {
             if (is_null $v) {
                 $tail
             } elsif (is_pair $v) {
                 no warnings 'recursion';
-                $tail= mixed_flatten (cdr $v, $tail, $maybe_delay);
-                $v= car $v;
+                $tail = mixed_flatten (cdr $v, $tail, $maybe_delay);
+                $v = car $v;
                 redo LP;
             } elsif (ref $v eq "ARRAY") {
-                @_= (sub {
-                         @_==2 or die "wrong number of arguments";
-                         my ($v,$tail)=@_;
+                @_ = (sub {
+                         @_ == 2 or die "wrong number of arguments";
+                         my ($v,$tail) = @_;
                          no warnings 'recursion';
                          # ^XX don't understand why it warns here
-                         @_=($v,$tail,$maybe_delay); goto \&mixed_flatten;
+                         @_ = ($v,$tail,$maybe_delay); goto \&mixed_flatten;
                      },
                      $tail,
                      $v);
@@ -2109,7 +2109,7 @@ TEST_STDOUT{ write_sexpr( mixed_flatten
 
 TEST_STDOUT{
     sub countdown {
-        my ($i)=@_;
+        my ($i) = @_;
         if ($i) {
             lazyLight {cons ($i, countdown($i-1))}
         } else {
@@ -2141,7 +2141,7 @@ TEST_STDOUT { write_sexpr
 use FP::Char 'is_char';
 
 sub is_charlist ($) {
-    my ($l)=@_;
+    my ($l) = @_;
     list_every \&is_char, $l
 }
 
@@ -2152,7 +2152,7 @@ use Carp;
 sub ldie {
     # perl string arguments are messages, char lists are turned to
     # perl-quoted strings, then everyting is appended
-    my @strs= map {
+    my @strs = map {
         if (is_charlist $_) {
             list_to_perlstring $_
         } elsif (is_null $_) {

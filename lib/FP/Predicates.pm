@@ -45,9 +45,9 @@ FP::Predicates
     # Experimental:
     {
         use FP::Failure '*use_failure';
-        local $use_failure=1;
+        local $use_failure = 1;
 
-        my $isp= is_pure_class("FP::Array");
+        my $isp = is_pure_class("FP::Array");
         is $isp ? "yes" : "no", "no";
         is $isp->message,
            "failure: is_pure_class: 'FP::Array'\n";
@@ -86,8 +86,8 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Predicates;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(
               is_pure
               is_pure_object
               is_pure_class
@@ -131,10 +131,10 @@ package FP::Predicates;
               either
               all_of both
          );
-@EXPORT_OK=qw(
+@EXPORT_OK = qw(
                  is_coderef
             );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::TEST;
@@ -153,7 +153,7 @@ use Scalar::Util qw(looks_like_number);
 # implicitly.)
 
 sub failwith {
-    my ($parents, $msg, @vals)=@_;
+    my ($parents, $msg, @vals) = @_;
     $FP::Failure::use_failure ?
         FP::Failure::failure(FP::Failure::message($msg, @vals),
                              $parents) :
@@ -161,7 +161,7 @@ sub failwith {
 }
 
 sub fail {
-    my ($msg, @vals)=@_;
+    my ($msg, @vals) = @_;
     $FP::Failure::use_failure ?
         FP::Failure::failure(FP::Failure::message($msg, @vals)) :
         0
@@ -186,21 +186,21 @@ sub is_pure_object ($) {
 }
 
 sub is_pure_class ($) {
-    my $r= is_class_name ($_[0]);
+    my $r = is_class_name ($_[0]);
     $r or return failwith [$r], "is_pure_class";
     UNIVERSAL::isa($_[0], "FP::Abstract::Pure")
         or fail "is_pure_class", $_[0]
 }
 
 sub is_string ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     (defined $v
      and not ref $v) # relax?
         or fail "is_string", $v
 }
 
 sub is_nonnumeric_string ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     (defined $v
      and not ref $v # relax?
      and not looks_like_number($v))
@@ -208,7 +208,7 @@ sub is_nonnumeric_string ($) {
 }
 
 sub is_nonnullstring ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     (defined $v
      and not ref $v # relax?
      and length $v)
@@ -216,18 +216,18 @@ sub is_nonnullstring ($) {
 }
 
 sub is_natural0 ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     (defined $v
      and not ref $v # relax?
-     and $v=~ /^\d+\z/)
+     and $v =~ /^\d+\z/)
         or fail "is_natural0", $v
 }
 
 sub is_natural ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     (defined $v
      and not ref $v # relax?
-     and $v=~ /^\d+\z/ and $v)
+     and $v =~ /^\d+\z/ and $v)
         or fail "is_natural", $v
 }
 
@@ -259,7 +259,7 @@ TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
 # for those instead..)
 
 sub less_than ($) {
-    my ($x)=@_;
+    my ($x) = @_;
     sub ($) {
         $_[0] < $x
           or fail "less_than", $x, $_[0] # last value last, ok?
@@ -267,7 +267,7 @@ sub less_than ($) {
 }
 
 sub greater_than ($) {
-    my ($x)=@_;
+    my ($x) = @_;
     sub ($) {
         $_[0] > $x
           or fail "greater_than", $x, $_[0] # last value last, ok?
@@ -275,7 +275,7 @@ sub greater_than ($) {
 }
 
 sub less_equal ($) {
-    my ($x)=@_;
+    my ($x) = @_;
     sub ($) {
         $_[0] <= $x
           or fail "less_equal", $x, $_[0] # last value last, ok?
@@ -283,7 +283,7 @@ sub less_equal ($) {
 }
 
 sub greater_equal ($) {
-    my ($x)=@_;
+    my ($x) = @_;
     sub ($) {
         $_[0] >= $x
           or fail "greater_equal", $x, $_[0] # last value last, ok?
@@ -299,12 +299,12 @@ sub is_zero ($) {
 # strictly 0 or 1
 sub is_boolean01 ($) {
     (not ref ($_[0]) # relax?
-     and $_[0]=~ /^[01]\z/)
+     and $_[0] =~ /^[01]\z/)
       or fail "is_boolean01", $_[0]
 }
 
 sub is_booleanyesno ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     (not ref $v
      and $v eq "yes" or $v eq "no")
       or fail "is_booleanyesno", $v
@@ -359,16 +359,16 @@ TEST { is_procedure *is_procedure } 1;
 TEST { is_procedure *fifu } 0;
 
 
-my $classpart_re= qr/\w+/;
+my $classpart_re = qr/\w+/;
 
 sub is_class_name ($) {
-    my ($v)= @_;
-    ! length ref ($v) and $v=~ /^(?:${classpart_re}::)*$classpart_re\z/
+    my ($v) = @_;
+    ! length ref ($v) and $v =~ /^(?:${classpart_re}::)*$classpart_re\z/
       or fail "is_class_name", $v
 }
 
 sub instance_of ($) {
-    my ($cl)=@_;
+    my ($cl) = @_;
     is_class_name $cl or die "need class name string, got: $cl";
     sub ($) {
         length ref $_[0] ? UNIVERSAL::isa ($_[0], $cl) : ''
@@ -377,22 +377,22 @@ sub instance_of ($) {
 }
 
 sub is_instance_of ($$) {
-    my ($v,$cl)=@_;
+    my ($v,$cl) = @_;
     # is_class_name $cl or die "need class name string, got: $cl";
     length ref $v ? UNIVERSAL::isa ($v, $cl) : ''
         or fail "is_instance_of", $v, $cl
 }
 
 sub is_subclass_of ($$) {
-    my ($v,$cl)=@_;
+    my ($v,$cl) = @_;
     # is_class_name $cl or die "need class name string, got: $cl";
     !length ref $v and UNIVERSAL::isa ($v, $cl)
         or fail "is_subclass_of", $v, $cl
 }
 
-TEST { my $v= "IO"; is_instance_of $v, "IO" } 0;
-TEST { my $v= bless [], "IO"; is_instance_of $v, "IO" } 1;
-TEST { my $v= "IO"; is_subclass_of $v, "IO" } 1;
+TEST { my $v = "IO"; is_instance_of $v, "IO" } 0;
+TEST { my $v = bless [], "IO"; is_instance_of $v, "IO" } 1;
+TEST { my $v = "IO"; is_subclass_of $v, "IO" } 1;
 TEST { require Chj::IO::File;
        is_subclass_of "Chj::IO::File", "IO" } 1;
 
@@ -418,9 +418,9 @@ TEST {[ map { is_filehandle $_ }
 
 # should probably be in a filesystem lib instead?
 sub is_filename ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     (is_nonnullstring ($v)
-     and !($v=~ m|/|)
+     and !($v =~ m|/|)
      and !($v eq ".")
      and !($v eq ".."))
         or fail "is_filename", $v
@@ -432,13 +432,13 @@ sub is_filename ($) {
 use FP::Lazy; # sigh dependency, too.
 
 sub is_sequence ($) {
-    my $v= force $_[0];
+    my $v = force $_[0];
     UNIVERSAL::isa($v, "FP::Abstract::Sequence")
         or fail "is_sequence", $v
 }
 
 sub is_proper_sequence ($) {
-    my $v= force $_[0];
+    my $v = force $_[0];
     (UNIVERSAL::isa($v, "FP::Abstract::Sequence")
      and $v->is_proper_sequence)
         or fail "is_sequence", $v
@@ -446,7 +446,7 @@ sub is_proper_sequence ($) {
 
 # Like is_sequence but only returns true when the sequence isn't empty
 sub is_seq ($) {
-    my $v= force $_[0];
+    my $v = force $_[0];
     UNIVERSAL::isa($v, "FP::Abstract::Sequence")
         && (not $v->is_null)
         or fail "is_sequence", $v
@@ -454,12 +454,12 @@ sub is_seq ($) {
 
 
 sub maybe ($) {
-    @_==1 or die "wrong number of arguments";
-    my ($pred)=@_;
+    @_ == 1 or die "wrong number of arguments";
+    my ($pred) = @_;
     sub ($) {
-        my ($v)=@_;
+        my ($v) = @_;
         defined $v ? do {
-            my $b= &$pred ($v);
+            my $b = &$pred ($v);
             $b or failwith [$b], "maybe"
         } : 1
     }
@@ -480,7 +480,7 @@ sub is_true ($) {
 # (this would also be a candidate as 'not' with a different name for
 # FP::Ops)
 sub is_false ($) {
-    @_==1 or die "wrong number of arguments";
+    @_ == 1 or die "wrong number of arguments";
     !$_[0]
         or fail "is_false", $_[0]
 }
@@ -494,10 +494,10 @@ sub false {
 }
 
 sub complement ($) {
-    @_==1 or die "wrong number of arguments";
-    my ($f)=@_;
+    @_ == 1 or die "wrong number of arguments";
+    my ($f) = @_;
     sub {
-        my $r= &$f(@_);
+        my $r = &$f(@_);
         !$r
             # XX: in a perfect world we would have information about
             # why $f *succeeded* here. Sigh. We don't. TODO?
@@ -506,26 +506,26 @@ sub complement ($) {
 }
 
 TEST {
-    my $t= complement (\&is_natural);
+    my $t = complement (\&is_natural);
     [map { &$t($_) } (-1,0,1,2,"foo")]
 } [1,1,0,0,1];
 
 
 sub either {
-    my (@fn)=@_;
+    my (@fn) = @_;
     sub {
         # Meh, code it up all twice. Macros anyone?
         if ($FP::Failure::use_failure) {
             my @failures;
             for my $fn (@fn) {
-                my $r= &$fn;
+                my $r = &$fn;
                 return $r if $r;
                 push @failures, $r 
             }
             failwith \@failures, "either"
         } else {
             for my $fn (@fn) {
-                my $r= &$fn;
+                my $r = &$fn;
                 return $r if $r;
             }
             0
@@ -534,16 +534,16 @@ sub either {
 }
 
 TEST {
-    my $t= either \&is_natural, \&is_boolean;
+    my $t = either \&is_natural, \&is_boolean;
     [map { &$t($_) } (-1,0,1,2,"foo")]
 } [0,1,1,2,0];
 
 
 sub all_of {
-    my (@fn)=@_;
+    my (@fn) = @_;
     sub {
         for my $fn (@fn) {
-            my $r= &$fn;
+            my $r = &$fn;
             return failwith [$r], "all_of" unless $r;
         }
         1
@@ -551,7 +551,7 @@ sub all_of {
 }
 
 sub both ($$) {
-    @_==2 or die "expecting 2 arguments";
+    @_ == 2 or die "expecting 2 arguments";
     all_of (@_)
 }
 

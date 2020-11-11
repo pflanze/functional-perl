@@ -26,8 +26,8 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Repl::corefuncs;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(corefuncs);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(corefuncs);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -121,14 +121,14 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
            "use"
 END
   ;
-    $txt=~ s/(\w)[-­]\s*(\w)/$1$2/sg;# careful: the -­ are two different chars.
+    $txt =~ s/(\w)[-­]\s*(\w)/$1$2/sg;# careful: the -­ are two different chars.
     #print $txt;
-    my @corefuncs= grep {
-        length($_)>=3
+    my @corefuncs = grep {
+        length($_) >= 3
     }
-      $txt=~ /"(\w+)"/g;
+      $txt =~ /"(\w+)"/g;
     no warnings 'redefine';
-    *corefuncs= sub {
+    *corefuncs = sub {
         @corefuncs
     };
 }

@@ -25,13 +25,13 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FunctionalPerl::Htmlgen::PathUtil;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(path_add path_diff
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(path_add path_diff
               path0
               path_path0_append
             );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -65,10 +65,10 @@ TEST_EXCEPTION {path_add ".", "../zoo/loo" }
 fun path_diff ($path0from, $path0to) {
     __ '($path0from, $path0to) -> $patstr '.
         '-- (via File::Spec with Windows hack)';
-    my $from= $path0from=~ m|(.*?)/+$|s ? $1 : dirname $path0from;
-    my $res= File::Spec->abs2rel($path0to, $from);
+    my $from = $path0from =~ m|(.*?)/+$|s ? $1 : dirname $path0from;
+    my $res = File::Spec->abs2rel($path0to, $from);
     # XX HACK for Windows (why is this using File::Spec, anyway?):
-    $res=~ s{\\}{/}sg;
+    $res =~ s{\\}{/}sg;
     $res
 }
 
@@ -83,16 +83,16 @@ TEST{path_diff "foo", "bar.css"} 'bar.css';
 
 fun path0 ($path) {
     __ 'delete "(../)*" prefix, just a hacky way to strip path prefix';
-    my $path0= $path;
-    while ($path0=~ s|^\.\./||){}; die if $path0=~ /\.\./;
+    my $path0 = $path;
+    while ($path0 =~ s|^\.\./||){}; die if $path0 =~ /\.\./;
     $path0
 }
 
 
 fun path_path0_append ($dir, $relpath0) {
     __ "a path-append that doesn't result in a leading './'";
-    my $p= "$dir/$relpath0";
-    $p=~ s|^\./||;
+    my $p = "$dir/$relpath0";
+    $p =~ s|^\./||;
     $p
 }
 

@@ -6,7 +6,7 @@ use vars qw( @ISA $PROTO $DEBUG);
 #$VERSION = "6.01";
 
 use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
-@ISA=qw(IO::Socket::INET);
+@ISA = qw(IO::Socket::INET);
 
 $PROTO = "HTTP/1.1";
 
@@ -79,7 +79,7 @@ package # waiting for feedback of changes to original module
 
 use vars qw(@ISA $DEBUG);
 use IO::Socket ();
-@ISA=qw(IO::Socket::INET);
+@ISA = qw(IO::Socket::INET);
 *DEBUG = \$Chj::HTTP::Daemon::DEBUG;
 
 use HTTP::Request  ();
@@ -297,10 +297,10 @@ sub get_request
         }
         else {
             $r->content($buf);
-            $buf='';
+            $buf = '';
         }
     }
-    elsif ($ct && $ct =~ m/^multipart\/\w+\s*;.*boundary\s*=\s*("?)(\w+)\1/i) {
+    elsif ($ct && $ct =~ m/^multipart\/\w+\s*;.*boundary\s* = \s*("?)(\w+)\1/i) {
         # Handle multipart content type
         my $boundary = "$CRLF--$2--";
         my $index;

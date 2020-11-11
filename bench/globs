@@ -14,9 +14,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -33,13 +33,13 @@ use Chj::TEST;
 use Chj::time_this;
 use FP::Div "inc";
 
-our $n= 1500000;
+our $n = 1500000;
 
 sub t {
-    my ($f)=@_;
-    my $z=0;
+    my ($f) = @_;
+    my $z = 0;
     for (1..$n) {
-        $z= &$f ($z)
+        $z = &$f ($z)
     }
     $z
 }

@@ -16,7 +16,7 @@ PXML::Tags
     use PXML::Tags qw(records
         protocol-version
         record);
-    my $xml= RECORDS(PROTOCOL_VERSION("1.0"),
+    my $xml = RECORDS(PROTOCOL_VERSION("1.0"),
                      RECORD("Hi"), RECORD("there!"));
     is ref($xml), "PXML::Element";
     is $xml->string, '<records><protocol-version>1.0</protocol-version><record>Hi</record><record>there!</record></records>';
@@ -41,14 +41,14 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use PXML::Element;
 
 sub import {
-    my $caller=caller;
+    my $caller = caller;
     for my $name (@_) {
-        my $fname= uc $name;
-        $fname=~ s/-/_/sg;
-        my $fqname= "${caller}::$fname";
+        my $fname = uc $name;
+        $fname =~ s/-/_/sg;
+        my $fqname = "${caller}::$fname";
         no strict 'refs';
-        *$fqname= sub {
-            my $atts= ref($_[0]) eq "HASH" ? shift : undef;
+        *$fqname = sub {
+            my $atts = ref($_[0]) eq "HASH" ? shift : undef;
             PXML::Element->new($name, $atts, [@_]);
         };
     }

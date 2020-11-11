@@ -15,8 +15,8 @@ Chj::xopen
 
     use Chj::xopen;
     {
-        my $in= xopen_read "foo.txt";
-        my $out= glob_to_fh(*STDOUT,"utf-8");
+        my $in = xopen_read "foo.txt";
+        my $out = glob_to_fh(*STDOUT,"utf-8");
         local $_;
         while (<$in>) { # default operation. (overload not possible :/)
             $out->xprint($_); # print, throwing an exception on error
@@ -78,10 +78,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::xopen;
-@ISA='Exporter';
+@ISA = 'Exporter';
 require Exporter;
-@EXPORT= qw(xopen xopen_read);
-@EXPORT_OK= qw(xopen_write xopen_append xopen_update
+@EXPORT = qw(xopen xopen_read);
+@EXPORT_OK = qw(xopen_write xopen_append xopen_update
                perhaps_open_read perhaps_xopen_read
                devnull devzero
                glob_to_fh
@@ -92,7 +92,7 @@ require Exporter;
                fh_to_fh
                possibly_fh_to_fh
               );
-%EXPORT_TAGS= (all=> [@EXPORT, @EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
@@ -100,8 +100,8 @@ use Carp;
 use Chj::IO::File;
 
 sub glob_to_fh ($;$) {
-    my ($glob, $maybe_layer_or_encoding)=@_;
-    my $fh= bless (*{$glob}{IO}, "Chj::IO::File");
+    my ($glob, $maybe_layer_or_encoding) = @_;
+    my $fh = bless (*{$glob}{IO}, "Chj::IO::File");
     $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);
     $fh
 }
@@ -116,27 +116,27 @@ sub glob_to_fh ($;$) {
 use IO::Handle;
 
 sub fd_to_fh ($$;$) {
-    my ($fd, $mode, $maybe_layer_or_encoding)=@_;
-    $fd=~ /^\d+\z/s
+    my ($fd, $mode, $maybe_layer_or_encoding) = @_;
+    $fd =~ /^\d+\z/s
       or die "fd argument must be a natural number";
-    my $fh= IO::Handle->new_from_fd($fd, $mode);
+    my $fh = IO::Handle->new_from_fd($fd, $mode);
     bless $fh, "Chj::IO::File";
     $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);
     $fh
 }
 
 sub inout_fd_to_fh ($;$) {
-    my ($fd, $maybe_layer_or_encoding)=@_;
+    my ($fd, $maybe_layer_or_encoding) = @_;
     fd_to_fh $fd, "rw", $maybe_layer_or_encoding
 }
 
 sub input_fd_to_fh ($;$) {
-    my ($fd, $maybe_layer_or_encoding)=@_;
+    my ($fd, $maybe_layer_or_encoding) = @_;
     fd_to_fh $fd, "r", $maybe_layer_or_encoding
 }
 
 sub output_fd_to_fh ($;$) {
-    my ($fd, $maybe_layer_or_encoding)=@_;
+    my ($fd, $maybe_layer_or_encoding) = @_;
     fd_to_fh $fd, "w", $maybe_layer_or_encoding
 }
 
@@ -146,13 +146,13 @@ sub output_fd_to_fh ($;$) {
 # for cases where reblessing is not ok.
 
 sub fh_to_fh ($) {
-    my ($fh)=@_;
+    my ($fh) = @_;
     require Chj::IO::WrappedFile;
     Chj::IO::WrappedFile->new($fh)
 }
 
 sub possibly_fh_to_fh ($) {
-    my ($fh)=@_;
+    my ($fh) = @_;
     if (length ref $fh and UNIVERSAL::isa($fh, "Chj::IO::File")) {
         $fh
     } else {
@@ -171,11 +171,11 @@ sub xopen {
 }
 
 sub xopen_read($) {
-    if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
+    if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_read: mode $1 not allowed"
           unless $2; # XXX isn't this wong? Too many parens above?
-    } elsif (@_==1 and $_[0] eq '-') {
-        @_=("<-")
+    } elsif (@_ == 1 and $_[0] eq '-') {
+        @_ = ("<-")
     } else {
         unshift @_,"<";
     }
@@ -186,14 +186,14 @@ sub xopen_read($) {
 # XX ok to simply use the 3-argument open and never allow 2-open
 # strings at all? See how I seem to have gotten it wrong anyway, above!
 sub perhaps_xopen_read ($) {
-    @_==1 or die "wrong number of arguments";
+    @_ == 1 or die "wrong number of arguments";
     unshift @_,"<";
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::perhaps_xopen;
 }
 
 sub perhaps_open_read ($) {
-    @_==1 or die "wrong number of arguments";
+    @_ == 1 or die "wrong number of arguments";
     unshift @_,"<";
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::perhaps_open;
@@ -201,11 +201,11 @@ sub perhaps_open_read ($) {
 
 
 sub xopen_write($) {
-    if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
+    if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_write: mode $1 not allowed"
           unless $3 or $4;
-    } elsif (@_==1 and $_[0] eq '-') {
-        @_=(">-")
+    } elsif (@_ == 1 and $_[0] eq '-') {
+        @_ = (">-")
     } else {
         unshift @_,">";
     }
@@ -214,24 +214,24 @@ sub xopen_write($) {
 }
 
 sub xopen_append($) {
-    if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
+    if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_append: mode $1 not allowed"
           unless $3;
-    } elsif (@_==1 and $_[0] eq '-') {
-        @_=(">>-")
+    } elsif (@_ == 1 and $_[0] eq '-') {
+        @_ = (" >> -")
     } else {
-        unshift @_,">>";
+        unshift @_," >> ";
     }
     unshift @_,'Chj::IO::File';
     goto &Chj::IO::File::xopen;
 }
 
 sub xopen_update($) {
-    if ($_[0]=~ /^((<)|(>>)|(>)|(\+<)|(\+>))/) {
+    if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_update: mode $1 not allowed"
           unless $5 or $6;
-    } elsif (@_==1 and $_[0] eq '-') {
-        @_=("+<-")
+    } elsif (@_ == 1 and $_[0] eq '-') {
+        @_ = ("+<-")
     } else {
         unshift @_, "+<";
     }

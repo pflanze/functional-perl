@@ -11,9 +11,9 @@ use Function::Parameters qw(:strict);
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -29,13 +29,13 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
+our $verbose = 0;
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage},
            ) or exit 1;
-usage unless @ARGV==2;
+usage unless @ARGV == 2;
 
-my ($infile,$outfile)= @ARGV;
+my ($infile,$outfile) = @ARGV;
 
 use FP::Predicates qw(is_string);
 use FP::List qw(mixed_flatten);
@@ -54,11 +54,11 @@ use FP::Combinators ":all";
 use Chj::ruse;
 
 
-use FP::Struct 'definitionlists::Match'=> ["value"],
+use FP::Struct 'definitionlists::Match' => ["value"],
   'FP::Struct::Show';
-use FP::Struct 'definitionlists::NonMatch'=> ["value"],
+use FP::Struct 'definitionlists::NonMatch' => ["value"],
   'FP::Struct::Show';
-use FP::Struct 'definitionlists::Link'=> ["txt", "url"],
+use FP::Struct 'definitionlists::Link' => ["txt", "url"],
   'FP::Struct::Show';
 import definitionlists::Link::constructors;
 import definitionlists::Match::constructors;
@@ -66,21 +66,21 @@ import definitionlists::NonMatch::constructors;
 
 
 
-fun parselinks ($str, $processmatch=*Link, $processnonmatch=*NonMatch) {
-    my $pos=0;
+fun parselinks ($str, $processmatch = *Link, $processnonmatch = *NonMatch) {
+    my $pos = 0;
     my @res;
-    while ($str=~ /\[([^\[\]]+)\]\(([^()]+)\)/sgc) {
-        my $len= length($1)+length($2)+4;
-        my $pos1= pos($str);
-        my $pos0= $pos1-$len;
+    while ($str =~ /\[([^\[\]]+)\]\(([^()]+)\)/sgc) {
+        my $len = length($1)+length($2)+4;
+        my $pos1 = pos($str);
+        my $pos0 = $pos1-$len;
         if ($pos < $pos0) {
             push @res, &$processnonmatch(substr($str, $pos, $pos0-$pos));
         }
         push @res, &$processmatch($1,$2); # aheh difference
-        $pos= $pos1;
+        $pos = $pos1;
     }
-    my $pos1= length($str); #end.
-    my $lenremainder= $pos1-$pos;
+    my $pos1 = length($str); #end.
+    my $lenremainder = $pos1-$pos;
     if ($lenremainder) {
         push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
     }
@@ -101,21 +101,21 @@ TEST {
 
 
 fun parse ($str, $processmatch, $processnonmatch) {
-    my $pos=0;
+    my $pos = 0;
     my @res;
-    while ($str=~ /(?:\n|\G)\* (.*?)\n([^ \n]|\z)/sgc) {
-        my $len= length($1);
-        my $pos1= pos($str);
-        my $pos0= $pos1-$len-4; #why 4 not 2 ???
+    while ($str =~ /(?:\n|\G)\* (.*?)\n([^ \n]|\z)/sgc) {
+        my $len = length($1);
+        my $pos1 = pos($str);
+        my $pos0 = $pos1-$len-4; #why 4 not 2 ???
         if ($pos < $pos0) {
             push @res, &$processnonmatch(substr($str, $pos, $pos0-$pos));
         }
         push @res, &$processmatch($1);
-        $pos=$pos1 - length($2);
-        pos($str)=$pos;
+        $pos = $pos1 - length($2);
+        pos($str) = $pos;
     }
-    my $pos1= length($str); #end.
-    my $lenremainder= $pos1-$pos;
+    my $pos1 = length($str); #end.
+    my $lenremainder = $pos1-$pos;
     if ($lenremainder) {
         push @res, &$processnonmatch(substr($str, $pos, $pos1-$pos));
     }
@@ -128,12 +128,12 @@ fun translate_paragraphs ($str) {
 }
 
 # XX move this somewhere
-*is_empty_string= *PXML::Serialize::is_empty_string;
+*is_empty_string = *PXML::Serialize::is_empty_string;
 
 fun pxml_body_is_empty ($e) {
-    my $l= mixed_flatten($e->body);
+    my $l = mixed_flatten($e->body);
     $l->every(fun($v){
-        is_string $v ? $v=~ /^\s*$/s : 0
+        is_string $v ? $v =~ /^\s*$/s : 0
     })
 }
 
@@ -155,7 +155,7 @@ fun pxml_de_paragraphy ($e) {
 fun de_paragraphy ($v) {
     if (is_pxml_element $v) {
         pxml_de_paragraphy $v
-    } elsif (my ($v0)= $v->perhaps_one) {
+    } elsif (my ($v0) = $v->perhaps_one) {
         de_paragraphy($v0)
     } else {
         $v->map(*de_paragraphy)
@@ -164,7 +164,7 @@ fun de_paragraphy ($v) {
 
 
 fun translate_links ($str) {
-    my $l= parselinks
+    my $l = parselinks
       ($str,
        fun ($txt,$url) {
            A {href=> $url}, $txt
@@ -177,9 +177,9 @@ fun translate_links ($str) {
 }
 
 fun translate_listitem ($str) {
-    my ($first, $rest)= $str=~ /^(.*?)\n\n(.*)/s
+    my ($first, $rest) = $str =~ /^(.*?)\n\n(.*)/s
       or die "invalid listitem '$str'";
-    my $ff= translate_links($first)->xone;
+    my $ff = translate_links($first)->xone;
     [
      # can't use chr(8226) or even $nbsp because htmldoc doesn't
      # support UTF-8
@@ -205,12 +205,12 @@ fun type_eq ($a,$b) {
 }
 
 fun translate ($str) {
-    my $parsed= parse ($str,
+    my $parsed = parse ($str,
                        *definitionlists::Match::c::Match,
                        *definitionlists::NonMatch::c::NonMatch);
-    my $grouped= $parsed->list->group(*type_eq)->map(the_method "reverse");
-    my $body= $grouped->map(fun ($l) {
-        my $t= $l->map(the_method "translate");
+    my $grouped = $parsed->list->group(*type_eq)->map(the_method "reverse");
+    my $body = $grouped->map(fun ($l) {
+        my $t = $l->map(the_method "translate");
         if ($l->first->isa("definitionlists::Match")) {
             DL $t
         } else {
@@ -222,13 +222,13 @@ fun translate ($str) {
               # Hack to try to get htmldoc to interpret content as
               # UTF-8, but doesn't work
               META ({'http-equiv'=>"Content-Type",
-                     content=> "text/html;charset=UTF-8"})),
+                     content => "text/html;charset=UTF-8"})),
          BODY($body))
 }
 
 #use FP::Repl::Trap; use FP::Repl; repl;exit;
 
-my $in= xgetfile_utf8 $infile;
+my $in = xgetfile_utf8 $infile;
 
 puthtmlfile($outfile, translate($in));
 

@@ -15,11 +15,11 @@ FP::Trie - purely functional prefix tree
 
     use FP::Trie;
 
-    my $t= empty_trie->set(string_to_list ("Hello"), "World");
+    my $t = empty_trie->set(string_to_list ("Hello"), "World");
     $t->perhaps_ref(string_to_list("Hell")); # ()
-    if (my ($subt)= $t->perhaps_skip(string_to_list("Hell"))) {
+    if (my ($subt) = $t->perhaps_skip(string_to_list("Hell"))) {
         print $subt->sublevels_length;
-        if (my ($v)= $subt->perhaps_ref(string_to_list("o"))) {
+        if (my ($v) = $subt->perhaps_ref(string_to_list("o"))) {
             print $v;
         }
     }
@@ -84,10 +84,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Trie;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(empty_trie);
-@EXPORT_OK=qw($empty_trie); # ok?
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(empty_trie);
+@EXPORT_OK = qw($empty_trie); # ok?
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -97,7 +97,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     use FP::Struct [],
         'FP::Struct::Show',
         'FP::Abstract::Pure';
-    use overload '""'=> 'string';
+    use overload '""' => 'string';
     sub string {"key not found"}
     _END_
 }
@@ -129,34 +129,34 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     }
 
     sub perhaps_skip {
-        @_==2 or die "wrong number of arguments";
-        my ($t, $l)=@_;
-        my ($t2,$maybe_l2)= $t->skip ($l);
+        @_ == 2 or die "wrong number of arguments";
+        my ($t, $l) = @_;
+        my ($t2,$maybe_l2) = $t->skip ($l);
         defined $maybe_l2 ? () : ($t2)
     }
 
-    our $key_not_found_exception= new FP::Trie::KeyNotFoundException;
+    our $key_not_found_exception = new FP::Trie::KeyNotFoundException;
 
     sub perhaps_ref {
-        @_==2 or die "wrong number of arguments";
-        my ($t, $l)=@_;
-        if (my ($t2)= $t->perhaps_skip ($l)) {
+        @_ == 2 or die "wrong number of arguments";
+        my ($t, $l) = @_;
+        if (my ($t2) = $t->perhaps_skip ($l)) {
             $t2->perhaps_value
         } else {
             ()
         }
     }
-    *maybe_ref= perhaps_to_maybe *perhaps_ref;
-    *ref_or= perhaps_to_or *perhaps_ref;
-    *ref= perhaps_to_x *perhaps_ref, $key_not_found_exception;
-    *exists= perhaps_to_exists *perhaps_ref;
+    *maybe_ref = perhaps_to_maybe *perhaps_ref;
+    *ref_or = perhaps_to_or *perhaps_ref;
+    *ref = perhaps_to_x *perhaps_ref, $key_not_found_exception;
+    *exists = perhaps_to_exists *perhaps_ref;
 
     # returns ($ending_level, $maybe_keyremainder,
     # $maybe_lastvaluelevel, $maybe_keyremainder_lvl)
     sub skip {
-        @_==2 or @_==4 or die "wrong number of arguments";
-        my ($t, $l, $maybe_lastvaluelevel, $maybe_keyremainder_lvl)=@_;
-        my ($maybe_lvl, $maybe_r_lvl)=
+        @_ == 2 or @_ == 4 or die "wrong number of arguments";
+        my ($t, $l, $maybe_lastvaluelevel, $maybe_keyremainder_lvl) = @_;
+        my ($maybe_lvl, $maybe_r_lvl) =
           UNIVERSAL::isa($t, "FP::Trie::ValueLevel") ?
               ($t, $l)
                 : ($maybe_lastvaluelevel, $maybe_keyremainder_lvl);
@@ -164,8 +164,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
             # found the node, which is perhaps holding a value
             ($t, undef, $maybe_lvl, $maybe_r_lvl)
         } else {
-            my ($a, $l2)= $l->first_and_rest;
-            if (my ($t2)= hash_perhaps_ref($$t{sublevels}, $a)) {
+            my ($a, $l2) = $l->first_and_rest;
+            if (my ($t2) = hash_perhaps_ref($$t{sublevels}, $a)) {
                 # XX TCO
                 $t2->skip ($l2, $maybe_lvl, $maybe_r_lvl)
             } else {
@@ -177,18 +177,18 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     }
 
     sub update {
-        @_==3 or die "wrong number of arguments";
-        my ($t, $l, $fn)=@_;
+        @_ == 3 or die "wrong number of arguments";
+        my ($t, $l, $fn) = @_;
         if ($l->is_null) {
             FP::Trie::ValueLevel->new ($$t{sublevels},
                                        &$fn ($t->perhaps_value))
         } else {
-            my ($a, $l2)= $l->first_and_rest;
+            my ($a, $l2) = $l->first_and_rest;
             $t->sublevels_update
               (sub {
                    hash_update $_[0], $a, sub {
                        do {
-                           if (my ($t2)= @_) {
+                           if (my ($t2) = @_) {
                                $t2
                            } else {
                                $FP::Trie::empty_trie
@@ -200,8 +200,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     }
 
     sub xdelete {
-        @_==2 or die "wrong number of arguments";
-        my ($t, $l)=@_;
+        @_ == 2 or die "wrong number of arguments";
+        my ($t, $l) = @_;
         if ($l->is_null) {
             if (UNIVERSAL::isa($t, "FP::Trie::ValueLevel")) {
                 if (keys %{$$t{sublevels}}) {
@@ -215,12 +215,12 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
                 die $key_not_found_exception
             }
         } else {
-            my ($a, $l2)= $l->first_and_rest;
+            my ($a, $l2) = $l->first_and_rest;
             $t->sublevels_update
               (sub {
                    hash_update $_[0], $a, sub {
-                       if (my ($t2)= @_) {
-                           my $t3= $t2->xdelete ($l2);
+                       if (my ($t2) = @_) {
+                           my $t3 = $t2->xdelete ($l2);
                            $t3 eq $FP::Trie::empty_trie ? () : $t3
                        } else {
                            #()
@@ -234,19 +234,19 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     }
 
     sub delete {
-        @_==2 or die "wrong number of arguments";
-        my ($t, $l)=@_;
+        @_ == 2 or die "wrong number of arguments";
+        my ($t, $l) = @_;
         # This is really calling for call/cc (parametrize the end case
         # in xdelete, with either a continuation call or the call to
         # an exception handler). But we have what we have (for now).
         my $res;
         if (eval {
-            $res= $t->xdelete($l);
+            $res = $t->xdelete($l);
             1
         }) {
             $res
         } else {
-            my $e= $@;
+            my $e = $@;
             if (ref $e and UNIVERSAL::isa($e,"FP::Trie::KeyNotFoundException")) {
                 $t
             } else {
@@ -256,35 +256,35 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     }
 
     sub set {
-        @_==3 or die "wrong number of arguments";
-        my ($t, $l, $v)=@_;
+        @_ == 3 or die "wrong number of arguments";
+        my ($t, $l, $v) = @_;
         $t->update ($l, sub { $v })
     }
 
     sub sublevels_length {
-        @_==1 or die "wrong number of arguments";
-        my ($t)=@_;
+        @_ == 1 or die "wrong number of arguments";
+        my ($t) = @_;
         hash_length $t->sublevels
     }
 
     # key_and_value_s, association list
     sub alist {
-        my ($t, $maybe_rprefix, $maybe_tail)=@_;
-        my $rprefix= $maybe_rprefix // null;
+        my ($t, $maybe_rprefix, $maybe_tail) = @_;
+        my $rprefix = $maybe_rprefix // null;
         if (0) {
             # XXX Why the hell does this not work, while the non-OO
             # variant does?
             stream (keys %{$$t{sublevels}})
               ->fold_right
                 (sub {
-                     my ($k,$rest)=@_;
+                     my ($k,$rest) = @_;
                      $$t{sublevels}{$k}->alist(cons ($k, $rprefix), $rest)
                  },
                  $maybe_tail // null);
         } else {
             stream_fold_right
               (sub {
-                   my ($k,$rest)=@_;
+                   my ($k,$rest) = @_;
                    $$t{sublevels}{$k}->alist(cons ($k, $rprefix), $rest)
                },
                $maybe_tail // null,
@@ -293,8 +293,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     }
 
     sub keys {
-        @_==1 or die "wrong number of arguments";
-        my ($t)=@_;
+        @_ == 1 or die "wrong number of arguments";
+        my ($t) = @_;
         $t->alist->stream_map (sub { $_[0][0] })
     }
 
@@ -302,8 +302,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     # else should this be named? `valuestream`? And the above
     # `keystream`?
     sub values {
-        @_==1 or die "wrong number of arguments";
-        my ($t)=@_;
+        @_ == 1 or die "wrong number of arguments";
+        my ($t) = @_;
         $t->alist->stream_map (sub { $_[0][1] })
     }
 
@@ -311,8 +311,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     # interoperation; call `write_sexpr` on it to get a readable
     # printout.
     sub sexpr {
-        my ($t)=@_;
-        my $sublevels= $t->sublevels;
+        my ($t) = @_;
+        my $sublevels = $t->sublevels;
         cons(list($t->perhaps_value),
              list(map {
                       list($_, $$sublevels{$_}->sexpr)
@@ -332,13 +332,13 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
       "FP::Trie::BareLevel";
 
     sub perhaps_value {
-        my ($t)=@_;
+        my ($t) = @_;
         $$t{value}
     }
 
     sub alist {
-        my ($t, $maybe_rprefix, $maybe_tail)=@_;
-        my $rprefix= $maybe_rprefix // null;
+        my ($t, $maybe_rprefix, $maybe_tail) = @_;
+        my $rprefix = $maybe_rprefix // null;
         lazy {
             cons ([$rprefix->reverse, $$t{value}],
                   $t->SUPER::alist ($rprefix, $maybe_tail))
@@ -348,7 +348,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     _END_
 }
 
-our $empty_trie= FP::Trie::BareLevel->new ({});
+our $empty_trie = FP::Trie::BareLevel->new ({});
 sub empty_trie {
     $empty_trie
 }

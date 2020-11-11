@@ -14,7 +14,7 @@ FunctionalPerl::Htmlgen::Htmlparse
 =head1 SYNOPSIS
 
     use FunctionalPerl::Htmlgen::Htmlparse qw(htmlparse);
-    my $b= htmlparse '<p>hi</p> <p>there!', 'body';
+    my $b = htmlparse '<p>hi</p> <p>there!', 'body';
     is ref($b), 'PXML::_::XHTML';
     is $b->string, '<body><p>hi</p><p>there!</p></body>';
 
@@ -30,10 +30,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FunctionalPerl::Htmlgen::Htmlparse;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(htmlparse);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(htmlparse);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -45,10 +45,10 @@ use PXML::XHTML;
 use Chj::TEST;
 
 fun htmlparse_raw ($htmlstr, $whichtag) {
-    my $t= HTML::TreeBuilder->new;
+    my $t = HTML::TreeBuilder->new;
     $t->ignore_unknown(0); # allow <with_toc> elements
     $t->parse_content ($htmlstr);
-    my $e= $t->elementify;
+    my $e = $t->elementify;
     # (^ actually mutates $t into the HTML::Element object already, ugh)
     $e->find_by_tag_name($whichtag)
 }
@@ -57,12 +57,12 @@ fun htmlparse_raw ($htmlstr, $whichtag) {
 fun htmlmap ($e) {
     __  '(HTML::Element) -> PXML::_::XHTML '.
         '-- convert output from HTML::TreeBuilder to PXML::XHTML (PXML::Element)';
-    my $name= lc($e->tag);
-    my $atts={};
+    my $name = lc($e->tag);
+    my $atts = {};
     for ($e->all_external_attr_names) {
         next if $_ eq "/";
         die "att name '$_'" unless /^\w+\z/s;
-        $$atts{lc $_}= $e->attr($_);
+        $$atts{lc $_} = $e->attr($_);
     }
     # XX unsafe, if we don't check that a corresponding constructor
     # exists! Could fall back to just PXML::Element (which

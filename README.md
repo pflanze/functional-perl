@@ -75,12 +75,12 @@ inputs:
     MYEXAMPLE(
         PROTOCOL_VERSION("0.123"),
         RECORDS(
-            csv_file_to_rows($inpath, {eol=> "\n", sep_char=> ";"})
+            csv_file_to_rows($inpath, {eol => "\n", sep_char => ";"})
             # skip the header row
             ->rest
             # map rows to XML elements
             ->map(sub {
-                      my ($a,$b,$c,$d)= @{$_[0]};
+                      my ($a,$b,$c,$d) = @{$_[0]};
                       RECORD(A($a), B($b), C($c), D($d))
                   })))
         # print XML document to disk
@@ -113,8 +113,8 @@ calculated you can't modify it in place; if you have multiple
 variables holding the same number, you can't (on purpose or
 accidentally) change them both at the same time:
 
-    my $x= 100; 
-    my $y= $x;
+    my $x = 100;
+    my $y = $x;
     $x++;
     is $y, 100; # still true, the number itself didn't change, only the variable
 
@@ -144,7 +144,7 @@ are more in`FP::Combinators`):
 
     # The same but takes the input items from a list instead of
     # multiple function arguments:
-    *square_of_the_sequence_sum= compose(\&square, the_method "sum");
+    *square_of_the_sequence_sum = compose(\&square, the_method "sum");
     is square_of_the_sequence_sum(list(2, 3)), 25;
 
 Functional programming matters more in the large--with small programs

@@ -25,7 +25,7 @@ use Test::More;
 use FP::Repl::WithRepl qw(withrepl WithRepl_eval);
 
 sub myeval ($) {
-    my ($str)=@_;
+    my ($str) = @_;
     if (FP::Repl::AutoTrap::possibly_activate) {
         withrepl {
             &WithRepl_eval($str)
@@ -37,7 +37,7 @@ sub myeval ($) {
 
 require "./meta/find-perl.pl";
 
-my %ignore= map{ $_=> 1}
+my %ignore = map{ $_ => 1}
   qw(
     Chj::Class::Array
     FP::DBI
@@ -92,18 +92,18 @@ my %ignore= map{ $_=> 1}
     Chj::xtmpfile
    );
 
-my $modules= modulenamelist;
-#my $modules= [qw(FP::Equal FP::Ops)];
+my $modules = modulenamelist;
+#my $modules = [qw(FP::Equal FP::Ops)];
 
-# plan tests=> scalar @$modules;
+# plan tests => scalar @$modules;
 #  nope, when running direct, each module contributes its own number of
 #  tests, not 1.
 
 sub save {
-    my ($module, $code)= @_;
-    my $file= "tps-$module.pl";
+    my ($module, $code) = @_;
+    my $file = "tps-$module.pl";
     # Older Strawberry Perl versions don't like "::" in paths, so:
-    $file=~ s/:/_/sg;
+    $file =~ s/:/_/sg;
     unlink $file;
     # XX possibly remove line directives from $code.
     open my $out, ">", $file or die "$file: $!";
@@ -117,38 +117,38 @@ sub save {
 }
 
 sub numfailures {
-    my @failures= grep {
+    my @failures = grep {
         not $_->{ok}
     } @{ Test::Builder->new->{Test_Results} };
     #warn "failures: @failures";
     scalar @failures
 }
 
-# to make Chj::TEST use=> feature die instead of exit:
-$ENV{RUN_TESTS}= "pod_snippets";
+# to make Chj::TEST use => feature die instead of exit:
+$ENV{RUN_TESTS} = "pod_snippets";
 
-my $namespacenum= 0;
+my $namespacenum = 0;
 
 for my $module (@$modules) {
     if ($ignore{$module}) {
         print "=== Ignoring pod snippets in $module.\n";
     } else {
-        subtest "pod snippets in $module"=> sub {
+        subtest "pod snippets in $module" => sub {
 
-            if (my @needs= module_needs $module) {
-                plan skip_all=>
+            if (my @needs = module_needs $module) {
+                plan skip_all =>
                     "test pod snippets in $module - can't use @needs", 1;
                 return;
             }
 
             my $tps_direct = Test::Pod::Snippets->new();
-            my $fail_before= numfailures;
-            my $code= $tps_direct->generate_test( module => $module );
-            $code=~ s/(;\s*)no warnings;/${1};/;
-            $code=~ s/(;\s*)no strict;/${1}use strict;/;
+            my $fail_before = numfailures;
+            my $code = $tps_direct->generate_test( module => $module );
+            $code =~ s/(;\s*)no warnings;/${1};/;
+            $code =~ s/(;\s*)no strict;/${1}use strict;/;
             $namespacenum++;
             if (myeval "package t_pod_snippets_$namespacenum; $code; \n1") {
-                my $fail_after= numfailures;
+                my $fail_after = numfailures;
                 if ($fail_after == $fail_before) {
                     # done_testing("snippets in $module") but that's part of $code
                 } else {
@@ -156,9 +156,9 @@ for my $module (@$modules) {
                     save $module, $code;
                 }
             } else {
-                my $e= $@;
-                if (my ($use_module)= $e=~ /^TEST use<(.*?)> failed:/) {
-                    plan skip_all=>
+                my $e = $@;
+                if (my ($use_module) = $e =~ /^TEST use<(.*?)> failed:/) {
+                    plan skip_all =>
                         "test pod snippets in $module - use $use_module failed", 1;
                     return;
                 } else {

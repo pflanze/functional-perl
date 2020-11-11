@@ -15,8 +15,8 @@ Chj::xopendir
 
     use Chj::xopendir;
     {
-        my $dir= xopendir "/foo";
-        while (defined(my $item=$dir->read)) {
+        my $dir = xopendir "/foo";
+        while (defined(my $item = $dir->read)) {
             print $item;
         }
     } # $dir is closed automatically (issuing a warning on error)
@@ -101,8 +101,8 @@ or on the L<website|http://functional-perl.org/>.
 #'
 
 package Chj::xopendir;
-@ISA='Exporter'; require Exporter;
-@EXPORT= qw(xopendir perhaps_opendir perhaps_xopendir);
+@ISA = 'Exporter'; require Exporter;
+@EXPORT = qw(xopendir perhaps_opendir perhaps_xopendir);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Chj::IO::Dir;

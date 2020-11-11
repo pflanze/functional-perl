@@ -10,9 +10,9 @@ use Function::Parameters qw(:strict);
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -29,9 +29,9 @@ exit (@_ ? 1 : 0);
 }
 
 use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage}) or exit 1;
+our $verbose = 0;
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage}) or exit 1;
 
 use FP::List;
 use FP::IOStream qw(xfile_replace_lines);
@@ -63,7 +63,7 @@ fun head_get ($head, $name) {
 # Get one of the headers
 
 fun head_xgetone ($head, $name) {
-    my ($header)= head_get($head, $name)->perhaps_one
+    my ($header) = head_get($head, $name)->perhaps_one
         or die "missing header '$name'";
     $header
 }
@@ -71,7 +71,7 @@ fun head_xgetone ($head, $name) {
 # Extract the value of a header
 
 fun header_value ($header) {
-    $header=~ s/^[^:]+://
+    $header =~ s/^[^:]+://
         or die "header line missing a key: '$header'";
     chompspace $header
 }
@@ -83,7 +83,7 @@ sub regex_from_strings {
     join ("|", map { quotemeta $_ } @_)
 }
 
-my $drop_header_name_regex=
+my $drop_header_name_regex =
     regex_from_strings(qw(
                        Return-Path
                        BCC
@@ -93,19 +93,19 @@ my $drop_header_name_regex=
                        Message-ID));
 
 fun fixlines ($lines) {
-    my ($head, $body)= lines_head_and_body $lines;
+    my ($head, $body) = lines_head_and_body $lines;
 
-    my $from= head_xgetone $head, "From";
-    my ($fromaddr)= $from=~ m@<([^<>]+)>@s
+    my $from = head_xgetone $head, "From";
+    my ($fromaddr) = $from =~ m@<([^<>]+)>@s
         or die "missing from address in '$from'";
-    my ($fromwhole)= $from=~ m@.?: *([^\n]*)@s
+    my ($fromwhole) = $from =~ m@.?: *([^\n]*)@s
         or die "?";
-    my ($fromdomain)= $fromaddr=~ m{\@(.*)}s
+    my ($fromdomain) = $fromaddr =~ m{\@(.*)}s
         or die "?";
-    my $messageid= head_xgetone $head, "Message-ID";
-    my ($messageid_uuid)= header_value($messageid)=~ m{([^<>@]+)\@}s
+    my $messageid = head_xgetone $head, "Message-ID";
+    my ($messageid_uuid) = header_value($messageid) =~ m{([^<>@]+)\@}s
         or die "no match in messageid '$messageid'";
-    my $bcc_values=
+    my $bcc_values =
         cons $fromwhole,
         head_get($head, "BCC")->map(*header_value);
 

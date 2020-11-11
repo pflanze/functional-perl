@@ -90,11 +90,11 @@ whose content can be replaced). So, instead of this code:
 which treats the variable @a as a mutable container, a functional
 program instead does:
 
-    my $a= [];
+    my $a = [];
     {
-        my $a= [@$a, 1];
+        my $a = [@$a, 1];
         {
-            my $a= [@$a, 2];
+            my $a = [@$a, 2];
             # ...
         }
     }
@@ -112,7 +112,7 @@ where mutations can happen: the variable itself, and the array data
 structure. In `@a` the variable as the container and the array data
 structure are "the same", but we can also write:
 
-    my $a= [];
+    my $a = [];
     push @$a, 1;
     push @$a, 2;
 
@@ -167,59 +167,59 @@ It would be possible to really only use one namespace in Perl, too
 (scalars), and write functions like so, even when they are global
 (`array_map` can be found in `FP::Array`):
 
-    our $square= sub {
-        my ($a)=@_;
+    our $square = sub {
+        my ($a) = @_;
         $a * $a
     };
 
-    my $inputs= [ 1,2,3 ];
+    my $inputs = [ 1,2,3 ];
 
-    my $results= array_map $square, $inputs;
+    my $results = array_map $square, $inputs;
 
 Stop, we're still breaking out into the function namespace here, for
 `array_map`. Let's be completely single-namespace; also, perhaps let's
 only use one kind of scoping:
 
-    my $square= sub {
-        my ($a)=@_;
+    my $square = sub {
+        my ($a) = @_;
         $a * $a
     };
 
-    my $inputs= [ 1,2,3 ];
+    my $inputs = [ 1,2,3 ];
 
-    my $results= &$array_map ($square, $inputs);
+    my $results = &$array_map ($square, $inputs);
 
 This is nicely uniform, but perhaps a tad impractical (also,
 `$array_map` can't be in a `my` variable if it was imported). Perl
 programmers have gotten used to defining local functions with `my
-$foo= sub ..`, but are used to using Perl's subroutine (CODE)
+$foo = sub ..`, but are used to using Perl's subroutine (CODE)
 namespace for global functions; pushing for a single namespace
 probably won't make sense.
 
 But this means that the above becomes:
 
     sub square {
-        my ($a)=@_;
+        my ($a) = @_;
         $a * $a
     }
 
-    my $inputs= [ 1,2,3 ];
+    my $inputs = [ 1,2,3 ];
 
-    my $results= array_map \&square, $inputs;
-
-or
-
-    my $results= array_map *square, $inputs;
+    my $results = array_map \&square, $inputs;
 
 or
 
-    my @inputs= ( 1,2,3 );
+    my $results = array_map *square, $inputs;
 
-    my $results= array_map \&square, \@inputs;
+or
+
+    my @inputs = ( 1,2,3 );
+
+    my $results = array_map \&square, \@inputs;
 
 or then still
 
-    my $results= array_map *square, \@inputs;
+    my $results = array_map *square, \@inputs;
 
 
 (Pick your favorite? Should this project give a recommendation?)
@@ -371,10 +371,10 @@ The most frequent case involving reference cycles in functional
 programs are self-referential closures:
 
     sub foo {
-        my ($start)=@_;
+        my ($start) = @_;
         my $x = calculate_x;
-        my $rec; $rec= sub {
-            my ($y)= @_;
+        my $rec; $rec = sub {
+            my ($y) = @_;
             is_bar $y ? $y : cons $y, &$rec(barify_a_bit_with $y, $x)
         };
         &{Weakened $rec} ($start)
@@ -423,7 +423,7 @@ hold on to it, meaning, it will grow, possibly without
 bounds. Example:
 
     {
-        my $s= xfile_lines $path; # lazy linked list of lines
+        my $s = xfile_lines $path; # lazy linked list of lines
         print "# ".$s->first."\n";
         $s->for_each (sub { print "> $_[0]\n" });
     }
@@ -438,7 +438,7 @@ of Perl, it can be worked around, by assigning `undef` or better
 weakening the variable from within the called method:
 
     sub for_each ($ $ ) {
-        my ($s, $proc)=@_;
+        my ($s, $proc) = @_;
         weaken $_[0];
         ...
     }
@@ -456,7 +456,7 @@ Now there may be situations where you actually really want to keep
 clobbered by passing it through the `Keep` function from `FP::Weak`:
 
     {
-        my $s= xfile_lines $path; # lazy linked list of lines
+        my $s = xfile_lines $path; # lazy linked list of lines
         print "# ".$s->first."\n";
         Keep($s)->for_each (sub { print "> ".$_[0]."\n" });
         $s->for_each (sub { print "again: > ".$_[0]."\n" });
@@ -467,17 +467,17 @@ the second `for_each`! So perhaps you'd really want to do the
 following:
 
     {
-        my $s= xfile_lines $path; # lazy linked list of lines
+        my $s = xfile_lines $path; # lazy linked list of lines
         print "# ".$s->first."\n";
         $s->for_each (sub { print "> ".$_[0]."\n" });
-        $s= xfile_lines $path; # reopen the file from the start
+        $s = xfile_lines $path; # reopen the file from the start
         $s->for_each (sub { print "again: > ".$_[0]."\n" });
     }
 
 This is probably the ugliest part when programming functionally in
 Perl.  Perhaps the interpreter could be changed (or a lowlevel module
 written) so that lexical variables are automatically cleared upon
-their last access (and something like @_=() is enough to clear it from
+their last access (and something like @_ = () is enough to clear it from
 the perl calling stack, if not automatic). An argument against this is
 inspection using debuggers or modules like `PadWalker`, so it will
 have to be enabled explicitely (lexically scoped).
@@ -495,7 +495,7 @@ released and the tail-called subroutine be made to return directly to
 the parent context, but the interpreter doesn't do it.
 
     sub sum_map_to {
-        my ($fn, $start, $end, $total)=@_;
+        my ($fn, $start, $end, $total) = @_;
         # this example only contains an expression in tail position
         # (ignoring the variable binding statement).
         $start < $end ?
@@ -523,11 +523,11 @@ retain:
 
     sub sum_map_to {
     sum_map_to: {
-        my ($fn, $start, $end, $total)=@_;
+        my ($fn, $start, $end, $total) = @_;
         # this example only contains an expression in tail position
         # (ignoring the variable binding statement).
         $start < $end ?
-            do { @_= ($fn, $start + 1, $end, $total + &$fn($start));
+            do { @_ = ($fn, $start + 1, $end, $total + &$fn($start));
                  redo sum_map_to }
           : $total
     }}
@@ -650,7 +650,7 @@ most likely hurt you later on.
 Instead, a wrapper subroutine needs to be passed that does the method
 calls, like:
 
-    $l->map( sub { my $s=shift; $s->baz } )
+    $l->map( sub { my $s = shift; $s->baz } )
 
 But thanks to the possibility of passing a method as a string, a
 method-string-to-subroutine converter can easily be written such that
@@ -668,7 +668,7 @@ The above is good if the object is what's in the list, and the method
 is your "function" to be applied. If instead the object is carrying
 information for the method that you want to pass, use `cut_method`:
 
-    my $bazzer= Foo::Bar->new($a,$b,$c);
+    my $bazzer = Foo::Bar->new($a,$b,$c);
     $l->map( cut_method $bazzer, "baz" ) # will pass sub { $bazzer->baz(@_) }
 
 (Does anyone have a better name for this function?)

@@ -37,7 +37,7 @@ use FP::Stream ":all";
 use FP::Ops qw(regex_substitute);
 
 TEST_EXCEPTION {
-    my $l= list 100-1, "bottles";
+    my $l = list 100-1, "bottles";
     die "not what we wanted: ".show ($l)
 }
   "not what we wanted: list(99, 'bottles')";
@@ -49,12 +49,12 @@ TEST { show improper_list (list (1,3), 2) }
   'improper_list(list(1, 3), 2)';
 
 TEST { regex_substitute sub{s/line \d+/line .../g},
-           show improper_list ([1,3], {foo=> list("bar",sub{"f"})}) }
+           show improper_list ([1,3], {foo => list("bar",sub{"f"})}) }
   'improper_list([1, 3], +{foo => list(\'bar\', sub { "DUMMY" })})';
 
 my $s;
 TEST {
-    $s= stream_iota->take(10);
+    $s = stream_iota->take(10);
     show $s
 } 'lazy { "DUMMY" }';
 

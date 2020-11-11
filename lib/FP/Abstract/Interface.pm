@@ -67,7 +67,7 @@ package FP::Abstract::Interface;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub FP_Interface__method_names {
-    my $class= shift;
+    my $class = shift;
     # If we're extending another interface (not the case here though),
     # we need to merge its interface definition with ours:
     ((), $class->SUPER::FP_Interface__method_names)

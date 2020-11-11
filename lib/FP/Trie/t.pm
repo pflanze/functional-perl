@@ -34,7 +34,7 @@ use FP::List qw(string_to_list);
 use FP::Ops "the_method";
 use Chj::TEST;
 
- my $t= empty_trie->set(string_to_list ("Hello"), "World");
+ my $t = empty_trie->set(string_to_list ("Hello"), "World");
 
 TEST {
     [$t->perhaps_ref(string_to_list("Hell"))]
@@ -45,9 +45,9 @@ TEST {
 } ["World"];
 
 TEST_STDOUT {
- if (my ($subt)= $t->perhaps_skip(string_to_list("Hell"))) {
+ if (my ($subt) = $t->perhaps_skip(string_to_list("Hell"))) {
      print $subt->sublevels_length;
-     if (my ($v)= $subt->perhaps_ref(string_to_list("o"))) {
+     if (my ($v) = $subt->perhaps_ref(string_to_list("o"))) {
          print $v;
      }
  }
@@ -55,9 +55,9 @@ TEST_STDOUT {
   "1World";
 
 TEST_STDOUT {
- if (my ($subt)= $t->perhaps_skip(string_to_list("Hello"))) {
+ if (my ($subt) = $t->perhaps_skip(string_to_list("Hello"))) {
      print $subt->sublevels_length;
-     if (my ($v)= $subt->perhaps_ref(string_to_list(""))) {
+     if (my ($v) = $subt->perhaps_ref(string_to_list(""))) {
          print $v;
      }
  }
@@ -65,22 +65,22 @@ TEST_STDOUT {
   "0World";
 
 TEST_STDOUT {
- if (my ($subt)= $t->perhaps_skip(string_to_list(""))) {
+ if (my ($subt) = $t->perhaps_skip(string_to_list(""))) {
      print $subt->sublevels_length;
-     if (my ($v)= $subt->perhaps_ref(string_to_list("Hello"))) {
+     if (my ($v) = $subt->perhaps_ref(string_to_list("Hello"))) {
          print $v;
      }
  }
 }
   "1World";
 
-my $t2= $t->update (string_to_list ("Hell"), sub {
+my $t2 = $t->update (string_to_list ("Hell"), sub {
                         [@_,"yes"]
                     });
-my $t3= $t2->update (string_to_list ("Hello"), sub {
+my $t3 = $t2->update (string_to_list ("Hello"), sub {
                         [@_,"2"]
                     });
-my $t4= $t3->set (string_to_list ("Hell"), "no");
+my $t4 = $t3->set (string_to_list ("Hell"), "no");
 
 TEST {
     $t3->perhaps_ref(string_to_list "Hell")
@@ -112,7 +112,7 @@ TEST {
 
 # delete
 
-my $t5= $t4->delete (string_to_list ("Hell"));
+my $t5 = $t4->delete (string_to_list ("Hell"));
 
 TEST {
     [$t5->perhaps_ref(string_to_list ("Hell"))]
@@ -122,7 +122,7 @@ TEST {
     [$t5->perhaps_ref(string_to_list ("Hello"))]
 } [["World","2"]];
 
-my $t6= $t4->delete (string_to_list ("Hello"));
+my $t6 = $t4->delete (string_to_list ("Hello"));
 
 TEST {
     [$t6->perhaps_ref(string_to_list ("Hell"))]
@@ -146,7 +146,7 @@ TEST_EXCEPTION {
 
 # Randomized tests for delete (too many edge cases):
 sub random_key {
-    my $len= int rand 3;
+    my $len = int rand 3;
     join("",
          map {
              chr (32 + int rand 64)
@@ -156,33 +156,33 @@ sub random_key {
 use FP::Repl::WithRepl 'withrepl';##
 
 TEST {
-    my $trie= empty_trie;
-    my $hash= {};
+    my $trie = empty_trie;
+    my $hash = {};
 
-    my $set_both= sub ($$) {
-        my ($k,$i)=@_;
-        $trie= $trie->set (string_to_list ($k), $i);
-        $$hash{$k}=$i;
+    my $set_both = sub ($$) {
+        my ($k,$i) = @_;
+        $trie = $trie->set (string_to_list ($k), $i);
+        $$hash{$k} = $i;
     };
 
-    my $delete_both= sub ($) {
-        my ($k)=@_;
-        $trie= $trie->delete (string_to_list $k);
+    my $delete_both = sub ($) {
+        my ($k) = @_;
+        $trie = $trie->delete (string_to_list $k);
         delete $$hash{$k};
     };
 
     withrepl {
-        my $oldk= random_key;
+        my $oldk = random_key;
         &$set_both ($oldk, -1);
 
         for my $i (1..1000) {
-            my $k= random_key;
+            my $k = random_key;
             &$set_both ($k, $i);
             $trie->ref (string_to_list $oldk) == $$hash{$oldk}
               or die "bug";
-            $oldk= $k;
+            $oldk = $k;
           DEL: {
-                my $k2= random_key;
+                my $k2 = random_key;
                 redo DEL if $k2 eq $oldk;
                 &$delete_both ($k2);
             }
@@ -195,8 +195,8 @@ TEST {
 
         $trie->keys->for_each
           (sub {
-               my ($kl)=@_;
-               my $k= $kl->string;
+               my ($kl) = @_;
+               my $k = $kl->string;
                exists $$hash{$k}
                  or die "key in trie that shouldn't be: '$k'";
                delete $$hash{$k};
@@ -211,13 +211,13 @@ TEST {
 
 # verify that forked structures work:
 
-my $t7= $t4->set (string_to_list("Hare"), "Krishna")
+my $t7 = $t4->set (string_to_list("Hare"), "Krishna")
   ->set (string_to_list ("He"),"Helium")
   ->set (string_to_list ("H"),"Heroic");
 
 sub t {
-    my ($key)=@_;
-    my ($t,$r,$maybe_last,$maybe_r)= $t7->skip (string_to_list($key));
+    my ($key) = @_;
+    my ($t,$r,$maybe_last,$maybe_r) = $t7->skip (string_to_list($key));
     [ $t->sublevels_length, $r, [$t->perhaps_value],
       $maybe_last ? $maybe_last->perhaps_value : undef,
       $maybe_r ? $maybe_r->string : undef ]
@@ -236,7 +236,7 @@ TEST {t "Hell"}
   [1, undef, ["no"], 'no', ""];
 
 TEST {t "Hello"}
-  do{my $v= ["World",2];
+  do{my $v = ["World",2];
      [0, undef, [$v], $v, ""]};
 
 

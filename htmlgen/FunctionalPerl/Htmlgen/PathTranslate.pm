@@ -40,21 +40,21 @@ use FunctionalPerl::Htmlgen::default_config;
 use FP::Show;
 use FP::Predicates 'false';
 
-our $t= __PACKAGE__->new_(is_indexpath0=> $$default_config{is_indexpath0},
-                          downcaps=> 1);
+our $t = __PACKAGE__->new_(is_indexpath0 => $$default_config{is_indexpath0},
+                          downcaps => 1);
 
-fun t_if_suffix_md_to_html ($in,$for_title=0) {
+fun t_if_suffix_md_to_html ($in,$for_title = 0) {
     $t->if_suffix_md_to_html ($in, $for_title,
                        sub {["then",@_]},
                        sub{["otherwise",@_]})
 }
 
 fun is_allcaps ($str) {
-    not $str=~ /[a-z]/
+    not $str =~ /[a-z]/
 }
 
 fun _path0_to_title_mod ($str) {
-    $str=~ s/_/ /sg;
+    $str =~ s/_/ /sg;
     ucfirst $str
 }
 
@@ -67,14 +67,14 @@ use FP::Struct [[*is_procedure, "is_indexpath0"],
 
 
 method is_md ($path) {
-    $path=~ /\.md$/s
+    $path =~ /\.md$/s
 }
 
 method if_suffix_md_to_html ($path0,$for_title,$then,$otherwise) {
     if (!$for_title and $$self{is_indexpath0}->($path0)) {
         tail &$then (path_path0_append (dirname($path0), "index.xhtml"))
     } else {
-        if ($path0=~ s/(.*?)([^\/]*)\.md$/$1$2.xhtml/) {
+        if ($path0 =~ s/(.*?)([^\/]*)\.md$/$1$2.xhtml/) {
             tail &$then
               ($$self{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
                : $path0);
@@ -95,7 +95,7 @@ TEST{t_if_suffix_md_to_html "Foo/READMe.md"}['then','Foo/index.xhtml'];
 TEST{t_if_suffix_md_to_html "Foo/MY.css"}['otherwise','Foo/MY.css'];
 
 
-method possibly_suffix_md_to_html ($path,$for_title=0) {
+method possibly_suffix_md_to_html ($path,$for_title = 0) {
     $self->if_suffix_md_to_html
       ($path,
        $for_title,
@@ -117,7 +117,7 @@ TEST_EXCEPTION{ $t->xsuffix_md_to_html ("foo", 0) } "file does not end in .md: '
 
 
 method path0_to_title ($path0) {
-    my $dn= dirname($path0);
+    my $dn = dirname($path0);
     if ($dn ne "." and $$self{is_indexpath0}->($path0)) {
         _path0_to_title_mod
           basename ( $self->xsuffix_md_to_html($dn.".md",1), ".xhtml");
@@ -143,7 +143,7 @@ TEST{$t->path0_to_title ("bugs/wishlist/line_wrapping_in_pre-MIME_mails.md")}
 
 
 method path0_to_bugtype ($path0) {
-    $path0=~ m|\bbugs/([^/]+)/| or die "no match, '$path0'";
+    $path0 =~ m|\bbugs/([^/]+)/| or die "no match, '$path0'";
     ucfirst $1
 }
 

@@ -39,24 +39,24 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::xIO;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(
     capture_stdout capture_stdout_
     capture_stderr capture_stderr_
     );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub capture_stdout_ {
-    my ($thunk)=@_;
-    my $buf="";
+    my ($thunk) = @_;
+    my $buf = "";
     open my $out, ">", \$buf
       or die $!;
     {
         # XX threadsafe or not?
-        local *STDOUT= $out;
+        local *STDOUT = $out;
         &$thunk(); # dropping results
     }
     close $out
@@ -71,13 +71,13 @@ sub capture_stdout (&) {
 # stupid COPY-PASTE
 
 sub capture_stderr_ {
-    my ($thunk)=@_;
-    my $buf="";
+    my ($thunk) = @_;
+    my $buf = "";
     open my $out, ">", \$buf
       or die $!;
     {
         # XX threadsafe or not?
-        local *STDERR= $out;
+        local *STDERR = $out;
         &$thunk(); # dropping results
     }
     close $out

@@ -14,7 +14,7 @@ FP::Abstract::Pure - functional purity protocol
 =head1 SYNOPSIS
 
     use FP::List;
-    my $v= list(1); # or any other data structure that implements
+    my $v = list(1); # or any other data structure that implements
                     # FP::Abstract::Pure
     is UNIVERSAL::isa($v, "FP::Abstract::Pure"), 1;
     # Or use Safe::Isa instead of UNIVERSAL::isa, but I don't understand

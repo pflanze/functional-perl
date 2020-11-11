@@ -26,11 +26,11 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FunctionalPerl::Htmlgen::Mediawiki;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(mediawiki_prepare mediawiki_replace mediawiki_rexpand
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(mediawiki_prepare mediawiki_replace mediawiki_rexpand
               mediawiki_expand);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -47,15 +47,15 @@ use FP::Show;
 use URI;
 use Encode;
 sub url_decode {
-    my ($str)=@_;
-    my $u= URI->new($str);
-    my $str2= $u->uri_unescape;
+    my ($str) = @_;
+    my $u = URI->new($str);
+    my $str2 = $u->uri_unescape;
     decode("utf-8", $str2, Encode::FB_CROAK)
 }
 
 # escape [ ] for markdown; XX is this correct?
 fun squarebracked_escape ($str) {
-    $str=~ s%([\[\]])%\\$1%sg;
+    $str =~ s%([\[\]])%\\$1%sg;
     $str
 }
 
@@ -68,12 +68,12 @@ fun mediawiki_prepare ($str, $token) {
     __ '($str, $tokenstr) -> ($str, $hashtable) '.
         '-- replace "[[...]]" syntax in $str with replacement tokens '.
         'which use $tokenstr as prefix';
-    my $table= {};
-    my $n=0;
-    $str=~ s%(^|.)\[\[(.*?[^\\])\]\]%
-      my ($pre,$cont)=($1,$2);
+    my $table = {};
+    my $n = 0;
+    $str =~ s%(^|.)\[\[(.*?[^\\])\]\]%
+      my ($pre,$cont) = ($1,$2);
       $n++;
-      $$table{$n}= $cont;
+      $$table{$n} = $cont;
       $pre.$token."-".$n."-" # must be inert to markdown parser
     %sge;
     ($str, $table)
@@ -92,9 +92,9 @@ TEST {[mediawiki_prepare 'foo [[bar]] [[baz]].', 'LO']}
 # replace, but I'm lazy right now.
 
 fun mediawiki_replace ($str, $token, $table) {
-    __ '($str, $token, {tokenargument=>$value,..}) -> $str '.
+    __ '($str, $token, {tokenargument => $value,..}) -> $str '.
         '-- re-insert hidden parts';
-    $str=~ s%\Q$token\E-(\d+)-%
+    $str =~ s%\Q$token\E-(\d+)-%
        '[['.$$table{$1}.']]'
     %sge;
     $str
@@ -113,40 +113,40 @@ fun mediawiki_rexpand ($str, $token, $table) {
 fun mediawiki_expand ($str) {
     __ '($text_segment_str) -> [string|PXML::Element] '.
         '-- expand "[[...]]" in $text_segment_str to link elements';
-    my $res=[];
-    my $lastpos= 0;
-    while ($str=~ m%(^|.)\[\[(.*?[^\\])\]\]%sg) {
+    my $res = [];
+    my $lastpos = 0;
+    while ($str =~ m%(^|.)\[\[(.*?[^\\])\]\]%sg) {
         next if $1 eq '\\';
-        my $cont= $2;
-        my $pos= pos $str;
+        my $cont = $2;
+        my $pos = pos $str;
 
-        my $matchlen= 2 + length ($cont) + 2;
-        my $prelen= $pos-$matchlen-$lastpos;
+        my $matchlen = 2 + length ($cont) + 2;
+        my $prelen = $pos-$matchlen-$lastpos;
         push @$res, substr $str, $lastpos, $prelen
           if $prelen>0;
-        $lastpos=$pos;
+        $lastpos = $pos;
 
-        $cont=~ s|(?<=[^\\])\\(.)|$1|sg; # remove quoting
-        my @parts= map { chompspace $_ } split /(?<=[^\\])\|/, $cont;
-        if (@parts==1) {
-            my ($docname_and_perhaps_fragment)= @parts;
-            my $uri= URI->new($docname_and_perhaps_fragment);
+        $cont =~ s|(?<=[^\\])\\(.)|$1|sg; # remove quoting
+        my @parts = map { chompspace $_ } split /(?<=[^\\])\|/, $cont;
+        if (@parts == 1) {
+            my ($docname_and_perhaps_fragment) = @parts;
+            my $uri = URI->new($docname_and_perhaps_fragment);
 
-            my $fragment= url_decode $uri->fragment;
-            my $fragmenttext= do {
+            my $fragment = url_decode $uri->fragment;
+            my $fragmenttext = do {
                 if (length $fragment) {
-                    my @f= split /,/, $fragment;
-                    my $f= shift @f;
+                    my @f = split /,/, $fragment;
+                    my $f = shift @f;
                     while (@f and length $f < 20 and length $f[0] < 20) {
-                        $f.= ",".shift @f;
+                        $f .= ",".shift @f;
                     }
-                    $f.= ".." if @f;
+                    $f .= ".." if @f;
                     if (length $f > 40) {
-                        $f= substr ($f, 0, 28). ".."
+                        $f = substr($f, 0, 28) . ".."
                     }
                     # convert underscores back to spaces (XX
                     # well.. that's lossy!)
-                    $f=~ s/_/ /sg;
+                    $f =~ s/_/ /sg;
                     " ($f)";
                 } else {
                     ""
@@ -159,21 +159,21 @@ fun mediawiki_expand ($str) {
             # XX use 'opaque' instead of 'path' for the url? for
             # locations with protocol or so? Or croak about those? Use
             # opaque for the text, though, ok?
-            my $text= $uri->opaque;
-            $text=~ tr/_/ /;
+            my $text = $uri->opaque;
+            $text =~ tr/_/ /;
             push @$res,
               A({
                  href=>
                  "//"
                  . $uri->path.".md"
                  . do {
-                     my $f= $uri->fragment;
+                     my $f = $uri->fragment;
                      length $f ? "#".$f : ""
                  }
                 },
                 $text.$fragmenttext);
-        } elsif (@parts==2) {
-            my ($loc,$text)= @parts;
+        } elsif (@parts == 2) {
+            my ($loc,$text) = @parts;
             push @$res,
               A({href=> $loc},
                 $text)
@@ -183,7 +183,7 @@ fun mediawiki_expand ($str) {
         }
     }
 
-    my $postlen= length($str)-$lastpos;
+    my $postlen = length($str)-$lastpos;
     push @$res, substr $str, $lastpos, $postlen
       if $postlen > 0;
 

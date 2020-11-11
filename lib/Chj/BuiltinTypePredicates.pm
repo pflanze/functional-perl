@@ -31,10 +31,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::BuiltinTypePredicates;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(is_filehandle);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(is_filehandle);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -44,7 +44,7 @@ use Scalar::Util 'reftype';
 # for tests, see FP::Predicates
 
 sub is_filehandle ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     # NOTE: never returns true for strings, even though plain strings
     # naming globals containing filehandles in their IO slot will work
     # for IO, too! Let's just leave that depreciated and
@@ -61,7 +61,7 @@ sub is_filehandle ($) {
     # take reference to the bare glob and treat it the same then,
     # though; but still.)
 
-    if (defined (my $rt= reftype ($v))) {
+    if (defined (my $rt = reftype ($v))) {
         (($rt eq "GLOB" and *{$v}{IO})
          or
          $rt eq "IO") ? 1 : '';
@@ -72,8 +72,8 @@ sub is_filehandle ($) {
 }
 
 # sub is_filehandle ($) {
-#     my ($v)=@_;
-#     my $r= ref ($v);
+#     my ($v) = @_;
+#     my $r = ref ($v);
 #     (length $r and ($r eq "GLOB" ? (*{$v}{IO} ? 1 : '')
 #                   : UNIVERSAL::isa($v, "IO"))) ? 1 : ''
 # }

@@ -41,13 +41,13 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::Util::AskYN;
-@ISA="Exporter"; require Exporter;
-@EXPORT= qw(maybe_askyn);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(maybe_askyn);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub maybe_askyn {
-    my ($maybe_prompt)=@_;
+    my ($maybe_prompt) = @_;
     local $|=1;
   ASK:{
         if (defined $maybe_prompt) {
@@ -56,9 +56,9 @@ sub maybe_askyn {
         print " ";
         my $ans=<STDIN>;
         if (defined $ans) {
-            if ($ans=~ /^n(?:o|ein|ada|on)?$/i) {
+            if ($ans =~ /^n(?:o|ein|ada|on)?$/i) {
                 ''
-            } elsif ($ans=~ /^(?:ja|yes|j|y|oui)$/i){
+            } elsif ($ans =~ /^(?:ja|yes|j|y|oui)$/i){
                 1
             } else {
                 print "Please answer with yes or no or their initials, ".

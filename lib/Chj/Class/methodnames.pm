@@ -43,20 +43,20 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::Class::methodnames;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(methodnames);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(methodnames);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
-our $stop={};
+our $stop = {};
 sub set_stoplist {
-    #my $class=shift; eh we are not a class here
-    my $newstop={};
+    #my $class = shift; eh we are not a class here
+    my $newstop = {};
     for(@_){
-        $newstop->{$_}=undef
+        $newstop->{$_} = undef
     }
-    $stop=$newstop;
+    $stop = $newstop;
 }
 
 set_stoplist(qw(
@@ -65,17 +65,17 @@ set_stoplist(qw(
                ));
 
 sub methods_of_class {
-    my ($class, $maybe_ignore_codes)=@_;
+    my ($class, $maybe_ignore_codes) = @_;
     if ($class eq 'Chj::Class::Array') {
         # since I have such a mess there, I exclude that one, and
         # return a list of only some of it's methods.
         return qw(clone )
     }
     no strict 'refs';
-    my $class_array_namehash= do {
+    my $class_array_namehash = do {
         if (defined *{$class."::_CLASS_ARRAY_COUNTER"}{SCALAR}) {
             +{
-              map { $_=>1 }
+              map { $_ => 1 }
               (@ {$class."::_CLASS_ARRAY_PUBLIC_FIELDS"},
                @ {$class."::_CLASS_ARRAY_PUBLICA_FIELDS"},
                @ {$class."::_CLASS_ARRAY_PROTECTED_FIELDS"},
@@ -85,17 +85,17 @@ sub methods_of_class {
             undef
         }
     };
-    my $ignore_codes= defined $maybe_ignore_codes ? $maybe_ignore_codes
+    my $ignore_codes = defined $maybe_ignore_codes ? $maybe_ignore_codes
       : +{
-          map { $_=>1 } (
-                         (*Data::Dumper::Dumper{CODE}||()),
-                         (*Carp::croak{CODE}||()),
-                         (*Carp::carp{CODE}||()),
-                         (*Carp::confess{CODE}||()),
-                         (*Carp::cluck{CODE}||())
+          map { $_ => 1 } (
+                         (*Data::Dumper::Dumper{CODE} || ()),
+                         (*Carp::croak{CODE} || ()),
+                         (*Carp::carp{CODE} || ()),
+                         (*Carp::confess{CODE} || ()),
+                         (*Carp::cluck{CODE} || ())
                         )
          };
-    if (my $hash= *{$class."::"}{HASH}) {
+    if (my $hash = *{$class."::"}{HASH}) {
         my $code;# (ugly?)
         (
          (
@@ -106,7 +106,7 @@ sub methods_of_class {
                    # or: constant at all?. how to find out if it's a constant?
                    $class_array_namehash and exists $class_array_namehash->{$_}
                }
-               and $code= *{$class."::".$_}{CODE}
+               and $code = *{$class."::".$_}{CODE}
                and not do {
                    # exclude carp/croak, Dumper etc.
                    $ignore_codes->{ $code }
@@ -115,7 +115,7 @@ sub methods_of_class {
           keys %$hash
          ),
          do {
-               if (my $isa= *{$class."::ISA"}{ARRAY}) {
+               if (my $isa = *{$class."::ISA"}{ARRAY}) {
                    map {
                        methods_of_class($_,$ignore_codes)
                    } @$isa
@@ -131,8 +131,8 @@ sub methods_of_class {
 
 
 sub methodnames ( $ ) {
-    my ($obj_or_class)=@_;
-    my $class= ref($obj_or_class) || $obj_or_class;
+    my ($obj_or_class) = @_;
+    my $class = ref($obj_or_class) || $obj_or_class;
     methods_of_class $class;
 }
 

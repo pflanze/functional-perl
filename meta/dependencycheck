@@ -23,55 +23,55 @@ use FP::Div ":all";
 use Chj::xperlfunc;
 use Chj::xopen 'xopen_read';
 
-our $verbose= $ENV{VERBOSE};
+our $verbose = $ENV{VERBOSE};
 
-our $files= @ARGV ? [@ARGV] : do {
-    my $files= Chj::IO::Command->new_sender(qw(git ls-files -z));
-    local $/="\0";
-    my $r= [ <$files> ];
+our $files = @ARGV ? [@ARGV] : do {
+    my $files = Chj::IO::Command->new_sender(qw(git ls-files -z));
+    local $ /= "\0";
+    my $r = [ <$files> ];
     $files->xxfinish;
     $r
 };
 
-our $namespaces=
+our $namespaces =
   array_filter sub { $_[0] ne "Chj::Class::Array" },
   array_filter \&identity,
   array_map sub {
-    my ($file)=@_;
-    $file=~ m{lib/(.*)\.pm} ? do {
-        my $str= $1;
-        $str=~ s{/}{::}sg;
+    my ($file) = @_;
+    $file =~ m{lib/(.*)\.pm} ? do {
+        my $str = $1;
+        $str =~ s{/}{::}sg;
         $str
     } : undef;
 }, $files;
 
-our $executables=
+our $executables =
   array_filter sub {
-      my ($v)=@_;
+      my ($v) = @_;
       xopen_read($v)->xreadline =~ /perl/
   },
   array_filter sub {
-      my ($v)=@_;
-      not ($v=~ m{^t(?:/|est)}
-           or $v=~ m{^meta/}
-           or $v=~ m{/t/}
-           or $v=~ m{functional_XML/testlazy} #runs endlessly ah yes of course.
+      my ($v) = @_;
+      not ($v =~ m{^t(?:/|est)}
+           or $v =~ m{^meta/}
+           or $v =~ m{/t/}
+           or $v =~ m{functional_XML/testlazy} #runs endlessly ah yes of course.
           )
   },
   array_filter sub { -x $_[0] },
   $files;
 
-our $out= xtmpfile;
+our $out = xtmpfile;
 
 sub collect_cmd {
     warn "running @_..";
-    my $t= xtmpfile;
-    my $code= xsystem( "daemonize", "--no-ask", "--quiet",
+    my $t = xtmpfile;
+    my $code = xsystem( "daemonize", "--no-ask", "--quiet",
                        "straceopens", "-o", $t->path, @_);
     if ($code != 0) {
         warn "straceopens @_: exited with code $code"
     }
-    my $tr= xopen_read($t->path);
+    my $tr = xopen_read($t->path);
     $tr->xsendfile_to($out);
     $tr->xclose;
 }
@@ -87,7 +87,7 @@ for my $exe (@$executables) {
 
 $out->xclose;
 
-our $in= xopen_read $out->path; # bleh?
+our $in = xopen_read $out->path; # bleh?
 our %o;
 local $_;
 while (<$in>) {

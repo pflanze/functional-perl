@@ -14,9 +14,9 @@ FP::Abstract::Equal - equality protocol
 =head1 SYNOPSIS
 
     package FPEqualExample::Foo {
-        sub new { my $class= shift; bless [@_], $class }
+        sub new { my $class = shift; bless [@_], $class }
         sub FP_Equal_equal {
-            my ($a, $b)=@_;
+            my ($a, $b) = @_;
             # If you know you've got numbers in here only:
             $$a[0] == $$b[0]
             # For generic values, you would instead:

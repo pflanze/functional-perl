@@ -42,7 +42,7 @@ use FP::Array 'array';
 use FP::Ops qw(the_method);
 use Chj::TEST;
 
-my $t_vals=
+my $t_vals =
     list(purearray(3,4),
          strictlist(3,4),
          list(3,4),
@@ -59,11 +59,11 @@ my $t_vals=
          array(),
          3,
          "character sequence",
-         {3=>4},
+         {3 => 4},
     );
 
 sub t_fn {
-    my ($fn)= @_;
+    my ($fn) = @_;
     $t_vals->map($fn)->array
 }
 
@@ -76,7 +76,7 @@ TEST { t_fn *is_proper_sequence }
 TEST { t_fn *is_seq }
  [ 1,1,1,1, 0,0,0,0, 1,0,0,0,0,0 ];
 
-my $t_seqs= $t_vals->filter(*is_proper_sequence);
+my $t_seqs = $t_vals->filter(*is_proper_sequence);
 TEST { $t_seqs->map(the_method "stream")->map(the_method "list") } GIVES {
     list (list(3,4),
          list(3,4),
@@ -137,13 +137,13 @@ TEST { stream(1,44,2)->join("-") }
   '1-44-2';
 
 sub is_pair_purearray ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     [ is_pair $v, is_purearray $v ]
 }
 
 # consing onto a purearray just builds an improper list:
 my $a;
-TEST { $a= cons 0, purearray (1,2,3);
+TEST { $a = cons 0, purearray (1,2,3);
        is_pair_purearray($a) }
   [1, ''];
 TEST { is_pair_purearray($a->rest) }
@@ -151,7 +151,7 @@ TEST { is_pair_purearray($a->rest) }
 
 # but purearrays also have a cons method that does the same:
 my $b;
-TEST { $b= purearray (4,5)->cons(3);
+TEST { $b = purearray (4,5)->cons(3);
        is_pair_purearray ($b) }
   [1, '' ];
 TEST { is_pair_purearray($b->rest) }
@@ -166,8 +166,8 @@ TEST { $b->ref(2) }
 
 # XX add more interesting tests
 TEST {
-    my $s= purearray(3,4,4,5,6,8,5,5)->map_with_index(*array)->stream;
-    my $r= $s->group(on *array_second, *number_eq)->array;
+    my $s = purearray(3,4,4,5,6,8,5,5)->map_with_index(*array)->stream;
+    my $r = $s->group(on *array_second, *number_eq)->array;
     [$s, $r]
 } [undef,
    [list([0,3]),
@@ -208,7 +208,7 @@ TEST { purearray(qw(a bc d e))->string } 'abcde';
 
 
 # Test across all sequence types
-our @sequencetypes= qw(
+our @sequencetypes = qw(
     purearray
     mutablearray
     list
@@ -226,13 +226,13 @@ use FP::MutableArray;
 use FP::StrictList;
 
 for my $orig (@sequencetypes) {
-    my $constructor= eval '\&'.$orig; die $@ if $@;
+    my $constructor = eval '\&'.$orig; die $@ if $@;
     for my $target (@sequencetypes) {
         next if $orig eq $target; #XX TODO: make it always valid
         next if ($orig eq "mutablearray" and $target eq "purearray"); #XXX
-        my $d1= $constructor->(qw(a b c d e));
-        my $d2= Keep($d1)->$target;
-        my $d3= $d2->$orig;
+        my $d1 = $constructor->(qw(a b c d e));
+        my $d2 = Keep($d1)->$target;
+        my $d3 = $d2->$orig;
         equal $d1,$d3
             # XX what is the recommended way to make/format
             # exceptions?

@@ -14,9 +14,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -29,7 +29,7 @@ use FP::Repl;
 # again, see (4b) in `basics` for basic explanations
 
 sub functional_fact {
-    my ($x)= @_;
+    my ($x) = @_;
     functional_fact_iter($x, 1)
 }
 
@@ -50,7 +50,7 @@ sub functional_fact_iter {
         # we're making use of Perl's goto &$subroutine feature (see
         # `perldoc -f goto`):
 
-        @_=($x - 1,  $x * $res);
+        @_ = ($x - 1,  $x * $res);
         goto \&functional_fact_iter
 
         # Yes that's rather ugly; see the file `more_tailcalls`
@@ -63,7 +63,7 @@ sub functional_fact_iter {
 # test for higher numbers of iterations:
 
 sub odd {
-    my ($n)=@_;
+    my ($n) = @_;
     if ($n == 0) {
         0
     } else {
@@ -72,7 +72,7 @@ sub odd {
 }
 
 sub even {
-    my ($n)=@_;
+    my ($n) = @_;
     if ($n == 0) {
         1
     } else {
@@ -98,21 +98,21 @@ sub even {
 
 
 sub opt_odd {
-    my ($n)=@_;
+    my ($n) = @_;
     if ($n == 0) {
         0
     } else {
-        @_=($n - 1);
+        @_ = ($n - 1);
         goto \&opt_even
     }
 }
 
 sub opt_even {
-    my ($n)=@_;
+    my ($n) = @_;
     if ($n == 0) {
         1
     } else {
-        @_=($n - 1);
+        @_ = ($n - 1);
         goto \&opt_odd
     }
 }

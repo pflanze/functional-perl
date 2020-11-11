@@ -77,7 +77,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
     }
 
     method subnodes_head_update ($fn) {
-        my $ss= $self->subnodes;
+        my $ss = $self->subnodes;
         if (is_null $ss) {
             die "skipped level" ## nicer message and all?
         } else {
@@ -101,16 +101,16 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
         if (is_null $indices) {
             $self
         } else {
-            my ($i,$indices1)= $indices->first_and_rest;
-            my $subnodes= $self->subnodes;
+            my ($i,$indices1) = $indices->first_and_rest;
+            my $subnodes = $self->subnodes;
             $subnodes->ref ($subnodes->length - $i)->ref ($indices1)
         }
     }
 
     # used during document mapping (while the toc is collected)
     method numberstring () {
-        my $ss= $self->subnodes;
-        my $len= $ss->length;
+        my $ss = $self->subnodes;
+        my $len = $ss->length;
         # the first is the one that was added last
         $len ? $len . "." . $ss->first->numberstring
           : "";
@@ -120,10 +120,10 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
     # build the TOC html. Need to get the numberstring differently
     # now.
     method html_with_parents ($rindices) {
-        my $maybe_name= $self->name;
-        my $shown= [FunctionalPerl::Htmlgen::Toc::rindices_numberstring ($rindices),
+        my $maybe_name = $self->name;
+        my $shown = [FunctionalPerl::Htmlgen::Toc::rindices_numberstring ($rindices),
                     $self->header_pxml_for_toc ];
-        DIR({class=> "toc"},
+        DIR({class => "toc"},
             (defined $maybe_name ? A({href=> "#".$maybe_name}, $shown)
              : $shown),
             $self->subnodes->array__reverse__map_with_length
@@ -163,7 +163,7 @@ package FunctionalPerl::Htmlgen::Toc::TocRootNode {
     method name () { undef }
 
     method html () {
-        DIV({class=> "toc_box"},
+        DIV({class => "toc_box"},
             $self->html_with_parents (null))
     }
 
@@ -171,27 +171,27 @@ package FunctionalPerl::Htmlgen::Toc::TocRootNode {
 }
 
 
-our $empty_toc= FunctionalPerl::Htmlgen::Toc::TocRootNode->new
+our $empty_toc = FunctionalPerl::Htmlgen::Toc::TocRootNode->new
   (strictnull,
-   H3 ({class=> "toc_title"}, "Contents"));
+   H3 ({class => "toc_title"}, "Contents"));
 
 sub tocnode ($$) {
-    my ($name,$header)=@_;
+    my ($name,$header) = @_;
     FunctionalPerl::Htmlgen::Toc::TocNode->new(strictnull, $name, $header);
 }
 
 our $ttoc;
 TEST {
-    my $t1= $empty_toc->level_add (1, tocnode("a", H1("First")));
-    my $t11= $t1->level_add (2, tocnode("b", H2("Sub-First")));
-    my $t2= $t11->level_add (1, tocnode("c", H1("Second")));
-    $ttoc= $t2;
+    my $t1 = $empty_toc->level_add (1, tocnode("a", H1("First")));
+    my $t11 = $t1->level_add (2, tocnode("b", H2("Sub-First")));
+    my $t2 = $t11->level_add (1, tocnode("c", H1("Second")));
+    $ttoc = $t2;
     [ map { $_->numberstring } $t11, $t2 ]
 }
   ['1.1.', '2.'];
 
 TEST {
-    my $t_paths= list (list(1), list(2), list(1,1));
+    my $t_paths = list (list(1), list(2), list(1,1));
     $t_paths->map (fun ($path) { $ttoc->ref ($path)-> name }) ->array }
   [qw(a c b)];
 
@@ -211,22 +211,22 @@ fun process__with_toc__body ($body, $first_level, $toc, $parents) {
       (
        fun ($v,$toc,$rest) {
            if (is_pxml_element ($v)) {
-               if (my ($_level)= $v->name =~ /^[hH](\d+)$/s) {
-                   my $level= $_level - $first_level + 1;
+               if (my ($_level) = $v->name =~ /^[hH](\d+)$/s) {
+                   my $level = $_level - $first_level + 1;
                    is_natural $level
                      or die "The given <with_toc> tag dictates that the ".
                        "top-most header level is '$first_level', but ".
                          "encountering <".$v->name.">";
 
-                   my $anchor= $parents->find (fun ($e) {
+                   my $anchor = $parents->find (fun ($e) {
                        $e->name eq "a" and $e->maybe_attribute("name")
                    }) // die "bug, missing anchor element";
 
-                   my $toc= $toc->level_add
+                   my $toc = $toc->level_add
                      ($level,
                       tocnode ($anchor->maybe_attribute("name"), $v));
 
-                   my ($tail, $toc2)= &$rest ($toc);
+                   my ($tail, $toc2) = &$rest ($toc);
 
                    (cons ($v->body_update
                           (fun ($body)
@@ -235,17 +235,17 @@ fun process__with_toc__body ($body, $first_level, $toc, $parents) {
                     $toc2)
                } else {
                    # map $v's body
-                   my ($body2, $toc2)= process__with_toc__body
+                   my ($body2, $toc2) = process__with_toc__body
                      ($v->body, $first_level, $toc,
                       cons ($v, $parents));
 
-                   my ($tail, $toc3)= &$rest ($toc2);
+                   my ($tail, $toc3) = &$rest ($toc2);
 
                    (cons ($v->body_set ($body2), $tail),
                     $toc3)
                }
            } else {
-               my ($tail, $toc2)= &$rest ($toc);
+               my ($tail, $toc2) = &$rest ($toc);
                (cons ($v, $tail), $toc2)
            }
        },
@@ -257,7 +257,7 @@ fun process__with_toc__body ($body, $first_level, $toc, $parents) {
 }
 
 TEST {
-    my ($body,$toc)= process__with_toc__body (["foo"], 1, $empty_toc, null);
+    my ($body,$toc) = process__with_toc__body (["foo"], 1, $empty_toc, null);
     [ $body->string, $toc->html->string ]
 }
   [
@@ -266,27 +266,27 @@ TEST {
   ];
 
 TEST {HTML((process__with_toc__body
-            ["foo", A({name=>"a"}, H1("hed")),"bar"],
+            ["foo", A({name => "a"}, H1("hed")),"bar"],
             1,
             $empty_toc, null)[0])->string}
   '<html>foo<a name="a"><h1>1. hed</h1></a>bar</html>';
 
 TEST {HTML((process__with_toc__body
-            ["foo", A({name=>"a"}, H1("hed")),P("bar")],
+            ["foo", A({name => "a"}, H1("hed")),P("bar")],
             1,
             $empty_toc, null)[0])->string}
   '<html>foo<a name="a"><h1>1. hed</h1></a><p>bar</p></html>';
 
 TEST {HTML((process__with_toc__body
-            [cons "foo", [A({name=>"a"}, H1("hed")),
-                          A({name=>"b"}, H2("hud")),
+            [cons "foo", [A({name => "a"}, H1("hed")),
+                          A({name => "b"}, H2("hud")),
                           ["",P("bar")]]],
             1,
             $empty_toc, null)[0])->string}
   '<html>foo<a name="a"><h1>1. hed</h1></a><a name="b"><h2>1.1. hud</h2></a><p>bar</p></html>';
 
 TEST {HTML ((process__with_toc__body
-             [" ", P ("blabla"), A({name=>"a"}, H1 ("for one"))],
+             [" ", P ("blabla"), A({name => "a"}, H1 ("for one"))],
              1,
              $empty_toc, null)
             [0])->string}
@@ -296,12 +296,12 @@ TEST {HTML ((process__with_toc__body
 
 # now the "EXPORT":
 
-use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
+use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
 method match_element_names () { ["with_toc"] }
 
 method map_element ($e, $uplist) {
-    my ($body, $toc)=
+    my ($body, $toc) =
       process__with_toc__body ($e->body,
                                $e->maybe_attribute("level") // 2,
                                $empty_toc, null);

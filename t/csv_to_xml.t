@@ -6,7 +6,7 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our $len= 210;
+our $len = 210;
 require "./meta/readin.pl";
 require "./meta/find-perl.pl";
 

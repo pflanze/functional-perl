@@ -42,9 +42,9 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Array;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(array
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(array
               array_equal
               array_first
               array_maybe_first
@@ -93,7 +93,7 @@ package FP::Array;
               array_last
               array_to_hash_group_by
             );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
@@ -107,10 +107,10 @@ sub array {
 }
 
 sub array_equal {
-    my ($a, $b)= @_;
+    my ($a, $b) = @_;
     @$a == @$b and do {
-        my $len= @$a;
-        for (my $i=0; $i< $len; $i++) {
+        my $len = @$a;
+        for (my $i = 0; $i< $len; $i++) {
             equal($$a[$i], $$b[$i])
                 or return 0;
         }
@@ -123,44 +123,44 @@ sub array_maybe_first ($) {
 }
 
 sub array_perhaps_first ($) {
-    my ($a)= @_;
+    my ($a) = @_;
     @$a ? $$a[0] : ()
 }
 
 sub array_first ($) {
-    my ($a)= @_;
+    my ($a) = @_;
     @$a or die "can't take the first of an empty array";
     $$a[0]
 }
 
 sub array_maybe_rest ($) {
-    my ($a)= @_;
+    my ($a) = @_;
     @$a ?
       [ @$a[1..$#$a] ]
       : undef
 }
 
 sub array_perhaps_rest ($) {
-    my ($a)= @_;
+    my ($a) = @_;
     @$a ?
       [ @$a[1..$#$a] ]
       : ()
 }
 
 sub array_rest ($) {
-    my ($a)= @_;
+    my ($a) = @_;
     @$a or die "can't take the rest of an empty array";
     [ @$a[1..$#$a] ]
 }
 
 sub array_maybe_first_and_rest ($) {
-    my ($a)= @_;
+    my ($a) = @_;
     @$a ? (array_first $a,
            array_rest $a) : undef
 }
 
 sub array_first_and_rest ($) {
-    my ($a)= @_;
+    my ($a) = @_;
     (array_first $a,
      array_rest $a)
 }
@@ -170,12 +170,12 @@ sub array_second ($) {
 }
 
 sub array_maybe_ref ($$) {
-    my ($a,$i)=@_;
+    my ($a,$i) = @_;
     $$a[$i]
 }
 
 sub array_ref ($$) {
-    my ($a,$i)=@_;
+    my ($a,$i) = @_;
     # XX also check that $i is integer?
     ($i >= 0 and $i < @$a)
       or croak "index out of bounds: $i";
@@ -192,58 +192,58 @@ sub array_length ($) {
 }
 
 sub array_is_null ($) {
-    @{$_[0]}==0
+    @{$_[0]} == 0
 }
 
 
 # functional updates
 
 sub array_set ($$$) {
-    @_==3 or croak "wrong number of arguments";
-    my ($a,$i,$v)=@_;
-    my $a2= [@$a];
-    $$a2[$i]= $v;
+    @_ == 3 or croak "wrong number of arguments";
+    my ($a,$i,$v) = @_;
+    my $a2 = [@$a];
+    $$a2[$i] = $v;
     $a2
 }
 
 sub array_update ($$$) {
-    @_==3 or croak "wrong number of arguments";
-    my ($a,$i,$fn)=@_;
-    my $a2= [@$a];
-    $$a2[$i]= &$fn ($$a2[$i]);
+    @_ == 3 or croak "wrong number of arguments";
+    my ($a,$i,$fn) = @_;
+    my $a2 = [@$a];
+    $$a2[$i] = &$fn ($$a2[$i]);
     $a2
 }
 
 sub array_push {
-    my $a=shift;
-    my $a2= [@$a];
+    my $a = shift;
+    my $a2 = [@$a];
     push @$a2, @_;
     $a2
 }
 
 sub array_pop ($) {
-    my ($a)= @_;
-    my $a2= [@$a];
-    my $v= pop @$a2;
+    my ($a) = @_;
+    my $a2 = [@$a];
+    my $v = pop @$a2;
     ($v, $a2)
 }
 
 sub array_shift ($) {
-    my ($a)= @_;
-    my $a2= [@$a];
-    my $v= shift @$a2;
+    my ($a) = @_;
+    my $a2 = [@$a];
+    my $v = shift @$a2;
     ($v, $a2)
 }
 
 sub array_unshift {
-    my $a=shift;
-    my $a2= [@$a];
+    my $a = shift;
+    my $a2 = [@$a];
     unshift @$a2, @_;
     $a2
 }
 
 sub array_sub {
-    my ($a,$from,$to)=@_; # incl $from, excl $to
+    my ($a,$from,$to) = @_; # incl $from, excl $to
     (0 <= $from and $from <= @$a)
         or die "from out of range: $from";
     (0 <= $to and $to <= @$a)
@@ -252,30 +252,30 @@ sub array_sub {
 }
 
 sub array_take ($$) {
-    my ($a,$n)= @_;
+    my ($a,$n) = @_;
     array_sub $a, 0, $n
 }
 
 sub array_drop ($$) {
-    my ($a,$n)= @_;
+    my ($a,$n) = @_;
     array_sub $a, $n, array_length $a
 }
 
 sub array_take_while ($$) {
-    my ($pred,$s)=@_;
-    my $i=0;
-    my $len= @$s;
-    while (!($i>= $len) and &$pred($$s[$i])) {
+    my ($pred,$s) = @_;
+    my $i = 0;
+    my $len = @$s;
+    while (!($i >= $len) and &$pred($$s[$i])) {
         $i++
     }
     [ @$s[0..$i-1] ]
 }
 
 sub array_take_while_and_rest ($$) {
-    my ($pred,$s)=@_;
-    my $i=0;
-    my $len= @$s;
-    while (!($i>= $len) and &$pred($$s[$i])) {
+    my ($pred,$s) = @_;
+    my $i = 0;
+    my $len = @$s;
+    while (!($i >= $len) and &$pred($$s[$i])) {
         $i++
     }
     ([ @$s[0..$i-1] ],
@@ -283,10 +283,10 @@ sub array_take_while_and_rest ($$) {
 }
 
 sub array_drop_while ($ $) {
-    my ($pred,$s)=@_;
-    my $i=0;
-    my $len= @$s;
-    while (!($i>= $len) and &$pred($$s[$i])) {
+    my ($pred,$s) = @_;
+    my $i = 0;
+    my $len = @$s;
+    while (!($i >= $len) and &$pred($$s[$i])) {
         $i++
     }
     [ @$s[$i..$#$s] ]
@@ -311,19 +311,19 @@ sub array_append {
 }
 
 sub array_reverse ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     [ reverse @$v ]
 }
 
 sub array_xone ($) {
-    my ($a)=@_;
-    @$a==1 or croak "expecting 1 element, got ".@$a;
+    my ($a) = @_;
+    @$a == 1 or croak "expecting 1 element, got ".@$a;
     $$a[0]
 }
 
 sub array_perhaps_one ($) {
-    my ($a)=@_;
-    if (@$a==1) {
+    my ($a) = @_;
+    if (@$a == 1) {
         $$a[0]
     } else {
         ()
@@ -331,13 +331,13 @@ sub array_perhaps_one ($) {
 }
 
 sub array_hashing_uniq ($;$ ) {
-    my ($ary,$maybe_warn)=@_;
+    my ($ary,$maybe_warn) = @_;
     my %seen;
     [
      grep {
-         my $s= $seen{$_};
+         my $s = $seen{$_};
          if ($s and $maybe_warn) { &$maybe_warn($_) };
-         $seen{$_}=1;
+         $seen{$_} = 1;
          not $s
      } @$ary
     ]
@@ -345,27 +345,27 @@ sub array_hashing_uniq ($;$ ) {
 
 sub array_zip2 ($$);
 sub array_zip2 ($$) {
-    my ($l,$m)=@_;
+    my ($l,$m) = @_;
     my @res;
-    my $len= min(scalar @$l, scalar @$m);
-    for (my $i=0; $i<$len; $i++) {
-        $res[$i]= [ $$l[$i], $$m[$i] ];
+    my $len = min(scalar @$l, scalar @$m);
+    for (my $i = 0; $i<$len; $i++) {
+        $res[$i] = [ $$l[$i], $$m[$i] ];
     }
     \@res
 }
 
 sub array_for_each ($$) {
-    my ($fn,$v)=@_;
+    my ($fn,$v) = @_;
     for my $a (@$v) { &$fn ($a) }
 }
 
 sub array_map {
     @_>1 or croak "wrong number of arguments";
-    my $fn=shift;
-    my $len= min (map { scalar @$_ } @_);
+    my $fn = shift;
+    my $len = min (map { scalar @$_ } @_);
     my @res;
-    for (my $i=0; $i<$len; $i++) {
-        $res[$i]= &$fn (map { $$_[$i] } @_);
+    for (my $i = 0; $i<$len; $i++) {
+        $res[$i] = &$fn (map { $$_[$i] } @_);
     }
     \@res
 }
@@ -376,11 +376,11 @@ TEST{ array_map sub { $_[0]+$_[1]}, [1,2,20], [-1,4] } [ 0,6 ];
 # (should one use multi-arg stream_map with stream_iota instead?..)
 sub array_map_with_index {
     @_>1 or croak "wrong number of arguments";
-    my $fn=shift;
-    my $len= min (map { scalar @$_ } @_);
+    my $fn = shift;
+    my $len = min (map { scalar @$_ } @_);
     my @res;
-    for (my $i=0; $i<$len; $i++) {
-        $res[$i]= &$fn ($i, map { $$_[$i] } @_);
+    for (my $i = 0; $i<$len; $i++) {
+        $res[$i] = &$fn ($i, map { $$_[$i] } @_);
     }
     \@res
 }
@@ -390,12 +390,12 @@ TEST{ array_map_with_index sub {[@_]}, [qw(a b)], [20..40] }
 
 sub array_map_with_islast {
     @_>1 or croak "wrong number of arguments";
-    my $fn=shift;
-    my $len= min (map { scalar @$_ } @_);
-    my $last= $len - 1;
+    my $fn = shift;
+    my $len = min (map { scalar @$_ } @_);
+    my $last = $len - 1;
     my @res;
-    for (my $i=0; $i<$len; $i++) {
-        $res[$i]= &$fn ($i == $last, map { $$_[$i] } @_);
+    for (my $i = 0; $i<$len; $i++) {
+        $res[$i] = &$fn ($i == $last, map { $$_[$i] } @_);
     }
     \@res
 }
@@ -408,18 +408,18 @@ TEST{ array_map_with_islast sub { [@_] }, [1,2,20], ["b","c"] }
 
 sub array_to_hash_map {
     @_>1 or croak "wrong number of arguments";
-    my $fn=shift;
-    my $len= min (map { scalar @$_ } @_);
+    my $fn = shift;
+    my $len = min (map { scalar @$_ } @_);
     my %res;
-    for (my $i=0; $i<$len; $i++) {
-        my @v= &$fn (map { $$_[$i] } @_);
-        @v==2 or croak "wrong number of return values: ".show (\@v);
-        $res{$v[0]}= $v[1];
+    for (my $i = 0; $i<$len; $i++) {
+        my @v = &$fn (map { $$_[$i] } @_);
+        @v == 2 or croak "wrong number of return values: ".show (\@v);
+        $res{$v[0]} = $v[1];
     }
     \%res
 }
 
-TEST { array_to_hash_map(sub { my($x,$a)=@_; $a=> $x*$x },
+TEST { array_to_hash_map(sub { my($x,$a) = @_; $a => $x*$x },
                          [2,3,4,5],
                          ["a","b","c"]) }
   +{
@@ -430,8 +430,8 @@ TEST { array_to_hash_map(sub { my($x,$a)=@_; $a=> $x*$x },
 
 
 sub array_filter ($$) {
-    @_==2 or croak "wrong number of arguments";
-    my ($fn,$v)=@_;
+    @_ == 2 or croak "wrong number of arguments";
+    my ($fn,$v) = @_;
     [
      grep {
          &$fn($_)
@@ -458,9 +458,9 @@ TEST { array_zip [3,4], [qw(a b c)] }
 # see discussion for `stream_fold` in `FP::Stream` for the reasoning
 # behind the argument order of $fn
 sub array_fold ($$$) {
-    my ($fn,$start,$ary)=@_;
+    my ($fn,$start,$ary) = @_;
     for (@$ary) {
-        $start= &$fn($_,$start);
+        $start = &$fn($_,$start);
     }
     $start
 }
@@ -474,11 +474,11 @@ TEST{ require FP::List;
 
 
 sub array_fold_right ($$$) {
-    @_==3 or croak "wrong number of arguments";
-    my ($fn,$tail,$a)=@_;
-    my $i= @$a - 1;
+    @_ == 3 or croak "wrong number of arguments";
+    my ($fn,$tail,$a) = @_;
+    my $i = @$a - 1;
     while ($i >= 0) {
-        $tail= &$fn($$a[$i], $tail);
+        $tail = &$fn($$a[$i], $tail);
         $i--;
     }
     $tail
@@ -492,7 +492,7 @@ TEST{ require FP::List;
 
 
 sub array_intersperse ($$) {
-    my ($ary,$val)=@_;
+    my ($ary,$val) = @_;
     my @res;
     for (@$ary) {
         push @res, $_, $val
@@ -512,8 +512,8 @@ TEST{ array_intersperse [1,2,3],"a" }
 TEST{ array_intersperse [],"a" } [];
 
 sub array_strings_join ($$) {
-    @_==2 or croak "wrong number of arguments";
-    my ($ary,$val)=@_;
+    @_ == 2 or croak "wrong number of arguments";
+    my ($ary,$val) = @_;
     join $val, @$ary
 }
 
@@ -521,8 +521,8 @@ TEST{ array_strings_join [1,2,3], "-" }
   "1-2-3";
 
 sub array_to_string ($) {
-    @_==1 or croak "wrong number of arguments";
-    my ($ary)=@_;
+    @_ == 1 or croak "wrong number of arguments";
+    my ($ary) = @_;
     join "", @$ary
 }
 
@@ -531,7 +531,7 @@ TEST{ array_to_string [1,2,3] }
 
 
 sub array_every ($$) {
-    my ($fn,$ary)=@_;
+    my ($fn,$ary) = @_;
     for (@$ary) {
         return 0 unless &$fn($_);
     }
@@ -543,7 +543,7 @@ TEST{ array_every sub { ($_[0] % 2) == 0 }, [ 2, 4, -6 ] } 1;
 TEST{ array_every sub { ($_[0] % 2) == 0 }, [ ] } 1;
 
 sub array_any ($$) {
-    my ($fn,$ary)=@_;
+    my ($fn,$ary) = @_;
     for (@$ary) {
         return 1 if &$fn($_);
     }
@@ -564,13 +564,13 @@ sub array_sum ($) {
 }
 
 sub array_last ($) {
-    my ($a)= @_;
+    my ($a) = @_;
     $$a[-1]
 }
 
 
 sub array_to_hash_group_by ($$) {
-    my ($ary,$on)=@_;
+    my ($ary,$on) = @_;
     my %res;
     for (@$ary) {
         push @{$res{&$on ($_)}}, $_
@@ -581,23 +581,23 @@ sub array_to_hash_group_by ($$) {
 
 # adapted from FP::List
 sub array_perhaps_find_tail ($$) {
-    @_==2 or die "wrong number of arguments";
-    my ($fn, $s,  )=@_;
-    my $len=  @$s;
-    my $i= 0;
+    @_ == 2 or die "wrong number of arguments";
+    my ($fn, $s,  ) = @_;
+    my $len =  @$s;
+    my $i = 0;
   LP: {
         if ($i >= $len) {
             ()
         } else {
-            #my ($v,$l1)= $s->first_and_rest;
+            #my ($v,$l1) = $s->first_and_rest;
             #  ^ with efficient slice we could do it !
-            my $v= $$s[$i];
+            my $v = $$s[$i];
             if (&$fn ($v)) {
                 # $s
                 # hmmm
                 $s->drop($i)
             } else {
-                # $s= $s1;
+                # $s = $s1;
                 $i++;
                 redo LP
             }
@@ -606,9 +606,9 @@ sub array_perhaps_find_tail ($$) {
 }
 
 sub array_perhaps_find ($$) {
-    @_==2 or die "wrong number of arguments";
-    my ($fn, $l)=@_;
-    if (my ($l)= array_perhaps_find_tail ($fn, $l)) {
+    @_ == 2 or die "wrong number of arguments";
+    my ($fn, $l) = @_;
+    if (my ($l) = array_perhaps_find_tail ($fn, $l)) {
         $l->first
     } else {
         ()

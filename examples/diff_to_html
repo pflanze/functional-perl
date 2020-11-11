@@ -9,9 +9,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -28,9 +28,9 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
+our $verbose = 0;
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage},
            ) or exit 1;
 usage if @ARGV;
 
@@ -43,18 +43,18 @@ use PXML::XHTML ":all";
 use FP::Ops ":all";
 use Chj::xopen "glob_to_fh";
 
-our $lines=
+our $lines =
   fh_to_stream (glob_to_fh (*STDIN, "utf-8"),
              the_method("xreadline_chomp"),
              the_method("xclose"));
 
-our $html=
+our $html =
   HTML
   (HEAD
    (TITLE ($myname),
     META ({'http-equiv'=> "Content-Type",
-           content=> "text/html;charset=utf-8"}),
-    STYLE({type=> "text/css"},
+           content => "text/html;charset=utf-8"}),
+    STYLE({type => "text/css"},
           '
 .diff {
   color: #008;
@@ -85,10 +85,10 @@ our $html=
     (PRE
      (stream_map
       func ($line) {
-          DIV ({class=> ($line=~ /^diff / ? "diff" :
-                         $line=~ /^(index|new|\+\+\+|---) / ? "meta" :
+          DIV ({class => ($line =~ /^diff / ? "diff" :
+                         $line =~ /^(index|new|\+\+\+|---) / ? "meta" :
                          do {
-                             my $c= substr $line,0,1;
+                             my $c = substr $line,0,1;
                              ($c eq '@' ? "position" :
                               $c eq '+' ? "add" :
                               $c eq '-' ? "del" :

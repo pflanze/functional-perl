@@ -9,7 +9,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 our ($mydir, $myname);
 BEGIN {
     $0=~ /(.*?)([^\/]+)\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../../lib";
 

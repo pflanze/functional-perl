@@ -14,7 +14,7 @@ use Test::More;
 is readin("echo hallo | perl examples/skip 1 2 |"), "all";
 
 sub t {
-    my ($bufsiz)=@_;
+    my ($bufsiz) = @_;
     is readin ("perl examples/skip --bufsiz $bufsiz  1 0 < t/skip.input|"), "ello World.";
     is readin ("perl examples/skip --bufsiz $bufsiz  0 1 < t/skip.input|"), "Hello World";
     is readin ("perl examples/skip --bufsiz $bufsiz  4 5 < t/skip.input|"), "o W";

@@ -30,25 +30,25 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Char;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(is_char char_is_whitespace char_is_alphanumeric);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(is_char char_is_whitespace char_is_alphanumeric);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
 sub is_char ($) {
-    my ($v)=@_;
-    defined $v and not (ref $v) and length($v)==1
+    my ($v) = @_;
+    defined $v and not (ref $v) and length($v) == 1
 }
 
 sub char_is_whitespace {
-    $_[0]=~ /^[ \r\n\t]$/s
+    $_[0] =~ /^[ \r\n\t]$/s
 }
 
 sub char_is_alphanumeric {
-    $_[0]=~ /^[a-zA-Z0-9_]$/s
+    $_[0] =~ /^[a-zA-Z0-9_]$/s
 }
 
 

@@ -24,11 +24,11 @@ FP::DBI - DBI with results as lazy lists
     $rv = $sth->execute;
 
     # then:
-    my $s= $sth->row_stream;    # purearrays blessed to FP::DBI::Row
+    my $s = $sth->row_stream;    # purearrays blessed to FP::DBI::Row
     # or
-    #my $s= $sth->array_stream; # arrays
+    #my $s = $sth->array_stream; # arrays
     # or
-    #my $s= $sth->hash_stream;  # hashes
+    #my $s = $sth->hash_stream;  # hashes
 
     use PXML::XHTML;
     TABLE
@@ -72,11 +72,11 @@ use Chj::NamespaceCleanAbove;
 
 {
     package FP::DBI::db;
-    our @ISA= 'DBI::db';
+    our @ISA = 'DBI::db';
 
     sub prepare {
-        my $s=shift;
-        my $st= $s->SUPER::prepare(@_);
+        my $s = shift;
+        my $st = $s->SUPER::prepare(@_);
         bless $st, "FP::DBI::st"
     }
 }
@@ -89,23 +89,23 @@ use Chj::NamespaceCleanAbove;
 
 {
     package FP::DBI::st;
-    our @ISA= 'DBI::st';
+    our @ISA = 'DBI::st';
     use FP::Lazy;
     use FP::Weak;
     use FP::List;
 
     sub make_X_stream {
-        my ($method, $maybe_mapfn)=@_;
+        my ($method, $maybe_mapfn) = @_;
         sub {
-            my $s=shift;
-            my $id= ++$$s{private_fp__dbi__id};
-            my $lp; $lp= sub {
-                my $lp=$lp; #keep strong reference
+            my $s = shift;
+            my $id = ++$$s{private_fp__dbi__id};
+            my $lp; $lp = sub {
+                my $lp = $lp; #keep strong reference
                 lazy {
                     $$s{private_fp__dbi__id} == $id
                       or die ("stream was interrupted by another execute".
                               " or stream request");
-                    if (my $v= $s->$method) {
+                    if (my $v = $s->$method) {
                         cons ($maybe_mapfn ? &$maybe_mapfn($v) : $v, &$lp);
                     } else {
                         null
@@ -120,16 +120,16 @@ use Chj::NamespaceCleanAbove;
 
 
     sub execute {
-        my $s=shift;
+        my $s = shift;
         $$s{private_fp__dbi__id}++;
         $s->SUPER::execute (@_)
     }
 
-    *row_stream= make_X_stream ("fetchrow_arrayref",
+    *row_stream = make_X_stream ("fetchrow_arrayref",
                                 sub {
                                     bless ([ @{$_[0]} ], "FP::DBI::Row")
                                 });
-    *array_stream= make_X_stream ("fetchrow_arrayref");
+    *array_stream = make_X_stream ("fetchrow_arrayref");
     *hash_stream= make_X_stream ("fetchrow_hashref");
 
     _END_
@@ -139,8 +139,8 @@ use Chj::NamespaceCleanAbove;
 use base 'DBI';
 
 sub connect {
-    my $cl=shift;
-    my $v= $cl->SUPER::connect (@_);
+    my $cl = shift;
+    my $v = $cl->SUPER::connect (@_);
     bless $v, "FP::DBI::db"
 }
 

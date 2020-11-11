@@ -42,19 +42,19 @@ TEST {
   1;
 
 TEST {
-    my $try= sub { # already have TEST_EXCEPTION, but this allows it
+    my $try = sub { # already have TEST_EXCEPTION, but this allows it
                    # inline
-        my ($th)=@_;
+        my ($th) = @_;
         my $res;
-        eval { $res= $th->(); 1 } ? $res : clean $@
+        eval { $res = $th->(); 1 } ? $res : clean $@
     };
-    my $a= purearray (1,4,5);
-    my $a2= $a->set (2,7)->set (0,-1);
-    my $a3= $a2->update (2,*inc);
-    my $a4= $a3->push (9,99)->unshift (77);
-    my ($p,$a5)= $a4->pop;
-    my ($s,undef)= $a4->shift;
-    my $a6= $a4->shift;
+    my $a = purearray (1,4,5);
+    my $a2 = $a->set (2,7)->set (0,-1);
+    my $a3 = $a2->update (2,*inc);
+    my $a4 = $a3->push (9,99)->unshift (77);
+    my ($p,$a5) = $a4->pop;
+    my ($s,undef) = $a4->shift;
+    my $a6 = $a4->shift;
     [$a->ref (2), $a2->array, $a3->array, $a4->length,
      $p, $a5->[-1], $s, $a6->array,
      &$try(sub { $a5->ref(-1) })]
@@ -64,8 +64,8 @@ TEST {
     'index out of bounds: -1' ];
 
 TEST {
-    my $a= purearray (1,4,5,7);
-    my @a= ($a->sub (0,2),
+    my $a = purearray (1,4,5,7);
+    my @a = ($a->sub (0,2),
             $a->sub (1,3));
     push @a, $a->sub (2,4);
     # throwing out of range errors
@@ -113,7 +113,7 @@ TEST{ (purearray 7)->any (sub { $_[0] % 2 }) }
 
 TEST {(purearray ["a",1], ["b",2], ["a",4])
         ->hash_group_by (*array_first) }
-  {'a'=>[['a',1],['a',4]],'b'=>[['b',2]]};
+  {'a' => [['a',1],['a',4]],'b' => [['b',2]]};
 
 TEST { purearray (3)->xone } 3;
 TEST_EXCEPTION { purearray (3,4)->xone } 'expecting 1 element, got 2';
@@ -136,11 +136,11 @@ TEST { require FP::Ops;
 
 {
     package FP::PureArray::_Test;
-    our @ISA= 'FP::_::PureArray'
+    our @ISA = 'FP::_::PureArray'
 }
 
 TEST {
-    my $null= FP::PureArray::_Test->null;
+    my $null = FP::PureArray::_Test->null;
     $null->set (1,5)
 }
   bless [undef, 5], 'FP::PureArray::_Test';

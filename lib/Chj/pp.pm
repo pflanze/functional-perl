@@ -31,10 +31,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::pp;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(pp pp_);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(pp pp_);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -51,7 +51,7 @@ sub pp {
 }
 
 sub pp_ {
-    my $msg=shift;
+    my $msg = shift;
     print STDERR "$msg:", (@_>1 ? "\n" : " "), Dump (@_);
     wantarray ? @_ : $_[-1]
 }

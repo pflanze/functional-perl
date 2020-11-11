@@ -27,10 +27,10 @@ FP::Repl::WithRepl
                        # handlers (takes an optional package argument, by
                        # default the caller's package is used)
 
-    my ($v,$e,$is_error)= WithRepl_eval_e("code",$maybe_package);
+    my ($v,$e,$is_error) = WithRepl_eval_e("code",$maybe_package);
                        # unlike WithRepl_eval and eval, this safely
-                       # returns the result of the given code, or $e==$@
-                       # and $is_error==1 in case of an exception/error.
+                       # returns the result of the given code, or $e == $@
+                       # and $is_error == 1 in case of an exception/error.
 
     pop_withrepl; # restore the handler that was pushed last.
 
@@ -58,10 +58,10 @@ or on the L<website|http://functional-perl.org/>.
 
 package FP::Repl::WithRepl;
 
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(withrepl push_withrepl pop_withrepl);
-@EXPORT_OK=qw(WithRepl_eval WithRepl_eval_e);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(withrepl push_withrepl pop_withrepl);
+@EXPORT_OK = qw(WithRepl_eval WithRepl_eval_e);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -70,34 +70,34 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # (`FP::Repl::WithRepl::WithRepl_eval`) that the handler can test for:
 
 sub WithRepl_eval (&;$) {
-    # my ($arg, $maybe_package)=@_;
+    # my ($arg, $maybe_package) = @_;
     if (ref $_[0]) {
-        @_==1 or die "wrong number of arguments";
-        my ($arg)=@_;
+        @_ == 1 or die "wrong number of arguments";
+        my ($arg) = @_;
         eval { &$arg() }
     } else {
         eval do {
-            @_==1 or @_==2 or die "wrong number of arguments";
-            my ($arg, $maybe_package)=@_;
-            my $package= $maybe_package // caller;
+            @_ == 1 or @_ == 2 or die "wrong number of arguments";
+            my ($arg, $maybe_package) = @_;
+            my $package = $maybe_package // caller;
             "package $package; $arg"
         }
     }
 }
 
 sub WithRepl_eval_e ($;$$) {
-    # my ($arg, $maybe_package, $wantarray)=@_;
+    # my ($arg, $maybe_package, $wantarray) = @_;
     if (ref $_[0]) {
         die "WithRepl_eval_e only supports string eval";
     } else {
-        my $success= eval do {
-            (@_>=1 and @_<=3) or die "wrong number of arguments";
-            my ($arg, $maybe_package, $wantarray)=@_;
-            my $package= $maybe_package // caller;
-            my $scalar= $wantarray ? "" : "scalar";
+        my $success = eval do {
+            (@_ >= 1 and @_ <= 3) or die "wrong number of arguments";
+            my ($arg, $maybe_package, $wantarray) = @_;
+            my $package = $maybe_package // caller;
+            my $scalar = $wantarray ? "" : "scalar";
             "[ $scalar do { package $package; $arg } ]"
         };
-        my ($arg, $maybe_package, $wantarray)=@_; # now can have the lexicals
+        my ($arg, $maybe_package, $wantarray) = @_; # now can have the lexicals
         if ($success) {
             ($wantarray ? $success : $$success[0], $@, '')
         } else {
@@ -113,16 +113,16 @@ use FP::Show;
 
 # test that 'no' variables are seen (yeah, could do better)
 TEST { &WithRepl_eval('"Hello $arg"') } ();
-TEST { my ($res,$e,$is_err)= WithRepl_eval_e('"Hello $arg"'); $is_err } 1;
-TEST { my ($res,$e,$is_err)= WithRepl_eval_e('[ $res ]'); $is_err } 1;
+TEST { my ($res,$e,$is_err) = WithRepl_eval_e('"Hello $arg"'); $is_err } 1;
+TEST { my ($res,$e,$is_err) = WithRepl_eval_e('[ $res ]'); $is_err } 1;
 
-TEST { my ($res,$e,$is_err)= WithRepl_eval_e q{
-       my @a= (qw(a b c));
+TEST { my ($res,$e,$is_err) = WithRepl_eval_e q{
+       my @a = (qw(a b c));
        @a
        }, "foo";
        $res } 3;
-TEST { my ($res,$e,$is_err)= WithRepl_eval_e q{
-       my @a= (qw(a b c));
+TEST { my ($res,$e,$is_err) = WithRepl_eval_e q{
+       my @a = (qw(a b c));
        @a
        }, "foo", 1;
        $res } [qw(a b c)];
@@ -137,11 +137,11 @@ TEST { my ($res,$e,$is_err)= WithRepl_eval_e q{
 # solution in XS.
 
 sub current_user_frame ($) {
-    my ($skip)=@_;
+    my ($skip) = @_;
     if ($skip) { $skip >= 0 or die "expecting maybe(natural0), got '$skip'"; }
     my @v;
-    my $i= 0;
-    while ((@v)= caller ($i++)) {
+    my $i = 0;
+    while ((@v) = caller ($i++)) {
         if ($v[0] ne "FP::Repl::WithRepl") {
             if ($skip) {
                 unless ((@v) = caller ($i + $skip)) {
@@ -166,28 +166,28 @@ sub current_user_frame ($) {
 our $debug = 0;
 
 sub have_eval_since_frame ($) {
-    my ($startframe)= @_;
+    my ($startframe) = @_;
 
     my @v;
-    my $i=1;
+    my $i = 1;
 
   SKIP: {
-        while ((@v)= caller $i++) {
+        while ((@v) = caller $i++) {
             last SKIP if ($v[0] ne "FP::Repl::WithRepl");
         }
         die "???"
     }
 
     do {
-        my $f= FP::Repl::StackFrame->new(undef, @v);
+        my $f = FP::Repl::StackFrame->new(undef, @v);
         if ($f->equal ($startframe)) {
             warn "reached startframe, thus return false"
               if $debug;
             return ''
         } elsif ($f->subroutine eq "(eval)") {
-            if ((@v)= caller $i++) {
-                my $f= FP::Repl::StackFrame->new(undef, @v);
-                my $sub= $f->subroutine;
+            if ((@v) = caller $i++) {
+                my $f = FP::Repl::StackFrame->new(undef, @v);
+                my $sub = $f->subroutine;
                 if ($sub =~ /::WithRepl_eval(?:_e)?\z/) {
                     warn "(ignore eval since it's from a WithRepl_eval)"
                       if $debug;
@@ -207,7 +207,7 @@ sub have_eval_since_frame ($) {
             }
         }
     }
-      while ((@v)= caller $i++);
+      while ((@v) = caller $i++);
 
     warn "couldn't find orig frame!"
       if $debug;
@@ -219,13 +219,13 @@ sub have_eval_since_frame ($) {
 
 
 sub handler_for ($$) {
-    my ($startframe, $orig_handler)=@_;
+    my ($startframe, $orig_handler) = @_;
     bless sub {
-        my ($e)=@_;
+        my ($e) = @_;
         # to show local errors with backtrace:
         # require Chj::Backtrace; import Chj::Backtrace;
         if (have_eval_since_frame $startframe) {
-            #$SIG{__DIE__}= $orig_handler;
+            #$SIG{__DIE__} = $orig_handler;
             # ^ helps against the loop but makes the push_withrepl
             #   one-shot, of course
             #goto &{$orig_handler // sub { die $_[0] }}  nah, try:
@@ -239,26 +239,26 @@ sub handler_for ($$) {
                 return
             }
         } else {
-            my $err= $FP::Repl::Repl::maybe_output // *STDERR{IO};
+            my $err = $FP::Repl::Repl::maybe_output // *STDERR{IO};
             print $err "Exception: ".show($e)."\n";
             # then what to do upon exiting it? return the value of the
             # repl?  XX repl needs new feature, a "quit this context
             # with this value". Although not helping anyway since Perl
             # can't be made to avoid leaving the exception context.
             push_withrepl(0); # XX correct? Argument?
-            repl(skip=> 1)
+            repl(skip => 1)
         }
     }, "FP::Repl::WithRepl::Handler" # just to mark, for Chj::Backtrace ugh
 }
 
 sub handler ($) {
-    my ($skip)= @_;
+    my ($skip) = @_;
     handler_for (current_user_frame($skip),
                  $SIG{__DIE__})
 }
 
 sub withrepl (&) {
-    local $SIG{__DIE__}= handler (0);
+    local $SIG{__DIE__} = handler (0);
     &{$_[0]}()
 }
 
@@ -272,13 +272,13 @@ TEST { [ withrepl { "hello", "world" } ] }
 our @stack;
 
 sub push_withrepl ($) {
-    my ($skip)= @_;
+    my ($skip) = @_;
     push @stack, $SIG{__DIE__};
-    $SIG{__DIE__}= handler ($skip);
+    $SIG{__DIE__} = handler ($skip);
 }
 
 sub pop_withrepl () {
-    $SIG{__DIE__}= pop @stack;
+    $SIG{__DIE__} = pop @stack;
 }
 
 

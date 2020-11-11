@@ -54,7 +54,7 @@ spec that defines exactly what it means?) Code couldn't know whether
 to quote the result:
 
     sub foo2 {
-        my ($l)=@_;
+        my ($l) = @_;
         # this is quoting safe:
         die "not what we wanted: ".show($l)
         # this would not be:
@@ -69,7 +69,7 @@ to quote the result:
     # just from looking at the message?
 
     # also:
-    eval { foo2 +{a=> 1, b=>10}; };
+    eval { foo2 +{a => 1, b => 10}; };
     like $@, qr/^\Qnot what we wanted: +{a => 1, b => 10}/;
       # would die with something like:
       #   not what we wanted: HASH(0xEADBEEF)
@@ -111,10 +111,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Show;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(show);
-@EXPORT_OK=qw(show_many subprefix_to_show_coderef);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(show);
+@EXPORT_OK = qw(show_many subprefix_to_show_coderef);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -124,31 +124,31 @@ use Devel::Peek q(DumpWithOP);
 use Capture::Tiny qw(capture_stderr);
 
 sub keyshow ($) {
-    my ($str)=@_;
-    ($str=~ /^\w+$/s
+    my ($str) = @_;
+    ($str =~ /^\w+$/s
      and
      # make sure it's not just an integer, as that would not be quoted
      # by perl and if big enough yield something different than the
      # string
-     $str=~ /[a-zA-Z]/s
+     $str =~ /[a-zA-Z]/s
     ) ? $str : terseDumper($str)
 }
 
-our $show_details= $ENV{RUN_TESTS} ? 0 : 1;
+our $show_details = $ENV{RUN_TESTS} ? 0 : 1;
 
 sub subprefix_to_show_coderef {
-    my ($subprefix)= @_;
+    my ($subprefix) = @_;
     sub {
-        my ($v,$show)=@_;
+        my ($v,$show) = @_;
         if ($show_details) {
-            my $info= capture_stderr { DumpWithOP($v) };
-            my @FILE= $info=~ m/\bFILE *= *("[^"]*"|\S+) *\n/g;
-            my @LINE= $info=~ m/\bLINE *= *(\d+) *\n/g; # col?..
-            my $location= do {
+            my $info = capture_stderr { DumpWithOP($v) };
+            my @FILE = $info =~ m/\bFILE * = *("[^"]*"|\S+) *\n/g;
+            my @LINE = $info =~ m/\bLINE * = *(\d+) *\n/g; # col?..
+            my $location = do {
                 if (@FILE) {
-                    my $filestr= $FILE[-1];
+                    my $filestr = $FILE[-1];
                     if (@LINE) {
-                        my $line= $LINE[0];
+                        my $line = $LINE[0];
                         "at $filestr line $line"
                     } else {
                         "at $filestr (line unknown)"
@@ -158,22 +158,22 @@ sub subprefix_to_show_coderef {
                 }
             };
 
-            my ($name, $maybe_prototype)=
+            my ($name, $maybe_prototype) =
               eval { require Sub::Util; 1 } ?
               (Sub::Util::subname($v),
                Sub::Util::prototype($v))
               : ("(for name, install Sub::Util)",
                  undef);
 
-            my $prototypestr= defined $maybe_prototype ? "($maybe_prototype) " : "";
+            my $prototypestr = defined $maybe_prototype ? "($maybe_prototype) " : "";
 
-            my $maybe_docstring= do {
+            my $maybe_docstring = do {
                 require FP::Docstring;
                 FP::Docstring::docstring($v)
             };
-            my $docstr= defined($maybe_docstring) ? "; __ ".show($maybe_docstring) : ""; 
+            my $docstr = defined($maybe_docstring) ? "; __ ".show($maybe_docstring) : "";
 
-            my $dummystr= "DUMMY: $name $location";
+            my $dummystr = "DUMMY: $name $location";
             $subprefix.$prototypestr."{ ".show($dummystr)."$docstr }"
         } else {
             $subprefix.'{ "DUMMY" }'
@@ -181,61 +181,61 @@ sub subprefix_to_show_coderef {
     }
 }
 
-our $primitive_show=
+our $primitive_show =
   +{
     # these return string or (string, bool) where the bool indicates
     # the string already contains blessing
-    ARRAY=> sub {
-        my ($v,$show)=@_;
+    ARRAY => sub {
+        my ($v,$show) = @_;
         "[".join(", ",
                  map { &$show ($_) } @$v)."]";
     },
-    HASH=> sub {
-        my ($v,$show)=@_;
+    HASH => sub {
+        my ($v,$show) = @_;
         "+{".join(", ",
                   map { keyshow($_)." => ".&$show ($$v{$_}) }
                   sort
                   keys %$v)."}";
     },
-    REF=> sub { # references to references
-        my ($v,$show)=@_;
+    REF => sub { # references to references
+        my ($v,$show) = @_;
         "\\(".&$show ($$v).")"
     },
-    GLOB=> sub {
-        my ($v,$show)=@_;
+    GLOB => sub {
+        my ($v,$show) = @_;
         (terseDumper($v), 1)
     },
-    SCALAR=> sub {
-        my ($v,$show)=@_;
+    SCALAR => sub {
+        my ($v,$show) = @_;
         (terseDumper($v), 1)
     },
-    CODE=> subprefix_to_show_coderef("sub "),
+    CODE => subprefix_to_show_coderef("sub "),
 
     # Don't really have any sensible serialization for these either,
     # but at least prevent them from hitting Data::Dumper which issues
     # warnings and returns invalid syntax in XS mode and gives plain
     # exceptions in useperl mode:
-    IO=> sub {
-        my ($v,$show)=@_;
-        my $fileno= fileno($v) // "UNKNOWN";
+    IO => sub {
+        my ($v,$show) = @_;
+        my $fileno = fileno($v) // "UNKNOWN";
         "IO($fileno)"
     },
-    LVALUE=> sub {
-        my ($v,$show)=@_;
+    LVALUE => sub {
+        my ($v,$show) = @_;
         "LVALUE(UNKNOWN)"
     },
    };
 
 sub show ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     if (length ref($v)) {
-        if (my $m= UNIVERSAL::can ($v, "FP_Show_show")) {
+        if (my $m = UNIVERSAL::can ($v, "FP_Show_show")) {
             (&$m ($v,*show))[0]
-        } elsif ($m= $$primitive_show{ref $v}) {
+        } elsif ($m = $$primitive_show{ref $v}) {
             (&$m ($v,*show))[0]
-        } elsif ($m= $$primitive_show{reftype $v}) {
+        } elsif ($m = $$primitive_show{reftype $v}) {
             # blessed basic type
-            my ($str, $includes_blessing)= &$m($v,*show);
+            my ($str, $includes_blessing) = &$m($v,*show);
             $includes_blessing ? $str
               : "bless($str, " . &show(ref($v)) . ")"
         } else {

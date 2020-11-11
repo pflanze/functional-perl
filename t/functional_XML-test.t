@@ -12,7 +12,7 @@ use Test::More;
 
 require "./meta/find-perl.pl";
 
-our $len= 672;
+our $len = 672;
 
 xxsystem_safe ($^X, "functional_XML/test", 10001000);
 

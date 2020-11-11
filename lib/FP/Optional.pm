@@ -18,19 +18,19 @@ FP::Optional - dealing with optional values
                         optionally poptionally);
 
     sub perhaps_div {
-        my ($a, $b)=@_;
+        my ($a, $b) = @_;
         $b == 0 ? () : $a/$b
     }
-    if (my ($r)= perhaps_div 10, 2) {
+    if (my ($r) = perhaps_div 10, 2) {
         is $r, 5;
     }
-    *maybe_div= perhaps_to_maybe *perhaps_div;
+    *maybe_div = perhaps_to_maybe *perhaps_div;
     is maybe_div(10, 2), 5;
     is maybe_div(10, 0), undef;
 
     use FP::Div qw(square);
     # short-cutting evaluation for undef:
-    *optionally_square= optionally(*square);
+    *optionally_square = optionally(*square);
     is optionally_square(2), 4;
     is optionally_square(undef), undef;
 
@@ -54,18 +54,18 @@ Example using undef:
     package Users;
     my %uid_to_username;
     sub maybe_uid_to_username {
-        my ($uid)=@_;
+        my ($uid) = @_;
         $uid_to_username{$uid}
     }
     package main;
     use Users;
-    if (defined (my $user= maybe_uid_to_username (123))) {
+    if (defined (my $user = maybe_uid_to_username (123))) {
         ...
     } else {
         ...
     }
-    my @existing_usernames= map {
-        my $maybe_username= maybe_uid_to_username $_;
+    my @existing_usernames = map {
+        my $maybe_username = maybe_uid_to_username $_;
         defined $maybe_uid_to_username ? $maybe_uid_to_username : ()
     } @uids;
 
@@ -77,24 +77,24 @@ Example using the empty list:
     package Users;
     my %uid_to_username;
     sub perhaps_uid_to_username {
-        my ($uid)=@_;
+        my ($uid) = @_;
         exists $uid_to_username{$uid} ? $uid_to_username{$uid} : ()
     }
     package main;
     use Users;
-    if (my ($user)= perhaps_uid_to_username (123)) {
+    if (my ($user) = perhaps_uid_to_username (123)) {
         ...
     } else {
         ...
     }
-    my @existing_usernames= map { perhaps_uid_to_username $_ } @uids;
+    my @existing_usernames = map { perhaps_uid_to_username $_ } @uids;
 
     # This would be *wrong*:
     # rename_users (map { perhaps_uid_to_username $_ } @uidpairs)
 
     # Instead this wordy version would need to be used:
     rename_users (map {
-        if (my ($name)= perhaps_uid_to_username $_) {
+        if (my ($name) = perhaps_uid_to_username $_) {
              $name
         } else {
              undef
@@ -105,17 +105,17 @@ An alternative to optional values are exceptions:
     package Users;
     my %uid_to_username;
     sub x_uid_to_username {
-        my ($uid)=@_;
+        my ($uid) = @_;
         exists $uid_to_username{$uid} ? $uid_to_username{$uid}
            : die "no such user"
     }
     package main;
     use Users;
-    my $user= x_uid_to_username (123);
+    my $user = x_uid_to_username (123);
     ...
-    my @existing_usernames= map {
+    my @existing_usernames = map {
         my $name;
-        eval { $name= x_uid_to_username $_; 1 } ? $name : ()
+        eval { $name = x_uid_to_username $_; 1 } ? $name : ()
     } @uids;
 
     rename_users (map { x_uid_to_username $_ } @uidpairs);
@@ -181,11 +181,11 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Optional;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists
               optionally poptionally);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -194,9 +194,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 
 sub perhaps_to_maybe ($) {
-    my ($f)= @_;
+    my ($f) = @_;
     sub {
-        if (my ($v)= &$f (@_)) {
+        if (my ($v) = &$f (@_)) {
             $v
         } else {
             undef
@@ -205,9 +205,9 @@ sub perhaps_to_maybe ($) {
 }
 
 sub perhaps_to_x ($$) {
-    my ($f, $exception)= @_;
+    my ($f, $exception) = @_;
     sub {
-        if (my ($v)= &$f (@_)) {
+        if (my ($v) = &$f (@_)) {
             $v
         } else {
             die $exception
@@ -216,11 +216,11 @@ sub perhaps_to_x ($$) {
 }
 
 sub perhaps_to_or ($) {
-    my ($f)= @_;
+    my ($f) = @_;
     sub {
-        @_==3 or die "wrong number of arguments";
-        my ($t,$k,$other)=@_;
-        if (my ($v)= &$f ($t, $k)) {
+        @_ == 3 or die "wrong number of arguments";
+        my ($t,$k,$other) = @_;
+        if (my ($v) = &$f ($t, $k)) {
             $v
         } else {
             $other
@@ -229,9 +229,9 @@ sub perhaps_to_or ($) {
 }
 
 sub perhaps_to_exists ($) {
-    my ($f)= @_;
+    my ($f) = @_;
     sub {
-        if (my ($_v)= &$f (@_)) {
+        if (my ($_v) = &$f (@_)) {
             1
         } else {
             ''
@@ -245,8 +245,8 @@ sub perhaps_to_exists ($) {
 # build functions that short-cut the 'nothing' case:
 
 sub optionally ($;$) {
-    my ($f,$maybe_pos)=@_;
-    my $pos= $maybe_pos // 0;
+    my ($f,$maybe_pos) = @_;
+    my $pos = $maybe_pos // 0;
     sub {
         if (defined $_[$pos]) {
             goto &$f
@@ -259,7 +259,7 @@ sub optionally ($;$) {
 
 # perhaps-based optionally: (XX better name? perhapsionally??)
 sub poptionally ($) {
-    my ($f)=@_;
+    my ($f) = @_;
     sub {
         if (@_) {
             goto &$f

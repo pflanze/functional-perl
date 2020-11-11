@@ -25,10 +25,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FunctionalPerl::Htmlgen::FileUtil;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(existingpath_or create_parent_dirs);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(existingpath_or create_parent_dirs);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -48,8 +48,8 @@ use Chj::xperlfunc qw(dirname xmkdir);
 
 # XX how is this different from xmkdir_p ?
 fun create_parent_dirs ($path0, $path0_to_outpath) {
-    my $path0= dirname $path0;
-    my $outpath= &$path0_to_outpath ($path0);
+    my $path0 = dirname $path0;
+    my $outpath = &$path0_to_outpath ($path0);
     if (mkdir $outpath) {
         # ok, return
     } elsif ($! == EEXIST) {

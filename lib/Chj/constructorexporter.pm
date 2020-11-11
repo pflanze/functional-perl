@@ -16,7 +16,7 @@ Chj::constructorexporter
     {
         package Foo;
         use Chj::constructorexporter;
-        *import= constructorexporter new=> "Foo", new_from_string=> "foo";
+        *import = constructorexporter new => "Foo", new_from_string => "foo";
         sub new { ... }
     }
     use Foo "foo", "foo"; # or ":all"; 'use Foo;' would not import anything
@@ -25,7 +25,7 @@ Chj::constructorexporter
 
     {
         package Bar;
-        our @ISA="Foo";
+        our @ISA = "Foo";
     }
     use Bar "foo"; # this exports a different "foo"!
     foo("def") # calls Bar->new("def")
@@ -63,57 +63,57 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::constructorexporter;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(constructorexporter);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(constructorexporter);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub constructorexporter {
-    my %exportdecl= @_;
+    my %exportdecl = @_;
     sub {
-        my $class=shift;
+        my $class = shift;
 
-        my ($all)= grep { $_ eq ":all" } @_;
-        my @rest= grep { $_ ne ":all" } @_;
+        my ($all) = grep { $_ eq ":all" } @_;
+        my @rest = grep { $_ ne ":all" } @_;
 
-        my $prefix="";
+        my $prefix = "";
         my @names;
-        for (my $i=0; $i < @rest; $i++) {
-            my $v= $rest[$i];
+        for (my $i = 0; $i < @rest; $i++) {
+            my $v = $rest[$i];
             if ($v eq "-prefix") {
                 $i++;
-                $prefix= $rest[$i];
+                $prefix = $rest[$i];
             } else {
                 push @names, $v
             }
         }
 
-        my $package= caller;
+        my $package = caller;
 
-        my $exportdecl= +{map {
-            my $methodname=$_;
-            my $exportname= $exportdecl{$methodname};
-            ($exportname=> sub {
+        my $exportdecl = +{map {
+            my $methodname = $_;
+            my $exportname = $exportdecl{$methodname};
+            ($exportname => sub {
                  $class->$methodname (@_)
              })
         } keys %exportdecl};
 
-        my $exports=
+        my $exports =
           ($all ?
            $exportdecl
            :
            +{
              map {
-                 $_=>
+                 $_ =>
                    $$exportdecl{$_} // die "$_ not exported by $class"
                } @names
             });
 
         for my $name (keys %$exports) {
             no strict 'refs';
-            *{$package."::".$prefix.$name}= $$exports{$name}
+            *{$package."::".$prefix.$name} = $$exports{$name}
         }
     }
 }

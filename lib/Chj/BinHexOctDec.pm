@@ -14,7 +14,7 @@ Chj::BinHexOctDec
 =head1 SYNOPSIS
 
     use Chj::BinHexOctDec;
-    my $num= Chj::BinHexOctDec->bin("1001010010");
+    my $num = Chj::BinHexOctDec->bin("1001010010");
     is ref($num), "Chj::BinHexOctDec";
     is $num->dec, 594;
 
@@ -49,41 +49,41 @@ package Chj::BinHexOctDec;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub bin {
-    my $this=shift;
+    my $this = shift;
     if (ref $this) {
         sprintf('%b',$$this)
     } else {
-        my $data=oct('0b'.shift);
+        my $data = oct('0b'.shift);
         bless \$data,$this
     }
 }
 
 sub dec {
-    my $this=shift;
+    my $this = shift;
     if (ref $this) {
         $$this
     } else {
-        my $data=shift;
+        my $data = shift;
         bless \$data,$this
     }
 }
 
 sub oct {
-    my $this=shift;
+    my $this = shift;
     if (ref $this) {
         sprintf('%o',$$this)
     } else {
-        my $data=oct('0'.shift);
+        my $data = oct('0'.shift);
         bless \$data,$this
     }
 }
 
 sub hex {
-    my $this=shift;
+    my $this = shift;
     if (ref $this) {
         sprintf('%x',$$this)
     } else {
-        my $data= hex(shift); # oct('0x'.shift); should work as well
+        my $data = hex(shift); # oct('0x'.shift); should work as well
         bless \$data,$this
     }
 }

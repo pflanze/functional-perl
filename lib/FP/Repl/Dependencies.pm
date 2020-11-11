@@ -13,7 +13,7 @@ FP::Repl::Dependencies - hack to load Repl dependencies
 
 =head1 SYNOPSIS
 
-    use Chj::TEST use=> 'FP::Repl::Dependencies';
+    use Chj::TEST use => 'FP::Repl::Dependencies';
 
 =head1 DESCRIPTION
 
@@ -35,10 +35,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Repl::Dependencies;
-#@ISA="Exporter"; require Exporter;
-#@EXPORT=qw();
-#@EXPORT_OK=qw();
-#%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+#@ISA = "Exporter"; require Exporter;
+#@EXPORT = qw();
+#@EXPORT_OK = qw();
+#%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 

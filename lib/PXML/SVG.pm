@@ -25,13 +25,13 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package PXML::SVG;
-@ISA="Exporter"; require Exporter;
+@ISA = "Exporter"; require Exporter;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use PXML::Element;
 
-our $tags=
+our $tags =
   [
    'svg',
    'path',
@@ -41,8 +41,8 @@ our $tags=
 
 
 sub svg {
-    my $attrs= ref $_[0] eq "HASH" ? shift : {};
-    my $attrs2= +{%$attrs};
+    my $attrs = ref $_[0] eq "HASH" ? shift : {};
+    my $attrs2 = +{%$attrs};
     $$attrs2{xmlns}= "http://www.w3.org/2000/svg";
     $$attrs2{"xmlns:xlink"}= "http://www.w3.org/1999/xlink";
     PXML::SVG::SVG($attrs2, @_)
@@ -51,16 +51,16 @@ sub svg {
 
 # XX mostly copy paste from PXHTML. Abstract away, please.
 
-our $nbsp= "\xa0";
+our $nbsp = "\xa0";
 
-our $funcs=
+our $funcs =
   [
    map {
-       my $tag=$_;
+       my $tag = $_;
        [
         uc $tag,
         sub {
-            my $atts= ref($_[0]) eq "HASH" ? shift : undef;
+            my $atts = ref($_[0]) eq "HASH" ? shift : undef;
             PXML::PSVG->new($tag, $atts, [@_]);
         }
        ]
@@ -68,17 +68,17 @@ our $funcs=
   ];
 
 for (@$funcs) {
-    my ($name, $fn)=@$_;
+    my ($name, $fn) = @$_;
     no strict 'refs';
-    *{"PXML::SVG::$name"}= $fn
+    *{"PXML::SVG::$name"} = $fn
 }
 
-our @EXPORT_OK= ('svg', '$nbsp', map { $$_[0] } @$funcs);
-our %EXPORT_TAGS=(all=>\@EXPORT_OK);
+our @EXPORT_OK = ('svg', '$nbsp', map { $$_[0] } @$funcs);
+our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 {
     package PXML::PSVG;
-    our @ISA= "PXML::Element";
+    our @ISA = "PXML::Element";
     # serialize to HTML5 compatible representation: -- nope, not
     # necessary for SVG, ok? Assuming XHTML always? And different tags
     # anyway, ok?

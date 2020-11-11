@@ -12,5 +12,5 @@ use Chj::xperlfunc ":all";
 
 require "./meta/find-perl.pl";
 
-$ENV{RUN_TESTS}=1; xexec_safe $^X, "examples/hiring-without-whiteboards";
+$ENV{RUN_TESTS} = 1; xexec_safe $^X, "examples/hiring-without-whiteboards";
 

@@ -47,9 +47,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # installed, but checked out from Github)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -57,7 +57,7 @@ use lib "$mydir/../lib";
 # run through test suite (so that testing of this file will be skipped
 # instead of reported as a failure)
 use Chj::TEST
-    use=> 'FP::Repl::Dependencies';
+    use => 'FP::Repl::Dependencies';
 
 # end of "Some setup".
 
@@ -131,7 +131,7 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 # otherwise obligatory "our " keyword and it will be understood as a
 # package variable and hence survive across entries.
 
-# main> $x= 10
+# main> $x = 10
 # $VAR1 = 10;
 # main> $x++
 # $VAR1 = 10;
@@ -140,14 +140,14 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 
 # If you used "my ", it would be restricted to just the line you enter:
 
-# main> my $x= 100
+# main> my $x = 100
 # $VAR1 = 100;
 # main> $x
 # $VAR1 = 11;
 
 # You can define new code:
 
-# main> sub hi { my (@names)= @_; "Hello ".join(" and ", @names) }
+# main> sub hi { my (@names) = @_; "Hello ".join(" and ", @names) }
 # main> hi "Paul"
 # $VAR1 = 'Hello Paul';
 
@@ -268,7 +268,7 @@ sub f {
 # names, although those names are prefixed with '$' (they are 'SCALAR'
 # variables instead of the 'CODE' variables that 'sub name' sets)):
 
-#main> $g= f(2,3); $h= f(4,5); ()
+#main> $g = f(2,3); $h = f(4,5); ()
 #main> $g->(4)
 #$VAR1 = 2;
 #main> $h->(4)
@@ -386,7 +386,7 @@ our @imperative_inspect; # array to hold the closures; 'our' means a
 
 sub imperative_fact {
     my ($n) = @_;
-    my $res= 1;
+    my $res = 1;
     while (1) {
         # save closure for later inspection of $n and $res
         push @imperative_inspect, sub {
@@ -398,7 +398,7 @@ sub imperative_fact {
         } else {
             # treat $res and $n not as immutable binding of a name to
             # a value, but as mutable memory location
-            $res= $n * $res;
+            $res = $n * $res;
             $n = $n - 1;
         }
     }
@@ -448,7 +448,7 @@ sub imperative_fact {
 # lifetime.
 
 sub functional_fact {
-    my ($n)= @_;
+    my ($n) = @_;
     functional_fact_iter($n, 1)
 }
 
@@ -596,7 +596,7 @@ TEST { cons(1, cons(2, cons(5, null))) }
 # Let's build a list functionally, using recursion:
 
 sub iota {
-    my ($from, $to)=@_;
+    my ($from, $to) = @_;
     if ($from >= $to) {
         null
     } else {
@@ -649,7 +649,7 @@ use FP::Lazy ":all";
 # stream_iota never ends it without the second argument.
 
 sub square {
-    my ($x)= @_;
+    my ($x) = @_;
     $x * $x
 }
 

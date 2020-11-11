@@ -25,12 +25,12 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package PXML::Util;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(pxml_deferred_map pxml_eager_map
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(pxml_deferred_map pxml_eager_map
               pxml_map_elements pxml_map_elements_exhaustively
             );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -58,10 +58,10 @@ sub pxml_deferred_map ($$;$$) {
     # pxml_deferred_map call (but keep the up-list).  Otherfn is
     # called for leafs (non-sequences) and receives (value, up-list).
 
-    my ($v, $elementfn, $maybe_otherfn, $maybe_uplist)= @_;
+    my ($v, $elementfn, $maybe_otherfn, $maybe_uplist) = @_;
 
-    my $make_inferior_map= sub {
-        my ($uplist)=@_;
+    my $make_inferior_map = sub {
+        my ($uplist) = @_;
         sub {
             pxml_deferred_map ($_[0],
                                $elementfn,
@@ -70,10 +70,10 @@ sub pxml_deferred_map ($$;$$) {
         }
     };
 
-    my $uplist= $maybe_uplist // null;
+    my $uplist = $maybe_uplist // null;
 
-    if (my $r= ref $v) {
-        my $uplist2= cons $v, $uplist;
+    if (my $r = ref $v) {
+        my $uplist2 = cons $v, $uplist;
         if (UNIVERSAL::isa ($v, "PXML::Element")) {
             # XX TCO?
             &$elementfn ($v,
@@ -95,11 +95,11 @@ sub pxml_deferred_map ($$;$$) {
 sub pxml_eager_map ($$;$$) {
     # The functions receive (value, up-list), where up-list is a
     # linked list to the parents
-    my ($v, $elementfn, $maybe_otherfn, $maybe_uplist)= @_;
+    my ($v, $elementfn, $maybe_otherfn, $maybe_uplist) = @_;
 
     pxml_deferred_map ($v,
                        sub {
-                           my ($e, $uplist, $inferior_map)=@_;
+                           my ($e, $uplist, $inferior_map) = @_;
                            # XX TCO?
                            &$elementfn($e->body_map ($inferior_map),
                                        $uplist)
@@ -128,20 +128,20 @@ TEST { pxml_eager_map
 use FP::Ops "the_method";
 
 sub uplist_show {
-    my ($uplist)=@_;
+    my ($uplist) = @_;
     "[".$uplist->map (the_method ("name"))->strings_join("|")."]"
 }
 
 TEST { pxml_eager_map
          (t_data,
           sub {
-              my ($e, $uplist)=@_;
+              my ($e, $uplist) = @_;
               $e->body_update (sub {
                                    cons (uplist_show ($uplist), $_[0])
                                })
           },
           sub {
-              my ($v, $uplist)=@_;
+              my ($v, $uplist) = @_;
               uplist_show ($uplist) . ($v//"-") . "."
           })->string }
   '<p>[][p]foo.<b>[p][b|p]bar.[b|p]-.[b|p]5.[b|p]6.[b|p]7.[b|p]8.</b></p>';
@@ -149,13 +149,13 @@ TEST { pxml_eager_map
 TEST { pxml_deferred_map
          (t_data,
           sub {
-              my ($e, $uplist, $inferior_map)=@_;
+              my ($e, $uplist, $inferior_map) = @_;
               $e->body_update
                 (sub {
-                     my ($body)=@_;
+                     my ($body) = @_;
                      cons (uplist_show ($uplist),
                            $e->name eq "b" ? do {
-                               my $s= stream_mixed_flatten $body;
+                               my $s = stream_mixed_flatten $body;
                                cons( &$inferior_map (car $s),
                                      cdr $s )
                            }
@@ -163,7 +163,7 @@ TEST { pxml_deferred_map
                  });
           },
           sub {
-              my ($v, $uplist)=@_;
+              my ($v, $uplist) = @_;
               uplist_show ($uplist) . ($v//"-") . "."
           })->string }
   '<p>[][p]foo.<b>[p][b|p]bar.5678</b></p>';
@@ -171,11 +171,11 @@ TEST { pxml_deferred_map
 
 
 sub pxml_map_elements ($$;$) {
-    my ($v, $name_to_mapper, $maybe_otherfn)= @_;
+    my ($v, $name_to_mapper, $maybe_otherfn) = @_;
     pxml_eager_map ($v,
                     sub {
-                        my ($e, $uplist)=@_;
-                        if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $e->name) {
+                        my ($e, $uplist) = @_;
+                        if (my ($mapper) = hash_perhaps_ref $name_to_mapper, $e->name) {
                             &$mapper ($e, $uplist)
                         } else {
                             $e
@@ -193,17 +193,17 @@ sub pxml_map_elements ($$;$) {
 
 # (do you have a better name?)
 sub pxml_map_elements_exhaustively ($$;$) {
-    my ($v, $name_to_mapper, $maybe_otherfn)= @_;
+    my ($v, $name_to_mapper, $maybe_otherfn) = @_;
     pxml_eager_map
       ($v,
        sub {
-           my ($e, $uplist)=@_;
+           my ($e, $uplist) = @_;
          LP: {
-               my $name= $e->name;
-               if (my ($mapper)= hash_perhaps_ref $name_to_mapper, $name) {
-                   my $v= &$mapper ($e, $uplist);
+               my $name = $e->name;
+               if (my ($mapper) = hash_perhaps_ref $name_to_mapper, $name) {
+                   my $v = &$mapper ($e, $uplist);
                    if (is_pxml_element $v) {
-                       $e= $v;
+                       $e = $v;
                        if ($e->name eq $name) {
                            $e
                        } else {
@@ -221,7 +221,7 @@ sub pxml_map_elements_exhaustively ($$;$) {
 }
 
 sub t_exh {
-    my ($map)= @_;
+    my ($map) = @_;
     &$map
       (P(A({href=>"fun"}, "hey"), B(CODE ("boo")), B("fi")),
        {# a mapper does not go into an endless loop:
@@ -231,10 +231,10 @@ sub t_exh {
         # need to be an element. (XX NOTE that a list around an
         # element, even if the element is the only list value, will
         # stop exhaustive processing!)
-        b=> sub { my($e,$uplist)=@_;
+        b => sub { my($e,$uplist) = @_;
                   if (is_pxml_element
                       stream_mixed_flatten($e->body)->first) {
-                      A({name=>"x"}, $e->body)
+                      A({name => "x"}, $e->body)
                   } else {
                       $e->body
                   }

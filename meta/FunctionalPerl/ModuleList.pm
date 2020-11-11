@@ -25,10 +25,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FunctionalPerl::ModuleList;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(modulenamelist modulepathlist);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(modulenamelist modulepathlist);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -44,7 +44,7 @@ sub moduleandpathlist {
         local $_;
         while (<$f>) {
             chomp;
-            my $path= $_;
+            my $path = $_;
             next unless s/\.pm$//;
             s|^(lib\|meta\|htmlgen)/|| or die "no match: $_";
             s|/|::|sg;

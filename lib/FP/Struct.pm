@@ -15,7 +15,7 @@ FP::Struct - classes for functional perl
 
     use FP::Predicates qw(is_array maybe);
 
-    use FP::Struct 'FPStructExample::Foo'=>
+    use FP::Struct 'FPStructExample::Foo' =>
             ["name", # accept any value
              [maybe (\&is_array), "animals"], # accept arrays or undef
             ]
@@ -36,7 +36,7 @@ FP::Struct - classes for functional perl
     };
     like $@, qr/^unacceptable value for field 'animals': 0 /;
     is (new FPStructExample::Foo (undef, ["Struppi"])->animals->[0], "Struppi");
-    is (new_ FPStructExample::Foo (animals=> ["Struppi"])->animals->[0], "Struppi");
+    is (new_ FPStructExample::Foo (animals => ["Struppi"])->animals->[0], "Struppi");
 
 
     # Usually preferred alternative: define the struct from within the
@@ -46,7 +46,7 @@ FP::Struct - classes for functional perl
     # FP::Struct' below, it would try to load Hum.pm
     package FPStructExample::Hum {
         sub hum {
-            my $s=shift;
+            my $s = shift;
             $s->name." hums ".$s->a." over ".$s->b
         }
     }
@@ -59,32 +59,32 @@ FP::Struct - classes for functional perl
 
       use Chj::TEST; # the TEST sub will be removed from the package upon
                      # _END_ (namespace cleaning)
-      use FP::Struct ["a","b"]=> "FPStructExample::Foo",
+      use FP::Struct ["a","b"] => "FPStructExample::Foo",
                                  "FPStructExample::Hum",
                                  "FPStructExample::Hah";
       sub div {
-         my $s=shift;
+         my $s = shift;
          $$s{a} / $$s{b}
       }
-      TEST { FPStructExample::Bar2->new_(a=> 1, b=> 2)->div } 1/2;
+      TEST { FPStructExample::Bar2->new_(a => 1, b => 2)->div } 1/2;
       _END_ # generate accessors for methods of given name which don't
             # exist yet *in either Bar or any super class*. (Does that
             # make sense?)
     }
 
-    my $bar= new FPStructExample::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
+    my $bar = new FPStructExample::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
     # same thing, but with sub instead of method call interface:
-    my $baz= FPStructExample::Bar2::c::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
+    my $baz = FPStructExample::Bar2::c::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
     # or:
     import FPStructExample::Bar2::constructors;
-    my $baz= Bar2 ("Franz", ["Barney"], "some aa", 1,2);
+    my $baz = Bar2 ("Franz", ["Barney"], "some aa", 1,2);
 
     is $bar->div, 1/2;
 
-    is(Bar2_(a=>1,b=>2)->div, 1/2);
-    is(FPStructExample::Bar2::c::Bar2_(a=>1, b=>2)->div, 1/2);
-    is(new__ FPStructExample::Bar2({a=>1,b=>2})->div, 1/2);
-    is(unsafe_new__ FPStructExample::Bar2({a=>1,b=>2})->div, 1/2);
+    is(Bar2_(a => 1,b => 2)->div, 1/2);
+    is(FPStructExample::Bar2::c::Bar2_(a => 1, b => 2)->div, 1/2);
+    is(new__ FPStructExample::Bar2({a => 1,b => 2})->div, 1/2);
+    is(unsafe_new__ FPStructExample::Bar2({a => 1,b => 2})->div, 1/2);
     # NOTE: unsafe_new__ returns the argument hash after checking and
     # blessing it, it doesn't copy it! Be careful. `new__` does copy it.
 
@@ -109,8 +109,8 @@ object so as to leave the original unharmed), take predicate functions
 Class::Struct.
 
 Also creates constructor methods: C<new> that takes positional
-arguments, C<new_> which takes name=> value pairs, C<new__> which takes
-a hash with name=> value pairs as a single argument, and
+arguments, C<new_> which takes name => value pairs, C<new__> which takes
+a hash with name => value pairs as a single argument, and
 C<unsafe_new__> which does the same as C<new__> but reuses the given
 hash (unsafe if the latter is modified later on).
 
@@ -180,12 +180,12 @@ use FP::Interface qw(require_package package_check_possible_interface);
 
 
 sub all_fields {
-    my ($isa)=@_;
+    my ($isa) = @_;
     (
      map {
-         my ($package)=$_;
+         my ($package) = $_;
          no strict 'refs';
-         if (my $fields= \@{"${package}::__Struct__fields"}) {
+         if (my $fields = \@{"${package}::__Struct__fields"}) {
              (
               all_fields (\@{"${package}::ISA"}),
               @$fields
@@ -199,114 +199,114 @@ sub all_fields {
 }
 
 sub field_maybe_predicate ($) {
-    my ($s)=@_;
+    my ($s) = @_;
     (ref $s) ? $$s[0] : undef
 }
 
 sub field_name ($) {
-    my ($s)=@_;
+    my ($s) = @_;
     (ref $s) ? $$s[1] : $s
 }
 
 sub field_maybe_predicate_and_name ($) {
     # returns nothing at all if a predicate was given but is undef
-    my ($s)=@_;
+    my ($s) = @_;
     (ref $s) ? (defined($$s[0]) ? @$s : ()) : (undef, $s)
 }
 
 sub field_has_predicate ($) {
-    my ($s)=@_;
+    my ($s) = @_;
     ref $s
 }
 
 
-our $immutable= 1; # only used if also is_pure
+our $immutable = 1; # only used if also is_pure
 
 sub import {
-    my $_importpackage= shift;
+    my $_importpackage = shift;
     return unless @_;
     my ($package, $is_expandedvariant, $fields, @perhaps_isa);
     if (ref $_[0]) {
-        ($fields, @perhaps_isa)= @_;
-        $package= caller;
-        $is_expandedvariant= 1;
+        ($fields, @perhaps_isa) = @_;
+        $package = caller;
+        $is_expandedvariant = 1;
     } else {
-        ($package, $fields, @perhaps_isa)= @_;
-        $is_expandedvariant= 0;
+        ($package, $fields, @perhaps_isa) = @_;
+        $is_expandedvariant = 0;
     }
-    my @isa= (@perhaps_isa==1 and ref($perhaps_isa[0])) ?
+    my @isa = (@perhaps_isa == 1 and ref($perhaps_isa[0])) ?
       $perhaps_isa[0]
         : @perhaps_isa;
 
     require_package $_ for @isa;
     no strict 'refs';
-    *{"${package}::ISA"}= \@isa;
+    *{"${package}::ISA"} = \@isa;
 
-    my $is_pure= UNIVERSAL::isa($package, "FP::Abstract::Pure");
+    my $is_pure = UNIVERSAL::isa($package, "FP::Abstract::Pure");
 
-    my $allfields=[ all_fields (\@isa), @$fields ];
+    my $allfields = [ all_fields (\@isa), @$fields ];
     # (^ ah, could store them in the package as well; but well, no
     # worries)
-    my $allfields_name= [map {field_name $_} @$allfields];
+    my $allfields_name = [map {field_name $_} @$allfields];
 
     # get list of package entries *before* setting
     # accessors/constructors
-    my $nonmethods= package_keys $package;
+    my $nonmethods = package_keys $package;
 
-    my @package_parts= split /::/, $package;
-    my $package_lastpart= $package_parts[-1];
+    my @package_parts = split /::/, $package;
+    my $package_lastpart = $package_parts[-1];
 
     # constructor with positional parameters:
-    my $allfields_i_with_predicate= do {
-        my $i=-1;
+    my $allfields_i_with_predicate = do {
+        my $i = -1;
         [ map {
             $i++;
-            if (my $pred= field_maybe_predicate $_) {
+            if (my $pred = field_maybe_predicate $_) {
                 [$pred, field_name ($_), $i]
             } else {
                 ()
             }
         } @$allfields ]
     };
-    *{"${package}::new"}= sub {
-        my $class=shift;
+    *{"${package}::new"} = sub {
+        my $class = shift;
         @_ <= @$allfields
           or croak "too many arguments to ${package}::new";
         for (@$allfields_i_with_predicate) {
-            my ($pred,$name,$i)=@$_;
+            my ($pred,$name,$i) = @$_;
             &$pred ($_[$i])
               or die "unacceptable value for field '$name': ".show($_[$i]);
         }
         my %s;
-        for (my $i=0; $i< @_; $i++) {
-            my $fieldname= $$allfields_name[$i];
-            $s{$fieldname}= $_[$i];
+        for (my $i = 0; $i< @_; $i++) {
+            my $fieldname = $$allfields_name[$i];
+            $s{$fieldname} = $_[$i];
             Internals::SvREADONLY $s{$fieldname}, 1
                 if $is_pure && $immutable;
         }
-        my $s= bless \%s, $class;
+        my $s = bless \%s, $class;
         Internals::SvREADONLY %$s, 1
             if $is_pure && $immutable;
         $s
     };
-    *{"${package}::c::${package_lastpart}"}= my $constructor= sub {
+    *{"${package}::c::${package_lastpart}"} = my $constructor = sub {
         # XX bah, almost copy-paste, because want to avoid sub call
         # overhead (inlining please finally?):
         @_ <= @$allfields
           or croak "too many arguments to ${package}::new";
         for (@$allfields_i_with_predicate) {
-            my ($pred,$name,$i)=@$_;
+            my ($pred,$name,$i) = @$_;
             &$pred ($_[$i])
               or die "unacceptable value for field '$name': ".show($_[$i]);
         }
         my %s;
-        for (my $i=0; $i< @_; $i++) {
-            my $fieldname= $$allfields_name[$i];
-            $s{$fieldname}= $_[$i];
+        for (my $i = 0; $i< @_; $i++) {
+            my $fieldname = $$allfields_name[$i];
+            $s{$fieldname} = $_[$i];
             Internals::SvREADONLY $s{$fieldname}, 1
                 if $is_pure && $immutable;
         }
-        my $s= bless \%s, $package;
+        my $s = bless \%s, $package;
         Internals::SvREADONLY %$s, 1
             if $is_pure && $immutable;
         $s
@@ -314,29 +314,29 @@ sub import {
 
 
     # constructor with keyword/value parameters:
-    my $allfields_h= +{ map { field_name($_)=> undef } @$allfields };
-    my $allfields_with_predicate= [grep { field_maybe_predicate $_ } @$allfields];
-    *{"${package}::new_"}= sub {
-        my $class=shift;
+    my $allfields_h = +{ map { field_name($_) => undef } @$allfields };
+    my $allfields_with_predicate = [grep { field_maybe_predicate $_ } @$allfields];
+    *{"${package}::new_"} = sub {
+        my $class = shift;
         $class->unsafe_new__(+{@_})
     };
     # XX mostly-copy-pasting again (like above):
-    *{"${package}::c::${package_lastpart}_"}= my $constructor_= sub {
+    *{"${package}::c::${package_lastpart}_"} = my $constructor_ = sub {
         $package->unsafe_new__(+{@_})
     };
 
     # constructor with hash parameter:
-    *{"${package}::new__"}= sub {
-        my $class=shift;
-        @_==1 or croak "wrong number of arguments to ${package}::new__";
-        my ($h)=@_;
+    *{"${package}::new__"} = sub {
+        my $class = shift;
+        @_ == 1 or croak "wrong number of arguments to ${package}::new__";
+        my ($h) = @_;
         $class->unsafe_new__(+{%$h})
     },
-    *{"${package}::unsafe_new__"}= sub {
+    *{"${package}::unsafe_new__"} = sub {
         # NOTE: reuses (blesses) the argument hash! careful!
-        my $class=shift;
-        @_==1 or croak "wrong number of arguments to ${package}::unsafe_new__";
-        my ($s)=@_;
+        my $class = shift;
+        @_ == 1 or croak "wrong number of arguments to ${package}::unsafe_new__";
+        my ($s) = @_;
         scalar (keys %$s) <= (@$allfields * 2)
           or croak "too many arguments to ${package}::new_";
         for (keys %$s) {
@@ -345,7 +345,7 @@ sub import {
                 if $is_pure && $immutable;
         }
         for (@$allfields_with_predicate) {
-            my ($pred,$name)=@$_;
+            my ($pred,$name) = @$_;
             &$pred ($$s{$name})
               or die "unacceptable value for field '$name': ".show($$s{$name});
         }
@@ -356,18 +356,18 @@ sub import {
     };
 
     # constructor exports: -- XX why did I decide to not use ::c:: for this? historic?
-    *{"${package}::constructors::${package_lastpart}"}= $constructor;
-    *{"${package}::constructors::${package_lastpart}_"}= $constructor_;
-    *{"${package}::constructors::ISA"}= ["Exporter"];
-    my $exports= [$package_lastpart, "${package_lastpart}_"];
-    *{"${package}::constructors::EXPORT"}= $exports;
-    *{"${package}::constructors::EXPORT_OK"}= [];
-    *{"${package}::constructors::EXPORT_TAGS"}= +{all=> $exports};
+    *{"${package}::constructors::${package_lastpart}"} = $constructor;
+    *{"${package}::constructors::${package_lastpart}_"} = $constructor_;
+    *{"${package}::constructors::ISA"} = ["Exporter"];
+    my $exports = [$package_lastpart, "${package_lastpart}_"];
+    *{"${package}::constructors::EXPORT"} = $exports;
+    *{"${package}::constructors::EXPORT_OK"} = [];
+    *{"${package}::constructors::EXPORT_TAGS"} = +{all => $exports};
 
-    my $end= sub {
+    my $end = sub {
         #warn "_END_ called for package '$package'";
         for my $_field (@$fields) {
-            my ($maybe_predicate,$name)=
+            my ($maybe_predicate,$name) =
                 field_maybe_predicate_and_name($_field)
                 or croak "type predicate given but undef (this can happen "
                 ."due to phasing, e.g. referring to a lexical variable "
@@ -376,18 +376,18 @@ sub import {
 
             # accessors
             if (not $package->can($name)) {
-                *{"${package}::$name"}= sub {
-                    my $s=shift;
+                *{"${package}::$name"} = sub {
+                    my $s = shift;
                     $$s{$name}
                 };
             }
 
             # functional modifiers
-            my $add_modifier= sub {
-                my ($modifierappendix,$modifier)= @_;
-                my $modifiername= "$name$modifierappendix";
+            my $add_modifier = sub {
+                my ($modifierappendix,$modifier) = @_;
+                my $modifiername = "$name$modifierappendix";
                 unless ($package->can($modifiername)) {
-                    *{"${package}::$modifiername"}= $modifier;
+                    *{"${package}::$modifiername"} = $modifier;
                 }
             };
 
@@ -395,22 +395,22 @@ sub import {
               ("_set",
                $maybe_predicate ?
                sub {
-                   my $s=shift;
-                   @_==1 or die "${name}_set: need 1 argument";
-                   my $v=shift;
+                   my $s = shift;
+                   @_ == 1 or die "${name}_set: need 1 argument";
+                   my $v = shift;
                    &$maybe_predicate($v)
                      or die "unacceptable value for field '$name': "
                        .show($v);
-                   my $new= +{%$s};
-                   $$new{$name}= $v;
+                   my $new = +{%$s};
+                   $$new{$name} = $v;
                    bless $new, ref $s
                }
                :
                sub {
-                   my $s=shift;
-                   @_==1 or die "${name}_set: need 1 argument";
-                   my $new= +{%$s};
-                   ($$new{$name})=@_;
+                   my $s = shift;
+                   @_ == 1 or die "${name}_set: need 1 argument";
+                   my $new = +{%$s};
+                   ($$new{$name}) = @_;
                    bless $new, ref $s
                });
 
@@ -418,23 +418,23 @@ sub import {
               ("_update",
                $maybe_predicate ?
                sub {
-                   @_==2 or die "${name}_update: need 1 argument";
-                   my ($s,$fn)=@_;
-                   my $v= &$fn ($s->{$name});
+                   @_ == 2 or die "${name}_update: need 1 argument";
+                   my ($s,$fn) = @_;
+                   my $v = &$fn ($s->{$name});
                    &$maybe_predicate($v)
                      or die "unacceptable value for field '$name': "
                        .show($v);
-                   my $new= +{%$s};
-                   $$new{$name}= $v;
+                   my $new = +{%$s};
+                   $$new{$name} = $v;
                    bless $new, ref $s
                }
                :
                sub {
-                   @_==2 or die "${name}_update: need 1 argument";
-                   my ($s,$fn)=@_;
-                   my $v= &$fn ($s->{$name});
-                   my $new= +{%$s};
-                   ($$new{$name})= $v;
+                   @_ == 2 or die "${name}_update: need 1 argument";
+                   my ($s,$fn) = @_;
+                   my $v = &$fn ($s->{$name});
+                   my $new = +{%$s};
+                   ($$new{$name}) = $v;
                    bless $new, ref $s
                });
         }
@@ -445,8 +445,8 @@ sub import {
 
         1 # make module load succeed at the same time.
     };
-    *{"${package}::_END__"}= $end;
-    *{"${package}::_END_"}= sub {
+    *{"${package}::_END__"} = $end;
+    *{"${package}::_END_"} = sub {
         #warn "_END_ called for package '$package'";
         package_delete $package, $nonmethods;
         &$end;
@@ -458,7 +458,7 @@ sub import {
         &$end()
     }
 
-    *{"${package}::__Struct__fields"}= $fields;
+    *{"${package}::__Struct__fields"} = $fields;
 
 }
 

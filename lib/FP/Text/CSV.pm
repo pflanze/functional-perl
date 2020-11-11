@@ -19,7 +19,7 @@ FP::Text::CSV - functional interface to Text::CSV
                          rows_to_csv_fh
                          rows_to_csv_file);
 
-    my $csvparams= +{sep_char=> ";", eol=> "\n"};
+    my $csvparams = +{sep_char => ";", eol => "\n"};
     # $csvparams and any of its entries are optional,
     #  defaults are taken from $FP::Text::CSV::defaults
 
@@ -28,10 +28,10 @@ FP::Text::CSV - functional interface to Text::CSV
     mkdir ".tmp";
 
     # -- Output: ---
-    my $rows=
+    my $rows =
       cons [ "i", "i^2" ],
         stream_iota->map(sub {
-            my ($i)=@_;
+            my ($i) = @_;
             [ $i, $i*$i ]
         })->take(100);
     rows_to_csv_fh (Keep($rows), xopen_write(".tmp/a1.csv"),
@@ -41,14 +41,14 @@ FP::Text::CSV - functional interface to Text::CSV
 
 
     # -- Input: ---
-    my $p= csv_line_xparser $csvparams;
-    my @vals= &$p("1;2;3;4\n");
+    my $p = csv_line_xparser $csvparams;
+    my @vals = &$p("1;2;3;4\n");
     is_equal \@vals, [1,2,3,4];
 
-    my $itemstream1=
+    my $itemstream1 =
             csv_fh_to_rows(xopen_read(".tmp/a1.csv"), $csvparams);
     # or
-    my $itemstream2= csv_file_to_rows(".tmp/a2.csv", $csvparams);
+    my $itemstream2 = csv_file_to_rows(".tmp/a2.csv", $csvparams);
 
     is_equal $itemstream1, $itemstream2;
     is_equal $itemstream2->first, [ "i", "i^2" ];
@@ -70,9 +70,9 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Text::CSV;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(
                  new_csv_instance
                  csv_line_xparser
                  csv_fh_to_rows
@@ -81,7 +81,7 @@ package FP::Text::CSV;
                  rows_to_csv_fh
                  rows_to_csv_file
             );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -92,29 +92,29 @@ use Text::CSV;
 use FP::HashSet 'hashset_union';
 use Chj::xopen 'xopen_read';
 
-our $defaults=
+our $defaults =
   +{
     binary => 1,
-    sep_char=> "\t",
-    eol=> "\r\n",
+    sep_char => "\t",
+    eol => "\r\n",
    };
 
 sub params ($) {
-    my ($maybe_params)=@_;
+    my ($maybe_params) = @_;
     defined $maybe_params ? hashset_union($maybe_params, $defaults)
       : $defaults
 }
 
 sub new_csv_instance (;$) {
-    my ($maybe_params)=@_;
+    my ($maybe_params) = @_;
     Text::CSV->new(params $maybe_params)
 }
 
 sub csv_line_xparser (;$) {
-    my ($maybe_params)=@_;
-    my $csv= new_csv_instance $maybe_params;
+    my ($maybe_params) = @_;
+    my $csv = new_csv_instance $maybe_params;
     sub ($) {
-        my ($line)=@_;
+        my ($line) = @_;
         $csv->parse($line)
           or die "CSV parsing failure"; # XX how to get error message from Text::CSV?
         $csv->fields
@@ -123,12 +123,12 @@ sub csv_line_xparser (;$) {
 
 
 sub csv_fh_to_rows ($;$) {
-    my ($in, $maybe_params)=@_;
-    my $csv= new_csv_instance ($maybe_params);
-    my $next; $next= sub {
-        my $next=$next;
+    my ($in, $maybe_params) = @_;
+    my $csv = new_csv_instance ($maybe_params);
+    my $next; $next = sub {
+        my $next = $next;
         lazy {
-            if (my $row= $csv->getline ($in)) {
+            if (my $row = $csv->getline ($in)) {
                 # XX error checks?
                 cons $row, &$next;
             } else {
@@ -141,8 +141,8 @@ sub csv_fh_to_rows ($;$) {
 }
 
 sub csv_file_to_rows ($;$) {
-    my ($path, $maybe_params)=@_;
-    my $in= xopen_read $path;
+    my ($path, $maybe_params) = @_;
+    my $in = xopen_read $path;
     binmode($in, ":encoding(utf-8)") or die "binmode";
     csv_fh_to_rows $in, $maybe_params
 }
@@ -151,10 +151,10 @@ sub csv_file_to_rows ($;$) {
 # -- Output: ---
 
 sub csv_printer ($;$) {
-    my ($fh, $maybe_params)=@_;
-    my $csv= new_csv_instance ($maybe_params);
+    my ($fh, $maybe_params) = @_;
+    my $csv = new_csv_instance ($maybe_params);
     sub {
-        my ($row)=@_;
+        my ($row) = @_;
         $csv->print($fh, $row)
           or die "could not write CSV row: ".$csv->error_diag;
         # XX ok?
@@ -164,7 +164,7 @@ sub csv_printer ($;$) {
 use FP::Stream "stream_for_each";
 
 sub rows_to_csv_fh ($$;$) {
-    my ($s, $fh, $maybe_params)=@_;
+    my ($s, $fh, $maybe_params) = @_;
     weaken $_[0];
     stream_for_each csv_printer($fh, $maybe_params), $s
 }
@@ -172,9 +172,9 @@ sub rows_to_csv_fh ($$;$) {
 use Chj::xtmpfile;
 
 sub rows_to_csv_file ($$;$) {
-    my ($s, $path, $maybe_params)=@_;
+    my ($s, $path, $maybe_params) = @_;
     weaken $_[0];
-    my $out= xtmpfile $path;
+    my $out = xtmpfile $path;
     rows_to_csv_fh ($s, $out, $maybe_params);
     $out->xclose;
     $out->xputback (0666 & ~umask);

@@ -9,9 +9,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -28,11 +28,11 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
+our $verbose = 0;
 our $outpath;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
-           "outpath=s"=> \$outpath,
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage},
+           "outpath=s" => \$outpath,
            ) or exit 1;
 usage unless @ARGV;
 
@@ -55,23 +55,23 @@ use PXML::Tags
 use PXML::Serialize qw(pxml_print);
 
 sub print_csv_as_xml {
-    my ($fh, $path)= @_;
+    my ($fh, $path) = @_;
 
-    my $rows= csv_file_to_rows $path, +{eol=> "\n", sep_char=> ";"};
+    my $rows = csv_file_to_rows $path, +{eol => "\n", sep_char => ";"};
     # $rows is a lazily-computed linked list of the rows
 
     # skip the header row from the CSV file:
-    $rows= rest $rows;
+    $rows = rest $rows;
 
     # create a partially lazily computed PXML data structure
-    my $xmlstream=
+    my $xmlstream =
       MYEXAMPLE
         (PROTOCOL_VERSION ("0.123"),
          RECORDS # here we embed the lazily computed part:
          ($rows->map (sub {
-                          my ($row)=@_;
+                          my ($row) = @_;
                           @$row == 4 or die "row doesn't contain 4 columns: @$row";
-                          my ($a,$b,$c,$d)= @$row;
+                          my ($a,$b,$c,$d) = @$row;
 
                           RECORD(A ($a),
                                  B ($b),
@@ -87,7 +87,7 @@ sub print_csv_as_xml {
 use Chj::xtmpfile;
 use Chj::xopen qw(glob_to_fh);
 
-my $fh= defined $outpath ? xtmpfile $outpath : glob_to_fh *STDOUT;
+my $fh = defined $outpath ? xtmpfile $outpath : glob_to_fh *STDOUT;
 print_csv_as_xml $fh, $_ for @ARGV;
 $fh->xclose;
 $fh->xputback (0666 & ~umask) if defined $outpath;

@@ -12,14 +12,14 @@ use utf8;
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
 
-my $delay= 5; # seconds
+my $delay = 5; # seconds
 
 sub usage {
     print "usage: $myname groupname/fieldname...
@@ -39,20 +39,20 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
-           "delay=n"=> \$delay,
+our $verbose = 0;
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage},
+           "delay=n" => \$delay,
            ) or exit 1;
 usage unless @ARGV;
 
 use Chj::Linux::LmSensors qw(sensors_get
                              Selector);
 
-my @sel= map {
-    my $sel=$_;
-    my @p= split "/", $sel;
-    @p== 2 or die "invalid selector: '$sel'";
+my @sel = map {
+    my $sel = $_;
+    my @p = split "/", $sel;
+    @p == 2 or die "invalid selector: '$sel'";
     Selector(@p)
 } @ARGV;
 
@@ -64,21 +64,21 @@ use Chj::xopen qw(glob_to_fh);
 
 
 sub input {
-    my $is_first=1;
-    my $in= maybeIO_to_stream(sub {
+    my $is_first = 1;
+    my $in = maybeIO_to_stream(sub {
                                   if ($is_first) {
-                                      $is_first=0;
+                                      $is_first = 0;
                                   } else {
                                       sleep $delay;
                                   }
                                   sensors_get
                               });
     $in->map(sub {
-                 my ($m)=@_;
+                 my ($m) = @_;
                  [
                   $m->time,
                   map {
-                      my $sel= $_;
+                      my $sel = $_;
                       $m->select($_)->value_or("")
                   } @sel
                  ]
@@ -87,7 +87,7 @@ sub input {
 
 
 sub do_log {
-    my $rows= input;
+    my $rows = input;
     rows_to_csv_fh($rows, *STDOUT);
     # do *not* use glob_to_fh on *STDOUT here, it breaks Text::CSV
     # extremely oddly (because of some other/combined bug? "Use of

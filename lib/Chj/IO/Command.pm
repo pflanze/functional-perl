@@ -14,19 +14,19 @@ Chj::IO::Command
 =head1 SYNOPSIS
 
     use Chj::IO::Command;
-    # my $mail= Chj::IO::Command->new_out("sendmail","-t");  or:
-    # my $mail= Chj::IO::Command->new_writer("sendmail","-t"); or:
-    my $mail= Chj::IO::Command->new_receiver("sendmail","-t");
+    # my $mail = Chj::IO::Command->new_out("sendmail","-t");  or:
+    # my $mail = Chj::IO::Command->new_writer("sendmail","-t"); or:
+    my $mail = Chj::IO::Command->new_receiver("sendmail","-t");
     warn "sendmail has pid ".$mail->pid;
     $mail->xprint("From:..\nTo:..\n\n...");
-    my $exitcode= $mail->xfinish;
-    # my $date= Chj::IO::Command->new_in("date")->xcontent;
-    # my $date= Chj::IO::Command->new_reader("date")->xcontent;
-    my $date= Chj::IO::Command->new_sender("date")->xcontent;
+    my $exitcode = $mail->xfinish;
+    # my $date = Chj::IO::Command->new_in("date")->xcontent;
+    # my $date = Chj::IO::Command->new_reader("date")->xcontent;
+    my $date = Chj::IO::Command->new_sender("date")->xcontent;
     # there's also ->new_err, which allows to gather errors
 
     # or catch stdout and stderr both together:
-    my $str= Chj::IO::Command->new_combinedsender("foo","bar","baz")->xcontent;
+    my $str = Chj::IO::Command->new_combinedsender("foo","bar","baz")->xcontent;
 
 
 =head1 DESCRIPTION
@@ -71,70 +71,70 @@ use Chj::xpipe;
 
 
 sub new_out {
-    my $class=shift;
-    my ($r,$self)=xpipe;
+    my $class = shift;
+    my ($r,$self) = xpipe;
     bless $self,$class;
     $self->xlaunch($r,0,@_)
 }
-*new_writer= *new_out;
-*new_write= *new_out;
-*new_receiver= *new_out;
+*new_writer = *new_out;
+*new_write = *new_out;
+*new_receiver = *new_out;
 
 sub new_in {
-    my $class=shift;
-    my ($self,$w)=xpipe;
+    my $class = shift;
+    my ($self,$w) = xpipe;
     bless $self,$class;
     $self->xlaunch($w,1,@_)
 }
-*new_reader= *new_in;
-*new_read= *new_in;
-*new_sender= *new_in;
+*new_reader = *new_in;
+*new_read = *new_in;
+*new_sender = *new_in;
 
 sub new_combinedsender {
-    my $class=shift;
-    my ($self,$w)=xpipe;
+    my $class = shift;
+    my ($self,$w) = xpipe;
     bless $self,$class;
     $self->xlaunch3(undef,$w,$w,@_)
 }
 
 sub new_combinedsender_with_stdin {
-    my $class=shift;
-    my $stdin= shift;
-    my ($self,$w)=xpipe;
+    my $class = shift;
+    my $stdin = shift;
+    my ($self,$w) = xpipe;
     bless $self,$class;
     $self->xlaunch3($stdin,$w,$w,@_)
 }
 
 sub assume_with_maybe_stdin_stdout_stderr {
-    my $class=shift;
+    my $class = shift;
     @_>4 or die "not enough arguments";
-    my $self=shift;
-    my $in= shift;
-    my $out= shift;
-    my $err= shift;
+    my $self = shift;
+    my $in = shift;
+    my $out = shift;
+    my $err = shift;
     bless $self,$class;
     $self->xlaunch3($in,$out,$err,@_)
 }
 
 sub new_err {
-    my $class=shift;
-    my ($self,$w)=xpipe;
+    my $class = shift;
+    my ($self,$w) = xpipe;
     bless $self,$class;
     $self->xlaunch($w,2,@_);
 }
 
 sub new_receiver_with_stderr_to_fh {
-    my $class=shift;
-    my $errfh=shift;
-    my ($r,$self)=xpipe;
+    my $class = shift;
+    my $errfh = shift;
+    my ($r,$self) = xpipe;
     bless $self,$class;
     $self->xlaunch3($r,undef,$errfh,@_)
 }
 
 sub new_receiver_with_stdout_to_fh {
-    my $class=shift;
-    my $outfh=shift;
-    my ($r,$self)=xpipe;
+    my $class = shift;
+    my $outfh = shift;
+    my ($r,$self) = xpipe;
     bless $self,$class;
     $self->xlaunch3($r,$outfh,undef,@_)
 }

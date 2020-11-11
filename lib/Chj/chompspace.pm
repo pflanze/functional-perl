@@ -25,15 +25,15 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::chompspace;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(chompspace);
-#@EXPORT_OK=qw();
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(chompspace);
+#@EXPORT_OK = qw();
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub chompspace($) {
-    my ($str)=@_;
-    $str=~ s/^\s+//s;
-    $str=~ s/\s+\z//s;
+    my ($str) = @_;
+    $str =~ s/^\s+//s;
+    $str =~ s/\s+\z//s;
     $str
 }
 

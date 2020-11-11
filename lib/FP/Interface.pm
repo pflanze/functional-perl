@@ -26,7 +26,7 @@ Also see L<FP::Interfaces>.
      package FP::Abstract::ExtendedSequence;
      use base qw(FP::Abstract::Sequence); 
      sub FP_Interface__method_names {
-         my $class= shift;
+         my $class = shift;
          (qw(sum), $class->SUPER::FP_Interface__method_names)
      }
  }
@@ -69,20 +69,20 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Interface;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(
     package_is_populated
     require_package
     package_check_possible_interface);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Carp 'croak';
 
 sub package_is_populated {
-    my ($package)= @_;
+    my ($package) = @_;
     my $pr = do {
         no strict 'refs';
         *{$package . "::"}
@@ -91,18 +91,18 @@ sub package_is_populated {
 }
 
 sub require_package ($) {
-    my ($package)=@_;
+    my ($package) = @_;
     if (not package_is_populated $package) {
-        $package=~ s|::|/|g;
-        $package.=".pm";
+        $package =~ s|::|/|g;
+        $package .= ".pm";
         require $package
     }
 }
 
 
 sub package_check_possible_interface ($$) {
-    my ($caller, $possible_interface_package)= @_;
-    if (my $m= UNIVERSAL::can($possible_interface_package,
+    my ($caller, $possible_interface_package) = @_;
+    if (my $m = UNIVERSAL::can($possible_interface_package,
                               "FP_Interface__method_names")) {
         my @missing;
         for my $method (&$m($possible_interface_package)) {
@@ -120,9 +120,9 @@ sub package_check_possible_interface ($$) {
 }
 
 sub implemented_with_caller {
-    @_==2 or die "wrong number of arguments";
-    my ($caller, $interface)= @_;
-    my ($caller_package, $caller_file, $caller_line)= @$caller;
+    @_ == 2 or die "wrong number of arguments";
+    my ($caller, $interface) = @_;
+    my ($caller_package, $caller_file, $caller_line) = @$caller;
     require_package $interface;
     no strict 'refs';
     push @{"${caller_package}::ISA"}, $interface;
@@ -138,10 +138,10 @@ sub implemented_with_caller {
 # called fully qualified, i.e. FP::Interface::implemented (to avoid
 # namespace pollution in classes)
 sub implemented {
-    @_==1 or
+    @_ == 1 or
         croak "FP::Interface::implemented: expecting 1 argument; ".
               "use FP::Interfaces (note the s) instead";
-    my $caller= [caller];
+    my $caller = [caller];
     implemented_with_caller($caller, $_[0])
 }
 

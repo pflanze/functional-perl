@@ -15,9 +15,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -63,7 +63,7 @@ func functional_fact_iter ($x, $res) {
         # we could be making use of Perl's goto &$subroutine feature (see
         # `perldoc -f goto`):
         #
-        # @_=($x - 1,  $x * $res);
+        # @_ = ($x - 1,  $x * $res);
         # goto \&functional_fact_iter
         #
         # or, with nicer looks, by using Sub::Call::Tail:
@@ -194,14 +194,14 @@ use FP::Stream 'Weakened'; # XX should probably move to non-lazyness
 
 func weakened_even ($n) {
     my ($odd,$even);
-    $odd= func ($n) {
+    $odd = func ($n) {
         if ($n == 0) {
             0
         } else {
             tail &$even ($n - 1)
         }
     };
-    $even= func ($n) {
+    $even = func ($n) {
         if ($n == 0) {
             1
         } else {
@@ -228,7 +228,7 @@ use FP::fix;
 
 func fix_even ($n) {
     my ($odd,
-        $even)= fixn
+        $even) = fixn
           (
            func ($odd, $even,
                  $n) {

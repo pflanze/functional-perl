@@ -9,9 +9,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -20,7 +20,7 @@ use lib "$mydir/../lib";
 # gracefully fail when run as a test and Method::Signatures is not
 # available
 use Chj::TEST
-  use=> 'Method::Signatures';
+  use => 'Method::Signatures';
 use Chj::Backtrace;
 use FP::List ":all";
 use FP::Ops ":all";
@@ -42,8 +42,8 @@ use FP::Stream ":all";
 #           p : sieve [x | x <- xs, x `mod` p /= 0]
 
 func primes_naive1 () {
-    my $sieve; $sieve= func ($p_xs) {
-        my ($p,$xs)= first_and_rest $p_xs;
+    my $sieve; $sieve = func ($p_xs) {
+        my ($p,$xs) = first_and_rest $p_xs;
         lazy {
             cons $p, &$sieve (stream_filter func ($x) {
                                   $x % $p != 0
@@ -61,7 +61,7 @@ func primes_naive () {
 }
 
 func sieve ($p_xs) {
-    my ($p,$xs)= first_and_rest $p_xs;
+    my ($p,$xs) = first_and_rest $p_xs;
     lazy {
         cons $p, sieve (stream_filter func ($x) {
                             $x % $p != 0
@@ -107,8 +107,8 @@ t_primes \&primes_naive;
 
 func merge ($xs, $ys) {
     lazy {
-        my ($x,$xt)= first_and_rest $xs;
-        my ($y,$yt)= first_and_rest $ys;
+        my ($x,$xt) = first_and_rest $xs;
+        my ($y,$yt) = first_and_rest $ys;
 
         if ($x < $y) {
             cons($x, merge ($xt, $ys))
@@ -122,8 +122,8 @@ func merge ($xs, $ys) {
 
 func diff ($xs, $ys) {
     lazy {
-        my ($x,$xt)= first_and_rest $xs;
-        my ($y,$yt)= first_and_rest $ys;
+        my ($x,$xt) = first_and_rest $xs;
+        my ($y,$yt) = first_and_rest $ys;
 
         if ($x < $y) {
             cons ($x, diff ($xt, $ys))
@@ -142,11 +142,11 @@ func primes () {
 }
 
 func nonprimes () {
-    my $f= func ($x_xt, $ys) {
-        my ($x, $xt)= first_and_rest $x_xt;
+    my $f = func ($x_xt, $ys) {
+        my ($x, $xt) = first_and_rest $x_xt;
         cons $x, merge ($xt, $ys)
     };
-    my $g= func ($p) {
+    my $g = func ($p) {
         stream_map (func ($n) { $n * $p },
                     stream_map (func ($q) { $p + $q * 2 }, stream_iota));
     };

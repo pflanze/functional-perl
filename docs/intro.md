@@ -189,7 +189,7 @@ Or we can pass the glob entry instead of taking a reference--this is
 simpler to type and looks better, in the author's opinion, and when
 the subroutine is redefined the glob will call the new definition,
 which is usually what you want, also setting and retrieving function
-values becomes symmetric (like in `*is_string_list= list_of
+values becomes symmetric (like in `*is_string_list = list_of
 *is_string;`). Thus this intro is going to use this style from now
 on. **NOTE: some of the nice folks on the `#perl` IRC channel on
 freenode have voiced strong concern about this, given globs are an
@@ -264,11 +264,11 @@ assigning values to package variables (globals), by default the repl
 does not 'use strict "vars"' thus we don't need to prefix them with
 "our":
 
-    fperl> $a= list 3,4,5
+    fperl> $a = list 3,4,5
     $VAR1 = list(3, 4, 5);
-    fperl> $b= $a->rest
+    fperl> $b = $a->rest
     $VAR1 = list(4, 5);
-    fperl> $c= cons 2, $b
+    fperl> $c = cons 2, $b
     $VAR1 = list(2, 4, 5);
     fperl> $b
     $VAR1 = list(4, 5);
@@ -278,12 +278,12 @@ does not 'use strict "vars"' thus we don't need to prefix them with
 As you can see, $a and $b still contain the elements they were
 originally assigned. Compare this with using arrays:
 
-    fperl> $a= [3,4,5]
+    fperl> $a = [3,4,5]
     $VAR1 = [3, 4, 5];
 
 Now to drop the first element, you could use shift, but:
 
-    fperl> $b=$a
+    fperl> $b = $a
     $VAR1 = [3, 4, 5];
     fperl> shift @$b
     $VAR1 = 3;
@@ -300,9 +300,9 @@ in-memory data structure, is also modified. You'd have to first create
 a full copy of the array so that when you modify it with shift the
 original stays unmodified:
 
-    fperl> $a= [3,4,5]
+    fperl> $a = [3,4,5]
     $VAR1 = [3, 4, 5];
-    fperl> $b=[@$a]
+    fperl> $b = [@$a]
     $VAR1 = [3, 4, 5];
     fperl> shift @$b
     $VAR1 = 3;
@@ -313,9 +313,9 @@ This works, and it can be hidden in pure functions, in fact
 functional-perl provides them already (part of `FP::Array` and
 imported by `fperl`):
 
-    fperl> $a= [3,4,5]
+    fperl> $a = [3,4,5]
     $VAR1 = [3, 4, 5];
-    fperl> $b= array_rest $a
+    fperl> $b = array_rest $a
     $VAR1 = [4, 5];
     fperl> $a
     $VAR1 = [3, 4, 5];
@@ -355,7 +355,7 @@ Another module which might make life better in the repl is
 
 then it will carry over lexical variables from one entry to the next:
 
-    fperl> my $x=10
+    fperl> my $x = 10
     $VAR1 = 10;
     fperl> $x
     $VAR1 = 10;
@@ -564,7 +564,7 @@ everywhere.
 To end this section, let's see what happens to promises when they are
 evaluated:
 
-    fperl> our $v= do { my $x= 4; lazy { warn "evaluating"; 1 / $x } }
+    fperl> our $v = do { my $x = 4; lazy { warn "evaluating"; 1 / $x } }
     $VAR1 = bless( [
                      sub { "DUMMY" },
                      undef,
@@ -597,7 +597,7 @@ Let's switch back to the `:s` view mode:
 It shows evaluated promises as their value directly. This is useful
 when dealing with bigger, lazily evaluated data structures.
 
-    fperl> our $l= list(3,2,1,0,-1)->map(*inverse)
+    fperl> our $l = list(3,2,1,0,-1)->map(*inverse)
     $VAR1 = list(lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" });
 
 There's a function `F` which returns a deep copy of its argument with
@@ -655,7 +655,7 @@ Well, we need a termination condition.
 
     fperl> fun inverse ($x) { lazy { 1 / $x } }
     fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), ourlist($i-1) : null }
-    fperl> our $l= ourlist 3
+    fperl> our $l = ourlist 3
     $VAR1 = list(lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" });
     fperl> F $l->drop(4)
     $VAR1 = list('-1');
@@ -683,7 +683,7 @@ Well, let's simply try:
 
     fperl> fun inverse ($x) { lazy { 1 / $x } }
     fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
-    fperl> our $l= ourlist 3
+    fperl> our $l = ourlist 3
     $VAR1 = improper_list(lazy { "DUMMY" }, lazy { "DUMMY" });
 
 The 'improper_list' here is really just a single cons cell (pair)
@@ -725,7 +725,7 @@ forcing the first few cells:
 
     fperl> fun inverse ($x) { 1 / $x }
     fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
-    fperl> our $l= ourlist 3
+    fperl> our $l = ourlist 3
     $VAR1 = improper_list('0.333333333333333', lazy { "DUMMY" });
 
 See how the first value is evaluated right away now; but we still
@@ -738,7 +738,7 @@ Another interesting observation we can make is that we don't really
 need the termination condition anymore now:
 
     fperl> fun ourlist ($i) { cons inverse($i), lazy{ ourlist($i-1) } }
-    fperl> our $l= ourlist 3
+    fperl> our $l = ourlist 3
     $VAR1 = improper_list('0.333333333333333', lazy { "DUMMY" });
 
 Since we'll be bombing out at 1/0 anyway before reaching 1/-1, the end
@@ -756,7 +756,7 @@ Ok, to be able to skip over that, we'd have to go back to our second
 definition of `inverse`. But anyway, we could also start at a safer
 location:
 
-    fperl> our $l= ourlist -1
+    fperl> our $l = ourlist -1
     $VAR1 = improper_list('-1', lazy { "DUMMY" });
     fperl> $l->take(10)
     $VAR1 = list('-1', '-0.5', '-0.333333333333333', '-0.25', '-0.2', '-0.166666666666667', '-0.142857142857143', '-0.125', '-0.111111111111111', '-0.1');
@@ -774,7 +774,7 @@ since recursing into ourlist will again return a lazy term):
 
     fperl> fun ourlist ($i) { lazy { cons inverse($i), ourlist($i-1) } }
     Subroutine ourlist redefined at (eval 145) line 1.
-    fperl> our $l= ourlist -1
+    fperl> our $l = ourlist -1
     $VAR1 = lazy { "DUMMY" };
     fperl> $l->take(10)
     $VAR1 = lazy { "DUMMY" };
@@ -820,7 +820,7 @@ Example:
 
     fperl> system("echo 'Hello\nWorld.\n' > ourtestfile.txt")
     $VAR1 = 0;
-    fperl> our $l= xfile_lines("ourtestfile.txt")
+    fperl> our $l = xfile_lines("ourtestfile.txt")
     $VAR1 = lazy { "DUMMY" };
     fperl> $l->first
     $VAR1 = 'Hello
@@ -834,7 +834,7 @@ bigger blocks. But in any case, you could do something like the
 following without making the perl try to read infinitely much into
 process memory:
 
-    fperl> our $l= fh_to_chunks xopen_read("/dev/zero"), 10
+    fperl> our $l = fh_to_chunks xopen_read("/dev/zero"), 10
     $VAR1 = lazy { "DUMMY" };
     fperl> $l->first
     $VAR1 = '^@^@^@^@^@^@^@^@^@^@';
@@ -879,7 +879,7 @@ you try to run the same expression again, you get:
 
 You can prevent this manually by protecting `$l` using the `Keep` function:
 
-    fperl> our $l= fh_to_chunks xopen_read("/dev/urandom"), 10
+    fperl> our $l = fh_to_chunks xopen_read("/dev/urandom"), 10
     $VAR1 = lazy { "DUMMY" };
     fperl> Keep($l)->drop(1000)->first
     $VAR1 = '<94> )&m^C<8C>ESC<AB>A';
@@ -896,7 +896,7 @@ promises here!
 Let's get a better understanding of functions, and first try the
 following:
 
-    fperl> our ($f1,$f2)= do { our $a= 10; my $f1= sub { $a }; $a=11; my $f2= sub { $a }; ($f1,$f2) }
+    fperl> our ($f1,$f2) = do { our $a = 10; my $f1 = sub { $a }; $a = 11; my $f2 = sub { $a }; ($f1,$f2) }
     $VAR1 = sub { "DUMMY" };
     $VAR2 = sub { "DUMMY" };
     fperl> &$f1
@@ -917,7 +917,7 @@ lifetime).
 
 Let's try a lexical variable instead (`my $a`):
 
-    fperl> our ($f1,$f2)= do { my $a= 10; my $f1= sub { $a }; $a=11; my $f2= sub { $a }; ($f1,$f2) }
+    fperl> our ($f1,$f2) = do { my $a = 10; my $f1 = sub { $a }; $a = 11; my $f2 = sub { $a }; ($f1,$f2) }
     $VAR1 = sub { "DUMMY" };
     $VAR2 = sub { "DUMMY" };
     fperl> &$f1
@@ -933,7 +933,7 @@ data structure).
 Now let's use a fresh lexical variable for the second value (11)
 instead:
 
-    fperl> our ($f1,$f2)= do { my $a= 10; my $f1= sub { $a }; { my $a=11; my $f2= sub { $a }; ($f1,$f2) }}
+    fperl> our ($f1,$f2) = do { my $a = 10; my $f1 = sub { $a }; { my $a = 11; my $f2 = sub { $a }; ($f1,$f2) }}
     $VAR1 = sub { "DUMMY" };
     $VAR2 = sub { "DUMMY" };
     fperl> &$f1
@@ -959,7 +959,7 @@ the same function) opens a new scope, and the variables introduced in
 it are hence fresh instances every time it is called:
 
     fperl> fun f ($x) { fun ($y) { [$x,$y] }}
-    fperl> our $f1= f(12); our $f2= f(14); &$f1("f1")
+    fperl> our $f1 = f(12); our $f2 = f(14); &$f1("f1")
     $VAR1 = [12, 'f1'];
     fperl> &$f2("f2")
     $VAR1 = [14, 'f2'];
@@ -995,14 +995,14 @@ allocates a new frame on the call stack for every nested call to
 `build`, which means it needs memory proportional to the number of
 iterations. But perl also offers a solution for this:
 
-    fperl> fun build ($i,$l) { if ($i > 0) { @_=($i-1, cons fun () { $i }, $l); goto &build } else { $l }}
+    fperl> fun build ($i,$l) { if ($i > 0) { @_ = ($i-1, cons fun () { $i }, $l); goto &build } else { $l }}
 
 Sorry for the one-line formatting here, our examples are starting to
 get a bit long for the repl, here is the same with line breaks:
 
     fun build ($i,$l) {
         if ($i > 0) {
-            @_=($i-1, cons fun () { $i }, $l); 
+            @_ = ($i-1, cons fun () { $i }, $l);
             goto &build
         } else {
             $l 
@@ -1108,7 +1108,7 @@ Sure enough. Those lexicals are available from code you enter:
 You can also modify them. The change is reflected in the calling
 program, once you leave the repl to let it continue:
 
-    main 1> $n=42
+    main 1> $n = 42
     $VAR1 = 42;
     main 1> (ctl-d)
     42 worlds
@@ -1136,9 +1136,9 @@ Let's adapt the example from "Writing a list-generating function":
     use FP::TransparentLazy;
 
     fun hello ($start, $end) {
-        my $inverse= fun ($x) { lazy { 1 / $x } };
+        my $inverse = fun ($x) { lazy { 1 / $x } };
 
-        my $ourlist; $ourlist= fun ($i) {
+        my $ourlist; $ourlist = fun ($i) {
             $i < $end ? null
               : cons &$inverse($i), &$ourlist($i-1)
         };
@@ -1170,9 +1170,9 @@ argument. That was a mouthful, let's see how it looks:
     use FP::fix;
 
     fun hello ($start, $end) {
-        my $inverse= fun ($x) { lazy { 1 / $x } };
+        my $inverse = fun ($x) { lazy { 1 / $x } };
 
-        my $ourlist= fix fun ($self, $i) {
+        my $ourlist = fix fun ($self, $i) {
             $i < $end ? null
               : cons &$inverse($i), &$self($i-1)
         };
@@ -1267,7 +1267,7 @@ each original function in turn (from the right to left) on the
 original arguments, or the result(s) from the previous call). See how
 flip behaves:
 
-    fperl> *div= fun($x,$y) { $x / $y }; *rdiv= flip *div
+    fperl> *div = fun($x,$y) { $x / $y }; *rdiv = flip *div
     Subroutine fperl::div redefined at (eval 136) line 1.
     $VAR1 = *fperl::rdiv;
     fperl> div 1,2
@@ -1281,7 +1281,7 @@ wrappers around Perl operators, so that they can be easily passed as
 arguments to other functions like `flip` or the `map` methods.
 
     fperl> fun inverse ($x) { lazy { 1 / $x } }
-    fperl> *add_then_invert= compose *inverse, *add
+    fperl> *add_then_invert = compose *inverse, *add
     $VAR1 = *fperl::add_then_invert;
     fperl> add_then_invert 1,2
     $VAR1 = lazy { "DUMMY" };
@@ -1405,9 +1405,9 @@ Update the examples/introexample script with the following:
 
 Then run it and try:
 
-    main> our $s1= Rectangle->new(Point->new(2,3), Point->new(5,4));
+    main> our $s1 = Rectangle->new(Point->new(2,3), Point->new(5,4));
     $VAR1 = bless(+{topleft => bless(+{y => 3, x => 2}, 'Point'), bottomright => bless(+{y => 4, x => 5}, 'Point')}, 'Rectangle');
-    main> our $s2= $s1->bottomright_update(fun($p) { $p->y_set(10) })
+    main> our $s2 = $s1->bottomright_update(fun($p) { $p->y_set(10) })
     $VAR1 = bless(+{topleft => bless(+{y => 3, x => 2}, 'Point'), bottomright => bless(+{y => 10, x => 5}, 'Point')}, 'Rectangle');
     main> list($s1,$s2)->map(the_method "area")
     $VAR1 = list(3, 21);
@@ -1438,9 +1438,9 @@ to the Point package and
 
 to the Rectangle package, then:
 
-    main> our $s1= Rectangle->new(Point->new(2,3), Point->new(5,4));
+    main> our $s1 = Rectangle->new(Point->new(2,3), Point->new(5,4));
     $VAR1 = Rectangle(Point(2, 3), Point(5, 4));
-    main> our $s2= $s1->bottomright_update(the_method "y_set", 10)
+    main> our $s2 = $s1->bottomright_update(the_method "y_set", 10)
     $VAR1 = Rectangle(Point(2, 3), Point(5, 10));
 
 To get the constructor functions whose existence these implicate:

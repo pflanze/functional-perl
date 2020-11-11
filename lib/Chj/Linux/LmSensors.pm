@@ -29,16 +29,16 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::Linux::LmSensors;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(sensors_get
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(sensors_get
               Selector
               Value
               ValueNA
               ValueGroup
               Measurement
             );
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -118,9 +118,9 @@ use Chj::TEST;
     package Chj::Linux::LmSensors::Measurement;
 
     sub by {
-        my ($method,$str)=@_;
+        my ($method,$str) = @_;
         sub {
-            my ($v)=@_;
+            my ($v) = @_;
             $v->$method eq $str
         }
     };
@@ -132,7 +132,7 @@ use Chj::TEST;
 
     # "expecting 1 element, got 0" meaning the field doesn't exist.
     sub select {
-        my ($self, $selector)=@_;
+        my ($self, $selector) = @_;
         $self->groups->filter(by "name", $selector->groupname)->xone
           ->values->filter(by "name", $selector->sensorname)->xone
     }
@@ -148,19 +148,19 @@ import Chj::Linux::LmSensors::Measurement::constructors;
 
 
 sub parse_value {
-    my ($s)=@_;
+    my ($s) = @_;
     chomp $s;
-    my ($name,$rest1)=
-      $s=~ m{^([\w -]+):[ \t]*(.*)\z}sx
+    my ($name,$rest1) =
+      $s =~ m{^([\w -]+):[ \t]*(.*)\z}sx
         or die "no name match: '$s'";
 
     chomp $rest1;
 
-    if ($rest1=~ m{^N/A\s*\z}sx) {
+    if ($rest1 =~ m{^N/A\s*\z}sx) {
         ValueNA($name)
     } else {
-        my ($value,$unit,$rest)=
-          $rest1=~ m{^([+-]?\d+(?:\.\d*)?)\s*([°A-Za-z]\w*)\s*(.*)\z}sx
+        my ($value,$unit,$rest) =
+          $rest1 =~ m{^([+-]?\d+(?:\.\d*)?)\s*([°A-Za-z]\w*)\s*(.*)\z}sx
             # wow ewil, space in ' *' would be dropped due to /x of course
             or die "no values match: '$rest1'";
         Value($name,$value,$unit,$rest)
@@ -178,16 +178,16 @@ TEST {
 use FP::PureArray qw(purearray array_to_purearray);
 
 sub parse_measurement {
-    my ($str,$time)=@_;
-    my @groups= map {
-        my $s=$_;
-        my ($groupname, $groupvalues)=
-          $s=~ m{^([\w -]+)\n
+    my ($str,$time) = @_;
+    my @groups = map {
+        my $s = $_;
+        my ($groupname, $groupvalues) =
+          $s =~ m{^([\w -]+)\n
                     (.*)
                     \z}sx
                       or die "no group match: '$s'";
 
-        my @values= map {
+        my @values = map {
             parse_value $_
         }
           split /\n/, $groupvalues;
@@ -203,10 +203,10 @@ sub parse_measurement {
 use Chj::IO::Command;
 
 sub sensors_get_string {
-    my $p= Chj::IO::Command->new_sender({LANG=> "C"},
+    my $p = Chj::IO::Command->new_sender({LANG => "C"},
                                         "sensors", "-A");
     $p->set_encoding("utf-8");
-    my $str= $p->xcontent;
+    my $str = $p->xcontent;
     $p->xxfinish;
     $str
 }
@@ -218,7 +218,7 @@ sub sensors_get {
 
 
 
-my $s= 'acpitz-virtual-0
+my $s = 'acpitz-virtual-0
 temp1:        +40.0°C  (crit = +127.0°C)
 temp2:        +38.0°C  (crit = +104.0°C)
 
@@ -249,7 +249,7 @@ temp16:           N/A
 
 my $m;
 TEST {
-    $m= parse_measurement($s, 1234567)
+    $m = parse_measurement($s, 1234567)
 }
   Measurement(1234567,
               purearray
@@ -289,7 +289,7 @@ TEST {
     purearray(Selector ('coretemp-isa-0000', 'Core 1'),
               Selector ('thinkpad-isa-0000', 'temp14'))
       ->map(sub {
-                my ($sel)=@_;
+                my ($sel) = @_;
                 $m->select($sel)->value_or("no val")
             })
   }

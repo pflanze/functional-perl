@@ -10,9 +10,9 @@ use Function::Parameters ":strict";
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -30,13 +30,13 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
+our $verbose = 0;
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage},
            ) or exit 1;
-usage unless @ARGV==2;
+usage unless @ARGV == 2;
 
-our ($path,$numrows)=@ARGV;
+our ($path,$numrows) = @ARGV;
 
 use FP::Text::CSV qw(rows_to_csv_file);
 use FP::List ":all";
@@ -51,13 +51,13 @@ fun fibs () {
     # global scope is used, here we don't use Keep around $fibs as
     # it's correct when the local variable, which goes out of scope,
     # is deleted)
-    my $fibs; $fibs=
+    my $fibs; $fibs =
       cons 1, cons 1, lazy { $fibs->stream_zip_with (\&add, rest $fibs) };
     $fibs
 }
 
 #fun exps($base, $start)
-sub exps; *exps= uncurry
+sub exps; *exps = uncurry
   fun ($base) {
       fix fun ($rec, $x) {
           lazy { cons $x, &$rec ($x * $base) }
@@ -65,12 +65,12 @@ sub exps; *exps= uncurry
   };
 
 fun series () {
-    my $a= 1.01;
-    my $b= 0.99;
-    my $ns= rest stream_iota;
-    my $as= exps $a, $a;
-    my $bs= exps $b, $b;
-    my $fibs= fibs;
+    my $a = 1.01;
+    my $b = 0.99;
+    my $ns = rest stream_iota;
+    my $as = exps $a, $a;
+    my $bs = exps $b, $b;
+    my $fibs = fibs;
 
     ([ "n", "$a^n", "$b^n", "fib" ],
      stream_zip $ns, $as, $bs, $fibs)
@@ -84,7 +84,7 @@ fun page ($title, $rows) {
 # the resulting stream has to be assigned to a lexical variable first,
 # or the stream head would be held on to and the process would run out
 # of memory:
-my $page= page (series);
+my $page = page (series);
 
-rows_to_csv_file $page, $path, +{eol=> "\n", sep_char=> ";"};
+rows_to_csv_file $page, $path, +{eol => "\n", sep_char => ";"};
 

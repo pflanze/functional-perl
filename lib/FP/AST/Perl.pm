@@ -21,9 +21,9 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
     is Get(HashVar "foo::bar")->string, '%foo::bar';
     is Ref(HashVar "foo::bar")->string, '\%foo::bar';
 
-    my $codefoo= CodeVar("foo");
-    my $arrayfoo= ArrayVar("foo");
-    my $lexfoo= ScalarVar("foo");
+    my $codefoo = CodeVar("foo");
+    my $arrayfoo = ArrayVar("foo");
+    my $lexfoo = ScalarVar("foo");
     is App(Get($codefoo), list())->string,
        '&foo()';
     is AppP(Get($codefoo), list())->string,
@@ -51,7 +51,7 @@ FP::AST::Perl -- abstract syntax tree for representing Perl code
     is_equal semicolons("x"), "x";
         # ^ no `Semicolon` instantiation thus no type failure because
         #   of the string
-    my $sems= semicolons(map {Get ScalarVar $_} qw(a b c));
+    my $sems = semicolons(map {Get ScalarVar $_} qw(a b c));
     is_equal $sems,
              Semicolon(Get(ScalarVar('a')),
                        Semicolon(Get(ScalarVar('b')),
@@ -93,22 +93,22 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::AST::Perl;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-my @classes=qw(
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+my @classes = qw(
     ScalarVar CodeVar HashVar ArrayVar Glob
     App AppP Get Ref
     Number String
     Literal
     Semicolon Comma Noop Let);
-@EXPORT_OK=(
+@EXPORT_OK = (
     @classes, qw(
     is_packvar_type
     is_var
     is_expr is_nonnoop_expr is_noop
     semicolons commas));
 
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -150,7 +150,7 @@ package FP::AST::Perl::Var {
         # ^ XX is_package_name ? But isn't everything allowed? But
         # then todo proper printing.
         #FUTURE: [*is_bool, 'is_lexical'] ?
-        ]=> "FP::AST::_::Perl";
+        ] => "FP::AST::_::Perl";
 
     method string () {
         $self->sigil . $self->name
@@ -160,13 +160,13 @@ package FP::AST::Perl::Var {
     _END_
 }
 
-*is_var= instance_of "FP::AST::Perl::Var"; ## XX Are those not all auto generated MAN ???
+*is_var = instance_of "FP::AST::Perl::Var"; ## XX Are those not all auto generated MAN ???
 
 
 # XX move to FP::Predicates? Or FP::Parser::Perl ?
 sub is_lexvar_string ($) {
-    my ($str)=@_;
-    $str=~ /^\w+\z/
+    my ($str) = @_;
+    $str =~ /^\w+\z/
 }
 
 package FP::AST::Perl::ScalarVar {
@@ -215,8 +215,8 @@ package FP::AST::Perl::Expr {
     _END_
 }
 
-*is_expr= instance_of "FP::AST::Perl::Expr";
-*is_nonnoop_expr= both *is_expr, complement *is_noop;
+*is_expr = instance_of "FP::AST::Perl::Expr";
+*is_nonnoop_expr = both *is_expr, complement *is_noop;
 
 # Do we need to distinguish context (list vs. scalar [vs. void]),
 # really? No, since the *dynamic* context determines this!
@@ -278,7 +278,7 @@ package FP::AST::Perl::Ref {
     _END_
 }
 
-# *is_ref= instance_of "FP::AST::Perl::Ref";
+# *is_ref = instance_of "FP::AST::Perl::Ref";
 
 package FP::AST::Perl::App {
     use FP::Predicates ":all";
@@ -332,7 +332,7 @@ package FP::AST::Perl::Value {
     _END_
 }
 
-*is_value= instance_of "FP::AST::Perl::Value";
+*is_value = instance_of "FP::AST::Perl::Value";
 
 package FP::AST::Perl::Number {
     use FP::Predicates ":all";
@@ -417,11 +417,11 @@ package FP::AST::Perl::Noop {
     _END_
 }
 
-*is_noop= instance_of "FP::AST::Perl::Noop";
+*is_noop = instance_of "FP::AST::Perl::Noop";
 
 
-*semicolons= right_associate_ *Semicolon, Noop();
-*commas= right_associate_ *Comma, Noop();
+*semicolons = right_associate_ *Semicolon, Noop();
+*commas = right_associate_ *Comma, Noop();
 
 
 package FP::AST::Perl::Let {
@@ -436,8 +436,8 @@ package FP::AST::Perl::Let {
         ] => "FP::AST::Perl::Expr";
 
     method string () {
-        my $vars= $self->vars;
-        my $multiple= $vars->length > 1;
+        my $vars = $self->vars;
+        my $multiple = $vars->length > 1;
         "my "
             . ($multiple ? "(" : "")
             . $vars->map(the_method "string")->strings_join(", ")

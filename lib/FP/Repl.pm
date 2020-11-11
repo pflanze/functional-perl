@@ -17,13 +17,13 @@ FP::Repl - read-eval-print loop
     repl;
 
     # pass parameters (any fields of the FP::Repl::Repl class):
-    repl (skip=> 3, # skip 3 caller frames (when the repl call is nested
+    repl (skip => 3, # skip 3 caller frames (when the repl call is nested
                     # within something you dont't want the user to see)
-          tty=> $fh, # otherwise repl tries to open /dev/tty, or if that fails,
+          tty => $fh, # otherwise repl tries to open /dev/tty, or if that fails,
                      # uses readline defaults (which is somewhat broken?)
           # also, any fields of the FP::Repl::Repl class are possible:
-          maxHistLen=> 100, maybe_prompt=> "foo>", maybe_package=> "Foo::Bar",
-          maybe_historypath=> ".foo_history", pager=> "more"
+          maxHistLen => 100, maybe_prompt => "foo>", maybe_package => "Foo::Bar",
+          maybe_historypath => ".foo_history", pager => "more"
           # etc.
          );
 
@@ -44,21 +44,21 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Repl;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(repl);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(repl);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use FP::Repl::Repl;
 
 sub repl {
     @_ % 2 and die "expecting even number of arguments";
-    my %args= @_;
-    my $maybe_skip= delete $args{skip};
-    my $maybe_tty= delete $args{tty};
+    my %args = @_;
+    my $maybe_skip = delete $args{skip};
+    my $maybe_tty = delete $args{tty};
 
-    my $r= new FP::Repl::Repl;
+    my $r = new FP::Repl::Repl;
 
     if (exists $args{maybe_settingspath}) {
         $r->set_maybe_settingspath(delete $args{maybe_settingspath});
@@ -67,12 +67,12 @@ sub repl {
     $r->possibly_restore_settings;
 
     for (keys %args) {
-        my $m= "set_$_";
+        my $m = "set_$_";
         $r->$m($args{$_});
     }
 
     #$r->run ($maybe_skip);
-    my $m= $r->can("run"); @_=($r, $maybe_skip); goto &$m
+    my $m = $r->can("run"); @_ = ($r, $maybe_skip); goto &$m
 }
 
 *FP::Repl= \&repl;

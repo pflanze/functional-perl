@@ -10,33 +10,33 @@ use Function::Parameters qw(:strict);
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
 
 
 sub sumofsquares {
-    my ($from, $to)=@_;
-    my $tot=0;
-    for (my $i= $from; $i<=$to; $i++) {
-        $tot+= $i * $i;
+    my ($from, $to) = @_;
+    my $tot = 0;
+    for (my $i = $from; $i <= $to; $i++) {
+        $tot+ = $i * $i;
     }
     $tot
 }
 
 
 sub Gsumofsquares {
-    my ($from, $to)=@_;
-    my $tot=0;
-    my $i=$from;
+    my ($from, $to) = @_;
+    my $tot = 0;
+    my $i = $from;
   test:
     goto calculate if $i <= $to;
     return $tot;
   calculate:
-    $tot+= $i * $i;
+    $tot+ = $i * $i;
     $i++;
     goto test;
 }

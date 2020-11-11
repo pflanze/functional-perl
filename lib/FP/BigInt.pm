@@ -38,10 +38,10 @@ L<FP::Abstract::Show>, L<FP::Abstract::Equal> -- implemented protocols
 
 
 package FP::BigInt;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(bigint);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(bigint);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -60,12 +60,12 @@ package # Monkey patching; but using long ucfirst (TODO: go all
   Math::BigInt {
 
     sub FP_Show_show {
-        my $s=shift;
+        my $s = shift;
         "bigint('$s')"
     }
 
     sub FP_Equal_equal {
-        my ($a,$b)= @_;
+        my ($a,$b) = @_;
         $a == $b
     }
 

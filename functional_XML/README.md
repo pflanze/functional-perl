@@ -29,7 +29,7 @@ the whole document at once).
 Direct creation of XML elements:
 
     use PXML::Element;
-    my $element= PXML::Element->new
+    my $element = PXML::Element->new
           ("a", {href=> "http://myserver.com"}, ["my server"]);
 
 Using 'tag functions' for shorter code:

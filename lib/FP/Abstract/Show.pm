@@ -14,9 +14,9 @@ FP::Abstract::Show - data constructor protocol
 =head1 SYNOPSIS
 
     package FPShowExample::Foo {
-        sub new { my $class= shift; bless [@_], $class }
+        sub new { my $class = shift; bless [@_], $class }
         sub FP_Show_show {
-            my ($self, $show)=@_;
+            my ($self, $show) = @_;
             # $show is for recursive use
             "FPShowExample::Foo->new(".join(", ",
                  map { $show->($_) } @$self).")"

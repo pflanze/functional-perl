@@ -60,11 +60,11 @@ that $fn returns. Other variants behave similarly: the appendix tells
 how many arguments each function level expects; the added numbers
 determine how many arguments the resulting function expects.
 
-    my $mult= uncurry sub { my ($x)=@_; sub { my ($y)=@_; $x*$y }};
+    my $mult = uncurry sub { my ($x) = @_; sub { my ($y) = @_; $x*$y }};
     is &$mult(2,3), 6;
     # 'uncurry' is an alias to 'uncurry_1_1'.
 
-    my $mult3= uncurry_2_1 sub { my ($x,$y)=@_; sub { my ($z)=@_; $x*$y*$z }};
+    my $mult3 = uncurry_2_1 sub { my ($x,$y) = @_; sub { my ($z) = @_; $x*$y*$z }};
     is &$mult3(2,3,4), 24;
 
 =back
@@ -91,8 +91,8 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Currying;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(
     curry
     curry_
     partial
@@ -103,31 +103,31 @@ package FP::Currying;
     uncurry_2_2
     uncurry_1_1_1
     );
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 sub curry ($) {
-    @_==1 or die "wrong number of arguments";
-    my ($f)= @_;
+    @_ == 1 or die "wrong number of arguments";
+    my ($f) = @_;
     sub {
-        @_==1 or die "wrong number of arguments";
-        my ($a)= @_;
+        @_ == 1 or die "wrong number of arguments";
+        my ($a) = @_;
         sub {
-            @_==1 or die "wrong number of arguments";
-            @_=($a, @_); goto \&$f
+            @_ == 1 or die "wrong number of arguments";
+            @_ = ($a, @_); goto \&$f
         }
     }
 }
 
 # relaxed version
 sub curry_ {
-    my ($f,@p)= @_;
+    my ($f,@p) = @_;
     sub {
-        my @a= @_;
+        my @a = @_;
         sub {
-            @_=(@p, @a, @_); goto \&$f
+            @_ = (@p, @a, @_); goto \&$f
         }
     }
 }
@@ -137,9 +137,9 @@ sub curry_ {
 # returns a fn that takes a variable number of additional args. When
 # called, the returned function calls f with args + additional args."
 sub partial {
-    my ($f,@p)= @_;
+    my ($f,@p) = @_;
     sub {
-        @_=(@p, @_); goto \&$f
+        @_ = (@p, @_); goto \&$f
     }
 }
 
@@ -147,49 +147,49 @@ sub partial {
 # Macros would be useful here.
 
 sub uncurry_1_1 ($) {
-    my ($f)=@_;
+    my ($f) = @_;
     sub {
-        @_==2 or die "expecting 2 arguments";
-        my ($a,$b)=@_;
+        @_ == 2 or die "expecting 2 arguments";
+        my ($a,$b) = @_;
         $f->($a)->($b)
     }
 }
 
 sub uncurry ($);
-*uncurry= *uncurry_1_1;
+*uncurry = *uncurry_1_1;
 
 sub uncurry_2_1 ($) {
-    my ($f)=@_;
+    my ($f) = @_;
     sub {
-        @_==3 or die "expecting 3 arguments";
-        my ($a,$b,$c)=@_;
+        @_ == 3 or die "expecting 3 arguments";
+        my ($a,$b,$c) = @_;
         $f->($a,$b)->($c)
     }
 }
 
 sub uncurry_1_2 ($) {
-    my ($f)=@_;
+    my ($f) = @_;
     sub {
-        @_==3 or die "expecting 3 arguments";
-        my ($a,$b,$c)=@_;
+        @_ == 3 or die "expecting 3 arguments";
+        my ($a,$b,$c) = @_;
         $f->($a)->($b,$c)
     }
 }
 
 sub uncurry_2_2 ($) {
-    my ($f)=@_;
+    my ($f) = @_;
     sub {
-        @_==4 or die "expecting 4 arguments";
-        my ($a,$b,$c,$d)=@_;
+        @_ == 4 or die "expecting 4 arguments";
+        my ($a,$b,$c,$d) = @_;
         $f->($a,$b)->($c,$d)
     }
 }
 
 sub uncurry_1_1_1 ($) {
-    my ($f)=@_;
+    my ($f) = @_;
     sub {
-        @_==3 or die "expecting 3 arguments";
-        my ($a,$b,$c)=@_;
+        @_ == 3 or die "expecting 3 arguments";
+        my ($a,$b,$c) = @_;
         $f->($a)->($b)->($c)
     }
 }

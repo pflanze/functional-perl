@@ -112,10 +112,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Equal;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(equal);
-@EXPORT_OK=qw(equaln is_equal relaxedequal pointer_eq);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(equal);
+@EXPORT_OK = qw(equaln is_equal relaxedequal pointer_eq);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -127,47 +127,47 @@ no warnings "recursion";
 # I find it odd that nobody did this before. But I can't find anything
 # on CPAN.
 
-our $primitive_equals=
+our $primitive_equals =
   +{
-    ARRAY=> sub {
-        my ($a,$b, $equal)=@_;
+    ARRAY => sub {
+        my ($a,$b, $equal) = @_;
         @$a == @$b and do {
-            my $i=0;
+            my $i = 0;
           LP: {
                 $i < @$a ? (&$equal ($$a[$i], $$b[$i]) and do{$i++; redo LP})
                   : 1
             }
         }
     },
-    HASH=> sub {
-        my ($a,$b, $equal)=@_;
+    HASH => sub {
+        my ($a,$b, $equal) = @_;
         keys %$a == keys %$b and do {
             for (keys %$a) {
-                my $v; $v= (exists $$b{$_} and &$equal($$a{$_}, $$b{$_}))
+                my $v; $v = (exists $$b{$_} and &$equal($$a{$_}, $$b{$_}))
                   or return $v;
             }
             1
         }
     },
-    REF=> sub { # references to references
-        my ($a,$b, $equal)=@_;
+    REF => sub { # references to references
+        my ($a,$b, $equal) = @_;
         &$equal($$a, $$b)
     },
     # *references* to globs; direct globs are compared in equal directly
-    GLOB=> sub {
+    GLOB => sub {
         # is it the same glob? If it's different ones, compare all of
         # their contents? XX if so, then also change the direct
         # comparison in equal
         '' # since if they are the same, then pointer comparison
            # already did it
     },
-    SCALAR=> sub {
-        my ($a,$b, $equal)=@_;
+    SCALAR => sub {
+        my ($a,$b, $equal) = @_;
         &$equal(${$_[0]}, ${$_[1]})
     },
 
     # compare closures using XS? Existing module?
-    #CODE=> sub {
+    #CODE => sub {
     #}
    };
 
@@ -180,18 +180,18 @@ sub pointer_eq ($$) {
 }
 
 sub make_equal {
-    my ($relaxed)= @_;
-    my $equal; $equal= sub ($$) {
-        @_==2 or die "wrong number of arguments";
+    my ($relaxed) = @_;
+    my $equal; $equal = sub ($$) {
+        @_ == 2 or die "wrong number of arguments";
       EQUAL: {
-          my ($a,$b)=@_;
+          my ($a,$b) = @_;
           if (!defined $a) {
               if (!defined $b) {
                   1
               } else {
                   if (length ref $b) {
                       if (is_promise $b) {
-                          @_=($a, force ($b)); redo EQUAL;
+                          @_ = ($a, force ($b)); redo EQUAL;
                       } else {
                           undef
                       }
@@ -204,7 +204,7 @@ sub make_equal {
               if (!defined $b) {
                   if (length ref $a) {
                       if (is_promise $a) {
-                          @_=(force($a), $b); redo EQUAL;
+                          @_ = (force($a), $b); redo EQUAL;
                       } else {
                           undef
                       }
@@ -213,18 +213,18 @@ sub make_equal {
                   }
               } else {
                   # both are defined
-                  if (length (my $ar= ref $a)) {
-                      if (length (my $br= ref $b)) {
+                  if (length (my $ar = ref $a)) {
+                      if (length (my $br = ref $b)) {
                           pointer_eq ($a, $b) or
                             do {
                                 if (is_promise $a or is_promise $b) {
-                                    @_=(force ($a), force ($b)); redo EQUAL;
+                                    @_ = (force ($a), force ($b)); redo EQUAL;
                                 } elsif ($ar eq $br) {
-                                    if (my $cmp= $$primitive_equals{$ar}) {
+                                    if (my $cmp = $$primitive_equals{$ar}) {
                                         &$cmp ($a, $b, $equal)
                                     } else {
                                         if ($relaxed) {
-                                            if (my $m= UNIVERSAL::can($a, "FP_Equal_equal")) {
+                                            if (my $m = UNIVERSAL::can($a, "FP_Equal_equal")) {
                                                 #@_ $a and $b are still the original $a and $b
                                                 goto $m
                                             } else {
@@ -253,7 +253,7 @@ sub make_equal {
                       } else {
                           # $b is not a reference ($a is)
                           if (is_promise $a) {
-                              @_=(force ($a), $b); redo EQUAL;
+                              @_ = (force ($a), $b); redo EQUAL;
                           } else {
                               undef
                           }
@@ -262,7 +262,7 @@ sub make_equal {
                       # $a is not a reference
                       if (length ref $b) {
                           if (is_promise $b) {
-                              @_=($a, force($b)); redo EQUAL;
+                              @_ = ($a, force($b)); redo EQUAL;
                           } else {
                               undef
                           }
@@ -292,9 +292,9 @@ sub make_equal {
 };
 
 sub equal($$);
-*equal= make_equal(0);
+*equal = make_equal(0);
 sub relaxedequal($$);
-*relaxedequal= make_equal(1);
+*relaxedequal = make_equal(1);
 
 
 sub equaln {
@@ -303,9 +303,9 @@ sub equaln {
     } elsif (@_ == 1) {
         1
     } else {
-        my $a= shift;
+        my $a = shift;
         for (@_) {
-            my $v; $v=equal ($a, $_)
+            my $v; $v = equal ($a, $_)
               or return $v;
         }
         1
@@ -314,7 +314,7 @@ sub equaln {
 
 
 sub is_equal ($$;$) {
-    my ($a, $b, $maybe_name)= @_;
+    my ($a, $b, $maybe_name) = @_;
     require Test::More;
     my $tb = Test::More->builder;
 

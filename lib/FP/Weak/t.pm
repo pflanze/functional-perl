@@ -34,10 +34,10 @@ use FP::Weak ":all";
 use Chj::TEST;
 
 sub t {
-    my $foo= []; weaken $foo; $foo
+    my $foo = []; weaken $foo; $foo
 }
 
-TEST { my $foo= []; noweaken $foo; $foo }
+TEST { my $foo = []; noweaken $foo; $foo }
   [];
 TEST { t }
   undef;
@@ -49,10 +49,10 @@ TEST { t }
   undef;
 TEST {
     my @w;
-    local $SIG{__WARN__}= sub {
-        my ($msg)= @_;
-        $msg=~ s/0x[0-9a-f]*/0x.../s;
-        $msg=~ s/ at .*/ .../s;
+    local $SIG{__WARN__} = sub {
+        my ($msg) = @_;
+        $msg =~ s/0x[0-9a-f]*/0x.../s;
+        $msg =~ s/ at .*/ .../s;
         push @w, $msg
     };
     [ &with_warnweaken (*t), @w]

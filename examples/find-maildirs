@@ -10,9 +10,9 @@ use Function::Parameters ":strict";
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -27,13 +27,13 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
+our $verbose = 0;
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage},
            ) or exit 1;
-usage unless @ARGV==1;
+usage unless @ARGV == 1;
 
-my ($rootdir)=@ARGV;
+my ($rootdir) = @ARGV;
 
 use FP::IOStream qw(perhaps_directory_paths);
 use FP::Stream qw(stream_fold_right);
@@ -76,7 +76,7 @@ use FP::fix qw(fixn);
 
 # XX is there a better way to test for a Git directory?
 
-my $is_gitdir_subdirs= list qw(refs branches objects info); # hooks ?
+my $is_gitdir_subdirs = list qw(refs branches objects info); # hooks ?
 
 fun is_gitdir ($path) {
     $path =~ /\.git\z/
@@ -98,11 +98,11 @@ fun is_maildir_plusplus_subfolder ($path) {
 
 fun find_below ($path, $pred) {
 
-    my ($fold_path, $fold_dirpath)=
+    my ($fold_path, $fold_dirpath) =
       fixn(
            fun ($fold_path, $fold_dirpath,
                 $path, $rest) {
-               my $s= xlstat $path; # XX: replace with one returning failure
+               my $s = xlstat $path; # XX: replace with one returning failure
                # objects, too (for cases where the
                # filesystem is modified between the readdir
                # and stat)
@@ -119,7 +119,7 @@ fun find_below ($path, $pred) {
 
            fun ($fold_path, $fold_dirpath,
                 $path, $rest) {
-               if (my ($s)= perhaps_directory_paths ($path)) {
+               if (my ($s) = perhaps_directory_paths ($path)) {
                    stream_fold_right ($fold_path, $rest, $s)
                } else {
                    cons (find_maildirs::Failure->new($path, "$!"), $rest)
@@ -133,6 +133,6 @@ fun find_below ($path, $pred) {
 #use FP::Repl::Trap; # or Chj::Backtrace
 #use FP::Repl;repl;
 
-my $s= find_below ($rootdir, *is_maildir);
+my $s = find_below ($rootdir, *is_maildir);
 $s->for_each (the_method "xprintln");
 

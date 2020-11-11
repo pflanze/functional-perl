@@ -14,9 +14,9 @@ Chj::IO::WrappedFile
 =head1 SYNOPSIS
 
     use Chj::xopen 'fh_to_fh';
-    my $fh= fh_to_fh ($some_pty_or_so);
+    my $fh = fh_to_fh ($some_pty_or_so);
     # which is the same as:
-    my $fh2= Chj::IO::WrappedFile->new ($some_pty_or_so);
+    my $fh2 = Chj::IO::WrappedFile->new ($some_pty_or_so);
 
     # $fh and $fh2 are Chj::IO::WrappedFile objects *containing*
     # $some_pty_or_so
@@ -42,7 +42,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 use base 'Chj::IO::File';
 
 sub new {
-    my $class=shift;
+    my $class = shift;
     bless [@_], $class
 }
 

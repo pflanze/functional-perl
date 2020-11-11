@@ -35,18 +35,18 @@ use PXML qw(pxmlbody);
 use PXML::Preserialize qw(pxmlfunc pxmlpre);
 use PXML::XHTML qw(A B);
 
-my $link_normal= sub {
+my $link_normal = sub {
     my ($href,$body)=@_;
     A {href=> $href}, $body
 };
 
-my $link_fast= pxmlfunc {
+my $link_fast = pxmlfunc {
     my ($href,$body)=@_; # can take up to 10[?] arguments.
     A {href=> $href}, $body
 };
 
 # the `2` is the number of arguments
-my $link_fast2= pxmlpre 2, $link_normal;
+my $link_fast2 = pxmlpre 2, $link_normal;
 
 # these expressions are all returing the same result, but the first
 # is slower then the others:
@@ -65,7 +65,7 @@ TEST{ pxmlfunc { pxmlbody 3, 2 } ->()->string }
 
 TEST_EXCEPTION {
     pxmlfunc {
-        my ($loc,$body)=@_;
+        my ($loc,$body) = @_;
         A {href=> "http://$loc"}, $body
           # yes, already *that* is forbidden.
     }
@@ -74,7 +74,7 @@ TEST_EXCEPTION {
 
 TEST_EXCEPTION {
     pxmlfunc {
-        my ($loc,$body)=@_;
+        my ($loc,$body) = @_;
         A {href=> $loc}, 0-$body
     }
 }
@@ -82,7 +82,7 @@ TEST_EXCEPTION {
 
 TEST_EXCEPTION {
     pxmlfunc {
-        my ($loc,$body)=@_;
+        my ($loc,$body) = @_;
         A {href=> $loc},  $loc ? $body : 1
     }
 }

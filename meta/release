@@ -9,9 +9,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -26,30 +26,30 @@ exit (@_ ? 1 : 0);
 }
 
 use Getopt::Long;
-our $verbose=0;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
-           #"dry-run"=> \$opt_dry,
+our $verbose = 0;
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage},
+           #"dry-run" => \$opt_dry,
            ) or exit 1;
-usage unless @ARGV<=1;
+usage unless @ARGV <= 1;
 
 use Chj::xopen qw(xopen_read);
 use Chj::xtmpfile;
 use Chj::xperlfunc;
 
 
-my ($maybe_version_argument)= @ARGV;
+my ($maybe_version_argument) = @ARGV;
 
-my ($maybe_version)= $maybe_version_argument ? do {
-    my @r= $maybe_version_argument=~ m/^v?(\d+\.\d+\.\d+)\z/s
+my ($maybe_version) = $maybe_version_argument ? do {
+    my @r = $maybe_version_argument =~ m/^v?(\d+\.\d+\.\d+)\z/s
         or die "invalid version number";
     @r
 } : ();
 
 sub version_inc {
-    my ($v)= @_;
-    my @v= split /\./, $v;
-    $v[-1]= $v[-1] + 1;
+    my ($v) = @_;
+    my @v = split /\./, $v;
+    $v[-1] = $v[-1] + 1;
     join '.', @v
 }
 
@@ -62,15 +62,15 @@ xxsystem "cj-git-status-is-clean";
 
 my $version;
 {
-    my $path= "lib/FunctionalPerl.pm";
+    my $path = "lib/FunctionalPerl.pm";
 
-    my $cnt= xopen_read ($path)->xcontent;
+    my $cnt = xopen_read ($path)->xcontent;
 
-    $cnt=~ s|(\$VERSION\s*=\s*)"([^"]+)"|
-      $1 . '"' . ($version= ($maybe_version // version_inc($2))) . '"'|sxe
+    $cnt =~ s|(\$VERSION\s* = \s*)"([^"]+)"|
+      $1 . '"' . ($version = ($maybe_version // version_inc($2))) . '"'|sxe
       or die "could not replace \$VERSION in $path";
 
-    my $f= xtmpfile $path;
+    my $f = xtmpfile $path;
     $f->xprint($cnt);
     $f->xclose;
     $f->xputback;
@@ -85,9 +85,9 @@ print "Releasing version $version...";
     use Chj::xperlfunc 'xlocaltime';
 
     xfile_replace_lines "Changes", sub {
-        my ($lines)= @_;
-        my $lt= xlocaltime;
-        my $date= join("-", $lt->Year, $lt->Mon, $lt->mday);
+        my ($lines) = @_;
+        my $lt = xlocaltime;
+        my $date = join("-", $lt->Year, $lt->Mon, $lt->mday);
         Keep($lines)->take(2)->append
             (cons "$version $date\n    - \n\n",
              Keep($lines)->drop(2))

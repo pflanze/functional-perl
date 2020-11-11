@@ -11,5 +11,5 @@ use Chj::xperlfunc ":all";
 
 require "./meta/find-perl.pl";
 
-$ENV{RUN_TESTS}=1; xexec_safe $^X, "examples/fibs";
+$ENV{RUN_TESTS} = 1; xexec_safe $^X, "examples/fibs";
 

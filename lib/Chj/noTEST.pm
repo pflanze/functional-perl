@@ -39,16 +39,16 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::noTEST;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST ();
 
-*import= *Chj::TEST::import;
+*import = *Chj::TEST::import;
 
 
 sub TEST (&$) {

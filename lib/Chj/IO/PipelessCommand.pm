@@ -17,9 +17,9 @@ Chj::IO::PipelessCommand
     use Chj::xopen qw(xopen_read);
     use Chj::xtmpfile;
 
-    my $in= xopen_read $inpath;
-    my $out= xtmpfile $outpath;
-    my $c= Chj::IO::PipelessCommand
+    my $in = xopen_read $inpath;
+    my $out = xtmpfile $outpath;
+    my $c = Chj::IO::PipelessCommand
                ->new_with_in_out ($in,$out, $path, @args);
     # $c can't be read from or written to.
     $c->xxfinish;
@@ -44,10 +44,10 @@ use base qw(
            );
 
 sub new_with_in_out {
-    my $class=shift;
-    my $infh=shift;
-    my $outfh=shift;
-    my $self= bless {}, $class;
+    my $class = shift;
+    my $infh = shift;
+    my $outfh = shift;
+    my $self = bless {}, $class;
     $self->xlaunch3($infh,$outfh,undef,@_);
 }
 

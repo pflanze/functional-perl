@@ -47,7 +47,7 @@ TEST{ path("a/b/C")
   ->add( path("/d/e"), 1 )->string }
   '/d/e';
 
-my $p= path ("a/../b/C")->add
+my $p = path ("a/../b/C")->add
   (path("../d/../e"), 0);
 TEST { $p->string } 'a/../b/C/../d/../e';
 TEST { $p->xclean->string } 'b/e';
@@ -170,7 +170,7 @@ TEST_EXCEPTION { FP::Path->new(list("/foo"), 1, 1)->string }
 # equal:
 
 sub t_equal ($$) {
-    my ($a,$b)=@_;
+    my ($a,$b) = @_;
     equal (path($a),
             path($b))
 }
@@ -184,16 +184,16 @@ TEST { t_equal "/foo/..", "/" } '';
 TEST { t_equal "/foo", "/foo/bar" } '';
 
 # test booleanization (!!) in equal method
-TEST { my $p= path("/foo");
+TEST { my $p = path("/foo");
        equal $p, $p->has_endslash_set(0) } 1;
 
 sub t_str_clean ($) {
-    my ($a)=@_;
+    my ($a) = @_;
     path($a)->clean_dot->xclean_dotdot;
 }
 
 sub t_equals_clean ($$) {
-    my ($a,$b)=@_;
+    my ($a,$b) = @_;
     equal (t_str_clean $a, t_str_clean $b);
 }
 
@@ -208,8 +208,8 @@ TEST { t_equals_clean "/foo/..", "/" } 1;
 # split and resplit:
 
 sub path_split_first_segment {
-    my ($str, $clean)= @_;
-    my $p= path $str;
+    my ($str, $clean) = @_;
+    my $p = path $str;
     if (my @v = ($clean ? $p->xclean : $p)->perhaps_split_first_segment) {
         [map {$_->string} @v]
     } else {
@@ -249,18 +249,18 @@ use FP::Array qw(array_is_null array_map);
 use FP::Ops qw(the_method);
 
 sub tupleify ($) {
-    my ($f)=@_;
+    my ($f) = @_;
     sub {
-        @_==1 or die "wrong number of arguments";
+        @_ == 1 or die "wrong number of arguments";
         [ &$f (@{$_[0]}) ]
     }
 }
 
 
 sub all_splits {
-    my ($str, $clean)= @_;
-    my $p= path $str;
-    my $p0= ($clean ? $p->xclean : $p);
+    my ($str, $clean) = @_;
+    my $p = path $str;
+    my $p0 = ($clean ? $p->xclean : $p);
 
     unfold (# ending predicate
             *array_is_null,

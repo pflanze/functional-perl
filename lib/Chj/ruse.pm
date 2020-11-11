@@ -68,17 +68,17 @@ package Chj::ruse;
 require Exporter;
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Carp;
-our $DEBUG=0; # -1 = more than normal-silent. 0 = no debugging. 1,2,3= debugging levels.
+our $DEBUG = 0; # -1 = more than normal-silent. 0 = no debugging. 1,2,3= debugging levels.
 
-our $orig_import= \&Exporter::import;
+our $orig_import = \&Exporter::import;
 
 our %rdep; # moduleclassname => caller => [ import-arguments ]
 
 sub new_import {
     warn "new_import called" if $DEBUG>2;
-    my $caller=caller;
-    my ($class)=@_;
-    $rdep{$class}{$caller}=[@_];
+    my $caller = caller;
+    my ($class) = @_;
+    $rdep{$class}{$caller} = [@_];
     goto &$orig_import;
 }
 
@@ -96,11 +96,11 @@ sub new_import {
     our $Debug;
 
     sub wipeout_namespace {
-        my ($key)=@_;
-        my $class=$key;
-        $class=~ s|/|::|sg;##COPY!!below.
-        $class=~ s|\.pm$||s;
-        my $h= do {
+        my ($key) = @_;
+        my $class = $key;
+        $class =~ s|/|::|sg;##COPY!!below.
+        $class =~ s|\.pm$||s;
+        my $h = do {
             no strict 'refs';
             \%{"${class}::"}
         };
@@ -113,24 +113,24 @@ sub new_import {
     }
 
     sub check {
-        $Debug= $Chj::ruse::DEBUG;  # so that it works when that one's local'ized
-        my $c=0;
+        $Debug = $Chj::ruse::DEBUG;  # so that it works when that one's local'ized
+        my $c = 0;
         my @ignores;
         push @ignores,$INC{"Module/Reload.pm"}
           if exists $INC{"Module/Reload.pm"};
         push @ignores,$INC{"Chj/ruse.pm"}
           if exists $INC{"Chj/ruse.pm"};
-        local $^W= ($Debug>=0);
-        my $memq_ignores= sub {
-            my ($f)=@_;
+        local $^W= ($Debug >= 0);
+        my $memq_ignores = sub {
+            my ($f) = @_;
             for (@ignores) {
                 return 1 if $_ eq $f
             }
             0
         };
-        my %inc= %INC;
+        my %inc = %INC;
         while (my ($key, $file) = each %inc) {
-            my $reload= sub {
+            my $reload = sub {
                 delete $INC{$key};
                 wipeout_namespace($key);
                 eval {
@@ -144,7 +144,7 @@ sub new_import {
                     if ($Debug>0) {
                         warn "Module::Reload: process $$ reloaded '$key'\n"
                           if $Debug == 1;
-                        warn("Module::Reload: process $$ reloaded '$key' (\@INC=".
+                        warn("Module::Reload: process $$ reloaded '$key' (\@INC = ".
                              join(', ',@INC).")\n")
                           if $Debug >= 2;
                     }
@@ -174,18 +174,18 @@ sub new_import {
     }
 }
 
-our $verbose= 0;
+our $verbose = 0;
 
 sub reimport {
-    my ($key)=@_;
-    my $class=$key;
-    $class=~ s|/|::|sg;##COPY above !!
-    $class=~ s|\.pm$||s;
-    if (my $importer= $class->can("import")) {
-        my $imports= $rdep{$class};
+    my ($key) = @_;
+    my $class = $key;
+    $class =~ s|/|::|sg;##COPY above !!
+    $class =~ s|\.pm$||s;
+    if (my $importer = $class->can("import")) {
+        my $imports = $rdep{$class};
         for my $caller (keys %$imports) {
-            my $code= "package $caller; "
-              .'$Chj::ruse::orig_import->(@{$$imports{$caller}})';
+            my $code = "package $caller; "
+              . '$Chj::ruse::orig_import->(@{$$imports{$caller}})';
             eval $code; # XX is this safe? (security)
             if (ref $@ or $@) {
                 warn "reimport WARNING: evaling '$code' gave: $@";
@@ -201,30 +201,30 @@ sub reimport {
 
 sub ruse {
     @_ > 1 and croak "ruse only takes 0 or 1 arguments";
-    local $DEBUG=( @_ ? $_[0] : $DEBUG);
+    local $DEBUG = ( @_ ? $_[0] : $DEBUG);
     Chj::ruse::Reload->check;
 }
 
 sub import {
-    my $class= shift;
-    my $caller= caller;
+    my $class = shift;
+    my $caller = caller;
     no strict 'refs';
     warn "Copying ruse function to '${caller}::ruse'" if $DEBUG>1;
     if (@_) {
         for my $name (@_) {
             if ($name eq 'r') {
-                *{"${caller}::r"}= \&ruse;
+                *{"${caller}::r"} = \&ruse;
             } elsif ($name eq 'ruse') {
-                *{"${caller}::ruse"}= \&ruse;
+                *{"${caller}::ruse"} = \&ruse;
             } elsif ($name eq ':all') {
-                *{"${caller}::r"}= \&ruse;
-                *{"${caller}::ruse"}= \&ruse;
+                *{"${caller}::r"} = \&ruse;
+                *{"${caller}::ruse"} = \&ruse;
             } else {
                 die "no such export: $name";
             }
         }
     } else {
-        *{"${caller}::ruse"}= \&ruse;
+        *{"${caller}::ruse"} = \&ruse;
     }
 }
 

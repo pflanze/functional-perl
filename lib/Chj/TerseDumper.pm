@@ -14,7 +14,7 @@ Chj::TerseDumper
 =head1 SYNOPSIS
 
     use Chj::TerseDumper;
-    my $foo= +{ foo=> 1, bar=> 10, baz=>-1 };
+    my $foo = +{ foo => 1, bar => 10, baz => -1 };
     is terseDumper($foo), "XXX";
     is TerseDumper($foo), "XXX";
 
@@ -31,10 +31,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::TerseDumper;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(TerseDumper terseDumper);
-@EXPORT_OK=qw(UnsortedTerseDumper);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(TerseDumper terseDumper);
+@EXPORT_OK = qw(UnsortedTerseDumper);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -51,7 +51,7 @@ sub TerseDumper {
 }
 
 sub terseDumper {
-    my $str= TerseDumper (@_);
+    my $str = TerseDumper (@_);
     chomp $str;
     $str
 }

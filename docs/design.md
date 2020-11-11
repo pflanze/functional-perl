@@ -146,7 +146,7 @@ The code reference (`\&foo`):
    includes serializing the whole code of the subroutine)
 
  - can be used as a value in lexical variables as arguments to goto
-   even without using a `&` prefix, as in `my $f=\&foo; goto $f`
+   even without using a `&` prefix, as in `my $f = \&foo; goto $f`
 
 The glob (`*foo`):
 
@@ -160,8 +160,8 @@ The glob (`*foo`):
  - nicer for debugging, as one can directly see the subroutine package
    and name, not just an anonymous code ref
 
- - this code fails: `my $f=*foo; goto $f`. But this still works:
-   `my $f=*foo; goto &$f`. (`Sub::Call::Tail`'s `tail` is fine.)
+ - this code fails: `my $f = *foo; goto $f`. But this still works:
+   `my $f = *foo; goto &$f`. (`Sub::Call::Tail`'s `tail` is fine.)
 
  - there are no builtin perl checks for the wrong type, i.e. passing
    `*foo` where an array reference is expected will silently access

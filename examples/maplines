@@ -11,9 +11,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -38,15 +38,15 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
+our $verbose = 0;
 my $opt_sort_result;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
-           "sort-result"=> \$opt_sort_result,
+GetOptions("verbose" => \$verbose,
+           "help" => sub{usage},
+           "sort-result" => \$opt_sort_result,
            ) or exit 1;
-usage unless @ARGV==1;
+usage unless @ARGV == 1;
 
-my ($mappingfile)=@ARGV;
+my ($mappingfile) = @ARGV;
 
 use FP::IOStream ":all";
 use Chj::xopen qw(glob_to_fh);
@@ -55,26 +55,26 @@ use Chj::TEST;
 
 #use FP::Repl::Trap; # or Chj::Backtrace
 
-my $config= require $mappingfile;
+my $config = require $mappingfile;
 ref($config) eq "HASH"
   or usage "invalid mappingfile, does not return a hash ref";
 
-my ($mapfn, $cmp)= @$config{"map","cmp"};
+my ($mapfn, $cmp) = @$config{"map","cmp"};
 
-my $in= glob_to_fh(*STDIN);
-my $out= glob_to_fh(*STDOUT);
+my $in = glob_to_fh(*STDIN);
+my $out = glob_to_fh(*STDOUT);
 
-my $lines= fh_to_lines $in;
+my $lines = fh_to_lines $in;
 
-my $mapped= $lines->map
+my $mapped = $lines->map
   (sub {
-       my ($line)=@_;
+       my ($line) = @_;
        chomp $line;
        &$mapfn($line)
    });
 
-my $result= do {
-    my $l= $mapped->filter(unary_operator 'defined');
+my $result = do {
+    my $l = $mapped->filter(unary_operator 'defined');
     $opt_sort_result ? $l->sort($cmp) : $l
 };
 

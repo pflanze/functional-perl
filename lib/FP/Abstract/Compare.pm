@@ -16,7 +16,7 @@ FP::Abstract::Compare - comparison protocol
     package FPCompareExample::Foo {
         use FP::Struct ["num"];
         sub FP_Compare_compare {
-            my ($a, $b)=@_;
+            my ($a, $b) = @_;
             # let's make the default sort order reversed for the sake
             # of a more interesting example:
             $b->num cmp $a->num

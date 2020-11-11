@@ -6,14 +6,14 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our $len= 1000;
+our $len = 1000;
 require "./meta/readin.pl";
 require "./meta/find-perl.pl";
 use Test::More;
 
 use POSIX 'SIGPIPE';
-our $sigpipe_is_fine= sub {
-    my ($buf, $default_on_error)= @_;
+our $sigpipe_is_fine = sub {
+    my ($buf, $default_on_error) = @_;
     $? == SIGPIPE ? $buf : &$default_on_error();
 };
 

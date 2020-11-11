@@ -25,15 +25,15 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package PXML::XHTML;
-@ISA="Exporter"; require Exporter;
+@ISA = "Exporter"; require Exporter;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use PXML::Element;
 
-our $nbsp= "\xa0";
+our $nbsp = "\xa0";
 
-our $tags=
+our $tags =
     [
           'a',
           'abbr',
@@ -128,14 +128,14 @@ our $tags=
           'video', # not XHTML?, hack
      ];
 
-our $funcs=
+our $funcs =
   [
    map {
-       my $tag=$_;
+       my $tag = $_;
        [
         uc $tag,
         sub {
-            my $atts= ref($_[0]) eq "HASH" ? shift : undef;
+            my $atts = ref($_[0]) eq "HASH" ? shift : undef;
             PXML::_::XHTML->new($tag, $atts, [@_]);
         }
        ]
@@ -143,17 +143,17 @@ our $funcs=
   ];
 
 for (@$funcs) {
-    my ($name, $fn)=@$_;
+    my ($name, $fn) = @$_;
     no strict 'refs';
-    *{"PXML::XHTML::$name"}= $fn
+    *{"PXML::XHTML::$name"} = $fn
 }
 
-our @EXPORT_OK= ('$nbsp', map { $$_[0] } @$funcs);
-our %EXPORT_TAGS=(all=>\@EXPORT_OK);
+our @EXPORT_OK = ('$nbsp', map { $$_[0] } @$funcs);
+our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 
 package PXML::_::XHTML {
-    our @ISA= "PXML::Element";
+    our @ISA = "PXML::Element";
 
     # serialize to HTML5 compatible representation:
     sub require_printing_nonvoid_elements_nonselfreferential  {
@@ -174,9 +174,9 @@ package PXML::_::XHTML {
     # names, and which packages they were exported to.) XXX at least
     # move to common base class of XHTML and HTML5.
     sub FP_Show_show {
-        my ($s,$show)=@_;
-        my $a= $s->maybe_attributes;
-        my $b= $s->body;
+        my ($s,$show) = @_;
+        my $a = $s->maybe_attributes;
+        my $b = $s->body;
         (uc($s->name)."(".
          join(", ",
               (defined($a) and keys %$a) ? &$show($a) : (),

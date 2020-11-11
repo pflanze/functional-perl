@@ -38,8 +38,8 @@ use Carp;
 # (croak creates a different text so the double duty is not removed.)
 
 sub Clean {
-    my ($str)=@_;
-    $str=~ s/(at [^\n]* line \d+)\.\n (at [^\n]* line \d+)\n/
+    my ($str) = @_;
+    $str =~ s/(at [^\n]* line \d+)\.\n (at [^\n]* line \d+)\n/
        if ($1 eq $2) {
           $1.".\n"
        } else {
@@ -49,9 +49,9 @@ sub Clean {
     $str
 }
 
-our $singlestep=0;#?.
-our $only_confess_if_not_already=1;
-our $do_confess_objects=0;
+our $singlestep = 0;#?.
+our $only_confess_if_not_already = 1;
+our $do_confess_objects = 0;
 
 sub import {
 
@@ -68,9 +68,9 @@ sub import {
                 die @_
             } else {
                 #print STDERR "\n------\n@_\n------\n";
-                if ($_[0]=~ /^[^\n]*line \d+\.\n/s) { # die, not confess.
+                if ($_[0] =~ /^[^\n]*line \d+\.\n/s) { # die, not confess.
                     die Clean Carp::longmess @_
-                } elsif ($_[0]=~ /^[^\n]*line \d+\n\t/s) { # confess
+                } elsif ($_[0] =~ /^[^\n]*line \d+\n\t/s) { # confess
                     die @_
                 } else { # unsure
                     die Clean Carp::longmess @_

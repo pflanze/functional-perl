@@ -25,11 +25,11 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::xIOUtil;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
               xcopyfile);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -43,7 +43,7 @@ use Chj::xperlfunc qw(xxsystem_safe xprint xgetfile_utf8);
 # print parens for lists etc., just print the contained basic types.
 sub xprint_object ($$);
 sub xprint_object ($$) {
-    my ($fh,$v)=@_;
+    my ($fh,$v) = @_;
     if (ref $v) {
         if (ref($v) eq "ARRAY") {
             xprint_object ($fh, $_) for @$v;
@@ -61,21 +61,21 @@ sub xprint_object ($$) {
 }
 
 sub xputfile_utf8 ($$) {
-    my ($path,$str)=@_;
-    my $out= xopen_write($path);
+    my ($path,$str) = @_;
+    my $out = xopen_write($path);
     binmode $out, ":encoding(UTF-8)" or die "binmode";
     xprint_object ($out, $str);
     $out->xclose;
 }
 
 sub xcopyfile_utf8 ($$) {
-    my ($src,$dest)=@_;
+    my ($src,$dest) = @_;
     xputfile_utf8 ($dest, xgetfile_utf8 ($src));
 }
 
 
 sub xcopyfile ($$) {
-    my ($src,$dest)=@_;
+    my ($src,$dest) = @_;
     # yes, giving up here. XX write something else or just use
     # Filecopy or whatever from CPAN.
     xxsystem_safe "cp", "-a", "--", $src, $dest

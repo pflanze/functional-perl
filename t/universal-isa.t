@@ -6,7 +6,7 @@
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our $len= 672;
+our $len = 672;
 
 use Test::More;
 use lib "./lib";
@@ -15,7 +15,7 @@ use Chj::xIO qw(capture_stdout);
 use Chj::Backtrace;
 
 # UNIVERSAL::isa does not require a reference
-is do { my $v= "IO"; UNIVERSAL::isa($v,"IO") },
+is do { my $v = "IO"; UNIVERSAL::isa($v,"IO") },
   1;
 
 # just to be sure

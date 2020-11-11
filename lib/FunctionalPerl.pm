@@ -43,7 +43,7 @@ Tags can be expanded via:
 =for test
 
     use FunctionalPerl qw(expand_import_tags);
-    my ($modules, $unused_tags, $nontags)= expand_import_tags(qw(:dev :most not_a_tag));
+    my ($modules, $unused_tags, $nontags) = expand_import_tags(qw(:dev :most not_a_tag));
     is $$modules{"FP::Failure"}, 2; # number of times used.
     is_deeply $unused_tags,
               [':all', ':ast', ':csv', ':dbi', ':fix', ':git', ':io', ':path', ':pxml', ':rare', ':trampoline', ':transparentlazy'];
@@ -129,89 +129,89 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FunctionalPerl;
-@ISA="Exporter"; require Exporter;
-@EXPORT=();
-@EXPORT_OK=(expand_import_tags);
-%EXPORT_TAGS=();
+@ISA = "Exporter"; require Exporter;
+@EXPORT = ();
+@EXPORT_OK = (expand_import_tags);
+%EXPORT_TAGS = ();
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our $VERSION= "0.72.36";
+our $VERSION = "0.72.36";
 
 
 # Export tag to modules and/or other tags; each module will be
-# imported with ":all" by default. Where a module name contains "=",
-# the part after the "=" is the comma-separated list of tag names to
+# imported with ":all" by default. Where a module name contains " = ",
+# the part after the " = " is the comma-separated list of tag names to
 # import.
 # NOTE: the documentation in "SEE ALSO" is auto-generated from this,
 # you do not need to keep it in sync manually.
-our $export_desc=
+our $export_desc =
   +{
-    ":autobox"=> [qw(FP::autobox=)],
+    ":autobox" => [qw(FP::autobox=)],
 
-    ":stream"=> [qw(FP::Stream FP::IOStream FP::Weak)],
-    ":lazy"=> [qw(FP::Lazy :stream FP::Weak)],
-    ":transparentlazy"=> [qw(FP::TransparentLazy :stream FP::Weak)],
-    ":failure"=> [qw(FP::Failure)],
+    ":stream" => [qw(FP::Stream FP::IOStream FP::Weak)],
+    ":lazy" => [qw(FP::Lazy :stream FP::Weak)],
+    ":transparentlazy" => [qw(FP::TransparentLazy :stream FP::Weak)],
+    ":failure" => [qw(FP::Failure)],
 
-    ":doc"=> [qw(FP::Docstring)],
-    ":show"=> [qw(FP::Show)],
-    ":equal"=> [qw(FP::Equal)],
-    ":debug"=> [qw(:show :equal Chj::Backtrace Chj::time_this Chj::pp)],
-    ":test"=> [qw(Chj::TEST)],
-    ":repl"=> [qw(FP::Repl FP::Repl::AutoTrap)],
-    ":dev"=> [qw(:repl :test :debug Chj::ruse)],
+    ":doc" => [qw(FP::Docstring)],
+    ":show" => [qw(FP::Show)],
+    ":equal" => [qw(FP::Equal)],
+    ":debug" => [qw(:show :equal Chj::Backtrace Chj::time_this Chj::pp)],
+    ":test" => [qw(Chj::TEST)],
+    ":repl" => [qw(FP::Repl FP::Repl::AutoTrap)],
+    ":dev" => [qw(:repl :test :debug Chj::ruse)],
 
-    ":functions"=> [qw(FP::Combinators FP::Combinators2
+    ":functions" => [qw(FP::Combinators FP::Combinators2
                        FP::Ops FP::Div
                        FP::Predicates
                        FP::Optional FP::Values
                        FP::Memoizing FP::Currying
                        FP::Untainted
                        :show :equal :failure)],
-    ":git"=> [qw(FP::Git::Repository)],
-    ":pxml"=> [qw(PXML::Util PXML::XHTML PXML::Serialize)],
-    ":ast"=> [qw(FP::AST::Perl)],
+    ":git" => [qw(FP::Git::Repository)],
+    ":pxml" => [qw(PXML::Util PXML::XHTML PXML::Serialize)],
+    ":ast" => [qw(FP::AST::Perl)],
 
-    ":numbers"=> [qw(FP::BigInt)],
-    ":chars"=> [qw(FP::Char)],
-    ":sequences"=> [qw(FP::List FP::StrictList FP::MutableArray
+    ":numbers" => [qw(FP::BigInt)],
+    ":chars" => [qw(FP::Char)],
+    ":sequences" => [qw(FP::List FP::StrictList FP::MutableArray
                        FP::Array FP::Array_sort
                        FP::PureArray
                        :stream)],
-    ":maps"=> [qw(FP::Hash FP::PureHash)],
-    ":sets"=> [qw(FP::HashSet FP::OrderedCollection)],
-    ":tries"=> [qw(FP::Trie)],
-    ":datastructures"=> [qw(:chars :numbers :sequences :maps :sets :tries)],
+    ":maps" => [qw(FP::Hash FP::PureHash)],
+    ":sets" => [qw(FP::HashSet FP::OrderedCollection)],
+    ":tries" => [qw(FP::Trie)],
+    ":datastructures" => [qw(:chars :numbers :sequences :maps :sets :tries)],
 
-    ":io"=> [qw(Chj::xIO Chj::xopen Chj::xtmpfile= Chj::tempdir
+    ":io" => [qw(Chj::xIO Chj::xopen Chj::xtmpfile= Chj::tempdir
                 Chj::xpipe= Chj::xoutpipe= Chj::xopendir= Chj::xperlfunc
                 Chj::xhome
                 FP::IOStream)],
-    ":dbi"=> [qw(FP::DBI=)],
-    ":csv"=> [qw(FP::Text::CSV)],
+    ":dbi" => [qw(FP::DBI=)],
+    ":csv" => [qw(FP::Text::CSV)],
 
-    ":fix"=> [qw(FP::fix)],
-    ":trampoline"=> [qw(FP::Trampoline)],
-    ":path"=> [qw(FP::Path)],
+    ":fix" => [qw(FP::fix)],
+    ":trampoline" => [qw(FP::Trampoline)],
+    ":path" => [qw(FP::Path)],
 
-    ":most"=> [qw(:lazy :datastructures :equal :show :functions :failure :debug
+    ":most" => [qw(:lazy :datastructures :equal :show :functions :failure :debug
                   :autobox :doc)],
-    ":rare"=> [qw(:csv :path :git :dbi  :trampoline :fix)],
-    ":all"=> [qw(:most :rare :io :dev)],
+    ":rare" => [qw(:csv :path :git :dbi  :trampoline :fix)],
+    ":all" => [qw(:most :rare :io :dev)],
    };
 
 
 sub check_off {
-    @_==3 or die "bug";
-    my ($tag, $seen_tags, $seen_modules)=@_;
-    my $vals= $$export_desc{$tag}
+    @_ == 3 or die "bug";
+    my ($tag, $seen_tags, $seen_modules) = @_;
+    my $vals = $$export_desc{$tag}
       or do {
           require Carp;
           Carp::croak ("unknown tag '$tag'");
       };
     for my $tag_or_module (@$vals) {
-        if ($tag_or_module=~ /^:/) {
+        if ($tag_or_module =~ /^:/) {
             $$seen_tags{$tag_or_module}++;
             check_off( $tag_or_module, $seen_tags, $seen_modules );
         } else {
@@ -223,9 +223,9 @@ sub check_off {
 sub expand_import_tags {
     # Arguments: tag names and other things. Returns (which tag names
     # are unused, used modules, the other things).
-    my @tags= grep { /^:/ } @_;
-    my $seen_tags= +{map {$_=> 1} @tags};
-    my $seen_modules= +{};
+    my @tags = grep { /^:/ } @_;
+    my $seen_tags = +{map {$_ => 1} @tags};
+    my $seen_modules = +{};
     for my $tag (@tags) {
         check_off $tag, $seen_tags, $seen_modules;
     }
@@ -236,23 +236,23 @@ sub expand_import_tags {
 }
 
 sub split_moduledesc {
-    my ($module_and_perhaps_tags)= @_;
-    my ($module, $maybe_tags)=
-        $module_and_perhaps_tags=~ m{^([^=]+)(?:=(.*))?} or die "no match";
+    my ($module_and_perhaps_tags) = @_;
+    my ($module, $maybe_tags) =
+        $module_and_perhaps_tags =~ m{^([^=]+)(?:=(.*))?} or die "no match";
     ($module, $maybe_tags)
 }
 
 sub export_desc2pod {
     join("",
          map {
-             my $a= $$export_desc{$_};
+             my $a = $$export_desc{$_};
              "C<$_> -> ".
                  join(", ",
                       map {
                           if (/^:/) {
                               "C<$_>"
                           } else {
-                              my ($module, $maybe_tags)= split_moduledesc $_;
+                              my ($module, $maybe_tags) = split_moduledesc $_;
                               "L<$module>"
                           }
                       } sort @$a)."\n\n"
@@ -260,21 +260,21 @@ sub export_desc2pod {
 }
 
 sub import {
-    my $pack= shift;
-    my $caller= caller;
+    my $pack = shift;
+    my $caller = caller;
 
-    my ($modules, $_unused_tags, $nontags)= expand_import_tags (@_);
+    my ($modules, $_unused_tags, $nontags) = expand_import_tags (@_);
 
     $pack->export_to_level(1, $caller, @$nontags);
 
     require Import::Into;
 
     for my $module_and_perhaps_tags (sort keys %$modules) {
-        my ($module, $maybe_tags)= split_moduledesc $module_and_perhaps_tags;
-        my @tags= split /,/, $maybe_tags // ":all";
-        my $path= $module;
-        $path=~ s/::/\//sg;
-        $path.= ".pm";
+        my ($module, $maybe_tags) = split_moduledesc $module_and_perhaps_tags;
+        my @tags = split /,/, $maybe_tags // ":all";
+        my $path = $module;
+        $path =~ s/::/\//sg;
+        $path .= ".pm";
         # Do not die right away in an attempt at making this more
         # usable for users where some of the modules don't work:
         if (eval {
@@ -283,9 +283,9 @@ sub import {
         }) {
             $module->import::into($caller, @tags)
         } else {
-            my $e= $@;
-            my $estr= "$e";
-            $estr=~ s/\n.*//s
+            my $e = $@;
+            my $estr = "$e";
+            $estr =~ s/\n.*//s
                 unless $ENV{FUNCTIONALPERL_VERBOSE};
             warn "NOTE: can't load $module: $estr";
         }

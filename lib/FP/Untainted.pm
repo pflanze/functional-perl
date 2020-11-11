@@ -44,23 +44,23 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Untainted;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(untainted);
-@EXPORT_OK=qw(untainted_with is_untainted);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(untainted);
+@EXPORT_OK = qw(untainted_with is_untainted);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 
 sub untainted ($) {
-    $_[0]=~ /(.*)/s or die "??";
+    $_[0] =~ /(.*)/s or die "??";
     $1
 }
 
 sub untainted_with ($$) {
-    my ($v, $re)= @_;
-    $v=~ /($re)/
+    my ($v, $re) = @_;
+    $v =~ /($re)/
       or die "untainted_with: does not match regex $re: '$v'";
     $1
 }

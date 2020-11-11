@@ -25,10 +25,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package Chj::Serialize;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(new_Serialize_Closure);
-@EXPORT_OK=qw();
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(new_Serialize_Closure);
+@EXPORT_OK = qw();
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -51,7 +51,7 @@ use Chj::TEST;
     use B::Deparse;
     use FP::Predicates ":all";
 
-    our $deparse= B::Deparse->new("-p","-l","-q");
+    our $deparse = B::Deparse->new("-p","-l","-q");
 
     use FP::Struct [[*is_hash, "_closure_generator_code_to_id"],
                     [*is_hash, "_id_to_closure_generator_code"],
@@ -60,18 +60,18 @@ use Chj::TEST;
         'FP::Struct::Show';
 
     sub next_id {
-        my ($self)=@_;
+        my ($self) = @_;
         $$self{current_id}++
     }
 
     sub id_to_closure_generator_code {
-        my ($self,$id)=@_;
+        my ($self,$id) = @_;
         $$self{_id_to_closure_generator_code}{$id}
           // die "unknown code_id $id";
     }
 
     sub id_to_closure_generator {
-        my ($self,$id)=@_;
+        my ($self,$id) = @_;
         $$self{_id_to_closure_generator}{$id} //=
           &WithRepl_eval ($self->id_to_closure_generator_code ($id))
             // die "eval error: $@";
@@ -79,21 +79,21 @@ use Chj::TEST;
     }
 
     sub serializable {
-        my ($self,$fn)=@_;
+        my ($self,$fn) = @_;
 
-        my $env= closed_over ($fn);
-        my $code= $deparse->coderef2text ($fn);
+        my $env = closed_over ($fn);
+        my $code = $deparse->coderef2text ($fn);
 
-        my $vars= [sort keys %$env];
+        my $vars = [sort keys %$env];
 
-        my $closure_generator_code=
-          'sub { my ('.join(",", @$vars).')=@_; sub '.$code.' }';
+        my $closure_generator_code =
+          'sub { my ('.join(",", @$vars).') = @_; sub '.$code.' }';
         # use this as key right now.
 
-        my $id=
+        my $id =
           $$self{_closure_generator_code_to_id}{$closure_generator_code} //= do {
-              my $id= $self->next_id;
-              $$self{_id_to_closure_generator_code}{$id}=
+              my $id = $self->next_id;
+              $$self{_id_to_closure_generator_code}{$id} =
                 $closure_generator_code;
               $id
           };
@@ -104,11 +104,11 @@ use Chj::TEST;
     }
 
     sub executable {
-        my ($self,$serializable_closure)=@_;
-        my ($env, $code_id)= ($serializable_closure->env,
+        my ($self,$serializable_closure) = @_;
+        my ($env, $code_id) = ($serializable_closure->env,
                               $serializable_closure->code_id);
 
-        my @vals=
+        my @vals =
           map {
               $$env{$_}
           }
@@ -131,18 +131,18 @@ my ($sfn, $sfn2);
 my $construct;
 
 TEST {
-    $sc= new_Serialize_Closure;
-    my $hello= "Hello";
-    my $unused= "Value";
-    $construct=
+    $sc = new_Serialize_Closure;
+    my $hello = "Hello";
+    my $unused = "Value";
+    $construct =
       sub{
-          my ($a,$b)=@_;
+          my ($a,$b) = @_;
           sub {
-              my ($x)=@_;
+              my ($x) = @_;
               "$hello $x $a $b"
           }
       };
-    $sfn= $sc->serializable
+    $sfn = $sc->serializable
       ($construct->("the", "world", "so"));
 }
   bless( {
@@ -156,7 +156,7 @@ TEST {
 
 
 TEST {
-    $sfn2= $sc->serializable
+    $sfn2 = $sc->serializable
       ($construct->("fool", "!"));
 }
   bless( {

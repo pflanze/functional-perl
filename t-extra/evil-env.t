@@ -8,14 +8,14 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 #use lib "$mydir/../lib";
 
 
-$ENV{TEST}= "0";
+$ENV{TEST} = "0";
 
 exec "make", "test"
     or exit 127;

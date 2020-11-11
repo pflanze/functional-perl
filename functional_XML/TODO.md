@@ -9,7 +9,7 @@ properly formatted versions of these documents.
 
 * Handle tag and attribute names safely? For example:
 
-        PXML::Element->new("<>", {"/"=>1}, [])
+        PXML::Element->new("<>", {"/" => 1}, [])
 
   will currently serialize to something like <<> /="1"></<>>
 

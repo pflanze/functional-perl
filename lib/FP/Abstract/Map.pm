@@ -28,10 +28,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FP::Abstract::Map;
-#@ISA="Exporter"; require Exporter;
-#@EXPORT=qw();
-#@EXPORT_OK=qw();
-#%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+#@ISA = "Exporter"; require Exporter;
+#@EXPORT = qw();
+#@EXPORT_OK = qw();
+#%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 

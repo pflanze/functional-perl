@@ -8,9 +8,9 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../lib";
 
@@ -25,7 +25,7 @@ use utf8;
 $|=1;
 
 sub countdown {
-    my ($i)=@_;
+    my ($i) = @_;
     lazyLight {
         #sleep 1;
         if ($i >= 0) {
@@ -39,7 +39,7 @@ sub countdown {
 }
 
 sub page {
-    my ($title,$mtime,$main)= @_;
+    my ($title,$mtime,$main) = @_;
     HTML(
         HEAD(
             TITLE($title)),
@@ -52,13 +52,13 @@ sub page {
                 ", last modified at ", gmtime($mtime)."", " (or something).")))
 }
 
-our $numbers= {
-               1=> "one",
-               2=> "two",
-               3=> "three"};
+our $numbers = {
+               1 => "one",
+               2 => "two",
+               3 => "three"};
 
 sub examplepage {
-    my ($title)= @_;
+    my ($title) = @_;
     page("example page - $title",
          $ENV{T} // time,
          [
@@ -66,7 +66,7 @@ sub examplepage {
           P("Garçon méchanique, \"1 < 2\" is true. ",
             A({href=> "\"1 < 2\""},
               "this will be 404")),
-          TABLE({border=>1},
+          TABLE({border => 1},
                 map {
                     TR(TD($_), TD($$numbers{$_}))
                 } (1..3)),

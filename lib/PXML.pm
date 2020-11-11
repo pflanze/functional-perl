@@ -43,10 +43,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package PXML;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw(is_pxml_element);
-@EXPORT_OK=qw(pxmlbody pxmlflush is_pxmlflush);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw(is_pxml_element);
+@EXPORT_OK = qw(pxmlbody pxmlflush is_pxmlflush);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
@@ -54,7 +54,7 @@ use PXML::Element;
 
 use FP::Predicates 'instance_of';
 
-sub is_pxml_element ($); *is_pxml_element= instance_of("PXML::Element");
+sub is_pxml_element ($); *is_pxml_element = instance_of("PXML::Element");
 
 
 {
@@ -67,13 +67,13 @@ sub pxmlbody {
     bless [@_], "PXML::Body"
 }
 
-my $flush= bless [], "PXML::Flush";
+my $flush = bless [], "PXML::Flush";
 sub pxmlflush {
     $flush
 }
 
 sub is_pxmlflush ($) {
-    my ($v)=@_;
+    my ($v) = @_;
     ref $v and UNIVERSAL::isa($v, "PXML::Flush")
 }
 

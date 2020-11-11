@@ -25,10 +25,10 @@ or on the L<website|http://functional-perl.org/>.
 
 
 package FunctionalPerl::Htmlgen::Nav;
-@ISA="Exporter"; require Exporter;
-@EXPORT=qw();
-@EXPORT_OK=qw(_nav entry);
-%EXPORT_TAGS=(all=>[@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter"; require Exporter;
+@EXPORT = qw();
+@EXPORT_OK = qw(_nav entry);
+%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
@@ -37,13 +37,13 @@ use Function::Parameters qw(:strict);
 # Constructors
 
 fun _nav ($items, $nav_bar) {
-    my $nav= FunctionalPerl::Htmlgen::Nav::TopEntry->new($items, $nav_bar, undef);
+    my $nav = FunctionalPerl::Htmlgen::Nav::TopEntry->new($items, $nav_bar, undef);
     $nav->index_set(nav_index ($nav))
 }
 
 fun entry ($path0,@subentries) {
-    FunctionalPerl::Htmlgen::Nav::RealEntry->new_(path0=> $path0,
-                                  subentries=> list(@subentries));
+    FunctionalPerl::Htmlgen::Nav::RealEntry->new_(path0 => $path0,
+                                  subentries => list(@subentries));
 }
 
 
@@ -77,9 +77,9 @@ package FunctionalPerl::Htmlgen::Nav::Entry {
                  $nav, $downitems, $upitem) {
                 # only show subnavs until the given location
                 # ($viewed_at_item), and then one more (to go down)?
-                if (my ($item,$rest)= $downitems->perhaps_first_and_rest) {
-                    my $entries= $nav->subentries;
-                    my $active= $entries->filter
+                if (my ($item,$rest) = $downitems->perhaps_first_and_rest) {
+                    my $entries = $nav->subentries;
+                    my $active = $entries->filter
                       (sub { $_[0] eq $item })
                         ->xone;
 
@@ -94,7 +94,7 @@ package FunctionalPerl::Htmlgen::Nav::Entry {
                     # (CSS based) mouse over submenu popups
                     # (advantage: show them on ~all the other items,
                     # too)?
-                    if (is_pair(my $es=$upitem->subentries)) {
+                    if (is_pair(my $es = $upitem->subentries)) {
                         equal ($upitem, $viewed_at_item)
                           or die "bug?";
                         # hack: passing $upitem as the item here (*no*
@@ -154,13 +154,13 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
     # missing in the nav declaration; thus, use the nav declaration to
     # *order* the pages instead:
     method path0_to_sortkey () {
-        my $sortprio= do {
-            my $i=1;
+        my $sortprio = do {
+            my $i = 1;
             +{
               map {
-                  my $file= $_;
-                  $file.= ".md" unless /\.\w{1,7}\z/;
-                  $file=> sprintf('-%04d', $i++)
+                  my $file = $_;
+                  $file .= ".md" unless /\.\w{1,7}\z/;
+                  $file => sprintf('-%04d', $i++)
               }
               $self->subentries->map(the_method "path0")->values
              }
@@ -175,7 +175,7 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
     }
 
     method nav_bar_level0 ($items, $item_selected, $viewed_at_item) {
-        my $shownitems=
+        my $shownitems =
           $items
             ->filter(complement $self->item_is_in_lower_hierarchy)
               ->sort(on the_method("path0"), $self->path0_navigation_cmp);
@@ -238,14 +238,14 @@ package FunctionalPerl::Htmlgen::Nav::Index {
 
 fun nav_index ($nav) {
     my (%p0_to_upitems,%p0_to_item);
-    my $index_level= fix
+    my $index_level = fix
       fun ($index_level, $items, $upitems) {
           $items->subentries->for_each
             (fun ($item) {
-                my $p0= $item->path0;
-                my $upitems1= $upitems->cons($item);
-                $p0_to_upitems{$p0}= $upitems1;
-                $p0_to_item{$p0}= $item;
+                my $p0 = $item->path0;
+                my $upitems1 = $upitems->cons($item);
+                $p0_to_upitems{$p0} = $upitems1;
+                $p0_to_item{$p0} = $item;
                 &$index_level($item, $upitems1);
             });
       };

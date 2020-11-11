@@ -9,29 +9,29 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
 our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+    my $location = (-l $0) ? abs_path ($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1,$2);
 }
 use lib "$mydir/../../lib";
 
 
 use Scalar::Util 'weaken';
 
-@ARGV==3 or die "usage: $0 impl n m";
+@ARGV == 3 or die "usage: $0 impl n m";
 our ($impl, $n, $m) = @ARGV;
 
 use FP::fix;
 
 if ($impl) {
-    $impl=~ /^\w+\z/ or die "invalid arg";
+    $impl =~ /^\w+\z/ or die "invalid arg";
     undef *fix;
     *fix = eval '\&FP::fix::'.$impl;
 }
 
 sub naturals {
-    my $f= fix sub {
-        my ($f, $n)= @_;
+    my $f = fix sub {
+        my ($f, $n) = @_;
         sub {
             if ($n > 0) {
                 [ $n, &$f($n - 1) ]
@@ -44,27 +44,27 @@ sub naturals {
 }
 
 sub stream_sum {
-    my ($s)=@_;
+    my ($s) = @_;
     weaken $_[0];
     # ^ not necessary here, since, unlike with FP::Lazy::Promise,
     # resulting value is not saved in its 'generating container'
-    my $lp= fix sub {
-        my ($lp, $tot, $s)=@_;
+    my $lp = fix sub {
+        my ($lp, $tot, $s) = @_;
         weaken $_[2];
-        if (my $fs= &$s) {
-            @_=($$fs[0] + $tot, $$fs[1]); goto &$lp;
+        if (my $fs = &$s) {
+            @_ = ($$fs[0] + $tot, $$fs[1]); goto &$lp;
         } else {
             $tot
         }
     };
-    @_=(0, $s); my $lp_=$lp; weaken $lp; goto &$lp_;
+    @_ = (0, $s); my $lp_ = $lp; weaken $lp; goto &$lp_;
 }
 
 
 my $res;
 for (1..$m) {
-    my $ns= naturals $n;
-    $res= stream_sum $ns;
+    my $ns = naturals $n;
+    $res = stream_sum $ns;
 }
 
 print $res,"\n";

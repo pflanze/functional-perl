@@ -13,8 +13,8 @@ FP::Repl::Stack
 
 =head1 SYNOPSIS
 
- my $stack= FP::Repl::Stack->get($numbers_of_levels_to_skip);
- my $f= $stack->frame($frameno);
+ my $stack = FP::Repl::Stack->get($numbers_of_levels_to_skip);
+ my $f = $stack->frame($frameno);
  $f->package
  $f->args
  ...
@@ -48,7 +48,7 @@ package FP::Repl::Stack;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 
-our @fields; BEGIN { @fields= qw(args
+our @fields; BEGIN { @fields = qw(args
                                  package filename line subroutine hasargs
                                  wantarray evaltext is_require hints bitmask
                                  hinthash) }
@@ -65,10 +65,10 @@ our @fields; BEGIN { @fields= qw(args
         'FP::Abstract::Pure';
 
     sub args_text {
-        my $s=shift;
-        my ($indent, $mode)=@_;
-        my $args= $s->args;
-        my $str= join ",\n", map {
+        my $s = shift;
+        my ($indent, $mode) = @_;
+        my $args = $s->args;
+        my $str = join ",\n", map {
             if ($mode eq "d") {
                 # XX reinvention forever, too: how to *shorten*-dump a
                 # value? Data::Dumper does not seem to support it?
@@ -85,13 +85,13 @@ our @fields; BEGIN { @fields= qw(args
                 die "unknown mode '$mode'";
             }
         } @$args;
-        $str= "\n$str" if @$args;
-        $str=~ s/\n/\n$indent/g; # XX there's also $Data::Dumper::Pad
+        $str = "\n$str" if @$args;
+        $str =~ s/\n/\n$indent/g; # XX there's also $Data::Dumper::Pad
         $str
     }
 
     sub desc {
-        my ($s,$mode)=@_;
+        my ($s,$mode) = @_;
         ($s->subroutine."("
          .$s->args_text("  ", $mode)
          ."\n) called at ".$s->filename." line ".$s->line)
@@ -99,8 +99,8 @@ our @fields; BEGIN { @fields= qw(args
 
     # one-line-desc
     sub oneline {
-        my $s=shift;
-        my ($maybe_prefix)=@_;
+        my $s = shift;
+        my ($maybe_prefix) = @_;
         (($maybe_prefix // "\t") #parens needed!
          .$s->subroutine
          ."(".with_maxlen(64, sub{singlequote_many(@{$s->args})}).")"
@@ -111,14 +111,14 @@ our @fields; BEGIN { @fields= qw(args
     # CAREFUL: equal stackframes still don't need to be the *same*
     # stackframe!
     sub equal {
-        my $s=shift;
-        my ($v)=@_;
-        my $equal_standard_fields= sub {
-            my $eq= sub {
-                my ($m)=@_;
+        my $s = shift;
+        my ($v) = @_;
+        my $equal_standard_fields = sub {
+            my $eq = sub {
+                my ($m) = @_;
                 #$s->$m eq $v->$m
-                my $S= $s->$m;
-                my $V= $v->$m;
+                my $S = $s->$m;
+                my $V = $v->$m;
                 if (defined $S) {
                     if (defined $V) {
                         $S eq $V
@@ -172,24 +172,24 @@ our @fields; BEGIN { @fields= qw(args
 }
 
 
-our $make_frame_accessor= sub {
-    my ($method)= @_;
+our $make_frame_accessor = sub {
+    my ($method) = @_;
     sub {
-        my $s=shift;
-        my ($frameno,@rest)=@_;
-        my $nf= $s->num_frames;
+        my $s = shift;
+        my ($frameno,@rest) = @_;
+        my $nf = $s->num_frames;
         $frameno < $nf
           or die "frame number must be between 0..".($nf-1).", got: $frameno";
         $s->frames->[$frameno]->$method(@rest)
     }
 };
 
-our $make_perhaps_frame_accessor= sub {
-    my ($method)= @_;
+our $make_perhaps_frame_accessor = sub {
+    my ($method) = @_;
     sub {
-        my $s=shift;
-        my ($frameno,@rest)=@_;
-        my $nf= $s->num_frames;
+        my $s = shift;
+        my ($frameno,@rest) = @_;
+        my $nf = $s->num_frames;
         ($frameno < $nf
          ? ($s->frames->[$frameno]->$method(@rest))
          : ())
@@ -202,12 +202,12 @@ use FP::Struct ["frames"],
     'FP::Abstract::Pure';
 
 sub get {
-    my $class=shift;
-    my ($skip)=@_;
+    my $class = shift;
+    my ($skip) = @_;
     package DB;
     my @frames;
-    while (my @vals=caller($skip)) {
-        my $subargs= [ @DB::args ];
+    while (my @vals = caller($skip)) {
+        my $subargs = [ @DB::args ];
         # XX how to handle this?: "@DB::args might have
         # information from the previous time "caller" was
         # called" (perlfunc on 'caller')
@@ -219,33 +219,33 @@ sub get {
 }
 
 sub frame {
-    my $s=shift;
-    @_==1 or die "wrong number of arguments";
-    my ($i)=@_;
+    my $s = shift;
+    @_ == 1 or die "wrong number of arguments";
+    my ($i) = @_;
     $s->frames->[$i]
 }
 
 sub num_frames {
-    my $s=shift;
+    my $s = shift;
     scalar @{$s->frames}
 }
 
 sub max_frameno {
-    my $s=shift;
+    my $s = shift;
     $#{$s->frames}
 }
 
 for (@fields, "desc") {
     no strict 'refs';
-    *{$_}= &$make_frame_accessor ($_);
-    *{"perhaps_$_"}= &$make_perhaps_frame_accessor ($_);
+    *{$_} = &$make_frame_accessor ($_);
+    *{"perhaps_$_"} = &$make_perhaps_frame_accessor ($_);
 }
 
 sub backtrace {
-    my $s=shift;
-    my ($maybe_skip)=@_;
-    my $skip= $maybe_skip//0;
-    my $fs= $s->frames;
+    my $s = shift;
+    my ($maybe_skip) = @_;
+    my $skip = $maybe_skip//0;
+    my $fs = $s->frames;
     my @f;
     for my $i ($skip..$#$fs) {
         push @f, $$fs[$i]->oneline("$i\t")

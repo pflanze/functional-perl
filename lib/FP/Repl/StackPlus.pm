@@ -13,7 +13,7 @@ FP::Repl::StackPlus - Stack including lexical variables
 
 =head1 SYNOPSIS
 
- my $stack= FP::Repl::StackPlus->get($numbers_of_levels_to_skip);
+ my $stack = FP::Repl::StackPlus->get($numbers_of_levels_to_skip);
  # same as FP::Repl::Stack, but frames also have `lexicals`, a hash
  # as delivered from PadWalker
 
@@ -48,8 +48,8 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
     # CAREFUL: equal stackframes still don't need to be the *same*
     # stackframe!
     sub equal {
-        my $s=shift;
-        my ($v)=@_;
+        my $s = shift;
+        my ($v) = @_;
         die "not implemented (yet?)";
     }
 
@@ -62,17 +62,17 @@ use PadWalker qw(peek_my);
 # TODO/XXX: see comments in commit 'StackPlus: don't die in peek_my
 # (HACK)'; this should be replaced with something clean /
 # investigated.
-our $maybe_peek_my= sub {
-    my ($skip)=@_;
+our $maybe_peek_my = sub {
+    my ($skip) = @_;
     my $res;
     if (eval {
-        $res= peek_my ($skip);
+        $res = peek_my ($skip);
         1
     }) {
         $res
     } else {
-        my $e= $@;
-        if ($e=~ /^Not nested deeply enough/i) {
+        my $e = $@;
+        if ($e =~ /^Not nested deeply enough/i) {
             undef
         } else {
             die $e
@@ -84,12 +84,12 @@ use FP::Struct [], "FP::Repl::Stack";
 
 # XX ugly, modified COPY from FP::Repl::Stack
 sub get {
-    my $class=shift;
-    my ($skip)=@_;
+    my $class = shift;
+    my ($skip) = @_;
     package DB; # needs to be outside loop or it won't work. Wow Perl.
     my @frames;
-    while (my @vals=caller($skip)) {
-        my $subargs= [ @DB::args ];
+    while (my @vals = caller($skip)) {
+        my $subargs = [ @DB::args ];
         # XX how to handle this?: "@DB::args might have
         # information from the previous time "caller" was
         # called" (perlfunc on 'caller')
@@ -101,7 +101,7 @@ sub get {
 }
 
 
-*lexicals= &$FP::Repl::Stack::make_frame_accessor ("lexicals");
-*perhaps_lexicals= &$FP::Repl::Stack::make_perhaps_frame_accessor ("lexicals");
+*lexicals = &$FP::Repl::Stack::make_frame_accessor ("lexicals");
+*perhaps_lexicals = &$FP::Repl::Stack::make_perhaps_frame_accessor ("lexicals");
 
 _END_
