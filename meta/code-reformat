@@ -1,0 +1,66 @@
+#!/usr/bin/perl -w
+
+# Tue 10 Nov 15:23:33 GMT 2020
+(my $email='ch%christianjaeger,ch')=~ tr/%,/@./;
+
+use strict; use warnings FATAL => 'uninitialized'; use utf8;
+
+$0=~ /(.*?)([^\/]+)\z/s or die "?";
+my ($mydir, $myname)=($1,$2);
+sub usage {
+    print STDERR map{"$_\n"} @_ if @_;
+    print "$myname ..
+
+  (Christian Jaeger <$email>)
+";
+exit (@_ ? 1 : 0);
+}
+
+use Getopt::Long;
+our $verbose=0;
+#our $opt_dry;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   #"dry-run"=> \$opt_dry,
+	   ) or exit 1;
+
+
+for my $file (@ARGV) {
+    use Chj::xtmpfile;
+    use Chj::xopen 'xopen_read';
+    my $f= xopen_read $file;
+    my @lines= $f->xreadline;
+    $f->xclose;
+    
+    my $t= xtmpfile $file;
+    $t->xprint(map {
+        if (/http|href/) {
+            $_
+        } else {
+            s° ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) °
+                my ($a,$b,$c)=($1,$2,$3);
+            my $all = "$a$b$c";
+            my $pre= substr($_, 0, pos($_)+1);
+            my $is_perl = 0;
+            if ($b eq "=>") {
+                $is_perl = 1
+            } elsif (not substr($pre, length($pre)-1, 1)=~ /\w/) {
+                $is_perl = 1
+            } elsif (my ($sigil) = $pre =~ /([^\w])[A-Za-z_]\w*\s*$/) {
+                $is_perl= $sigil =~ /[\$*&@%]/
+            }
+            #use FP::Repl;repl;
+            if ($is_perl) {
+                ($a eq " " ? $a : "$a ").$b.($c eq " " ? $c : " $c")
+            } else {
+                $all
+            }
+            °sgex and
+            s/[ \t]*$//;
+            $_
+        }
+               } @lines);
+    $t->xclose;
+    $t->xputback;
+}
+
