@@ -5,18 +5,17 @@
 -vt=0    # Less vertical tightness
 -pt=2    # High parenthesis tightness
 -bt=2    # High brace tightness
+-bbt=2   # --block-brace-tightness
 -sbt=2   # High square bracket tightness
 -wn      # Weld nested containers
 -isbc    # Don't indent comments without leading space
 -nst     # Don't output to STDOUT
 -nasc    # Do not add semicolons to tail expressions (they are used to
          # indicate that the value is explicitly used as the return value
--g
--ce
--i=4
--conv
--bt=1
--bbt=2
--tso
--nsfs
--b
+-ce      # --cuddled-else
+-i=4     # columns per indentation level
+-conv    # --converge
+-tso     # --tight-secret-operators   0+  +0  ()x!! ~~<>  ,=>   =( )=
+-nsfs    # --nospace-for-semicolon  Semicolons within for loops
+
+-b       # --backup-and-modify-in-place
