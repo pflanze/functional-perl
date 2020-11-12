@@ -71,7 +71,7 @@ package FunctionalPerl::Htmlgen::Cost::_::Totalcost {
             on the_method ("cost",$index), \&number_cmp );
         (@$all == 1
          ? $$all[0]->cost ($index)
-         : $$all[0]->cost ($index)."..".$$all[-1]->cost($index)),
+         : $$all[0]->cost ($index)."..".$$all[-1]->cost($index))
     }
     _END_
 }
