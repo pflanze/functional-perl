@@ -51,7 +51,7 @@ use FP::Predicates qw(is_natural);
 
 fun rindices_numberstring($rindices) {
     is_null($rindices) ? "" : $rindices->reverse->map(fun($i) {"$i."})
-        ->strings_join("") . " ";
+        ->strings_join("") . " "
 }
 
 TEST { rindices_numberstring(list()) } "";
