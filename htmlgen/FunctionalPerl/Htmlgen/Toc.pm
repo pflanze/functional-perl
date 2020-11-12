@@ -50,7 +50,7 @@ use PXML ":all";
 use FP::Predicates qw(is_natural);
 
 fun rindices_numberstring($rindices) {
-    is_null $rindices ? "" : $rindices->reverse->map(fun($i) {"$i."})
+    is_null($rindices) ? "" : $rindices->reverse->map(fun($i) {"$i."})
         ->strings_join("") . " ";
 }
 
