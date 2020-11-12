@@ -45,23 +45,23 @@ for my $file (@ARGV) {
             } else {
                 s` ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) `
                 my ($a,$b,$c)=($1,$2,$3);
-            my $all = "$a$b$c";
-            my $pre= substr($_, 0, pos($_)+1);
-            my $is_perl = 0;
-            if ($b eq "=>") {
-                $is_perl = 1
-            } elsif (not substr($pre, length($pre)-1, 1)=~ /\w/) {
-                $is_perl = 1
-            } elsif (my ($sigil) = $pre =~ /([^\w])[A-Za-z_]\w*\s*$/) {
-                $is_perl= $sigil =~ /[\$*&@%]/
-            }
-            #use FP::Repl;repl;
-            if ($is_perl) {
-                ($a eq " " ? $a : "$a ").$b.($c eq " " ? $c : " $c")
-            } else {
-                $all
-            }
-            `sgex and s/[ \t]*$//;
+                my $all = "$a$b$c";
+                my $pre= substr($_, 0, pos($_)+1);
+                my $is_perl = 0;
+                if ($b eq "=>") {
+                    $is_perl = 1
+                } elsif (not substr($pre, length($pre)-1, 1)=~ /\w/) {
+                    $is_perl = 1
+                } elsif (my ($sigil) = $pre =~ /([^\w])[A-Za-z_]\w*\s*$/) {
+                    $is_perl= $sigil =~ /[\$*&@%]/
+                }
+                #use FP::Repl;repl;
+                if ($is_perl) {
+                    ($a eq " " ? $a : "$a ").$b.($c eq " " ? $c : " $c")
+                } else {
+                    $all
+                }
+                `sgex and s/[ \t]*$//;
                 $_
             }
         } @lines
