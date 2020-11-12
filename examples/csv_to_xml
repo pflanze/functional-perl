@@ -4,17 +4,20 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
-
 
 sub usage {
     print "usage: $myname [-o xmlfile] csvfile(s)
@@ -24,33 +27,35 @@ sub usage {
   (plus some buffering) into memory at a time.
 
 ";
-    exit (@_ ? 1 : 0);
+    exit(@_ ? 1 : 0);
 }
 
 use Getopt::Long;
 our $verbose = 0;
 our $outpath;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           "outpath=s" => \$outpath,
-           ) or exit 1;
+GetOptions(
+    "verbose"   => \$verbose,
+    "help"      => sub {usage},
+    "outpath=s" => \$outpath,
+) or exit 1;
 usage unless @ARGV;
 
 use FP::Text::CSV qw(csv_file_to_rows);
 
 use PXML::Tags
-  # create tag functions for the following XML tag names. Casing is
-  # preserved for the output, but the tag functions are all-uppercase
-  # (to try to avoid name conflicts and for better visibility) and
-  # replace the minus with the underscore.
-  qw(myexample
-     protocol-version
-     records
-     record
-     a
-     b
-     c
-     d);
+
+    # create tag functions for the following XML tag names. Casing is
+    # preserved for the output, but the tag functions are all-uppercase
+    # (to try to avoid name conflicts and for better visibility) and
+    # replace the minus with the underscore.
+    qw(myexample
+    protocol-version
+    records
+    record
+    a
+    b
+    c
+    d);
 
 use PXML::Serialize qw(pxml_print);
 
@@ -58,26 +63,24 @@ sub print_csv_as_xml {
     my ($fh, $path) = @_;
 
     my $rows = csv_file_to_rows $path, +{eol => "\n", sep_char => ";"};
+
     # $rows is a lazily-computed linked list of the rows
 
     # skip the header row from the CSV file:
     $rows = rest $rows;
 
     # create a partially lazily computed PXML data structure
-    my $xmlstream =
-      MYEXAMPLE
-        (PROTOCOL_VERSION ("0.123"),
-         RECORDS # here we embed the lazily computed part:
-         ($rows->map (sub {
-                          my ($row) = @_;
-                          @$row == 4 or die "row doesn't contain 4 columns: @$row";
-                          my ($a,$b,$c,$d) = @$row;
+    my $xmlstream = MYEXAMPLE(
+        PROTOCOL_VERSION("0.123"),
+        RECORDS    # here we embed the lazily computed part:
+            ($rows->map (sub {
+            my ($row) = @_;
+            @$row == 4 or die "row doesn't contain 4 columns: @$row";
+            my ($a, $b, $c, $d) = @$row;
 
-                          RECORD(A ($a),
-                                 B ($b),
-                                 C ($c),
-                                 D ($d))
-                      })));
+            RECORD(A($a), B($b), C($c), D($d))
+            }))
+    );
 
     # walk and print the PXML data structure, forcing its evaluation
     # as needed
@@ -87,8 +90,8 @@ sub print_csv_as_xml {
 use Chj::xtmpfile;
 use Chj::xopen qw(glob_to_fh);
 
-my $fh = defined $outpath ? xtmpfile $outpath : glob_to_fh *STDOUT;
+my $fh = defined $outpath ? xtmpfile $outpath : glob_to_fh * STDOUT;
 print_csv_as_xml $fh, $_ for @ARGV;
 $fh->xclose;
-$fh->xputback (0666 & ~umask) if defined $outpath;
+$fh->xputback(0666 & ~umask) if defined $outpath;
 

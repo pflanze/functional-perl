@@ -4,19 +4,23 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+
 #use Function::Parameters qw(:strict);
 #use Sub::Call::Tail;
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
-
 
 sub usage {
     print "usage: $myname ...
@@ -26,11 +30,8 @@ sub usage {
 
 use Getopt::Long;
 our $verbose = 0;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           ) or exit 1;
+GetOptions("verbose" => \$verbose, "help" => sub {usage},) or exit 1;
 usage if @ARGV;
-
 
 # Perl code from:
 # http://perl6maven.com/from-iterative-to-functional-perl6-code
@@ -51,26 +52,25 @@ use FP::Ops qw(the_method unary_operator);
     my $paths    = stream(qw< /tmp /var/tmp >);
     my $filename = 'temp123';
     my $ext      = list(qw<pod pm pl>);
+
     # `the_method` corresponds to Perl 6's `*`, but we don't have an
     # IO::e method, and cartesian_product doesn't do the string join,
     # thus resort to a manual closure:
-    my $existing_files = stream_filter sub { -e join("",@_) },
-      stream_cartesian_product($paths, list("/$filename."), $ext);
+    my $existing_files = stream_filter sub { -e join("", @_) },
+        stream_cartesian_product($paths, list("/$filename."), $ext);
 }
 
 # or
 
-my $paths    = stream(qw< /tmp /var/tmp >);
-my $filename = 'temp123';
-my $ext      = list(qw<pod pm pl>);
-my $all_paths =
-  $paths->cartesian_product(list("/$filename."), $ext)
-        ->map(*list_to_string);
+my $paths     = stream(qw< /tmp /var/tmp >);
+my $filename  = 'temp123';
+my $ext       = list(qw<pod pm pl>);
+my $all_paths = $paths->cartesian_product(list("/$filename."), $ext)
+    ->map(*list_to_string);
 my $existing_files = $all_paths->filter(unary_operator "-e");
-
-
 
 use FP::Repl::Trap;
 use FP::Repl;
 repl;
+
 # at the repl, enter 'F $all_paths', 'F $existing_files'

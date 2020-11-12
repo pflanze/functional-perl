@@ -23,17 +23,18 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::xtmpfile;
 @ISA = 'Exporter';
 require Exporter;
 @EXPORT = qw(xtmpfile);
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::IO::Tempfile;
 
 sub xtmpfile {
-    unshift @_,'Chj::IO::Tempfile';
+    unshift @_, 'Chj::IO::Tempfile';
     goto &Chj::IO::Tempfile::xtmpfile;
 }
 

@@ -68,22 +68,24 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Text::CSV;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw();
+@ISA = "Exporter";
+require Exporter;
+@EXPORT    = qw();
 @EXPORT_OK = qw(
-                 new_csv_instance
-                 csv_line_xparser
-                 csv_fh_to_rows
-                 csv_file_to_rows
-                 csv_printer
-                 rows_to_csv_fh
-                 rows_to_csv_file
-            );
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+    new_csv_instance
+    csv_line_xparser
+    csv_fh_to_rows
+    csv_file_to_rows
+    csv_printer
+    rows_to_csv_fh
+    rows_to_csv_file
+);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use FP::List ":all";
 use FP::Lazy ":all";
@@ -92,17 +94,11 @@ use Text::CSV;
 use FP::HashSet 'hashset_union';
 use Chj::xopen 'xopen_read';
 
-our $defaults =
-  +{
-    binary => 1,
-    sep_char => "\t",
-    eol => "\r\n",
-   };
+our $defaults = +{binary => 1, sep_char => "\t", eol => "\r\n",};
 
 sub params ($) {
     my ($maybe_params) = @_;
-    defined $maybe_params ? hashset_union($maybe_params, $defaults)
-      : $defaults
+    defined $maybe_params ? hashset_union($maybe_params, $defaults) : $defaults
 }
 
 sub new_csv_instance (;$) {
@@ -113,25 +109,29 @@ sub new_csv_instance (;$) {
 sub csv_line_xparser (;$) {
     my ($maybe_params) = @_;
     my $csv = new_csv_instance $maybe_params;
+
     sub ($) {
         my ($line) = @_;
         $csv->parse($line)
-          or die "CSV parsing failure"; # XX how to get error message from Text::CSV?
+            or die
+            "CSV parsing failure"; # XX how to get error message from Text::CSV?
         $csv->fields
     }
 }
 
-
 sub csv_fh_to_rows ($;$) {
     my ($in, $maybe_params) = @_;
-    my $csv = new_csv_instance ($maybe_params);
-    my $next; $next = sub {
+    my $csv = new_csv_instance($maybe_params);
+    my $next;
+    $next = sub {
         my $next = $next;
         lazy {
-            if (my $row = $csv->getline ($in)) {
+            if (my $row = $csv->getline($in)) {
+
                 # XX error checks?
                 cons $row, &$next;
-            } else {
+            }
+            else {
                 $in->xclose;
                 null
             }
@@ -147,16 +147,16 @@ sub csv_file_to_rows ($;$) {
     csv_fh_to_rows $in, $maybe_params
 }
 
-
 # -- Output: ---
 
 sub csv_printer ($;$) {
     my ($fh, $maybe_params) = @_;
-    my $csv = new_csv_instance ($maybe_params);
+    my $csv = new_csv_instance($maybe_params);
     sub {
         my ($row) = @_;
         $csv->print($fh, $row)
-          or die "could not write CSV row: ".$csv->error_diag;
+            or die "could not write CSV row: " . $csv->error_diag;
+
         # XX ok?
     }
 }
@@ -175,10 +175,9 @@ sub rows_to_csv_file ($$;$) {
     my ($s, $path, $maybe_params) = @_;
     weaken $_[0];
     my $out = xtmpfile $path;
-    rows_to_csv_fh ($s, $out, $maybe_params);
+    rows_to_csv_fh($s, $out, $maybe_params);
     $out->xclose;
-    $out->xputback (0666 & ~umask);
+    $out->xputback(0666 & ~umask);
 }
-
 
 1

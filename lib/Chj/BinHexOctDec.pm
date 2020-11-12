@@ -43,18 +43,20 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::BinHexOctDec;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub bin {
     my $this = shift;
     if (ref $this) {
-        sprintf('%b',$$this)
-    } else {
-        my $data = oct('0b'.shift);
-        bless \$data,$this
+        sprintf('%b', $$this)
+    }
+    else {
+        my $data = oct('0b' . shift);
+        bless \$data, $this
     }
 }
 
@@ -62,31 +64,33 @@ sub dec {
     my $this = shift;
     if (ref $this) {
         $$this
-    } else {
+    }
+    else {
         my $data = shift;
-        bless \$data,$this
+        bless \$data, $this
     }
 }
 
 sub oct {
     my $this = shift;
     if (ref $this) {
-        sprintf('%o',$$this)
-    } else {
-        my $data = oct('0'.shift);
-        bless \$data,$this
+        sprintf('%o', $$this)
+    }
+    else {
+        my $data = oct('0' . shift);
+        bless \$data, $this
     }
 }
 
 sub hex {
     my $this = shift;
     if (ref $this) {
-        sprintf('%x',$$this)
-    } else {
-        my $data = hex(shift); # oct('0x'.shift); should work as well
-        bless \$data,$this
+        sprintf('%x', $$this)
+    }
+    else {
+        my $data = hex(shift);    # oct('0x'.shift); should work as well
+        bless \$data, $this
     }
 }
-
 
 1

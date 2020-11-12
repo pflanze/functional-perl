@@ -33,10 +33,11 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package PXML::Tags;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use PXML::Element;
 

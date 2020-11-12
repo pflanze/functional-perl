@@ -23,19 +23,20 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FunctionalPerl::ModuleList;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(modulenamelist modulepathlist);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(modulenamelist modulepathlist);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
-
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::xopen 'xopen_read';
 
-our $moduleandpathlist; # [[ name, path ] ...]
+our $moduleandpathlist;    # [[ name, path ] ...]
 
 sub moduleandpathlist {
     $moduleandpathlist //= do {
@@ -55,12 +56,8 @@ sub moduleandpathlist {
     }
 }
 
-sub modulenamelist {
-    [ map { $$_[0] } @{moduleandpathlist()} ]
-}
+sub modulenamelist { [map { $$_[0] } @{moduleandpathlist()}] }
 
-sub modulepathlist {
-    [ map { $$_[1] } @{moduleandpathlist()} ]
-}
+sub modulepathlist { [map { $$_[1] } @{moduleandpathlist()}] }
 
 1

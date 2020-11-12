@@ -23,12 +23,15 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::chompspace;
-@ISA = "Exporter"; require Exporter;
+@ISA = "Exporter";
+require Exporter;
 @EXPORT = qw(chompspace);
+
 #@EXPORT_OK = qw();
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub chompspace($) {
     my ($str) = @_;
@@ -37,6 +40,6 @@ sub chompspace($) {
     $str
 }
 
-*Chj::chompspace= \&chompspace;
+*Chj::chompspace = \&chompspace;
 
 1;

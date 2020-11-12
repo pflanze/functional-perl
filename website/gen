@@ -4,13 +4,17 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 
 unless ($ENV{SUB_CALL_TAIL}) {
@@ -18,13 +22,11 @@ unless ($ENV{SUB_CALL_TAIL}) {
     require FunctionalPerl::TailExpand;
 }
 
-chdir $mydir
-    or die "chdir $mydir: $!";
+chdir $mydir or die "chdir $mydir: $!";
 
-my $inbase = "..";
-my $outbase = "www";
+my $inbase     = "..";
+my $outbase    = "www";
 my $configpath = "./gen-config.pl";
-
 
 # make it work by default without Sub::Call::Tail:
 my $prefix = $ENV{SUB_CALL_TAIL} ? "" : ".";
@@ -32,4 +34,5 @@ my $prefix = $ENV{SUB_CALL_TAIL} ? "" : ".";
 my $gen = "../${prefix}htmlgen/gen";
 
 exec $^X, $gen, $configpath, $inbase, $outbase, @ARGV
-    or die "possibly missing '$gen', run 'meta/tail-expand' (or simply 'make test') first";
+    or die
+    "possibly missing '$gen', run 'meta/tail-expand' (or simply 'make test') first";

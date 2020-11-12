@@ -55,27 +55,31 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Repl::WithRepl;
 
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(withrepl push_withrepl pop_withrepl);
-@EXPORT_OK = qw(WithRepl_eval WithRepl_eval_e);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(withrepl push_withrepl pop_withrepl);
+@EXPORT_OK   = qw(WithRepl_eval WithRepl_eval_e);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 #-- moved up here before any lexicals to avoid their exposure--
 # Wrapping `eval` calls with a special frame
 # (`FP::Repl::WithRepl::WithRepl_eval`) that the handler can test for:
 
 sub WithRepl_eval (&;$) {
+
     # my ($arg, $maybe_package) = @_;
     if (ref $_[0]) {
         @_ == 1 or die "wrong number of arguments";
         my ($arg) = @_;
         eval { &$arg() }
-    } else {
+    }
+    else {
         eval do {
             @_ == 1 or @_ == 2 or die "wrong number of arguments";
             my ($arg, $maybe_package) = @_;
@@ -86,23 +90,22 @@ sub WithRepl_eval (&;$) {
 }
 
 sub WithRepl_eval_e ($;$$) {
+
     # my ($arg, $maybe_package, $wantarray) = @_;
     if (ref $_[0]) {
         die "WithRepl_eval_e only supports string eval";
-    } else {
+    }
+    else {
         my $success = eval do {
             (@_ >= 1 and @_ <= 3) or die "wrong number of arguments";
             my ($arg, $maybe_package, $wantarray) = @_;
             my $package = $maybe_package // caller;
-            my $scalar = $wantarray ? "" : "scalar";
+            my $scalar  = $wantarray ? "" : "scalar";
             "[ $scalar do { package $package; $arg } ]"
         };
-        my ($arg, $maybe_package, $wantarray) = @_; # now can have the lexicals
-        if ($success) {
-            ($wantarray ? $success : $$success[0], $@, '')
-        } else {
-            (undef, $@, 1)
-        }
+        my ($arg, $maybe_package, $wantarray) = @_;  # now can have the lexicals
+        if ($success) { ($wantarray ? $success : $$success[0], $@, '') }
+        else          { (undef, $@, 1) }
     }
 }
 
@@ -113,21 +116,25 @@ use FP::Show;
 
 # test that 'no' variables are seen (yeah, could do better)
 TEST { &WithRepl_eval('"Hello $arg"') } ();
-TEST { my ($res,$e,$is_err) = WithRepl_eval_e('"Hello $arg"'); $is_err } 1;
-TEST { my ($res,$e,$is_err) = WithRepl_eval_e('[ $res ]'); $is_err } 1;
+TEST { my ($res, $e, $is_err) = WithRepl_eval_e('"Hello $arg"'); $is_err } 1;
+TEST { my ($res, $e, $is_err) = WithRepl_eval_e('[ $res ]'); $is_err } 1;
 
-TEST { my ($res,$e,$is_err) = WithRepl_eval_e q{
+TEST {
+    my ($res, $e, $is_err) = WithRepl_eval_e q{
        my @a = (qw(a b c));
        @a
        }, "foo";
-       $res } 3;
-TEST { my ($res,$e,$is_err) = WithRepl_eval_e q{
+    $res
+}
+3;
+TEST {
+    my ($res, $e, $is_err) = WithRepl_eval_e q{
        my @a = (qw(a b c));
        @a
        }, "foo", 1;
-       $res } [qw(a b c)];
-
-
+    $res
+}
+[qw(a b c)];
 
 # PROBLEM: even exceptions within contexts that catch exceptions
 # (i.e. `eval { }`) are invoking a repl, unless we use a workaround.
@@ -141,10 +148,10 @@ sub current_user_frame ($) {
     if ($skip) { $skip >= 0 or die "expecting maybe(natural0), got '$skip'"; }
     my @v;
     my $i = 0;
-    while ((@v) = caller ($i++)) {
+    while ((@v) = caller($i++)) {
         if ($v[0] ne "FP::Repl::WithRepl") {
             if ($skip) {
-                unless ((@v) = caller ($i + $skip)) {
+                unless ((@v) = caller($i + $skip)) {
                     die "skip value goes beyond the end of the stack";
                 }
             }
@@ -153,7 +160,6 @@ sub current_user_frame ($) {
     }
     die "???"
 }
-
 
 # have_eval_since_frame: is ignoring eval from repl. Uh, so hacky. But
 # otherwise how to enable WithRepl from within a repl? With a special
@@ -171,7 +177,7 @@ sub have_eval_since_frame ($) {
     my @v;
     my $i = 1;
 
-  SKIP: {
+SKIP: {
         while ((@v) = caller $i++) {
             last SKIP if ($v[0] ne "FP::Repl::WithRepl");
         }
@@ -180,107 +186,109 @@ sub have_eval_since_frame ($) {
 
     do {
         my $f = FP::Repl::StackFrame->new(undef, @v);
-        if ($f->equal ($startframe)) {
-            warn "reached startframe, thus return false"
-              if $debug;
+        if ($f->equal($startframe)) {
+            warn "reached startframe, thus return false" if $debug;
             return ''
-        } elsif ($f->subroutine eq "(eval)") {
+        }
+        elsif ($f->subroutine eq "(eval)") {
             if ((@v) = caller $i++) {
-                my $f = FP::Repl::StackFrame->new(undef, @v);
+                my $f   = FP::Repl::StackFrame->new(undef, @v);
                 my $sub = $f->subroutine;
                 if ($sub =~ /::WithRepl_eval(?:_e)?\z/) {
                     warn "(ignore eval since it's from a WithRepl_eval)"
-                      if $debug;
-                } elsif ($sub =~ /::BEGIN\z/) {
+                        if $debug;
+                }
+                elsif ($sub =~ /::BEGIN\z/) {
+
                     # (why does BEGIN use eval?)
-                    warn "(ignore eval since it's from a BEGIN)"
-                      if $debug;
-                } else {
-                    warn "GOT eval (standalone)"
-                      if $debug;
+                    warn "(ignore eval since it's from a BEGIN)" if $debug;
+                }
+                else {
+                    warn "GOT eval (standalone)" if $debug;
                     return 1
                 }
-            } else {
-                warn "GOT eval right at end of stack"
-                  if $debug;
+            }
+            else {
+                warn "GOT eval right at end of stack" if $debug;
                 return 1
             }
         }
-    }
-      while ((@v) = caller $i++);
+    } while ((@v) = caller $i++);
 
-    warn "couldn't find orig frame!"
-      if $debug;
-      # not even tail-calling should be able to do that, unless, not
-      # local'ized, hm XXX non-popped handler.
+    warn "couldn't find orig frame!" if $debug;
+
+    # not even tail-calling should be able to do that, unless, not
+    # local'ized, hm XXX non-popped handler.
     0
 }
-
-
 
 sub handler_for ($$) {
     my ($startframe, $orig_handler) = @_;
     bless sub {
         my ($e) = @_;
+
         # to show local errors with backtrace:
         # require Chj::Backtrace; import Chj::Backtrace;
         if (have_eval_since_frame $startframe) {
+
             #$SIG{__DIE__} = $orig_handler;
             # ^ helps against the loop but makes the push_withrepl
             #   one-shot, of course
             #goto &{$orig_handler // sub { die $_[0] }}  nah, try:
             if (defined $orig_handler) {
+
                 #goto $orig_handler
                 # ^ just doesn't work, seems to undo the looping
                 #   protection. so..:  -- XX test goto &$orig_handler
-                &$orig_handler ($e)
-            } else {
+                &$orig_handler($e)
+            }
+            else {
                 #warn "no orig_handler, returning";
                 return
             }
-        } else {
+        }
+        else {
             my $err = $FP::Repl::Repl::maybe_output // *STDERR{IO};
-            print $err "Exception: ".show($e)."\n";
+            print $err "Exception: " . show($e) . "\n";
+
             # then what to do upon exiting it? return the value of the
             # repl?  XX repl needs new feature, a "quit this context
             # with this value". Although not helping anyway since Perl
             # can't be made to avoid leaving the exception context.
-            push_withrepl(0); # XX correct? Argument?
+            push_withrepl(0);    # XX correct? Argument?
             repl(skip => 1)
         }
-    }, "FP::Repl::WithRepl::Handler" # just to mark, for Chj::Backtrace ugh
+        }, "FP::Repl::WithRepl::Handler"  # just to mark, for Chj::Backtrace ugh
 }
 
 sub handler ($) {
     my ($skip) = @_;
-    handler_for (current_user_frame($skip),
-                 $SIG{__DIE__})
+    handler_for(current_user_frame($skip), $SIG{__DIE__})
 }
 
 sub withrepl (&) {
-    local $SIG{__DIE__} = handler (0);
+    local $SIG{__DIE__} = handler(0);
     &{$_[0]}()
 }
 
-
-TEST { withrepl { 1+2 } }
- 3;
-TEST { [ withrepl { "hello", "world" } ] }
-  [ 'hello', 'world' ];
-
+TEST {
+    withrepl { 1 + 2 }
+}
+3;
+TEST { [withrepl { "hello", "world" }] }
+['hello', 'world'];
 
 our @stack;
 
 sub push_withrepl ($) {
     my ($skip) = @_;
     push @stack, $SIG{__DIE__};
-    $SIG{__DIE__} = handler ($skip);
+    $SIG{__DIE__} = handler($skip);
 }
 
 sub pop_withrepl () {
     $SIG{__DIE__} = pop @stack;
 }
-
 
 1
 

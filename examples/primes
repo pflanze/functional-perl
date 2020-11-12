@@ -4,29 +4,29 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
-
-
 # gracefully fail when run as a test and Method::Signatures is not
 # available
-use Chj::TEST
-  use => 'Method::Signatures';
+use Chj::TEST use => 'Method::Signatures';
 use Chj::Backtrace;
 use FP::List ":all";
 use FP::Ops ":all";
 use FP::Lazy ":all";
 use FP::Stream ":all";
-
 
 # Another translation of (a) Haskell example(s) (see also `fibs`).
 
@@ -41,43 +41,51 @@ use FP::Stream ":all";
 #   where sieve (p:xs) =
 #           p : sieve [x | x <- xs, x `mod` p /= 0]
 
-func primes_naive1 () {
-    my $sieve; $sieve = func ($p_xs) {
-        my ($p,$xs) = first_and_rest $p_xs;
+func primes_naive1() {
+    my $sieve;
+    $sieve = func($p_xs) {
+        my ($p, $xs) = first_and_rest $p_xs;
         lazy {
-            cons $p, &$sieve (stream_filter func ($x) {
-                                  $x % $p != 0
-                              }, $xs)
+            cons $p, &$sieve(
+                stream_filter func($x)
+                {
+                    $x % $p != 0
+                },
+                $xs
+            )
         }
     };
+
     # XXX Weakened($sieve)
     $sieve->(stream_iota 2)
 }
 
 # or simpler, by lifting `sieve` to the toplevel:
 
-func primes_naive () {
-    sieve (stream_iota 2)
+func primes_naive() {
+    sieve(stream_iota 2)
 }
 
-func sieve ($p_xs) {
-    my ($p,$xs) = first_and_rest $p_xs;
+func sieve($p_xs) {
+    my ($p, $xs) = first_and_rest $p_xs;
     lazy {
-        cons $p, sieve (stream_filter func ($x) {
-                            $x % $p != 0
-                        }, $xs)
+        cons $p, sieve(
+            stream_filter func($x)
+            {
+                $x % $p != 0
+            },
+            $xs
+        )
     }
 }
 
-
-func t_primes ($primes) {
+func t_primes($primes) {
     TEST { stream_to_array stream_take &$primes(), 10 }
-      [2,3,5,7,11,13,17,19,23,29];
+    [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
 }
 
 t_primes \&primes_naive1;
 t_primes \&primes_naive;
-
 
 # ------------------------------------------------------------------
 # (B) Now let's use a better algorithm:
@@ -105,93 +113,121 @@ t_primes \&primes_naive;
 #     f (x:xt) ys = x : (merge xt ys)
 #     g p         = [ n * p | n <- [p, p + 2 ..]]
 
-func merge ($xs, $ys) {
+func merge($xs, $ys) {
     lazy {
-        my ($x,$xt) = first_and_rest $xs;
-        my ($y,$yt) = first_and_rest $ys;
+        my ($x, $xt) = first_and_rest $xs;
+        my ($y, $yt) = first_and_rest $ys;
 
         if ($x < $y) {
-            cons($x, merge ($xt, $ys))
-        } elsif ($x == $y) {
-            cons($x, merge ($xt, $yt))
-        } else {
-            cons($y, merge ($xs, $yt))
+            cons($x, merge($xt, $ys))
+        }
+        elsif ($x == $y) {
+            cons($x, merge($xt, $yt))
+        }
+        else {
+            cons($y, merge($xs, $yt))
         }
     }
 }
 
-func diff ($xs, $ys) {
+func diff($xs, $ys) {
     lazy {
-        my ($x,$xt) = first_and_rest $xs;
-        my ($y,$yt) = first_and_rest $ys;
+        my ($x, $xt) = first_and_rest $xs;
+        my ($y, $yt) = first_and_rest $ys;
 
         if ($x < $y) {
-            cons ($x, diff ($xt, $ys))
-        } elsif ($x == $y) {
-            diff ($xt, $yt)
-        } else {
-            diff ($xs, $yt)
+            cons($x, diff($xt, $ys))
+        }
+        elsif ($x == $y) {
+            diff($xt, $yt)
+        }
+        else {
+            diff($xs, $yt)
         }
     }
 }
 
-func primes () {
-    stream_append (array_to_list ([2, 3, 5]),
-                   diff (stream_map (func ($x) { $x*2 + 7 }, stream_iota),
-                         lazy{nonprimes()} ))
+func primes() {
+    stream_append(
+        array_to_list([2, 3, 5]),
+        diff(
+            stream_map(
+                func($x)
+                {
+                    $x * 2 + 7
+                },
+                stream_iota
+            ),
+            lazy { nonprimes() }
+        )
+    )
 }
 
-func nonprimes () {
-    my $f = func ($x_xt, $ys) {
+func nonprimes() {
+    my $f = func($x_xt, $ys) {
         my ($x, $xt) = first_and_rest $x_xt;
-        cons $x, merge ($xt, $ys)
+        cons $x, merge($xt, $ys)
     };
-    my $g = func ($p) {
-        stream_map (func ($n) { $n * $p },
-                    stream_map (func ($q) { $p + $q * 2 }, stream_iota));
+    my $g = func($p) {
+        stream_map(func($n) { $n * $p }, stream_map(func($q) { $p + $q * 2 },
+                stream_iota));
     };
     stream_foldr1 $f, stream_map $g, rest primes
 }
-
 
 # And tests...
 
 # from http://en.literateprograms.org/Sieve_of_Eratosthenes_(Haskell) :
 
-TEST { stream_to_array
-         stream_take (diff (stream_iota (1),
-                            stream_map func ($x) { $x * 2 }, stream_iota(1)),
-                      10) }
-  [1,3,5,7,9,11,13,15,17,19];
+TEST {
+    stream_to_array stream_take(
+        diff(
+            stream_iota(1),
+            stream_map func($x)
+            {
+                $x * 2
+            },
+            stream_iota(1)
+        ),
+        10
+    )
+}
+[1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
 
-TEST { stream_to_array
-         stream_take (diff (stream_iota (10),
-                            stream_map func ($x) { $x * 2 }, stream_iota(1)),
-                      10) }
-  [11,13,15,17,19,21,23,25,27,29];
+TEST {
+    stream_to_array stream_take(
+        diff(
+            stream_iota(10),
+            stream_map func($x)
+            {
+                $x * 2
+            },
+            stream_iota(1)
+        ),
+        10
+    )
+}
+[11, 13, 15, 17, 19, 21, 23, 25, 27, 29];
 
 # merge:
 
-func t_merge ($a1,$a2,$n) {
-    stream_to_array
-      stream_take (merge (array_to_stream ($a1),
-                          array_to_stream ($a2),),
-                   $n);
+func t_merge($a1, $a2, $n) {
+    stream_to_array stream_take(
+        merge(array_to_stream($a1), array_to_stream($a2),), $n);
 }
 
-TEST { t_merge [1,2,99], [3,4,99], 4 }
-  [1,2,3,4];
+TEST { t_merge [1, 2, 99], [3, 4, 99], 4 }
+[1, 2, 3, 4];
 
-TEST { t_merge [1,3,99], [3,4,99], 4 }
-  [1,3,4,99]; # not [1,3,3,4]
+TEST { t_merge [1, 3, 99], [3, 4, 99], 4 }
+[1, 3, 4, 99];    # not [1,3,3,4]
 
-TEST { t_merge [1,3,99], [2,4,99], 4 }
-  [1,2,3,4];
+TEST { t_merge [1, 3, 99], [2, 4, 99], 4 }
+[1, 2, 3, 4];
 
 # and the whole thing:
 
 t_primes \&primes;
-
 
 # Benchmarking:
 # [[times], stream_ref (primes_naive, 1000), [times]] -> 8.86 sec user time
@@ -204,5 +240,6 @@ t_primes \&primes;
 # ------------------------------------------------------------------
 # for the test suite:
 perhaps_run_tests "main" or do {
-    require FP::Repl; FP::Repl::repl();
-}
+    require FP::Repl;
+    FP::Repl::repl();
+    }

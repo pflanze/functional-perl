@@ -4,34 +4,36 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
-
 sub usage {
-    print STDERR map{"$_\n"} @_ if @_;
+    print STDERR map {"$_\n"} @_ if @_;
     print "$myname file(s)
 
   Hack to prepare an outgoing mail file (as saved in a Maildir) for
   sending through 'sendmail -t'. It simply removes and adds some mail
   headers. It replaces the given file(s) with the modified one(s).
 ";
-exit (@_ ? 1 : 0);
+    exit(@_ ? 1 : 0);
 }
 
 use Getopt::Long;
 our $verbose = 0;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage}) or exit 1;
+GetOptions("verbose" => \$verbose, "help" => sub {usage}) or exit 1;
 
 use FP::List;
 use FP::IOStream qw(xfile_replace_lines);
@@ -42,27 +44,24 @@ use Chj::TEST;
 
 # do not warn about failures to keep owner, or backups, due to
 # different user than owner
-local $Chj::IO::Tempfile::warn_all_failures= 0;
-
+local $Chj::IO::Tempfile::warn_all_failures = 0;
 
 # Split lines into head and body (at the first empty line)
 
 fun lines_head_and_body($lines) {
-    $lines->take_while_and_rest(
-        complement regex_match qr/^\n\z/s)
+    $lines->take_while_and_rest(complement regex_match qr/^\n\z/s)
 }
-
 
 # Get headers of given name; this ad-hoc mail "parser" unsafely assumes
 # that the headers we're interested in consist of one line only
 
-fun head_get ($head, $name) {
+fun head_get($head, $name) {
     $head->filter(regex_match qr/^\Q$name:/i)
 }
 
 # Get one of the headers
 
-fun head_xgetone ($head, $name) {
+fun head_xgetone($head, $name) {
     my ($header) = head_get($head, $name)->perhaps_one
         or die "missing header '$name'";
     $header
@@ -70,60 +69,57 @@ fun head_xgetone ($head, $name) {
 
 # Extract the value of a header
 
-fun header_value ($header) {
-    $header =~ s/^[^:]+://
-        or die "header line missing a key: '$header'";
+fun header_value($header) {
+    $header =~ s/^[^:]+:// or die "header line missing a key: '$header'";
     chompspace $header
 }
 
 TEST { header_value "From:  <foo\@br>\t\n" } '<foo@br>';
 
-
 sub regex_from_strings {
-    join ("|", map { quotemeta $_ } @_)
+    join("|", map { quotemeta $_ } @_)
 }
 
-my $drop_header_name_regex =
-    regex_from_strings(qw(
-                       Return-Path
-                       BCC
-                       X-K9mail-Identity
-                       User-Agent
-                       Date
-                       Message-ID));
+my $drop_header_name_regex = regex_from_strings(qw(
+    Return-Path
+    BCC
+    X-K9mail-Identity
+    User-Agent
+    Date
+Message-ID));
 
-fun fixlines ($lines) {
+fun fixlines($lines) {
     my ($head, $body) = lines_head_and_body $lines;
 
     my $from = head_xgetone $head, "From";
     my ($fromaddr) = $from =~ m@<([^<>]+)>@s
         or die "missing from address in '$from'";
-    my ($fromwhole) = $from =~ m@.?: *([^\n]*)@s
-        or die "?";
-    my ($fromdomain) = $fromaddr =~ m{\@(.*)}s
-        or die "?";
+    my ($fromwhole)  = $from     =~ m@.?: *([^\n]*)@s or die "?";
+    my ($fromdomain) = $fromaddr =~ m{\@(.*)}s        or die "?";
     my $messageid = head_xgetone $head, "Message-ID";
     my ($messageid_uuid) = header_value($messageid) =~ m{([^<>@]+)\@}s
         or die "no match in messageid '$messageid'";
-    my $bcc_values =
-        cons $fromwhole,
+    my $bcc_values = cons $fromwhole,
         head_get($head, "BCC")->map(*header_value);
 
-    (cons "Return-Path: <$fromaddr>\n",
-     cons "BCC: ".$bcc_values->strings_join(", ")."\n",
-     $head->filter_with_tail(
-         complement(regex_match("(?^i:^$drop_header_name_regex:)")),
-         cons "Message-ID: <$messageid_uuid\@$fromdomain>\n", $body))
+    (
+        cons "Return-Path: <$fromaddr>\n",
+        cons "BCC: " . $bcc_values->strings_join(", ") . "\n",
+        $head->filter_with_tail(
+            complement(regex_match("(?^i:^$drop_header_name_regex:)")),
+            cons "Message-ID: <$messageid_uuid\@$fromdomain>\n",
+            $body
+        )
+    )
 }
 
-
-fun string2lines ($str) {
-    list map { "$_\n" } split /\n/, $str
+fun string2lines($str) {
+    list map {"$_\n"} split /\n/, $str
 }
 
 TEST {
-    fixlines(string2lines
-'return-path: Hello
+    fixlines(
+        string2lines 'return-path: Hello
 from: <foo@bar.com>
 To: Heiri Hunten <heiri.hunten@example.com>
 Bcc: some@where.com
@@ -133,7 +129,8 @@ user-agent: tester
 Hi There!
 
 All good?
-')->strings_join("")
+'
+    )->strings_join("")
 }
 'Return-Path: <foo@bar.com>
 BCC: <foo@bar.com>, some@where.com
@@ -146,17 +143,16 @@ Hi There!
 All good?
 ';
 
-
-fun sendprepare ($path) {
+fun sendprepare($path) {
     xfile_replace_lines $path, *fixlines;
 }
 
-
-$ENV{DEBUG} ? do {
+$ENV{DEBUG}
+    ? do {
     require FP::Repl::Trap;
     FP::Repl::repl();
-} : do {
-    perhaps_run_tests __PACKAGE__ or
-        do { sendprepare $_ for @ARGV };
-};
+    }
+    : do {
+    perhaps_run_tests __PACKAGE__ or do { sendprepare $_ for @ARGV };
+    };
 

@@ -38,12 +38,13 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::xpipe;
 @ISA = 'Exporter';
 require Exporter;
 @EXPORT = qw(xpipe);
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::IO::Pipe;
 use Carp;
@@ -51,11 +52,12 @@ use Carp;
 sub xpipe {
     if (@_) {
         confess "form with arguments not yet supported";
-    } else {
+    }
+    else {
         my $r = new Chj::IO::Pipe;
         my $w = new Chj::IO::Pipe;
-        pipe $r,$w or croak "xpipe: $!";
-        ($r,$w)
+        pipe $r, $w or croak "xpipe: $!";
+        ($r, $w)
     }
 }
 

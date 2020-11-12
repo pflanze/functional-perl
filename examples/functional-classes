@@ -4,19 +4,22 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (non-installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
 use Test::Requires qw(Moo);
-
 
 # Comparison of imperative and functional approaches to some data
 # container:
@@ -24,24 +27,25 @@ use Test::Requires qw(Moo);
 package ImperativePerson {
     use Moo;
 
-    has name => is => 'ro';
-    has todo_items => is => 'ro'; # the array itself is the mutable part
+    has name       => is => 'ro';
+    has todo_items => is => 'ro';    # the array itself is the mutable part
 
     sub add_todo {
         my ($self, $item) = @_;
         push @{$self->{todo_items}}, $item;
     }
-    
+
 }
 
 package FunctionalPerson {
 
-    use FP::List; # for `cons`, `cons_`
+    use FP::List;                    # for `cons`, `cons_`
 
     use FP::Struct ["name", "todo_items"];
 
     sub add_todo {
         my ($self, $item) = @_;
+
         # The sub receives the old todo_items list, and returns a new
         # list with $item prepended:
         #$self->todo_items_update(sub { cons $item, $_[0] })
@@ -49,7 +53,7 @@ package FunctionalPerson {
         # cons_'s argument to its own argument:
         $self->todo_items_update(cons_ $item)
     }
-    
+
     _END_
 }
 
@@ -57,34 +61,36 @@ use Test::More;
 
 sub testImperative {
     my $p = ImperativePerson->new(name => "Chris", todo_items => []);
-    $p->add_todo ("buy bread");
-    $p->add_todo ("walk dog");
+    $p->add_todo("buy bread");
+    $p->add_todo("walk dog");
     is_deeply $p->todo_items, ['buy bread', 'walk dog'];
 }
 
-use FP::Equal qw(is_equal); # using FP::Equal's `equal` but still
-                            # reporting via Test::More
-use FP::List; # for `list`
+use FP::Equal qw(is_equal);    # using FP::Equal's `equal` but still
+                               # reporting via Test::More
+use FP::List;                  # for `list`
 
 sub testFunctional {
     my $p = FunctionalPerson->new_(name => "Chris", todo_items => list());
+
     # or, using positional arguments:
     #my $p = FunctionalPerson->new("Chris", list());
 
     # Each add_todo call returns a new version of the object, any
     # pointer to the old version still sees the original value:
-    my $p2 = $p->add_todo ("buy bread");
-    my $p3 = $p2->add_todo ("walk dog");
+    my $p2 = $p->add_todo("buy bread");
+    my $p3 = $p2->add_todo("walk dog");
     is_equal $p3->todo_items, list('walk dog', 'buy bread');
     is_equal $p2->todo_items, list('buy bread');
 }
-
 
 if ($ENV{RUN_TESTS}) {
     testImperative;
     testFunctional;
     done_testing;
-} else {
-    require FunctionalPerl; import FunctionalPerl ":repl";
+}
+else {
+    require FunctionalPerl;
+    import FunctionalPerl ":repl";
     repl();
 }

@@ -55,88 +55,88 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::IO::Command;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use base qw(
-            Chj::IO::CommandCommon
-            Chj::IO::Pipe
-            IO
-           );
-sub import {};
+    Chj::IO::CommandCommon
+    Chj::IO::Pipe
+    IO
+);
+sub import { }
 
 use Chj::xpipe;
 
-
 sub new_out {
     my $class = shift;
-    my ($r,$self) = xpipe;
-    bless $self,$class;
-    $self->xlaunch($r,0,@_)
+    my ($r, $self) = xpipe;
+    bless $self, $class;
+    $self->xlaunch($r, 0, @_)
 }
-*new_writer = *new_out;
-*new_write = *new_out;
+*new_writer   = *new_out;
+*new_write    = *new_out;
 *new_receiver = *new_out;
 
 sub new_in {
     my $class = shift;
-    my ($self,$w) = xpipe;
-    bless $self,$class;
-    $self->xlaunch($w,1,@_)
+    my ($self, $w) = xpipe;
+    bless $self, $class;
+    $self->xlaunch($w, 1, @_)
 }
 *new_reader = *new_in;
-*new_read = *new_in;
+*new_read   = *new_in;
 *new_sender = *new_in;
 
 sub new_combinedsender {
     my $class = shift;
-    my ($self,$w) = xpipe;
-    bless $self,$class;
-    $self->xlaunch3(undef,$w,$w,@_)
+    my ($self, $w) = xpipe;
+    bless $self, $class;
+    $self->xlaunch3(undef, $w, $w, @_)
 }
 
 sub new_combinedsender_with_stdin {
     my $class = shift;
     my $stdin = shift;
-    my ($self,$w) = xpipe;
-    bless $self,$class;
-    $self->xlaunch3($stdin,$w,$w,@_)
+    my ($self, $w) = xpipe;
+    bless $self, $class;
+    $self->xlaunch3($stdin, $w, $w, @_)
 }
 
 sub assume_with_maybe_stdin_stdout_stderr {
     my $class = shift;
-    @_>4 or die "not enough arguments";
+    @_ > 4 or die "not enough arguments";
     my $self = shift;
-    my $in = shift;
-    my $out = shift;
-    my $err = shift;
-    bless $self,$class;
-    $self->xlaunch3($in,$out,$err,@_)
+    my $in   = shift;
+    my $out  = shift;
+    my $err  = shift;
+    bless $self, $class;
+    $self->xlaunch3($in, $out, $err, @_)
 }
 
 sub new_err {
     my $class = shift;
-    my ($self,$w) = xpipe;
-    bless $self,$class;
-    $self->xlaunch($w,2,@_);
+    my ($self, $w) = xpipe;
+    bless $self, $class;
+    $self->xlaunch($w, 2, @_);
 }
 
 sub new_receiver_with_stderr_to_fh {
     my $class = shift;
     my $errfh = shift;
-    my ($r,$self) = xpipe;
-    bless $self,$class;
-    $self->xlaunch3($r,undef,$errfh,@_)
+    my ($r, $self) = xpipe;
+    bless $self, $class;
+    $self->xlaunch3($r, undef, $errfh, @_)
 }
 
 sub new_receiver_with_stdout_to_fh {
     my $class = shift;
     my $outfh = shift;
-    my ($r,$self) = xpipe;
-    bless $self,$class;
-    $self->xlaunch3($r,$outfh,undef,@_)
+    my ($r, $self) = xpipe;
+    bless $self, $class;
+    $self->xlaunch3($r, $outfh, undef, @_)
 }
 
 1

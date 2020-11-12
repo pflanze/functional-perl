@@ -28,22 +28,22 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::url_;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(url_);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(url_);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use URI;
 
-our @keys =
-  qw(scheme path fragment);
+our @keys = qw(scheme path fragment);
 
-our %keys =
-  map { $_ => $_ } @keys;
+our %keys = map { $_ => $_ } @keys;
 
 sub url_ {
     my $u = new URI;
@@ -56,6 +56,5 @@ sub url_ {
     }
     $u
 }
-
 
 1

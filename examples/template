@@ -4,19 +4,23 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+
 #use Function::Parameters qw(:strict);
 #use Sub::Call::Tail;
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
-
 
 sub usage {
     print "usage: $myname ...
@@ -26,11 +30,8 @@ sub usage {
 
 use Getopt::Long;
 our $verbose = 0;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           ) or exit 1;
+GetOptions("verbose" => \$verbose, "help" => sub {usage},) or exit 1;
 usage if @ARGV;
-
 
 # example module use:
 use FP::List ":all";
@@ -40,7 +41,7 @@ use Chj::TEST;
 
 # for development/debugging
 use Chj::ruse;
-use FP::Repl::Trap; # or Chj::Backtrace
+use FP::Repl::Trap;    # or Chj::Backtrace
 use FP::Repl;
 
 # add your own code.... (possibly adding `repl` calls within, too;

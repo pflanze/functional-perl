@@ -202,81 +202,87 @@ package Chj::xperlfunc;
 @ISA = "Exporter";
 require Exporter;
 @EXPORT = qw(
-           xfork
-           xfork_
-           xexec
-           xexec_safe
-           xsystem
-           xxsystem
-           xsystem_safe
-           xxsystem_safe
-           xrename
-           xmkdir
-           xrmdir
-           xchmod
-           xchown
-           xchdir
-           xstat
-           xlstat
-           Xstat
-           Xlstat
-           xlocaltime
-           xreadlink
-           xunlink
-           xlink
-           xsymlink
-           xutime
-           xkill
-           xeval
-           xwaitpid
-           xxwaitpid
-           xwait
-           xxwait
-           xsysread
-           xchroot
-          );
+    xfork
+    xfork_
+    xexec
+    xexec_safe
+    xsystem
+    xxsystem
+    xsystem_safe
+    xxsystem_safe
+    xrename
+    xmkdir
+    xrmdir
+    xchmod
+    xchown
+    xchdir
+    xstat
+    xlstat
+    Xstat
+    Xlstat
+    xlocaltime
+    xreadlink
+    xunlink
+    xlink
+    xsymlink
+    xutime
+    xkill
+    xeval
+    xwaitpid
+    xxwaitpid
+    xwait
+    xxwait
+    xsysread
+    xchroot
+);
 @EXPORT_OK = qw(
-              xspawn
-              xlaunch
-              xmvmkdir
-              xmkdir_with_paragon
-              xtmpdir_with_paragon
-              xlinkunlink
-              xlinkreplace
-              xxcarefulrename
-              xfileno
-              basename
-              dirname
-              xmkdir_p
-              xlink_p
-              xgetpwnam
-              xgetgrnam
-              caching_getpwnam
-              caching_getgrnam
-              xprint
-              xprintln
-              xLmtimed
-              XLmtimed
-              xLmtime
-              XLmtime
-              min max
-              fstype_for_device
-              xgetfile_utf8 xslurp
-            );
-              # would we really want to export these?:
-              #caching_getpwuid
-              #caching_getgrgid
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+    xspawn
+    xlaunch
+    xmvmkdir
+    xmkdir_with_paragon
+    xtmpdir_with_paragon
+    xlinkunlink
+    xlinkreplace
+    xxcarefulrename
+    xfileno
+    basename
+    dirname
+    xmkdir_p
+    xlink_p
+    xgetpwnam
+    xgetgrnam
+    caching_getpwnam
+    caching_getgrnam
+    xprint
+    xprintln
+    xLmtimed
+    XLmtimed
+    xLmtime
+    XLmtime
+    min max
+    fstype_for_device
+    xgetfile_utf8 xslurp
+);
+
+# would we really want to export these?:
+#caching_getpwuid
+#caching_getgrgid
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Carp;
-use Chj::singlequote 'singlequote_many'; # the only dependency so far
+use Chj::singlequote 'singlequote_many';    # the only dependency so far
 use Chj::Unix::Exitcode qw(exitcode);
 
 BEGIN {
     if ($^O eq 'linux') {
-        eval 'sub EEXIST() {17} sub ENOENT() {2}'; die if $@;
-    } else {
-        eval 'use POSIX "EEXIST","ENOENT"'; die if $@;
+        eval 'sub EEXIST() {17} sub ENOENT() {2}';
+        die if $@;
+    }
+    else {
+        eval 'use POSIX "EEXIST","ENOENT"';
+        die if $@;
     }
 }
 
@@ -292,11 +298,13 @@ sub xfork_(&) {
     my $pid = xfork;
     if ($pid) {
         $pid
-    } else {
+    }
+    else {
         # kinda run in a new dynamic context, please... (evil,
         # e.g. $SIG{__WARN__} is still set; do all of this?)
         eval {
             &$thunk();
+
             # drop return value (transfer via pipe? 'No.')
             exit 0;
         } || do {
@@ -309,242 +317,250 @@ sub xfork_(&) {
 sub xexec {
     no warnings;
     exec @_;
-    croak "xexec ".singlequote_many(@_).": $!";
+    croak "xexec " . singlequote_many(@_) . ": $!";
 }
 
 sub xexec_safe {
     no warnings;
-    exec { $_[0] } @_;
-    croak "xexec_safe ".singlequote_many(@_).": $!";
+    exec {$_[0]} @_;
+    croak "xexec_safe " . singlequote_many(@_) . ": $!";
 }
-
 
 sub xspawn {
     croak "xspawn: too few arguments" unless @_;
-    local $^F=0;
-    pipe READ,WRITE or die "pipe: $!";
+    local $^F = 0;
+    pipe READ, WRITE or die "pipe: $!";
     if (my $pid = xfork) {
         close WRITE;
-        local $_; #local $/; not really necessary
-        while (<READ>){
+        local $_;    #local $/; not really necessary
+        while (<READ>) {
             close READ;
             croak "xspawn: can't exec \"$_[0]\": $_";
         }
         close READ;
         return $pid;
-    } else {
+    }
+    else {
         no warnings;
         close READ;
         exec @_;
-        select WRITE; $|=1;
+        select WRITE;
+        $| = 1;
         print $!;
         exit;
     }
 }
 
-sub xlaunch { ## NA: todo: noch nicht fertig, insbesondere geht kommunikation exec failure nich bis zum parent.
+sub xlaunch
+{ ## NA: todo: noch nicht fertig, insbesondere geht kommunikation exec failure nich bis zum parent.
     my $pid = xfork;
     if ($pid) {
-        waitpid $pid,0; # !
-    } else {
+        waitpid $pid, 0;    # !
+    }
+    else {
         # evtl. set session zeugs.
         xspawn @_;
-        exit; # !
+        exit;               # !
     }
 }
 
 sub xsystem {
-    @_>0 or croak "xsystem: missing arguments";
+    @_ > 0 or croak "xsystem: missing arguments";
     no warnings;
-    (system @_) >= 0
-      or croak "xsystem: could not start command '$_[0]': $!";
+    (system @_) >= 0 or croak "xsystem: could not start command '$_[0]': $!";
     $?
 }
 
 sub xxsystem {
-    @_>0 or croak "xxsystem: missing arguments";
+    @_ > 0 or croak "xxsystem: missing arguments";
     no warnings;
-    (system @_) >= 0
-      or croak "xxsystem: could not start command '$_[0]': $!";
+    (system @_) >= 0 or croak "xxsystem: could not start command '$_[0]': $!";
     $? == 0
-      or croak "xxsystem: process '$_[0]' terminated with ".exitcode($?);
+        or croak "xxsystem: process '$_[0]' terminated with " . exitcode($?);
 }
 
 sub xsystem_safe {
-    @_>0 or croak "xsystem_safe: missing arguments";
+    @_ > 0 or croak "xsystem_safe: missing arguments";
     no warnings;
-    (system { $_[0] } @_) >= 0
-      or croak "xsystem_safe: could not start command '$_[0]': $!";
+    (system {$_[0]} @_) >= 0
+        or croak "xsystem_safe: could not start command '$_[0]': $!";
     $?
 }
 
 sub xxsystem_safe {
-    @_>0 or croak "xxsystem_safe: missing arguments";
+    @_ > 0 or croak "xxsystem_safe: missing arguments";
     no warnings;
-    (system { $_[0] } @_) >= 0
-      or croak "xxsystem_safe: could not start command '$_[0]': $!";
-    $? == 0
-      or croak "xxsystem_safe: process terminated with ".exitcode($?);
+    (system {$_[0]} @_) >= 0
+        or croak "xxsystem_safe: could not start command '$_[0]': $!";
+    $? == 0 or croak "xxsystem_safe: process terminated with " . exitcode($?);
 }
 
 sub xwaitpid ( $ ; $ ) {
-    my ($pid,$flags) = @_;
+    my ($pid, $flags) = @_;
     defined $flags or $flags = 0;
-    my $kid = waitpid $pid,$flags;
-    die "xwaitpid ($pid,$flags): no child process" if $kid<0;
+    my $kid = waitpid $pid, $flags;
+    die "xwaitpid ($pid,$flags): no child process" if $kid < 0;
+
     # ^ "no such child" but pid -1 is okay right? so..
     #$? # hm drop $kid?  build tuple?   ?
     $kid
 }
 
 sub xxwaitpid ( $ ; $ ) {
-    my ($pid,$flags) = @_;
+    my ($pid, $flags) = @_;
     defined $flags or $flags = 0;
-    my $kid = xwaitpid $pid,$flags;
+    my $kid = xwaitpid $pid, $flags;
     $? == 0
         or die "xxwaitpid ($pid,$flags): child process terminated with "
-        .exitcode($?);
+        . exitcode($?);
     $kid
 }
 
 sub xwait {
     @_ == 0 or croak "xwait: expecting 0 arguments";
     my $kid = wait;
-    defined $kid or die "xwait: $!";# when can this happen? EINTR?
+    defined $kid or die "xwait: $!";    # when can this happen? EINTR?
     wantarray ? ($kid, $?) : $kid
 }
 
 sub xxwait {
     @_ == 0 or croak "xxwait: expecting 0 arguments";
     my $kid = wait;
-    defined $kid or die "xxwait: $!";# when can this happen? EINTR?
+    defined $kid or die "xxwait: $!";    # when can this happen? EINTR?
     my $status = $?;
     $status == 0
-        or die "xxwait: child process $kid terminated with ".exitcode($?);
+        or die "xxwait: child process $kid terminated with " . exitcode($?);
     $kid
 }
 
 sub xrename {
     @_ == 2 or croak "xrename: wrong number of arguments";
-    rename $_[0],$_[1]
-      or croak "xrename(".join(", ",@_)."): $!";
+    rename $_[0], $_[1] or croak "xrename(" . join(", ", @_) . "): $!";
 }
 
 sub xlinkunlink {
     @_ == 2 or croak "xlinkunlink: wrong number of arguments";
-    link $_[0],$_[1]
-        or croak "xlinkunlink(".join(", ",@_)."): can't link to target: $!";
-    unlink $_[0]
-        or do {
-            my $err = "$!";
-            my $res = unlink $_[1];
-            # ^ could this ever be dangerous? answer is yes. does it bother me?
-            if ($res) {
-                croak "xlinkunlink(".join(", ",@_)
-                    ."): can't unlink source: $err, so removed target again";
-            } else {
-                croak "xlinkunlink(".join(", ",@_)
-                    ."): can't unlink source: $err, "
-                    ."additionally an error occured while trying to unlink "
-                    ."the target again: $!";
-            }
-        };
+    link $_[0], $_[1]
+        or croak "xlinkunlink("
+        . join(", ", @_)
+        . "): can't link to target: $!";
+    unlink $_[0] or do {
+        my $err = "$!";
+        my $res = unlink $_[1];
+
+        # ^ could this ever be dangerous? answer is yes. does it bother me?
+        if ($res) {
+            croak "xlinkunlink("
+                . join(", ", @_)
+                . "): can't unlink source: $err, so removed target again";
+        }
+        else {
+            croak "xlinkunlink("
+                . join(", ", @_)
+                . "): can't unlink source: $err, "
+                . "additionally an error occured while trying to unlink "
+                . "the target again: $!";
+        }
+    };
 }
 
 # Since xlinkunlink doesn't work for directories, or not always under
 # grsec: (But note: it's careful, not guaranteed to be safe.)
 sub xxcarefulrename {
     @_ == 2 or croak "xxcarefulrename: wrong number of arguments";
-    my ($source,$dest) = @_;
-    if (link $source,$dest) {
-        unlink $source
-        or do {
+    my ($source, $dest) = @_;
+    if (link $source, $dest) {
+        unlink $source or do {
             my $err = "$!";
             my $res = unlink $dest;
+
             # ^ could this ever be dangerous? answer is yes. does it bother me?
             if ($res) {
-                croak "xxcarefulrename(".join(", ",@_)
-                    ."): can't unlink source: $err, so removed target again";
+                croak "xxcarefulrename("
+                    . join(", ", @_)
+                    . "): can't unlink source: $err, so removed target again";
+
                 # note: no need to goto rename-branch, since the
                 # difficult cases either won't come here (grsec
                 # hardlink restriction) or won't be helped by rename
                 # (non-owned source file in sticky source dir (we're
                 # not even talking about the case where both source
                 # and target are in sticky dirs..)).
-            } else {
-                croak "xxcarefulrename(".join(", ",@_)
-                    ."): can't unlink source: $err, additionally an error "
-                    ."occured while trying to unlink the target again: $!";
+            }
+            else {
+                croak "xxcarefulrename("
+                    . join(", ", @_)
+                    . "): can't unlink source: $err, additionally an error "
+                    . "occured while trying to unlink the target again: $!";
             }
         };
-    } else {
+    }
+    else {
         if (lstat $dest) {
+
             # (yes, link too already fails if target exists as a
             # dangling symlink)
             croak "xxcarefulrename: target '$dest' already exists";
         }
         else {
-            rename $source,$dest
-              or croak "xxcarefulrename(".join(", ",@_)."): $!";
+            rename $source, $dest
+                or croak "xxcarefulrename(" . join(", ", @_) . "): $!";
         }
     }
 }
-
 
 sub xlinkreplace {
     @_ == 2 or croak "xlinkreplace: wrong number of arguments";
-    my ($source,$dest) = @_;
+    my ($source, $dest) = @_;
     ## schon wieder dieser temporary try mechanismus. sollte ich dringend eine generische func oder ein makro dafür haben theoretisch
-    # nun im gegensatz zu Tempfile.pm brauchen wir kein eval hier. Aber auch das waer ja per func/macro machbar
+# nun im gegensatz zu Tempfile.pm brauchen wir kein eval hier. Aber auch das waer ja per func/macro machbar
     my $path;
-  TRY: {
-        for (1..3) {
-            $ != 0;
-            my $rand = int(rand(99999)*100000+rand(99999));
+TRY: {
+        for (1 .. 3) {
+            $! = 0;
+            my $rand = int(rand(99999) * 100000 + rand(99999));
+
             # well, not good enough for dangerous cases nor reasonable for
             # non-dangerous cases?
             $path = "$source.tmp$rand~";
-            last TRY if link $source,$path;
+            last TRY if link $source, $path;
         }
         croak "xlinkreplace: failed 3 attempts to create hardlinks from "
-            ."'$source' to e.g. '$path': $!";
+            . "'$source' to e.g. '$path': $!";
     }
-    rename $path,$dest
-      or croak "xlinkreplace: could not rename '$path' to '$dest': $!";
+    rename $path, $dest
+        or croak "xlinkreplace: could not rename '$path' to '$dest': $!";
 }
-
 
 sub xmkdir {
     if (@_ == 1) {
-        mkdir $_[0]
-          or croak "xmkdir($_[0]): $!";
-    } elsif (@_ == 2) {
-        mkdir $_[0],$_[1]
-          or croak "xmkdir(".join(", ",@_)."): $!";
-    } else {
+        mkdir $_[0] or croak "xmkdir($_[0]): $!";
+    }
+    elsif (@_ == 2) {
+        mkdir $_[0], $_[1] or croak "xmkdir(" . join(", ", @_) . "): $!";
+    }
+    else {
         croak "xmkdir: wrong number of arguments";
     }
 }
 
 sub xrmdir {
     if (@_ == 1) {
-        rmdir $_[0]
-          or croak "xrmdir($_[0]): $!";
-    } else {
+        rmdir $_[0] or croak "xrmdir($_[0]): $!";
+    }
+    else {
         croak "xrmdir: wrong number of arguments";
     }
 }
 
 sub xchmod {
-    @_ >= 1 or croak "xchmod: not enoug arguments"; # should it be >1?
-    chmod shift,@_
-      or croak "xchmod: $!";
+    @_ >= 1 or croak "xchmod: not enoug arguments";    # should it be >1?
+    chmod shift, @_ or croak "xchmod: $!";
 }
 
 sub xchown {
-    @_ >= 2 or croak "xchown: not enoug arguments"; # should it be >2?
-    chown shift,shift,@_
-      or croak "xchown: $!";
+    @_ >= 2 or croak "xchown: not enoug arguments";    # should it be >2?
+    chown shift, shift, @_ or croak "xchown: $!";
 }
 
 sub xchdir {
@@ -555,18 +571,21 @@ our $time_hires = 0;
 
 sub stat_possiblyhires {
     if ($time_hires) {
-        require Time::HiRes; # (that's not slow, right?)
+        require Time::HiRes;    # (that's not slow, right?)
         if (@_) {
             @_ == 1 or die "wrong number of arguments";
             Time::HiRes::stat($_[0])
-        } else {
+        }
+        else {
             Time::HiRes::stat($_)
         }
-    } else {
+    }
+    else {
         if (@_) {
             @_ == 1 or die "wrong number of arguments";
             stat($_[0])
-        } else {
+        }
+        else {
             stat($_)
         }
     }
@@ -578,14 +597,17 @@ sub lstat_possiblyhires {
         if (@_) {
             @_ == 1 or die "wrong number of arguments";
             Chj::Linux::HiRes::lstat($_[0])
-        } else {
+        }
+        else {
             Chj::Linux::HiRes::lstat($_)
         }
-    } else {
+    }
+    else {
         if (@_) {
             @_ == 1 or die "wrong number of arguments";
             lstat($_[0])
-        } else {
+        }
+        else {
             lstat($_)
         }
     }
@@ -595,12 +617,13 @@ sub xstat {
     my @r;
     @_ <= 1 or croak "xstat: too many arguments";
     @r = stat_possiblyhires(@_ ? @_ : $_);
-    @r or croak (@_ ? "xstat: '@_': $!" : "xstat: '$_': $!");
+    @r or croak(@_ ? "xstat: '@_': $!" : "xstat: '$_': $!");
     if (wantarray) {
         @r
-    } elsif (defined wantarray) {
+    }
+    elsif (defined wantarray) {
         my $self = \@r;
-        bless $self,'Chj::xperlfunc::xstat'
+        bless $self, 'Chj::xperlfunc::xstat'
     }
 }
 
@@ -608,12 +631,13 @@ sub xlstat {
     my @r;
     @_ <= 1 or croak "xlstat: too many arguments";
     @r = lstat_possiblyhires(@_ ? @_ : $_);
-    @r or croak (@_ ? "xlstat: '@_': $!" : "xlstat: '$_': $!");
+    @r or croak(@_ ? "xlstat: '@_': $!" : "xlstat: '$_': $!");
     if (wantarray) {
         @r
-    } elsif (defined wantarray) {
+    }
+    elsif (defined wantarray) {
         my $self = \@r;
-        bless $self,'Chj::xperlfunc::xstat'
+        bless $self, 'Chj::xperlfunc::xstat'
     }
 }
 
@@ -624,18 +648,21 @@ sub Xstat {
     @_ <= 1 or croak "Xstat: too many arguments";
     @r = stat_possiblyhires(@_ ? @_ : $_);
     @r or do {
-        if ($!== ENOENT) {
+        if ($! == ENOENT) {
             return;
-        } else {
-            croak (@_ ? "Xstat: '@_': $!" : "Xstat: '$_': $!");
+        }
+        else {
+            croak(@_ ? "Xstat: '@_': $!" : "Xstat: '$_': $!");
         }
     };
     if (wantarray) {
         cluck "Xstat call in array context doesn't make sense";
         @r
-    } elsif (defined wantarray) {
-        bless \@r,'Chj::xperlfunc::xstat'
-    } else {
+    }
+    elsif (defined wantarray) {
+        bless \@r, 'Chj::xperlfunc::xstat'
+    }
+    else {
         cluck "Xstat call in void context doesn't make sense";
     }
 }
@@ -648,20 +675,22 @@ sub Xlstat {
     @r or do {
         if ($accept_errors or $! == ENOENT) {
             return;
-        } else {
-            croak ("Xlstat: '$path': $!");
+        }
+        else {
+            croak("Xlstat: '$path': $!");
         }
     };
     if (wantarray) {
         cluck "Xlstat call in array context doesn't make sense";
         @r
-    } elsif (defined wantarray) {
-        bless \@r,'Chj::xperlfunc::xstat'
-    } else {
+    }
+    elsif (defined wantarray) {
+        bless \@r, 'Chj::xperlfunc::xstat'
+    }
+    else {
         cluck "Xlstat call in void context doesn't make sense";
     }
 }
-
 
 # caching variants of perlfuncs:
 
@@ -673,78 +702,89 @@ sub mk_caching_getANYid {
         my ($id) = @_;
         if (defined $id) {
             my $v;
-            if (not defined ($v = $cache{$id})) {
-                $v = [
-                     &$function ($id)
-                    ];
+            if (not defined($v = $cache{$id})) {
+                $v = [&$function($id)];
                 $cache{$id} = $v;
             }
             wantarray ? @$v : $$v[$scalarindex]
-        } else {
+        }
+        else {
             croak "$methodname: got undefined value";
         }
     }
 }
-*caching_getpwuid = mk_caching_getANYid (sub{getpwuid $_[0]}, 0, "caching_getpwuid");
-*caching_getgrgid = mk_caching_getANYid (sub{getgrgid $_[0]}, 0, "caching_getgrgid");
+*caching_getpwuid
+    = mk_caching_getANYid(sub { getpwuid $_[0] }, 0, "caching_getpwuid");
+*caching_getgrgid
+    = mk_caching_getANYid(sub { getgrgid $_[0] }, 0, "caching_getgrgid");
 
-*caching_getpwnam = mk_caching_getANYid (sub{getpwnam $_[0]}, 2, "caching_getpwnam");
-*caching_getgrnam = mk_caching_getANYid (sub{getgrnam $_[0]}, 2, "caching_getgrnam");
-
+*caching_getpwnam
+    = mk_caching_getANYid(sub { getpwnam $_[0] }, 2, "caching_getpwnam");
+*caching_getgrnam
+    = mk_caching_getANYid(sub { getgrnam $_[0] }, 2, "caching_getgrnam");
 
 our $fstype_for_device;
 
 sub fstype_for_device_init() {
-    open my $mounts, "<", "/proc/mounts"
-        or die "/proc/mounts: $!";
-    local $ /= "\n";
+    open my $mounts, "<", "/proc/mounts" or die "/proc/mounts: $!";
+    local $/ = "\n";
     my %t;
     while (<$mounts>) {
         my @f = split / /, $_;
         my ($_dev, $mountpoint, $fstype) = @f;
-        if (($fstype eq "rootfs"
-             # stupid Linux, not only source but also fs type is shown
-             # as rootfs.
-            ) or
-            ($fstype eq "autofs"
-             # more stupid: entry with systemd-1 source, then later
-             # with binfmt_misc source and fstype
-            )) {
+        if (
+            (
+                $fstype eq "rootfs"
+
+                # stupid Linux, not only source but also fs type is shown
+                # as rootfs.
+            )
+            or (
+                $fstype eq "autofs"
+
+                # more stupid: entry with systemd-1 source, then later
+                # with binfmt_misc source and fstype
+            )
+            )
+        {
             # Ignore and count on the second entry from /proc/mounts
             # for the same mount.
-        } else {
-            if (defined (my $s = Xlstat($mountpoint, 1))) {
+        }
+        else {
+            if (defined(my $s = Xlstat($mountpoint, 1))) {
                 my $dev = $s->dev;
                 if (defined $t{$dev}) {
                     $t{$dev} eq $fstype
-                      or die "entry for '$dev' was previously set to '$t{$dev}', now '$fstype'";
+                        or die
+                        "entry for '$dev' was previously set to '$t{$dev}', now '$fstype'";
                 }
                 $t{$s->dev} = $fstype;
             }
         }
+
         # else silently ignore, presumably the fs should be reachable
         # at another location then, or the $dev in question would
         # never be found by that user. OK?
     }
-    close $mounts
-        or die $!;
+    close $mounts or die $!;
     $fstype_for_device = \%t;
 }
 
 sub fstype_for_device($) {
     my ($dev) = @_;
     my $t = $fstype_for_device->{$dev};
-    if (! defined $t) {
+    if (!defined $t) {
         fstype_for_device_init;
         $t = $fstype_for_device->{$dev};
     }
-    defined $t
-        or die "no fstype found for device $dev";
+    defined $t or die "no fstype found for device $dev";
     $t
 }
 
 {
+
     package Chj::xperlfunc::xstat;
+
     # (Alternative to arrays: hashes, so that slices like
     # ->{"dev","ino"} could be done? But so what.)
     sub dev     { shift->[0] }
@@ -761,61 +801,62 @@ sub fstype_for_device($) {
     sub blksize { shift->[11] }
     sub blocks  { shift->[12] }
 
-    sub set_dev     { my $s = shift; ($s->[0]) = @_; }
-    sub set_ino     { my $s = shift; ($s->[1]) = @_; }
-    sub set_mode    { my $s = shift; ($s->[2]) = @_; }
-    sub set_nlink   { my $s = shift; ($s->[3]) = @_; }
-    sub set_uid     { my $s = shift; ($s->[4]) = @_; }
-    sub set_gid     { my $s = shift; ($s->[5]) = @_; }
-    sub set_rdev    { my $s = shift; ($s->[6]) = @_; }
-    sub set_size    { my $s = shift; ($s->[7]) = @_; }
-    sub set_atime   { my $s = shift; ($s->[8]) = @_; }
-    sub set_mtime   { my $s = shift; ($s->[9]) = @_; }
+    sub set_dev     { my $s = shift; ($s->[0])  = @_; }
+    sub set_ino     { my $s = shift; ($s->[1])  = @_; }
+    sub set_mode    { my $s = shift; ($s->[2])  = @_; }
+    sub set_nlink   { my $s = shift; ($s->[3])  = @_; }
+    sub set_uid     { my $s = shift; ($s->[4])  = @_; }
+    sub set_gid     { my $s = shift; ($s->[5])  = @_; }
+    sub set_rdev    { my $s = shift; ($s->[6])  = @_; }
+    sub set_size    { my $s = shift; ($s->[7])  = @_; }
+    sub set_atime   { my $s = shift; ($s->[8])  = @_; }
+    sub set_mtime   { my $s = shift; ($s->[9])  = @_; }
     sub set_ctime   { my $s = shift; ($s->[10]) = @_; }
     sub set_blksize { my $s = shift; ($s->[11]) = @_; }
     sub set_blocks  { my $s = shift; ($s->[12]) = @_; }
 
     # test helpers:
-    sub permissions { shift->[2] & 07777 }
-    sub permissions_oct { sprintf('%o',shift->permissions) }
-    sub permissions_u { (shift->[2] & 00700) >> 6 }
-    sub permissions_g { (shift->[2] & 00070) >> 3 }
-    sub permissions_o { shift->[2] & 00007 }
-    sub permissions_s { (shift->[2] & 07000) >> 9 }
-    sub setuid { !!(shift->[2] & 04000) }
-    # ^ I have no desire to put is_ in front.
-    sub setgid { !!(shift->[2] & 02000) }
-    sub sticky { !!(shift->[2] & 01000) }
-    sub filetype { (shift->[2] & 0170000) >> 12 } # 4*3bits
+    sub permissions     { shift->[2] & 07777 }
+    sub permissions_oct { sprintf('%o', shift->permissions) }
+    sub permissions_u   { (shift->[2] & 00700) >> 6 }
+    sub permissions_g   { (shift->[2] & 00070) >> 3 }
+    sub permissions_o   { shift->[2] & 00007 }
+    sub permissions_s   { (shift->[2] & 07000) >> 9 }
+    sub setuid          { !!(shift->[2] & 04000) }
 
+    # ^ I have no desire to put is_ in front.
+    sub setgid   { !!(shift->[2] & 02000) }
+    sub sticky   { !!(shift->[2] & 01000) }
+    sub filetype { (shift->[2] & 0170000) >> 12 }    # 4*3bits
 
     sub fstype {
         my $s = shift;
         Chj::xperlfunc::fstype_for_device($s->dev)
     }
 
-    our $has_no_subdirs_safe_fstype =
-        +{
-            ext2 => 1,
-            ext3 => 1,
-            ext4 => 1,
-            tmpfs => 1,
-            vfat => 1,
-            squashfs => 1,
-            overlay => 0,
-         };
+    our $has_no_subdirs_safe_fstype = +{
+        ext2     => 1,
+        ext3     => 1,
+        ext4     => 1,
+        tmpfs    => 1,
+        vfat     => 1,
+        squashfs => 1,
+        overlay  => 0,
+    };
 
     sub has_no_subdirs {
         my $s = shift;
-        $s->is_dir
-            or die "has_no_subdirs can only be used on directories";
-        my $dev = $s->dev;
+        $s->is_dir or die "has_no_subdirs can only be used on directories";
+        my $dev    = $s->dev;
         my $fstype = $s->fstype;
         if ($$has_no_subdirs_safe_fstype{$fstype}) {
             my $n = $s->nlink;
-            $n < 2 ? die "bug: dir on device node $dev has < 2 links, need to ignore this file system"
-              : $n == 2;
-        } else {
+            $n < 2
+                ? die
+                "bug: dir on device node $dev has < 2 links, need to ignore this file system"
+                : $n == 2;
+        }
+        else {
             undef
         }
     }
@@ -826,63 +867,70 @@ sub fstype_for_device($) {
     # Also NOTE: this does not check parent folders of this item!
     sub checkaccess_for_submask_by_uid_gids {
         my $s = shift;
-        my ($mod,$uid,$gids) = @_; # the latter being an array ref!
-        #return 1 if $uid == 0;
-        #  ^ this is not correct for say, is_executable with uid 0;
-        #    XXX how should it behave in other cases?
+        my ($mod, $uid, $gids) = @_;    # the latter being an array ref!
+            #return 1 if $uid == 0;
+            #  ^ this is not correct for say, is_executable with uid 0;
+            #    XXX how should it behave in other cases?
         if ($s->[4] == $uid) {
             return !!($s->[2] & (00100 * $mod))
-        } else {
+        }
+        else {
             if ($gids) {
                 for my $gid (@$gids) {
-                    length($gid) == length($gid+0)
+                    length($gid) == length($gid + 0)
                         or Carp::croak "invalid gid argument '$gid' - maybe "
-                        ." you forgot to split '\$)'?";
+                        . " you forgot to split '\$)'?";
+
                     # XXX: what if one is member of group 0, is this special?
                     if ($s->[5] == $gid) {
                         if ($s->[2] & (00010 * $mod)) {
                             return 1;
-                        } else {
+                        }
+                        else {
                             # even if others are allowed, we are not
                             return 0;
                         }
                     }
                 }
                 return !!($s->[2] & (00001 * $mod))
-            } else {
+            }
+            else {
                 Carp::croak "missing gids argument - might just be a ref to "
-                    ."an empty array";
+                    . "an empty array";
             }
         }
     }
+
     sub readable_by_uid_gids {
-        splice @_,1,0,4;
+        splice @_, 1, 0, 4;
         goto &checkaccess_for_submask_by_uid_gids;
     }
+
     sub writeable_by_uid_gids {
-        splice @_,1,0,2;
+        splice @_, 1, 0, 2;
         goto &checkaccess_for_submask_by_uid_gids;
     }
     *writable_by_uid_gids = *writeable_by_uid_gids;
+
     sub executable_by_uid_gids {
-        splice @_,1,0,1;
+        splice @_, 1, 0, 1;
         goto &checkaccess_for_submask_by_uid_gids;
     }
 
     sub Filetype_is_file { shift == 8 }
-    sub is_file { Filetype_is_file(shift->filetype) } # call it is_normalfile ?
-    sub Filetype_is_dir { shift == 4 }
-    sub is_dir { Filetype_is_dir(shift->filetype) }
+    sub is_file { Filetype_is_file(shift->filetype) }  # call it is_normalfile ?
+    sub Filetype_is_dir  { shift == 4 }
+    sub is_dir           { Filetype_is_dir(shift->filetype) }
     sub Filetype_is_link { shift == 10 }
-    sub is_link { Filetype_is_link(shift->filetype) }
+    sub is_link          { Filetype_is_link(shift->filetype) }
     *is_symlink = \&is_link;
-    sub Filetype_is_socket { shift == 12 }
-    sub is_socket { Filetype_is_socket(shift->filetype) }
-    sub Filetype_is_chardevice { shift == 2 }
-    sub is_chardevice { Filetype_is_chardevice(shift->filetype) }
+    sub Filetype_is_socket      { shift == 12 }
+    sub is_socket               { Filetype_is_socket(shift->filetype) }
+    sub Filetype_is_chardevice  { shift == 2 }
+    sub is_chardevice           { Filetype_is_chardevice(shift->filetype) }
     sub Filetype_is_blockdevice { shift == 6 }
-    sub is_blockdevice { Filetype_is_blockdevice(shift->filetype) }
-    sub Filetype_is_pipe { shift == 1 } # or call it is_fifo?
+    sub is_blockdevice          { Filetype_is_blockdevice(shift->filetype) }
+    sub Filetype_is_pipe { shift == 1 }                # or call it is_fifo?
     sub is_pipe { Filetype_is_pipe(shift->filetype) }
 
     # (See NOTE on checkaccess_for_submask_by_uid_gids!)
@@ -891,69 +939,73 @@ sub fstype_for_device($) {
         my ($maybe_allow_dirs, $maybe_uid, $maybe_gids) = @_;
 
         my $allow_dirs = $maybe_allow_dirs // 1;
-        my $uid = $maybe_uid // $>;
-        my $gids = $maybe_gids // [split / /, $) ];
+        my $uid        = $maybe_uid        // $>;
+        my $gids       = $maybe_gids       // [split / /, $)];
 
         (($s->is_file or ($allow_dirs and $s->is_dir))
-         and
-         $s->executable_by_uid_gids($uid, $gids))
+                and $s->executable_by_uid_gids($uid, $gids))
     }
 
     sub type {
         my $s = shift;
-        if ($s->is_dir) { "dir" }
-        elsif ($s->is_link) { "link" }
-        elsif ($s->is_file) { "file" }
-        elsif ($s->is_socket) { "socket" }
-        elsif ($s->is_chardevice) { "chardevice" }
-        elsif ($s->is_blockdevice) { "blockdevice" }
-        elsif ($s->is_pipe) { "pipe" }
-        else { die "unknown type of filetype: ".$s->filetype }
+        if    ($s->is_dir)         {"dir"}
+        elsif ($s->is_link)        {"link"}
+        elsif ($s->is_file)        {"file"}
+        elsif ($s->is_socket)      {"socket"}
+        elsif ($s->is_chardevice)  {"chardevice"}
+        elsif ($s->is_blockdevice) {"blockdevice"}
+        elsif ($s->is_pipe)        {"pipe"}
+        else { die "unknown type of filetype: " . $s->filetype }
     }
 
     # check whether "a file has changed"
     sub equal_content {
         my $s = shift;
         my ($s2) = @_;
-        ($s->dev == $s2->dev
-         and $s->ino == $s2->ino
-         and $s->size == $s2->size
-         and $s->mtime == $s2->mtime)
+        (           $s->dev == $s2->dev
+                and $s->ino == $s2->ino
+                and $s->size == $s2->size
+                and $s->mtime == $s2->mtime)
     }
+
     # Could also implement FP::Abstract::Equal, but do not just use
     # the following *equal for it, rather check *all* the fields!
     sub equal {
         my $s = shift;
         my ($s2) = @_;
+
         # permissions:
-        ($s->equal_content($s2)
-         and $s->mode == $s2->mode
-         and $s->uid == $s2->uid
-         and $s->gid == $s2->gid
-        )
+        (           $s->equal_content($s2)
+                and $s->mode == $s2->mode
+                and $s->uid == $s2->uid
+                and $s->gid == $s2->gid)
     }
+
     sub same_node {
         my $s = shift;
         my ($s2) = @_;
-        ($s->ino == $s2->ino
-         and $s->dev == $s2->dev)
+        ($s->ino == $s2->ino and $s->dev == $s2->dev)
     }
-    # for simplicity (and in cases where I copy values in 'rows' (lists of methods)):
-    # ATTENTION: these are non-caching! see below.
+
+# for simplicity (and in cases where I copy values in 'rows' (lists of methods)):
+# ATTENTION: these are non-caching! see below.
     sub username {
         my $s = shift;
         scalar $s->getpw
     }
+
     sub groupname {
         my $s = shift;
         scalar $s->getgr
     }
+
     # note that those are sensitive to list context!:
     # (and yes those should 'probably' return such objects as these, too..)
     sub getpw {
         my $s = shift;
         getpwuid($s->uid)
     }
+
     sub getgr {
         my $s = shift;
         getgrgid($s->gid)
@@ -964,41 +1016,49 @@ sub fstype_for_device($) {
         my $s = shift;
         Chj::xperlfunc::caching_getpwuid($s->uid);
     }
+
     sub caching_getgr {
         my $s = shift;
         Chj::xperlfunc::caching_getgrgid($s->gid);
     }
+
     sub caching_username {
         my $s = shift;
         scalar $s->caching_getpw
     }
+
     sub caching_groupname {
         my $s = shift;
         scalar $s->caching_getgr
     }
 }
 
-use FP::Div qw(min max); # min just for the backwards-compatible
-                         # re-export
+use FP::Div qw(min max);    # min just for the backwards-compatible
+                            # re-export
 
 {
+
     package Chj::xperlfunc::mtimed;
-    sub path     { shift->[0] }
-    sub mtime     { shift->[1] }
-    sub lstat     { shift->[2] }
-    sub maybe_stat    { shift->[3] }
+    sub path       { shift->[0] }
+    sub mtime      { shift->[1] }
+    sub lstat      { shift->[2] }
+    sub maybe_stat { shift->[3] }
+
     # ---
     sub xstat {
         my $s = shift;
         $$s[3] || die "Xstat gave file not found for: '$$s[0]'";
     }
+
     sub is_link {
         shift->[2]->is_link
     }
+
     sub is_dir {
         my $s = shift;
         $s->is_link ? $s->xstat->is_dir : $s->lstat->is_dir
     }
+
     sub is_file {
         my $s = shift;
         $s->is_link ? $s->xstat->is_file : $s->lstat->is_file
@@ -1010,25 +1070,14 @@ sub XLmtimed ($) {
     if (my $ls = Xlstat $path) {
         bless do {
             if ($ls->is_link) {
-                if (my $s = Xstat $path) {
-                    [$path,
-                     max ($ls->mtime, $s->mtime),
-                     $ls,
-                     $s]
-                } else {
-                    [$path,
-                     $ls->mtime,
-                     $ls,
-                     undef]
-                }
-            } else {
-                [$path,
-                 $ls->mtime,
-                 $ls,
-                 undef]
+                if (my $s = Xstat $path)
+                { [$path, max($ls->mtime, $s->mtime), $ls, $s] }
+                else { [$path, $ls->mtime, $ls, undef] }
             }
-        }, "Chj::xperlfunc::mtimed"
-    } else {
+            else { [$path, $ls->mtime, $ls, undef] }
+            }, "Chj::xperlfunc::mtimed"
+    }
+    else {
         undef
     }
 }
@@ -1041,47 +1090,48 @@ sub xLmtimed ($) {
 
 sub xLmtime ($) {
     my ($path) = @_;
-    xLmtimed ($path)->mtime
+    xLmtimed($path)->mtime
 }
 
 sub XLmtime ($) {
     my ($path) = @_;
-    if (defined (my $s = XLmtimed ($path))) {
+    if (defined(my $s = XLmtimed($path))) {
         $s->mtime
-    } else {
+    }
+    else {
         undef
     }
 }
 
-
-
 {
-    package Chj::xperlfunc::xlocaltime;
-    sub sec      { shift->[0] }
-    sub min      { shift->[1] }
-    sub hour     { shift->[2] }
-    sub mday     { shift->[3] }
-    sub mon      { shift->[4] }  # 0..11
-    sub year     { shift->[5] }  # -1900
-    sub wday     { shift->[6] }  # 0=sunday
-    sub yday     { shift->[7] }  # 0..36[45]
-    sub isdst    { shift->[8] }
-    sub Year     { shift->[5]+1900 }
-    sub Mon      { shift->[4]+1 }
-    sub Wday     { shift->[6]+1 }  # 1=sunday
-    sub wDay     { my $d = shift->[6]; $d == 0 ? 6 : $d-1 }  # 0=monday
 
-    sub set_sec      { my ($s,$v) = @_; $s->[0] = $v; $s }
-    sub set_min      { my ($s,$v) = @_; $s->[1] = $v; $s }
-    sub set_hour     { my ($s,$v) = @_; $s->[2] = $v; $s }
-    sub set_mday     { my ($s,$v) = @_; $s->[3] = $v; $s }
-    sub set_mon      { my ($s,$v) = @_; $s->[4] = $v; $s }  # 0..11
-    sub set_year     { my ($s,$v) = @_; $s->[5] = $v; $s }  # -1900
-    #sub set_wday     { my ($s,$v) = @_; $s->[6] = $v; $s }  # 0=sunday
-    sub set_yday     { my ($s,$v) = @_; $s->[7] = $v; $s }  # 0..36[45]
-    sub set_isdst    { my ($s,$v) = @_; $s->[8] = $v; $s }
-    sub set_Year     { my ($s,$v) = @_; $s->[5] = $v - 1900; $s }
-    sub set_Mon      { my ($s,$v) = @_; $s->[4] = $v - 1; $s }
+    package Chj::xperlfunc::xlocaltime;
+    sub sec   { shift->[0] }
+    sub min   { shift->[1] }
+    sub hour  { shift->[2] }
+    sub mday  { shift->[3] }
+    sub mon   { shift->[4] }                                  # 0..11
+    sub year  { shift->[5] }                                  # -1900
+    sub wday  { shift->[6] }                                  # 0=sunday
+    sub yday  { shift->[7] }                                  # 0..36[45]
+    sub isdst { shift->[8] }
+    sub Year  { shift->[5] + 1900 }
+    sub Mon   { shift->[4] + 1 }
+    sub Wday  { shift->[6] + 1 }                              # 1=sunday
+    sub wDay  { my $d = shift->[6]; $d == 0 ? 6 : $d - 1 }    # 0=monday
+
+    sub set_sec  { my ($s, $v) = @_; $s->[0] = $v; $s }
+    sub set_min  { my ($s, $v) = @_; $s->[1] = $v; $s }
+    sub set_hour { my ($s, $v) = @_; $s->[2] = $v; $s }
+    sub set_mday { my ($s, $v) = @_; $s->[3] = $v; $s }
+    sub set_mon  { my ($s, $v) = @_; $s->[4] = $v; $s }       # 0..11
+    sub set_year { my ($s, $v) = @_; $s->[5] = $v; $s }       # -1900
+             #sub set_wday     { my ($s,$v) = @_; $s->[6] = $v; $s }  # 0=sunday
+    sub set_yday  { my ($s, $v) = @_; $s->[7] = $v;        $s }    # 0..36[45]
+    sub set_isdst { my ($s, $v) = @_; $s->[8] = $v;        $s }
+    sub set_Year  { my ($s, $v) = @_; $s->[5] = $v - 1900; $s }
+    sub set_Mon   { my ($s, $v) = @_; $s->[4] = $v - 1;    $s }
+
     #sub set_Wday
     #sub set_wDay
     # but those don't have any effect on timelocal anyway.
@@ -1094,160 +1144,167 @@ sub XLmtime ($) {
 
 sub xlocaltime (;$ ) {
     bless [localtime(defined $_[0] ? $_[0] : time)],
-      "Chj::xperlfunc::xlocaltime"
+        "Chj::xperlfunc::xlocaltime"
 }
 
-
 sub xreadlink {
-    my $res = @_ == 0 ? readlink
+    my $res
+        = @_ == 0 ? readlink
         : @_ == 1 ? readlink $_[0]
-        : croak "xreadlink: wrong number of arguments";
-    defined $res or croak @_? "xreadlink @_: $!" : "xreadlink: $!";
+        :           croak "xreadlink: wrong number of arguments";
+    defined $res or croak @_ ? "xreadlink @_: $!" : "xreadlink: $!";
     $res
 }
 
 sub xmkdir_with_paragon {
     @_ == 2 or @_ == 3 or croak "xmvmkdir: wrong number of arguments";
     warn "UNTESTED!";
-    my ($owner,$group,$mode) = (xstat $_[1])[4,5,2];
-    xmkdir $_[0],0;
-    if (! chown $owner,$group,$_[0]){
+    my ($owner, $group, $mode) = (xstat $_[1])[4, 5, 2];
+    xmkdir $_[0], 0;
+    if (!chown $owner, $group, $_[0]) {
         $_[2] and croak "xmvmkdir: could not recreate user or group: $!";
     }
-    xchmod $mode,$_[0];
+    xchmod $mode, $_[0];
 }
 
 {
+
     package Chj::xperlfunc::tmpdir;
+
     sub DESTROY {
         my $self = shift;
-        local ($@,$!);
-        rmdir $$self ## hack
-          and warn "removed tmpdir '$$self'";## should it warn? prolly not.
+        local ($@, $!);
+        rmdir $$self                              ## hack
+            and warn "removed tmpdir '$$self'";   ## should it warn? prolly not.
     }
 }
 
 sub xtmpdir_with_paragon {
-    @_ == 1 or @_ == 2 or croak "xtmpdir_with_paragon: wrong number of arguments";
-    my ($paragon,$strict) = @_;
-    my ($owner,$group,$mode) = (xstat $paragon)[4,5,2];
+    @_ == 1
+        or @_ == 2
+        or croak "xtmpdir_with_paragon: wrong number of arguments";
+    my ($paragon, $strict) = @_;
+    my ($owner, $group, $mode) = (xstat $paragon)[4, 5, 2];
     my $newname;
-  TRY: for (0..2) {
+TRY: for (0 .. 2) {
         $newname = $paragon;
         $newname =~ s{(^|/)([^/]+)\z}{"$1.$2.tmp".int(rand(100000))}se;
-        last TRY if mkdir $newname,0;
+        last TRY if mkdir $newname, 0;
         if ($! != EEXIST) {
             croak "xtmpdir_with_paragon: mkdir: $!";
         }
     }
-    if (! chown $owner,$group,$newname){
-        if ($strict){
+    if (!chown $owner, $group, $newname) {
+        if ($strict) {
             rmdir $newname;
             croak "xtmpdir_with_paragon: could not recreate user or group: $!";
         }
     }
-    if (! chmod $mode,$newname) {
+    if (!chmod $mode, $newname) {
         rmdir $newname;
         croak "xtmpdir_with_paragon: chmod: $!";
     }
-    return bless \ $newname, 'Chj::xperlfunc::tmpdir';
+    return bless \$newname, 'Chj::xperlfunc::tmpdir';
+
     # ^ so that it will be removed upon error
 }
 
 sub xmvmkdir {
     @_ == 2 or @_ == 3 or croak "xmvmkdir: wrong number of arguments";
-    xrename $_[0],$_[1];
-    my ($owner,$group,$mode) = (xstat $_[1])[4,5,2];
-    xmkdir $_[0],0;
-    if (! chown $owner,$group,$_[0]){
+    xrename $_[0], $_[1];
+    my ($owner, $group, $mode) = (xstat $_[1])[4, 5, 2];
+    xmkdir $_[0], 0;
+    if (!chown $owner, $group, $_[0]) {
         $_[2] and croak "xmvmkdir: could not recreate user or group: $!";
     }
-    xchmod $mode,$_[0];
+    xchmod $mode, $_[0];
 }
 
 sub xunlink {
     for (@_) {
-        unlink $_
-          or croak "xunlink '$_': $!";
+        unlink $_ or croak "xunlink '$_': $!";
     }
 }
+
 sub xlink {
     @_ == 2 or croak "xlink: wrong number of arguments";
-    link $_[0],$_[1]
-      or croak "xlink '$_[0]','$_[1]': $!";
+    link $_[0], $_[1] or croak "xlink '$_[0]','$_[1]': $!";
 }
+
 sub xsymlink {
     @_ == 2 or croak "xsymlink: wrong number of arguments";
-    symlink $_[0],$_[1]
-      or croak "xsymlink to '$_[1]': $!";
+    symlink $_[0], $_[1] or croak "xsymlink to '$_[1]': $!";
 }
 
 sub xutime {
     @_ >= 2 or croak "xutime: wrong number of arguments";
-    my ($atime,$mtime) = (shift,shift);
-    utime $atime,$mtime,@_
-      or croak "xutime @_: $!";
+    my ($atime, $mtime) = (shift, shift);
+    utime $atime, $mtime, @_ or croak "xutime @_: $!";
 }
 
-sub xkill{
+sub xkill {
     my $sig = shift;
-    kill $sig,@_
-      or croak "xkill $sig @_: $!";
+    kill $sig, @_ or croak "xkill $sig @_: $!";
 }
 
 sub xchroot ( $ ) {
     my ($rtd) = @_;
-    chroot $rtd
-      or die "could not chroot to '$rtd': $!";
+    chroot $rtd or die "could not chroot to '$rtd': $!";
 }
 
-sub xeval( $ ) { # meant for string eval only, of course.
+sub xeval( $ ) {    # meant for string eval only, of course.
     ## hm ps should one localize $@ here?
     if (defined wantarray) {
         if (wantarray) {
             my @res = eval $_[0];
-            if (ref$@ or $@){
+            if (ref $@ or $@) {
                 die $@
-            } else {
+            }
+            else {
                 @res
             }
-        } else {
+        }
+        else {
             my $res = eval $_[0];
-            if (ref$@ or $@){
+            if (ref $@ or $@) {
                 die $@
-            } else {
+            }
+            else {
                 $res
             }
         }
-    } else {
+    }
+    else {
         eval $_[0];
-        if (ref$@ or $@){
+        if (ref $@ or $@) {
             die $@
         }
     }
 }
 
 sub xfileno {
+
     # takes fh or integer
     my ($arg) = @_;
     my $fd = fileno $arg;
-    return $fd if defined $fd;
-    return $arg+0 if $arg =~ /^\s*\d+\s*\z/;
+    return $fd      if defined $fd;
+    return $arg + 0 if $arg =~ /^\s*\d+\s*\z/;
     croak "xfileno: '$arg' is not a filehandle nor a file descriptor number";
 }
-
 
 sub xsysread ( $ $ $ ; $ ) {
     my $rv = do {
         if (@_ == 4) {
             sysread $_[0], $_[1], $_[2], $_[3]
-        } else {
+        }
+        else {
             sysread $_[0], $_[1], $_[2]
         }
     };
-    defined $rv or die "xsysread(".singlequote_many(@_)."): $!";
+    defined $rv or die "xsysread(" . singlequote_many(@_) . "): $!";
     $rv
 }
+
 # ^- ok this is silly (is it?) since I've got Chj::IO::File. But that
 # latter one is not yet complete, I'm debugging xreadline atm.
 
@@ -1258,39 +1315,47 @@ sub basename ($;$$) {
     my $copy = $path;
     $copy =~ s|.*/||s;
     my $res = do {
-    length($copy) ? $copy : do {
-        # path ending in slash--or empty from the start.
-        if ($path =~ s|/+\z||s) {
-            $path =~ s|.*/||s;
-            # ^ this is necessary since we did it on $copy only,
-            #   before!
-            if (length $path) {
-                $path
-            } else {
-                "/"  # or die? no.
+        length($copy) ? $copy : do {
+
+            # path ending in slash--or empty from the start.
+            if ($path =~ s|/+\z||s) {
+                $path =~ s|.*/||s;
+
+                # ^ this is necessary since we did it on $copy only,
+                #   before!
+                if (length $path) {
+                    $path
+                }
+                else {
+                    "/"    # or die? no.
+                }
             }
-        } else {
-            croak "basename(".show_many(@_)."): ".
-              "cannot get basename from empty string";
+            else {
+                croak "basename("
+                    . show_many(@_) . "): "
+                    . "cannot get basename from empty string";
+            }
         }
-    }};
+    };
     if (defined $maybe_suffixS) {
         if (ref($maybe_suffixS)) {
-          TRY: {
+        TRY: {
                 for my $suffix (@$maybe_suffixS) {
-                    ($insensitive ?
-                     $res =~ s/\Q$suffix\E\z//i
-                     : $res =~ s/\Q$suffix\E\z//)
-                      and last TRY;
+                    (     $insensitive
+                        ? $res =~ s/\Q$suffix\E\z//i
+                        : $res =~ s/\Q$suffix\E\z//)
+                        and last TRY;
                 }
-                croak "basename(".show_many(@_)."): ".
-                  "no suffix matches";
+                croak "basename(" . show_many(@_) . "): " . "no suffix matches";
             }
-        } else {
-            ($insensitive ? $res =~ s/\Q$maybe_suffixS\E\z//i
-              : $res =~ s/\Q$maybe_suffixS\E\z//)
-              or croak "basename(".show_many(@_)."): ".
-                "suffix does not match";
+        }
+        else {
+            (     $insensitive
+                ? $res =~ s/\Q$maybe_suffixS\E\z//i
+                : $res =~ s/\Q$maybe_suffixS\E\z//)
+                or croak "basename("
+                . show_many(@_) . "): "
+                . "suffix does not match";
         }
     }
     $res
@@ -1304,45 +1369,56 @@ sub basename ($;$$) {
 #blabla
 # so no, do not strip before basenaming, really do it afterwards as I do
 
-
 sub dirname ($ ) {
     my ($path) = @_;
     if ($path =~ s|/+[^/]+/*\z||) {
         if (length $path) {
             $path
-        } else {
+        }
+        else {
             "/"
         }
-    } else {
+    }
+    else {
         # deviates from the shell in that dirname of . and / are errors. good?
         if ($path =~ m|^/+\z|) {
             die "can't go out of file system"
-        } elsif ($path eq ".") {
+        }
+        elsif ($path eq ".") {
             die "can't go above cur dir in a relative path";
-        } elsif ($path eq "") {
+        }
+        elsif ($path eq "") {
             die "can't take dirname of empty string";
-        } else {
+        }
+        else {
             "."
         }
     }
 }
 
 sub xmkdir_p ($ );
+
 sub xmkdir_p ($ ) {
     my ($path) = @_;
+
     # (XX: see commit d1abd3c2 in megacopy for possible improvement)
     if (-d $path) {
+
         #done
         ()
-    } else {
+    }
+    else {
         if (mkdir $path) {
+
             #done
             ()
-        } else {
-            if ($!==ENOENT) {
+        }
+        else {
+            if ($! == ENOENT) {
                 xmkdir_p(dirname $path);
                 mkdir $path or die "could not mkdir('$path'): $!";
-            } else {
+            }
+            else {
                 die "could not mkdir('$path'): $!";
             }
         }
@@ -1350,9 +1426,9 @@ sub xmkdir_p ($ ) {
 }
 
 sub xlink_p ($ $ ) {
-    my ($from,$to) = @_;
-    xmkdir_p (dirname $to);
-    xlink $from,$to
+    my ($from, $to) = @_;
+    xmkdir_p(dirname $to);
+    xlink $from, $to
 }
 
 # sub xuser_uid ( $ ) {
@@ -1362,93 +1438,95 @@ sub xlink_p ($ $ ) {
 #     $uid
 # }
 {
+
     package Chj::xperlfunc::Getpwnam;
     use Chj::Class::Array -fields => -publica =>
-      qw(name passwd uid gid quota comment gcos dir shell expire);
+        qw(name passwd uid gid quota comment gcos dir shell expire);
+
     sub perhaps_get {
-        my $class = shift;
+        my $class  = shift;
         my ($user) = @_;
-        my $s = bless [ getpwnam ($user) ], $class;
+        my $s      = bless [getpwnam($user)], $class;
         if (@$s) {
             wantarray ? @$s : $s
-        } else {
+        }
+        else {
             return
         }
     }
     end Chj::Class::Array;
 }
+
 sub xgetpwnam ( $ ) {
     my ($user) = @_;
     if (wantarray) {
         my @f = Chj::xperlfunc::Getpwnam->perhaps_get($user);
         @f or croak "xgetpwnam: '$user' not in passwd file";
         @f
-    } else {
+    }
+    else {
         Chj::xperlfunc::Getpwnam->perhaps_get($user)
             or croak "xgetpwnam: '$user' not in passwd file";
     }
 }
 
 {
+
     package Chj::xperlfunc::Getgrnam;
-    use Chj::Class::Array -fields => -publica =>
-      qw(name passwd gid members);
+    use Chj::Class::Array -fields => -publica => qw(name passwd gid members);
+
     sub perhaps_get {
-        my $class = shift;
+        my $class  = shift;
         my ($user) = @_;
-        my $s = bless [ getgrnam ($user) ], $class;
+        my $s      = bless [getgrnam($user)], $class;
         if (@$s) {
             wantarray ? @$s : $s
-        } else {
+        }
+        else {
             return
         }
     }
     end Chj::Class::Array;
 }
+
 sub xgetgrnam ( $ ) {
     my ($group) = @_;
     if (wantarray) {
         my @f = Chj::xperlfunc::Getgrnam->perhaps_get($group);
         @f or croak "xgetgrnam: '$group' not in group file";
         @f
-    } else {
+    }
+    else {
         Chj::xperlfunc::Getgrnam->perhaps_get($group)
             or croak "xgetgrnam: '$group' not in group file";
     }
 }
-
 
 # Also see xprint and xprintln methods in Chj::IO::File.
 
 use Chj::BuiltinTypePredicates 'is_filehandle';
 
 sub xprint {
-    my $fh = is_filehandle ($_[0]) ? shift : *STDOUT{IO};
-    print $fh @_
-      or die "printing to $fh: $!"
+    my $fh = is_filehandle($_[0]) ? shift : *STDOUT{IO};
+    print $fh @_ or die "printing to $fh: $!"
 }
 
 sub xprintln {
-    my $fh = is_filehandle ($_[0]) ? shift : *STDOUT{IO};
-    print $fh @_,"\n"
-      or die "printing to $fh: $!"
+    my $fh = is_filehandle($_[0]) ? shift : *STDOUT{IO};
+    print $fh @_, "\n" or die "printing to $fh: $!"
 }
 
 sub xgetfile_utf8 ($) {
     my ($path) = @_;
-    open my $in, "<", $path
-        or die "xgetfile_utf8($path): open: $!";
+    open my $in, "<", $path or die "xgetfile_utf8($path): open: $!";
     binmode $in, ":encoding(UTF-8)" or die "binmode";
     local $/;
-    my $cnt = <$in>
-        // die "xgetfile_utf8($path): read: $!";
-    close $in
-        or die "xgetfile_utf8($path): close: $!";
+    my $cnt = <$in> // die "xgetfile_utf8($path): read: $!";
+    close $in or die "xgetfile_utf8($path): close: $!";
     $cnt
 }
 
 sub xslurp ($);
 *xslurp = \&xgetfile_utf8;
-
 
 1;

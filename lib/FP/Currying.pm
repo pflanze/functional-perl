@@ -89,9 +89,9 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Currying;
-@ISA = "Exporter"; require Exporter;
+@ISA = "Exporter";
+require Exporter;
 @EXPORT = qw(
     curry
     curry_
@@ -102,11 +102,13 @@ package FP::Currying;
     uncurry_1_2
     uncurry_2_2
     uncurry_1_1_1
-    );
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub curry ($) {
     @_ == 1 or die "wrong number of arguments";
@@ -116,18 +118,20 @@ sub curry ($) {
         my ($a) = @_;
         sub {
             @_ == 1 or die "wrong number of arguments";
-            @_ = ($a, @_); goto \&$f
+            @_ = ($a, @_);
+            goto \&$f
         }
     }
 }
 
 # relaxed version
 sub curry_ {
-    my ($f,@p) = @_;
+    my ($f, @p) = @_;
     sub {
         my @a = @_;
         sub {
-            @_ = (@p, @a, @_); goto \&$f
+            @_ = (@p, @a, @_);
+            goto \&$f
         }
     }
 }
@@ -137,12 +141,12 @@ sub curry_ {
 # returns a fn that takes a variable number of additional args. When
 # called, the returned function calls f with args + additional args."
 sub partial {
-    my ($f,@p) = @_;
+    my ($f, @p) = @_;
     sub {
-        @_ = (@p, @_); goto \&$f
+        @_ = (@p, @_);
+        goto \&$f
     }
 }
-
 
 # Macros would be useful here.
 
@@ -150,7 +154,7 @@ sub uncurry_1_1 ($) {
     my ($f) = @_;
     sub {
         @_ == 2 or die "expecting 2 arguments";
-        my ($a,$b) = @_;
+        my ($a, $b) = @_;
         $f->($a)->($b)
     }
 }
@@ -162,8 +166,8 @@ sub uncurry_2_1 ($) {
     my ($f) = @_;
     sub {
         @_ == 3 or die "expecting 3 arguments";
-        my ($a,$b,$c) = @_;
-        $f->($a,$b)->($c)
+        my ($a, $b, $c) = @_;
+        $f->($a, $b)->($c)
     }
 }
 
@@ -171,8 +175,8 @@ sub uncurry_1_2 ($) {
     my ($f) = @_;
     sub {
         @_ == 3 or die "expecting 3 arguments";
-        my ($a,$b,$c) = @_;
-        $f->($a)->($b,$c)
+        my ($a, $b, $c) = @_;
+        $f->($a)->($b, $c)
     }
 }
 
@@ -180,8 +184,8 @@ sub uncurry_2_2 ($) {
     my ($f) = @_;
     sub {
         @_ == 4 or die "expecting 4 arguments";
-        my ($a,$b,$c,$d) = @_;
-        $f->($a,$b)->($c,$d)
+        my ($a, $b, $c, $d) = @_;
+        $f->($a, $b)->($c, $d)
     }
 }
 
@@ -189,7 +193,7 @@ sub uncurry_1_1_1 ($) {
     my ($f) = @_;
     sub {
         @_ == 3 or die "expecting 3 arguments";
-        my ($a,$b,$c) = @_;
+        my ($a, $b, $c) = @_;
         $f->($a)->($b)->($c)
     }
 }

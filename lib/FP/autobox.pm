@@ -61,10 +61,11 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::autobox;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 require FP::PureArray;
 require autobox;
@@ -77,10 +78,8 @@ sub import {
     if (not $args{ARRAY}) {
         push @_, ARRAY => 'FP::PureArray::autobox';
     }
-    my $m = $pack->can("SUPER::import")
-        or die "bug";
+    my $m = $pack->can("SUPER::import") or die "bug";
     goto $m
 }
-
 
 1

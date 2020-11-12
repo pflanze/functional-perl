@@ -53,76 +53,98 @@ L<FP::Repl>
 
 =cut
 
-
 package FP::Docstring;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(__ docstring);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(__ docstring);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 
-
 sub __ ($) { }
+
 # optimization would be to make it syntax...
 
-my %endquote = ('[' => ']',
-               '(' => ')',
-               '{' => '}');
+my %endquote = ('[' => ']', '(' => ')', '{' => '}');
 
 my $warned;
 
 sub docstring ($) {
     my ($fn_or_glob) = @_;
-    my $fn = UNIVERSAL::isa($fn_or_glob, "CODE") ? $fn_or_glob :
-        UNIVERSAL::isa(\$fn_or_glob, "GLOB") ? \&$fn_or_glob :
-        die "not a coderef nor glob: $fn_or_glob";
+    my $fn
+        = UNIVERSAL::isa($fn_or_glob,  "CODE") ? $fn_or_glob
+        : UNIVERSAL::isa(\$fn_or_glob, "GLOB") ? \&$fn_or_glob
+        :   die "not a coderef nor glob: $fn_or_glob";
     if (eval { require B::Deparse; 1 }) {
         my $str = B::Deparse->new->coderef2text($fn);
+
         #warn "str='$str'";
         if (my ($docstring) = $str =~ /\b__\('(.*?)'\);/s) {
             $docstring
-        } elsif (($docstring) = $str =~ /\b__\("(.*?)"\);/s) {
+        }
+        elsif (($docstring) = $str =~ /\b__\("(.*?)"\);/s) {
             $docstring =~ s/\\n/\n/sg;
             $docstring =~ s/\\\\/\\/sg;
             $docstring =~ s/\\\$/\$/sg;
             $docstring
-        } elsif (my ($quote, $docstring_and_rest) = $str =~ /\b__\(q(.)(.*)/s) {
+        }
+        elsif (my ($quote, $docstring_and_rest) = $str =~ /\b__\(q(.)(.*)/s) {
+
             # sigh, really?
             my $endquote = $endquote{$quote}
-              or die "don't know what quote this is: $quote";
+                or die "don't know what quote this is: $quote";
             $docstring_and_rest =~ s/\Q$endquote\E.*//s;
             $docstring_and_rest
-        } else {
+        }
+        else {
             undef
         }
-    } else {
+    }
+    else {
         unless ($warned) {
-            warn "for docstring support, install B::Deparse"
-                unless $warned;
+            warn "for docstring support, install B::Deparse" unless $warned;
             $warned = 1;
         }
         undef
     }
 }
 
-
 # try to trick the parser:
-TEST { docstring(sub{__"hi\');"; $_[0]+1}) } 'hi\');';
-TEST { docstring(sub{__"hi\");"; $_[0]+1}) } 'hi");';
+TEST {
+    docstring(sub { __ "hi\');"; $_[0] + 1 })
+}
+'hi\');';
+TEST {
+    docstring(sub { __ "hi\");"; $_[0] + 1 })
+}
+'hi");';
 
 # get the quoting right:
-TEST { docstring(sub{__ '($foo) -> hash'; $_[0]+1}) } '($foo) -> hash';
-TEST { docstring(sub{__ '("$foo")'; $_[0]+1}) } '("$foo")';
-TEST { docstring(sub{__ '(\'$foo\')'; $_[0]+1}) } '(\'$foo\')';
-TEST { docstring sub {
-    __ '($str, $token, {tokenargument => $value,..})-> $str
+TEST {
+    docstring(sub { __ '($foo) -> hash'; $_[0] + 1 })
+}
+'($foo) -> hash';
+TEST {
+    docstring(sub { __ '("$foo")'; $_[0] + 1 })
+}
+'("$foo")';
+TEST {
+    docstring(sub { __ '(\'$foo\')'; $_[0] + 1 })
+}
+'(\'$foo\')';
+TEST {
+    docstring sub {
+        __ '($str, $token, {tokenargument => $value,..})-> $str
         re-insert hidden parts';
-    1
-       } }
-   '($str, $token, {tokenargument => $value,..})-> $str
+        1
+    }
+}
+'($str, $token, {tokenargument => $value,..})-> $str
         re-insert hidden parts';
 
 1

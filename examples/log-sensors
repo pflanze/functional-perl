@@ -4,22 +4,26 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use utf8;
+
 #use Function::Parameters qw(:strict);
 #use Sub::Call::Tail;
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
-
-my $delay = 5; # seconds
+my $delay = 5;    # seconds
 
 sub usage {
     print "usage: $myname groupname/fieldname...
@@ -40,59 +44,60 @@ sub usage {
 
 use Getopt::Long;
 our $verbose = 0;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           "delay=n" => \$delay,
-           ) or exit 1;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+    "delay=n" => \$delay,
+) or exit 1;
 usage unless @ARGV;
 
 use Chj::Linux::LmSensors qw(sensors_get
-                             Selector);
+    Selector);
 
 my @sel = map {
     my $sel = $_;
-    my @p = split "/", $sel;
+    my @p   = split "/", $sel;
     @p == 2 or die "invalid selector: '$sel'";
     Selector(@p)
 } @ARGV;
 
-
 use FP::Text::CSV qw(rows_to_csv_fh);
 use FP::IOStream qw(maybeIO_to_stream);
 use Chj::xopen qw(glob_to_fh);
- # ^ a tiny bit of a strange module this is is in?
 
+# ^ a tiny bit of a strange module this is is in?
 
 sub input {
     my $is_first = 1;
-    my $in = maybeIO_to_stream(sub {
-                                  if ($is_first) {
-                                      $is_first = 0;
-                                  } else {
-                                      sleep $delay;
-                                  }
-                                  sensors_get
-                              });
+    my $in       = maybeIO_to_stream(sub {
+        if ($is_first) {
+            $is_first = 0;
+        }
+        else {
+            sleep $delay;
+        }
+        sensors_get
+    });
     $in->map(sub {
-                 my ($m) = @_;
-                 [
-                  $m->time,
-                  map {
-                      my $sel = $_;
-                      $m->select($_)->value_or("")
-                  } @sel
-                 ]
-             })
+        my ($m) = @_;
+        [
+            $m->time,
+            map {
+                my $sel = $_;
+                $m->select($_)->value_or("")
+            } @sel
+        ]
+    })
 }
-
 
 sub do_log {
     my $rows = input;
     rows_to_csv_fh($rows, *STDOUT);
+
     # do *not* use glob_to_fh on *STDOUT here, it breaks Text::CSV
     # extremely oddly (because of some other/combined bug? "Use of
     # uninitialized value in subroutine entry" only when passing it
-    # values from input, not values entered from the repl. Tainting? 
+    # values from input, not values entered from the repl. Tainting?
     # But -T is off here.)
 }
 

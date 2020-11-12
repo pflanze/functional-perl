@@ -24,46 +24,53 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Show::t;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 
-use FP::Show; # exports 'show'
+use FP::Show;    # exports 'show'
 use FP::List ":all";
 use FP::Stream ":all";
 use FP::Ops qw(regex_substitute);
 
 TEST_EXCEPTION {
-    my $l = list 100-1, "bottles";
-    die "not what we wanted: ".show ($l)
+    my $l = list 100 - 1, "bottles";
+    die "not what we wanted: " . show($l)
 }
-  "not what we wanted: list(99, 'bottles')";
+"not what we wanted: list(99, 'bottles')";
 
 TEST { show cons 1, cons 2, 3 }
-  'improper_list(1, 2, 3)';
+'improper_list(1, 2, 3)';
 
-TEST { show improper_list (list (1,3), 2) }
-  'improper_list(list(1, 3), 2)';
+TEST { show improper_list(list(1, 3), 2) }
+'improper_list(list(1, 3), 2)';
 
-TEST { regex_substitute sub{s/line \d+/line .../g},
-           show improper_list ([1,3], {foo => list("bar",sub{"f"})}) }
-  'improper_list([1, 3], +{foo => list(\'bar\', sub { "DUMMY" })})';
+TEST {
+    regex_substitute sub {s/line \d+/line .../g},
+        show improper_list([1, 3], {foo => list("bar", sub {"f"})})
+}
+'improper_list([1, 3], +{foo => list(\'bar\', sub { "DUMMY" })})';
 
 my $s;
 TEST {
     $s = stream_iota->take(10);
     show $s
-} 'lazy { "DUMMY" }';
+}
+'lazy { "DUMMY" }';
 
 TEST {
     $s->rest->rest;
     show $s
-} 'improper_list(0, 1, lazy { "DUMMY" })';
+}
+'improper_list(0, 1, lazy { "DUMMY" })';
 
-TEST { show *STDERR{IO} }
-  "bless(IO(2), 'IO::File')";
+TEST {
+    show * STDERR {IO}
+}
+"bless(IO(2), 'IO::File')";
 
 1

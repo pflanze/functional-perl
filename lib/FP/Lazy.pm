@@ -191,19 +191,20 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Lazy;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(lazy lazy_if lazyLight force FORCE is_promise);
-@EXPORT_OK = qw(delay force_noeval lazy_backtrace);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(lazy lazy_if lazyLight force FORCE is_promise);
+@EXPORT_OK   = qw(delay force_noeval lazy_backtrace);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Carp;
 use FP::Mixin::Utils;
 use FP::Show;
-
 
 our $eager = ($ENV{DEBUG_FP_LAZY} and $ENV{DEBUG_FP_LAZY} =~ /^eager$/i);
 our $debug = $ENV{DEBUG_FP_LAZY} ? (not $eager) : '';
@@ -213,57 +214,55 @@ our $debug = $ENV{DEBUG_FP_LAZY} ? (not $eager) : '';
 # index 1: value once evaluated
 # index 2: backtrace if $debug is true
 
-sub lazy_backtrace ($) { # not a method to avoid shadowing any
-                         # 'contained' method
+sub lazy_backtrace ($) {    # not a method to avoid shadowing any
+                            # 'contained' method
     my ($v) = @_;
-    UNIVERSAL::isa($v, "FP::Lazy::Promise") # not working for Light ones*!*
-        or die "not a FP::Lazy::Promise: ".show($v);
+    UNIVERSAL::isa($v, "FP::Lazy::Promise")    # not working for Light ones*!*
+        or die "not a FP::Lazy::Promise: " . show($v);
     $$v[2]
 }
 
 sub lazy (&) {
-    $eager ? goto $_[0] :
-        bless [$_[0],
-               undef,
-               $debug && FP::Repl::Stack->get(1)->backtrace
-        ], "FP::Lazy::Promise"
+    $eager
+        ? goto $_[0]
+        : bless [$_[0], undef, $debug && FP::Repl::Stack->get(1)->backtrace],
+        "FP::Lazy::Promise"
 }
 
-sub lazy_if (&$) {
-    (($_[1] and not $eager) ?
-     bless ([$_[0],
-             undef,
-             $debug && FP::Repl::Stack->get(1)->backtrace
-            ], "FP::Lazy::Promise")
-     : do {
-         my ($thunk) = @_;
-         @_ = ();
-         goto $thunk;
-     })
-}
+sub lazy_if (&$) { (
+    ($_[1] and not $eager)
+    ? bless([$_[0], undef, $debug && FP::Repl::Stack->get(1)->backtrace],
+        "FP::Lazy::Promise")
+    : do {
+        my ($thunk) = @_;
+        @_ = ();
+        goto $thunk;
+    }
+) }
 
 # not providing for caching (1-time-only evaluation)
 sub lazyLight (&) {
-    $eager ? goto $_[0] :
-        bless $_[0], "FP::Lazy::PromiseLight"
+    $eager ? goto $_[0] : bless $_[0], "FP::Lazy::PromiseLight"
 }
 
 sub is_promise ($) {
-    length ref $_[0] ? UNIVERSAL::isa ($_[0], "FP::Lazy::AnyPromise") : ''
+    length ref $_[0] ? UNIVERSAL::isa($_[0], "FP::Lazy::AnyPromise") : ''
 }
 
-sub delay (&);  *delay = \&lazy;
-sub delayLight (&); *delayLight = \&lazyLight;
-
+sub delay (&);
+*delay = \&lazy;
+sub delayLight (&);
+*delayLight = \&lazyLight;
 
 sub force ($;$) {
-    my ($perhaps_promise,$nocache) = @_;
-  LP: {
-        if (length (my $r = ref $perhaps_promise)) {
-            if (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::PromiseLight")) {
+    my ($perhaps_promise, $nocache) = @_;
+LP: {
+        if (length(my $r = ref $perhaps_promise)) {
+            if (UNIVERSAL::isa($perhaps_promise, "FP::Lazy::PromiseLight")) {
                 $perhaps_promise = &$perhaps_promise;
                 redo LP;
-            } elsif (UNIVERSAL::isa ($perhaps_promise, "FP::Lazy::Promise")) {
+            }
+            elsif (UNIVERSAL::isa($perhaps_promise, "FP::Lazy::Promise")) {
                 if (my $thunk = $$perhaps_promise[0]) {
                     my $v = &$thunk();
                     unless ($nocache) {
@@ -272,14 +271,17 @@ sub force ($;$) {
                     }
                     $perhaps_promise = $v;
                     redo LP;
-                } else {
+                }
+                else {
                     $perhaps_promise = $$perhaps_promise[1];
                     redo LP;
                 }
-            } else {
+            }
+            else {
                 $perhaps_promise
             }
-        } else {
+        }
+        else {
             $perhaps_promise
         }
     }
@@ -288,21 +290,23 @@ sub force ($;$) {
 # just remove promise wrapper, don't actually force its evaluation
 sub force_noeval ($) {
     my ($s) = @_;
-    if (length (my $r = ref $s)) {
-        if (UNIVERSAL::isa ($s, "FP::Lazy::Promise")) {
+    if (length(my $r = ref $s)) {
+        if (UNIVERSAL::isa($s, "FP::Lazy::Promise")) {
             if ($$s[0]) {
                 $s
-            } else {
+            }
+            else {
                 $$s[1]
             }
-        } else {
+        }
+        else {
             $s
         }
-    } else {
+    }
+    else {
         $s
     }
 }
-
 
 sub FORCE {
     for (@_) {
@@ -311,38 +315,41 @@ sub FORCE {
     wantarray ? @_ : $_[-1]
 }
 
-
 # XX because show did lead to endless loop, (why?) sgh
 sub strshow {
     my ($v) = @_;
     if (defined $v) {
         require overload;
         overload::StrVal($v)
-    } else {
+    }
+    else {
         "undef"
     }
 }
 
-
 # `use overload` arguments, to prevent from accidental use as if it
 # were FP::TransparentLazy
 
-our $allow_access = 0; # true 'turns off' the overload
+our $allow_access = 0;    # true 'turns off' the overload
 
 sub overloads {
     my ($with_application_overload) = @_;
-    ((map {
-        my $ctx = $_;
-        $ctx => sub {
-            $allow_access ? $_[0] :
-                Carp::croak "non-auto-forcing promise accessed via $ctx operation"
-        }
-      }
-      ($with_application_overload ? ("&{}") : ()),
-      # (XX can't overload '@{}'?)
-      qw(0+ "" bool qr ${} %{} *{})
-     ),
-     fallback => 1
+    (
+        (
+            map {
+                my $ctx = $_;
+                $ctx => sub {
+                    $allow_access
+                        ? $_[0]
+                        : Carp::croak
+                        "non-auto-forcing promise accessed via $ctx operation"
+                }
+            } ($with_application_overload ? ("&{}") : ()),
+
+            # (XX can't overload '@{}'?)
+            qw(0+ "" bool qr ${} %{} *{})
+        ),
+        fallback => 1
     )
 }
 
@@ -351,36 +358,43 @@ package FP::Lazy::AnyPromise {
     *force = *FP::Lazy::force;
 
     sub FORCE {
-        $_[0] = force ($_[0]);
+        $_[0] = force($_[0]);
     }
 
     sub DESTROY {
+
         # nothing, catch this to prevent it from entering AUTOLOAD
     }
 
-    our $AUTOLOAD; # needs to be declared even though magical
+    our $AUTOLOAD;    # needs to be declared even though magical
+
     sub AUTOLOAD {
         my $methodname = $AUTOLOAD;
-        my $v = force ($_[0]);
+        my $v          = force($_[0]);
         $methodname =~ s/.*:://;
+
         # To be able to select special implementations for lazy
         # inputs, select a method with `stream_` prefix if present.
         # (No need to check whether $v is a reference, as the same
         # code is valid for class names.)
-        my $method =
-          ($methodname =~ /^stream_/ ? UNIVERSAL::can($v, $methodname)
-           : UNIVERSAL::can($v, "stream_$methodname")
-           // UNIVERSAL::can($v, $methodname)
-           // UNIVERSAL::can("FP::Mixin::Utils", $methodname));
+        my $method
+            = ($methodname =~ /^stream_/
+            ? UNIVERSAL::can($v, $methodname)
+            : UNIVERSAL::can($v, "stream_$methodname")
+                // UNIVERSAL::can($v,                 $methodname)
+                // UNIVERSAL::can("FP::Mixin::Utils", $methodname));
         if ($method) {
+
             # can't change @_ or it would break 'env clearing' ability
             # of the method. Thus assign to $_[0], which will effect
             # our env, too, but so what? XX still somewhat bad.
-            $_[0] = $v; goto &$method;
-        } else {
+            $_[0] = $v;
+            goto &$method;
+        }
+        else {
             # XX imitate perl's ~exact error message?
             Carp::croak "no method '$methodname' found for object: "
-                .FP::Lazy::strshow($v);
+                . FP::Lazy::strshow($v);
         }
     }
 
@@ -406,11 +420,13 @@ package FP::Lazy::Promise {
     use overload FP::Lazy::overloads(1);
 
     sub FP_Show_show {
-        my ($s,$show) = @_;
+        my ($s, $show) = @_;
+
         # do not force unforced promises
         if ($$s[0]) {
             &$lazy_thunk_show($$s[0])
-        } else {
+        }
+        else {
             &$show($$s[1])
         }
     }
@@ -424,11 +440,11 @@ package FP::Lazy::PromiseLight {
     use overload FP::Lazy::overloads(0);
 
     sub FP_Show_show {
-        my ($s,$show) = @_;
+        my ($s, $show) = @_;
+
         # do not force unforced promises
         &$lazyLight_thunk_show($s)
     }
 }
-
 
 1

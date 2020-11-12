@@ -36,28 +36,31 @@ L<FP::Abstract::Show>, L<FP::Abstract::Equal> -- implemented protocols
 
 =cut
 
-
 package FP::BigInt;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(bigint);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(bigint);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Math::BigInt;
+
 #use FP::Interfaces;
 
 sub bigint ($) {
     Math::BigInt->new($_[0])
 }
 
-package # Monkey patching; but using long ucfirst (TODO: go all
-        # uppercase(?)) method names that should never conflict with
-        # anybody else's. Use case doesn't really allow for
-        # subclassing. Might look into implementing some sort of
-        # lexical extensions of classes at some point.
-  Math::BigInt {
+package    # Monkey patching; but using long ucfirst (TODO: go all
+           # uppercase(?)) method names that should never conflict with
+           # anybody else's. Use case doesn't really allow for
+           # subclassing. Might look into implementing some sort of
+           # lexical extensions of classes at some point.
+    Math::BigInt {
 
     sub FP_Show_show {
         my $s = shift;
@@ -65,7 +68,7 @@ package # Monkey patching; but using long ucfirst (TODO: go all
     }
 
     sub FP_Equal_equal {
-        my ($a,$b) = @_;
+        my ($a, $b) = @_;
         $a == $b
     }
 

@@ -32,14 +32,16 @@ the source repository, i.e. during testing (or build).
 
 =cut
 
-
 package FunctionalPerl::TailExpand;
+
 #@ISA = "Exporter"; require Exporter;
 #@EXPORT = qw();
 #@EXPORT_OK = qw();
 #%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
 use Chj::xperlfunc ":all";
@@ -54,6 +56,5 @@ use lib "./.htmlgen";
 
 # normal load paths, to be transparent re what should be loaded
 # use lib "./meta"; no need as that had to be done already to reach us
-
 
 1

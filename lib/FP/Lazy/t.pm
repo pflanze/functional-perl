@@ -19,23 +19,25 @@ Had to move them here to avoid dependency cycle.
 
 =cut
 
-
 package FP::Lazy::t;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use FP::Lazy;
 use Chj::TEST;
 
 TEST {
     our $foo = "";
+
     sub moo {
         my ($bar) = @_;
         local $foo = "Hello";
-        lazy { "$foo $bar" }
+        lazy {"$foo $bar"}
     }
-    moo ("you")->force
+    moo("you")->force
 }
-  " you";
+" you";
 
 1

@@ -4,15 +4,18 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
-
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 
 BEGIN {
@@ -35,17 +38,16 @@ plan tests => 2;
 
 subtest "require" => sub {
     my $modules = do {
-        if (my $mnl = $ENV{MODULENAMELIST}) {
-            [split /\s+|,/, $mnl]
-        } else {
+        if (my $mnl = $ENV{MODULENAMELIST}) { [split /\s+|,/, $mnl] }
+        else {
             modulenamelist
         }
     };
 
     for my $module (@$modules) {
-      SKIP: {
+    SKIP: {
             if (my @needs = module_needs $module) {
-                   skip "require $module - can't use @needs", 1;
+                skip "require $module - can't use @needs", 1;
             }
             require_ok $module;
         }
@@ -53,6 +55,7 @@ subtest "require" => sub {
 };
 
 subtest "run_tests" => sub {
+
     # already loaded by require_ok above:
     Chj::TEST::run_tests();
 };

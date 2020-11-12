@@ -4,22 +4,26 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location= (-l $0) ? abs_path ($0) : $0;
-    $location=~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
+    $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
 use Chj::xopen qw(xopen_read xopen_write);
 use Chj::TEST ":all";
 use Chj::xIOUtil qw(xgetfile_utf8);
-#use FP::Repl::Trap; $SIG{INT}=sub{ die "SIGINT" };
 
+#use FP::Repl::Trap; $SIG{INT}=sub{ die "SIGINT" };
 
 sub usage {
     print "usage: $myname in out
@@ -32,54 +36,63 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose=0;
+our $verbose = 0;
 our $opt_repl;
-GetOptions("verbose"=> \$verbose,
-           "help"=> sub{usage},
-           "repl"=> \$opt_repl,
-           #"dry-run"=> \$opt_dry,
-           ) or exit 1;
-usage unless @ARGV==2;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+    "repl"    => \$opt_repl,
 
-our ($inpath,$outpath)=@ARGV;
+    #"dry-run"=> \$opt_dry,
+) or exit 1;
+usage unless @ARGV == 2;
 
-    
-our $code= xgetfile_utf8($inpath);
+our ($inpath, $outpath) = @ARGV;
 
-our $IDENT= qr/\w+(?:::\w+)*/;
+our $code = xgetfile_utf8($inpath);
+
+our $IDENT = qr/\w+(?:::\w+)*/;
 
 sub translate {
-    my ($c)=@_;
+    my ($c) = @_;
+
     #warn "translate: <$c>";
-    $c=~ s/\s+\z//s; # XX killing line numbering
-    $c=~ s/^\s+//s; # dito?
+    $c =~ s/\s+\z//s;    # XX killing line numbering
+    $c =~ s/^\s+//s;     # dito?
     my @p;
-    if ($c=~ /\#/) {
+    if ($c =~ /\#/) {
         undef
-    } elsif (@p= split /->/, $c and @p==2) {
-        my ($before,$after)= @p;
-        '@_='.$after.'; goto &{'.$before.'}'
-    } elsif ($c=~ s/^\&//) {
-        if (my ($ident, $args)= $c=~ m/^(\$${IDENT})\s*(\(.*)/s) {
-            '@_='.$args.'; goto &'.$ident
-        } else {
+    }
+    elsif (@p = split /->/, $c and @p == 2) {
+        my ($before, $after) = @p;
+        '@_=' . $after . '; goto &{' . $before . '}'
+    }
+    elsif ($c =~ s/^\&//) {
+        if (my ($ident, $args) = $c =~ m/^(\$${IDENT})\s*(\(.*)/s) {
+            '@_=' . $args . '; goto &' . $ident
+        }
+        else {
             die "dunno about '$c'";
         }
-    } elsif (my ($ident,$args)= $c=~ m/^($IDENT)\s*(\(.*)/s) {
-        '@_='.$args.'; goto \&'.$ident
-    } else {
+    }
+    elsif (my ($ident, $args) = $c =~ m/^($IDENT)\s*(\(.*)/s) {
+        '@_=' . $args . '; goto \&' . $ident
+    }
+    else {
         undef
     }
 }
 
-TEST { translate '&$odd ($n - 1)'."\n\t " }
-  '@_=($n - 1); goto &$odd';
+TEST { translate '&$odd ($n - 1)' . "\n\t " }
+'@_=($n - 1); goto &$odd';
 TEST { translate 'Weakened($even)->($n)' }
-  '@_=($n); goto &{Weakened($even)}';
-TEST { translate ' &$then
+'@_=($n); goto &{Weakened($even)}';
+TEST {
+    translate ' &$then
    ($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
-               : $path0)' }
-  '@_=($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
+               : $path0)'
+}
+'@_=($$config{downcaps} && is_allcaps ($2) ? $1.lc($2).".xhtml"
                : $path0); goto &$then';
 
 use FP::Div 'min';
@@ -88,125 +101,132 @@ sub min_maybe {
     min grep { defined $_ } @_
 }
 
-
 # register positions of the lines, and their indentation
 sub get_line_position_and_indents {
-    my $line_position_and_indents=[];
-    my $lineno=-1; # 0-based index, *not* what editors expect
-    while ($code=~ /(?:^|\n)([ \t]*)/g) {
+    my $line_position_and_indents = [];
+    my $lineno = -1;    # 0-based index, *not* what editors expect
+    while ($code =~ /(?:^|\n)([ \t]*)/g) {
         $lineno++;
-        my $indentstr= $1;
-        my $pos= pos ($code);
+        my $indentstr = $1;
+        my $pos       = pos($code);
+
         # the pos where that line starts:
-        my $pos0= $pos - length ($indentstr);
-        my $i=0;
+        my $pos0 = $pos - length($indentstr);
+        my $i    = 0;
         for (split //, $indentstr) {
             if ($_ eq ' ') {
                 $i++
-            } elsif ($_ eq "\t") {
+            }
+            elsif ($_ eq "\t") {
+
                 # 8-based tabs
-                $i= (int ($i / 8) + 1)* 8
-            } else {
+                $i = (int($i / 8) + 1) * 8
+            }
+            else {
                 die "??"
             }
         }
-        push @$line_position_and_indents,
-          [$lineno, $pos0, $i];
+        push @$line_position_and_indents, [$lineno, $pos0, $i];
     }
     $line_position_and_indents
 }
 
-our $line_position_and_indents= get_line_position_and_indents;
-
+our $line_position_and_indents = get_line_position_and_indents;
 
 sub find_line_by_pos {
-    my ($pos)=@_;
+    my ($pos) = @_;
+
     # XX would need binary search for efficiency.
-    my $prevline= $$line_position_and_indents[0];
-    for (@$line_position_and_indents[1..$#$line_position_and_indents]) {
-        my ($lineno, $pos0, $i)= @$_;
+    my $prevline = $$line_position_and_indents[0];
+    for (@$line_position_and_indents[1 .. $#$line_position_and_indents]) {
+        my ($lineno, $pos0, $i) = @$_;
         return $prevline if $pos < $pos0;
-        $prevline=$_;
+        $prevline = $_;
     }
-    return $prevline # (don't have len of that line to check, thus trust)
+    return $prevline    # (don't have len of that line to check, thus trust)
 }
 
 # expand the 'tail' keyword right before pos in $code, set pos to
 # afterwards.
 sub expand_tail_at_pos {
-    my $pos= pos ($code);
+    my $pos = pos($code);
+
     #warn "expand_tail_at_pos $pos";
 
     # Where is the end of the arguments? Either when encountering a
     # ";", or a line with indent the same or smaller than the current
     # line, whichever comes first.
 
-    my $maybe_endpos_semicolon= pos($code)-1 if $code=~ /;/g;
+    my $maybe_endpos_semicolon = pos($code) - 1 if $code =~ /;/g;
+
     # -1 so as to leave the ';' in *afterwards*.
 
-    my ($tailline_lineno, $tailline_pos0, $tailline_i)=
-      @{find_line_by_pos $pos};
+    my ($tailline_lineno, $tailline_pos0, $tailline_i)
+        = @{find_line_by_pos $pos};
     my $afterline;
-    for my $lineno ($tailline_lineno+1 .. $#$line_position_and_indents) {
-        $afterline= $$line_position_and_indents[$lineno];
+    for my $lineno ($tailline_lineno + 1 .. $#$line_position_and_indents) {
+        $afterline = $$line_position_and_indents[$lineno];
         last if $$afterline[2] <= $tailline_i;
     }
-    my $maybe_endpos_indent= $$afterline[1]-1 if $afterline;
+    my $maybe_endpos_indent = $$afterline[1] - 1 if $afterline;
+
     # -1 so as to leave the "\n" in.
 
-    my $maybe_endpos= min_maybe ($maybe_endpos_semicolon, $maybe_endpos_indent);
+    my $maybe_endpos = min_maybe($maybe_endpos_semicolon, $maybe_endpos_indent);
 
     if (defined $maybe_endpos) {
-        my $endpos= $maybe_endpos;
-        my $args= substr $code, $pos, $endpos-$pos;
-        if (defined (my $replacement= translate $args)) {
+        my $endpos = $maybe_endpos;
+        my $args   = substr $code, $pos, $endpos - $pos;
+        if (defined(my $replacement = translate $args)) {
             my $startpos = $pos - 4;
 
             substr $code, $startpos, $endpos - $startpos, $replacement;
 
             # re-init index. XX nonscalable of course.
-            $line_position_and_indents= get_line_position_and_indents;
+            $line_position_and_indents = get_line_position_and_indents;
 
-            pos($code)= $startpos + length $replacement;
+            pos($code) = $startpos + length $replacement;
+
             #warn "right: '$args'";
-        } else {
-            #warn "wrong1: '$args'";
-            pos($code)= $pos+1;
         }
-    } else {
+        else {
+            #warn "wrong1: '$args'";
+            pos($code) = $pos + 1;
+        }
+    }
+    else {
         warn "wrong2"
     }
 }
 
-
 if ($opt_repl) {
     require Chj::Backtrace;
     require FP::Repl;
-    FP::Repl::repl ();
+    FP::Repl::repl();
     exit;
 
-} else {
+}
+else {
 
     # be insensitive to 'tail ' mentioned in comments; so bad. but
     # lookbehind are not variable width, and setting pos($code) from
     # within a substitution does not work.
-    $code=~ s=\n[\t ]*#[^\n]*\btail [^\n]*[^\n]=\n\n=sg;
+    $code =~ s=\n[\t ]*#[^\n]*\btail [^\n]*[^\n]=\n\n=sg;
 
     # Instead of writing a various kinds of parens and various kinds
     # of quoting parser, look at indentation: after newlines allow
     # only more indentation than the line where the tail statement is
     # found on has.
-    while ($code=~ m/(?<!\$)\btail\b/g) {
+    while ($code =~ m/(?<!\$)\btail\b/g) {
         expand_tail_at_pos
     }
 
-    $code=~ s/\buse\s*Sub::Call::Tail\b.*?;//s; # XX kills line numbering
+    $code =~ s/\buse\s*Sub::Call::Tail\b.*?;//s;    # XX kills line numbering
 
-    my $o= xopen_write $outpath;
-    $o->xprint ($code);
+    my $o = xopen_write $outpath;
+    $o->xprint($code);
     $o->xclose;
 
-    chmod 0755, $outpath
-        if -x $inpath;
+    chmod 0755, $outpath if -x $inpath;
 
 }

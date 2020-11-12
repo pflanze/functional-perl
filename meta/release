@@ -4,47 +4,54 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
 sub usage {
-    print STDERR map{"$_\n"} @_ if @_;
+    print STDERR map {"$_\n"} @_ if @_;
     print "$myname [[v]X.Y.Z]
 
   Prepare a new functional-perl release, setting the version number to the given
 
 ";
-exit (@_ ? 1 : 0);
+    exit(@_ ? 1 : 0);
 }
 
 use Getopt::Long;
 our $verbose = 0;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           #"dry-run" => \$opt_dry,
-           ) or exit 1;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+
+    #"dry-run" => \$opt_dry,
+) or exit 1;
 usage unless @ARGV <= 1;
 
 use Chj::xopen qw(xopen_read);
 use Chj::xtmpfile;
 use Chj::xperlfunc;
 
-
 my ($maybe_version_argument) = @ARGV;
 
-my ($maybe_version) = $maybe_version_argument ? do {
+my ($maybe_version) = $maybe_version_argument
+    ? do {
     my @r = $maybe_version_argument =~ m/^v?(\d+\.\d+\.\d+)\z/s
         or die "invalid version number";
     @r
-} : ();
+    }
+    : ();
 
 sub version_inc {
     my ($v) = @_;
@@ -59,16 +66,15 @@ xxsystem "meta/update-pod";
 
 xxsystem "cj-git-status-is-clean";
 
-
 my $version;
 {
     my $path = "lib/FunctionalPerl.pm";
 
-    my $cnt = xopen_read ($path)->xcontent;
+    my $cnt = xopen_read($path)->xcontent;
 
     $cnt =~ s|(\$VERSION\s* = \s*)"([^"]+)"|
       $1 . '"' . ($version = ($maybe_version // version_inc($2))) . '"'|sxe
-      or die "could not replace \$VERSION in $path";
+        or die "could not replace \$VERSION in $path";
 
     my $f = xtmpfile $path;
     $f->xprint($cnt);
@@ -86,11 +92,10 @@ print "Releasing version $version...";
 
     xfile_replace_lines "Changes", sub {
         my ($lines) = @_;
-        my $lt = xlocaltime;
-        my $date = join("-", $lt->Year, $lt->Mon, $lt->mday);
-        Keep($lines)->take(2)->append
-            (cons "$version $date\n    - \n\n",
-             Keep($lines)->drop(2))
+        my $lt      = xlocaltime;
+        my $date    = join("-", $lt->Year, $lt->Mon, $lt->mday);
+        Keep($lines)->take(2)
+            ->append(cons "$version $date\n    - \n\n", Keep($lines)->drop(2))
     };
 
 }
@@ -98,12 +103,13 @@ print "Releasing version $version...";
 xxsystem "e", "Changes";
 
 xxsystem "git", "commit", "-a", "-m", "Release $version";
+
 #xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
 
-xxsystem "perl", "Makefile.PL";
-xxsystem "make", "test";
+xxsystem "perl",        "Makefile.PL";
+xxsystem "make",        "test";
 xxsystem "website/gen", "--trap";
-xxsystem "make", "dist";
+xxsystem "make",        "dist";
 
 print "OK, ready to go.\n";
 

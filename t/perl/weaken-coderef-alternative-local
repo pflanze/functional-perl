@@ -4,18 +4,22 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub foo {
     local *f = sub {
         my ($n) = @_;
+
         #f($n); # works, endless recursion.
         #my $f = \&f; # does not work on either v5.14.2 or bleadperl
-        my $f = *f{CODE}; # neither does this (both give undef)
+        my $f = *f{CODE};    # neither does this (both give undef)
         sub {
             if ($n > 0) {
                 $n + &{&$f($n - 1)}
-            } else {
+            }
+            else {
                 0
             }
         }
@@ -25,5 +29,5 @@ sub foo {
 
 my $res = &{foo 2};
 
-print $res,"\n";
+print $res, "\n";
 

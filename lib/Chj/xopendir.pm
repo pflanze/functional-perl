@@ -101,10 +101,13 @@ or on the L<website|http://functional-perl.org/>.
 #'
 
 package Chj::xopendir;
-@ISA = 'Exporter'; require Exporter;
+@ISA = 'Exporter';
+require Exporter;
 @EXPORT = qw(xopendir perhaps_opendir perhaps_xopendir);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Chj::IO::Dir;
 
 sub xopendir($) {

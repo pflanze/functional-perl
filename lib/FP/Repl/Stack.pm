@@ -43,126 +43,145 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Repl::Stack;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
-our @fields; BEGIN { @fields = qw(args
-                                 package filename line subroutine hasargs
-                                 wantarray evaltext is_require hints bitmask
-                                 hinthash) }
+our @fields;
+
+BEGIN {
+    @fields = qw(args
+        package filename line subroutine hasargs
+        wantarray evaltext is_require hints bitmask
+        hinthash)
+}
 
 {
+
     package FP::Repl::StackFrame;
     use Chj::TerseDumper;
     use FP::Div "Chomp";
     use Chj::singlequote qw(singlequote_many with_maxlen);
     use FP::Show;
 
-    use FP::Struct [@fields],
-        'FP::Struct::Show',
-        'FP::Abstract::Pure';
+    use FP::Struct [@fields], 'FP::Struct::Show', 'FP::Abstract::Pure';
 
     sub args_text {
         my $s = shift;
         my ($indent, $mode) = @_;
         my $args = $s->args;
-        my $str = join ",\n", map {
+        my $str  = join ",\n", map {
             if ($mode eq "d") {
+
                 # XX reinvention forever, too: how to *shorten*-dump a
                 # value? Data::Dumper does not seem to support it?
-                local $Data::Dumper::Maxdepth= 1;
+                local $Data::Dumper::Maxdepth = 1;
+
                 # ^ ok helps a bit sometimes. XX But will now be
                 # confusing, as there's no way to know references from
                 # (accidentally) stringified references
-                Chomp (TerseDumper($_))
-            } elsif ($mode eq "s") {
+                Chomp(TerseDumper($_))
+            }
+            elsif ($mode eq "s") {
                 show($_)
-            } elsif ($mode eq "p") {
+            }
+            elsif ($mode eq "p") {
                 "$_"
-            } else {
+            }
+            else {
                 die "unknown mode '$mode'";
             }
         } @$args;
         $str = "\n$str" if @$args;
-        $str =~ s/\n/\n$indent/g; # XX there's also $Data::Dumper::Pad
+        $str =~ s/\n/\n$indent/g;    # XX there's also $Data::Dumper::Pad
         $str
     }
 
     sub desc {
-        my ($s,$mode) = @_;
-        ($s->subroutine."("
-         .$s->args_text("  ", $mode)
-         ."\n) called at ".$s->filename." line ".$s->line)
+        my ($s, $mode) = @_;
+        (         $s->subroutine . "("
+                . $s->args_text("  ", $mode)
+                . "\n) called at "
+                . $s->filename
+                . " line "
+                . $s->line)
     }
 
     # one-line-desc
     sub oneline {
         my $s = shift;
         my ($maybe_prefix) = @_;
-        (($maybe_prefix // "\t") #parens needed!
-         .$s->subroutine
-         ."(".with_maxlen(64, sub{singlequote_many(@{$s->args})}).")"
-         ." called at ".$s->filename." line ".$s->line
-         ."\n")
+        (
+            ($maybe_prefix // "\t")    #parens needed!
+            . $s->subroutine . "("
+                . with_maxlen(64, sub { singlequote_many(@{$s->args}) }) . ")"
+                . " called at "
+                . $s->filename
+                . " line "
+                . $s->line . "\n"
+        )
     }
 
     # CAREFUL: equal stackframes still don't need to be the *same*
     # stackframe!
     sub equal {
-        my $s = shift;
-        my ($v) = @_;
+        my $s                     = shift;
+        my ($v)                   = @_;
         my $equal_standard_fields = sub {
             my $eq = sub {
                 my ($m) = @_;
+
                 #$s->$m eq $v->$m
                 my $S = $s->$m;
                 my $V = $v->$m;
                 if (defined $S) {
                     if (defined $V) {
                         $S eq $V
-                    } else {
+                    }
+                    else {
                         0
                     }
-                } else {
+                }
+                else {
                     if (defined $V) {
                         0
-                    } else {
-                        1 # both undefined
+                    }
+                    else {
+                        1    # both undefined
                     }
                 }
             };
-            (&$eq ("package")
-             and
-             &$eq ("filename")
-             and
-             &$eq ("line")
-             and
-             &$eq ("subroutine")
-             and
-             &$eq ("hasargs")
-             and
-             &$eq ("wantarray")
-             #and
-             #&$eq ("")
-             # hints bitmask hinthash ?
+            (
+                        &$eq("package")
+                    and &$eq("filename")
+                    and &$eq("line")
+                    and &$eq("subroutine")
+                    and &$eq("hasargs")
+                    and &$eq("wantarray")
+
+                    #and
+                    #&$eq ("")
+                    # hints bitmask hinthash ?
             )
         };
         if (defined $v->args) {
-            if (defined $s->args) {
-                (&$equal_standard_fields
-                 and do {
-                     require FP::DumperEqual;
-                     FP::DumperEqual::dumperequal ($v->args, $s->args)
-                 })
-            } else {
+            if (defined $s->args) { (
+                &$equal_standard_fields and do {
+                    require FP::DumperEqual;
+                    FP::DumperEqual::dumperequal($v->args, $s->args)
+                }
+            ) }
+            else {
                 ''
             }
-        } else {
+        }
+        else {
             if (defined $s->args) {
                 ''
-            } else {
+            }
+            else {
                 &$equal_standard_fields
             }
         }
@@ -171,15 +190,16 @@ our @fields; BEGIN { @fields = qw(args
     _END_
 }
 
-
 our $make_frame_accessor = sub {
     my ($method) = @_;
     sub {
         my $s = shift;
-        my ($frameno,@rest) = @_;
+        my ($frameno, @rest) = @_;
         my $nf = $s->num_frames;
         $frameno < $nf
-          or die "frame number must be between 0..".($nf-1).", got: $frameno";
+            or die "frame number must be between 0.."
+            . ($nf - 1)
+            . ", got: $frameno";
         $s->frames->[$frameno]->$method(@rest)
     }
 };
@@ -188,31 +208,27 @@ our $make_perhaps_frame_accessor = sub {
     my ($method) = @_;
     sub {
         my $s = shift;
-        my ($frameno,@rest) = @_;
+        my ($frameno, @rest) = @_;
         my $nf = $s->num_frames;
-        ($frameno < $nf
-         ? ($s->frames->[$frameno]->$method(@rest))
-         : ())
+        ($frameno < $nf ? ($s->frames->[$frameno]->$method(@rest)) : ())
     }
 };
 
-
-use FP::Struct ["frames"],
-    'FP::Struct::Show',
-    'FP::Abstract::Pure';
+use FP::Struct ["frames"], 'FP::Struct::Show', 'FP::Abstract::Pure';
 
 sub get {
     my $class = shift;
     my ($skip) = @_;
+
     package DB;
     my @frames;
     while (my @vals = caller($skip)) {
-        my $subargs = [ @DB::args ];
+        my $subargs = [@DB::args];
+
         # XX how to handle this?: "@DB::args might have
         # information from the previous time "caller" was
         # called" (perlfunc on 'caller')
-        push @frames, FP::Repl::StackFrame->new
-          ($subargs, @vals);
+        push @frames, FP::Repl::StackFrame->new($subargs, @vals);
         $skip++;
     }
     $class->new(\@frames);
@@ -237,20 +253,20 @@ sub max_frameno {
 
 for (@fields, "desc") {
     no strict 'refs';
-    *{$_} = &$make_frame_accessor ($_);
-    *{"perhaps_$_"} = &$make_perhaps_frame_accessor ($_);
+    *{$_} = &$make_frame_accessor($_);
+    *{"perhaps_$_"} = &$make_perhaps_frame_accessor($_);
 }
 
 sub backtrace {
-    my $s = shift;
+    my $s            = shift;
     my ($maybe_skip) = @_;
-    my $skip = $maybe_skip//0;
-    my $fs = $s->frames;
+    my $skip         = $maybe_skip // 0;
+    my $fs           = $s->frames;
     my @f;
-    for my $i ($skip..$#$fs) {
+    for my $i ($skip .. $#$fs) {
         push @f, $$fs[$i]->oneline("$i\t")
     }
-    join ("", @f)
+    join("", @f)
 }
 
 _END_

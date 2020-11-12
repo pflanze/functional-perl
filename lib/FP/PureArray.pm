@@ -84,48 +84,49 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::PureArray;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(is_purearray purearray);
-@EXPORT_OK = qw(array_clone_to_purearray array_to_purearray);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(is_purearray purearray);
+@EXPORT_OK   = qw(array_clone_to_purearray array_to_purearray);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use FP::Interfaces;
 use Carp;
 
-
-our $immutable = 1; # whether new instances are to be immutable
-
+our $immutable = 1;    # whether new instances are to be immutable
 
 sub is_purearray ($) {
-    length ref ($_[0]) and UNIVERSAL::isa($_[0], "FP::_::PureArray")
+    length ref($_[0]) and UNIVERSAL::isa($_[0], "FP::_::PureArray")
 }
 
 sub purearray {
-    FP::_::PureArray->new_from_array ([@_])
+    FP::_::PureArray->new_from_array([@_])
 }
 
 sub array_clone_to_purearray ($) {
-    FP::_::PureArray->new_from_array ([@{$_[0]}])
+    FP::_::PureArray->new_from_array([@{$_[0]}])
 }
 
 sub array_to_purearray ($) {
-    FP::_::PureArray->new_from_array ($_[0])
+    FP::_::PureArray->new_from_array($_[0])
 }
-
 
 package FP::PureArray::autobox {
     our $AUTOLOAD;
+
     sub AUTOLOAD {
         my $methodname = $AUTOLOAD;
         $methodname =~ s/.*:://;
         my $v = FP::_::PureArray->new_from_array($_[0]);
         if (my $m = UNIVERSAL::can($v, $methodname)) {
             goto $m
-        } else {
+        }
+        else {
             die "no method '$methodname' found for object: $v";
         }
     }
@@ -142,8 +143,7 @@ package FP::_::PureArray {
         my ($class, $a) = @_;
         bless $a, $class;
         if ($FP::PureArray::immutable) {
-            Internals::SvREADONLY $_, 1
-                for @$a;
+            Internals::SvREADONLY $_, 1 for @$a;
             Internals::SvREADONLY @$a, 1;
         }
         $a
@@ -164,6 +164,7 @@ package FP::_::PureArray {
     # emptyness constructor that works for subclassing (using singletons
     # for performance (perhaps))
     my %null;
+
     sub null {
         my $proto = shift;
         my $class = ref($proto) || $proto;
@@ -174,8 +175,8 @@ package FP::_::PureArray {
         "purearray"
     }
 
-
     our $pure_warned = 0;
+
     sub pure {
         @_ == 1 or die "wrong number of arguments";
         my $a = shift;
@@ -186,14 +187,13 @@ package FP::_::PureArray {
     sub unsafe_mutable {
         @_ == 1 or die "wrong number of arguments";
         my $a = shift;
-        Internals::SvREADONLY $_, 0
-            for @$a;
+        Internals::SvREADONLY $_, 0 for @$a;
         Internals::SvREADONLY @$a, 0;
-        require FP::MutableArray; # cost?
-        bless $a, "FP::_::MutableArray" 
+        require FP::MutableArray;    # cost?
+        bless $a, "FP::_::MutableArray"
     }
 
-    _END_; # Chj::NamespaceCleanAbove
+    _END_;                           # Chj::NamespaceCleanAbove
 
     FP::Interfaces::implemented qw(
         FP::Abstract::Pure

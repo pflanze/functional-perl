@@ -4,14 +4,13 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-
 # Fancy (but only?) way to enable taint mode, while also bouncing off
 # /usr/bin/env: (thanks to spm and Zefram)
 BEGIN {
     if (!${^TAINT}) {
-        exec $^X, '-T', '--', $0, @ARGV
-          or die "exec '$^X': $!";
-    } else {
+        exec $^X, '-T', '--', $0, @ARGV or die "exec '$^X': $!";
+    }
+    else {
         # trust PERL5LIB:
         if (my $lib = $ENV{PERL5LIB}) {
             my @paths = $lib =~ m{([^:]+)(?::|\z)}sg;
@@ -20,23 +19,27 @@ BEGIN {
     }
 }
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Function::Parameters ':strict';
 use Sub::Call::Tail;
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
 use FP::Untainted;
+
 # trust PATH
 $ENV{PATH} = untainted $ENV{PATH};
-
 
 our @tailcmd = qw(tail --follow=name --retry --lines=0);
 
@@ -68,9 +71,7 @@ sub usage {
 
 use Getopt::Long;
 our $verbose = 0;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           ) or exit 1;
+GetOptions("verbose" => \$verbose, "help" => sub {usage},) or exit 1;
 usage unless @ARGV == 1;
 
 our ($configpath) = @ARGV;
@@ -80,18 +81,18 @@ our ($configpath) = @ARGV;
 use FP::IOStream qw(fh_to_stream);
 use FP::Ops qw(the_method);
 
-fun fh_to_linestream ($fh, $close) {
-    fh_to_stream $fh, the_method ("xreadline"), $close
+fun fh_to_linestream($fh, $close) {
+    fh_to_stream $fh, the_method("xreadline"), $close
 }
 
 use Time::HiRes qw(time sleep);
 
-fun sleep_until ($unixtime) {
-    my $t = time;
+fun sleep_until($unixtime) {
+    my $t       = time;
     my $seconds = $unixtime - $t;
     if ($seconds > 0.01) {
         sleep $seconds;
-        tail sleep_until ($unixtime);
+        tail sleep_until($unixtime);
     }
 }
 
@@ -101,7 +102,8 @@ sub forked (&) {
     my ($thunk) = @_;
     if (my $pid = xfork) {
         $pid
-    } else {
+    }
+    else {
         &$thunk();
         exit 0;
     }
@@ -116,117 +118,120 @@ use Chj::IO::Command;
 use Chj::xpipe;
 use Chj::singlequote;
 use FP::Show;
+
 #use FP::Repl::Trap; # or Chj::Backtrace
 #use FP::Repl;
 
+fun safe_for_mail($str) {
+    $str =~ /^([^\r\n\t]*)\z/s ? $1 : die "not safe for mail: " . show($str);
 
-fun safe_for_mail ($str) {
-    $str =~ /^([^\r\n\t]*)\z/s ? $1
-      : die "not safe for mail: ".show($str);
     # (should really escape instead, but don't want to make it
     # complex)
 }
 
 # to be accessible by code at $configpath (hacky?)
-fun report_mailto ($from, $to) {
-    my $_from = safe_for_mail ($from);
-    my $_to = safe_for_mail ($to);
-    fun ($path) {
-        my $sendmail = Chj::IO::Command->new_receiver ("sendmail","-t");
-        my $in = xopen_read ($path);
+fun report_mailto($from, $to) {
+    my $_from = safe_for_mail($from);
+    my $_to   = safe_for_mail($to);
+    fun($path) {
+        my $sendmail = Chj::IO::Command->new_receiver("sendmail", "-t");
+        my $in       = xopen_read($path);
         $sendmail->xprintln("From: $_from");
         $sendmail->xprintln("To: $_to");
         $sendmail->xprintln("Subject: "
-                            .safe_for_mail($myname)." "
-                            .safe_for_mail($configpath));
+                . safe_for_mail($myname) . " "
+                . safe_for_mail($configpath));
         $sendmail->xprintln;
-        $sendmail->xprintln("$0 on ".hostname()." found the following log messages:");
+        $sendmail->xprintln(
+            "$0 on " . hostname() . " found the following log messages:");
         $sendmail->xprintln;
         $sendmail->xflush;
-        $in->xsendfile_to ($sendmail);
+        $in->xsendfile_to($sendmail);
         $in->xclose;
         $sendmail->xxfinish;
         unlink $path;
     }
 }
 
-fun require_config ($path) {
-    my $arg = untainted( $path =~ m|^\.{0,2}/| ? $path : "./$path" );
+fun require_config($path) {
+    my $arg = untainted($path =~ m|^\.{0,2}/| ? $path : "./$path");
     require $arg
 }
 
 use Hash::Util 'lock_hash';
 my $config = require_config $configpath;
+
 # (btw unlike 'eval' this doesn't give the code in question access to
 # lexicals, right?)
 lock_hash %$config;
 
+my $REPORTMSG = "REPORT-" . rand();    # XX not enough randomness
 
-
-my $REPORTMSG = "REPORT-".rand(); # XX not enough randomness
-
-my ($r,$w) = xpipe;
+my ($r, $w) = xpipe;
 
 use Chj::xtmpfile;
 
-fun xtmpfile_noautoclean () {
+fun xtmpfile_noautoclean() {
     my $t = xtmpfile;
     $t->autoclean(0);
     $t
 }
 
-fun processlines_ ($lines, $out, $maybe_reporterpid) {
+fun processlines_($lines, $out, $maybe_reporterpid) {
     weaken $_[0];
-    my ($line,$rest) = $lines->first_and_rest;
-    warn "line='$line', maybe_reporterpid=".singlequote($maybe_reporterpid)
-      if $verbose;
+    my ($line, $rest) = $lines->first_and_rest;
+    warn "line='$line', maybe_reporterpid=" . singlequote($maybe_reporterpid)
+        if $verbose;
     if ($line =~ /^$REPORTMSG/) {
-        warn "REPORT!"
-          if $verbose;
+        warn "REPORT!" if $verbose;
+
         # XX is it really guaranteed that lines are never broken
         # apart?
         $out->xclose;
         $$config{report}->($out->path);
         xxwaitpid $maybe_reporterpid;
-        tail processlines_ ($rest, xtmpfile_noautoclean, undef)
-    } else {
+        tail processlines_($rest, xtmpfile_noautoclean, undef)
+    }
+    else {
         if ($$config{match}->($line)) {
             my $t_report = time + $$config{collecttime};
             $out->xprint($line);
-            tail processlines_ ($rest,
-                                $out,
-                                $maybe_reporterpid // forked {
-                                    $r->xclose;
-                                    sleep_until $t_report;
-                                    $w->xprintln ($REPORTMSG);
-                                    $w->xclose;
-                                    warn "sent $REPORTMSG"
-                                      if $verbose;
-                                });
-        } else {
-            tail processlines_ ($rest, $out, $maybe_reporterpid)
+            tail processlines_(
+                $rest, $out,
+                $maybe_reporterpid // forked {
+                    $r->xclose;
+                    sleep_until $t_report;
+                    $w->xprintln($REPORTMSG);
+                    $w->xclose;
+                    warn "sent $REPORTMSG" if $verbose;
+                }
+            );
+        }
+        else {
+            tail processlines_($rest, $out, $maybe_reporterpid)
         }
     }
 }
 
-fun processlines ($lines) {
+fun processlines($lines) {
     weaken $_[0];
-    processlines_ ($lines, xtmpfile_noautoclean, undef)
+    processlines_($lines, xtmpfile_noautoclean, undef)
 }
-
 
 my $tailpid = forked {
     $r->xclose;
     $w->xdup2(1);
-    xexec @tailcmd,"--", $$config{logfile};
+    xexec @tailcmd, "--", $$config{logfile};
 };
 
-my $lines = fh_to_linestream
-  ($r,
-   fun ($fh) {
-       $fh->xclose;
-       xxwait $tailpid;
-   });
+my $lines = fh_to_linestream(
+    $r,
+    fun($fh)
+    {
+        $fh->xclose;
+        xxwait $tailpid;
+    }
+);
 
 processlines $lines;
 

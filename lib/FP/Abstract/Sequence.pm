@@ -61,12 +61,13 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Abstract::Sequence;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
-require FP::List; # "use"ing it would create a circular dependency
+require FP::List;    # "use"ing it would create a circular dependency
 use FP::Array_sort qw(on_maybe);
 use FP::Lazy;
 use FP::Ops qw(add mult number_cmp);
@@ -79,79 +80,77 @@ sub FP_Interface__method_names {
     my $class = shift;
     (
 
-     # base definition in this file hence not necessary to specify
-     # here except for the sake of safety in case the base implementation is
-     # removed:
-     qw(
-     is_proper_sequence
-     flatten
-     intersperse
-     extreme
-     min
-     max
-     minmax
-     subsection
-     make_reduce
-     reduce
-     reduce_right
-     sum
-     mean
-     median
-     product
-     none
-     join
-     ),
+        # base definition in this file hence not necessary to specify
+        # here except for the sake of safety in case the base implementation is
+        # removed:
+        qw(
+            is_proper_sequence
+            flatten
+            intersperse
+            extreme
+            min
+            max
+            minmax
+            subsection
+            make_reduce
+            reduce
+            reduce_right
+            sum
+            mean
+            median
+            product
+            none
+            join
+            ),
 
-     # virtual methods:
-     grep {
-         not /^TODO/
-     }
-     qw(
-     is_null
-     first rest
-     first_and_rest
-     maybe_first maybe_rest
-     perhaps_first perhaps_rest
-     perhaps_first_and_rest
-     map
-     map_with_index
-     map_with_islast
-     filter
-     TODO_filter_with_tail
-     drop_while
-     TODO_rtake_while_and_rest
-     TODO_rtake_while
-     take_while_and_rest
-     take_while
-     every
-     any
-     find
-     fold
-     fold_right
-     preferred_fold
-     append
-     reverse
-     take
-     drop
-     xone
-     perhaps_one
-     zip
-     for_each
-     strings_join
-     length
-     second
-     cons
-     array
-     list
-     stream
-     sort
-     sortCompare
-     string
-     ),
+        # virtual methods:
+        grep { not /^TODO/ } qw(
+            is_null
+            first rest
+            first_and_rest
+            maybe_first maybe_rest
+            perhaps_first perhaps_rest
+            perhaps_first_and_rest
+            map
+            map_with_index
+            map_with_islast
+            filter
+            TODO_filter_with_tail
+            drop_while
+            TODO_rtake_while_and_rest
+            TODO_rtake_while
+            take_while_and_rest
+            take_while
+            every
+            any
+            find
+            fold
+            fold_right
+            preferred_fold
+            append
+            reverse
+            take
+            drop
+            xone
+            perhaps_one
+            zip
+            for_each
+            strings_join
+            length
+            second
+            cons
+            array
+            list
+            stream
+            sort
+            sortCompare
+            string
+            ),
 
-     # $class->SUPER::FP_Interface__method_names
+        # $class->SUPER::FP_Interface__method_names
     )
 }
+
 #XXX different protocol for random access ones:
 #hmm add ref here too?  vs. efficient_ref  etc. *?*  or  slow_ref  or somthing?
 #  InefficientSequence
@@ -169,8 +168,6 @@ sub FP_Interface__method_names {
 # group group_by
 #     zip2
 
-
-
 # XXX these don't weaken the caller arguments, thus will leak for
 # streams. How to solve this (and not copy-paste-adapt the methods
 # manually) without fixing perl?
@@ -178,12 +175,13 @@ sub FP_Interface__method_names {
 sub flatten {
     @_ == 1 or @_ == 2 or die "wrong number of arguments";
     my ($self, $perhaps_tail) = @_;
-    $self->fold_right
-      (sub {
-           my ($v, $rest) = @_;
-           $v->append($rest)
-       },
-       @_ == 2 ? $perhaps_tail : FP::List::null());
+    $self->fold_right(
+        sub {
+            my ($v, $rest) = @_;
+            $v->append($rest)
+        },
+        @_ == 2 ? $perhaps_tail : FP::List::null()
+    );
 }
 
 # XXX and on top of that, these return a lazy result even if the input
@@ -195,38 +193,38 @@ sub flatten {
 sub intersperse {
     @_ == 2 or die "wrong number of arguments";
     my ($self, $value) = @_;
+
     # (should we recurse locally like most sequence functions? Or is
     # it actually a good idea to call the method on the rest (for
     # improper_listS, but once we introduce a `cons` method on
     # PureArray etc. that won't happen anymore?)?)
     lazy {
-        $self->is_null ? $self :
-          do {
-              my ($v,$rest) = $self->first_and_rest;
-              $rest->is_null ? $self
+        $self->is_null ? $self : do {
+            my ($v, $rest) = $self->first_and_rest;
+            $rest->is_null
+                ? $self
                 : FP::List::cons($v,
-                                 FP::List::cons($value,
-                                                $rest->intersperse($value)))
-          }
+                FP::List::cons($value, $rest->intersperse($value)))
+        }
     }
 }
-
-
 
 # XX better name?
 sub extreme {
     @_ == 2 or die "wrong number of arguments";
     my ($self, $cmp) = @_;
+
     # XXX: fold_right is good for FP::Stream streaming. left fold will
     # be better for FP::List. How? Add fold_left for explicit left
     # folding and make fold chose the preferred solution for
     # order-irrelevant folding?
-    $self->rest->fold
-      (sub {
-           my ($v, $res) = @_;
-           &$cmp($v, $res) ? $v : $res
-       },
-       $self->first);
+    $self->rest->fold(
+        sub {
+            my ($v, $res) = @_;
+            &$cmp($v, $res) ? $v : $res
+        },
+        $self->first
+    );
 }
 
 sub min {
@@ -244,34 +242,37 @@ sub max {
 sub minmax {
     @_ == 1 or @_ == 2 or die "wrong number of arguments";
     my ($self, $maybe_extract) = @_;
-    # XXX same comment as in `extreme`
-    @{$self->rest->fold
-        (defined $maybe_extract ?
-         sub {
-             my ($v, $res) = @_;
-             my ($min,$max) = @$res;
-             my $v_ = &$maybe_extract($v);
-             [ $v_ < &$maybe_extract($min) ? $v : $min,
-               $v_ > &$maybe_extract($max) ? $v : $max ]
-         }
-         :
-         sub {
-             my ($v, $res) = @_;
-             my ($min,$max) = @$res;
-             [ $v < $min ? $v : $min,
-               $v > $max ? $v : $max ]
-         },
-         [$self->first, $self->first])}
-}
 
+    # XXX same comment as in `extreme`
+    @{
+        $self->rest->fold(
+            defined $maybe_extract
+            ? sub {
+                my ($v,   $res) = @_;
+                my ($min, $max) = @$res;
+                my $v_ = &$maybe_extract($v);
+                [
+                    $v_ < &$maybe_extract($min) ? $v : $min,
+                    $v_ > &$maybe_extract($max) ? $v : $max
+                ]
+            }
+            : sub {
+                my ($v,   $res) = @_;
+                my ($min, $max) = @$res;
+                [$v < $min ? $v : $min, $v > $max ? $v : $max]
+            },
+            [$self->first, $self->first]
+        )
+    }
+}
 
 sub subsection {
     @_ == 3 or die "wrong number of arguments";
     my ($self, $i0, $i1) = @_;
+
     # XXX same comment as in `extreme`
     $self->drop($i0)->take($i1 - $i0)
 }
-
 
 # Reduce is a variant of fold that doesn't require an initial
 # reduction value but instead takes $seq.first() as the initial
@@ -290,9 +291,10 @@ sub make_reduce {
         my ($seq, $fn) = @_;
         if ($seq->is_null()) {
             &$fn()
-        } else {
+        }
+        else {
             my ($first, $rest) = $seq->first_and_rest;
-            $rest->$fold($fn,$first)
+            $rest->$fold($fn, $first)
         }
     }
 }
@@ -312,7 +314,6 @@ sub reduce;
 sub reduce_right;
 *reduce_right = __PACKAGE__->make_reduce("fold_right");
 
-
 sub sum {
     @_ == 1 or die "wrong number of arguments";
     $_[0]->reduce(*add)
@@ -321,19 +322,21 @@ sub sum {
 sub mean {
     @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
+
     # XX imprecise for large numbers of items
     $s->sum / $s->length
 }
 
 sub median {
     @_ == 1 or die "wrong number of arguments";
-    my ($s) = @_;
+    my ($s)    = @_;
     my $sorted = $s->sort(\&number_cmp);
-    my $len = $s->length;
-    my $mid = int($len/2);
+    my $len    = $s->length;
+    my $mid    = int($len / 2);
     if (is_even $len) {
-        average($sorted->ref($mid-1), $sorted->ref($mid));
-    } else {
+        average($sorted->ref($mid - 1), $sorted->ref($mid));
+    }
+    else {
         $sorted->ref($mid)
     }
 }
@@ -346,20 +349,21 @@ sub product {
 sub none {
     @_ == 2 or die "wrong number of arguments";
     my ($s, $pred) = @_;
-    $s->every (complement $pred)
+    $s->every(complement $pred)
 }
 
 sub split_at {
     @_ == 2 or die "wrong number of arguments";
     my ($s, $pos) = @_;
+
     # XXX weaken as all of them.
-    ($s->take($pos),
-     $s->drop($pos))
+    ($s->take($pos), $s->drop($pos))
 }
 
 sub chunks_of {
     @_ == 2 or die "wrong number of arguments";
     my ($s, $chunklen) = @_;
+
     # XXX weaken as all of them.
     $s->stream->chunks_of($chunklen)
 }
@@ -367,21 +371,23 @@ sub chunks_of {
 sub strictly_chunks_of {
     @_ == 2 or die "wrong number of arguments";
     my ($s, $chunklen) = @_;
+
     # XXX weaken as all of them.
     $s->stream->strictly_chunks_of($chunklen)
 }
-
 
 # join in Haskell is doing "++" on the items, should probably choose a
 # protocol for this as well; for now, hard-code to strings_join:
 sub join {
     my ($s) = @_;
+
     # Tail-call, please, for 'weakening maintenance'.
 
     # XX only AUTOLOAD is defined, not `can`! But $s was already
     # forced by the AUTOLOAD thus nothing more is needed here. But
     # this might change!
     my $m = $s->can("strings_join")
+
         # bug since it's requested by the interface
         or die "bug: missing strings_join method on: $s";
 

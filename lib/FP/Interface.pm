@@ -67,17 +67,19 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Interface;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw();
+@ISA = "Exporter";
+require Exporter;
+@EXPORT    = qw();
 @EXPORT_OK = qw(
     package_is_populated
     require_package
     package_check_possible_interface);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Carp 'croak';
 
@@ -99,21 +101,26 @@ sub require_package ($) {
     }
 }
 
-
 sub package_check_possible_interface ($$) {
     my ($caller, $possible_interface_package) = @_;
-    if (my $m = UNIVERSAL::can($possible_interface_package,
-                              "FP_Interface__method_names")) {
+    if (
+        my $m = UNIVERSAL::can(
+            $possible_interface_package, "FP_Interface__method_names"
+        )
+        )
+    {
         my @missing;
         for my $method (&$m($possible_interface_package)) {
             unless (UNIVERSAL::can($caller, $method)) {
                 push @missing, $method
             }
         }
-        warn "FP::Interface warning: '$caller' does not implement '$possible_interface_package' methods: @missing\n"
+        warn
+            "FP::Interface warning: '$caller' does not implement '$possible_interface_package' methods: @missing\n"
             if @missing;
         1
-    } else {
+    }
+    else {
         # not an interface
         undef
     }
@@ -127,23 +134,25 @@ sub implemented_with_caller {
     no strict 'refs';
     push @{"${caller_package}::ISA"}, $interface;
     package_check_possible_interface($caller_package, $interface) // do {
-        my $suggestload = package_is_populated($interface) ? ""
+        my $suggestload
+            = package_is_populated($interface)
+            ? ""
             : " (perhaps you forgot to load \"$interface\"?)";
-        die "'$interface' does not have a 'FP_Interface__method_names' method hence is not an interface"
+        die
+            "'$interface' does not have a 'FP_Interface__method_names' method hence is not an interface"
             . $suggestload
-            ." at $caller_file line $caller_line.\n";
+            . " at $caller_file line $caller_line.\n";
     };
 }
 
 # called fully qualified, i.e. FP::Interface::implemented (to avoid
 # namespace pollution in classes)
 sub implemented {
-    @_ == 1 or
-        croak "FP::Interface::implemented: expecting 1 argument; ".
-              "use FP::Interfaces (note the s) instead";
+    @_ == 1
+        or croak "FP::Interface::implemented: expecting 1 argument; "
+        . "use FP::Interfaces (note the s) instead";
     my $caller = [caller];
     implemented_with_caller($caller, $_[0])
 }
-
 
 1

@@ -23,17 +23,20 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::xIOUtil;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw();
+@ISA = "Exporter";
+require Exporter;
+@EXPORT    = qw();
 @EXPORT_OK = qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
-              xcopyfile);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+    xcopyfile);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::xopen ":all";
+
 # ^ well, this voids the purpose of Chj::xIO (to avoid Chj::IO::*)
 use FP::Lazy;
 use FP::List;
@@ -42,44 +45,48 @@ use Chj::xperlfunc qw(xxsystem_safe xprint xgetfile_utf8);
 # print, not write, i.e. flatten nested structures out, but don't
 # print parens for lists etc., just print the contained basic types.
 sub xprint_object ($$);
+
 sub xprint_object ($$) {
-    my ($fh,$v) = @_;
+    my ($fh, $v) = @_;
     if (ref $v) {
         if (ref($v) eq "ARRAY") {
-            xprint_object ($fh, $_) for @$v;
-        } elsif (is_pair $v) {
-            xprint_object ($fh, car $v);
-            xprint_object ($fh, cdr $v);
-        } elsif (is_promise $v) {
-            xprint_object ($fh, force $v)
-        } else {
-            die "don't know how to print a ".ref($v)." ('$v')";
+            xprint_object($fh, $_) for @$v;
         }
-    } else {
+        elsif (is_pair $v) {
+            xprint_object($fh, car $v);
+            xprint_object($fh, cdr $v);
+        }
+        elsif (is_promise $v) {
+            xprint_object($fh, force $v)
+        }
+        else {
+            die "don't know how to print a " . ref($v) . " ('$v')";
+        }
+    }
+    else {
         xprint $fh, $v
     }
 }
 
 sub xputfile_utf8 ($$) {
-    my ($path,$str) = @_;
+    my ($path, $str) = @_;
     my $out = xopen_write($path);
     binmode $out, ":encoding(UTF-8)" or die "binmode";
-    xprint_object ($out, $str);
+    xprint_object($out, $str);
     $out->xclose;
 }
 
 sub xcopyfile_utf8 ($$) {
-    my ($src,$dest) = @_;
-    xputfile_utf8 ($dest, xgetfile_utf8 ($src));
+    my ($src, $dest) = @_;
+    xputfile_utf8($dest, xgetfile_utf8($src));
 }
 
-
 sub xcopyfile ($$) {
-    my ($src,$dest) = @_;
+    my ($src, $dest) = @_;
+
     # yes, giving up here. XX write something else or just use
     # Filecopy or whatever from CPAN.
     xxsystem_safe "cp", "-a", "--", $src, $dest
 }
-
 
 1

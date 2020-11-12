@@ -24,168 +24,174 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Path::t;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 use FP::Path "path";
 use FP::Equal;
 
+TEST {
+    path("a/b/C")->add(path("d/e"), 0)->string
+}
+'a/b/C/d/e';
+TEST {
+    path("a/b/C")->add(path("../d/e"), 0)->string
+}
+'a/b/C/../d/e';
+TEST {
+    path("a/b/C")->add(path("../d/e"), 1)->string
+}
+'a/b/d/e';
+TEST {
+    path("a/b/C")->add(path("/d/e"), 1)->string
+}
+'/d/e';
 
-TEST{ path("a/b/C")
-  ->add( path("d/e"), 0 )->string }
-  'a/b/C/d/e';
-TEST{ path("a/b/C")
-  ->add( path("../d/e"), 0 )->string }
-  'a/b/C/../d/e';
-TEST{ path("a/b/C")
-  ->add( path("../d/e"), 1 )->string }
-  'a/b/d/e';
-TEST{ path("a/b/C")
-  ->add( path("/d/e"), 1 )->string }
-  '/d/e';
-
-my $p = path ("a/../b/C")->add
-  (path("../d/../e"), 0);
+my $p = path("a/../b/C")->add(path("../d/../e"), 0);
 TEST { $p->string } 'a/../b/C/../d/../e';
 TEST { $p->xclean->string } 'b/e';
 TEST { equal($p->xclean, $p) } '';
 TEST { equal($p->xclean, $p->xclean) } 1;
 
-
-TEST { path ("a/.././b/C")->add
-  (path("../d/./../e"), 0)->string }
-  'a/../b/C/../d/../e'; # 'add' does an implicit clean_dot; should it be
-                        # implemented differently?
+TEST {
+    path("a/.././b/C")->add(path("../d/./../e"), 0)->string
+}
+'a/../b/C/../d/../e';    # 'add' does an implicit clean_dot; should it be
+                         # implemented differently?
 
 TEST { (path "hello//world/you")->string }
-  "hello/world/you";
+"hello/world/you";
 TEST { (path "/hello//world/you")->string }
-  "/hello/world/you";
+"/hello/world/you";
 TEST { (path "/hello//world/you/")->string }
-  "/hello/world/you/";
+"/hello/world/you/";
 TEST { (path "/")->string }
-  "/";
+"/";
 TEST { (path ".")->string }
-  ".";
+".";
 TEST { (path "./")->string }
-  "./";
+"./";
 TEST { (path "./")->clean_dot->string }
-  "./";
+"./";
 TEST { (path "./..")->string }
-  "./..";
+"./..";
 TEST { (path "./..")->clean_dot->string }
-  "..";
+"..";
 
 TEST { (path "./foo/../bar/.//baz/.")->clean_dot->string }
-  "foo/../bar/baz/";
+"foo/../bar/baz/";
 TEST { (path "")->clean_dot->string }
-  # XX should this be an error?
-  '.';
+
+# XX should this be an error?
+'.';
 
 TEST { (path ".")->string }
-  ".";
+".";
 TEST { (path ".")->clean_dot->string }
-  './';
+'./';
 
 TEST { (path "/")->string }
-  "/";
+"/";
 TEST { (path "/")->clean_dot->string }
-  "/";
+"/";
 TEST { (path "/.")->clean_dot->string }
-  "/";
+"/";
 TEST { (path "/./")->clean_dot->string }
-  "/";
+"/";
 TEST { (path "/./")->string }
-  "/./";
+"/./";
 TEST { (path "/.")->string }
-  "/.";
+"/.";
 
 TEST { (path "/.")->contains_dotdot }
-  "0";
+"0";
 TEST { (path "foo/bar/../baz")->contains_dotdot }
-  "1";
+"1";
 TEST { (path "../baz")->contains_dotdot }
-  "1";
+"1";
 TEST { (path "baz/..")->contains_dotdot }
-  "1";
+"1";
 TEST { (path "baz/..")->clean_dot->contains_dotdot }
-  "1";
+"1";
 
 TEST_EXCEPTION { path(".")->clean_dot->dirname }
-  q{can't take dirname of empty path};
+q{can't take dirname of empty path};
 TEST { path("foo")->clean_dot->dirname->string }
-  './';
+'./';
 TEST { path("foo/bar")->clean_dot->dirname->string }
-  'foo/';
+'foo/';
 TEST { path("/bar")->clean_dot->dirname->string }
-  '/';
+'/';
 TEST_EXCEPTION { path("")->dirname }
-  q{can't take dirname of empty path};
+q{can't take dirname of empty path};
 
 TEST { path(".")->clean_dot->has_endslash }
-  1;
+1;
 TEST { path(".")->clean_dot->string }
-  './';
+'./';
+
 #ok
 TEST { path("")->clean_dot->has_endslash }
-  0;
+0;
 TEST { path("")->clean_dot->string }
-  '.';
+'.';
+
 #h
 
 TEST { path("/foo")->to_relative->string }
-  'foo';
+'foo';
 TEST { path("/")->to_relative->string }
-  './';
+'./';
 TEST_EXCEPTION { path("")->to_relative->string }
-  q{is already relative};
+q{is already relative};
 TEST { path("/foo/")->to_relative->string }
- 'foo/';
+'foo/';
 
 use FP::DumperEqual;
 
-TEST { dumperequal (path("/"),
-                    path("//"),
-                    path("///")) }
-  1;
-
+TEST {
+    dumperequal(path("/"), path("//"), path("///"))
+}
+1;
 
 # invalid segments:
 
 use FP::List;
 
 TEST_EXCEPTION { path("/foo")->add_segment("") }
-  "segments cannot be the empty string";
+"segments cannot be the empty string";
 TEST_EXCEPTION { path("/foo")->add_segment("bar/") }
-  'segment contains slash: \'bar/\'';
+'segment contains slash: \'bar/\'';
 TEST_EXCEPTION { FP::Path->new(list("/foo"), 1, 1)->string }
-  ($FP::Path::use_costly_typing ?
-   'unacceptable value for field \'rsegments\': list(\'/foo\')'
-   : 'segment contains slash: \'/foo\'');
-
+($FP::Path::use_costly_typing
+    ? 'unacceptable value for field \'rsegments\': list(\'/foo\')'
+    : 'segment contains slash: \'/foo\'');
 
 # equal:
 
 sub t_equal ($$) {
-    my ($a,$b) = @_;
-    equal (path($a),
-            path($b))
+    my ($a, $b) = @_;
+    equal(path($a), path($b))
 }
 
-TEST { t_equal "/foo", "/foo" } 1;
-TEST { t_equal "/foo", "foo" } '';
-TEST { t_equal "/foo", "/foo/" } '';
-TEST { t_equal "/foo", "/bar" } '';
-TEST { t_equal "/", "/" } 1;
+TEST { t_equal "/foo",    "/foo" } 1;
+TEST { t_equal "/foo",    "foo" } '';
+TEST { t_equal "/foo",    "/foo/" } '';
+TEST { t_equal "/foo",    "/bar" } '';
+TEST { t_equal "/",       "/" } 1;
 TEST { t_equal "/foo/..", "/" } '';
-TEST { t_equal "/foo", "/foo/bar" } '';
+TEST { t_equal "/foo",    "/foo/bar" } '';
 
 # test booleanization (!!) in equal method
-TEST { my $p = path("/foo");
-       equal $p, $p->has_endslash_set(0) } 1;
+TEST {
+    my $p = path("/foo");
+    equal $p, $p->has_endslash_set(0)
+}
+1;
 
 sub t_str_clean ($) {
     my ($a) = @_;
@@ -193,56 +199,54 @@ sub t_str_clean ($) {
 }
 
 sub t_equals_clean ($$) {
-    my ($a,$b) = @_;
-    equal (t_str_clean $a, t_str_clean $b);
+    my ($a, $b) = @_;
+    equal(t_str_clean $a, t_str_clean $b);
 }
 
-TEST { t_equals_clean "/foo", "/foo" } 1;
-TEST { t_equals_clean "/foo", "foo" } '';
+TEST { t_equals_clean "/foo",        "/foo" } 1;
+TEST { t_equals_clean "/foo",        "foo" } '';
 TEST { t_equals_clean "/foo/bar/..", "/foo" } '';
 TEST { t_equals_clean "/foo/bar/..", "/foo/" } 1;
-TEST { t_equals_clean "/foo/..", "/" } 1;
-
-
+TEST { t_equals_clean "/foo/..",     "/" } 1;
 
 # split and resplit:
 
 sub path_split_first_segment {
     my ($str, $clean) = @_;
     my $p = path $str;
-    if (my @v = ($clean ? $p->xclean : $p)->perhaps_split_first_segment) {
-        [map {$_->string} @v]
-    } else {
+    if (my @v = ($clean ? $p->xclean : $p)->perhaps_split_first_segment)
+    { [map { $_->string } @v] }
+    else {
         "unsplittable"
     }
 }
 
 TEST { path_split_first_segment "/foo/bar" }
-  ["/foo/", "bar"];
+["/foo/", "bar"];
 TEST { path_split_first_segment "/foo/bar/" }
-  ["/foo/", "bar/"];
+["/foo/", "bar/"];
 TEST { path_split_first_segment "/foo/" }
-  ["/foo/", "./"];
+["/foo/", "./"];
 TEST { path_split_first_segment "/foo" }
-  ["/foo", "."];
+["/foo", "."];
 TEST { path_split_first_segment "/" }
-  "unsplittable";
+"unsplittable";
 TEST { path_split_first_segment "./foo/bar" }
-  ["./", "foo/bar"]; # ok? what you get for not cleaning.
+["./", "foo/bar"];    # ok? what you get for not cleaning.
 TEST { path_split_first_segment "foo/bar" }
-  ["foo/", "bar"];
+["foo/", "bar"];
 TEST { path_split_first_segment "foo/" }
-  ["foo/", "./"];
+["foo/", "./"];
 TEST { path_split_first_segment "foo" }
-  ["foo", "."];
+["foo", "."];
+
 # (BTW isn't it stupid that ./ and . do both exist? Ok, some kinds of
 # paths might treat "." as non-directory filename? But then it would
 # fail anyway. XX)
 TEST { path_split_first_segment "." }
-  [".", "."]; # odd of course, but that's what you get for not cleaning?
+[".", "."];           # odd of course, but that's what you get for not cleaning?
 TEST { path_split_first_segment ".", 1 }
-  "unsplittable";
-
+"unsplittable";
 
 use FP::List qw(unfold);
 use FP::Array qw(array_is_null array_map);
@@ -252,36 +256,35 @@ sub tupleify ($) {
     my ($f) = @_;
     sub {
         @_ == 1 or die "wrong number of arguments";
-        [ &$f (@{$_[0]}) ]
+        [&$f(@{$_[0]})]
     }
 }
 
-
 sub all_splits {
     my ($str, $clean) = @_;
-    my $p = path $str;
+    my $p  = path $str;
     my $p0 = ($clean ? $p->xclean : $p);
 
-    unfold (# ending predicate
-            *array_is_null,
-            # mapping function
-            sub { array_map the_method ("string"), $_[0] },
-            # stepping function
-            tupleify the_method ("perhaps_resplit_next_segment"),
-            # seed value
-            [ $p0->perhaps_split_first_segment ])
-      ->array
+    unfold(    # ending predicate
+        *array_is_null,
+
+        # mapping function
+        sub { array_map the_method("string"), $_[0] },
+
+        # stepping function
+        tupleify the_method("perhaps_resplit_next_segment"),
+
+        # seed value
+        [$p0->perhaps_split_first_segment]
+        )->array
 }
 
 TEST { all_splits "/foo/bar" }
-  [[ '/foo/', 'bar' ],
-   [ '/foo/bar', '.']];
+[['/foo/', 'bar'], ['/foo/bar', '.']];
 TEST { all_splits "/foo/./bar" }
-  [[ '/foo/', './bar' ],
-   [ '/foo/./', 'bar' ],
-   [ '/foo/./bar', '.']];
+[['/foo/', './bar'], ['/foo/./', 'bar'], ['/foo/./bar', '.']];
 TEST { all_splits "/foo" }
-  [[ '/foo', '.']];
+[['/foo', '.']];
 
 # Note that the end cases above have a left part that does *not* have
 # an end slash (it inherited the setting from the right part). Is this
@@ -291,16 +294,11 @@ TEST { all_splits "/foo" }
 # It's unambiguous when the right hand argument has_end_slash==1:
 
 TEST { all_splits "/foo/bar/" }
-  [[ '/foo/', 'bar/' ],
-   [ '/foo/bar/', './']];
+[['/foo/', 'bar/'], ['/foo/bar/', './']];
 TEST { all_splits "/foo/./bar/" }
-  [[ '/foo/', './bar/' ],
-   [ '/foo/./', 'bar/' ],
-   [ '/foo/./bar/', './']];
+[['/foo/', './bar/'], ['/foo/./', 'bar/'], ['/foo/./bar/', './']];
 TEST { all_splits "/foo/" }
-  [[ '/foo/', './']];
-
-
+[['/foo/', './']];
 
 # XX rules-based testing rules?:
 
@@ -317,35 +315,33 @@ TEST { all_splits "/foo/" }
 #   'can\'t take \'..\' of root directory';
 
 TEST_EXCEPTION { path("..")->xclean_dotdot->string }
-  'can\'t take \'..\' of root directory'; # ".."; ?
+'can\'t take \'..\' of root directory';    # ".."; ?
 TEST_EXCEPTION { path("../..")->xclean_dotdot->string }
-  'can\'t take \'..\' of root directory'; # "../.."; ?
+'can\'t take \'..\' of root directory';    # "../.."; ?
 TEST_EXCEPTION { path("/..")->xclean_dotdot->string }
-  'can\'t take \'..\' of root directory';
+'can\'t take \'..\' of root directory';
 TEST_EXCEPTION { path("/../..")->xclean_dotdot->string }
-  'can\'t take \'..\' of root directory';
+'can\'t take \'..\' of root directory';
 
-TEST_EXCEPTION {path("../foo")->xclean->string }
-  "can't take '..' of root directory";
+TEST_EXCEPTION { path("../foo")->xclean->string }
+"can't take '..' of root directory";
+
 # should .. be allowed at the beginning? But then all of the above are
 # ok, too, just translate into a number of ../ at the beginning. ->
 # XX See scm libs re chroot / leaving root.
 
-
 # - does cleaning a path that ends in /. leve it with has_endslash
 # set?
 
-TEST { path ("foo/.") -> has_endslash } '';
-TEST { path ("foo/.") -> xclean -> has_endslash } 1;
-TEST { path ("/.") -> has_endslash } '';
-TEST { path ("/.") -> xclean -> has_endslash } 1;
+TEST { path("foo/.")->has_endslash } '';
+TEST { path("foo/.")->xclean->has_endslash } 1;
+TEST { path("/.")->has_endslash } '';
+TEST { path("/.")->xclean->has_endslash } 1;
 
-TEST { path ("foo/..") -> has_endslash } '';
-TEST { path ("foo/..") -> xclean -> has_endslash } 1;
+TEST { path("foo/..")->has_endslash } '';
+TEST { path("foo/..")->xclean->has_endslash } 1;
 
-TEST { path ("foo/bar/..") -> has_endslash } '';
-TEST { path ("foo/bar/..") -> xclean -> has_endslash } 1;
-
-
+TEST { path("foo/bar/..")->has_endslash } '';
+TEST { path("foo/bar/..")->xclean->has_endslash } 1;
 
 1

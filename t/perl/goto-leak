@@ -4,20 +4,20 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 @ARGV == 2 or die "usage: $0 n m";
 our ($n, $m) = @ARGV;
-
 
 # a lazily nested data structure to work on:
 
 sub naturals {
     my ($n) = @_;
     sub {
-        if ($n > 0) {
-            [ $n, naturals($n - 1) ]
-        } else {
+        if ($n > 0) { [$n, naturals($n - 1)] }
+        else {
             undef
         }
     }
@@ -29,8 +29,10 @@ sub naturals {
 sub stream_sum_LEAK {
     my ($s, $tot) = @_;
     if (my $fs = &$s) {
-        @_ = ($$fs[1], $$fs[0] + $tot); goto \&stream_sum_LEAK;
-    } else {
+        @_ = ($$fs[1], $$fs[0] + $tot);
+        goto \&stream_sum_LEAK;
+    }
+    else {
         $tot
     }
 }
@@ -41,14 +43,17 @@ sub stream_sum_LEAK {
 # $coderef`.
 
 sub stream_sum_OK {
-  stream_sum_OK: {
-    my ($s, $tot) = @_;
-    if (my $fs = &$s) {
-        @_ = ($$fs[1], $$fs[0] + $tot); goto stream_sum_OK;
-    } else {
-        $tot
+stream_sum_OK: {
+        my ($s, $tot) = @_;
+        if (my $fs = &$s) {
+            @_ = ($$fs[1], $$fs[0] + $tot);
+            goto stream_sum_OK;
+        }
+        else {
+            $tot
+        }
     }
-}}
+}
 
 # -----------------------------------------------------------
 # variant using trampolines to implement tail call optimization, also
@@ -61,7 +66,7 @@ sub T (&) {
 
 sub trampoline ($) {
     my ($v) = @_;
-    while (ref ($v) eq "TrampolineContinuation") {
+    while (ref($v) eq "TrampolineContinuation") {
         $v = &$v()
     }
     $v
@@ -71,13 +76,14 @@ sub _stream_sum_TRAMPOLINE {
     my ($s, $tot) = @_;
     if (my $fs = &$s) {
         T { _stream_sum_TRAMPOLINE($$fs[1], $$fs[0] + $tot) }
-    } else {
+    }
+    else {
         $tot
     }
 }
 
 sub stream_sum_TRAMPOLINE {
-    trampoline _stream_sum_TRAMPOLINE (@_)
+    trampoline _stream_sum_TRAMPOLINE(@_)
 }
 
 # -----------------------------------------------------------
@@ -87,12 +93,12 @@ sub stream_sum_TRAMPOLINE {
 *stream_sum = *stream_sum_LEAK;
 
 my $res;
-for (1..$m) {
+for (1 .. $m) {
     warn "build up..\n";
     my $ns = naturals $n;
     warn "summing..\n";
-    $res = stream_sum ($ns, 0);
+    $res = stream_sum($ns, 0);
 }
 
-print $res,"\n";
+print $res, "\n";
 

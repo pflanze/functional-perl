@@ -4,28 +4,33 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Scalar::Util "weaken";
 
 sub foo {
-    my $f; $f = sub {
+    my $f;
+    $f = sub {
         my ($n) = @_;
-        my $f = $f; # create a new, strong binding for f to prevent it
-                  # from being freed (upon return from f)
+        my $f   = $f;    # create a new, strong binding for f to prevent it
+                         # from being freed (upon return from f)
         sub {
             if ($n > 0) {
                 $n + &{&$f($n - 1)}
-            } else {
+            }
+            else {
                 0
             }
         }
     };
-    my $f_ = $f; weaken $f;
+    my $f_ = $f;
+    weaken $f;
     &$f_;
 }
 
 my $res = &{foo 2};
 
-print $res,"\n";
+print $res, "\n";
 

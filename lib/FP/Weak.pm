@@ -83,19 +83,21 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Weak;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(weaken Weakened Keep);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT    = qw(weaken Weakened Keep);
 @EXPORT_OK = qw(
-                 do_weaken
-                 noweaken noWeakened with_noweaken
-                 warnweaken warnWeakened with_warnweaken
-                 cluckweaken cluckWeakened with_cluckweaken
-            );
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+    do_weaken
+    noweaken noWeakened with_noweaken
+    warnweaken warnWeakened with_warnweaken
+    cluckweaken cluckWeakened with_cluckweaken
+);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Scalar::Util ();
 
@@ -104,9 +106,9 @@ our $weaken = \&Scalar::Util::weaken;
 sub weaken ($) {
     goto &$weaken
 }
+
 # XX is there really no way (short of re-exporting everywhere with a
 # Chj::ruse approach) to avoid the extra function call cost?
-
 
 # protect a variable from being pruned by callees that prune their
 # arguments
@@ -123,8 +125,8 @@ sub Weakened ($) {
     $ref
 }
 
-
 sub noweaken ($) {
+
     # noop
 }
 
@@ -134,56 +136,53 @@ sub noWeakened ($) {
 
 sub with_noweaken (&) { local $weaken = \&noweaken; &{$_[0]}() }
 
-
 use Carp;
 
 sub warnweaken ($) {
     carp "weaken ($_[0])";
-    Scalar::Util::weaken ($_[0]);
+    Scalar::Util::weaken($_[0]);
 }
 
 sub warnWeakened ($) {
     carp "weaken ($_[0])";
-    Weakened ($_[0]);
+    Weakened($_[0]);
 }
 
 sub with_warnweaken (&) { local $weaken = \&warnweaken; &{$_[0]}() }
-
 
 use Carp 'cluck';
 
 sub cluckweaken ($) {
     cluck "weaken ($_[0])";
-    Scalar::Util::weaken ($_[0]);
+    Scalar::Util::weaken($_[0]);
 }
 
 sub cluckWeakened ($) {
     cluck "weaken ($_[0])";
-    Weakened ($_[0]);
+    Weakened($_[0]);
 }
 
 sub with_cluckweaken (&) { local $weaken = \&cluckweaken; &{$_[0]}() }
 
-
 sub do_weaken ($) {
     my ($v) = @_;
-    my $w =
-      $v ?
-        (+{
-           1 => \&Scalar::Util::weaken,
-           "yes" => \&Scalar::Util::weaken,
-           "no" => \&noweaken,
-           "on" => \&Scalar::Util::weaken,
-           "off" => \&noweaken,
-           "noweaken" => \&noweaken,
-           "warn" => \&warnweaken,
-           "warnweaken" => \&warnweaken,
-           "cluck" => \&cluckweaken,
-           "cluckweaken" => \&cluckweaken,
-          }->{$v} // die "do_weaken: unknown key '$v'")
-          : \&noweaken;
+    my $w = $v
+        ? (
+        +{
+            1             => \&Scalar::Util::weaken,
+            "yes"         => \&Scalar::Util::weaken,
+            "no"          => \&noweaken,
+            "on"          => \&Scalar::Util::weaken,
+            "off"         => \&noweaken,
+            "noweaken"    => \&noweaken,
+            "warn"        => \&warnweaken,
+            "warnweaken"  => \&warnweaken,
+            "cluck"       => \&cluckweaken,
+            "cluckweaken" => \&cluckweaken,
+        }->{$v} // die "do_weaken: unknown key '$v'"
+        )
+        : \&noweaken;
     $weaken = $w
 }
-
 
 1

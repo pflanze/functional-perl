@@ -4,106 +4,112 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
-
 
 use Chj::TEST;
 use Chj::Backtrace;
 
-
 {
+
     package Foo;
     use FP::Predicates;
 
-    BEGIN { *is_age = both *is_natural0, sub { $_[0] < 130 } }
+    BEGIN {
+        *is_age = both * is_natural0, sub { $_[0] < 130 }
+    }
 
-    use FP::Struct [[*is_string, "name"],
-                    [*is_age, "age"]];
+    use FP::Struct [[*is_string, "name"], [*is_age, "age"]];
     _END_
 }
 
 {
+
     package Bar;
     use FP::Predicates;
 
     use FP::Struct [[*is_string, "name"],
-                    [both (*is_natural0, less_than 130), "age"]];
+        [both(*is_natural0, less_than 130), "age"]];
     _END_
 }
 
 sub test {
     my ($class) = @_;
 
-    my $f = $class->new ("Heinz", 105);
+    my $f = $class->new("Heinz", 105);
     TEST { $f->age }
-      105;
+    105;
     TEST {
         # check namespace cleaning
         $f->can("is_age")
-    } undef;
-    TEST_EXCEPTION { $f = $class->new ("Maria", 1300) }
-      'unacceptable value for field \'age\': 1300';
-    TEST_EXCEPTION { $f = $class->new ("Maria", 104.5) }
-      'unacceptable value for field \'age\': \'104.5\'';
+    }
+    undef;
+    TEST_EXCEPTION { $f = $class->new("Maria", 1300) }
+    'unacceptable value for field \'age\': 1300';
+    TEST_EXCEPTION { $f = $class->new("Maria", 104.5) }
+    'unacceptable value for field \'age\': \'104.5\'';
 }
 
 test "Foo";
 test "Bar";
-
 
 use FP::Predicates;
 use FP::List;
 use FP::PureArray;
 
 TEST { is_pure 11 }
-  1;
+1;
 
 TEST { my $x = 11; $x++; is_pure $x }
-  1;
+1;
 
 TEST { my $x = 11; $x++; is_pure_object $x }
-  0;
+0;
 
-TEST { is_pure cons 1,2 }
-  1;
+TEST { is_pure cons 1, 2 }
+1;
 
-TEST { is_pure_object cons 1,2 }
-  1;
+TEST { is_pure_object cons 1, 2 }
+1;
 
-TEST { is_pure [ 1,2 ] }
-  0;
+TEST { is_pure [1, 2] }
+0;
 
 TEST { is_pure purearray 1, 2 }
-  1;
+1;
 
 use FP::Lazy;
 
-TEST { is_pure lazy { cons 1,2 } }
-  0; # or should it force it? XX or (wildly) assume that lazy
-     # expressions are always returning pure values?
+TEST {
+    is_pure lazy { cons 1, 2 }
+}
+0;    # or should it force it? XX or (wildly) assume that lazy
+      # expressions are always returning pure values?
 
+use FP::OrderedCollection;    # based on FP::Struct
 
-use FP::OrderedCollection; # based on FP::Struct
+my $a = [1, 2];
 
-my $a = [1,2];
+TEST { is_pure(FP::OrderedCollection->unsafe_new_from_array($a)) }
+1;    # this assumes that the array passed in is not mutated by the
+      # caller!
 
-TEST { is_pure( FP::OrderedCollection->unsafe_new_from_array($a) ) }
-  1; # this assumes that the array passed in is not mutated by the
-     # caller!
-
-TEST { is_pure( FP::OrderedCollection->new_from_array($a) ) }
-  1; # this copies the array, hence is always safe
-
+TEST { is_pure(FP::OrderedCollection->new_from_array($a)) }
+1;    # this copies the array, hence is always safe
 
 perhaps_run_tests "main" or do {
-    require FP::Repl; FP::Repl::repl();
-}
+    require FP::Repl;
+    FP::Repl::repl();
+    }

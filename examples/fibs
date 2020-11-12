@@ -4,17 +4,20 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
-
 
 use Chj::TEST use => "PadWalker";
 use FP::List ":all";
@@ -29,16 +32,14 @@ use Chj::Backtrace;
 # fibs = 1:1:zipWith (+) fibs (tail fibs)
 # fib n = fibs!!n
 
-our $fibs; $fibs =
-    cons bigint(1),
-    cons bigint(1),
+our $fibs;
+$fibs = cons bigint(1), cons bigint(1),
     lazy { stream_zip_with \&add, Keep($fibs), rest $fibs };
 
 sub fib {
     my ($n) = @_;
     stream_ref Keep($fibs), $n
 }
-
 
 # The above code creates the sequence only once per program run and
 # then keeps it around in the $fibs global; there's no provision to
@@ -53,10 +54,9 @@ sub fib {
 # called:
 
 sub fibs {
-    my $fibs; $fibs =
-      cons bigint(1),
-      cons bigint(1),
-      lazy { stream_zip_with *add, $fibs, rest $fibs };
+    my $fibs;
+    $fibs = cons bigint(1), cons bigint(1),
+        lazy { stream_zip_with * add, $fibs, rest $fibs };
     $fibs
 }
 
@@ -68,10 +68,10 @@ sub fibs {
 # package variable) instead of mutating a lexical variable:
 
 sub fibs2 {
-    cons bigint(1),
-    cons bigint(1),
-    lazy { my $fibs = fibs2();
-           stream_zip_with *add, $fibs, rest $fibs }
+    cons bigint(1), cons bigint(1), lazy {
+        my $fibs = fibs2();
+        stream_zip_with * add, $fibs, rest $fibs
+    }
 }
 
 # But it's less efficient: it recalculates parts multiple times, as
@@ -81,18 +81,25 @@ sub fibs2 {
 # calculation:
 
 my $addcount = 0;
+
 sub counting_add {
     $addcount++;
     $_[0] + $_[1]
 }
 
-TEST { $addcount = 0; local *add = *counting_add;
-       [ fibs->ref(80), $addcount ] }
-  [bigint('37889062373143906'), 79];
+TEST {
+    $addcount = 0;
+    local *add = *counting_add;
+    [fibs->ref(80), $addcount]
+}
+[bigint('37889062373143906'), 79];
 
-TEST { $addcount = 0; local *add = *counting_add;
-       [ fibs2->ref(80), $addcount ] }
-  [bigint('37889062373143906'), 3160]; # 3160 == 79*80/2
+TEST {
+    $addcount = 0;
+    local *add = *counting_add;
+    [fibs2->ref(80), $addcount]
+}
+[bigint('37889062373143906'), 3160];    # 3160 == 79*80/2
 
 # This is because the recursive call to `fibs2` is creating a second,
 # independently calculated sequence, which itself at the second
@@ -100,18 +107,17 @@ TEST { $addcount = 0; local *add = *counting_add;
 # sequence, etc. We want to calculate the same sequence only once,
 # which `fibs` achieves.
 
-
 TEST { Keep($fibs)->take(10)->map(*stringify)->array }
-  [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+[1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
 
 TEST { fib 30 }
-  bigint(1346269);
+bigint(1346269);
 
 TEST { fibs->ref(30) }
-  bigint(1346269);
+bigint(1346269);
 
 TEST { fibs2->ref(30) }
-  bigint(1346269);
+bigint(1346269);
 
 # ------------------------------------------------------------------
 
@@ -131,15 +137,13 @@ TEST { fibs2->ref(30) }
 
 sub _fib {
     my ($n) = @_;
-    ($n == 0) ? (bigint(0), bigint(1))
-      : do {
-          no warnings 'recursion';
-          my ($a,$b) = _fib($n / 2);
-          my $c = $a * ($b * 2 - $a);
-          my $d = $a * $a + $b * $b;
-          ($n % 2) == 0 ? ($c, $d)
-            : ($d, $c + $d)
-        };
+    ($n == 0) ? (bigint(0), bigint(1)) : do {
+        no warnings 'recursion';
+        my ($a, $b) = _fib($n / 2);
+        my $c = $a * ($b * 2 - $a);
+        my $d = $a * $a + $b * $b;
+        ($n % 2) == 0 ? ($c, $d) : ($d, $c + $d)
+    };
 }
 
 sub _fibonacci {
@@ -153,22 +157,23 @@ sub fibonacci {
 }
 
 TEST { fibonacci 30 }
-  bigint(1346269);
-
+bigint(1346269);
 
 # With bigger inputs:
 
 use Chj::time_this;
 
-my $a = lazy{time_this{ fib (1400) } "fib"};
-my $b = lazy{time_this{ fibonacci (1400) } "fibonacci"};
+my $a = lazy {
+    time_this { fib(1400) } "fib"
+};
+my $b = lazy {
+    time_this { fibonacci(1400) } "fibonacci"
+};
 
-TEST { FORCE($a)."" }
-  "27682097123729003105677626449505746191732174241149462650923690069660131404640833946850969379619575819465246124164576690629246144675379393573106211382631761722558988596174542778374560842981861789646519389087106627252306193512024601313327314953992743800841043870569935864482663072626507327493026";
+TEST { FORCE($a) . "" }
+"27682097123729003105677626449505746191732174241149462650923690069660131404640833946850969379619575819465246124164576690629246144675379393573106211382631761722558988596174542778374560842981861789646519389087106627252306193512024601313327314953992743800841043870569935864482663072626507327493026";
 
 TEST { FORCE($b) } $a;
-
-
 
 perhaps_run_tests "main" or do {
     require FP::Repl::Trap;

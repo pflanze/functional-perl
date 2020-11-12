@@ -4,7 +4,9 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Test::Requires qw(Function::Parameters Text::CSV);
 use Test::More;
@@ -15,22 +17,25 @@ use Chj::xperlfunc ":all";
 require "./meta/find-perl.pl";
 
 require "./testmem.pl";
-setlimit_mem_MB ($^V->{version}[1] < 15 ? 30 : 80); # 14 is enough on 32bit Debian, 64bit will need more
+setlimit_mem_MB($^V->{version}[1] < 15 ? 30 : 80)
+    ;    # 14 is enough on 32bit Debian, 64bit will need more
 
 SKIP: {
     if (0) {
-        warn "todo: fix perl issue or functional-perl bug"; 
-        skip "Perl issue or functional-perl bug?", 3; # XXX
+        warn "todo: fix perl issue or functional-perl bug";
+        skip "Perl issue or functional-perl bug?", 3;    # XXX
     }
 
-    is xsystem_safe ($^X, qw"examples/gen-csv t/test-a.csv 40000"),
-        0;
+    is xsystem_safe($^X, qw"examples/gen-csv t/test-a.csv 40000"), 0;
+
     # 20000 pass on 32bit Debian even with bug
 
-    is xsystem_safe ($^X, qw"examples/csv_to_xml_short t/test-a.csv t/test-a.xml"),
+    is xsystem_safe(
+        $^X, qw"examples/csv_to_xml_short t/test-a.csv t/test-a.xml"
+        ),
         0;
 
-    is xsystem_safe ($^X, qw"examples/csv_to_xml t/test-a.csv -o t/test-a.xml"),
+    is xsystem_safe($^X, qw"examples/csv_to_xml t/test-a.csv -o t/test-a.xml"),
         0;
 }
 

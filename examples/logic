@@ -4,115 +4,113 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-
 # This was written while working through the online course material
 # "Introduction to Logic" at Stanford University
 
 # http://logic.stanford.edu/intrologic/
 # http://logic.stanford.edu/intrologic/chapters/chapter_01.html
 
-
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
 use Function::Parameters qw(:strict);
+
 #use Sub::Call::Tail;
 use FP::Array ":all";
 use FP::Predicates qw(complement);
-use FP::Stream ":all"; # incl. F
+use FP::Stream ":all";    # incl. F
 use FP::Ops ":all";
-use Chj::TEST ":all",
-    use => 'FP::Repl::Dependencies';
+use Chj::TEST ":all", use => 'FP::Repl::Dependencies';
 use FP::Equal;
 use FP::Repl::Stack;
-use FP::Repl::Trap; # or Chj::Backtrace
+use FP::Repl::Trap;       # or Chj::Backtrace
 use FP::Repl;
 use FP::Hash ":all";
 use FP::Show;
 use FP::Array_sort ":all";
 
-
 {
+
     package examples_logic::Predicate;
-    use FP::Struct ["coderef","stack"];
-    use overload ('&{}' => "coderef",
-                  '""' => "FP_Show_show");
-    method FP_Show_show (@args) {
+    use FP::Struct ["coderef", "stack"];
+    use overload ('&{}' => "coderef", '""' => "FP_Show_show");
+    method FP_Show_show(@args) {
+
         # 2 args what for?
         "predicate from:\n" . $self->stack->backtrace(0)
     }
     _END_
 }
 
-
 my @tests;
-fun test ($pred) {
-    push @tests, examples_logic::Predicate->new
-      ($pred,
-       FP::Repl::Stack->get(1));
+fun test($pred) {
+    push @tests, examples_logic::Predicate->new($pred, FP::Repl::Stack->get(1));
 }
 
-fun matrix_likes ($matrix, $subj, $obj) {
+fun matrix_likes($matrix, $subj, $obj) {
     $$matrix{$subj}{$obj}
 }
 
-fun likes ($subj, $obj) {
-    fun ($matrix) {
+fun likes($subj, $obj) {
+    fun($matrix) {
         matrix_likes $matrix, $subj, $obj
     }
 }
 
-fun does_not_like ($subj,$obj) {
-    complement likes($subj,$obj)
+fun does_not_like($subj, $obj) {
+    complement likes($subj, $obj)
 }
 
-fun likes_either ($subj,@objs) {
-    fun ($matrix) {
-        array_any
-          (
-           fun ($obj) {
-               matrix_likes $matrix, $subj, $obj
-           },
-           \@objs);
+fun likes_either($subj, @objs) {
+    fun($matrix) {
+        array_any(
+            fun($obj)
+            {
+                matrix_likes $matrix, $subj, $obj
+            },
+            \@objs
+        );
     }
 }
 
-fun matrix_people ($matrix) {
+fun matrix_people($matrix) {
+
     # XX only works if there are entries (at least in the first level)
     # even for false relations!
-    [ keys %$matrix ]
+    [keys %$matrix]
 }
 
-fun matrix_likers ($matrix, $liked) {
+fun matrix_likers($matrix, $liked) {
+
     # find who likes $liked
-    array_filter
-      (
-       fun ($person) {
-           matrix_likes $matrix, $person, $liked
-       },
-       matrix_people $matrix);
+    array_filter(
+        fun($person)
+        {
+            matrix_likes $matrix, $person, $liked
+        },
+        matrix_people $matrix);
 }
 
-fun matrix_liked ($matrix, $subj) {
+fun matrix_liked($matrix, $subj) {
+
     # array of who $subj likes
     my $l2 = $$matrix{$subj};
-    [
-     grep {
-         $$l2{$_}
-     }
-     keys %$l2
-    ]
+    [grep { $$l2{$_} } keys %$l2]
 }
 
-fun matrix_numrelations ($matrix) {
+fun matrix_numrelations($matrix) {
     my $n = 0;
     for my $k0 (keys %$matrix) {
         my $m = $$matrix{$k0};
@@ -123,63 +121,71 @@ fun matrix_numrelations ($matrix) {
     $n
 }
 
-fun likes_everyone_that_x_likes ($subj, $othersubj) {
-    fun ($matrix) {
-        array_every
-          (
-           fun ($obj) {
-               matrix_likes $matrix, $subj, $obj
-           },
-           matrix_liked $matrix, $othersubj);
+fun likes_everyone_that_x_likes($subj, $othersubj) {
+    fun($matrix) {
+        array_every(
+            fun($obj)
+            {
+                matrix_likes $matrix, $subj, $obj
+            },
+            matrix_liked $matrix,
+            $othersubj
+        );
     }
 }
 
-fun likes_everyone_who_likes ($subj,$liked) {
+fun likes_everyone_who_likes($subj, $liked) {
+
     # is this cheating, walking the matrix? Should it look at
     # predicates? ehr no, ehr?
-    fun ($matrix) {
-        array_every
-          (
-           fun ($liker) {
-               matrix_likes $matrix, $subj, $liker
-           },
-           matrix_likers $matrix, $liked);
+    fun($matrix) {
+        array_every(
+            fun($liker)
+            {
+                matrix_likes $matrix, $subj, $liker
+            },
+            matrix_likers $matrix,
+            $liked
+        );
     }
 }
 
-fun Or ($t0,$t1) {
-    fun ($matrix) {
+fun Or($t0, $t1) {
+    fun($matrix) {
         &$t0($matrix) or &$t1($matrix)
     }
 }
 
-
-fun contradictions_for ($matrix) {
-    array_to_stream(\@tests) -> filter(complement applying_to $matrix)
+fun contradictions_for($matrix) {
+    array_to_stream(\@tests)->filter(complement applying_to $matrix)
 }
 
-fun checks ($matrix) {
+fun checks($matrix) {
     is_null contradictions_for $matrix
 }
-
 
 # logic sentences
 
 # Dana likes Cody.
 test likes "Dana", "Cody";
+
 # Abby does not like Dana.
 test does_not_like "Abby", "Dana";
+
 # Dana does not like Abby.
 test does_not_like "Dana", "Abby";
+
 # Bess likes Cody or Dana.
 test likes_either "Bess", "Cody", "Dana";
+
 # Abby likes everyone that Bess likes.
 test likes_everyone_that_x_likes "Abby", "Bess";
+
 # Cody likes everyone who likes her.
 test likes_everyone_who_likes "Cody", "Cody";
+
 # Nobody likes herself.
 test does_not_like $_, $_ for qw(Dana Cody Abby Bess);
-
 
 # Logical Entailment:
 
@@ -187,50 +193,28 @@ test does_not_like $_, $_ for qw(Dana Cody Abby Bess);
 # outcome? Then, *is* there still a successful match?
 
 # Abby likes Bess or Bess likes Abby.
-test Or (likes ("Abby", "Bess"),
-         likes "Bess", "Abby");
+test Or(likes("Abby", "Bess"), likes "Bess", "Abby");
 
-
-my $onesolution =
-  {
-   Abby => {
-           Abby => '',
-           Bess => 1,
-           Cody => 1,
-           Dana => ''
-          },
-   Bess => {
-           Abby => '',
-           Bess => '',
-           Cody => 1,
-           Dana => ''
-          },
-   Cody => {
-           Abby => 1,
-           Bess => 1,
-           Cody => '',
-           Dana => 1
-          },
-   Dana => {
-           Abby => '',
-           Bess => '',
-           Cody => 1,
-           Dana => ''
-          },
-  };
+my $onesolution = {
+    Abby => {Abby => '', Bess => 1,  Cody => 1,  Dana => ''},
+    Bess => {Abby => '', Bess => '', Cody => 1,  Dana => ''},
+    Cody => {Abby => 1,  Bess => 1,  Cody => '', Dana => 1},
+    Dana => {Abby => '', Bess => '', Cody => 1,  Dana => ''},
+};
 
 TEST { matrix_numrelations $onesolution } 7;
 
-fun T ($pred) {
-    &$pred ($onesolution)
+fun T($pred) {
+    &$pred($onesolution)
 }
 
-TEST { T likes "Dana","Cody" } 1;
-TEST { T likes "Abby","Dana" } '';
+TEST { T likes "Dana", "Cody" } 1;
+TEST { T likes "Abby", "Dana" } '';
 
 # test likes_everyone_who_likes "Abby", "Bess":
-TEST { T likes "Cody","Bess" } 1;
-TEST { T likes "Abby", "Cody" } 1; # because Cody likes Bess
+TEST { T likes "Cody", "Bess" } 1;
+TEST { T likes "Abby", "Cody" } 1;    # because Cody likes Bess
+
 #^ ehr that was crap, 'odd' that it fits into the same world?
 
 # test likes_everyone_that_x_likes "Abby", "Bess":
@@ -240,10 +224,10 @@ TEST { matrix_liked $onesolution, "Bess" } ["Cody"];
 TEST { T likes_everyone_that_x_likes "Abby", "Bess" } 1;
 
 # test likes_everyone_who_likes "Cody", "Cody":
-TEST { T likes "Dana","Cody" } 1;
-TEST { T likes "Bess","Cody" } 1;
-TEST { T likes "Abby","Cody" } 1;
-TEST { T likes "Cody", "Dana" } 1; # because Dana likes Cody
+TEST { T likes "Dana", "Cody" } 1;
+TEST { T likes "Bess", "Cody" } 1;
+TEST { T likes "Abby", "Cody" } 1;
+TEST { T likes "Cody", "Dana" } 1;    # because Dana likes Cody
 TEST { T likes "Cody", "Bess" } 1;
 TEST { T likes "Cody", "Abby" } 1;
 
@@ -254,57 +238,58 @@ TEST { T does_not_like "Abby", "Dana" } 1;
 TEST { T does_not_like "Cody", "Cody" } 1;
 TEST { T does_not_like "Abby", "Abby" } 1;
 
-
 TEST { checks $onesolution } 1;
+
 #TEST { checks hash2_set $onesolution, "Bess", "Cody", 0 } 0;
 #TEST { checks hash2_set $onesolution, "Bess", "Dana", 0 } 1;
 #TEST { checks hash2_set $onesolution, "Bess", "Dana", 1 } 0; got 1 hm
 
+our $people   = matrix_people $onesolution;
+our $people_i = [0 .. $#$people];
 
-our $people = matrix_people $onesolution;
-our $people_i = [0..$#$people];
-
-
-fun buildmatrix ($bits) {
-    array_to_hash_map
-      (
-       fun ($subj, $subji) {
-           $subj =>
-             array_to_hash_map
-               (
-                fun ($obj, $obji) {
+fun buildmatrix($bits) {
+    array_to_hash_map(
+        fun($subj, $subji)
+        {
+            $subj => array_to_hash_map(
+                fun($obj, $obji)
+                {
                     my $i = $subji * 4 + $obji;
-                    $obj => !!($bits & (1<<$i))
+                    $obj => !!($bits & (1 << $i))
                 },
                 $people,
-                $people_i);
-       },
-       $people,
-       $people_i);
+                $people_i
+            );
+        },
+        $people,
+        $people_i
+    );
 }
 
-fun search () {
+fun search() {
     stream_iota->take(2**16)->map(*buildmatrix)->filter(*checks)
 }
 
 if ($ENV{RUN_SLOW_TESTS}) {
     my $results;
     TEST {
-        $results = search ->array;
+        $results = search->array;
         array_length $results
-    } 2;
+    }
+    2;
 
-    TEST { array_length array_filter fun($v){ equal $v, $onesolution }, $results }
-      1;
+    TEST {
+        array_length array_filter fun($v) { equal $v, $onesolution }, $results
+    }
+    1;
 
     my $sorted;
     TEST {
-        $sorted = array_sort $results, on *matrix_numrelations, *number_cmp;
-        [matrix_numrelations ($$sorted[0]),
-         matrix_numrelations ($$sorted[-1])]
-    } [7,8];
+        $sorted = array_sort $results, on * matrix_numrelations, *number_cmp;
+        [matrix_numrelations($$sorted[0]), matrix_numrelations($$sorted[-1])]
+    }
+    [7, 8];
 
 }
-
 
 perhaps_run_tests "main" or repl;

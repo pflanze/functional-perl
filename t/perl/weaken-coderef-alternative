@@ -4,7 +4,9 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Scalar::Util "weaken";
 
@@ -14,15 +16,16 @@ sub foo {
         sub {
             if ($n > 0) {
                 $n + &{&$f($f, $n - 1)}
-            } else {
+            }
+            else {
                 0
             }
         }
     };
-    &$f($f,@_);
+    &$f($f, @_);
 }
 
 my $res = &{foo 2};
 
-print $res,"\n";
+print $res, "\n";
 

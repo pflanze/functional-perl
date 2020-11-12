@@ -50,28 +50,28 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Struct::Equal;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use base 'FP::Abstract::Equal';
 use FP::Equal ();
 
 sub FP_Equal_equal {
     my ($self, $b) = @_;
-    my $class = ref ($self);
-    length $class
-      or die "FP_Show_show called on non-object: $self";
+    my $class = ref($self);
+    length $class or die "FP_Show_show called on non-object: $self";
     my $fieldnames = do {
         no strict 'refs';
         \@{"${class}::__Struct__fields"}
     };
+
     # XX is all_fields slow, probably? Optim?
     for (FP::Struct::all_fields([$class])) {
         my $fieldname = FP::Struct::field_name($_);
-        FP::Equal::equal($self->$fieldname, $b->$fieldname)
-            or return 0
+        FP::Equal::equal($self->$fieldname, $b->$fieldname) or return 0
     }
     1
 }

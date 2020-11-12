@@ -25,30 +25,32 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FunctionalPerl::Htmlgen::PXMLMapper;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 use FP::Docstring;
 use FP::Predicates;
 
 use FP::Struct [
-                [*is_nonnullstring, "path0"],
-                [*is_procedure, "maybe_have_path0"],
-                [*is_procedure, "perhaps_filename_to_path0"],
-                [maybe(*is_procedure), "map_code_body"],
-                [instance_of("FunctionalPerl::Htmlgen::PathTranslate"), "pathtranslate"],
-               ];
+    [*is_nonnullstring,    "path0"],
+    [*is_procedure,        "maybe_have_path0"],
+    [*is_procedure,        "perhaps_filename_to_path0"],
+    [maybe(*is_procedure), "map_code_body"],
+    [instance_of("FunctionalPerl::Htmlgen::PathTranslate"), "pathtranslate"],
+];
 
-method match_element_names () {
-    __  'method () -> [string] -- array of element names';
+method match_element_names() {
+    __ 'method () -> [string] -- array of element names';
     die "abstract class, missing implementation";
 }
 
-method map_element ($e, $uplist) {
-    __  'method ($e: PXML::Element, $uplist: list_of PXML::Element) -> PXML::Element';
+method map_element($e, $uplist) {
+    __
+        'method ($e: PXML::Element, $uplist: list_of PXML::Element) -> PXML::Element';
     die "abstract class, missing implementation";
 }
 

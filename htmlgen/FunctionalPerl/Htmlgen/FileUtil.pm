@@ -23,44 +23,49 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FunctionalPerl::Htmlgen::FileUtil;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw();
-@EXPORT_OK = qw(existingpath_or create_parent_dirs);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw();
+@EXPORT_OK   = qw(existingpath_or create_parent_dirs);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 
 # lib?
-fun existingpath_or (@paths) {
+fun existingpath_or(@paths) {
     for (@paths) {
         return $_ if -e $_
     }
     die "none of the paths exist: @paths";
 }
 
-
 use POSIX qw(EEXIST ENOENT);
 use Chj::xperlfunc qw(dirname xmkdir);
 
 # XX how is this different from xmkdir_p ?
-fun create_parent_dirs ($path0, $path0_to_outpath) {
-    my $path0 = dirname $path0;
-    my $outpath = &$path0_to_outpath ($path0);
+fun create_parent_dirs($path0, $path0_to_outpath) {
+    my $path0   = dirname $path0;
+    my $outpath = &$path0_to_outpath($path0);
     if (mkdir $outpath) {
+
         # ok, return
-    } elsif ($! == EEXIST) {
+    }
+    elsif ($! == EEXIST) {
+
         # ok, return
-    } elsif ($! == ENOENT) {
-        create_parent_dirs ($path0, $path0_to_outpath);
+    }
+    elsif ($! == ENOENT) {
+        create_parent_dirs($path0, $path0_to_outpath);
         xmkdir $outpath;
-    } else {
+    }
+    else {
         die "mkdir '$outpath': $!";
     }
 }
-
 
 1

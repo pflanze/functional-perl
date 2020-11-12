@@ -35,21 +35,22 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::NamespaceCleanAbove;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::NamespaceClean;
 
 sub import {
     my $_importpackage = shift;
-    my $package = caller;
-    my $keys = package_keys $package;
+    my $package        = caller;
+    my $keys           = package_keys $package;
     no strict 'refs';
     *{"${package}::_END_"} = sub {
         package_delete $package, $keys;
-        1 # make _END_ work as the last statement in a module
+        1    # make _END_ work as the last statement in a module
     };
 }
 

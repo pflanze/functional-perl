@@ -23,17 +23,19 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FunctionalPerl::Htmlgen::PathUtil;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw();
+@ISA = "Exporter";
+require Exporter;
+@EXPORT    = qw();
 @EXPORT_OK = qw(path_add path_diff
-              path0
-              path_path0_append
-            );
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+    path0
+    path_path0_append
+);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 use FP::Docstring;
@@ -44,58 +46,55 @@ use FP::Path;
 use Chj::xperlfunc qw(dirname);
 use Chj::TEST ":all";
 
-fun path_add ($base, $rel) {
-    __ '($basestr, $relstr) -> $str '.
-        '-- throws exception if $relstr goes above all of $basestr (via FP::Path)';
-    FP::Path->new_from_string($base)->add
-        (FP::Path->new_from_string($rel), 1)
-          ->string
+fun path_add($base, $rel) {
+    __ '($basestr, $relstr) -> $str '
+        . '-- throws exception if $relstr goes above all of $basestr (via FP::Path)';
+    FP::Path->new_from_string($base)->add(FP::Path->new_from_string($rel), 1)
+        ->string
 }
 
-TEST{path_add "/foo", "/zoo" } "/zoo";
-TEST{path_add "/foo", "../zoo" } "/zoo";
-TEST{path_add "/foo", "zoo/loo" } "/foo/zoo/loo";
-TEST{path_add "/foo", "zoo//loo/." } "/foo/zoo/loo/";
-TEST{path_add ".", "zoo/loo" } "zoo/loo"; # definitely
-TEST_EXCEPTION {path_add ".", "../zoo/loo" }
-  # "../zoo/loo"; # yes that's something I want, ok?
-  "can't take '..' of root directory"; # well, ok?
+TEST { path_add "/foo", "/zoo" } "/zoo";
+TEST { path_add "/foo", "../zoo" } "/zoo";
+TEST { path_add "/foo", "zoo/loo" } "/foo/zoo/loo";
+TEST { path_add "/foo", "zoo//loo/." } "/foo/zoo/loo/";
+TEST { path_add ".",    "zoo/loo" } "zoo/loo";            # definitely
+TEST_EXCEPTION { path_add ".", "../zoo/loo" }
 
+# "../zoo/loo"; # yes that's something I want, ok?
+"can't take '..' of root directory";                      # well, ok?
 
-fun path_diff ($path0from, $path0to) {
-    __ '($path0from, $path0to) -> $patstr '.
-        '-- (via File::Spec with Windows hack)';
+fun path_diff($path0from, $path0to) {
+    __ '($path0from, $path0to) -> $patstr '
+        . '-- (via File::Spec with Windows hack)';
     my $from = $path0from =~ m|(.*?)/+$|s ? $1 : dirname $path0from;
-    my $res = File::Spec->abs2rel($path0to, $from);
+    my $res  = File::Spec->abs2rel($path0to, $from);
+
     # XX HACK for Windows (why is this using File::Spec, anyway?):
     $res =~ s{\\}{/}sg;
     $res
 }
 
-TEST{path_diff "foo/", "bar.css"} '../bar.css';
-TEST{path_diff "foo/bar.html", "bar.css"} '../bar.css';
-TEST{path_diff "foo", "bar.css"} 'bar.css';
+TEST { path_diff "foo/",         "bar.css" } '../bar.css';
+TEST { path_diff "foo/bar.html", "bar.css" } '../bar.css';
+TEST { path_diff "foo",          "bar.css" } 'bar.css';
+
 #TEST{path_diff ".", "bar.css"} 'bar.css';
 
 #/lib
 
-
-
-fun path0 ($path) {
+fun path0($path) {
     __ 'delete "(../)*" prefix, just a hacky way to strip path prefix';
     my $path0 = $path;
-    while ($path0 =~ s|^\.\./||){}; die if $path0 =~ /\.\./;
+    while ($path0 =~ s|^\.\./||) { };
+    die if $path0 =~ /\.\./;
     $path0
 }
 
-
-fun path_path0_append ($dir, $relpath0) {
+fun path_path0_append($dir, $relpath0) {
     __ "a path-append that doesn't result in a leading './'";
     my $p = "$dir/$relpath0";
     $p =~ s|^\./||;
     $p
 }
-
-
 
 1

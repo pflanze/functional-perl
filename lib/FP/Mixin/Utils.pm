@@ -35,15 +35,15 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Mixin::Utils;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub F {
     require FP::Stream;
     goto \&FP::Stream::F
 }
-
 
 1

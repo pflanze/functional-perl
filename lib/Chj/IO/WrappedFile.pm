@@ -34,10 +34,11 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::IO::WrappedFile;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use base 'Chj::IO::File';
 
@@ -49,6 +50,5 @@ sub new {
 sub fh {
     $_[0][0]
 }
-
 
 1

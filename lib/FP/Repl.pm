@@ -42,21 +42,23 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Repl;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(repl);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(repl);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use FP::Repl::Repl;
 
 sub repl {
     @_ % 2 and die "expecting even number of arguments";
-    my %args = @_;
+    my %args       = @_;
     my $maybe_skip = delete $args{skip};
-    my $maybe_tty = delete $args{tty};
+    my $maybe_tty  = delete $args{tty};
 
     my $r = new FP::Repl::Repl;
 
@@ -72,9 +74,11 @@ sub repl {
     }
 
     #$r->run ($maybe_skip);
-    my $m = $r->can("run"); @_ = ($r, $maybe_skip); goto &$m
+    my $m = $r->can("run");
+    @_ = ($r, $maybe_skip);
+    goto &$m
 }
 
-*FP::Repl= \&repl;
+*FP::Repl = \&repl;
 
 1

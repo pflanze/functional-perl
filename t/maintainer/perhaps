@@ -1,66 +1,60 @@
 #!/usr/bin/perl -w
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # "What happens here?: "
 
 use Test::More;
 
 {
-    my ($a,$b) = (0, undef)
-        or die "no";
+    my ($a, $b) = (0, undef) or die "no";
 
-    is_deeply
-        [$a, $b],
-        [0, undef],
-        "t1";
+    is_deeply [$a, $b], [0, undef], "t1";
 }
 
 like(
-    (eval
-     {
-         my ($a,$b) = do { (0, undef)
-                              or die "no" };
-         1
-     } || $@
+    (
+        eval {
+            my ($a, $b) = do {
+                (0, undef) or die "no"
+            };
+            1
+        }
+            || $@
     ),
     qr/^no at /,
-    "t2");
+    "t2"
+);
 
 {
-    is_deeply
-        [my ($a,$b) = (0, undef)],
-        [0, undef],
-        "t3";
+    is_deeply [my ($a, $b) = (0, undef)], [0, undef], "t3";
 }
 
 {
-    is_deeply
-        [do { my ($a,$b) = (0, undef) }],
-        [0, undef],
-        "t3b";
+    is_deeply [
+        do { my ($a, $b) = (0, undef) }
+        ],
+        [0, undef], "t3b";
 }
 
 {
-    is_deeply
-        [scalar do { my ($a,$b) = (0, undef) }],
-        [2],
-        "t3c";
+    is_deeply [
+        scalar do { my ($a, $b) = (0, undef) }
+        ],
+        [2], "t3c";
 }
 
 {
-    is_deeply
-        [scalar do { my ($a,$b) = () }],
-        [0],
-        "t3d";
+    is_deeply [
+        scalar do { my ($a, $b) = () }
+        ],
+        [0], "t3d";
 }
 
 {
-    is_deeply
-        [my ($a,$b) = (0, undef)
-         or die "no"],
-        [2],
-        "t4";
+    is_deeply [my ($a, $b) = (0, undef) or die "no"], [2], "t4";
 }
 
 done_testing;

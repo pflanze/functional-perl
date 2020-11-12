@@ -42,14 +42,16 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Untainted;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(untainted);
-@EXPORT_OK = qw(untainted_with is_untainted);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(untainted);
+@EXPORT_OK   = qw(untainted_with is_untainted);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Chj::TEST;
 
@@ -60,21 +62,19 @@ sub untainted ($) {
 
 sub untainted_with ($$) {
     my ($v, $re) = @_;
-    $v =~ /($re)/
-      or die "untainted_with: does not match regex $re: '$v'";
+    $v =~ /($re)/ or die "untainted_with: does not match regex $re: '$v'";
     $1
 }
 
-TEST { untainted_with "Foo", qr/\w+/s } "Foo";
+TEST { untainted_with "Foo",  qr/\w+/s } "Foo";
 TEST { untainted_with "Foo ", qr/\w+/s } "Foo";
 TEST_EXCEPTION { untainted_with "Foo ", qr/^\w+$/s }
-  'untainted_with: does not match regex (?^s:^\\w+$): \'Foo \'';
+'untainted_with: does not match regex (?^s:^\\w+$): \'Foo \'';
 
-TEST { untainted_with "Foo", '\w+' } "Foo";
+TEST { untainted_with "Foo",  '\w+' } "Foo";
 TEST { untainted_with "Foo ", '\w+' } "Foo";
-TEST_EXCEPTION { untainted_with "Foo ", '^\w+$' } # /s missing.
-  'untainted_with: does not match regex ^\\w+$: \'Foo \'';
-
+TEST_EXCEPTION { untainted_with "Foo ", '^\w+$' }    # /s missing.
+'untainted_with: does not match regex ^\\w+$: \'Foo \'';
 
 use Scalar::Util 'tainted';
 

@@ -4,25 +4,27 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-
 # This file shows how to do optimized tail-calls in Perl; see point
 # (4b) in the file `basics` for the version without optimized
 # tail-calls.
 
 # ------------------------------------------------------------------
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
 use Chj::Backtrace;
 use FP::Repl;
-
 
 # ------------------------------------------------------------------
 
@@ -37,12 +39,11 @@ our @functional_inspect;
 
 sub functional_fact_iter {
     my ($x, $res) = @_;
-    push @functional_inspect, sub {
-        ($x,$res)
-    };
+    push @functional_inspect, sub { ($x, $res) };
     if ($x < 2) {
         return $res;
-    } else {
+    }
+    else {
         # This is a tail call. Instead of doing it unoptimized like:
         #
         #  functional_fact_iter($x - 1,  $x * $res)
@@ -50,14 +51,13 @@ sub functional_fact_iter {
         # we're making use of Perl's goto &$subroutine feature (see
         # `perldoc -f goto`):
 
-        @_ = ($x - 1,  $x * $res);
+        @_ = ($x - 1, $x * $res);
         goto \&functional_fact_iter
 
-        # Yes that's rather ugly; see the file `more_tailcalls`
-        # for a better-looking way.
+            # Yes that's rather ugly; see the file `more_tailcalls`
+            # for a better-looking way.
     }
 }
-
 
 # To really see the difference, here's a function that we can usefully
 # test for higher numbers of iterations:
@@ -66,8 +66,9 @@ sub odd {
     my ($n) = @_;
     if ($n == 0) {
         0
-    } else {
-        even ($n - 1)
+    }
+    else {
+        even($n - 1)
     }
 }
 
@@ -75,8 +76,9 @@ sub even {
     my ($n) = @_;
     if ($n == 0) {
         1
-    } else {
-        odd ($n - 1)
+    }
+    else {
+        odd($n - 1)
     }
 }
 
@@ -96,12 +98,12 @@ sub even {
 
 # You can see that Perl ran out of space for the stack.
 
-
 sub opt_odd {
     my ($n) = @_;
     if ($n == 0) {
         0
-    } else {
+    }
+    else {
         @_ = ($n - 1);
         goto \&opt_even
     }
@@ -111,7 +113,8 @@ sub opt_even {
     my ($n) = @_;
     if ($n == 0) {
         1
-    } else {
+    }
+    else {
         @_ = ($n - 1);
         goto \&opt_odd
     }
@@ -122,7 +125,6 @@ sub opt_even {
 # $VAR1 = 1;
 
 # Now it runs with little (and constant) memory usage.
-
 
 # ------------------------------------------------------------------
 # enter the repl for your experiments, see (0) in `basics`

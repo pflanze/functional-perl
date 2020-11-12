@@ -24,45 +24,43 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package PXML::HTML5;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw();
-@EXPORT_OK = qw( $html5_void_elements $html5_void_element_h);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw();
+@EXPORT_OK   = qw( $html5_void_elements $html5_void_element_h);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # the set of tags that are allowed to be self-closing (<foo/>) without
 # semantical changes
-our $html5_void_elements =
-  [
-   # http://dev.w3.org/html5/markup/syntax.html
-   # "The following is a complete list of the void elements in HTML:"
-   qw(
-         area
-         base
-         br
-         col
-         command
-         embed
-         hr
-         img
-         input
-         keygen
-         link
-         meta
-         param
-         source
-         track
-         wbr
-    )
-   ];
+our $html5_void_elements = [
 
-our $html5_void_element_h =
-  +{
-    map { $_ => 1} @$html5_void_elements
-   };
+    # http://dev.w3.org/html5/markup/syntax.html
+    # "The following is a complete list of the void elements in HTML:"
+    qw(
+        area
+        base
+        br
+        col
+        command
+        embed
+        hr
+        img
+        input
+        keygen
+        link
+        meta
+        param
+        source
+        track
+        wbr
+        )
+];
 
+our $html5_void_element_h = +{map { $_ => 1 } @$html5_void_elements};
 
 1

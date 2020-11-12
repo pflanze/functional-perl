@@ -179,26 +179,27 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Optional;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw();
+@ISA = "Exporter";
+require Exporter;
+@EXPORT    = qw();
 @EXPORT_OK = qw(perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists
-              optionally poptionally);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+    optionally poptionally);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
-
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # Functions to change the kind of optionals API:
-
 
 sub perhaps_to_maybe ($) {
     my ($f) = @_;
     sub {
-        if (my ($v) = &$f (@_)) {
+        if (my ($v) = &$f(@_)) {
             $v
-        } else {
+        }
+        else {
             undef
         }
     }
@@ -207,9 +208,10 @@ sub perhaps_to_maybe ($) {
 sub perhaps_to_x ($$) {
     my ($f, $exception) = @_;
     sub {
-        if (my ($v) = &$f (@_)) {
+        if (my ($v) = &$f(@_)) {
             $v
-        } else {
+        }
+        else {
             die $exception
         }
     }
@@ -219,10 +221,11 @@ sub perhaps_to_or ($) {
     my ($f) = @_;
     sub {
         @_ == 3 or die "wrong number of arguments";
-        my ($t,$k,$other) = @_;
-        if (my ($v) = &$f ($t, $k)) {
+        my ($t, $k, $other) = @_;
+        if (my ($v) = &$f($t, $k)) {
             $v
-        } else {
+        }
+        else {
             $other
         }
     }
@@ -231,26 +234,27 @@ sub perhaps_to_or ($) {
 sub perhaps_to_exists ($) {
     my ($f) = @_;
     sub {
-        if (my ($_v) = &$f (@_)) {
+        if (my ($_v) = &$f(@_)) {
             1
-        } else {
+        }
+        else {
             ''
         }
     }
 }
-
 
 # Functions to help build chains:
 
 # build functions that short-cut the 'nothing' case:
 
 sub optionally ($;$) {
-    my ($f,$maybe_pos) = @_;
+    my ($f, $maybe_pos) = @_;
     my $pos = $maybe_pos // 0;
     sub {
         if (defined $_[$pos]) {
             goto &$f
-        } else {
+        }
+        else {
             # pass on the undef value
             undef
         }
@@ -263,12 +267,12 @@ sub poptionally ($) {
     sub {
         if (@_) {
             goto &$f
-        } else {
+        }
+        else {
             # pass on the empty list
             ()
         }
     }
 }
-
 
 1

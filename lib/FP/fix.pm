@@ -59,31 +59,34 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::fix;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(fix fixn);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(fix fixn);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # Alternative implementations:
 
 # Y combinator
 *Y = do {
-        my $fix0 = sub {
-            my ($fix0, $f) = @_;
-            sub {
-                @_ = (&$fix0 ($fix0, $f), @_); goto &$f;
-            }
-        };
-        sub ($) {
-            my ($f) = @_;
-            &$fix0 ($fix0, $f)
+    my $fix0 = sub {
+        my ($fix0, $f) = @_;
+        sub {
+            @_ = (&$fix0($fix0, $f), @_);
+            goto &$f;
         }
     };
 
+    sub ($) {
+        my ($f) = @_;
+        &$fix0($fix0, $f)
+    }
+};
 
 # Haskell recursive let based implementation:
 #   XXX move this code to separate file to avoid dependencies
@@ -95,60 +98,63 @@ use FP::TransparentLazy qw(lazy lazyLight);
 # this variant is different since it requires $f to be curried
 *haskell_curried = sub {
     my ($f) = @_;
-    my $x; $x = &$f(lazy { $x });  # can't use lazyLight here, why?
+    my $x;
+    $x = &$f(lazy {$x});    # can't use lazyLight here, why?
     $x
 };
 
 use Chj::TEST;
 TEST {
-    my $f = haskell_curried (sub {
+    my $f = haskell_curried(sub {
         my ($self) = @_;
         sub {
             my ($x) = @_;
-            $x > 0 ? $x * &$self($x-1) : 1
+            $x > 0 ? $x * &$self($x - 1) : 1
         }
     });
-    [ &$f(0), &$f(3) ]
-} [1, 6];
-
+    [&$f(0), &$f(3)]
+}
+[1, 6];
 
 *haskell_uncurried = sub {
     my ($f) = @_;
     my $fc = sub {
         my ($fc) = @_;
         sub {
-            unshift @_, $fc; goto &$f;
+            unshift @_, $fc;
+            goto &$f;
         };
     };
-    my $x; $x = &$fc(lazy { $x });  # can't use lazyLight here, why?
+    my $x;
+    $x = &$fc(lazy {$x});    # can't use lazyLight here, why?
     $x
 };
 
-
 # indirectly self-referencing through package variable
-*rec =
-    sub ($) {
-        my ($f) = @_;
-        sub {
-            #@_ = (fix ($f), @_); goto &$f;
-            unshift @_, fix ($f); goto &$f;
-        }
-    };
+*rec = sub ($) {
+    my ($f) = @_;
+    sub {
+        #@_ = (fix ($f), @_); goto &$f;
+        unshift @_, fix($f);
+        goto &$f;
+    }
+};
 
 # directly locally self-referencing
 
 use Scalar::Util 'weaken';
 
-*weakcycle =
-    sub ($) {
-        my ($f) = @_;
-        my $f2; $f2 = sub {
-            unshift @_, $f2; goto &$f
-        };
-        my $f2_ = $f2; weaken $f2; $f2_
+*weakcycle = sub ($) {
+    my ($f) = @_;
+    my $f2;
+    $f2 = sub {
+        unshift @_, $f2;
+        goto &$f
     };
-
-
+    my $f2_ = $f2;
+    weaken $f2;
+    $f2_
+};
 
 # choose implementation:
 
@@ -156,19 +162,20 @@ sub fix ($);
 
 *fix = *weakcycle;
 
-
 # n-ary version:
 
 sub fixn {
     my (@f) = @_;
     my @ff;
-    for (my $i = 0; $i<@f; $i++) {
+    for (my $i = 0; $i < @f; $i++) {
         my $f = $f[$i];
         $ff[$i] = sub {
-            unshift @_, @ff; goto &$f;
+            unshift @_, @ff;
+            goto &$f;
         }
     }
     my @ff_ = @ff;
+
     # weaken $_ for @ff;
     # ^ XXX: releases too early, same issue as
     #   mentioned in `intro/more_tailcalls`
@@ -177,6 +184,5 @@ sub fixn {
         $ff_[0]
     }
 }
-
 
 1

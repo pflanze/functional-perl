@@ -4,7 +4,9 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # "This token is only available under use v5.16 or the "current_sub" feature"
 use v5.16;
@@ -16,7 +18,8 @@ sub foo {
         sub {
             if ($n > 0) {
                 $n + &{&$f($n - 1)}
-            } else {
+            }
+            else {
                 0
             }
         }
@@ -26,5 +29,5 @@ sub foo {
 
 my $res = &{foo 2};
 
-print $res,"\n";
+print $res, "\n";
 

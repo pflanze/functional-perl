@@ -27,10 +27,11 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Git::Repository;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use FP::Predicates ":all";
 use Chj::IO::Command;
@@ -43,33 +44,33 @@ use Chj::singlequote qw(singlequote_many);
 our @git = "git";
 
 sub make_perhaps_VAR {
-    my ($var,$method) = @_;
+    my ($var, $method) = @_;
     sub {
         my $self = shift;
-        if (defined (my $v = $self->$method)) {
-            ($var => $v)
-        } else {
-            ()
-        }
+        if   (defined(my $v = $self->$method)) { ($var => $v) }
+        else                                   { () }
     }
 }
 
+use FP::Struct [
+    [maybe(\&is_nonnullstring), "git_dir"],
+    [maybe(\&is_nonnullstring), "work_tree"],
+    [maybe(\&is_nonnullstring), "chdir"]
+    ],
 
-use FP::Struct [[maybe(\&is_nonnullstring), "git_dir"],
-                [maybe(\&is_nonnullstring), "work_tree"],
-                [maybe(\&is_nonnullstring), "chdir"]],
     # 'FP::Abstract::Pure', can't, setting _git_dir_from_work_tree
     'FP::Struct::Show';
 
 sub git_dir_from_work_tree {
     my $self = shift;
     $$self{_git_dir_from_work_tree} //= do {
-        if (defined (my $wd = $self->work_tree)) {
+        if (defined(my $wd = $self->work_tree)) {
             $wd =~ s|/\z||;
             my $d = "$wd/.git";
             -d $d or die "can't find git_dir from work_tree";
             $d
-        } else {
+        }
+        else {
             undef
         }
     }
@@ -81,25 +82,22 @@ sub git_dir {
         // $self->git_dir_from_work_tree
 }
 
-
-*perhaps_GIT_DIR = make_perhaps_VAR "GIT_DIR", "git_dir";
+*perhaps_GIT_DIR       = make_perhaps_VAR "GIT_DIR",       "git_dir";
 *perhaps_GIT_WORK_TREE = make_perhaps_VAR "GIT_WORK_TREE", "work_tree";
 
 sub command_records {
     my $self = shift;
-    my ($read,$close,$cmd_and_args) = @_;
-    my $in = Chj::IO::Command->new_sender
-      (sub {
-           if (defined (my $d = $self->chdir)) {
-               xchdir $d;
-           }
-           my $env = {$self->perhaps_GIT_DIR,
-                     $self->perhaps_GIT_WORK_TREE};
-           for my $var (keys %$env) {
-               $ENV{$var} = $$env{$var}
-           }
-           xexec(@git, @$cmd_and_args);
-       });
+    my ($read, $close, $cmd_and_args) = @_;
+    my $in = Chj::IO::Command->new_sender(sub {
+        if (defined(my $d = $self->chdir)) {
+            xchdir $d;
+        }
+        my $env = {$self->perhaps_GIT_DIR, $self->perhaps_GIT_WORK_TREE};
+        for my $var (keys %$env) {
+            $ENV{$var} = $$env{$var}
+        }
+        xexec(@git, @$cmd_and_args);
+    });
     fh_to_stream($in, $read, $close)
 }
 
@@ -111,44 +109,40 @@ sub command_records {
 
 sub command_lines {
     my $self = shift;
-    $self->command_records(the_method("xreadline"),
-                           the_method("xxfinish"),
-                           [@_])
+    $self->command_records(the_method("xreadline"), the_method("xxfinish"),
+        [@_])
 }
 
 sub command_lines_chomp {
     my $self = shift;
     $self->command_records(the_method("xreadline_chomp"),
-                           the_method("xxfinish"),
-                           [@_])
+        the_method("xxfinish"), [@_])
 }
 
 sub command_lines0_chop {
     my $self = shift;
     $self->command_records(the_method("xreadline0_chop"),
-                           the_method("xxfinish"),
-                           [@_])
+        the_method("xxfinish"), [@_])
 }
-
 
 sub perhaps_author_date {
     my $self = shift;
-    my $lines = $self->
-      command_lines_chomp("log", '--pretty=format:%aD', "--", @_);
-    if (is_null $lines) {
-        ()
-    } else {
+    my $lines
+        = $self->command_lines_chomp("log", '--pretty=format:%aD', "--", @_);
+    if (is_null $lines) { () }
+    else {
         $lines->first
     }
 }
 
 sub author_date {
     my $self = shift;
-    if (my ($d) = $self->perhaps_author_date (@_)) {
+    if (my ($d) = $self->perhaps_author_date(@_)) {
         $d
-    } else {
+    }
+    else {
         warn "Note: can't get author date for (file not committed): "
-          .singlequote_many(@_).".\n";
+            . singlequote_many(@_) . ".\n";
         ()
     }
 }

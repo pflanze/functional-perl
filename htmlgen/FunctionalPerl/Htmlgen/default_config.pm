@@ -23,26 +23,26 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FunctionalPerl::Htmlgen::default_config;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw($default_config);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw($default_config);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
+
 #use Sub::Call::Tail;
 
 use Chj::xperlfunc qw(basename);
 
-fun default__is_indexpath0 ($path0) {
+fun default__is_indexpath0($path0) {
     my $bn = lc basename($path0);
     $bn eq "index.md" or $bn eq "readme.md"
 }
 
-our $default_config =
-  +{
-    is_indexpath0 => \&default__is_indexpath0,
-   };
+our $default_config = +{is_indexpath0 => \&default__is_indexpath0,};
 

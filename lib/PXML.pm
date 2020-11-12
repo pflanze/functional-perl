@@ -41,24 +41,28 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package PXML;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(is_pxml_element);
-@EXPORT_OK = qw(pxmlbody pxmlflush is_pxmlflush);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(is_pxml_element);
+@EXPORT_OK   = qw(pxmlbody pxmlflush is_pxmlflush);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use PXML::Element;
 
 use FP::Predicates 'instance_of';
 
-sub is_pxml_element ($); *is_pxml_element = instance_of("PXML::Element");
-
+sub is_pxml_element ($);
+*is_pxml_element = instance_of("PXML::Element");
 
 {
+
     package PXML::Body;
+
     # hacky?.
     *string = *PXML::Element::string;
 }
@@ -68,6 +72,7 @@ sub pxmlbody {
 }
 
 my $flush = bless [], "PXML::Flush";
+
 sub pxmlflush {
     $flush
 }
@@ -82,6 +87,5 @@ sub is_pxmlflush ($) {
 # - move `string` there (and perhaps all of serialization)
 # - automatically use PXML::Body for bodies? (now that I moved away
 #   from requiring bodies to be arrays, though?)
-
 
 1

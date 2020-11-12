@@ -39,33 +39,38 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::Util::AskYN;
-@ISA = "Exporter"; require Exporter;
+@ISA = "Exporter";
+require Exporter;
 @EXPORT = qw(maybe_askyn);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub maybe_askyn {
     my ($maybe_prompt) = @_;
-    local $|=1;
-  ASK:{
+    local $| = 1;
+ASK: {
         if (defined $maybe_prompt) {
             print $maybe_prompt;
         }
         print " ";
-        my $ans=<STDIN>;
+        my $ans = <STDIN>;
         if (defined $ans) {
             if ($ans =~ /^n(?:o|ein|ada|on)?$/i) {
                 ''
-            } elsif ($ans =~ /^(?:ja|yes|j|y|oui)$/i){
+            }
+            elsif ($ans =~ /^(?:ja|yes|j|y|oui)$/i) {
                 1
-            } else {
-                print "Please answer with yes or no or their initials, ".
-                  "or the same in french or german.\n";
+            }
+            else {
+                print "Please answer with yes or no or their initials, "
+                    . "or the same in french or german.\n";
                 redo ASK;
             }
-        } else {
+        }
+        else {
             # EOF, i.e. ctl-d
             print "\n";
             undef

@@ -57,10 +57,11 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Path;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use FP::List ":all";
 use Chj::constructorexporter;
@@ -70,12 +71,9 @@ use FP::Equal;
 
 sub perhaps_segment_error ($) {
     my ($segment) = @_;
-    return "segments must be strings"
-      unless is_string $segment;
-    return "segments cannot be the empty string"
-      unless length $segment;
-    return "segment contains slash: ".show($segment)
-      if $segment =~ m{/};
+    return "segments must be strings" unless is_string $segment;
+    return "segments cannot be the empty string" unless length $segment;
+    return "segment contains slash: " . show($segment) if $segment =~ m{/};
     ()
 }
 
@@ -89,57 +87,53 @@ sub check_segment ($) {
 
 # Toggle typing, off for speed (checking FP::List costs O(length);
 # better use FP::StrictList if really interested in strict typing!)
-sub use_costly_typing () { 0 }
-our $use_costly_typing = use_costly_typing; # for access from FP::Path::t
+sub use_costly_typing () {0}
+our $use_costly_typing = use_costly_typing;    # for access from FP::Path::t
+
 sub typed ($$) {
-    my ($pred,$name) = @_;
-    if (use_costly_typing) {
-        [$pred,$name]
-    } else {
+    my ($pred, $name) = @_;
+    if (use_costly_typing) { [$pred, $name] }
+    else {
         $name
     }
 }
 
-
-use FP::Struct
-  [
-   typed(list_of (*is_segment),
-         'rsegments'), # reversed list
-   typed(*is_boolean,
-         'has_endslash'), # whether the path is forcibly specifying a
-                          # dir by using a slash at the end (forcing a
-                          # dir by ending in "." isn't setting this
-                          # flag)
-   typed(*is_boolean,
-         'is_absolute'), # bool
-  ],
+use FP::Struct [
+    typed(list_of(*is_segment), 'rsegments'),     # reversed list
+    typed(*is_boolean,          'has_endslash')
+    ,    # whether the path is forcibly specifying a
+         # dir by using a slash at the end (forcing a
+         # dir by ending in "." isn't setting this
+         # flag)
+    typed(*is_boolean, 'is_absolute'),    # bool
+    ],
     'FP::Struct::Show',
     'FP::Abstract::Equal',
     'FP::Abstract::Pure';
 
 *import = constructorexporter new_from_string => "path";
 
-
 sub new_from_string {
     @_ == 2 or die "wrong number of arguments";
     my ($class, $str) = @_;
     my @p = split m{/+}, $str;
     shift @p if (@p and $p[0] eq "");
-    $class->new(array_to_list_reverse(\@p),
-                scalar $str =~ m{/$}s,
-                scalar $str =~ m{^/}s)
+    $class->new(
+        array_to_list_reverse(\@p),
+        scalar $str =~ m{/$}s,
+        scalar $str =~ m{^/}s
+    )
 }
 
 sub FP_Equal_equal {
     @_ == 2 or die "wrong number of arguments";
-    my ($a,$b) = @_;
+    my ($a, $b) = @_;
+
     # no need to compare is_absolute, since it is being distinguished
     # anyway? Or better be safe than sorry?
-    ((!!$a->is_absolute eq !!$b->is_absolute)
-     and
-     (!!$a->has_endslash eq !!$b->has_endslash)
-     and
-     equal ($a->rsegments, $b->rsegments))
+    (           (!!$a->is_absolute eq !!$b->is_absolute)
+            and (!!$a->has_endslash eq !!$b->has_endslash)
+            and equal($a->rsegments, $b->rsegments))
 }
 
 sub segments {
@@ -148,7 +142,7 @@ sub segments {
 }
 
 sub string {
-    my $s = shift;
+    my $s  = shift;
     my $rs = $s->rsegments;
 
     # check that no invalid segments have creeped in (by way of using
@@ -156,10 +150,10 @@ sub string {
     # constructors directly; adding a type check to the segments field
     # would solve this, but is less efficient as it would have to walk
     # the list on every change instead of only stringification):
-    $rs->for_each (*check_segment);
+    $rs->for_each(*check_segment);
 
     # force "." for empty relative paths:
-    my $rs1 = is_null ($rs) && not($s->is_absolute) ? list(".") : $rs;
+    my $rs1 = is_null($rs) && not($s->is_absolute) ? list(".") : $rs;
 
     # add end slash
     my $ss = ($s->has_endslash ? $rs1->cons("") : $rs1)->reverse;
@@ -171,49 +165,52 @@ sub string {
 # remove "." entries: (leave ".." in, because these cannot be resolved
 # without reading the file system or knowing the usage)
 sub clean_dot {
-    my $s = shift;
+    my $s    = shift;
     my $rseg = $s->rsegments;
-    $s->rsegments_set ($rseg->filter(sub { not ($_[0] eq ".") }))
-      ->has_endslash_set
-        (
-         # set forced dir flag if the last segment was a ".", even
-         # if previously it didn't end in "/"
-         $$s{has_endslash}
-         or
-         do {
-             if (is_null $rseg) {
-                 0
-             } else {
-                 $rseg->first eq "."
-             }
-         });
+    $s->rsegments_set($rseg->filter(sub { not($_[0] eq ".") }))
+        ->has_endslash_set(
+
+        # set forced dir flag if the last segment was a ".", even
+        # if previously it didn't end in "/"
+        $$s{has_endslash} or do {
+            if (is_null $rseg) {
+                0
+            }
+            else {
+                $rseg->first eq "."
+            }
+        }
+        );
 }
 
 # This is only valid to be applied to paths that have already been
 # `clean_dot`ed !
 sub perhaps_clean_dotdot {
     my $s = shift;
+
     # XX this might actually be more efficient when working on the reverse
     # order? But leaving old imperative algorithm for now.
-    my $rs = $s->rsegments;
-    my $ends_in_dotdot = is_pair ($rs) && $rs->first eq "..";
+    my $rs             = $s->rsegments;
+    my $ends_in_dotdot = is_pair($rs) && $rs->first eq "..";
     my @s;
     for my $seg ($rs->reverse_values) {
         if ($seg eq "..") {
             if (@s) {
                 pop @s;
-            } else {
+            }
+            else {
                 return ()
             }
-        } else {
+        }
+        else {
             push @s, $seg
         }
     }
-    my $s1 = $s->rsegments_set (array_to_list_reverse \@s);
+    my $s1 = $s->rsegments_set(array_to_list_reverse \@s);
     $ends_in_dotdot ? $s1->has_endslash_set(1) : $s1
 }
-# (should have those functions without the Path wrapper? Maybe, maybe not.)
 
+# (should have those functions without the Path wrapper? Maybe, maybe not.)
 
 # This is only valid to be applied to paths that have already been
 # `clean_dot`ed !
@@ -221,11 +218,11 @@ sub xclean_dotdot {
     my $s = shift;
     if (my ($v) = $s->perhaps_clean_dotdot) {
         $v
-    } else {
+    }
+    else {
         die "can't take '..' of root directory"
     }
 }
-
 
 sub perhaps_clean {
     my $s = shift;
@@ -237,15 +234,14 @@ sub xclean {
     $s->clean_dot->xclean_dotdot
 }
 
-
-sub add_segment { # functionally. hm.
+sub add_segment {    # functionally. hm.
     my $s = shift;
     my ($segment) = @_;
     check_segment $segment;
-    $s->rsegments_update
-      (sub {
-           cons $segment, $_[0]
-       })
+    $s->rsegments_update(sub {
+        cons $segment, $_[0]
+    })
+
         # no forced endslash anymore
         ->has_endslash_set(0);
 }
@@ -253,28 +249,27 @@ sub add_segment { # functionally. hm.
 sub add {
     my $a = shift;
     @_ == 2 or die "wrong number of arguments";
-    my ($b, $is_url) = @_; # when is_url is true, it cleans dit
+    my ($b, $is_url) = @_;    # when is_url is true, it cleans dit
     if ($b->is_absolute) {
         $b
-    } else {
-        my $c = $a->rsegments_set ($b->rsegments->append($a->rsegments))
-          ->clean_dot;
+    }
+    else {
+        my $c = $a->rsegments_set($b->rsegments->append($a->rsegments))
+            ->clean_dot;
         $is_url ? $c->xclean_dotdot : $c
     }
 }
 
 sub dirname {
     my $s = shift;
-    is_null $$s{rsegments}
-      and die "can't take dirname of empty path";
-    $s->rsegments_update(*rest)
-      ->has_endslash_set(1);
+    is_null $$s{rsegments} and die "can't take dirname of empty path";
+    $s->rsegments_update(*rest)->has_endslash_set(1);
 }
 
 sub to_relative {
     my $s = shift;
-    die "is already relative"
-      unless $s->is_absolute;
+    die "is already relative" unless $s->is_absolute;
+
     # keep has_endslash, # XX hm always? what about the dropping of first entry?
     $s->is_absolute_set(0);
 }
@@ -284,7 +279,6 @@ sub contains_dotdot {
     $s->rsegments->any(sub { $_[0] eq ".." })
 }
 
-
 # These are used as helpers for Chj::Path::Filesystem's touched_paths
 
 # split a path into two parts, one with the first segment and one with
@@ -292,33 +286,32 @@ sub contains_dotdot {
 sub perhaps_split_first_segment {
     @_ == 1 or die "wrong number of arguments";
     my ($p) = @_;
-    perhaps_resplit_next_segment ($p->rsegments_set(null), $p)
+    perhaps_resplit_next_segment($p->rsegments_set(null), $p)
 }
 
 # re-split two paths so that the first gains another segment from the
 # second
 sub perhaps_resplit_next_segment {
     @_ == 2 or die "wrong number of arguments";
-    my ($p0,$p1) = @_;
+    my ($p0, $p1) = @_;
+
     # XX the reversing makes this O(n). Use a better list
     # representation.
     my $ss = $p1->segments;
     if (is_pair $ss) {
-        my $class = ref ($p0);
-        my ($first,$rest) = $ss->first_and_rest;
-        ($class->new ($p0->rsegments->cons ($first),
-                      is_null($rest) ? $p1->has_endslash : 1,
-                      $p0->is_absolute),
-         $class->new ($rest->reverse,
-                      $p1->has_endslash,
-                      ''))
-    } else {
-        ()
+        my $class = ref($p0);
+        my ($first, $rest) = $ss->first_and_rest;
+        (
+            $class->new(
+                $p0->rsegments->cons($first),
+                is_null($rest) ? $p1->has_endslash : 1,
+                $p0->is_absolute
+            ),
+            $class->new($rest->reverse, $p1->has_endslash, '')
+        )
     }
+    else { () }
 }
-
-
-
 
 _END_
 

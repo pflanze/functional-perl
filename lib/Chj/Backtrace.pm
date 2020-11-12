@@ -1,5 +1,5 @@
 # Fri Oct 29 16:30:48 2004  Chris Tarnutzer, tarnutzer@ethlife.ethz.ch
-# 
+#
 # Copyright 2004 by Chris Tarnutzer
 # Published under the same terms as perl itself
 #
@@ -23,9 +23,10 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::Backtrace;
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Carp;
 
 # Carp::longmess 'usually' inserts a needless repetition
@@ -49,9 +50,9 @@ sub Clean {
     $str
 }
 
-our $singlestep = 0;#?.
+our $singlestep                  = 0;    #?.
 our $only_confess_if_not_already = 1;
-our $do_confess_objects = 0;
+our $do_confess_objects          = 0;
 
 sub import {
 
@@ -60,27 +61,31 @@ sub import {
     return if UNIVERSAL::isa($SIG{__DIE__}, "FP::Repl::WithRepl::Handler");
 
     $SIG{__DIE__} = sub {
-        $DB::single=1 if $singlestep;
+        $DB::single = 1 if $singlestep;
         if ($only_confess_if_not_already) {
             if (!$do_confess_objects and ref $_[0]) {
+
                 # exception object
                 # (ah well, confess does that check anyway!)
                 die @_
-            } else {
+            }
+            else {
                 #print STDERR "\n------\n@_\n------\n";
-                if ($_[0] =~ /^[^\n]*line \d+\.\n/s) { # die, not confess.
+                if ($_[0] =~ /^[^\n]*line \d+\.\n/s) {    # die, not confess.
                     die Clean Carp::longmess @_
-                } elsif ($_[0] =~ /^[^\n]*line \d+\n\t/s) { # confess
+                }
+                elsif ($_[0] =~ /^[^\n]*line \d+\n\t/s) {    # confess
                     die @_
-                } else { # unsure
+                }
+                else {                                       # unsure
                     die Clean Carp::longmess @_
                 }
             }
-        } else {
+        }
+        else {
             die Clean Carp::longmess @_
         }
     };
 }
-
 
 1;

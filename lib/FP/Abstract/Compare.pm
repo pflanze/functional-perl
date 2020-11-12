@@ -53,14 +53,12 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Abstract::Compare;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
-sub FP_Interface__method_names {
-    ("FP_Compare_compare")
-}
-
+sub FP_Interface__method_names { ("FP_Compare_compare") }
 
 1

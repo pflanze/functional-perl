@@ -29,32 +29,33 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::TerseDumper;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(TerseDumper terseDumper);
-@EXPORT_OK = qw(UnsortedTerseDumper);
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(TerseDumper terseDumper);
+@EXPORT_OK   = qw(UnsortedTerseDumper);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Data::Dumper;
 
 sub UnsortedTerseDumper {
-    local $Data::Dumper::Terse= 1;
+    local $Data::Dumper::Terse = 1;
     Dumper(@_)
 }
 
 sub TerseDumper {
-    local $Data::Dumper::Sortkeys= 1;
-    UnsortedTerseDumper (@_)
+    local $Data::Dumper::Sortkeys = 1;
+    UnsortedTerseDumper(@_)
 }
 
 sub terseDumper {
-    my $str = TerseDumper (@_);
+    my $str = TerseDumper(@_);
     chomp $str;
     $str
 }
-
 
 1

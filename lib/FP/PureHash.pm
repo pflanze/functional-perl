@@ -60,67 +60,64 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::PureHash;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(purehash);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(purehash);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use FP::Docstring;
 use FP::Show;
 
-
 our $immutable = 1;
 
 sub purehash {
-    __  'convert key/value pairs to an immutable hash; re-use of keys is an error';
-    die "uneven number of arguments"
-        if @_ & 1;
+    __
+        'convert key/value pairs to an immutable hash; re-use of keys is an error';
+    die "uneven number of arguments" if @_ & 1;
     my %out;
-    for (my $i = 0; $i< @_; $i += 2) {
+    for (my $i = 0; $i < @_; $i += 2) {
         my $k = $_[$i];
         if (exists $out{$k}) {
-            die "duplicate key: ".show($k);
+            die "duplicate key: " . show($k);
         }
-        $out{$k} = $_[$i+1];
-        Internals::SvREADONLY $out{$k}, 1
-            if $FP::PureHash::immutable;
+        $out{$k} = $_[$i + 1];
+        Internals::SvREADONLY $out{$k}, 1 if $FP::PureHash::immutable;
     }
     my $res = bless \%out, "FP::_::PureHash";
-    Internals::SvREADONLY %out, 1
-        if $FP::PureHash::immutable;
+    Internals::SvREADONLY %out, 1 if $FP::PureHash::immutable;
+
     # XX ^ this also changes the behaviour accessing a non-existing key, yeah;
     # why not just   overload? oh  that was said to be slow or was it Tie  ?
     $res
 }
 
 sub is_purehash ($) {
-    length ref ($_[0]) and UNIVERSAL::isa($_[0], "FP::_::PureHash")
+    length ref($_[0]) and UNIVERSAL::isa($_[0], "FP::_::PureHash")
 }
-
 
 package FP::Hash::Mixin {
     use FP::Equal 'equal';
     use Chj::NamespaceCleanAbove;
 
     sub FP_Show_show {
-        my ($s,$show) = @_;
-        $s->constructor_name."(".join(
-            ", ",
-            map {
-                &$show($_)." => ".&$show($$s{$_})
-            }
-            sort keys %$s).")"
+        my ($s, $show) = @_;
+        $s->constructor_name . "("
+            . join(", ",
+            map { &$show($_) . " => " . &$show($$s{$_}) } sort keys %$s)
+            . ")"
     }
 
     sub FP_Equal_equal {
         my ($a, $b) = @_;
         keys(%$a) == keys(%$b) and do {
             for my $key (keys %$a) {
-                exists $$b{$key} or return 0;
+                exists $$b{$key}            or return 0;
                 equal($$a{$key}, $$b{$key}) or return 0;
             }
             1
@@ -130,13 +127,12 @@ package FP::Hash::Mixin {
     _END_
 }
 
-
 package FP::_::PureHash {
     use base "FP::Hash::Mixin";
     use FP::Interfaces;
     use Chj::NamespaceCleanAbove;
 
-    sub constructor_name { "purehash" }
+    sub constructor_name {"purehash"}
 
     # XX  why not get, again? set and get? If ref, then what for set?
     sub ref {
@@ -164,11 +160,10 @@ package FP::_::PureHash {
             }
         }
         my $res = bless \%out, "FP::_::PureHash";
-        Internals::SvREADONLY %out, 1
-            if $FP::PureHash::immutable;
+        Internals::SvREADONLY %out, 1 if $FP::PureHash::immutable;
         $res
     }
-    
+
     FP::Interfaces::implemented qw(
         FP::Abstract::Pure
         FP::Abstract::Map

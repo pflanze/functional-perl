@@ -26,10 +26,11 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FunctionalPerl::Htmlgen::PerlTidy;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use Sub::Call::Tail;
 use FP::Docstring;
@@ -38,46 +39,52 @@ use Perl::Tidy;
 use FunctionalPerl::Htmlgen::Htmlparse ":all";
 use FunctionalPerl::Htmlgen::Sourcelang;
 
-use FunctionalPerl ":all";##xx
+use FunctionalPerl ":all";    ##xx
 
 sub tidyhtml {
-    my ($source)= @_;
+    my ($source) = @_;
     my ($dest, $errorfile);
-    my $error= Perl::Tidy::perltidy(argv=> '--html -ntoc',
-                                    source=> \$source,
-                                    destination=> \$dest,
-                                    errorfile=> \$errorfile);
+    my $error = Perl::Tidy::perltidy(
+        argv        => '--html -ntoc',
+        source      => \$source,
+        destination => \$dest,
+        errorfile   => \$errorfile
+    );
     if ($error) {
-        warn "perltidy error: ".show($error)." (".show($errorfile).")";
+        warn "perltidy error: " . show($error) . " (" . show($errorfile) . ")";
         ()
-    } else {
+    }
+    else {
         htmlparse $dest, "pre"
     }
 }
 
+use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
-use FP::Struct []=> "FunctionalPerl::Htmlgen::PXMLMapper";
+method match_element_names() { [qw(code)] }
 
-method match_element_names () { [qw(code)] }
+method map_element($e, $uplist) {
 
-method map_element ($e, $uplist) {
-    #warn "hm: ".show($e->name). ", uplist= ".show($uplist->map(the_method "name"));
+#warn "hm: ".show($e->name). ", uplist= ".show($uplist->map(the_method "name"));
     if (not $uplist->is_null and $uplist->first->lcname eq "pre") {
-        my $txt= $e->text;
-        if (sourcelang ($txt) eq "Perl") {
-            my $pre= tidyhtml $txt;
+        my $txt = $e->text;
+        if (sourcelang($txt) eq "Perl") {
+            my $pre = tidyhtml $txt;
+
             #use FP::Repl;repl;
             $pre->body
-        } else {
+        }
+        else {
             # do not handle this element, leave up to pointer_eq to
             # detect that
             $e
         }
-    } else {
+    }
+    else {
         # do not handle this element, leave up to pointer_eq to detect
         # that
         $e
     }
 }
 
-_END_ # _END__ for dev
+_END_    # _END__ for dev

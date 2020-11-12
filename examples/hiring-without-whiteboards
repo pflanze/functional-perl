@@ -4,18 +4,23 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use utf8;
 binmode *STDOUT{IO}, ":encoding(UTF-8)";
 use Function::Parameters qw(:strict);
+
 #use Sub::Call::Tail;
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
@@ -51,12 +56,9 @@ sub usage {
 
 use Getopt::Long;
 our $verbose = 0;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           ) or exit 1;
+GetOptions("verbose" => \$verbose, "help" => sub {usage},) or exit 1;
 
 my ($basedir) = @ARGV;
-
 
 use Chj::ruse;
 use FP::Repl::Trap;
@@ -77,7 +79,6 @@ use FP::PureArray ":all";
 
 use Chj::TEST ":all";
 
-
 # XX lib
 sub triples {
     my @out;
@@ -87,35 +88,30 @@ sub triples {
         my $v = shift;
         @_ or die "wrong number of inputs";
         my $v2 = shift;
-        push @out, [$k,$v,$v2]
+        push @out, [$k, $v, $v2]
     }
     array_to_purearray \@out
 }
 
-
-
 package CountryOrRemote {
-    use FP::Struct [],
-        'FP::Struct::Show';
-    use overload '""' => sub {shift->string};
+    use FP::Struct [], 'FP::Struct::Show';
+    use overload '""' => sub { shift->string };
     _END_
 }
 
 package Remote {
-    use FP::Struct [],
-        'CountryOrRemote';
-    method is_USA() { undef }
-    method is_remote() { 1 }
-    method string() { "Remote" }
+    use FP::Struct [], 'CountryOrRemote';
+    method is_USA() {undef}
+    method is_remote() {1}
+    method string() {"Remote"}
     _END_
 }
 import Remote::constructors;
 my $Remote = Remote();
 
 package Country {
-    use FP::Struct [],
-        'CountryOrRemote';
-    method is_remote() { 0 }
+    use FP::Struct [], 'CountryOrRemote';
+    method is_remote() {0}
     _END_
 }
 
@@ -188,10 +184,9 @@ my $nonstates = "
  U.S. Armed Forces – Pacific    AP";
 
 package USPSCode {
-    use FP::Struct ["name", "code", "is_state"],
-        'Country';
-    method is_USA() { 1 }
-    method country_name() { "USA" }
+    use FP::Struct ["name", "code", "is_state"], 'Country';
+    method is_USA() {1}
+    method country_name() {"USA"}
     method string() { $$self{code} }
     _END_
 }
@@ -199,35 +194,35 @@ import USPSCode::constructors;
 
 fun parse_USPS_segment($str, $is_state) {
     $str =~ s/^\s+//;
-    purearray(split /\n/, $str)->map(fun($line) {
-        $line =~ s/^\s*(.*?)\s*\z/$1/s;
-        my ($name,$code) = $line =~ /^(\S.*?\S)\s+(\w{2})\z/
-            or die "no parse: '$line'";
-        USPSCode($name, $code, $is_state)
-    })
+    purearray(split /\n/, $str)->map(
+        fun($line)
+        {
+            $line =~ s/^\s*(.*?)\s*\z/$1/s;
+            my ($name, $code) = $line =~ /^(\S.*?\S)\s+(\w{2})\z/
+                or die "no parse: '$line'";
+            USPSCode($name, $code, $is_state)
+        }
+    )
 }
 
-my $USPSCodes = parse_USPS_segment($states, 1)
-    ->append(parse_USPS_segment($nonstates, 0));
-my %USfromCode =
-    map { $_->code => $_ } $USPSCodes->values;
+my $USPSCodes
+    = parse_USPS_segment($states, 1)->append(parse_USPS_segment($nonstates, 0));
+my %USfromCode = map { $_->code => $_ } $USPSCodes->values;
 
 package NonUSCountry {
-    use FP::Struct ["country_name"],
-        'Country';
-    method is_USA() { 0 }
+    use FP::Struct ["country_name"], 'Country';
+    method is_USA() {0}
     method string() { $$self{country_name} }
     _END_
 }
 import NonUSCountry::constructors;
 
 package City {
-    use FP::Struct ["city", "country"],
-        'FP::Struct::Show';
-    use overload '""' => sub {shift->string};
+    use FP::Struct ["city", "country"], 'FP::Struct::Show';
+    use overload '""' => sub { shift->string };
 
     method string() {
-        $self->city.", ".$self->country
+        $self->city . ", " . $self->country
     }
 
     _END_
@@ -236,75 +231,83 @@ import City::constructors;
 
 fun sortstring($str) {
     my $s = lc($str);
+
     # I'm sure there might be a library for this? Anyway, the
     # rules used by this project may be too specific.
-    $s =~ s/[ä]/a/sg; # or ae ?
+    $s =~ s/[ä]/a/sg;       # or ae ?
     $s =~ s/[éế]/e/sg;
     $s =~ s/[ï]/i/sg;
     $s =~ s/[ōöô]/o/sg;
     $s =~ s/[üû]/o/sg;
     $s =~ s/[ç]/c/sg;
-    $s =~ s/[|]/0/sg; # hacky
-    $s =~ s/[:]//sg; # do *not* strip space, (), -
+    $s =~ s/[|]/0/sg;        # hacky
+    $s =~ s/[:]//sg;         # do *not* strip space, (), -
     $s
 }
 
 package Company {
     use FP::Ops qw(the_method);
 
-    use FP::Struct ["name",
-                    "URL",
-                    "locations",
-                    "maybe_process"],
-      'FP::Struct::Show';
+    use FP::Struct ["name", "URL", "locations", "maybe_process"],
+        'FP::Struct::Show';
     use overload (
-        '""' => sub {shift->string},
-        cmp => sub {
-            my ($a,$b,$inverted) = @_;
-            die if $inverted; ##
-            my @v = map { $_->sortstring } ($a,$b);
+        '""' => sub { shift->string },
+        cmp  => sub {
+            my ($a, $b, $inverted) = @_;
+            die if $inverted;    ##
+            my @v     = map { $_->sortstring } ($a, $b);
             my $order = $v[0] cmp $v[1];
+
             # Order numeric entries between X and Y (since that's what
             # the current hand sorted document does)
             if ($order) {
                 my @vo = $order < 0 ? @v : reverse @v;
                 if ($vo[0] =~ /^[0-9]/ and $vo[1] =~ /^[a-x]/) {
-                    - $order
-                } else {
+                    -$order
+                }
+                else {
                     $order
                 }
-            } else {
+            }
+            else {
                 0
             }
-        });
+        }
+    );
 
     method sortstring() {
         main::sortstring($self->name)
     }
 
     method string() {
+
         # back to markdown
-        ("- [".$self->name."](".$self->URL.")"
-         ." | ".$self->locations->map(the_method("string"))->join("; ")
-         .do {
-             if (defined(my $p = $self->maybe_process)) {
-                 " | $p"
-             } else {
-                 ""
-             }
-         })
+        (
+                  "- ["
+                . $self->name . "]("
+                . $self->URL . ")" . " | "
+                . $self->locations->map(the_method("string"))->join("; ")
+                . do {
+                if (defined(my $p = $self->maybe_process)) {
+                    " | $p"
+                }
+                else {
+                    ""
+                }
+            }
+        )
     }
 
-    method remote () {
+    method remote() {
+
         # not calling it is_remote since has_remote might be more
         # appropriate, and then just keep it short.
-        $self->locations->any (the_method("is_remote"))
+        $self->locations->any(the_method("is_remote"))
     }
 
     _END_
 }
 import Company::constructors;
-
 
 # ==================================================================
 # For re-grouping&sorting (I'm crazy to have considered writing that)
@@ -312,41 +315,38 @@ import Company::constructors;
 # Oh, don't have ranges yet? Just code one up for us here, hacky
 # anyway.
 package InclusiveRange {
-    use FP::Struct ["from", "to"],
-        'FP::Struct::Show';
+    use FP::Struct ["from", "to"], 'FP::Struct::Show';
     use overload (
-        '""' => sub {shift->string},
-        cmp => sub {
-            my ($a,$b) = @_;
-            ($a->from cmp $b->cmp
-             or
-             $a->to cmp $b->to)
-        });
+        '""' => sub { shift->string },
+        cmp  => sub {
+            my ($a, $b) = @_;
+            ($a->from cmp $b->cmp or $a->to cmp $b->to)
+        }
+    );
 
     method string() {
-        $self->from." - ".$self->to
+        $self->from . " - " . $self->to
     }
 
     method contains_item($v) {
+
         # super HACK to accomodate for the '#' thing (should use a
         # maybe type instead for ranges which are open above--except
         # cmp is wrong for digits, too, so, dunno):
         return 1 if $self->to eq '#' and $v =~ /^[0-9]$/;
-        (($self->from cmp $v) <= 0
-         and
-         ($v cmp $self->to) <= 0)
+        (($self->from cmp $v) <= 0 and ($v cmp $self->to) <= 0)
     }
-    
+
     _END_
 }
 import InclusiveRange::constructors;
 
 package CatchallRange {
+
     # A bit of a hack, to catch numbers and whatever in the last one
     # with the '#', as the letter '#' isn't actually covering over the
     # digits so would otherwise have to hack InclusiveRange.
-    use FP::Struct [],
-        'InclusiveRange';
+    use FP::Struct [], 'InclusiveRange';
     method contains_item($v) {
         1
     }
@@ -354,166 +354,177 @@ package CatchallRange {
 }
 import CatchallRange::constructors;
 
-
-
 package Group {
     use FP::Predicates qw(instance_of);
-    use FP::Struct [[instance_of("InclusiveRange"), "range"],
-                    "items"],
+    use FP::Struct [[instance_of("InclusiveRange"), "range"], "items"],
         'FP::Struct::Show';
     _END_
 }
 import Group::constructors;
 
+my $ranges = triples('A' .. 'Z', '#')->map_with_islast(
+    fun($islast, $a)
+    {
+        ($islast ? \&CatchallRange : \&InclusiveRange)->($$a[0], $$a[2])
+    }
+)->list;
 
-my $ranges = triples('A'..'Z', '#')->map_with_islast(
-    fun($islast,$a) {
-        ($islast ? \&CatchallRange : \&InclusiveRange)
-            ->( $$a[0],$$a[2] )
-    })->list;
+fun group_companies($l, $ranges) {
 
-fun group_companies ($l,$ranges) {
     # sortedlist -> list_of(Group)
     return null if $l->is_null;
     my $range = $ranges->first;
     my ($groupitems, $rest) = $l->take_while_and_rest(
-        fun($company) {
+        fun($company)
+        {
             $range->contains_item(uc substr($company->name, 0, 1))
-        });
+        }
+    );
     no warnings "recursion";
-    cons(Group($range, $groupitems),
-         group_companies($rest, $ranges->rest))
+    cons(Group($range, $groupitems), group_companies($rest, $ranges->rest))
 }
-
 
 # ==================================================================
 # markdown line parsing
 
-fun is_item ($s) {
+fun is_item($s) {
     $s =~ /^-\s+/
 }
 
-fun is_heading_of ($pred) {
-    fun ($s) {
+fun is_heading_of($pred) {
+    fun($s) {
         if (my ($txt) = $s =~ /^\s*#+\s*(.*)/) {
-            &$pred ($txt)
-        } else {
+            &$pred($txt)
+        }
+        else {
             0
         }
     }
 }
 
-*is_heading = is_heading_of (fun ($s) { 1 });
-*is_AlsoSee = is_heading_of (fun ($s) { $s =~ /also *see/i });
+*is_heading = is_heading_of(fun($s) {1});
+*is_AlsoSee = is_heading_of(fun($s) { $s =~ /also *see/i });
 
-fun is_hr ($s) {
+fun is_hr($s) {
     $s =~ /^---\s*$/
 }
 
-fun is_empty ($s) {
+fun is_empty($s) {
     $s =~ /^\s*$/
 }
 
-fun parse_country ($str) {
+fun parse_country($str) {
     $USfromCode{$str} // NonUSCountry($str)
 }
 
 fun parse_location($str) {
     if ($str =~ /^remote$/i) {
         $Remote
-    } else {
+    }
+    else {
         my @s = split /\s*,\s*/, $str;
         if (@s == 1) {
             parse_country($s[0])
-        } elsif (@s == 2) {
+        }
+        elsif (@s == 2) {
             my ($city, $country) = @s;
             City($city, parse_country($country))
-        } elsif (@s == 3) {
+        }
+        elsif (@s == 3) {
             my ($city, $state, $country) = @s;
             if ($country eq "USA") {
                 my $s = parse_country($state);
                 if ($s->is_USA) {
                     City($city, $s)
-                } else {
+                }
+                else {
                     die "presumed state '$state' is not a state in the USA";
                 }
-            } else {
-                die "don't know how to deal with presumed state '$state' in country '$country': don't know that country";
             }
-        } else {
+            else {
+                die
+                    "don't know how to deal with presumed state '$state' in country '$country': don't know that country";
+            }
+        }
+        else {
             die "more than two commas in: '$str'"
         }
     }
 }
 
-fun parse_line ($line) {
+fun parse_line($line) {
     my $s = $line;
-    $s =~ s/^-\s*//
-      or die "line is not an item";
+    $s =~ s/^-\s*// or die "line is not an item";
     my ($name, $url, $rest) = $s =~ /^\[(.*?)\] *\((.*?)\)\s*(.*)$/
-      or die "missing link formatting in: '$s'";
+        or die "missing link formatting in: '$s'";
 
     my @p = split /\s*\|\s*/, $rest;
-    @p == 2 or @p == 3
-      or die "rest does not contain 2 or 3 parts: '$rest'";
+    @p == 2 or @p == 3 or die "rest does not contain 2 or 3 parts: '$rest'";
     my (undef, $locations, $process) = @p;
-    Company ($name,
-             $url,
-             # /, ; and & used inconsistently:
-             list(map { parse_location $_ } split m%\s*[/;&]\s*%, $locations),
-             $process)
-}
+    Company(
+        $name, $url,
 
+        # /, ; and & used inconsistently:
+        list(map { parse_location $_ } split m%\s*[/;&]\s*%, $locations),
+        $process
+    )
+}
 
 TEST {
-    parse_line "- [Accredible](https://www.accredible.com/careers) | Cambridge, UK / San Francisco, CA / Remote | Take home project, then a pair-programming and discussion onsite / Skype round."
+    parse_line
+        "- [Accredible](https://www.accredible.com/careers) | Cambridge, UK / San Francisco, CA / Remote | Take home project, then a pair-programming and discussion onsite / Skype round."
 }
-  Company ("Accredible", "https://www.accredible.com/careers",
-           list (City('Cambridge', NonUSCountry('UK')), City('San Francisco', USPSCode('California', 'CA', 1)), Remote()),
-           "Take home project, then a pair-programming and discussion onsite / Skype round.");
-
+Company(
+    "Accredible",
+    "https://www.accredible.com/careers",
+    list(
+        City('Cambridge',     NonUSCountry('UK')),
+        City('San Francisco', USPSCode('California', 'CA', 1)),
+        Remote()
+    ),
+    "Take home project, then a pair-programming and discussion onsite / Skype round."
+);
 
 # XX move?; name?
-fun FP::Abstract::Sequence::drop_over ($l, $pred) {
-    $l->drop_while (complement $pred)->drop_while ($pred)
+fun FP::Abstract::Sequence::drop_over($l, $pred) {
+    $l->drop_while(complement $pred)->drop_while($pred)
 }
 
-fun datalines () {
-    xfile_lines_chomp ("$basedir/$mainfile", "UTF-8")
-        ->drop_over (*is_hr)
-        ->take_while (complement *is_AlsoSee)
-        ->filter (complement *is_empty)
+fun datalines() {
+    xfile_lines_chomp("$basedir/$mainfile", "UTF-8")->drop_over(*is_hr)
+        ->take_while(complement * is_AlsoSee)->filter(complement * is_empty)
 }
 
-fun companies () {
+fun companies() {
+
     # Simply ignore the grouping headings.
-    datalines
-        ->filter (complement *is_heading)
-        ->map (*parse_line)
+    datalines->filter(complement * is_heading)->map (*parse_line)
 }
 
 fun parse_heading($str) {
-    my ($from,$to) = $str =~ /^#+\s+(\w)\s*-\s*(\w|\\?#)\s*$/
+    my ($from, $to) = $str =~ /^#+\s+(\w)\s*-\s*(\w|\\?#)\s*$/
         or die "not a heading: '$str'";
     $to =~ s/^\\//;
-    InclusiveRange($from,$to)
+    InclusiveRange($from, $to)
 }
 
-fun grouped_companies_from ($datalines) {
+fun grouped_companies_from($datalines) {
+
     # Capture the groupings as well, as the original file is badly
     # grouping them, so to keep a diff minimal we first have to
     # maintain the wrong grouping before re-grouping automatically.
     if ($datalines->is_null) {
         null
-    } else {
-        my ($heading,$r) = $datalines->first_and_rest;
-        if (is_heading ($heading)) {
-            my ($groupitems, $r) = $r->take_while_and_rest(
-                complement *is_heading);
-            cons(Group(parse_heading($heading),
-                       $groupitems->map(*parse_line)),
-                 grouped_companies_from $r)
-        } else {
+    }
+    else {
+        my ($heading, $r) = $datalines->first_and_rest;
+        if (is_heading($heading)) {
+            my ($groupitems, $r)
+                = $r->take_while_and_rest(complement * is_heading);
+            cons(Group(parse_heading($heading), $groupitems->map(*parse_line)),
+                grouped_companies_from $r)
+        }
+        else {
             die "expecting a header, got: '$heading'";
         }
     }
@@ -523,50 +534,53 @@ fun grouped_companies() {
     grouped_companies_from datalines
 }
 
-fun print_groups ($s) {
+fun print_groups($s) {
     $s->for_each(
-        fun ($group) {
+        fun($group)
+        {
             my $range = $group->range->string;
             $range =~ s/#/\\#/;
             xprintln "## $range";
             $group->items->for_each(
-                fun ($company) {
+                fun($company)
+                {
                     xprintln $company;
-                });
+                }
+            );
             xprintln;
-        })
+        }
+    )
 }
-
 
 # HACK: should really just use the repl printer (show) directly to
 # show the whole results list, but show currently doesn't do
 # multi-line pretty-printing; so:
-fun print_showln ($v) {
+fun print_showln($v) {
     xprintln show $v
 }
+
 # XX see above, and move?
-fun FP::Abstract::Sequence::show_items ($l) {
-    $l->for_each (*print_showln)
+fun FP::Abstract::Sequence::show_items($l) {
+    $l->for_each(*print_showln)
 }
 
-fun FP::Abstract::Sequence::print ($l) {
-    $l->for_each (*xprintln)
+fun FP::Abstract::Sequence::print($l) {
+    $l->for_each(*xprintln)
 }
 
-fun FP::Abstract::Sequence::print_grouped ($l,$please_sort = 1) {
+fun FP::Abstract::Sequence::print_grouped($l, $please_sort = 1) {
     my $l = $please_sort ? $l->sort : $l;
     print_groups(group_companies($l, $ranges));
 }
-
 
 # ==================================================================
 # main
 
 fun cs() { companies() }
 
-
 perhaps_run_tests "main" or do {
     usage unless @ARGV == 1;
+
     # let the user play with the data
     repl;
 };

@@ -54,28 +54,28 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::MutableArray;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(is_mutablearray mutablearray array_to_mutablearray);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(is_mutablearray mutablearray array_to_mutablearray);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
-
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub is_mutablearray ($) {
-    length ref ($_[0]) and UNIVERSAL::isa($_[0], "FP::_::MutableArray")
+    length ref($_[0]) and UNIVERSAL::isa($_[0], "FP::_::MutableArray")
 }
 
 sub mutablearray {
-    FP::_::MutableArray->new_from_array ([@_])
+    FP::_::MutableArray->new_from_array([@_])
 }
 
 sub array_to_purearray ($) {
-    FP::_::MutableArray->new_from_array ($_[0])
+    FP::_::MutableArray->new_from_array($_[0])
 }
-
 
 package FP::_::MutableArray {
     use base qw(FP::Array::Mixin);
@@ -104,22 +104,25 @@ package FP::_::MutableArray {
     sub null {
         my $proto = shift;
         my $class = ref($proto) || $proto;
+
         # can't cache this since mutation is allowed!:
-        $class->new_from_array([]) 
+        $class->new_from_array([])
     }
 
     sub constructor_name {
         "mutablearray"
     }
- 
+
     sub pure {
         @_ == 1 or die "wrong number of arguments";
+
         # same as `array_to_purearray`
-        require FP::PureArray; # cost?
+        require FP::PureArray;    # cost?
         FP::_::PureArray->new_from_array($_[0])
     }
 
     our $unsafe_mutable_warned = 0;
+
     sub unsafe_mutable {
         @_ == 1 or die "wrong number of arguments";
         my $a = shift;
@@ -127,7 +130,7 @@ package FP::_::MutableArray {
         $a
     }
 
-    _END_; # Chj::NamespaceCleanAbove
+    _END_;    # Chj::NamespaceCleanAbove
 
     FP::Interfaces::implemented qw(
         FP::Abstract::Sequence

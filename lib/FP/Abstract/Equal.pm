@@ -64,14 +64,12 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Abstract::Equal;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
-sub FP_Interface__method_names {
-    ("FP_Equal_equal")
-}
-
+sub FP_Interface__method_names { ("FP_Equal_equal") }
 
 1

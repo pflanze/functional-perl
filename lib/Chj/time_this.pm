@@ -46,49 +46,55 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::time_this;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(time_this);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(time_this);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 my $fields = [qw(user system cuser csystem)];
 
 sub time_this (&;@) {
-    my ($thunk,@args) = @_;
+    my ($thunk, @args) = @_;
     my $wantarray = wantarray;
-    my $args = {};
-    my $maybe_msg = @args == 1 ? $args[0] : do { $args = +{@args}; $$args{msg} };
+    my $args      = {};
+    my $maybe_msg
+        = @args == 1 ? $args[0] : do { $args = +{@args}; $$args{msg} };
     my $n = $$args{n} // 1;
 
     my $a = [times];
     my @res;
-    for (1..$n) {
+    for (1 .. $n) {
         @res = $wantarray ? &$thunk() : scalar &$thunk();
     }
     my $b = [times];
 
-    my $d = [map { $$fields[$_]." = ".($$b[$_] - $$a[$_]) } 0..$#$a ];
+    my $d      = [map { $$fields[$_] . " = " . ($$b[$_] - $$a[$_]) } 0 .. $#$a];
     my $forstr = defined($maybe_msg) ? " for $maybe_msg" : "";
-    my $msgstr = "times$forstr: ".join(", ",@$d)."\n";
+    my $msgstr = "times$forstr: " . join(", ", @$d) . "\n";
     if (my $out = $$args{out}) {
-        if (ref ($out) eq "ARRAY") {
+        if (ref($out) eq "ARRAY") {
             push @$out, $msgstr
-        } elsif (ref ($out) eq "SCALAR") {
+        }
+        elsif (ref($out) eq "SCALAR") {
             $$out = $msgstr
-        } elsif (is_filehandle $out) {
+        }
+        elsif (is_filehandle $out) {
             print $out $msgstr
-        } else {
+        }
+        else {
             warn "don't know how to output to '$out'";
         }
-    } else {
+    }
+    else {
         warn $msgstr;
     }
     $wantarray ? @res : $res[0]
 }
-
 
 1

@@ -42,14 +42,12 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Abstract::Pure;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
-sub FP_Interface__method_names {
-    ()
-}
-
+sub FP_Interface__method_names { () }
 
 1

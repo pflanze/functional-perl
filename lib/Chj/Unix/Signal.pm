@@ -23,20 +23,18 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::Unix::Signal;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
-use Chj::Class::Array -fields =>
-  -publica =>
-  'number',
-  ;
-
+use Chj::Class::Array -fields => -publica => 'number',
+    ;
 
 sub new {
     my $class = shift;
-    my $s = $class->SUPER::new;
+    my $s     = $class->SUPER::new;
     ($$s[Number]) = @_;
     $s
 }
@@ -48,6 +46,7 @@ sub new {
 our $inited = 0;
 our $signo;
 our $signame;
+
 sub MaybeInit {
     $inited ||= do {
         require Config;

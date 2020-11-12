@@ -4,17 +4,20 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
-
 
 sub usage {
     print "usage: $myname < file.diff > file-diff.html
@@ -24,16 +27,13 @@ sub usage {
 
   Uses streaming and hence works with arbitrarily long inputs.
 ";
-    exit (@_ ? 1 : 0);
+    exit(@_ ? 1 : 0);
 }
 
 use Getopt::Long;
 our $verbose = 0;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           ) or exit 1;
+GetOptions("verbose" => \$verbose, "help" => sub {usage},) or exit 1;
 usage if @ARGV;
-
 
 use Method::Signatures;
 use FP::Stream ":all";
@@ -43,19 +43,18 @@ use PXML::XHTML ":all";
 use FP::Ops ":all";
 use Chj::xopen "glob_to_fh";
 
-our $lines =
-  fh_to_stream (glob_to_fh (*STDIN, "utf-8"),
-             the_method("xreadline_chomp"),
-             the_method("xclose"));
+our $lines = fh_to_stream(
+    glob_to_fh(*STDIN, "utf-8"),
+    the_method("xreadline_chomp"),
+    the_method("xclose")
+);
 
-our $html =
-  HTML
-  (HEAD
-   (TITLE ($myname),
-    META ({'http-equiv'=> "Content-Type",
-           content => "text/html;charset=utf-8"}),
-    STYLE({type => "text/css"},
-          '
+our $html = HTML(HEAD(
+    TITLE($myname),
+    META({'http-equiv' => "Content-Type", content => "text/html;charset=utf-8"
+    }),
+    STYLE(
+        {type => "text/css"}, '
 .diff {
   color: #008;
   border-top: 1px solid;
@@ -80,28 +79,34 @@ our $html =
 .other {
   color: orange;
 }
-'),
-    BODY
-    (PRE
-     (stream_map
-      func ($line) {
-          DIV ({class => ($line =~ /^diff / ? "diff" :
-                         $line =~ /^(index|new|\+\+\+|---) / ? "meta" :
-                         do {
-                             my $c = substr $line,0,1;
-                             ($c eq '@' ? "position" :
-                              $c eq '+' ? "add" :
-                              $c eq '-' ? "del" :
-                              $c eq ' ' ? "context" :
-                              "other")
-                         })},
-               $line)
-      },
-      $lines))));
+'
+    ),
+    BODY(PRE(
+        stream_map func($line)
+        {
+            DIV(
+                {
+                    class => (
+                          $line =~ /^diff /                   ? "diff"
+                        : $line =~ /^(index|new|\+\+\+|---) / ? "meta"
+                        : do {
+                            my $c = substr $line, 0, 1;
+                            (     $c eq '@' ? "position"
+                                : $c eq '+' ? "add"
+                                : $c eq '-' ? "del"
+                                : $c eq ' ' ? "context"
+                                : "other")
+                        }
+                    )
+                },
+                $line
+            )
+        },
+        $lines
+    ))
+));
 
-
-puthtmlfile ("-", $html);
-
+puthtmlfile("-", $html);
 
 # TODO: why have `puthtmlfile` to write to magic "-" file as
 # filehandle, but do glob_to_fh etc. manipulation?

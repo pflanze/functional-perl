@@ -24,11 +24,12 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::IO::Pipe;
 @ISA = "Chj::IO::File";
 require Chj::IO::File;
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub quotedname {
     "pipe"

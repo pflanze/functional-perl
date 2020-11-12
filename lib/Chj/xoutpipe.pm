@@ -37,18 +37,18 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::xoutpipe;
 @ISA = 'Exporter';
 require Exporter;
 @EXPORT = qw(xoutpipe);
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Chj::IO::Command;
 
 sub xoutpipe {
     Chj::IO::Command->new_receiver(@_);
 }
-*Chj::xoutpipe= \&xoutpipe;
-
+*Chj::xoutpipe = \&xoutpipe;
 
 1

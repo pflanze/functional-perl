@@ -60,10 +60,11 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::DBI;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use DBI;
 use Chj::TEST;
@@ -71,23 +72,26 @@ use Chj::TEST;
 use Chj::NamespaceCleanAbove;
 
 {
+
     package FP::DBI::db;
     our @ISA = 'DBI::db';
 
     sub prepare {
-        my $s = shift;
+        my $s  = shift;
         my $st = $s->SUPER::prepare(@_);
         bless $st, "FP::DBI::st"
     }
 }
 
 {
+
     package FP::DBI::Row;
-    use FP::PureArray(); # XX oh, ugly, to load the below namespace!
+    use FP::PureArray();    # XX oh, ugly, to load the below namespace!
     use base 'FP::_::PureArray';
 }
 
 {
+
     package FP::DBI::st;
     our @ISA = 'DBI::st';
     use FP::Lazy;
@@ -97,52 +101,53 @@ use Chj::NamespaceCleanAbove;
     sub make_X_stream {
         my ($method, $maybe_mapfn) = @_;
         sub {
-            my $s = shift;
+            my $s  = shift;
             my $id = ++$$s{private_fp__dbi__id};
-            my $lp; $lp = sub {
-                my $lp = $lp; #keep strong reference
+            my $lp;
+            $lp = sub {
+                my $lp = $lp;    #keep strong reference
                 lazy {
                     $$s{private_fp__dbi__id} == $id
-                      or die ("stream was interrupted by another execute".
-                              " or stream request");
+                        or die("stream was interrupted by another execute"
+                            . " or stream request");
                     if (my $v = $s->$method) {
-                        cons ($maybe_mapfn ? &$maybe_mapfn($v) : $v, &$lp);
-                    } else {
+                        cons($maybe_mapfn ? &$maybe_mapfn($v) : $v, &$lp);
+                    }
+                    else {
                         null
                     }
                 }
             };
-            Weakened ($lp)->()
+            Weakened($lp)->()
         }
     }
 
     use Chj::NamespaceCleanAbove;
 
-
     sub execute {
         my $s = shift;
         $$s{private_fp__dbi__id}++;
-        $s->SUPER::execute (@_)
+        $s->SUPER::execute(@_)
     }
 
-    *row_stream = make_X_stream ("fetchrow_arrayref",
-                                sub {
-                                    bless ([ @{$_[0]} ], "FP::DBI::Row")
-                                });
-    *array_stream = make_X_stream ("fetchrow_arrayref");
-    *hash_stream= make_X_stream ("fetchrow_hashref");
+    *row_stream = make_X_stream(
+        "fetchrow_arrayref",
+        sub {
+            bless([@{$_[0]}], "FP::DBI::Row")
+        }
+    );
+    *array_stream = make_X_stream("fetchrow_arrayref");
+    *hash_stream  = make_X_stream("fetchrow_hashref");
 
     _END_
 }
-
 
 use base 'DBI';
 
 sub connect {
     my $cl = shift;
-    my $v = $cl->SUPER::connect (@_);
+    my $v  = $cl->SUPER::connect(@_);
     bless $v, "FP::DBI::db"
 }
 
-
-_END_ # namespace cleaning
+_END_    # namespace cleaning

@@ -64,16 +64,14 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Abstract::Show;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use base qw(FP::Mixin::Utils);
 
-sub FP_Interface__method_names {
-    ("FP_Show_show")
-}
-
+sub FP_Interface__method_names { ("FP_Show_show") }
 
 1

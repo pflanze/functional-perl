@@ -84,65 +84,67 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Predicates;
-@ISA = "Exporter"; require Exporter;
+@ISA = "Exporter";
+require Exporter;
 @EXPORT = qw(
-              is_pure
-              is_pure_object
-              is_pure_class
-              is_string
-              is_nonnumeric_string
-              is_nonnullstring
-              is_natural0
-              is_natural
-              is_even is_odd
-              is_boolean01
-              is_booleanyesno
-              is_boolean
-              is_hash
-              is_array
-              is_procedure
-              is_class_name
-              instance_of
-              is_instance_of
-              is_subclass_of
+    is_pure
+    is_pure_object
+    is_pure_class
+    is_string
+    is_nonnumeric_string
+    is_nonnullstring
+    is_natural0
+    is_natural
+    is_even is_odd
+    is_boolean01
+    is_booleanyesno
+    is_boolean
+    is_hash
+    is_array
+    is_procedure
+    is_class_name
+    instance_of
+    is_instance_of
+    is_subclass_of
 
-              is_filehandle
+    is_filehandle
 
-              is_filename
-              is_sequence
-              is_proper_sequence
-              is_seq
+    is_filename
+    is_sequence
+    is_proper_sequence
+    is_seq
 
-              less_than
-              greater_than
-              less_equal
-              greater_equal
-              is_zero
+    less_than
+    greater_than
+    less_equal
+    greater_equal
+    is_zero
 
-              maybe
-              is_defined
-              is_true
-              true
-              is_false
-              false
-              complement
-              either
-              all_of both
-         );
+    maybe
+    is_defined
+    is_true
+    true
+    is_false
+    false
+    complement
+    either
+    all_of both
+);
 @EXPORT_OK = qw(
-                 is_coderef
-            );
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+    is_coderef
+);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use FP::Abstract::Pure;
 use Chj::BuiltinTypePredicates 'is_filehandle';
+
 # ^ should probably move more lowlevel predicates there
 use Scalar::Util qw(looks_like_number);
-
 
 # Only use `FP::Failure` features if $FP::Failure::use_failure is
 # true--which means that FP::Failure should be loaded, no need to
@@ -154,19 +156,17 @@ use Scalar::Util qw(looks_like_number);
 
 sub failwith {
     my ($parents, $msg, @vals) = @_;
-    $FP::Failure::use_failure ?
-        FP::Failure::failure(FP::Failure::message($msg, @vals),
-                             $parents) :
-        0
+    $FP::Failure::use_failure
+        ? FP::Failure::failure(FP::Failure::message($msg, @vals), $parents)
+        : 0
 }
 
 sub fail {
     my ($msg, @vals) = @_;
-    $FP::Failure::use_failure ?
-        FP::Failure::failure(FP::Failure::message($msg, @vals)) :
-        0
+    $FP::Failure::use_failure
+        ? FP::Failure::failure(FP::Failure::message($msg, @vals))
+        : 0
 }
-
 
 # XX check for read-only flags?
 
@@ -175,82 +175,81 @@ sub fail {
 # is no reason for fear from mutations from scopes before it got
 # control of the value:
 sub is_pure ($) {
-    (length (ref $_[0]) ? UNIVERSAL::isa ($_[0], "FP::Abstract::Pure")
-     : 1)
+    (length(ref $_[0]) ? UNIVERSAL::isa($_[0], "FP::Abstract::Pure") : 1)
         or fail "is_pure", $_[0]
 }
 
 sub is_pure_object ($) {
-    (length ref $_[0] and UNIVERSAL::isa ($_[0], "FP::Abstract::Pure"))
+    (length ref $_[0] and UNIVERSAL::isa($_[0], "FP::Abstract::Pure"))
         or fail "is_pure_object", $_[0]
 }
 
 sub is_pure_class ($) {
-    my $r = is_class_name ($_[0]);
+    my $r = is_class_name($_[0]);
     $r or return failwith [$r], "is_pure_class";
-    UNIVERSAL::isa($_[0], "FP::Abstract::Pure")
-        or fail "is_pure_class", $_[0]
+    UNIVERSAL::isa($_[0], "FP::Abstract::Pure") or fail "is_pure_class", $_[0]
 }
 
 sub is_string ($) {
     my ($v) = @_;
-    (defined $v
-     and not ref $v) # relax?
+    (defined $v and not ref $v)    # relax?
         or fail "is_string", $v
 }
 
 sub is_nonnumeric_string ($) {
     my ($v) = @_;
-    (defined $v
-     and not ref $v # relax?
-     and not looks_like_number($v))
+    (
+        defined $v and not ref $v    # relax?
+            and not looks_like_number($v)
+        )
         or fail "is_string", $v
 }
 
 sub is_nonnullstring ($) {
     my ($v) = @_;
-    (defined $v
-     and not ref $v # relax?
-     and length $v)
+    (
+        defined $v and not ref $v    # relax?
+            and length $v
+        )
         or fail "is_nonnullstring", $v
 }
 
 sub is_natural0 ($) {
     my ($v) = @_;
-    (defined $v
-     and not ref $v # relax?
-     and $v =~ /^\d+\z/)
+    (
+        defined $v and not ref $v    # relax?
+            and $v =~ /^\d+\z/
+        )
         or fail "is_natural0", $v
 }
 
 sub is_natural ($) {
     my ($v) = @_;
-    (defined $v
-     and not ref $v # relax?
-     and $v =~ /^\d+\z/ and $v)
+    (
+        defined $v and not ref $v       # relax?
+            and $v =~ /^\d+\z/ and $v
+        )
         or fail "is_natural", $v
 }
 
 # XX careful these do not check for number types first
 
 sub is_even ($) {
-    ($_[0] & 1) == 0
-      or fail "is_even", $_[0]
+    ($_[0] & 1) == 0 or fail "is_even", $_[0]
 }
 
 sub is_odd ($) {
-    ($_[0] & 1)
-      or fail "is_odd", $_[0]
+    ($_[0] & 1) or fail "is_odd", $_[0]
 }
 
-TEST { [map { is_even $_ } -3..3] }
-  [0,1,0,1,0,1,0];
-TEST { [map { is_odd $_ } -3..3] }
-  [1,0,1,0,1,0,1];
-TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
-  # XX what should it give?
-  [0,0,1,1,1];
+TEST { [map { is_even $_ } -3 .. 3] }
+[0, 1, 0, 1, 0, 1, 0];
+TEST { [map { is_odd $_ } -3 .. 3] }
+[1, 0, 1, 0, 1, 0, 1];
+TEST { [map { is_even $_ } 3, 3.1, 4, 4.1, -4.1] }
 
+# XX what should it give?
+[0, 0, 1, 1, 1];
 
 # no `is_` prefix as those are not the final predicates (they are
 # curried forms of < and > etc.):
@@ -260,83 +259,76 @@ TEST { [map { is_even $_ } 3,3.1,4,4.1,-4.1] }
 
 sub less_than ($) {
     my ($x) = @_;
+
     sub ($) {
-        $_[0] < $x
-          or fail "less_than", $x, $_[0] # last value last, ok?
+        $_[0] < $x or fail "less_than", $x, $_[0]    # last value last, ok?
     }
 }
 
 sub greater_than ($) {
     my ($x) = @_;
+
     sub ($) {
-        $_[0] > $x
-          or fail "greater_than", $x, $_[0] # last value last, ok?
+        $_[0] > $x or fail "greater_than", $x, $_[0]    # last value last, ok?
     }
 }
 
 sub less_equal ($) {
     my ($x) = @_;
+
     sub ($) {
-        $_[0] <= $x
-          or fail "less_equal", $x, $_[0] # last value last, ok?
+        $_[0] <= $x or fail "less_equal", $x, $_[0]     # last value last, ok?
     }
 }
 
 sub greater_equal ($) {
     my ($x) = @_;
+
     sub ($) {
-        $_[0] >= $x
-          or fail "greater_equal", $x, $_[0] # last value last, ok?
+        $_[0] >= $x or fail "greater_equal", $x, $_[0]    # last value last, ok?
     }
 }
 
 sub is_zero ($) {
-    $_[0] == 0
-      or fail "is_zero", $_[0]
+    $_[0] == 0 or fail "is_zero", $_[0]
 }
-
 
 # strictly 0 or 1
 sub is_boolean01 ($) {
-    (not ref ($_[0]) # relax?
-     and $_[0] =~ /^[01]\z/)
-      or fail "is_boolean01", $_[0]
+    (
+        not ref($_[0])                                    # relax?
+            and $_[0] =~ /^[01]\z/
+        )
+        or fail "is_boolean01", $_[0]
 }
 
 sub is_booleanyesno ($) {
     my ($v) = @_;
-    (not ref $v
-     and $v eq "yes" or $v eq "no")
-      or fail "is_booleanyesno", $v
+    (not ref $v and $v eq "yes" or $v eq "no") or fail "is_booleanyesno", $v
 }
 
 # undef, 0, "", or 1
 sub is_boolean ($) {
-    (not ref ($_[0]) # relax?
-     and (! $_[0]
-          or
-          $_[0] eq "1"))
-      or fail "is_boolean", $_[0]
+    (
+        not ref($_[0])    # relax?
+            and (!$_[0] or $_[0] eq "1")
+        )
+        or fail "is_boolean", $_[0]
 }
 
-
 sub is_hash ($) {
-    (defined $_[0] and ref ($_[0]) eq "HASH")
-      or fail "is_hash", $_[0]
+    (defined $_[0] and ref($_[0]) eq "HASH") or fail "is_hash", $_[0]
 }
 
 sub is_array ($) {
-    (defined $_[0] and ref ($_[0]) eq "ARRAY")
-      or fail "is_array", $_[0]
+    (defined $_[0] and ref($_[0]) eq "ARRAY") or fail "is_array", $_[0]
 }
-
 
 # Usually you should prefer `is_procedure` (see below) over this, as
 # we like to pass globs as subroutine place holders, too.
 
 sub is_coderef ($) {
-    (defined $_[0] and ref ($_[0]) eq "CODE")
-      or fail "is_coderef", $_[0]
+    (defined $_[0] and ref($_[0]) eq "CODE") or fail "is_coderef", $_[0]
 }
 
 # Should this be called `is_subroutine` or `is_sub` instead, to cater
@@ -345,144 +337,142 @@ sub is_coderef ($) {
 # is_coderef naming above.
 
 sub is_procedure ($) {
-    (defined $_[0] and
-      (ref ($_[0]) eq "CODE"
-       or
-       (ref \($_[0]) eq "GLOB" ? *{$_[0]}{CODE} ? 1 : '' : '')))
-      # XX: also check for objects that overload '&'?
-      or fail "is_procedure", $_[0]
-}
+    (
+        defined $_[0]
+            and (ref($_[0]) eq "CODE"
+            or (ref \($_[0]) eq "GLOB" ? *{$_[0]}{CODE} ? 1 : '' : ''))
+        )
 
-TEST { is_procedure [] } 0;
+        # XX: also check for objects that overload '&'?
+        or fail "is_procedure", $_[0]
+    }
+
+    TEST { is_procedure [] } 0;
 TEST { is_procedure \&is_procedure } 1;
 TEST { is_procedure *is_procedure } 1;
 TEST { is_procedure *fifu } 0;
-
 
 my $classpart_re = qr/\w+/;
 
 sub is_class_name ($) {
     my ($v) = @_;
-    ! length ref ($v) and $v =~ /^(?:${classpart_re}::)*$classpart_re\z/
-      or fail "is_class_name", $v
+    !length ref($v) and $v =~ /^(?:${classpart_re}::)*$classpart_re\z/
+        or fail "is_class_name", $v
 }
 
 sub instance_of ($) {
     my ($cl) = @_;
     is_class_name $cl or die "need class name string, got: $cl";
+
     sub ($) {
-        length ref $_[0] ? UNIVERSAL::isa ($_[0], $cl) : ''
+        length ref $_[0] ? UNIVERSAL::isa($_[0], $cl) : ''
             or fail "instance_of", $cl, $_[0]
     }
 }
 
 sub is_instance_of ($$) {
-    my ($v,$cl) = @_;
+    my ($v, $cl) = @_;
+
     # is_class_name $cl or die "need class name string, got: $cl";
-    length ref $v ? UNIVERSAL::isa ($v, $cl) : ''
+    length ref $v ? UNIVERSAL::isa($v, $cl) : ''
         or fail "is_instance_of", $v, $cl
 }
 
 sub is_subclass_of ($$) {
-    my ($v,$cl) = @_;
+    my ($v, $cl) = @_;
+
     # is_class_name $cl or die "need class name string, got: $cl";
-    !length ref $v and UNIVERSAL::isa ($v, $cl)
+    !length ref $v and UNIVERSAL::isa($v, $cl)
         or fail "is_subclass_of", $v, $cl
 }
 
 TEST { my $v = "IO"; is_instance_of $v, "IO" } 0;
 TEST { my $v = bless [], "IO"; is_instance_of $v, "IO" } 1;
 TEST { my $v = "IO"; is_subclass_of $v, "IO" } 1;
-TEST { require Chj::IO::File;
-       is_subclass_of "Chj::IO::File", "IO" } 1;
-
+TEST {
+    require Chj::IO::File;
+    is_subclass_of "Chj::IO::File", "IO"
+}
+1;
 
 # is_filename in Chj::BuiltinTypePredicates
 
-TEST {[ map { is_filehandle $_ }
-        "STDOUT", undef,
-        *STDOUT, *STDOUT{IO}, \*STDOUT,
-        *SMK69GXDB, *SMK69GXDB{IO}, \*SMK69GXDB,
-        bless (\*WOFWEOXVV, "ReallyNotIO"),
-        do { open my $in, '<', $0 or die $!;
-             #warn "HM".<$in>;  # works
-             bless $in, "MightActullyBeIO" }
-      ]}
-  ['', '',
-   '', 1, 1,
-   '', '', '',
-   '',
-   1
-  ];
+TEST { [
+    map { is_filehandle $_ } "STDOUT",
+    undef, *STDOUT,
+    *STDOUT{IO},
+    \*STDOUT,
+    *SMK69GXDB,
+    *SMK69GXDB{IO},
+    \*SMK69GXDB,
+    bless(\*WOFWEOXVV, "ReallyNotIO"),
+    do {
+        open my $in, '<', $0 or die $!;
 
+        #warn "HM".<$in>;  # works
+        bless $in, "MightActullyBeIO"
+    }
+] }
+['', '', '', 1, 1, '', '', '', '', 1];
 
 # should probably be in a filesystem lib instead?
 sub is_filename ($) {
     my ($v) = @_;
-    (is_nonnullstring ($v)
-     and !($v =~ m|/|)
-     and !($v eq ".")
-     and !($v eq ".."))
+    (is_nonnullstring($v) and !($v =~ m|/|) and !($v eq ".") and !($v eq ".."))
         or fail "is_filename", $v
 }
 
-
 # can't be in `FP::Abstract::Sequence` since that package is for OO, well, what
 # to do about it?
-use FP::Lazy; # sigh dependency, too.
+use FP::Lazy;    # sigh dependency, too.
 
 sub is_sequence ($) {
     my $v = force $_[0];
-    UNIVERSAL::isa($v, "FP::Abstract::Sequence")
-        or fail "is_sequence", $v
+    UNIVERSAL::isa($v, "FP::Abstract::Sequence") or fail "is_sequence", $v
 }
 
 sub is_proper_sequence ($) {
     my $v = force $_[0];
-    (UNIVERSAL::isa($v, "FP::Abstract::Sequence")
-     and $v->is_proper_sequence)
+    (UNIVERSAL::isa($v, "FP::Abstract::Sequence") and $v->is_proper_sequence)
         or fail "is_sequence", $v
 }
 
 # Like is_sequence but only returns true when the sequence isn't empty
 sub is_seq ($) {
     my $v = force $_[0];
-    UNIVERSAL::isa($v, "FP::Abstract::Sequence")
-        && (not $v->is_null)
+    UNIVERSAL::isa($v, "FP::Abstract::Sequence") && (not $v->is_null)
         or fail "is_sequence", $v
 }
-
 
 sub maybe ($) {
     @_ == 1 or die "wrong number of arguments";
     my ($pred) = @_;
+
     sub ($) {
         my ($v) = @_;
-        defined $v ? do {
-            my $b = &$pred ($v);
+        defined $v
+            ? do {
+            my $b = &$pred($v);
             $b or failwith [$b], "maybe"
-        } : 1
+            }
+            : 1
     }
 }
 
-
 # (this would also be a candidate for FP::Ops)
 sub is_defined ($) {
-    defined $_[0]
-        or fail "is_defined", $_[0]
+    defined $_[0] or fail "is_defined", $_[0]
 }
 
 sub is_true ($) {
-    $_[0]
-        or fail "is_true", $_[0]
+    $_[0] or fail "is_true", $_[0]
 }
 
 # (this would also be a candidate as 'not' with a different name for
 # FP::Ops)
 sub is_false ($) {
     @_ == 1 or die "wrong number of arguments";
-    !$_[0]
-        or fail "is_false", $_[0]
+    !$_[0] or fail "is_false", $_[0]
 }
 
 sub true {
@@ -499,6 +489,7 @@ sub complement ($) {
     sub {
         my $r = &$f(@_);
         !$r
+
             # XX: in a perfect world we would have information about
             # why $f *succeeded* here. Sigh. We don't. TODO?
             or failwith [fail "not"], "complement"
@@ -506,10 +497,10 @@ sub complement ($) {
 }
 
 TEST {
-    my $t = complement (\&is_natural);
-    [map { &$t($_) } (-1,0,1,2,"foo")]
-} [1,1,0,0,1];
-
+    my $t = complement(\&is_natural);
+    [map { &$t($_) } (-1, 0, 1, 2, "foo")]
+}
+[1, 1, 0, 0, 1];
 
 sub either {
     my (@fn) = @_;
@@ -520,10 +511,11 @@ sub either {
             for my $fn (@fn) {
                 my $r = &$fn;
                 return $r if $r;
-                push @failures, $r 
+                push @failures, $r
             }
             failwith \@failures, "either"
-        } else {
+        }
+        else {
             for my $fn (@fn) {
                 my $r = &$fn;
                 return $r if $r;
@@ -535,9 +527,9 @@ sub either {
 
 TEST {
     my $t = either \&is_natural, \&is_boolean;
-    [map { &$t($_) } (-1,0,1,2,"foo")]
-} [0,1,1,2,0];
-
+    [map { &$t($_) } (-1, 0, 1, 2, "foo")]
+}
+[0, 1, 1, 2, 0];
 
 sub all_of {
     my (@fn) = @_;
@@ -552,8 +544,7 @@ sub all_of {
 
 sub both ($$) {
     @_ == 2 or die "expecting 2 arguments";
-    all_of (@_)
+    all_of(@_)
 }
-
 
 1

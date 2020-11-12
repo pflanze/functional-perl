@@ -34,25 +34,26 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::IO::PipelessCommand;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use base qw(
-            Chj::IO::CommandCommon
-           );
+    Chj::IO::CommandCommon
+);
 
 sub new_with_in_out {
     my $class = shift;
-    my $infh = shift;
+    my $infh  = shift;
     my $outfh = shift;
-    my $self = bless {}, $class;
-    $self->xlaunch3($infh,$outfh,undef,@_);
+    my $self  = bless {}, $class;
+    $self->xlaunch3($infh, $outfh, undef, @_);
 }
 
 # override as NOOPs
-sub close {}
-sub xclose {}
+sub close  { }
+sub xclose { }
 
 1

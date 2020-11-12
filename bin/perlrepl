@@ -9,16 +9,19 @@
 # bundled with this file.
 #
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
-
 
 sub usage {
     print "$myname [ calculation(s) ]
@@ -49,7 +52,7 @@ sub usage {
   -M module        use the given module (namespace or path)
   -m module        same as -M but don't complain about failures
 ";
-exit @_;
+    exit @_;
 }
 
 use Chj::xhome qw(xsafehome);
@@ -63,93 +66,90 @@ for (my $i = 0; $i <= $#ARGV; $i++) {
     local $_ = $ARGV[$i];
     if (/^--?h(elp)?$/) {
         usage
-    } elsif ($_ eq '--') {
-        push @files, @ARGV[$i+1..$#ARGV];
+    }
+    elsif ($_ eq '--') {
+        push @files, @ARGV[$i + 1 .. $#ARGV];
         last;
-    } elsif ($_ eq '-H' or $_ eq '--no-history') {
+    }
+    elsif ($_ eq '-H' or $_ eq '--no-history') {
         $opt_H = 1;
-    } elsif ($_ eq '-t') {
+    }
+    elsif ($_ eq '-t') {
         $opt_t = 1;
-    } elsif (/^-M(.*)/) {
+    }
+    elsif (/^-M(.*)/) {
         if ($1) {
-            push @opt_M,$1;
-        } else {
+            push @opt_M, $1;
+        }
+        else {
             my $arg = $ARGV[++$i];
             defined $arg or usage "missing argument to -M";
-            push @opt_M,$arg;
+            push @opt_M, $arg;
         }
-    } elsif (/^-m(.*)/) {
+    }
+    elsif (/^-m(.*)/) {
         if ($1) {
-            push @opt_m,$1;
-        } else {
+            push @opt_m, $1;
+        }
+        else {
             my $arg = $ARGV[++$i];
             defined $arg or usage "missing argument to -m";
-            push @opt_m,$arg;
+            push @opt_m, $arg;
         }
-    } elsif (/^--name$/) {
+    }
+    elsif (/^--name$/) {
         my $arg = $ARGV[++$i];
         defined $arg or usage "missing argument to --name";
         $myname = $arg;
-    } elsif (/^-/) {
+    }
+    elsif (/^-/) {
         warn "Unknown option '$_'\n";
         usage(1)
-    } else {
+    }
+    else {
         push @files, $_
     }
 }
 
-my $HISTFILE = xsafehome."/.${myname}_history";
+my $HISTFILE   = xsafehome . "/.${myname}_history";
 my $MAXHISTLEN = 100;
 
-
-eval {
-    require Chj::BinHexOctDec;
-};
+eval { require Chj::BinHexOctDec; };
 warn $@ if $@;
 
 use Chj::Package::OfPath qw(package_of_path_or_package);
 use FP::Repl::WithRepl qw(push_withrepl WithRepl_eval WithRepl_eval_e);
 
-push_withrepl (0)
-  if $opt_t;
-
+push_withrepl(0) if $opt_t;
 
 sub moduleoption_to_code ($) {
     my ($a) = @_;
-    $a =~ s/([^=]+)//s
-        or die "invalid -M option '$_'";
+    $a =~ s/([^=]+)//s or die "invalid -M option '$_'";
     my $path_or_package = $1;
-    my $p = package_of_path_or_package($path_or_package);
-    "use ".do {
+    my $p               = package_of_path_or_package($path_or_package);
+    "use " . do {
         if ($a =~ s/^=//s) {
-            $p." ".join(", ",map{"'$_'"} split /,/,$a)
-        } else {
+            $p . " " . join(", ", map {"'$_'"} split /,/, $a)
+        }
+        else {
             $p
         }
     }
 }
 
-
 if (@opt_M) {
-    my $code =
-      join(";",
-           map { moduleoption_to_code $_ }
-           @opt_M);
+    my $code = join(";", map { moduleoption_to_code $_ } @opt_M);
 
-    &WithRepl_eval ("package $myname; "
-                    .$code
-                    ."; 1")
-      or die $@;
+    &WithRepl_eval("package $myname; " . $code . "; 1") or die $@;
 }
 
 for my $path_or_package (@opt_m) {
     eval moduleoption_to_code $path_or_package;
 }
 
-
 if (@files) {
     for (@files) {
-        my ($res,$e,$is_error) = &WithRepl_eval_e($_, $myname);
+        my ($res, $e, $is_error) = &WithRepl_eval_e($_, $myname);
         die $e if $is_error;
         print "$res\n";
     }
@@ -157,8 +157,10 @@ if (@files) {
 
 else {
     require FP::Repl;
-    FP::Repl::repl(maybe_historypath => ($opt_H ? undef : $HISTFILE),
-              maxhistlen => $MAXHISTLEN,
-              maybe_package => $myname);
+    FP::Repl::repl(
+        maybe_historypath => ($opt_H ? undef : $HISTFILE),
+        maxhistlen        => $MAXHISTLEN,
+        maybe_package     => $myname
+    );
 }
 

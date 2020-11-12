@@ -44,14 +44,16 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Interfaces;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw();
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw();
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use FP::Interface;
 
@@ -64,6 +66,5 @@ sub implemented {
         FP::Interface::implemented_with_caller($caller, $interface)
     }
 }
-
 
 1

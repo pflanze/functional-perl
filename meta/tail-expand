@@ -4,57 +4,59 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-
 # Expand some .pm files to avoid dependency on Sub::Call::Tail:
 
 # (XX could also include intro/more_tailcalls here and call this
 # instead from t/trampoline-fix, but so what)
 
-
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
 use Chj::xperlfunc qw(dirname xxsystem_safe xLmtime XLmtime xmkdir_p);
 
-my $windows= 1; #($^O =~ /win32/i);
+my $windows = 1;    #($^O =~ /win32/i);
+
 sub executable {
-    my ($path)= @_;
+    my ($path) = @_;
     if ($windows) {
+
         # -x apparently doesn't work; thus:
         open my $in, "<", $path or die "open '$path': $!";
-        my $line= <$in>;
+        my $line = <$in>;
         close $in;
-        $line=~ /^#!/
-    } else {
+        $line =~ /^#!/
+    }
+    else {
         -x $path
     }
 }
 
-open my $manif, "<", "MANIFEST"
-    or die "$!";
+open my $manif, "<", "MANIFEST" or die "$!";
 
 local $_;
 while (<$manif>) {
     chomp;
-    next unless m{^htmlgen/}; # if m{^(?:lib|meta)/};
+    next unless m{^htmlgen/};                # if m{^(?:lib|meta)/};
     next unless m|\.pm$| or executable $_;
-    my $from= $_;
-    my $to= ".".$from;
+    my $from = $_;
+    my $to   = "." . $from;
 
-    my $t_from= xLmtime $from;
-    my $expand= sub {
-        xxsystem_safe ($^X, "bin/expand-tail", $from, $to);
+    my $t_from = xLmtime $from;
+    my $expand = sub {
+        xxsystem_safe($^X, "bin/expand-tail", $from, $to);
     };
-    if (my $t_to= XLmtime $to) {
+    if (my $t_to = XLmtime $to) {
         if ($t_from >= $t_to) {
             &$expand;
         }
-    } else {
+    }
+    else {
         xmkdir_p dirname $to;
         &$expand;
     }
 }
 
-close $manif
-    or die $!;
+close $manif or die $!;
 

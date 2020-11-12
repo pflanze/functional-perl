@@ -126,21 +126,26 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package PXML::Preserialize;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(pxmlpre pxmlfunc);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(pxmlpre pxmlfunc);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 {
+
     package PXML::Preserialize::Serialized;
+
     sub new {
-        my ($class,$str) = @_;
+        my ($class, $str) = @_;
         bless \($str), $class
     }
+
     sub pxml_serialized_body_string {
         my $s = shift;
         $$s
@@ -148,19 +153,21 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 }
 
 {
+
     package PXML::Preserialize::Argument;
-    use FP::Struct ["effecter","n"],
-        'FP::Struct::Show',
-        'FP::Abstract::Pure';
+    use FP::Struct ["effecter", "n"], 'FP::Struct::Show', 'FP::Abstract::Pure';
 
     # Prevent erroneous usage:
-    use overload ('""' => 'err',
-                  '0+' => 'err',
-                  #'+' => 'err',
-                  fallback => 1 # necessary not to have to provide + etc.
-                 );
+    use overload (
+        '""' => 'err',
+        '0+' => 'err',
+
+        #'+' => 'err',
+        fallback => 1    # necessary not to have to provide + etc.
+    );
+
     sub err {
-        die "tried to access a ".__PACKAGE__." object"
+        die "tried to access a " . __PACKAGE__ . " object"
     }
 
     # Called when used correctly:
@@ -168,14 +175,15 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
         my $self = shift;
         my ($fh) = @_;
         flush $fh or die $!;
-        $self->effecter-> (0, $self->n);
+        $self->effecter->(0, $self->n);
         ""
     }
+
     sub pxml_serialized_attribute_string {
         my $self = shift;
         my ($fh) = @_;
         flush $fh or die $!;
-        $self->effecter-> (1, $self->n);
+        $self->effecter->(1, $self->n);
         ""
     }
     _END_
@@ -188,80 +196,78 @@ use FP::Div qw(max);
 # passes $fn $nargs arguments that it will use during serialization to
 # cut apart the serialized representation.
 sub _pxmlpre ($$) {
-    my ($nargs,$fn) = @_;
+    my ($nargs, $fn) = @_;
 
     my @items;
-    my $buf = "";
+    my $buf   = "";
     my $lasti = 0;
 
     my $effecter = sub {
         my ($is_attribute, $n) = @_;
+
         # let $buf grow unimpeded (setting it to "" here seems to mess
         # up perl: string is regrown to previous size, but shows
         # what's probably uninitialized memory, heh!)
-        push @items,
-          PXML::Preserialize::Serialized->new(substr $buf, $lasti)
-              if $lasti < length $buf;
+        push @items, PXML::Preserialize::Serialized->new(substr $buf, $lasti)
+            if $lasti < length $buf;
         push @items, [$is_attribute, $n];
         $lasti = length $buf;
     };
 
-    my @args = map {
-        PXML::Preserialize::Argument->new ($effecter, $_)
-    } 0..$nargs-1;
+    my @args = map { PXML::Preserialize::Argument->new($effecter, $_) }
+        0 .. $nargs - 1;
 
-    my $res = &$fn (@args);
+    my $res = &$fn(@args);
 
-    open my $out, ">", \$buf
-      or die $!;
+    open my $out, ">", \$buf or die $!;
 
-    pxml_print_fragment_fast ($res, $out);
+    pxml_print_fragment_fast($res, $out);
 
-    close $out
-      or die $!;
-    push @items,
-      PXML::Preserialize::Serialized->new(substr $buf, $lasti)
-          if $lasti < length $buf;
+    close $out or die $!;
+    push @items, PXML::Preserialize::Serialized->new(substr $buf, $lasti)
+        if $lasti < length $buf;
 
     \@items
 }
 
 sub build {
     my ($nargs, $items) = @_;
+
     # return interpreter(?), not compilate (to avoid eval (overhead?))
     sub {
-        @_ == $nargs
-          or die "expecting $nargs argument(s), got ".@_;
-        pxmlbody
-          (
-           map {
-               ref($_) eq "ARRAY" ? do {
-                   my ($is_attribute,$i) = @$_;
-                   $is_attribute ?
-                     PXML::Preserialize::Serialized->new
-                         (attribute_escape($_[$i]))
-                           # otherwise let the default escaper in the
-                           # serializer do it (this *should* always be in
-                           # body context, XXX danger?)
-                           : $_[$i];
-               } : $_;
-           } @$items)
+        @_ == $nargs or die "expecting $nargs argument(s), got " . @_;
+        pxmlbody(
+            map {
+                ref($_) eq "ARRAY"
+                    ? do {
+                    my ($is_attribute, $i) = @$_;
+                    $is_attribute
+                        ? PXML::Preserialize::Serialized
+                        ->new(attribute_escape($_[$i]))
+
+                        # otherwise let the default escaper in the
+                        # serializer do it (this *should* always be in
+                        # body context, XXX danger?)
+                        : $_[$i];
+                    }
+                    : $_;
+            } @$items
+        )
     }
 }
 
 sub pxmlpre ($$) {
-    my ($nargs,$fn) = @_;
-    build ($nargs, _pxmlpre ($nargs,$fn))
+    my ($nargs, $fn) = @_;
+    build($nargs, _pxmlpre($nargs, $fn))
 }
 
 our $maxargs = 10;
 
 sub pxmlfunc (&) {
     my ($fn) = @_;
-    my $items = _pxmlpre ($maxargs,$fn);
-    my $nargs =
-      (max (map { $$_[1] } grep { ref ($_) eq "ARRAY" } @$items) // -1)
-        + 1;
+    my $items = _pxmlpre($maxargs, $fn);
+    my $nargs
+        = (max(map { $$_[1] } grep { ref($_) eq "ARRAY" } @$items) // -1) + 1;
     build $nargs, $items
 }
 

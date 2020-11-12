@@ -40,23 +40,27 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::Destructor;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(Destructor);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(Destructor);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 {
+
     package Chj::_::Destructor;
     use FP::Predicates ":all";
-    use FP::Struct [[*is_procedure, "thunk"]],
-        'FP::Struct::Show', 'FP::Abstract::Pure';
+    use FP::Struct [[*is_procedure, "thunk"]], 'FP::Struct::Show',
+        'FP::Abstract::Pure';
+
     sub DESTROY {
         my ($self) = @_;
-        local ($@,$!,$?,$^E,$.);
+        local ($@, $!, $?, $^E, $.);
         $self->thunk->()
     }
     _END_
@@ -64,7 +68,7 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 
 # Chj::_::Destructor::constructors->import -- no, special prototype:
 sub Destructor (&) {
-    Chj::_::Destructor->new ($_[0])
+    Chj::_::Destructor->new($_[0])
 }
 
 use Chj::TEST;
@@ -75,7 +79,7 @@ TEST {
         my $x = ["foo", Destructor { $z++ }];
     }
     $z
-} 1;
-
+}
+1;
 
 1

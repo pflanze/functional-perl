@@ -1,6 +1,8 @@
 package Chj::HTTP::Daemon;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use vars qw( @ISA $PROTO $DEBUG);
 
 #$VERSION = "6.01";
@@ -10,20 +12,16 @@ use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
 
 $PROTO = "HTTP/1.1";
 
-
-sub new
-{
-    my($class, %args) = @_;
+sub new {
+    my ($class, %args) = @_;
     $args{Listen} ||= 5;
     $args{Proto}  ||= 'tcp';
     return $class->SUPER::new(%args);
 }
 
-
-sub accept
-{
+sub accept {
     my $self = shift;
-    my $pkg = shift || "Chj::HTTP::Daemon::ClientConn";
+    my $pkg  = shift || "Chj::HTTP::Daemon::ClientConn";
     my ($sock, $peer) = $self->SUPER::accept($pkg);
     if ($sock) {
         ${*$sock}{'httpd_daemon'} = $self;
@@ -34,11 +32,9 @@ sub accept
     }
 }
 
-
-sub url
-{
+sub url {
     my $self = shift;
-    my $url = $self->_default_scheme . "://";
+    my $url  = $self->_default_scheme . "://";
     my $addr = $self->sockaddr;
     if (!$addr || $addr eq INADDR_ANY) {
         require Sys::Hostname;
@@ -56,30 +52,24 @@ sub url
     $url;
 }
 
-
 sub _default_port {
     80;
 }
-
 
 sub _default_scheme {
     "http";
 }
 
-
-sub product_tokens
-{
+sub product_tokens {
     "libwww-perl-daemon/$HTTP::Daemon::VERSION";
 }
 
-
-
-package # waiting for feedback of changes to original module
-  Chj::HTTP::Daemon::ClientConn;
+package    # waiting for feedback of changes to original module
+    Chj::HTTP::Daemon::ClientConn;
 
 use vars qw(@ISA $DEBUG);
 use IO::Socket ();
-@ISA = qw(IO::Socket::INET);
+@ISA   = qw(IO::Socket::INET);
 *DEBUG = \$Chj::HTTP::Daemon::DEBUG;
 
 use HTTP::Request  ();
@@ -89,14 +79,12 @@ use HTTP::Date qw(time2str);
 use LWP::MediaTypes qw(guess_media_type);
 use Carp ();
 
-my $CRLF = "\015\012";   # "\r\n" is not portable
+my $CRLF     = "\015\012";                  # "\r\n" is not portable
 my $HTTP_1_0 = _http_version("HTTP/1.0");
 my $HTTP_1_1 = _http_version("HTTP/1.1");
 
-
-sub get_request
-{
-    my($self, $only_headers) = @_;
+sub get_request {
+    my ($self, $only_headers) = @_;
     if (${*$self}{'httpd_nomore'}) {
         $self->reason("No more requests from this connection");
         return;
@@ -106,32 +94,33 @@ sub get_request
     my $buf = ${*$self}{'httpd_rbuf'};
     $buf = "" unless defined $buf;
 
-    my $timeout = $ {*$self}{'io_socket_timeout'};
-    my $fdset = "";
+    my $timeout = ${*$self}{'io_socket_timeout'};
+    my $fdset   = "";
     vec($fdset, $self->fileno, 1) = 1;
-    local($_);
+    local ($_);
 
-  READ_HEADER:
+READ_HEADER:
     while (1) {
+
         # loop until we have the whole header in $buf
-        $buf =~ s/^(?:\015?\012)+//;  # ignore leading blank lines
-        if ($buf =~ /\012/) {  # potential, has at least one line
+        $buf =~ s/^(?:\015?\012)+//;    # ignore leading blank lines
+        if ($buf =~ /\012/) {           # potential, has at least one line
             if ($buf =~ /^\w+[^\012]+HTTP\/\d+\.\d+\015?\012/) {
                 if ($buf =~ /\015?\012\015?\012/) {
-                    last READ_HEADER;  # we have it
+                    last READ_HEADER;    # we have it
                 }
-                elsif (length($buf) > 16*1024) {
-                    $self->send_error(413); # REQUEST_ENTITY_TOO_LARGE
+                elsif (length($buf) > 16 * 1024) {
+                    $self->send_error(413);    # REQUEST_ENTITY_TOO_LARGE
                     $self->reason("Very long header");
                     return;
                 }
             }
             else {
-                last READ_HEADER;  # HTTP/0.9 client
+                last READ_HEADER;              # HTTP/0.9 client
             }
         }
-        elsif (length($buf) > 16*1024) {
-            $self->send_error(414); # REQUEST_URI_TOO_LARGE
+        elsif (length($buf) > 16 * 1024) {
+            $self->send_error(414);            # REQUEST_URI_TOO_LARGE
             $self->reason("Very long first line");
             return;
         }
@@ -140,24 +129,25 @@ sub get_request
     }
     if ($buf !~ s/^(\S+)[ \t]+(\S+)(?:[ \t]+(HTTP\/\d+\.\d+))?[^\012]*\012//) {
         ${*$self}{'httpd_client_proto'} = _http_version("HTTP/1.0");
-        $self->send_error(400);  # BAD_REQUEST
+        $self->send_error(400);                # BAD_REQUEST
         $self->reason("Bad request line: $buf");
         return;
     }
     my $method = $1;
-    my $uri = $2;
-    my $proto = $3 || "HTTP/0.9";
+    my $uri    = $2;
+    my $proto  = $3 || "HTTP/0.9";
     $uri = "http://$uri" if $method eq "CONNECT";
     $uri = $HTTP::URI_CLASS->new($uri, $self->daemon->url);
     my $r = HTTP::Request->new($method, $uri);
     $r->protocol($proto);
     ${*$self}{'httpd_client_proto'} = $proto = _http_version($proto);
-    ${*$self}{'httpd_head'} = ($method eq "HEAD");
+    ${*$self}{'httpd_head'}         = ($method eq "HEAD");
 
     if ($proto >= $HTTP_1_0) {
+
         # we expect to find some headers
-        my($key, $val);
-      HEADER:
+        my ($key, $val);
+    HEADER:
         while ($buf =~ s/^([^\012]*)\012//) {
             $_ = $1;
             s/\015$//;
@@ -180,8 +170,8 @@ sub get_request
         ${*$self}{'httpd_nomore'}++ if $conn && lc($conn) =~ /\bclose\b/;
     }
     else {
-        ${*$self}{'httpd_nomore'}++ unless $conn &&
-                                           lc($conn) =~ /\bkeep-alive\b/;
+        ${*$self}{'httpd_nomore'}++
+            unless $conn && lc($conn) =~ /\bkeep-alive\b/;
     }
 
     if ($only_headers) {
@@ -195,8 +185,8 @@ sub get_request
     my $len = $r->header('Content-Length');
 
     # Act on the Expect header, if it's there
-    for my $e ( $r->header('Expect') ) {
-        if( lc($e) eq '100-continue' ) {
+    for my $e ($r->header('Expect')) {
+        if (lc($e) eq '100-continue') {
             $self->send_status_line(100);
             $self->send_crlf;
         }
@@ -208,9 +198,10 @@ sub get_request
     }
 
     if ($te && lc($te) eq 'chunked') {
+
         # Handle chunked transfer encoding
         my $body = "";
-      CHUNK:
+    CHUNK:
         while (1) {
             print STDERR "Chunked\n" if $DEBUG;
             if ($buf =~ s/^([^\012]*)\012//) {
@@ -223,8 +214,8 @@ sub get_request
                 my $size = hex($1);
                 last CHUNK if $size == 0;
 
-                my $missing = $size - length($buf) + 2; # 2=CRLF at chunk end
-                # must read until we have a complete chunk
+                my $missing = $size - length($buf) + 2;    # 2=CRLF at chunk end
+                     # must read until we have a complete chunk
                 while ($missing > 0) {
                     print STDERR "Need $missing more bytes\n" if $DEBUG;
                     my $n = $self->_need_more($buf, $timeout, $fdset);
@@ -232,7 +223,7 @@ sub get_request
                     $missing -= $n;
                 }
                 $body .= substr($buf, 0, $size);
-                substr($buf, 0, $size+2) = '';
+                substr($buf, 0, $size + 2) = '';
 
             }
             else {
@@ -246,10 +237,11 @@ sub get_request
         $r->remove_header('Transfer-Encoding');
         $r->header('Content-Length', length($body));
 
-        my($key, $val);
-      FOOTER:
+        my ($key, $val);
+    FOOTER:
         while (1) {
             if ($buf !~ /\012/) {
+
                 # need at least one line to look at
                 return unless $self->_need_more($buf, $timeout, $fdset);
             }
@@ -277,12 +269,13 @@ sub get_request
 
     }
     elsif ($te) {
-        $self->send_error(501);         # Unknown transfer encoding
+        $self->send_error(501);    # Unknown transfer encoding
         $self->reason("Unknown transfer encoding '$te'");
         return;
 
     }
     elsif ($len) {
+
         # Plain body specified by "Content-Length"
         my $missing = $len - length($buf);
         while ($missing > 0) {
@@ -292,7 +285,7 @@ sub get_request
             $missing -= $n;
         }
         if (length($buf) > $len) {
-            $r->content(substr($buf,0,$len));
+            $r->content(substr($buf, 0, $len));
             substr($buf, 0, $len) = '';
         }
         else {
@@ -300,13 +293,15 @@ sub get_request
             $buf = '';
         }
     }
-    elsif ($ct && $ct =~ m/^multipart\/\w+\s*;.*boundary\s* = \s*("?)(\w+)\1/i) {
+    elsif ($ct && $ct =~ m/^multipart\/\w+\s*;.*boundary\s* = \s*("?)(\w+)\1/i)
+    {
         # Handle multipart content type
         my $boundary = "$CRLF--$2--";
         my $index;
         while (1) {
             $index = index($buf, $boundary);
             last if $index >= 0;
+
             # end marker not yet found
             return unless $self->_need_more($buf, $timeout, $fdset);
         }
@@ -320,15 +315,14 @@ sub get_request
     $r;
 }
 
-
-sub _need_more
-{
+sub _need_more {
     my $self = shift;
+
     #my($buf,$timeout,$fdset) = @_;
     if ($_[1]) {
-        my($timeout, $fdset) = @_[1,2];
+        my ($timeout, $fdset) = @_[1, 2];
         print STDERR "select(,,,$timeout)\n" if $DEBUG;
-        my $n = select($fdset,undef,undef,$timeout);
+        my $n = select($fdset, undef, undef, $timeout);
         unless ($n) {
             $self->reason(defined($n) ? "Timeout" : "select: $!");
             return;
@@ -340,67 +334,52 @@ sub _need_more
     $n;
 }
 
-
-sub read_buffer
-{
+sub read_buffer {
     my $self = shift;
-    my $old = ${*$self}{'httpd_rbuf'};
+    my $old  = ${*$self}{'httpd_rbuf'};
     if (@_) {
         ${*$self}{'httpd_rbuf'} = shift;
     }
     $old;
 }
 
-
-sub reason
-{
+sub reason {
     my $self = shift;
-    my $old = ${*$self}{'httpd_reason'};
+    my $old  = ${*$self}{'httpd_reason'};
     if (@_) {
         ${*$self}{'httpd_reason'} = shift;
     }
     $old;
 }
 
-
-sub proto_ge
-{
+sub proto_ge {
     my $self = shift;
     ${*$self}{'httpd_client_proto'} >= _http_version(shift);
 }
 
-
-sub _http_version
-{
-    local($_) = shift;
+sub _http_version {
+    local ($_) = shift;
     return 0 unless m,^(?:HTTP/)?(\d+)\.(\d+)$,i;
     $1 * 1000 + $2;
 }
 
-
-sub antique_client
-{
+sub antique_client {
     my $self = shift;
     ${*$self}{'httpd_client_proto'} < $HTTP_1_0;
 }
 
-
-sub force_last_request
-{
+sub force_last_request {
     my $self = shift;
     ${*$self}{'httpd_nomore'}++;
 }
 
-sub head_request
-{
+sub head_request {
     my $self = shift;
     ${*$self}{'httpd_head'};
 }
 
-
-sub send_status_line
-{
-    my($self, $status, $message, $proto) = @_;
+sub send_status_line {
+    my ($self, $status, $message, $proto) = @_;
     return if $self->antique_client;
     $status  ||= RC_OK;
     $message ||= status_message($status) || "";
@@ -408,16 +387,12 @@ sub send_status_line
     print $self "$proto $status $message$CRLF" or die $!;
 }
 
-
-sub send_crlf
-{
+sub send_crlf {
     my $self = shift;
     print $self $CRLF or die $!;
 }
 
-
-sub send_basic_header
-{
+sub send_basic_header {
     my $self = shift;
     return if $self->antique_client;
     $self->send_status_line(@_);
@@ -426,22 +401,18 @@ sub send_basic_header
     print $self "Server: $product$CRLF" or die $! if $product;
 }
 
-
-sub send_header
-{
+sub send_header {
     my $self = shift;
     while (@_) {
-        my($k, $v) = splice(@_, 0, 2);
+        my ($k, $v) = splice(@_, 0, 2);
         $v = "" unless defined($v);
         print $self "$k: $v$CRLF" or die $!;
     }
 }
 
-
-sub send_response
-{
+sub send_response {
     my $self = shift;
-    my $res = shift;
+    my $res  = shift;
     if (!ref $res) {
         $res ||= RC_OK;
         $res = HTTP::Response->new($res, @_);
@@ -452,11 +423,13 @@ sub send_response
         my $code = $res->code;
         $self->send_basic_header($code, $res->message, $res->protocol);
         if ($code =~ /^(1\d\d|[23]04)$/) {
+
             # make sure content is empty
             $res->remove_header("Content-Length");
             $content = "";
         }
         elsif ($res->request && $res->request->method eq "HEAD") {
+
             # probably OK
         }
         elsif (ref($content) eq "CODE") {
@@ -471,17 +444,19 @@ sub send_response
         elsif (length($content)) {
             $res->header("Content-Length" => length($content));
         }
-        elsif (lc($res->header('connection')//"") =~ /\bkeep-alive\b/) {
+        elsif (lc($res->header('connection') // "") =~ /\bkeep-alive\b/) {
+
             # don't close connection if user asks for it to stay open
         }
         else {
             $self->force_last_request;
-            $res->header('connection','close');
+            $res->header('connection', 'close');
         }
         print $self $res->headers_as_string($CRLF) or die $!;
-        print $self $CRLF or die $!;  # separates headers and content
+        print $self $CRLF or die $!;    # separates headers and content
     }
     if ($self->head_request) {
+
         # no content
     }
     elsif (ref($content) eq "CODE") {
@@ -490,23 +465,21 @@ sub send_response
             last unless defined($chunk) && length($chunk);
             if ($chunked) {
                 printf $self "%x%s%s%s", length($chunk), $CRLF, $chunk, $CRLF
-                  or die $!;
+                    or die $!;
             }
             else {
                 print $self $chunk or die $!;
             }
         }
-        print $self "0$CRLF$CRLF" or die $! if $chunked;  # no trailers either
+        print $self "0$CRLF$CRLF" or die $! if $chunked;    # no trailers either
     }
     elsif (length $content) {
         print $self $content or die $!;
     }
 }
 
-
-sub send_redirect
-{
-    my($self, $loc, $status, $content) = @_;
+sub send_redirect {
+    my ($self, $loc, $status, $content) = @_;
     $status ||= RC_MOVED_PERMANENTLY;
     Carp::croak("Status '$status' is not redirect") unless is_redirect($status);
     $self->send_basic_header($status);
@@ -514,23 +487,22 @@ sub send_redirect
     $loc = $HTTP::URI_CLASS->new($loc, $base) unless ref($loc);
     $loc = $loc->abs($base);
     print $self "Location: $loc$CRLF" or die $!;
+
     if ($content) {
         my $ct = $content =~ /^\s*</ ? "text/html" : "text/plain";
         print $self "Content-Type: $ct$CRLF" or die $!;
     }
-    print $self $CRLF or die $!;
+    print $self $CRLF    or die $!;
     print $self $content or die $! if $content && !$self->head_request;
-    $self->force_last_request;  # no use keeping the connection open
+    $self->force_last_request;    # no use keeping the connection open
 }
 
-
-sub send_error
-{
-    my($self, $status, $error) = @_;
+sub send_error {
+    my ($self, $status, $error) = @_;
     $status ||= RC_BAD_REQUEST;
     Carp::croak("Status '$status' is not an error") unless is_error($status);
     my $mess = status_message($status);
-    $error  ||= "";
+    $error ||= "";
     $mess = <<EOT;
 <title>$status $mess</title>
 <h1>$status $mess</h1>
@@ -538,36 +510,35 @@ $error
 EOT
     unless ($self->antique_client) {
         $self->send_basic_header($status);
-        print $self "Content-Type: text/html$CRLF" or die $!;
+        print $self "Content-Type: text/html$CRLF"             or die $!;
         print $self "Content-Length: " . length($mess) . $CRLF or die $!;
-        print $self $CRLF or die $!;
+        print $self $CRLF                                      or die $!;
     }
     print $self $mess or die $! unless $self->head_request;
     $status;
 }
 
-
-sub send_file_response
-{
-    my($self, $file) = @_;
+sub send_file_response {
+    my ($self, $file) = @_;
     if (-d $file) {
         $self->send_dir($file);
     }
     elsif (-f _) {
+
         # plain file
-        local(*F);
-        sysopen(F, $file, 0) or 
-          return $self->send_error(RC_FORBIDDEN);
+        local (*F);
+        sysopen(F, $file, 0) or return $self->send_error(RC_FORBIDDEN);
         binmode(F);
-        my($ct,$ce) = guess_media_type($file);
-        my($size,$mtime) = (stat _)[7,9];
+        my ($ct,   $ce)    = guess_media_type($file);
+        my ($size, $mtime) = (stat _)[7, 9];
         unless ($self->antique_client) {
             $self->send_basic_header;
-            print $self "Content-Type: $ct$CRLF" or die $!;
+            print $self "Content-Type: $ct$CRLF"     or die $!;
             print $self "Content-Encoding: $ce$CRLF" or die $! if $ce;
             print $self "Content-Length: $size$CRLF" or die $! if $size;
-            print $self "Last-Modified: ", time2str($mtime), "$CRLF" or die $!
-              if $mtime;
+            print $self "Last-Modified: ", time2str($mtime), "$CRLF"
+                or die $!
+                if $mtime;
             print $self $CRLF or die $!;
         }
         $self->send_file(\*F) unless $self->head_request;
@@ -578,20 +549,16 @@ sub send_file_response
     }
 }
 
-
-sub send_dir
-{
-    my($self, $dir) = @_;
+sub send_dir {
+    my ($self, $dir) = @_;
     $self->send_error(RC_NOT_FOUND) unless -d $dir;
     $self->send_error(RC_NOT_IMPLEMENTED);
 }
 
-
-sub send_file
-{
-    my($self, $file) = @_;
+sub send_file {
+    my ($self, $file) = @_;
     my $opened = 0;
-    local(*FILE);
+    local (*FILE);
     if (!ref($file)) {
         open(FILE, $file) || return undef;
         binmode(FILE);
@@ -601,7 +568,7 @@ sub send_file
     my $cnt = 0;
     my $buf = "";
     my $n;
-    while ($n = sysread($file, $buf, 8*1024)) {
+    while ($n = sysread($file, $buf, 8 * 1024)) {
         last if !$n;
         $cnt += $n;
         print $self $buf or die $!;
@@ -610,13 +577,10 @@ sub send_file
     $cnt;
 }
 
-
-sub daemon
-{
+sub daemon {
     my $self = shift;
     ${*$self}{'httpd_daemon'};
 }
-
 
 1;
 

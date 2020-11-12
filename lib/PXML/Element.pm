@@ -23,10 +23,11 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package PXML::Element;
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use FP::Stream qw(stream_mixed_flatten stream_map);
 use FP::Hash qw($empty_hash hash_set);
@@ -42,9 +43,9 @@ use Chj::NamespaceCleanAbove;
 
 # [ name, attributes, body ]
 BEGIN {
-    sub NAME () {0}
+    sub NAME ()       {0}
     sub ATTRIBUTES () {1}
-    sub BODY () {2}
+    sub BODY ()       {2}
 }
 
 sub new {
@@ -58,7 +59,7 @@ sub name {
 }
 
 sub lcname {
-    lc ($_[0][NAME])
+    lc($_[0][NAME])
 }
 
 sub maybe_attributes {
@@ -75,6 +76,7 @@ sub attributes {
 }
 
 sub body {
+
     # could be undef, too, but then undef is the empty list when
     # interpreted as a FP::List, thus no need for the maybe_
     # prefix. -- XXX that's not true anymore, null is not undef anymore.
@@ -85,18 +87,17 @@ sub maybe_attribute {
     @_ == 2 or die "wrong number of arguments";
     my $s = shift;
     my ($name) = @_;
-    defined ($$s[ATTRIBUTES]) ? $$s[ATTRIBUTES]{$name} : undef
+    defined($$s[ATTRIBUTES]) ? $$s[ATTRIBUTES]{$name} : undef
 }
 
 sub perhaps_attribute {
     @_ == 2 or die "wrong number of arguments";
     my $s = shift;
     my ($name) = @_;
-    if (defined (my $h = $$s[ATTRIBUTES])) {
+    if (defined(my $h = $$s[ATTRIBUTES])) {
         exists $$h{$name} ? $$h{$name} : ()
-    } else {
-        ()
     }
+    else { () }
 }
 
 # functional setters (following the convention I've started to use of
@@ -105,52 +106,50 @@ sub perhaps_attribute {
 sub name_set {
     my $s = shift;
     @_ == 1 or die "wrong number of arguments";
-    bless [ $_[0], $$s[ATTRIBUTES], $$s[BODY] ], ref $s
+    bless [$_[0], $$s[ATTRIBUTES], $$s[BODY]], ref $s
 }
 
 sub attributes_set {
     my $s = shift;
     @_ == 1 or die "wrong number of arguments";
-    bless [ $$s[NAME], $_[0], $$s[BODY] ], ref $s
+    bless [$$s[NAME], $_[0], $$s[BODY]], ref $s
 }
 
 sub attribute_set {
     my $s = shift;
     @_ == 2 or die "wrong number of arguments";
-    my ($nam,$v) = @_;
-    bless [ $$s[NAME], hash_set($$s[1]//{}, $nam, $v), $$s[BODY] ], ref $s
+    my ($nam, $v) = @_;
+    bless [$$s[NAME], hash_set($$s[1] // {}, $nam, $v), $$s[BODY]], ref $s
 }
 
 sub body_set {
     my $s = shift;
     @_ == 1 or die "wrong number of arguments";
-    bless [ $$s[NAME], $$s[ATTRIBUTES], $_[0] ], ref $s
+    bless [$$s[NAME], $$s[ATTRIBUTES], $_[0]], ref $s
 }
-
 
 # functional updaters
 
 sub name_update {
-     my $s = shift;
-     @_ == 1 or die "wrong number of arguments";
-     my ($fn) = @_;
-     bless [ &$fn($$s[NAME]), $$s[ATTRIBUTES], $$s[BODY] ], ref $s
+    my $s = shift;
+    @_ == 1 or die "wrong number of arguments";
+    my ($fn) = @_;
+    bless [&$fn($$s[NAME]), $$s[ATTRIBUTES], $$s[BODY]], ref $s
 }
 
 sub attributes_update {
-     my $s = shift;
-     @_ == 1 or die "wrong number of arguments";
-     my ($fn) = @_;
-     bless [ $$s[NAME], &$fn($$s[ATTRIBUTES]), $$s[BODY] ], ref $s
+    my $s = shift;
+    @_ == 1 or die "wrong number of arguments";
+    my ($fn) = @_;
+    bless [$$s[NAME], &$fn($$s[ATTRIBUTES]), $$s[BODY]], ref $s
 }
 
 sub body_update {
-     my $s = shift;
-     @_ == 1 or die "wrong number of arguments";
-     my ($fn) = @_;
-     bless [ $$s[NAME], $$s[ATTRIBUTES], &$fn($$s[BODY]) ], ref $s
+    my $s = shift;
+    @_ == 1 or die "wrong number of arguments";
+    my ($fn) = @_;
+    bless [$$s[NAME], $$s[ATTRIBUTES], &$fn($$s[BODY])], ref $s
 }
-
 
 # mapping
 
@@ -158,9 +157,8 @@ sub body_map {
     my $s = shift;
     @_ == 1 or die "wrong number of arguments";
     my ($fn) = @_;
-    $s->body_update (sub { stream_map $fn, stream_mixed_flatten $_[0] })
+    $s->body_update(sub { stream_map $fn, stream_mixed_flatten $_[0] })
 }
-
 
 # "body text", a string, dropping tags; not having knowledge about
 # which XML tags have 'relevant body text', this returns all of it.
@@ -169,43 +167,46 @@ sub body_map {
 # to touch the code there... so, here goes. Really, better languages
 # have been created to write code in.
 
-
 sub _text {
     my ($v) = @_;
     if (defined $v) {
-        if (ref $v)  {
-            if (UNIVERSAL::isa ($v, "PXML::Element")) {
+        if (ref $v) {
+            if (UNIVERSAL::isa($v, "PXML::Element")) {
                 $v->text
-            } elsif (UNIVERSAL::isa ($v, "ARRAY")) {
-                join("",
-                     map {
-                         _text ($_)
-                     } @$v);
-            } elsif (UNIVERSAL::isa ($v, "CODE")) {
+            }
+            elsif (UNIVERSAL::isa($v, "ARRAY")) {
+                join("", map { _text($_) } @$v);
+            }
+            elsif (UNIVERSAL::isa($v, "CODE")) {
+
                 # correct? XX why does A(string_to_stream("You're
                 # great."))->text trigger this case?
-                _text (&$v ());
-            } elsif (is_pair $v) {
-                my ($a,$v2) = $v->car_and_cdr;
-                _text ($a) . _text ($v2); # XXX quadratic complexity?
-            } elsif (is_promise $v) {
-                _text (force $v);
-            } else {
+                _text(&$v());
+            }
+            elsif (is_pair $v) {
+                my ($a, $v2) = $v->car_and_cdr;
+                _text($a) . _text($v2);    # XXX quadratic complexity?
+            }
+            elsif (is_promise $v) {
+                _text(force $v);
+            }
+            else {
                 die "don't know how to get text of: $v";
             }
-        } else {
+        }
+        else {
             $v
         }
-    } else {
+    }
+    else {
         ""
     }
 }
 
 sub text {
     my $s = shift;
-    _text ($s->body)
+    _text($s->body)
 }
-
 
 # only for debugging? Doesn't emit XML/XHTML prologues!  Also, ugly
 # monkey-access to PXML::Serialize. Circular dependency, too.
@@ -214,12 +215,9 @@ sub string {
     my $s = shift;
     require PXML::Serialize;
     capture_stdout {
-        PXML::Serialize::pxml_print_fragment_fast
-            ($s, *STDOUT);
+        PXML::Serialize::pxml_print_fragment_fast($s, *STDOUT);
     }
 }
-
-
 
 # XML does not distinguish between void elements and non-void ones in
 # its syntactical representation; whether an element is printed in
@@ -227,13 +225,12 @@ sub string {
 # whether the content of the particular element ('at runtime') is
 # empty.
 
-sub require_printing_nonvoid_elements_nonselfreferential  {
+sub require_printing_nonvoid_elements_nonselfreferential {
     0
 }
 
 #sub void_element_h {
 #    undef
 #}
-
 
 _END_

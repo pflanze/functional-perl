@@ -4,14 +4,12 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-
 # NOTE: there is now a more extensive intro in docs/intro.md; this
 # file was written before that intro existed. This file still has
 # useful info above that intro; you can probably choose one or the
 # other (and then check the other for completeness) without much
 # difference (to get a perfect didactic material, someone could work
 # on eliminating this duplication).
-
 
 # This file contains an intro to functions and the very basic parts of
 # functional programming, and to how to use FunctionalPerl:
@@ -27,7 +25,6 @@
 # using standard Perl. 5 will use the List module from
 # FunctionalPerl.
 
-
 # ------------------------------------------------------------------
 # (0) boilerplate (this will be familiar to Perlers)
 
@@ -37,8 +34,9 @@
 # reporting of errors in the program flow, before invalid results are
 # used for real, and while still close to the context the issue is
 # originating from, making the problem easier to find.
-use strict; use warnings; use warnings FATAL => 'uninitialized';
-
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # Some setup that's required to have this script work well as part of
 # the project, you wouldn't need this in your own scripts.
@@ -46,49 +44,49 @@ use strict; use warnings; use warnings FATAL => 'uninitialized';
 # Find modules from the functional-perl working directory (if not
 # installed, but checked out from Github)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
 # Specify FP::Repl's dependencies as a dependency when this file is
 # run through test suite (so that testing of this file will be skipped
 # instead of reported as a failure)
-use Chj::TEST
-    use => 'FP::Repl::Dependencies';
+use Chj::TEST use => 'FP::Repl::Dependencies';
 
 # end of "Some setup".
-
 
 # For development/debugging
 
 #use Chj::ruse; # get the 'ruse' procedure which will reload modules;
-                # since we're putting the meat of the program into the
-                # main file here, this wouldn't help us in this case.
+# since we're putting the meat of the program into the
+# main file here, this wouldn't help us in this case.
 
-use Chj::Backtrace; # show a backtrace when an error happens
+use Chj::Backtrace;    # show a backtrace when an error happens
 
-use FP::Repl; # get the 'repl' procedure, so we can call it at the
-              # end, but you can also put it anywhere in the code when
-              # you want to examine the state of the program at that
-              # point.
+use FP::Repl;          # get the 'repl' procedure, so we can call it at the
+                       # end, but you can also put it anywhere in the code when
+                       # you want to examine the state of the program at that
+                       # point.
 
-use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
-                        # that opens a repl whenever there's an
-                        # uncaught exception in your program (and the
-                        # program is running on a tty). This is useful
-                        # if you're the programmer; it wouldn't be
-                        # useful if you hand your script to an end
-                        # user who is not a programmer, thus comment
-                        # out (or otherwise disable) this import when
-                        # you pass the script on. NOTE: this overrides
-                        # the handler from Chj::Backtrace above, thus
-                        # you could comment out that line above; or,
-                        # just leave it as is, and if you comment out
-                        # FP::Repl::AutoTrap, Chj::Backtrace will
-                        # automatically be active instead.
+use FP::Repl::AutoTrap;    # set up an error handler (via $SIG{__DIE__})
+                           # that opens a repl whenever there's an
+                           # uncaught exception in your program (and the
+                           # program is running on a tty). This is useful
+                           # if you're the programmer; it wouldn't be
+                           # useful if you hand your script to an end
+                           # user who is not a programmer, thus comment
+                           # out (or otherwise disable) this import when
+                           # you pass the script on. NOTE: this overrides
+                           # the handler from Chj::Backtrace above, thus
+                           # you could comment out that line above; or,
+                           # just leave it as is, and if you comment out
+                           # FP::Repl::AutoTrap, Chj::Backtrace will
+                           # automatically be active instead.
 
 # ------------------------------------------------------------------
 # (1) Demonstrating the repl, which stands for read-eval-print loop:
@@ -115,7 +113,7 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 #$VAR1 = 2;
 #$VAR2 = 4;
 #main> ()
-#main> 
+#main>
 
 # An array:
 
@@ -154,7 +152,7 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 # main> hi "Stefan", undef
 # Exception: 'Use of uninitialized value $names[1] in join or string at (eval 146) line 1.
 # '
-# main 1> 
+# main 1>
 
 # An exception has happened because of the "use warnings FATAL"
 # above. The "1" in the new prompt indicates that you're in a nested
@@ -192,7 +190,7 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 # main 1> hi "there", undef, "again"
 # Exception: 'Use of uninitialized value $names[1] in join or string at (eval 146) line 1.
 # '
-# main 2> 
+# main 2>
 
 # The "2" signifies that you've got 2 nested repls now.
 
@@ -222,8 +220,7 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 
 # And again ctl-d:
 
-# main> 
-
+# main>
 
 # ------------------------------------------------------------------
 # (2) Demonstrating closures:
@@ -233,10 +230,12 @@ use FP::Repl::AutoTrap; # set up an error handler (via $SIG{__DIE__})
 # "pure function", then its *only* effect is to return a value.
 
 sub f {
+
     # this is just how functions receive their arguments in Perl
     # (ugly, yes; we'll see a nicer way in the file
     # `more_tailcalls`):
-    my ($x,$y) = @_;
+    my ($x, $y) = @_;
+
     # $x and $y are fresh variables here ('my' means fresh and local
     # to the scope), set to the arguments that were passed to 'f'
 
@@ -277,7 +276,6 @@ sub f {
 # Note how $g and $h remember the values that were passed to 'f' for
 # their creation.
 
-
 # ------------------------------------------------------------------
 # 3-4: we're defining the factorial function:
 #        f(n) = 1 * 2 * 3 * ... * n
@@ -289,8 +287,9 @@ sub fact {
     warn "n=$n";
     if ($n < 2) {
         1
-    } else {
-        $n * fact ($n - 1)
+    }
+    else {
+        $n * fact($n - 1)
     }
 }
 
@@ -367,7 +366,6 @@ sub fact {
 # function, or by way of using loop syntax. These two styles are shown
 # below:
 
-
 # (4a) iteration with a loop and variable mutation. This means, that
 # only one instance of $n and $res respectively is created when
 # calling 'imperative_fact', and subsequently assigned new values;
@@ -378,32 +376,31 @@ sub fact {
 # values of the variables that were in their context at the time of
 # their creation.
 
-our @imperative_inspect; # array to hold the closures; 'our' means a
-                         # global variable, as opposed to 'my' which
-                         # is lexically accessible only. For a
-                         # variable to be accessible from 'repl', it
-                         # needs to be global (sadly)
+our @imperative_inspect;    # array to hold the closures; 'our' means a
+                            # global variable, as opposed to 'my' which
+                            # is lexically accessible only. For a
+                            # variable to be accessible from 'repl', it
+                            # needs to be global (sadly)
 
 sub imperative_fact {
     my ($n) = @_;
     my $res = 1;
     while (1) {
+
         # save closure for later inspection of $n and $res
-        push @imperative_inspect, sub {
-            ($n,$res)
-        };
+        push @imperative_inspect, sub { ($n, $res) };
 
         if ($n < 2) {
             return $res;
-        } else {
+        }
+        else {
             # treat $res and $n not as immutable binding of a name to
             # a value, but as mutable memory location
             $res = $n * $res;
-            $n = $n - 1;
+            $n   = $n - 1;
         }
     }
-}       
-
+}
 
 #main> imperative_fact 4
 #$VAR1 = 24;
@@ -437,8 +434,6 @@ sub imperative_fact {
 # matter when working on the code within the scope that they are kept
 # to, i.e. when imperative_fact is modified later on).
 
-
-
 # (4b) factorial still using iteration, but instead of using mutation,
 # again using pure functions internally. Note how this implements the
 # same algorithm as imperative_fact, but the looping happens by way of
@@ -456,33 +451,32 @@ our @functional_inspect;
 
 sub functional_fact_iter {
     my ($n, $res) = @_;
-    push @functional_inspect, sub {
-        ($n,$res)
-    };
+    push @functional_inspect, sub { ($n, $res) };
     if ($n < 2) {
         return $res;
-    } else {
+    }
+    else {
         # This is a tail call: it happens in tail position,
         # i.e. there's nothing happening *after* this call within this
         # function.
-        functional_fact_iter($n - 1,  $n * $res)
+        functional_fact_iter($n - 1, $n * $res)
 
-        # In different words: when this sub-call returns a value, it
-        # will be immediately returned by the current call, too,
-        # without doing any further computation with it. Because of
-        # this, there's no need to keep space allocated (on the call
-        # stack) for the current context--it won't be used
-        # anymore. Dropping the current context at the same time as
-        # executing the tail call is what one calls "tail-call
-        # optimization".
+            # In different words: when this sub-call returns a value, it
+            # will be immediately returned by the current call, too,
+            # without doing any further computation with it. Because of
+            # this, there's no need to keep space allocated (on the call
+            # stack) for the current context--it won't be used
+            # anymore. Dropping the current context at the same time as
+            # executing the tail call is what one calls "tail-call
+            # optimization".
 
-        # But: Perl does *not* carry out this optimization
-        # automatically, thus this code will still use stack space
-        # (not a real problem for factorial since it will not be a
-        # huge amount; cases where a loop can be repeated millions of
-        # times it would be a problem as Perl would run out of stack
-        # space). It can be specified explicitely, though. See the
-        # file `tailcalls` for a version that won't use stack space.
+            # But: Perl does *not* carry out this optimization
+            # automatically, thus this code will still use stack space
+            # (not a real problem for factorial since it will not be a
+            # huge amount; cases where a loop can be repeated millions of
+            # times it would be a problem as Perl would run out of stack
+            # space). It can be specified explicitely, though. See the
+            # file `tailcalls` for a version that won't use stack space.
     }
 }
 
@@ -502,7 +496,6 @@ sub functional_fact_iter {
 
 # Note how the closures really remember the values that were in their
 # context when they were created.
-
 
 # ------------------------------------------------------------------
 # (5) Linked lists
@@ -531,8 +524,8 @@ sub functional_fact_iter {
 # For best fit with functional programming, the bare chains are passed
 # around, without any object wrapper.
 
-use FP::List ":all"; # cons, car, cdr, first, rest
-use FP::Array ":all"; # list_to_array
+use FP::List ":all";     # cons, car, cdr, first, rest
+use FP::Array ":all";    # list_to_array
 
 # main> cons(1,2)
 # $VAR1 = bless( [
@@ -549,27 +542,23 @@ use FP::Array ":all"; # list_to_array
 
 use Chj::TEST;
 
-TEST { cons(1,2) }
-  bless( [
-          1,
-          2
-         ], 'FP::List::Pair' );
-
+TEST { cons(1, 2) }
+bless([1, 2], 'FP::List::Pair');
 
 # Let's build a list containing 3 elements; null is returning the list
 # end marker.
 
 TEST { cons(1, cons(2, cons(5, null))) }
-  bless( [
-          1,
-          bless( [
-                  2,
-                  bless( [
-                          5,
-                          bless( [], 'FP::List::Null' )
-                         ], 'FP::List::Pair' )
-                 ], 'FP::List::Pair' )
-         ], 'FP::List::Pair' );
+bless(
+    [
+        1,
+        bless(
+            [2, bless([5, bless([], 'FP::List::Null')], 'FP::List::Pair')],
+            'FP::List::Pair'
+        )
+    ],
+    'FP::List::Pair'
+);
 
 # This becomes ugly fast, so, turn it back into an array that Perl
 # will show nicely:
@@ -592,14 +581,14 @@ TEST { cons(1, cons(2, cons(5, null))) }
 # main> list(1, 1+1, 2*2)
 # $VAR1 = list(1, 2, 4);
 
-
 # Let's build a list functionally, using recursion:
 
 sub iota {
     my ($from, $to) = @_;
     if ($from >= $to) {
         null
-    } else {
+    }
+    else {
         cons $from, iota($from + 1, $to)
     }
 }
@@ -615,7 +604,6 @@ sub iota {
 # main> write_sexpr iota (3, 8); print "\n"
 # ("3" "4" "5" "6" "7")
 # $VAR1 = 1;
-
 
 # A preview on lazy lists, AKA functional streams:
 # those are linked lists, but computed on demand.

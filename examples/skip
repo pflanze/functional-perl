@@ -4,23 +4,25 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
-
-
-our $BUFSIZ = 1024*16;
+our $BUFSIZ = 1024 * 16;
 
 sub usage {
-    print STDERR map{"$_\n"} @_ if @_;
+    print STDERR map {"$_\n"} @_ if @_;
     print "$myname n [m]
 
   Skip n bytes of input, output the rest. If m is given, don't output
@@ -29,7 +31,7 @@ sub usage {
    --bufsize n   use n instead of default $BUFSIZ as buffer size
    --silent      don't give error if the input is too short
 ";
-exit @_ ? 1 : 0;
+    exit @_ ? 1 : 0;
 }
 
 use Getopt::Long;
@@ -62,85 +64,70 @@ sub resource_rss () {
 
 sub chunks_change_tail {
     @_ == 3 or die "wrong number of arguments";
-    my ($chunks,  $minsize, $fn) = @_;
+    my ($chunks, $minsize, $fn) = @_;
     weaken $_[0];
 
-    is_null $chunks
-      and die "got empty input";
+    is_null $chunks and die "got empty input";
 
     # start and rest are parts of the same stream of chunks,
     # windowsize is the number of bytes between them
-    my $next; $next = sub {
+    my $next;
+    $next = sub {
         @_ == 3 or die "wrong number of arguments";
         my ($start, $rest, $windowsize) = @_;
         my $next = $next;
         lazy {
-          NEXT: {
-                FORCE $start, $rest; # optional (since is_null, first
-                                     # etc. are forcing promises
-                                     # anyway), but might reduce
-                                     # overhead slightly?
-                my $first = first $start;
+        NEXT: {
+                FORCE $start, $rest;    # optional (since is_null, first
+                                        # etc. are forcing promises
+                                        # anyway), but might reduce
+                                        # overhead slightly?
+                my $first    = first $start;
                 my $lenfirst = length $first;
-                my $reserve = $windowsize - $minsize;
+                my $reserve  = $windowsize - $minsize;
                 if ($lenfirst <= $reserve) {
-                    cons ($first,
-                          &$next(rest $start, $rest, $windowsize - $lenfirst))
-                } else {
+                    cons($first,
+                        &$next(rest $start, $rest, $windowsize - $lenfirst))
+                }
+                else {
                     if (is_null $rest) {
                         &$fn($start, $windowsize)
-                    } else {
-                        #&$next($start, rest $rest, $windowsize + length first $rest)
+                    }
+                    else {
+                   #&$next($start, rest $rest, $windowsize + length first $rest)
                         $windowsize = $windowsize + length first $rest;
-                        $rest = rest $rest;
+                        $rest       = rest $rest;
                         redo NEXT;
                     }
                 }
             }
         }
     };
-    Weakened ($next)->($chunks, $chunks, 0);
+    Weakened($next)->($chunks, $chunks, 0);
 }
 
 sub test_with_size ($) {
     my ($size) = @_;
-    stream_to_array
-        chunks_change_tail(array_to_stream (["foo","bars","baz"]),
-                           $size,
-                           sub { my ($tail, $len) = @_; cons $len, $tail });
+    stream_to_array chunks_change_tail(array_to_stream(["foo", "bars", "baz"]),
+        $size, sub { my ($tail, $len) = @_; cons $len, $tail });
 }
 
 use FP::DumperEqual;
 
 TEST { test_with_size 1 }
-[
- 'foo',
- 'bars',
- 3,
- 'baz'
-];
+['foo', 'bars', 3, 'baz'];
 
-TEST { dumperequal test_with_size 2, test_with_size 1
-           and
-       dumperequal test_with_size 3, test_with_size 1 }
+TEST {
+    dumperequal test_with_size 2, test_with_size 1
+        and dumperequal test_with_size 3, test_with_size 1
+}
 1;
 
 TEST { test_with_size 4 }
-[
- 'foo',
- 7,
- 'bars',
- 'baz'
-];
+['foo', 7, 'bars', 'baz'];
 
 TEST { test_with_size 999 }
-[
- 10,
- 'foo',
- 'bars',
- 'baz'
-];
-
+[10, 'foo', 'bars', 'baz'];
 
 # ------------------------------------------------------------
 
@@ -148,14 +135,14 @@ our $verbose = 0;
 our $opt_repl;
 our $opt_leaktest;
 our $opt_silent;
-GetOptions("verbose" => \$verbose,
-           "help" => sub{usage},
-           "bufsize=n" => \$BUFSIZ,
-           "repl" => \$opt_repl,
-           "leaktest" => \$opt_leaktest,
-           "silent" => \$opt_silent,
-           ) or exit 1;
-
+GetOptions(
+    "verbose"   => \$verbose,
+    "help"      => sub {usage},
+    "bufsize=n" => \$BUFSIZ,
+    "repl"      => \$opt_repl,
+    "leaktest"  => \$opt_leaktest,
+    "silent"    => \$opt_silent,
+) or exit 1;
 
 # called for testing or debugging:
 
@@ -175,37 +162,36 @@ usage unless (@ARGV == 1 or @ARGV == 2);
 
 our ($n, $maybe_m) = @ARGV;
 
-is_natural0 $n
-  or usage "n must be a non-negative integer";
+is_natural0 $n or usage "n must be a non-negative integer";
 
 if (defined $maybe_m) {
-    is_natural0 $maybe_m
-      or usage "m must be a non-negative integer";
+    is_natural0 $maybe_m or usage "m must be a non-negative integer";
 }
-
 
 our $mem_start = resource_rss if $opt_leaktest;
 our $mem_end;
 
-our $in = glob_to_fh *STDIN;
-our $out = glob_to_fh *STDOUT;
+our $in  = glob_to_fh * STDIN;
+our $out = glob_to_fh * STDOUT;
 
 if ($n) {
     $in->seek($n) || do {
         if ($! == ESPIPE) {
+
             # non-seekable device
-            my $nbufs = int ($n / $BUFSIZ);
+            my $nbufs = int($n / $BUFSIZ);
             my $nrest = $n % $BUFSIZ;
-            $nbufs * $BUFSIZ + $nrest == $n
-                or die "Perl can't calculate?";
+            $nbufs * $BUFSIZ + $nrest == $n or die "Perl can't calculate?";
             my $buf;
-            for (1..$nbufs) {
+            for (1 .. $nbufs) {
                 $in->xsysreadcompletely($buf, $BUFSIZ);
             }
             $in->xsysreadcompletely($buf, $nrest);
+
             # XX: seek does not complain when file is too short; this
             # does. This is inconsistent. Also, check $opt_silent ?
-        } else {
+        }
+        else {
             die "seek: $!";
         }
     };
@@ -216,38 +202,42 @@ if ($maybe_m) {
     if (is_null $chunks) {
         die "$myname: no remainder left after skipping $n byte(s)\n"
             unless $opt_silent;
-    } else {
-        my $chunks2 = chunks_change_tail
-            ($chunks, $maybe_m, sub {
+    }
+    else {
+        my $chunks2 = chunks_change_tail(
+            $chunks, $maybe_m,
+            sub {
                 my ($rest, $remainingsize) = @_;
                 $mem_end = resource_rss if $opt_leaktest;
 
                 if ($remainingsize < $maybe_m) {
                     if ($opt_silent) {
                         null
-                    } else {
-                        die "$myname: only $remainingsize byte(s) left ".
-                          "after skipping $n byte(s)\n"
                     }
-                } else {
-                    my $last = first $rest;
-                    cons(substr ($last, 0, $remainingsize - $maybe_m), null)
+                    else {
+                        die "$myname: only $remainingsize byte(s) left "
+                            . "after skipping $n byte(s)\n"
+                    }
                 }
-             });
+                else {
+                    my $last = first $rest;
+                    cons(substr($last, 0, $remainingsize - $maybe_m), null)
+                }
+            }
+        );
         stream_for_each sub {
             $out->xprint($_[0])
         }, $chunks2;
     }
-} else {
+}
+else {
     $in->xsendfile_to($out);
     $in->xclose;
 }
 
 $out->xclose;
 
-if ($opt_leaktest
-    and
-    (($mem_end - $mem_start) / $mem_start > 1.5)) {
+if ($opt_leaktest and (($mem_end - $mem_start) / $mem_start > 1.5)) {
     die "there was a leak";
 }
 

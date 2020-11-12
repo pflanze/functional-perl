@@ -61,14 +61,16 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package Chj::constructorexporter;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(constructorexporter);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(constructorexporter);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub constructorexporter {
     my %exportdecl = @_;
@@ -85,38 +87,39 @@ sub constructorexporter {
             if ($v eq "-prefix") {
                 $i++;
                 $prefix = $rest[$i];
-            } else {
+            }
+            else {
                 push @names, $v
             }
         }
 
         my $package = caller;
 
-        my $exportdecl = +{map {
-            my $methodname = $_;
-            my $exportname = $exportdecl{$methodname};
-            ($exportname => sub {
-                 $class->$methodname (@_)
-             })
-        } keys %exportdecl};
+        my $exportdecl = +{
+            map {
+                my $methodname = $_;
+                my $exportname = $exportdecl{$methodname};
+                (
+                    $exportname => sub {
+                        $class->$methodname(@_)
+                    }
+                )
+            } keys %exportdecl
+        };
 
-        my $exports =
-          ($all ?
-           $exportdecl
-           :
-           +{
-             map {
-                 $_ =>
-                   $$exportdecl{$_} // die "$_ not exported by $class"
-               } @names
-            });
+        my $exports = (
+            $all ? $exportdecl : +{
+                map {
+                    $_ => $$exportdecl{$_} // die "$_ not exported by $class"
+                } @names
+            }
+        );
 
         for my $name (keys %$exports) {
             no strict 'refs';
-            *{$package."::".$prefix.$name} = $$exports{$name}
+            *{$package . "::" . $prefix . $name} = $$exports{$name}
         }
     }
 }
-
 
 1

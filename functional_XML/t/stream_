@@ -4,12 +4,15 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 our ($mydir, $myname);
+
 BEGIN {
-    $0=~ /(.*?)([^\/]+)\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
 }
 
 use lib "$mydir/../../lib";
@@ -17,7 +20,7 @@ use lib "$mydir/../../lib";
 use FP::Stream ":all";
 use Chj::TEST ':all';
 
-TEST{stream_length stream_iota 0, 1000000}
-  1000000;
+TEST { stream_length stream_iota 0, 1000000 }
+1000000;
 
 run_tests;

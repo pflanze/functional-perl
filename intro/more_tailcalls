@@ -4,20 +4,23 @@
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
-
 # This file shows how to use syntactical sugar additions to Perl to
 # make the code from the file `tailcalls` look better.
 
 # Also, there's some added material towards the end.
 
 # ------------------------------------------------------------------
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 use Cwd 'abs_path';
-our ($mydir, $myname); BEGIN {
-    my $location = (-l $0) ? abs_path ($0) : $0;
+our ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
     $location =~ /(.*?)([^\/]+?)_?\z/s or die "?";
-    ($mydir, $myname) = ($1,$2);
+    ($mydir, $myname) = ($1, $2);
 }
 use lib "$mydir/../lib";
 
@@ -43,19 +46,18 @@ use Sub::Call::Tail;
 
 # again, see (4b) in `basics` for basic explanations
 
-func functional_fact ($x) {
+func functional_fact($x) {
     functional_fact_iter($x, 1)
 }
 
 our @functional_inspect;
 
-func functional_fact_iter ($x, $res) {
-    push @functional_inspect, func {
-        ($x,$res)
-    };
+func functional_fact_iter($x, $res) {
+    push @functional_inspect, func { ($x, $res) };
     if ($x < 2) {
         return $res;
-    } else {
+    }
+    else {
         # This is a tail call. Instead of doing it unoptimized like:
         #
         #  functional_fact_iter($x - 1,  $x * $res)
@@ -67,27 +69,28 @@ func functional_fact_iter ($x, $res) {
         # goto \&functional_fact_iter
         #
         # or, with nicer looks, by using Sub::Call::Tail:
-        tail functional_fact_iter($x - 1,  $x * $res)
+        tail functional_fact_iter($x - 1, $x * $res)
     }
 }
-
 
 # To really see the difference, here's a function that we can usefully
 # test for higher numbers of iterations:
 
-func odd ($n) {
+func odd($n) {
     if ($n == 0) {
         0
-    } else {
-        even ($n - 1)
+    }
+    else {
+        even($n - 1)
     }
 }
 
-func even ($n) {
+func even($n) {
     if ($n == 0) {
         1
-    } else {
-        odd ($n - 1)
+    }
+    else {
+        odd($n - 1)
     }
 }
 
@@ -107,20 +110,21 @@ func even ($n) {
 
 # You can see that Perl ran out of space for the stack.
 
-
-func opt_odd ($n) {
+func opt_odd($n) {
     if ($n == 0) {
         0
-    } else {
-        tail opt_even ($n - 1);
+    }
+    else {
+        tail opt_even($n - 1);
     }
 }
 
-func opt_even ($n) {
+func opt_even($n) {
     if ($n == 0) {
         1
-    } else {
-        tail opt_odd ($n - 1);
+    }
+    else {
+        tail opt_odd($n - 1);
     }
 }
 
@@ -130,56 +134,59 @@ func opt_even ($n) {
 
 # Now it runs with little (and constant) memory usage.
 
-
 # ------------------------------------------------------------------
 # Note: there's also trampolining as a potential solution:
 
 use FP::Trampoline;
 use Chj::time_this;
 
-func tramp_odd ($n) {
+func tramp_odd($n) {
     if ($n == 0) {
         0
-    } else {
-        T{ tramp_even ($n - 1) }
+    }
+    else {
+        T { tramp_even($n - 1) }
     }
 }
 
-func tramp_even ($n) {
+func tramp_even($n) {
     if ($n == 0) {
         1
-    } else {
-        T{ tramp_odd ($n - 1) }
+    }
+    else {
+        T { tramp_odd($n - 1) }
     }
 }
 
-TEST { time_this { trampoline tramp_even 60000 } "T" }
-  1;
-
+TEST {
+    time_this { trampoline tramp_even 60000 } "T"
+}
+1;
 
 # or
 
-func tramp2_odd ($n) {
+func tramp2_odd($n) {
     if ($n == 0) {
         0
-    } else {
-        TC *tramp2_even, $n - 1
+    }
+    else {
+        TC * tramp2_even, $n - 1
     }
 }
 
-func tramp2_even ($n) {
+func tramp2_even($n) {
     if ($n == 0) {
         1
-    } else {
-        TC *tramp2_odd, $n - 1
+    }
+    else {
+        TC * tramp2_odd, $n - 1
     }
 }
 
-TEST { time_this { trampoline tramp2_even 60000 } "TC" }
-  1;
-
-
-
+TEST {
+    time_this { trampoline tramp2_even 60000 } "TC"
+}
+1;
 
 # ------------------------------------------------------------------
 # Also note: all of the above example are defining functions as
@@ -189,76 +196,81 @@ TEST { time_this { trampoline tramp2_even 60000 } "TC" }
 # calls (recursive function definitions), either by way of weaken:
 
 use Scalar::Util 'weaken';
-use FP::Stream 'Weakened'; # XX should probably move to non-lazyness
-                           # related place
+use FP::Stream 'Weakened';    # XX should probably move to non-lazyness
+                              # related place
 
-func weakened_even ($n) {
-    my ($odd,$even);
-    $odd = func ($n) {
+func weakened_even($n) {
+    my ($odd, $even);
+    $odd = func($n) {
         if ($n == 0) {
             0
-        } else {
-            tail &$even ($n - 1)
+        }
+        else {
+            tail &$even($n - 1)
         }
     };
-    $even = func ($n) {
+    $even = func($n) {
         if ($n == 0) {
             1
-        } else {
-            tail &$odd ($n - 1)
+        }
+        else {
+            tail &$odd($n - 1)
         }
     };
+
     # do *not* make this a tail call or $even will become undef on
     # bleadperl at some point (not so on v5.14.2):
     # (XXX Perl issue, or what are the rules here?)
     Weakened($even)->($n)
 }
 
-TEST { ($^V->{version}[1] > 20) ?
-         weakened_even 60000
-           :  warn "skipping test on older perl" }
-  1;
+TEST {
+    ($^V->{version}[1] > 20)
+        ? weakened_even 60000
+        : warn "skipping test on older perl"
+}
+1;
+
 # XXX this actually fails both on v5.14.2 and bleadperl for undefined
 # subroutine call. Submit bug report?
-
 
 # or by using the n-ary fixpoint combinator:
 
 use FP::fix;
 
-func fix_even ($n) {
-    my ($odd,
-        $even) = fixn
-          (
-           func ($odd, $even,
-                 $n) {
-               if ($n == 0) {
-                   0
-               } else {
-                   tail &$even ($n - 1)
-               }
-           },
-           func ($odd, $even,
-                 $n) {
-               if ($n == 0) {
-                   1
-               } else {
-                   tail &$odd ($n - 1)
-               }
-           }
-          );
+func fix_even($n) {
+    my ($odd, $even) = fixn(
+        func($odd, $even, $n)
+        {
+            if ($n == 0) {
+                0
+            }
+            else {
+                tail &$even($n - 1)
+            }
+        },
+        func($odd, $even, $n)
+        {
+            if ($n == 0) {
+                1
+            }
+            else {
+                tail &$odd($n - 1)
+            }
+        }
+    );
     tail &$even($n)
 }
 
 TEST { fix_even 60000 }
-  1;
-
+1;
 
 # ------------------------------------------------------------------
 # run tests if called as part of the test suite, or
 # enter the repl for your experiments, see (0) in `basics`
 
 perhaps_run_tests "main" or do {
-    require FP::Repl; FP::Repl::repl();
+    require FP::Repl;
+    FP::Repl::repl();
 };
 

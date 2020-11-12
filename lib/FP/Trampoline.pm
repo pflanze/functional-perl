@@ -73,14 +73,16 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::Trampoline;
-@ISA = "Exporter"; require Exporter;
-@EXPORT = qw(T TC trampoline);
-@EXPORT_OK = qw();
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+@ISA = "Exporter";
+require Exporter;
+@EXPORT      = qw(T TC trampoline);
+@EXPORT_OK   = qw();
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 
 sub T (&) {
     bless $_[0], "FP::Trampoline::Continuation"
@@ -92,17 +94,20 @@ sub TC {
 
 sub trampoline ($) {
     my ($v) = @_;
-    @_ = (); # so that calling a continuation does not need () (possible
-           # speedup)
+    @_ = ();    # so that calling a continuation does not need () (possible
+                # speedup)
     while (1) {
         if (my $r = ref $v) {
-            $v =
-              ($r eq "FP::Trampoline::Continuation" ? &$v
-               : $r eq "FP::Trampoline::Call" ? do {
-                   $$v[0]->(@$v[1..$#$v])
-               }
-               : return $v);
-        } else {
+            $v = (
+                  $r eq "FP::Trampoline::Continuation"
+                ? &$v
+                : $r eq "FP::Trampoline::Call" ? do {
+                    $$v[0]->(@$v[1 .. $#$v])
+                    }
+                : return $v
+            );
+        }
+        else {
             return $v
         }
     }

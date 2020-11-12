@@ -91,9 +91,9 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-
 package FP::AST::Perl;
-@ISA = "Exporter"; require Exporter;
+@ISA = "Exporter";
+require Exporter;
 @EXPORT = qw();
 my @classes = qw(
     ScalarVar CodeVar HashVar ArrayVar Glob
@@ -103,16 +103,20 @@ my @classes = qw(
     Semicolon Comma Noop Let);
 @EXPORT_OK = (
     @classes, qw(
-    is_packvar_type
-    is_var
-    is_expr is_nonnoop_expr is_noop
-    semicolons commas));
+        is_packvar_type
+        is_var
+        is_expr is_nonnoop_expr is_noop
+        semicolons commas)
+);
 
-%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
+%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict; use warnings; use warnings FATAL => 'uninitialized';
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
 use FP::Predicates ":all";
+
 #use Chj::TEST;
 use FP::List;
 use FP::Combinators2 qw(right_associate_);
@@ -122,46 +126,43 @@ for my $name (@classes) {
     "FP::AST::Perl::${name}::constructors"->import()
 }
 
-
 package FP::AST::_::Perl {
     use FP::Docstring;
 
-    use FP::Struct [] =>
-        "FP::Abstract::Pure",
-        "FP::Struct::Equal",
-        "FP::Struct::Show";
+    use FP::Struct [] => "FP::Abstract::Pure",
+        "FP::Struct::Equal", "FP::Struct::Show";
 
-    method string_proto () {
-        __  "stringification when used as the callee in AppP";
+    method string_proto() {
+        __ "stringification when used as the callee in AppP";
         $self->string
     }
 
     _END_
 }
 
-
 # Variables
 
 package FP::AST::Perl::Var {
     use FP::Predicates ":all";
-    
+
     use FP::Struct [
         [*is_string, 'name'],
+
         # ^ XX is_package_name ? But isn't everything allowed? But
         # then todo proper printing.
         #FUTURE: [*is_bool, 'is_lexical'] ?
-        ] => "FP::AST::_::Perl";
+    ] => "FP::AST::_::Perl";
 
-    method string () {
+    method string() {
         $self->sigil . $self->name
     }
-    method callderef () { die $self->type_name." var can't be called" }
+    method callderef() { die $self->type_name . " var can't be called" }
 
     _END_
 }
 
-*is_var = instance_of "FP::AST::Perl::Var"; ## XX Are those not all auto generated MAN ???
-
+*is_var = instance_of
+    "FP::AST::Perl::Var";    ## XX Are those not all auto generated MAN ???
 
 # XX move to FP::Predicates? Or FP::Parser::Perl ?
 sub is_lexvar_string ($) {
@@ -171,62 +172,62 @@ sub is_lexvar_string ($) {
 
 package FP::AST::Perl::ScalarVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
-    method type_name () { "SCALAR" }
-    method sigil () { '$' }
-    method callderef () { '->' }
+    method type_name() {"SCALAR"}
+    method sigil() {'$'}
+    method callderef() {'->'}
     _END_
 }
+
 package FP::AST::Perl::CodeVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
-    method type_name () { "CODE" }
-    method sigil () { '&' }
-    method callderef () { '' }
+    method type_name() {"CODE"}
+    method sigil() {'&'}
+    method callderef() {''}
 
-    method string_proto () { $self->name }
+    method string_proto() { $self->name }
     _END_
 }
+
 package FP::AST::Perl::HashVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
-    method type_name () { "HASH" }
-    method sigil () { '%' }
+    method type_name() {"HASH"}
+    method sigil() {'%'}
     _END_
 }
+
 package FP::AST::Perl::ArrayVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
-    method type_name () { "ARRAY" }
-    method sigil () { '@' }
+    method type_name() {"ARRAY"}
+    method sigil() {'@'}
     _END_
 }
+
 package FP::AST::Perl::Glob {
-    use FP::Struct [] => "FP::AST::Perl::Var";  # XX *?*
-    method type_name () { "GLOB" }
-    method sigil () { '*' }
+    use FP::Struct [] => "FP::AST::Perl::Var";    # XX *?*
+    method type_name() {"GLOB"}
+    method sigil() {'*'}
     _END_
 }
-
-
 
 # Expressions
 
 package FP::AST::Perl::Expr {
 
     use FP::Struct [] => "FP::AST::_::Perl";
-    
+
     _END_
 }
 
-*is_expr = instance_of "FP::AST::Perl::Expr";
-*is_nonnoop_expr = both *is_expr, complement *is_noop;
+*is_expr         = instance_of "FP::AST::Perl::Expr";
+*is_nonnoop_expr = both * is_expr, complement * is_noop;
 
 # Do we need to distinguish context (list vs. scalar [vs. void]),
 # really? No, since the *dynamic* context determines this!
 
 package FP::AST::Perl::Get {
     use FP::Predicates ":all";
-    
-    use FP::Struct [
-        [*FP::AST::Perl::is_var, 'var'],
-        ] => "FP::AST::Perl::Expr";
+
+    use FP::Struct [[*FP::AST::Perl::is_var, 'var'],] => "FP::AST::Perl::Expr";
 
     # XX problem is, for CODE vars, Get is only valid in App proc
     # context! Otherwise, Ref must be used! How to type check?
@@ -234,19 +235,19 @@ package FP::AST::Perl::Get {
 
     # XX BTW eliminate those delegates? Just call manually? OR: use
     # Var directly in App proc ??
-    
-    method string () {
+
+    method string() {
         $self->var->string
     }
 
-    method string_proto () {
+    method string_proto() {
         $self->var->string_proto
     }
 
-    method callderef () {
+    method callderef() {
         $self->var->callderef
     }
-    
+
     _END_
 }
 
@@ -254,12 +255,10 @@ package FP::AST::Perl::Get {
 
 package FP::AST::Perl::Ref {
     use FP::Predicates ":all";
-    
-    use FP::Struct [
-        [*FP::AST::Perl::is_var, 'var'],
-        ] => "FP::AST::Perl::Expr";
 
-    method string () {
+    use FP::Struct [[*FP::AST::Perl::is_var, 'var'],] => "FP::AST::Perl::Expr";
+
+    method string() {
         "\\" . $self->var->string
     }
 
@@ -270,11 +269,12 @@ package FP::AST::Perl::Ref {
     #         # i DO think this call should never happen, right?
     # }
 
-    method callderef () {
+    method callderef() {
+
         # taking a ref means the call will have to deref it, always
         '->'
     }
-    
+
     _END_
 }
 
@@ -284,51 +284,53 @@ package FP::AST::Perl::App {
     use FP::Predicates ":all";
     use FP::List ":all";
     use FP::Ops ":all";
-    
+
     use FP::Struct [
         [*FP::AST::Perl::is_expr, 'proc'],
-        [list_of *FP::AST::Perl::is_expr, 'argexprs'],
+        [list_of * FP::AST::Perl::is_expr, 'argexprs'],
+
         # ^ yes, proc is also an expr, but only yielding one (usable)
         # value, as opposed to argexprs which may yield more used
         # values than there are exprs (at least here; not
         # (necessarily) in AppP).
-        ] => "FP::AST::Perl::Expr";
+    ] => "FP::AST::Perl::Expr";
 
-    method string () {
-        $self->proc_string . $self->proc->callderef . "(" .
-            $self->argexprs->map(the_method "string")->strings_join (", ") .
+    method string() {
+        $self->proc_string
+            . $self->proc->callderef . "("
+            . $self->argexprs->map(the_method "string")->strings_join(", ")
+            .
+
             # ^ XX are parens needed around arguments?
             ")"
     }
-    method proc_string () {
+    method proc_string() {
         $self->proc->string
     }
     _END_
 }
 
 package FP::AST::Perl::AppP {
-    # App with exposure to prototypes
-    use FP::Struct [
-        ] => "FP::AST::Perl::App";
 
-    method proc_string () {
+    # App with exposure to prototypes
+    use FP::Struct [] => "FP::AST::Perl::App";
+
+    method proc_string() {
         $self->proc->string_proto
     }
 
     _END_
 }
 
-
 # Literals
 
 package FP::AST::Perl::Value {
     use FP::Predicates ":all";
-    
-    use FP::Struct [
-        ] => "FP::AST::_::Perl";
+
+    use FP::Struct [] => "FP::AST::_::Perl";
 
     # missing string method  XX interface
-    
+
     _END_
 }
 
@@ -338,12 +340,11 @@ package FP::AST::Perl::Number {
     use FP::Predicates ":all";
     use Scalar::Util qw(looks_like_number);
 
-    use FP::Struct [
-        [*looks_like_number, 'perlvalue'],
-        ] => "FP::AST::Perl::Value";
+    use FP::Struct [[*looks_like_number, 'perlvalue'],] =>
+        "FP::AST::Perl::Value";
 
-    method string () {
-        $self->perlvalue # no quoting
+    method string() {
+        $self->perlvalue    # no quoting
     }
 
     _END_
@@ -353,42 +354,35 @@ package FP::AST::Perl::String {
     use FP::Predicates ":all";
     use Chj::singlequote;
 
-    use FP::Struct [
-        'perlvalue',
-        ] => "FP::AST::Perl::Value";
+    use FP::Struct ['perlvalue',] => "FP::AST::Perl::Value";
 
-    method string () {
+    method string() {
         singlequote($self->perlvalue)
     }
 
     _END_
 }
 
-
 package FP::AST::Perl::Literal {
     use FP::Predicates ":all";
     use FP::List ":all";
     use FP::Ops ":all";
-    
-    use FP::Struct [
-        [*FP::AST::Perl::is_value, 'value'],
-        ] => "FP::AST::Perl::Expr";
 
-    method string () {
+    use FP::Struct [[*FP::AST::Perl::is_value, 'value'],] =>
+        "FP::AST::Perl::Expr";
+
+    method string() {
         $self->value->string
     }
 
     _END_
 }
 
-
 package FP::AST::Perl::Semicolon {
-    use FP::Struct [
-        [*FP::AST::Perl::is_expr, 'a'],
-        [*FP::AST::Perl::is_expr, 'b'],
-        ] => "FP::AST::Perl::Expr";
+    use FP::Struct [[*FP::AST::Perl::is_expr, 'a'],
+        [*FP::AST::Perl::is_expr, 'b'],] => "FP::AST::Perl::Expr";
 
-    method string () {
+    method string() {
         $self->a->string . "; " . $self->b->string
     }
     _END_
@@ -396,22 +390,19 @@ package FP::AST::Perl::Semicolon {
 
 # mostly-copy-paste of above
 package FP::AST::Perl::Comma {
-    use FP::Struct [
-        [*FP::AST::Perl::is_expr, 'a'],
-        [*FP::AST::Perl::is_expr, 'b'],
-        ] => "FP::AST::Perl::Expr";
+    use FP::Struct [[*FP::AST::Perl::is_expr, 'a'],
+        [*FP::AST::Perl::is_expr, 'b'],] => "FP::AST::Perl::Expr";
 
-    method string () {
+    method string() {
         $self->a->string . ", " . $self->b->string
     }
     _END_
 }
 
 package FP::AST::Perl::Noop {
-    use FP::Struct [
-        ] => "FP::AST::Perl::Expr";
+    use FP::Struct [] => "FP::AST::Perl::Expr";
 
-    method string () {
+    method string() {
         ""
     }
     _END_
@@ -419,10 +410,8 @@ package FP::AST::Perl::Noop {
 
 *is_noop = instance_of "FP::AST::Perl::Noop";
 
-
-*semicolons = right_associate_ *Semicolon, Noop();
-*commas = right_associate_ *Comma, Noop();
-
+*semicolons = right_associate_ * Semicolon, Noop();
+*commas     = right_associate_ * Comma,     Noop();
 
 package FP::AST::Perl::Let {
     use FP::Predicates;
@@ -430,21 +419,20 @@ package FP::AST::Perl::Let {
     use FP::Ops ":all";
 
     use FP::Struct [
-        [list_of *FP::AST::Perl::is_var, 'vars'],
+        [list_of * FP::AST::Perl::is_var, 'vars'],
         [*FP::AST::Perl::is_nonnoop_expr, 'expr'],
-        [*FP::AST::Perl::is_expr, 'body'],
-        ] => "FP::AST::Perl::Expr";
+        [*FP::AST::Perl::is_expr,         'body'],
+    ] => "FP::AST::Perl::Expr";
 
-    method string () {
-        my $vars = $self->vars;
+    method string() {
+        my $vars     = $self->vars;
         my $multiple = $vars->length > 1;
         "my "
             . ($multiple ? "(" : "")
             . $vars->map(the_method "string")->strings_join(", ")
-            . ($multiple ? ")" : "")
-            . " = "
+            . ($multiple ? ")" : "") . " = "
             . $self->expr->string
-            . "; " # XX like Semicolon! But not the same *?* Q
+            . "; "    # XX like Semicolon! But not the same *?* Q
             . $self->body->string
     }
     _END_
@@ -453,7 +441,7 @@ package FP::AST::Perl::Let {
 sub String;
 sub Literal;
 
-sub t{
+sub t {
 }
 
 1
