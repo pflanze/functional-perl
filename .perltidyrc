@@ -11,4 +11,12 @@
 -nst     # Don't output to STDOUT
 -nasc    # Do not add semicolons to tail expressions (they are used to
          # indicate that the value is explicitly used as the return value
+-g
+-ce
+-i=4
+-conv
+-bt=1
+-bbt=2
+-tso
+-nsfs
 -b
