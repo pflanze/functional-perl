@@ -67,8 +67,7 @@ sub is_filehandle ($) {
         (($rt eq "GLOB" and *{$v}{IO}) or $rt eq "IO") ? 1 : '';
 
         # explicitely return '' instead of undef
-    }
-    else {
+    } else {
         ''
     }
 }

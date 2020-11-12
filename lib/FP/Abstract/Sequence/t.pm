@@ -52,7 +52,7 @@ my $t_vals = list(
     cons(3, 4),     # ok this can't really count as a sequence,
                     # what to do about it?
     array(3, 4),    # Could `autobox` change this?
-    array(), 3, "character sequence", {3 => 4},
+    array(), 3, "character sequence", { 3 => 4 },
 );
 
 sub t_fn {

@@ -87,8 +87,8 @@ package FunctionalPerl::Htmlgen::Nav::Entry {
 
                     cons($self->nav_bar->($entries, $item, $viewed_at_item),
                         &$rec($active, $rest, $item))
-                }
-                else {
+                } else {
+
                     # the lowest level of the navigation stack: if the
                     # current item ($upitem, should also be the
                     # $viewed_at_item) has subentries, then show that
@@ -105,8 +105,7 @@ package FunctionalPerl::Htmlgen::Nav::Entry {
                         # fulfills the purpose)
                         cons($self->nav_bar->($es, $upitem, $viewed_at_item),
                             null)
-                    }
-                    else {
+                    } else {
                         null
                     }
                 }

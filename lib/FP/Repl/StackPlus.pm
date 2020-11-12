@@ -72,13 +72,11 @@ our $maybe_peek_my = sub {
     })
     {
         $res
-    }
-    else {
+    } else {
         my $e = $@;
         if ($e =~ /^Not nested deeply enough/i) {
             undef
-        }
-        else {
+        } else {
             die $e
         }
     }

@@ -194,16 +194,14 @@ sub stream_iota {
             lazy {
                 if ($i < $end) {
                     cons($i, &$rec($i + 1))
-                }
-                else {
+                } else {
                     null
                 }
             }
         };
         @_ = ($start);
-        goto &{Weakened $rec};
-    }
-    else {
+        goto &{ Weakened $rec};
+    } else {
         my $rec;
         $rec = sub {
             my ($i) = @_;
@@ -213,7 +211,7 @@ sub stream_iota {
             }
         };
         @_ = ($start);
-        goto &{Weakened $rec};
+        goto &{ Weakened $rec};
     }
 }
 
@@ -246,16 +244,14 @@ sub stream_step_range {
             lazy {
                 if ($inverse ? $i >= $end : $i <= $end) {
                     cons($i, &$rec($i + $step))
-                }
-                else {
+                } else {
                     null
                 }
             }
         };
         @_ = ($start);
-        goto &{Weakened $rec};
-    }
-    else {
+        goto &{ Weakened $rec};
+    } else {
         my $rec;
         $rec = sub {
             my ($i) = @_;
@@ -265,7 +261,7 @@ sub stream_step_range {
             }
         };
         @_ = ($start);
-        goto &{Weakened $rec};
+        goto &{ Weakened $rec};
     }
 }
 
@@ -376,14 +372,11 @@ sub stream_append2 ($$) {
 sub stream_append {
     if (@_ == 0) {
         null
-    }
-    elsif (@_ == 1) {
+    } elsif (@_ == 1) {
         $_[0]
-    }
-    elsif (@_ == 2) {
+    } elsif (@_ == 2) {
         goto \&stream_append2
-    }
-    else {
+    } else {
         my $ss = list(reverse @_);
         weaken $_ for @_;
 
@@ -551,11 +544,9 @@ sub stream_foldr1 ($ $) {
         $l = force $l;
         if (is_pair $l) {
             &$fn(car $l, stream_foldr1($fn, cdr $l))
-        }
-        elsif (is_null $l) {
+        } elsif (is_null $l) {
             die "foldr1: reached end of list"
-        }
-        else {
+        } else {
             die "improper list: $l"
         }
     }
@@ -572,11 +563,9 @@ sub stream_fold_right ($ $ $) {
         $l = force $l;
         if (is_pair $l) {
             &$fn(car $l, stream_fold_right($fn, $start, cdr $l))
-        }
-        elsif (is_null $l) {
+        } elsif (is_null $l) {
             $start
-        }
-        else {
+        } else {
             die "improper list: $l"
         }
     }
@@ -600,19 +589,18 @@ sub make_stream__fold_right {
             lazy {
                 if (&$whileP($i, $len)) {
                     &$fn(&$ref($a, $i), &$rec($i + $d))
-                }
-                else {
+                } else {
                     $tail
                 }
             }
         };
-        &{Weakened $rec}($start)
+        &{ Weakened $rec}($start)
     }
 }
 
 our $lt            = sub { $_[0] < $_[1] };
 our $gt            = sub { $_[0] > $_[1] };
-our $array_length  = sub { scalar @{$_[0]} };
+our $array_length  = sub { scalar @{ $_[0] } };
 our $array_ref     = sub { $_[0][$_[1]] };
 our $string_length = sub { length $_[0] };
 our $string_ref    = sub { substr $_[0], $_[1], 1 };
@@ -731,8 +719,7 @@ sub stream_take ($ $) {
         if ($n > 0) {
             $s = force $s;
             is_null $s ? $s : cons(car $s, stream_take(cdr $s, $n - 1));
-        }
-        else {
+        } else {
             null
         }
     }
@@ -749,13 +736,11 @@ sub stream_take_while ($ $) {
         $s = force $s;
         if (is_null $s) {
             null
-        }
-        else {
+        } else {
             my $a = car $s;
             if (&$fn($a)) {
                 cons $a, stream_take_while($fn, cdr $s)
-            }
-            else {
+            } else {
                 null
             }
         }
@@ -780,19 +765,17 @@ sub stream_slice ($ $) {
             $s = force $s;
             if (is_null $s) {
                 $s    # null
-            }
-            else {
+            } else {
                 if ($s eq $end) {
                     null
-                }
-                else {
+                } else {
                     cons car($s), &$rec(cdr $s)
                 }
             }
         }
     };
     @_ = ($start);
-    goto &{Weakened $rec};
+    goto &{ Weakened $rec};
 }
 
 *FP::List::List::stream_slice = *stream_slice;
@@ -808,8 +791,7 @@ sub stream_drop_while ($ $) {
             if (!is_null $s and &$pred(car $s)) {
                 $s = cdr $s;
                 redo LP;
-            }
-            else {
+            } else {
                 $s
             }
         }
@@ -833,11 +815,8 @@ sub t_ref {
         my $l  = &$list(qw(a b));
         my $il = &$cons("x", "y");
         [
-            Keep($l)->ref(0),
-            Keep($l)->ref(1),
-            exn { Keep($l)->ref(-1) },
-            exn { Keep($l)->ref(0.1) },
-            exn { Keep($l)->ref(2) },
+            Keep($l)->ref(0), Keep($l)->ref(1), exn { Keep($l)->ref(-1) },
+            exn { Keep($l)->ref(0.1) }, exn { Keep($l)->ref(2) },
             Keep($il)->ref(0),
             exn { Keep($il)->ref(1) }
         ]
@@ -870,24 +849,20 @@ sub F ($) {
     # only be good for short sequences, better don't
     if (is_promise $v) {
         F force $v;
-    }
-    else {
+    } else {
         if (length(my $r = ref $v)) {
             if (is_pair $v) {
                 cons(F(car $v), F(cdr $v))
-            }
-            elsif (is_null $v) {
+            } elsif (is_null $v) {
                 $v
-            }
-            elsif ($r eq "ARRAY") { [map { F $_ } @$v] }
-            elsif (UNIVERSAL::isa($v, "ARRAY")) {
+            } elsif ($r eq "ARRAY")
+            { [map { F $_ } @$v] } elsif (UNIVERSAL::isa($v, "ARRAY"))
+            {
                 bless [map { F $_ } @$v], ref $v
-            }
-            else {
+            } else {
                 $v
             }
-        }
-        else {
+        } else {
             $v
         }
     }
@@ -990,11 +965,9 @@ sub stream_any ($ $) {
             my $r = cdr $l;
             stream_any($pred, $r)
         }
-    }
-    elsif (is_null $l) {
+    } elsif (is_null $l) {
         0
-    }
-    else {
+    } else {
         die "improper list: $l"
     }
 }
@@ -1004,7 +977,7 @@ sub stream_any ($ $) {
 # (meant as a debugging tool: turn stream to string)
 sub stream_show ($) {
     my ($s) = @_;
-    join("", map {"  '$_'\n"} @{stream_to_array $s })
+    join("", map {"  '$_'\n"} @{ stream_to_array $s })
 }
 
 *FP::List::List::stream_show = *stream_show;
@@ -1023,8 +996,7 @@ sub stream_state_fold_right {
         if (is_null $s) {
             @_ = ($statedown);
             goto &$stateupfn
-        }
-        else {
+        } else {
             my ($v, $s) = $s->first_and_rest;
             @_ = ($v, $statedown, stream_state_fold_right($fn, $stateupfn, $s));
             goto &$fn;
@@ -1139,11 +1111,9 @@ sub stream_cartesian_product_2 {
         lazy {
             if (is_null $a) {
                 null
-            }
-            elsif (is_null $b) {
+            } elsif (is_null $b) {
                 &$rec(cdr $a, $orig_b);
-            }
-            else {
+            } else {
                 cons(cons(car $a, car $b), &$rec($a, cdr $b))
             }
         }
@@ -1177,11 +1147,9 @@ sub stream_cartesian_product {
     weaken $_ for @_;
     if (!@v) {
         die "stream_cartesian_product: need at least 1 argument"
-    }
-    elsif (@v == 1) {
+    } elsif (@v == 1) {
         stream_map *list, $v[0]
-    }
-    else {
+    } else {
         my $first = shift @v;
         stream_cartesian_product_2($first, stream_cartesian_product(@v))
     }
@@ -1233,8 +1201,7 @@ sub make_chunks_of {
                 for my $i (1 .. $chunklen) {
                     if ($s->is_null) {
                         die "premature end of input" if $strictly;
-                    }
-                    else {
+                    } else {
                         push @v, $s->first;
                         $s = $s->rest;
                     }
@@ -1351,7 +1318,7 @@ TEST {
 }
 [];
 
-TEST { join("", @{stream_to_array(string_to_stream("You're great."))}) }
+TEST { join("", @{ stream_to_array(string_to_stream("You're great.")) }) }
 'You\'re great.';
 
 TEST {

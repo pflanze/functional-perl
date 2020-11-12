@@ -60,17 +60,15 @@ ASK: {
         if (defined $ans) {
             if ($ans =~ /^n(?:o|ein|ada|on)?$/i) {
                 ''
-            }
-            elsif ($ans =~ /^(?:ja|yes|j|y|oui)$/i) {
+            } elsif ($ans =~ /^(?:ja|yes|j|y|oui)$/i) {
                 1
-            }
-            else {
+            } else {
                 print "Please answer with yes or no or their initials, "
                     . "or the same in french or german.\n";
                 redo ASK;
             }
-        }
-        else {
+        } else {
+
             # EOF, i.e. ctl-d
             print "\n";
             undef

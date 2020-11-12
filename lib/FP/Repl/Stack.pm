@@ -83,14 +83,11 @@ BEGIN {
                 # confusing, as there's no way to know references from
                 # (accidentally) stringified references
                 Chomp(TerseDumper($_))
-            }
-            elsif ($mode eq "s") {
+            } elsif ($mode eq "s") {
                 show($_)
-            }
-            elsif ($mode eq "p") {
+            } elsif ($mode eq "p") {
                 "$_"
-            }
-            else {
+            } else {
                 die "unknown mode '$mode'";
             }
         } @$args;
@@ -116,7 +113,7 @@ BEGIN {
         (
             ($maybe_prefix // "\t")    #parens needed!
             . $s->subroutine . "("
-                . with_maxlen(64, sub { singlequote_many(@{$s->args}) }) . ")"
+                . with_maxlen(64, sub { singlequote_many(@{ $s->args }) }) . ")"
                 . " called at "
                 . $s->filename
                 . " line "
@@ -139,16 +136,13 @@ BEGIN {
                 if (defined $S) {
                     if (defined $V) {
                         $S eq $V
-                    }
-                    else {
+                    } else {
                         0
                     }
-                }
-                else {
+                } else {
                     if (defined $V) {
                         0
-                    }
-                    else {
+                    } else {
                         1    # both undefined
                     }
                 }
@@ -172,16 +166,13 @@ BEGIN {
                     require FP::DumperEqual;
                     FP::DumperEqual::dumperequal($v->args, $s->args)
                 }
-            ) }
-            else {
+            ) } else {
                 ''
             }
-        }
-        else {
+        } else {
             if (defined $s->args) {
                 ''
-            }
-            else {
+            } else {
                 &$equal_standard_fields
             }
         }
@@ -243,12 +234,12 @@ sub frame {
 
 sub num_frames {
     my $s = shift;
-    scalar @{$s->frames}
+    scalar @{ $s->frames }
 }
 
 sub max_frameno {
     my $s = shift;
-    $#{$s->frames}
+    $#{ $s->frames }
 }
 
 for (@fields, "desc") {

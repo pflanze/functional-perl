@@ -80,18 +80,14 @@ sub time_this (&;@) {
     if (my $out = $$args{out}) {
         if (ref($out) eq "ARRAY") {
             push @$out, $msgstr
-        }
-        elsif (ref($out) eq "SCALAR") {
+        } elsif (ref($out) eq "SCALAR") {
             $$out = $msgstr
-        }
-        elsif (is_filehandle $out) {
+        } elsif (is_filehandle $out) {
             print $out $msgstr
-        }
-        else {
+        } else {
             warn "don't know how to output to '$out'";
         }
-    }
-    else {
+    } else {
         warn $msgstr;
     }
     $wantarray ? @res : $res[0]

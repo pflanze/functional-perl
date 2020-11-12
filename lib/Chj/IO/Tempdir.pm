@@ -48,7 +48,7 @@ sub numify {
     my $class = ref $self;
     bless $self,
         "Chj::IO::Tempdir::FOOOOOOO"; # this is even how overload::StrVal works.
-    my $num = $self + 0;
+    my $num = $self +0;
     bless $self, $class;
     $num
 }
@@ -83,17 +83,14 @@ TRY: {
             my $self = $class->SUPER::new;
             $self->set(path => $path, autoclean => $DEFAULT_AUTOCLEAN);
             return $self;
-        }
-        elsif ($! == EEXIST or $! == EINTR) {
+        } elsif ($! == EEXIST or $! == EINTR) {
             if (--$n > 0) {
                 redo TRY;
-            }
-            else {
+            } else {
                 croak "xtmpdir: too many attempts to create a "
                     . "tempfile starting with path '$basepath'";
             }
-        }
-        else {
+        } else {
             croak "xtmpdir: could not create dir '$path': $!";
         }
     }
@@ -101,7 +98,7 @@ TRY: {
 
 sub set {
     my $self = shift;
-    %{$meta{pack "I", $self}} = @_    # XX does this delete old keys?
+    %{ $meta{ pack "I", $self } } = @_    # XX does this delete old keys?
 }
 
 sub path {
@@ -109,8 +106,7 @@ sub path {
     my $key  = pack "I", $self;
     if (@_) {
         ($meta{$key}{path}) = @_
-    }
-    else {
+    } else {
         $meta{$key}{path};
     }
 }
@@ -118,10 +114,9 @@ sub path {
 sub autoclean {
     my $self = shift;
     if (@_) {
-        ($meta{pack "I", $self}{autoclean}) = @_;
-    }
-    else {
-        $meta{pack "I", $self}{autoclean}
+        ($meta{ pack "I", $self }{autoclean}) = @_;
+    } else {
+        $meta{ pack "I", $self }{autoclean}
     }
 }
 
@@ -153,7 +148,7 @@ sub push_on_destruction {
     @_ == 1 or die;
     my $key = pack "I", $self;
     my ($handler) = @_;
-    push @{$meta{$key}{on_destruction}}, $handler
+    push @{ $meta{$key}{on_destruction} }, $handler
 }
 
 sub DESTROY {

@@ -66,47 +66,37 @@ for (my $i = 0; $i <= $#ARGV; $i++) {
     local $_ = $ARGV[$i];
     if (/^--?h(elp)?$/) {
         usage
-    }
-    elsif ($_ eq '--') {
+    } elsif ($_ eq '--') {
         push @files, @ARGV[$i + 1 .. $#ARGV];
         last;
-    }
-    elsif ($_ eq '-H' or $_ eq '--no-history') {
+    } elsif ($_ eq '-H' or $_ eq '--no-history') {
         $opt_H = 1;
-    }
-    elsif ($_ eq '-t') {
+    } elsif ($_ eq '-t') {
         $opt_t = 1;
-    }
-    elsif (/^-M(.*)/) {
+    } elsif (/^-M(.*)/) {
         if ($1) {
             push @opt_M, $1;
-        }
-        else {
+        } else {
             my $arg = $ARGV[++$i];
             defined $arg or usage "missing argument to -M";
             push @opt_M, $arg;
         }
-    }
-    elsif (/^-m(.*)/) {
+    } elsif (/^-m(.*)/) {
         if ($1) {
             push @opt_m, $1;
-        }
-        else {
+        } else {
             my $arg = $ARGV[++$i];
             defined $arg or usage "missing argument to -m";
             push @opt_m, $arg;
         }
-    }
-    elsif (/^--name$/) {
+    } elsif (/^--name$/) {
         my $arg = $ARGV[++$i];
         defined $arg or usage "missing argument to --name";
         $myname = $arg;
-    }
-    elsif (/^-/) {
+    } elsif (/^-/) {
         warn "Unknown option '$_'\n";
         usage(1)
-    }
-    else {
+    } else {
         push @files, $_
     }
 }
@@ -130,8 +120,7 @@ sub moduleoption_to_code ($) {
     "use " . do {
         if ($a =~ s/^=//s) {
             $p . " " . join(", ", map {"'$_'"} split /,/, $a)
-        }
-        else {
+        } else {
             $p
         }
     }
@@ -153,9 +142,8 @@ if (@files) {
         die $e if $is_error;
         print "$res\n";
     }
-}
 
-else {
+} else {
     require FP::Repl;
     FP::Repl::repl(
         maybe_historypath => ($opt_H ? undef : $HISTFILE),

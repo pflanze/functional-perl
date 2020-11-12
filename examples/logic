@@ -196,10 +196,10 @@ test does_not_like $_, $_ for qw(Dana Cody Abby Bess);
 test Or(likes("Abby", "Bess"), likes "Bess", "Abby");
 
 my $onesolution = {
-    Abby => {Abby => '', Bess => 1,  Cody => 1,  Dana => ''},
-    Bess => {Abby => '', Bess => '', Cody => 1,  Dana => ''},
-    Cody => {Abby => 1,  Bess => 1,  Cody => '', Dana => 1},
-    Dana => {Abby => '', Bess => '', Cody => 1,  Dana => ''},
+    Abby => { Abby => '', Bess => 1,  Cody => 1,  Dana => '' },
+    Bess => { Abby => '', Bess => '', Cody => 1,  Dana => '' },
+    Cody => { Abby => 1,  Bess => 1,  Cody => '', Dana => 1 },
+    Dana => { Abby => '', Bess => '', Cody => 1,  Dana => '' },
 };
 
 TEST { matrix_numrelations $onesolution } 7;

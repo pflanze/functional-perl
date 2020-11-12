@@ -51,10 +51,10 @@ our $lines = fh_to_stream(
 
 our $html = HTML(HEAD(
     TITLE($myname),
-    META({'http-equiv' => "Content-Type", content => "text/html;charset=utf-8"
-    }),
+    META({
+        'http-equiv' => "Content-Type", content => "text/html;charset=utf-8" }),
     STYLE(
-        {type => "text/css"}, '
+        { type => "text/css" }, '
 .diff {
   color: #008;
   border-top: 1px solid;

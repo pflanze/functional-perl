@@ -85,7 +85,7 @@ TEST { path_diff "foo",          "bar.css" } 'bar.css';
 fun path0($path) {
     __ 'delete "(../)*" prefix, just a hacky way to strip path prefix';
     my $path0 = $path;
-    while ($path0 =~ s|^\.\./||) { };
+    while ($path0 =~ s|^\.\./||) { }
     die if $path0 =~ /\.\./;
     $path0
 }

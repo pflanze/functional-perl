@@ -32,7 +32,7 @@ package ImperativePerson {
 
     sub add_todo {
         my ($self, $item) = @_;
-        push @{$self->{todo_items}}, $item;
+        push @{ $self->{todo_items} }, $item;
     }
 
 }
@@ -88,8 +88,7 @@ if ($ENV{RUN_TESTS}) {
     testImperative;
     testFunctional;
     done_testing;
-}
-else {
+} else {
     require FunctionalPerl;
     import FunctionalPerl ":repl";
     repl();

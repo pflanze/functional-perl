@@ -181,11 +181,11 @@ TEST_EXCEPTION { array_ref [5], 1 } "index out of bounds: 1";
 TEST_EXCEPTION { array_ref [5], -1 } "index out of bounds: -1";
 
 sub array_length ($) {
-    scalar @{$_[0]}
+    scalar @{ $_[0] }
 }
 
 sub array_is_null ($) {
-    @{$_[0]} == 0
+    @{ $_[0] } == 0
 }
 
 # functional updates
@@ -291,8 +291,7 @@ sub array_append { [
         # evil inlined `is_array`
         if (defined $_[0] and ref($_[0]) eq "ARRAY") {
             @$_
-        }
-        else {
+        } else {
             $_->values
         }
     } @_
@@ -313,8 +312,7 @@ sub array_perhaps_one ($) {
     my ($a) = @_;
     if (@$a == 1) {
         $$a[0]
-    }
-    else { () }
+    } else { () }
 }
 
 sub array_hashing_uniq ($;$ ) {
@@ -413,7 +411,7 @@ sub array_to_hash_map {
     for (my $i = 0; $i < $len; $i++) {
         my @v = &$fn(map { $$_[$i] } @_);
         @v == 2 or croak "wrong number of return values: " . show(\@v);
-        $res{$v[0]} = $v[1];
+        $res{ $v[0] } = $v[1];
     }
     \%res
 }
@@ -425,7 +423,7 @@ TEST {
         ["a", "b", "c"]
     )
 }
-+{'a' => 4, 'b' => 9, 'c' => 16};
++{ 'a' => 4, 'b' => 9, 'c' => 16 };
 
 sub array_filter ($$) {
     @_ == 2 or croak "wrong number of arguments";
@@ -577,7 +575,7 @@ sub array_to_hash_group_by ($$) {
     my ($ary, $on) = @_;
     my %res;
     for (@$ary) {
-        push @{$res{&$on($_)}}, $_
+        push @{ $res{ &$on($_) } }, $_
     }
     \%res
 }
@@ -599,8 +597,8 @@ LP: {
                 # $s
                 # hmmm
                 $s->drop($i)
-            }
-            else {
+            } else {
+
                 # $s = $s1;
                 $i++;
                 redo LP
@@ -614,8 +612,7 @@ sub array_perhaps_find ($$) {
     my ($fn, $l) = @_;
     if (my ($l) = array_perhaps_find_tail($fn, $l)) {
         $l->first
-    }
-    else { () }
+    } else { () }
 }
 
 1

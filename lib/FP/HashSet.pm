@@ -85,29 +85,29 @@ use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 
 sub array_to_hashset ($) {
-    +{map { $_ => $_ } @{$_[0]}}
+    +{ map { $_ => $_ } @{ $_[0] } }
 }
 
 sub array_to_lchashset ($) {
-    +{map { lc($_) => $_ } @{$_[0]}}
+    +{ map { lc($_) => $_ } @{ $_[0] } }
 }
 
-sub hashset_to_array ($) { [sort values %{$_[0]}] }
+sub hashset_to_array ($) { [sort values %{ $_[0] }] }
 
 sub hashset_to_predicate ($) {
     my ($s) = @_;
     sub {
         @_ == 1 or die "wrong number of arguments";
-        exists $$s{$_[0]}
+        exists $$s{ $_[0] }
     }
 }
 
 sub hashset_keys_unsorted ($) {
-    keys %{$_[0]}
+    keys %{ $_[0] }
 }
 
 sub hashset_keys ($) {
-    sort keys %{$_[0]}
+    sort keys %{ $_[0] }
 }
 
 sub hashset_add_hashset_d ($ $) {
@@ -168,11 +168,11 @@ sub hashset_is_subset ($ $) {
 }
 
 sub hashset_size ($) {
-    scalar keys %{$_[0]}
+    scalar keys %{ $_[0] }
 }
 
 sub hashset_empty ($) {
-    not keys %{$_[0]}
+    not keys %{ $_[0] }
 }
 
 sub hashset_diff ($ $) {
@@ -198,7 +198,7 @@ sub hashset_diff ($ $) {
     ["b"];
     TEST { hashset_is_subset($B, $A) }
     0;
-    TEST { hashset_is_subset(+{b => 1}, $A) }
+    TEST { hashset_is_subset(+{ b => 1 }, $A) }
     1;
     TEST { hashset_size($A) }
     3;
@@ -207,7 +207,7 @@ sub hashset_diff ($ $) {
     TEST { hashset_empty(+{}) }
     1;
     TEST { hashset_diff($A, $B) }
-    +{b => "-", d => "+"};
+    +{ b => "-", d => "+" };
     my $f = hashset_to_predicate($A);
     TEST { $f->("a") }
     1;

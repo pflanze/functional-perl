@@ -225,8 +225,7 @@ sub is_strictlist ($) {
             # XX evil: inlined `is_promise`
             UNIVERSAL::isa($v, "FP::Lazy::Promise") && &is_strictlist(force $v)
             or ''
-    }
-    else {
+    } else {
         ''
     }
 }

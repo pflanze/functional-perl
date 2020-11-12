@@ -143,8 +143,7 @@ sub new_import {
                 };
                 if ($@) {
                     warn "Module::Reload: error during reload of '$key': $@\n"
-                }
-                else {
+                } else {
                     if ($Debug > 0) {
                         warn "Module::Reload: process $$ reloaded '$key'\n"
                             if $Debug == 1;
@@ -162,8 +161,7 @@ sub new_import {
                 my $file2 = $INC{$key};
                 my $mtime = (stat $file2)[9];
                 $Stat{$file2} = $mtime;
-            }
-            else {
+            } else {
                 next if $memq_ignores->($file);    # too confusing
                  #local $^W = 0; XX nope, only shut down redefinition warnings please.
                 my $mtime = (stat $file)[9];
@@ -197,8 +195,7 @@ sub reimport {
                 warn "reimport WARNING: evaling '$code' gave: $@";
             }
         }
-    }
-    else {
+    } else {
         warn(     "reimport WARNING: $class->can('import') didn't yield true, "
                 . "apparently the module doesn't inherit from Exporter")
             if $verbose;
@@ -220,20 +217,16 @@ sub import {
         for my $name (@_) {
             if ($name eq 'r') {
                 *{"${caller}::r"} = \&ruse;
-            }
-            elsif ($name eq 'ruse') {
+            } elsif ($name eq 'ruse') {
                 *{"${caller}::ruse"} = \&ruse;
-            }
-            elsif ($name eq ':all') {
+            } elsif ($name eq ':all') {
                 *{"${caller}::r"}    = \&ruse;
                 *{"${caller}::ruse"} = \&ruse;
-            }
-            else {
+            } else {
                 die "no such export: $name";
             }
         }
-    }
-    else {
+    } else {
         *{"${caller}::ruse"} = \&ruse;
     }
 }

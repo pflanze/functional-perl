@@ -53,8 +53,7 @@ sub tidyhtml {
     if ($error) {
         warn "perltidy error: " . show($error) . " (" . show($errorfile) . ")";
         ()
-    }
-    else {
+    } else {
         htmlparse $dest, "pre"
     }
 }
@@ -73,14 +72,14 @@ method map_element($e, $uplist) {
 
             #use FP::Repl;repl;
             $pre->body
-        }
-        else {
+        } else {
+
             # do not handle this element, leave up to pointer_eq to
             # detect that
             $e
         }
-    }
-    else {
+    } else {
+
         # do not handle this element, leave up to pointer_eq to detect
         # that
         $e

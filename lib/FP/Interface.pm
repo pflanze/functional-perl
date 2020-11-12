@@ -87,7 +87,7 @@ sub package_is_populated {
     my ($package) = @_;
     my $pr = do {
         no strict 'refs';
-        *{$package . "::"}
+        *{ $package . "::" }
     };
     %$pr ? 1 : 0
 }
@@ -119,8 +119,8 @@ sub package_check_possible_interface ($$) {
             "FP::Interface warning: '$caller' does not implement '$possible_interface_package' methods: @missing\n"
             if @missing;
         1
-    }
-    else {
+    } else {
+
         # not an interface
         undef
     }

@@ -54,16 +54,13 @@ fun create_parent_dirs($path0, $path0_to_outpath) {
     if (mkdir $outpath) {
 
         # ok, return
-    }
-    elsif ($! == EEXIST) {
+    } elsif ($! == EEXIST) {
 
         # ok, return
-    }
-    elsif ($! == ENOENT) {
+    } elsif ($! == ENOENT) {
         create_parent_dirs($path0, $path0_to_outpath);
         xmkdir $outpath;
-    }
-    else {
+    } else {
         die "mkdir '$outpath': $!";
     }
 }

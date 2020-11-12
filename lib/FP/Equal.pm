@@ -171,7 +171,7 @@ our $primitive_equals = +{
     },
     SCALAR => sub {
         my ($a, $b, $equal) = @_;
-        &$equal(${$_[0]}, ${$_[1]})
+        &$equal(${ $_[0] }, ${ $_[1] })
     },
 
     # compare closures using XS? Existing module?
@@ -196,39 +196,34 @@ sub make_equal {
             if (!defined $a) {
                 if (!defined $b) {
                     1
-                }
-                else {
+                } else {
                     if (length ref $b) {
                         if (is_promise $b) {
                             @_ = ($a, force($b));
                             redo EQUAL;
-                        }
-                        else {
+                        } else {
                             undef
                         }
-                    }
-                    else {
+                    } else {
                         undef
                     }
                 }
-            }
-            else {
+            } else {
+
                 # $a is defined
                 if (!defined $b) {
                     if (length ref $a) {
                         if (is_promise $a) {
                             @_ = (force($a), $b);
                             redo EQUAL;
-                        }
-                        else {
+                        } else {
                             undef
                         }
-                    }
-                    else {
+                    } else {
                         undef
                     }
-                }
-                else {
+                } else {
+
                     # both are defined
                     if (length(my $ar = ref $a)) {
                         if (length(my $br = ref $b)) {
@@ -236,12 +231,10 @@ sub make_equal {
                                 if (is_promise $a or is_promise $b) {
                                     @_ = (force($a), force($b));
                                     redo EQUAL;
-                                }
-                                elsif ($ar eq $br) {
+                                } elsif ($ar eq $br) {
                                     if (my $cmp = $$primitive_equals{$ar}) {
                                         &$cmp($a, $b, $equal)
-                                    }
-                                    else {
+                                    } else {
                                         if ($relaxed) {
                                             if (
                                                 my $m = UNIVERSAL::can(
@@ -251,8 +244,8 @@ sub make_equal {
                                             {
                                   #@_ $a and $b are still the original $a and $b
                                                 goto $m
-                                            }
-                                            else {
+                                            } else {
+
                                              # costly require?, but slow anyway.
                                                 require FP::DumperEqual;
 
@@ -264,13 +257,12 @@ sub make_equal {
                                                 FP::DumperEqual::dumperequal_utf8(
                                                     $a, $b)
                                             }
-                                        }
-                                        else {
+                                        } else {
                                             $a->FP_Equal_equal($b)
                                         }
                                     }
-                                }
-                                else {
+                                } else {
+
                                     # XXX allow subclasses of same
                                     # hierarchy? Check whether $br isa $ar
                                     # or vica versa and then call
@@ -279,30 +271,28 @@ sub make_equal {
                                     undef
                                 }
                             };
-                        }
-                        else {
+                        } else {
+
                             # $b is not a reference ($a is)
                             if (is_promise $a) {
                                 @_ = (force($a), $b);
                                 redo EQUAL;
-                            }
-                            else {
+                            } else {
                                 undef
                             }
                         }
-                    }
-                    else {
+                    } else {
+
                         # $a is not a reference
                         if (length ref $b) {
                             if (is_promise $b) {
                                 @_ = ($a, force($b));
                                 redo EQUAL;
-                            }
-                            else {
+                            } else {
                                 undef
                             }
-                        }
-                        else {
+                        } else {
+
                          # $b is not a reference either
                          # make sure it's the same kind of non-reference values:
                             if (ref(\$a) eq ref(\$b)) {
@@ -317,8 +307,7 @@ sub make_equal {
                         # both as string and as number?
 
                                 $a eq $b
-                            }
-                            else {
+                            } else {
                                 undef
                             }
                         }
@@ -337,11 +326,9 @@ sub relaxedequal($$);
 sub equaln {
     if (@_ == 2) {
         goto \&equal
-    }
-    elsif (@_ == 1) {
+    } elsif (@_ == 1) {
         1
-    }
-    else {
+    } else {
         my $a = shift;
         for (@_) {
             my $v;
@@ -358,8 +345,7 @@ sub is_equal ($$;$) {
 
     if (equal $a, $b) {
         $tb->ok(1, $maybe_name ? $maybe_name : ())
-    }
-    else {
+    } else {
         require FP::Show;
         $tb->is_eq(FP::Show::show($a), FP::Show::show($b),
             $maybe_name ? $maybe_name : ())

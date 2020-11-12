@@ -104,11 +104,11 @@ sub hash_set ($$$) {
     $h2
 }
 
-my $h = {a => 1, b => 2};
+my $h = { a => 1, b => 2 };
 TEST { hash_set $h, b => 3 }
-+{'a' => 1, 'b' => 3};
++{ 'a' => 1, 'b' => 3 };
 TEST {$h}
-+{'a' => 1, 'b' => 2};
++{ 'a' => 1, 'b' => 2 };
 
 sub hash_delete ($$) {
     my ($h, $k) = @_;
@@ -122,8 +122,7 @@ sub hash_update ($$$) {
     my $h2 = +{%$h};
     if (my ($v) = &$fn(exists $$h{$k} ? $$h{$k} : ())) {
         $$h2{$k} = $v;
-    }
-    else {
+    } else {
         delete $$h2{$k}
     }
     $h2
@@ -132,15 +131,15 @@ sub hash_update ($$$) {
 TEST {
     hash_update $h, 'a', sub { $_[0] + 10 }
 }
-+{a => 11, b => 2};
++{ a => 11, b => 2 };
 TEST {
     hash_update $h, 'x', sub { [@_] }
 }
-+{a => 1, b => 2, x => []};
++{ a => 1, b => 2, x => [] };
 TEST {
     hash_update $h, 'a', sub { () }
 }
-+{b => 2};
++{ b => 2 };
 
 sub hash_length ($) {
     my ($h) = @_;
@@ -148,14 +147,13 @@ sub hash_length ($) {
 }
 
 TEST { hash_length +{} } 0;
-TEST { hash_length +{a => 4, b => 5} } 2;
+TEST { hash_length +{ a => 4, b => 5 } } 2;
 
 sub hash_perhaps_ref ($$) {
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
-    }
-    else { () }
+    } else { () }
 }
 
 # difference of the following to just $$h{$k} is that it won't die on
@@ -164,8 +162,7 @@ sub hash_maybe_ref ($$) {
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
-    }
-    else {
+    } else {
         undef
     }
 }
@@ -174,8 +171,7 @@ sub hash_xref ($$) {
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
-    }
-    else {
+    } else {
         die "unbound table key";    # no such key. unknown key. unbound
                                     # hash key. ?
     }
@@ -185,8 +181,7 @@ sub hash_ref_or ($$$) {
     my ($h, $k, $other) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
-    }
-    else {
+    } else {
         $other
     }
 }
@@ -197,8 +192,7 @@ sub hash_cache ($$$) {
     my ($h, $k, $generate) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
-    }
-    else {
+    } else {
         $$h{$k} = &$generate()
     }
 }
@@ -213,8 +207,7 @@ sub hash_diff ($$) {
         my $new = $$h2{$key};
         if (defined($old) and defined($new)) {
             $$changes{$key} = ($old eq $new) ? "unchanged" : "changed";
-        }
-        else {
+        } else {
             $$changes{$key} = defined($old) ? "deleted" : "added";
         }
     }
@@ -225,17 +218,17 @@ sub hash_diff ($$) {
     $changes
 }
 
-TEST { hash_diff {a => 1, b => 2}, {a => 1, b => 3} }
-+{'a' => 'unchanged', 'b' => 'changed'};
-TEST { hash_diff {a => 1, b => 2}, {a => 1, b => 3, c => 5} }
-+{'c' => 'added', 'a' => 'unchanged', 'b' => 'changed'};
-TEST { hash_diff {a => 1, b => 2}, {b => 3, c => 5} }
-+{'c' => 'added', 'a' => 'deleted', 'b' => 'changed'};
+TEST { hash_diff { a => 1, b => 2 }, { a => 1, b => 3 } }
++{ 'a' => 'unchanged', 'b' => 'changed' };
+TEST { hash_diff { a => 1, b => 2 }, { a => 1, b => 3, c => 5 } }
++{ 'c' => 'added', 'a' => 'unchanged', 'b' => 'changed' };
+TEST { hash_diff { a => 1, b => 2 }, { b => 3, c => 5 } }
++{ 'c' => 'added', 'a' => 'deleted', 'b' => 'changed' };
 TEST {
-    hash_diff {a => 1, b => 2, x => 9},
-        {a => undef, b => 3, c => 5, x => 9}
+    hash_diff { a => 1, b => 2, x => 9 },
+        { a => undef, b => 3, c => 5, x => 9 }
 }
-+{'c' => 'added', 'a' => 'deleted', 'b' => 'changed', 'x' => 'unchanged'};
++{ 'c' => 'added', 'a' => 'deleted', 'b' => 'changed', 'x' => 'unchanged' };
 
 sub subhash {
     my $s = shift;
@@ -246,13 +239,13 @@ sub subhash {
     \%r
 }
 
-TEST { subhash({a => 10, b => 11, c => 12}, "a", "c") }
-+{a => 10, c => 12};
+TEST { subhash({ a => 10, b => 11, c => 12 }, "a", "c") }
++{ a => 10, c => 12 };
 
 use FP::HashSet;
 
 sub hashes_keys {
-    keys %{array_to_hashset([map { keys %$_ } @_])}
+    keys %{ array_to_hashset([map { keys %$_ } @_]) }
 }
 
 # set leafs in 2-level hash structure:

@@ -26,14 +26,14 @@ use FP::Array ":all";    # XXX inconsistency in export directives
 use FP::PureArray;
 
 TEST_STDOUT {
-    pxml_print_fragment_fast(A({href => "hah"}, "Hello ", I("World", B("!"))),
+    pxml_print_fragment_fast(A({ href => "hah" }, "Hello ", I("World", B("!"))),
         *STDOUT{IO})
 }
 '<a href="hah">Hello <i>World<b>!</b></i></a>';
 
 TEST {
     A(
-        {href => "hah"},
+        { href => "hah" },
         "Hello ",
         I("World", undef, B("!")),
         cons(" ", string_to_stream("You're great."))

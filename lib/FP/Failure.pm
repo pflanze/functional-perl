@@ -214,8 +214,7 @@ package FP::Failure::Failure {
                         "$subname at $file line $line"
                     } @$t
                 )
-            }
-            else {
+            } else {
                 ""
             }
         };
@@ -228,14 +227,13 @@ package FP::Failure::Failure {
         };
         $indent . "failure: " . $valuestr . $tracestr . "\n" . do {
             my @parents = grep { FP::Failure::is_failure($_) }
-                @{$s->maybe_parents // []};
+                @{ $s->maybe_parents // [] };
             if (@parents) {
                 $indent
                     . "  because:\n"
                     . join("",
                     map { $_->message($showtrace, $indent . "  ") } @parents)
-            }
-            else {
+            } else {
                 ""
             }
         }
@@ -315,7 +313,7 @@ package FP::Failure::MessageFmt {
     sub message {
         @_ == 1 or die "wrong number of arguments";
         my $s = shift;
-        sprintf($s->formatstring, map { show $_ } @{$s->arguments})
+        sprintf($s->formatstring, map { show $_ } @{ $s->arguments })
     }
 
     _END_
@@ -326,13 +324,11 @@ sub messagefmt {
     if (not $fmtstr =~ /\%\%/) {
         if (($fmtstr =~ tr/%/%/) == @args) {
             FP::Failure::MessageFmt->new($fmtstr, \@args)
-        }
-        else {
+        } else {
             die "wrong number of arguments (" . @args
                 . ") for given format string '$fmtstr'"
         }
-    }
-    else {
+    } else {
         die "full fmt parsing support not implemented yet"    # XX todo
     }
 }

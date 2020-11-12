@@ -48,14 +48,14 @@ use PXML::Tags qw(myexample protocol-version records record a b c d);
 MYEXAMPLE(
     PROTOCOL_VERSION("0.123"),
     RECORDS(    # read lazy list of rows from CSV file
-        csv_file_to_rows($inpath, {eol => "\n", sep_char => ";"})
+        csv_file_to_rows($inpath, { eol => "\n", sep_char => ";" })
 
             # skip the header row
             ->rest
 
             # map rows to XML elements
             ->map(sub {
-            my ($a, $b, $c, $d) = @{$_[0]};
+            my ($a, $b, $c, $d) = @{ $_[0] };
             RECORD A($a), B($b), C($c), D($d)
             })
     )

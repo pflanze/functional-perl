@@ -61,6 +61,6 @@ our $html5_void_elements = [
         )
 ];
 
-our $html5_void_element_h = +{map { $_ => 1 } @$html5_void_elements};
+our $html5_void_element_h = +{ map { $_ => 1 } @$html5_void_elements };
 
 1

@@ -88,12 +88,11 @@ sub chunks_change_tail {
                 if ($lenfirst <= $reserve) {
                     cons($first,
                         &$next(rest $start, $rest, $windowsize - $lenfirst))
-                }
-                else {
+                } else {
                     if (is_null $rest) {
                         &$fn($start, $windowsize)
-                    }
-                    else {
+                    } else {
+
                    #&$next($start, rest $rest, $windowsize + length first $rest)
                         $windowsize = $windowsize + length first $rest;
                         $rest       = rest $rest;
@@ -190,8 +189,7 @@ if ($n) {
 
             # XX: seek does not complain when file is too short; this
             # does. This is inconsistent. Also, check $opt_silent ?
-        }
-        else {
+        } else {
             die "seek: $!";
         }
     };
@@ -202,8 +200,7 @@ if ($maybe_m) {
     if (is_null $chunks) {
         die "$myname: no remainder left after skipping $n byte(s)\n"
             unless $opt_silent;
-    }
-    else {
+    } else {
         my $chunks2 = chunks_change_tail(
             $chunks, $maybe_m,
             sub {
@@ -213,13 +210,11 @@ if ($maybe_m) {
                 if ($remainingsize < $maybe_m) {
                     if ($opt_silent) {
                         null
-                    }
-                    else {
+                    } else {
                         die "$myname: only $remainingsize byte(s) left "
                             . "after skipping $n byte(s)\n"
                     }
-                }
-                else {
+                } else {
                     my $last = first $rest;
                     cons(substr($last, 0, $remainingsize - $maybe_m), null)
                 }
@@ -229,8 +224,7 @@ if ($maybe_m) {
             $out->xprint($_[0])
         }, $chunks2;
     }
-}
-else {
+} else {
     $in->xsendfile_to($out);
     $in->xclose;
 }

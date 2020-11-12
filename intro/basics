@@ -287,8 +287,7 @@ sub fact {
     warn "n=$n";
     if ($n < 2) {
         1
-    }
-    else {
+    } else {
         $n * fact($n - 1)
     }
 }
@@ -392,8 +391,8 @@ sub imperative_fact {
 
         if ($n < 2) {
             return $res;
-        }
-        else {
+        } else {
+
             # treat $res and $n not as immutable binding of a name to
             # a value, but as mutable memory location
             $res = $n * $res;
@@ -454,8 +453,8 @@ sub functional_fact_iter {
     push @functional_inspect, sub { ($n, $res) };
     if ($n < 2) {
         return $res;
-    }
-    else {
+    } else {
+
         # This is a tail call: it happens in tail position,
         # i.e. there's nothing happening *after* this call within this
         # function.
@@ -587,8 +586,7 @@ sub iota {
     my ($from, $to) = @_;
     if ($from >= $to) {
         null
-    }
-    else {
+    } else {
         cons $from, iota($from + 1, $to)
     }
 }

@@ -150,12 +150,10 @@ fun pxml_de_paragraphy($e) {
     if ($e->name eq "p") {
         if (pxml_body_is_empty $e) {
             BR    # HACK.
-        }
-        else {
+        } else {
             $e->body
         }
-    }
-    else {
+    } else {
         $e
     }
 }
@@ -163,11 +161,9 @@ fun pxml_de_paragraphy($e) {
 fun de_paragraphy($v) {
     if (is_pxml_element $v) {
         pxml_de_paragraphy $v
-    }
-    elsif (my ($v0) = $v->perhaps_one) {
+    } elsif (my ($v0) = $v->perhaps_one) {
         de_paragraphy($v0)
-    }
-    else {
+    } else {
         $v->map(*de_paragraphy)
     }
 }
@@ -177,7 +173,7 @@ fun translate_links($str) {
         $str,
         fun($txt, $url)
         {
-            A {href => $url}, $txt
+            A { href => $url }, $txt
         },
         fun($str)
         {
@@ -225,8 +221,7 @@ fun translate($str) {
             my $t = $l->map(the_method "translate");
             if ($l->first->isa("definitionlists::Match")) {
                 DL $t
-            }
-            else {
+            } else {
                 $t
             }
         }

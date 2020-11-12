@@ -28,8 +28,8 @@ BEGIN {
 $| = 1 if DEBUG;
 
 #use enum qw(PUBLIC PROTECTED PRIVATE);
-sub PUBLIC ()    {0};
-sub PROTECTED () {1};
+sub PUBLIC ()    {0}
+sub PROTECTED () {1}
 sub PRIVATE ()   {2};    # enum is not in the base perl 5.005 dist
 sub PUBLICA () {3}; # (new 04/10/31) public only via accessors, not via field constant export.
 
@@ -60,118 +60,90 @@ sub import {
         if ($flag_base) {
             $flag_base = 0;
             $class     = $_;
-        }
-        elsif ($flag_namehash) {
+        } elsif ($flag_namehash) {
             $flag_namehash = 0;
             $namehash      = $_;
-        }
-        elsif ($flag_pmixin) {
+        } elsif ($flag_pmixin) {
             $flag_pmixin = 0;
             push @pmixin, $_;
             ##(or should we actually accept as many arguments as there are non-dashed ones?)
-        }
-        elsif ($flag_caller) {
+        } elsif ($flag_caller) {
             $flag_caller   = 0;
             $calling_class = $_;
-        }
-        elsif ($_ eq '-caller') {
+        } elsif ($_ eq '-caller') {
             croak "Multiple occurrence of -caller argument"
                 if defined $calling_class;
             $flag_caller = 1;
-        }
-        elsif ($_ eq '-nowarn') {
+        } elsif ($_ eq '-nowarn') {
             $flag_nowarn = 1;
-        }
-        elsif ($_ eq '-fields' or $_ eq '-members') {
+        } elsif ($_ eq '-fields' or $_ eq '-members') {
             $flag_fields = 1;
-        }
-        elsif ($_ eq '-extend') {
+        } elsif ($_ eq '-extend') {
             $flag_extend = 1;
-        }
-        elsif ($_ eq '-public') {
+        } elsif ($_ eq '-public') {
             if ($flag_extend || $flag_fields) {
                 $publicity = PUBLIC;
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": missing -extend or -fields option before -public";
             }
-        }
-        elsif ($_ eq '-publica' or $_ eq '-pub') {
+        } elsif ($_ eq '-publica' or $_ eq '-pub') {
             if ($flag_extend || $flag_fields) {
                 $publicity = PUBLICA;
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": missing -extend or -fields option before -publica";
             }
-        }
-        elsif ($_ eq '-shared' || $_ eq '-protected') {
+        } elsif ($_ eq '-shared' || $_ eq '-protected') {
             if ($flag_extend || $flag_fields) {
                 $publicity = PROTECTED;
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": missing -extend or -fields option before -protected";
             }
-        }
-        elsif ($_ eq '-private') {
+        } elsif ($_ eq '-private') {
             if ($flag_extend || $flag_fields) {
                 $publicity = PRIVATE;
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": missing -extend or -fields option before -private";
             }
-        }
-        elsif ($_ eq '-onlyfields' or $_ eq '-onlymembers') {
+        } elsif ($_ eq '-onlyfields' or $_ eq '-onlymembers') {
             if ($flag_extend || $flag_fields) {
                 croak __PACKAGE__
                     . ": -onlyfields option not allowed after -extend or -fields";
-            }
-            else {
+            } else {
                 $flag_onlyfields = 1;
             }
-        }
-        elsif ($_ eq '-class') {
+        } elsif ($_ eq '-class') {
             if (defined $flag_base) {
                 croak __PACKAGE__ . ": only one -class option possible";
-            }
-            else {
+            } else {
                 $flag_base = 1;
             }
             $flag_base = 1;
-        }
-        elsif ($_ eq '-namehash') {
+        } elsif ($_ eq '-namehash') {
             $flag_namehash = 1
                 ; ## wieso dieser hack?, warum nicht nächstes argument clobbern? Hmm.
-        }
-        elsif ($_ eq '-pmixin') {
+        } elsif ($_ eq '-pmixin') {
             $flag_pmixin = 1;    #dito
-        }
-        elsif (/^-/) {
+        } elsif (/^-/) {
             croak __PACKAGE__ . ": don't understand option `$_'";
-        }
-        else {
+        } else {
             if ($flag_fields || $flag_extend) {
                 if ($publicity == PUBLIC) {
                     push @newpublicfields, $class->class_array_conformize($_);
-                }
-                elsif ($publicity == PUBLICA) {
+                } elsif ($publicity == PUBLICA) {
                     push @newpublicafields, $class->class_array_conformize($_);
-                }
-                elsif ($publicity == PROTECTED) {
+                } elsif ($publicity == PROTECTED) {
                     push @newprotectedfields,
                         $class->class_array_conformize($_);
-                }
-                else {
+                } else {
                     push @newprivatefields, $class->class_array_conformize($_);
                 }
-            }
-            elsif ($flag_onlyfields) {
+            } elsif ($flag_onlyfields) {
                 push @only_fields, $_;
-            }
-            else {
+            } else {
                 push @normal_import, $_;
             }
         }
@@ -193,15 +165,12 @@ sub import {
 # çç
     if ($flag_fields && defined $flag_base) {
         croak __PACKAGE__ . ": you can't give both -fields and -class options";
-    }
-    elsif ($flag_fields && $flag_extend) {
+    } elsif ($flag_fields && $flag_extend) {
         croak __PACKAGE__ . ": you can't give both -fields and -extend options";
-    }
-    elsif ($flag_fields and $flag_onlyfields) {
+    } elsif ($flag_fields and $flag_onlyfields) {
         croak __PACKAGE__
             . ": you can't give both -fields and -onlyfields options";
-    }
-    elsif ($flag_fields) {    # set up $calling_class as base class
+    } elsif ($flag_fields) {    # set up $calling_class as base class
         my $counter = 0
             ; ##PS. könnte bei 1 anfangen und ins arrayelement 0 was anderes stopfen...
         create_fields_and_bless_class($calling_class, $counter,
@@ -212,8 +181,7 @@ sub import {
                 1);
         }
 
-    }
-    elsif ($flag_extend) {    # Inherit a class
+    } elsif ($flag_extend) {    # Inherit a class
         no strict 'refs';
         my $counter = ${"${class}::_CLASS_ARRAY_COUNTER"};
         unless (defined $counter) {
@@ -222,8 +190,7 @@ sub import {
                     . ": please use the '-fields' argument instead of '-extend' for deriving from the Chj::Class::Array base class";
 
 # (Hmm, does it really make sense?, should we just drop the '-fields' arg in favour of -extend in all cases?)
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": class $class doesn't seem to be a Chj::Class::Array type class";
             }
@@ -241,7 +208,7 @@ sub import {
             alias_fields(
                 $class,
                 $calling_class,
-                $flag_onlyfields ? {map { $_ => 1 } @only_fields} : undef,
+                $flag_onlyfields ? { map { $_ => 1 } @only_fields } : undef,
                 $flag_nowarn,
                 !$flag_fields,
                 {
@@ -255,8 +222,7 @@ sub import {
                 1);
         }
 
-    }
-    else {    # 'normal' use of a class without inheriting it.
+    } else {    # 'normal' use of a class without inheriting it.
         croak "$class is of no use without defining fields on top of it"
             unless do {
             no strict 'refs';
@@ -266,7 +232,7 @@ sub import {
         # don't simply test '$class eq __PACKAGE__' since this would
         # stop one to extent Chj::Class::Array itself.
         alias_fields($class, $calling_class,
-            $flag_onlyfields ? {map { $_ => 1 } @only_fields} : undef,
+            $flag_onlyfields ? { map { $_ => 1 } @only_fields } : undef,
             $flag_nowarn, 0);
         if ($namehash)
         {    # create (if needed) and import name lookup hash (and cache it)
@@ -277,7 +243,7 @@ sub import {
     if (@pmixin) {
         $load->(@pmixin);
         no strict 'refs';
-        push @{$calling_class . "::ISA"}, @pmixin;
+        push @{ $calling_class . "::ISA" }, @pmixin;
     }
 
     # 'normal' export mechanism
@@ -311,8 +277,7 @@ sub alias_fields {
                 if ($ignore_fields->{$_}) {
                     warn "alias_fields: ignoring field '$_' in class '$class'"
                         if DEBUG;
-                }
-                else {
+                } else {
                     if (defined *{"${calling_class}::$_"}{CODE}) {
                         if (*{"${calling_class}::$_"}{CODE}
                             == *{"${class}::$_"}{CODE})
@@ -321,8 +286,7 @@ sub alias_fields {
                                 "${calling_class}::$_ exists already but is the same as ${class}::$_"
                                 if DEBUG;
                             $ignore_fields->{$_} = 1;
-                        }
-                        else {
+                        } else {
                             carp __PACKAGE__
                                 . ": conflicting name `$_': ignoring and also removing existing entry (all of \*$_ !)"
                                 unless $flag_nowarn;
@@ -335,8 +299,7 @@ sub alias_fields {
                             delete ${"${calling_class}::"}{$_}
                                 ; #"  OK! Works, but deletes all glob fields, not only CODE. Does anybody know how to do this correctly? In Perl?, in a C extension?
                         }
-                    }
-                    else {
+                    } else {
                         *{"${calling_class}::$_"} = *{"${class}::$_"}{CODE};
                         $ignore_fields->{$_} = 1;
                     }
@@ -382,8 +345,7 @@ sub class_array_namehash_allprotected
     if ($hashref = *{"${class}::_CLASS_ARRAY_NAMEHASHALLPROTECTED"}{HASH}) {
 
         #warn "reuse cached hash";
-    }
-    else {
+    } else {
         $hashref
             = {};  # könnte es ja sein dass gar nirgends protected fields sind!
         my $workclass = $class;
@@ -416,8 +378,7 @@ sub class_array_namehash
         : *{"${class}::_CLASS_ARRAY_NAMEHASHFOREXTERNALUSE"}{HASH})
     {
         warn "using cached namehash for '$class'" if DEBUG;
-    }
-    else {
+    } else {
         warn "need to create it" if DEBUG;
         $hashref = $incomplete_hashref ? $incomplete_hashref : {};
         my $superclass = ${"${class}::_CLASS_ARRAY_SUPERCLASS"};
@@ -459,8 +420,7 @@ sub class_array_namehash
                 warn
                     "DEBUG: saved namehash as ${calling_class}::CLASS_ARRAY_NAMEHASH"
                     if DEBUG;
-            }
-            else {
+            } else {
                 *{"${class}::_CLASS_ARRAY_NAMEHASHFOREXTERNALUSE"} = $hashref;
                 warn
                     "DEBUG: saved namehash as ${class}::_CLASS_ARRAY_NAMEHASHFOREXTERNALUSE"
@@ -509,22 +469,18 @@ sub transport {
                     {
                         carp __PACKAGE__ . ": symbol `$_' already imported"
                             if DEBUG;
-                    }
-                    else {
+                    } else {
                         carp __PACKAGE__ . ": conflicting name `$_' - ignoring"
                             unless $flag_nowarn;
                     }
-                }
-                else {
+                } else {
                     *{"${calling_class}::$1"} = *{"${class}::$1"}{SCALAR};
                 }
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": can't export \$${class}::$1 since it doesn't exist";
             }
-        }
-        elsif (/^\@(.*)/) {    # array
+        } elsif (/^\@(.*)/) {    # array
             if (defined *{"${class}::$1"}{ARRAY}) {
                 if (defined *{"${calling_class}::$1"}{ARRAY}) {
                     if (*{"${calling_class}::$1"}{ARRAY}
@@ -532,22 +488,18 @@ sub transport {
                     {
                         carp __PACKAGE__ . ": symbol `$_' already imported"
                             if DEBUG;
-                    }
-                    else {
+                    } else {
                         carp __PACKAGE__ . ": conflicting name `$_' - ignoring"
                             unless $flag_nowarn;
                     }
-                }
-                else {
+                } else {
                     *{"${calling_class}::$1"} = *{"${class}::$1"}{ARRAY};
                 }
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": can't export \@${class}::$1 since it doesn't exist";
             }
-        }
-        elsif (/^\%(.*)/) {    # hash
+        } elsif (/^\%(.*)/) {    # hash
             if (defined *{"${class}::$1"}{HASH}) {
                 if (defined *{"${calling_class}::$1"}{HASH}) {
                     if (*{"${calling_class}::$1"}{HASH}
@@ -555,22 +507,18 @@ sub transport {
                     {
                         carp __PACKAGE__ . ": symbol `$_' already imported"
                             if DEBUG;
-                    }
-                    else {
+                    } else {
                         carp __PACKAGE__ . ": conflicting name `$_' - ignoring"
                             unless $flag_nowarn;
                     }
-                }
-                else {
+                } else {
                     *{"${calling_class}::$1"} = *{"${class}::$1"}{HASH};
                 }
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": can't export \%${class}::$1 since it doesn't exist";
             }
-        }
-        else {    # subroutine/constant
+        } else {    # subroutine/constant
             if (defined *{"${class}::$_"}{CODE}) {
                 if (defined *{"${calling_class}::$_"}{CODE}) {
                     if (*{"${calling_class}::$_"}{CODE}
@@ -578,17 +526,14 @@ sub transport {
                     {
                         carp __PACKAGE__ . ": symbol `$_' already imported"
                             if DEBUG;
-                    }
-                    else {
+                    } else {
                         carp __PACKAGE__ . ": conflicting name `$_' - ignoring"
                             unless $flag_nowarn;
                     }
-                }
-                else {
+                } else {
                     *{"${calling_class}::$_"} = *{"${class}::$_"}{CODE};    #"
                 }
-            }
-            else {
+            } else {
                 croak __PACKAGE__
                     . ": can't export ${class}::$_ since it doesn't exist";
             }
@@ -645,8 +590,7 @@ sub create_fields_and_bless_class {
         if (defined *{"${calling_class}::$_"}{CODE}) {    # coderef exists
             croak __PACKAGE__
                 . ": conflicting name `$_': can't create initial member constant";
-        }
-        else {
+        } else {
             my $scalar = $counter++;
             *{"${calling_class}::$_"} = sub () {$scalar};
 
@@ -722,8 +666,7 @@ sub class_array_conformize {
     my ($name) = @_;
     if (lc($name) eq ($name)) {
         ucfirstletter($name)
-    }
-    else {
+    } else {
         $name
     }
 }
@@ -796,8 +739,7 @@ sub class_array_publica_fields {
     { # auf $superclass prüfen geht eben nicht, das ist immer ein true ref. MANN. todo oben ist das wohl überall buggy.
             #warn "superclass '$$superclass'\n";
         class_array_publica_fields($$superclass, $result)
-    }
-    else {
+    } else {
         @$result
     }
 }

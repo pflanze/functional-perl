@@ -86,26 +86,22 @@ sub docstring ($) {
         #warn "str='$str'";
         if (my ($docstring) = $str =~ /\b__\('(.*?)'\);/s) {
             $docstring
-        }
-        elsif (($docstring) = $str =~ /\b__\("(.*?)"\);/s) {
+        } elsif (($docstring) = $str =~ /\b__\("(.*?)"\);/s) {
             $docstring =~ s/\\n/\n/sg;
             $docstring =~ s/\\\\/\\/sg;
             $docstring =~ s/\\\$/\$/sg;
             $docstring
-        }
-        elsif (my ($quote, $docstring_and_rest) = $str =~ /\b__\(q(.)(.*)/s) {
+        } elsif (my ($quote, $docstring_and_rest) = $str =~ /\b__\(q(.)(.*)/s) {
 
             # sigh, really?
             my $endquote = $endquote{$quote}
                 or die "don't know what quote this is: $quote";
             $docstring_and_rest =~ s/\Q$endquote\E.*//s;
             $docstring_and_rest
-        }
-        else {
+        } else {
             undef
         }
-    }
-    else {
+    } else {
         unless ($warned) {
             warn "for docstring support, install B::Deparse" unless $warned;
             $warned = 1;

@@ -44,5 +44,5 @@ fun default__is_indexpath0($path0) {
     $bn eq "index.md" or $bn eq "readme.md"
 }
 
-our $default_config = +{is_indexpath0 => \&default__is_indexpath0,};
+our $default_config = +{ is_indexpath0 => \&default__is_indexpath0, };
 

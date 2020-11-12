@@ -75,8 +75,7 @@ sub xcheck_home {
         $home =~ m|^[a-z]+:|i    # XX correct letter syntax?
             or die
             "environment variable HOME does not start with a drive designator: '$home'";
-    }
-    else {
+    } else {
         $home =~ m|^/|
             or die
             "environment variable HOME does not start with a slash: '$home'";
@@ -108,8 +107,7 @@ sub xsafehome () {
 
         # XX or how to look it up on Windows again? If implemented, update pod.
         xhome()
-    }
-    else {
+    } else {
         my $effectiveuserhome = xeffectiveuserhome;
         if (my $e = $ENV{HOME}) {
             $e eq $effectiveuserhome
@@ -127,8 +125,7 @@ sub xchecked_home ($$) {
     xcheck_home $home;
     if (-d $home) {
         $home
-    }
-    else {
+    } else {
         warn "$what: dir '$home' does not exist, falling back to getpwuid"
             unless $warned++;
         undef
@@ -138,8 +135,7 @@ sub xchecked_home ($$) {
 sub maybe_HOME {
     if (my $home = $ENV{HOME}) {
         xchecked_home $home, '$ENV{HOME}'
-    }
-    else {
+    } else {
         undef
     }
 }
@@ -148,8 +144,7 @@ sub maybe_globhome {
     my ($home) = glob "~";
     if (defined $home) {
         xchecked_home $home, "glob '~'";
-    }
-    else {
+    } else {
         undef
     }
 }

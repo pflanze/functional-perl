@@ -106,8 +106,7 @@ sub trampoline ($) {
                     }
                 : return $v
             );
-        }
-        else {
+        } else {
             return $v
         }
     }

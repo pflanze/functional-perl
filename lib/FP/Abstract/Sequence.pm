@@ -291,8 +291,7 @@ sub make_reduce {
         my ($seq, $fn) = @_;
         if ($seq->is_null()) {
             &$fn()
-        }
-        else {
+        } else {
             my ($first, $rest) = $seq->first_and_rest;
             $rest->$fold($fn, $first)
         }
@@ -335,8 +334,7 @@ sub median {
     my $mid    = int($len / 2);
     if (is_even $len) {
         average($sorted->ref($mid - 1), $sorted->ref($mid));
-    }
-    else {
+    } else {
         $sorted->ref($mid)
     }
 }

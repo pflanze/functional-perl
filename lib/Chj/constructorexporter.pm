@@ -87,8 +87,7 @@ sub constructorexporter {
             if ($v eq "-prefix") {
                 $i++;
                 $prefix = $rest[$i];
-            }
-            else {
+            } else {
                 push @names, $v
             }
         }
@@ -117,7 +116,7 @@ sub constructorexporter {
 
         for my $name (keys %$exports) {
             no strict 'refs';
-            *{$package . "::" . $prefix . $name} = $$exports{$name}
+            *{ $package . "::" . $prefix . $name } = $$exports{$name}
         }
     }
 }

@@ -57,8 +57,7 @@ sub stream_sum {
         if (my $fs = &$s) {
             @_ = ($$fs[0] + $tot, $$fs[1]);
             goto &$lp;
-        }
-        else {
+        } else {
             $tot
         }
     };

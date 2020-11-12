@@ -156,12 +156,10 @@ sub subprefix_to_show_coderef {
                     if (@LINE) {
                         my $line = $LINE[0];
                         "at $filestr line $line"
-                    }
-                    else {
+                    } else {
                         "at $filestr (line unknown)"
                     }
-                }
-                else {
+                } else {
                     "(no location found)"
                 }
             };
@@ -185,8 +183,7 @@ sub subprefix_to_show_coderef {
 
             my $dummystr = "DUMMY: $name $location";
             $subprefix . $prototypestr . "{ " . show($dummystr) . "$docstr }"
-        }
-        else {
+        } else {
             $subprefix . '{ "DUMMY" }'
         }
     }
@@ -241,21 +238,17 @@ sub show ($) {
     if (length ref($v)) {
         if (my $m = UNIVERSAL::can($v, "FP_Show_show")) {
             (&$m($v, *show))[0]
-        }
-        elsif ($m = $$primitive_show{ref $v}) {
+        } elsif ($m = $$primitive_show{ ref $v }) {
             (&$m($v, *show))[0]
-        }
-        elsif ($m = $$primitive_show{reftype $v}) {
+        } elsif ($m = $$primitive_show{ reftype $v}) {
 
             # blessed basic type
             my ($str, $includes_blessing) = &$m($v, *show);
             $includes_blessing ? $str : "bless($str, " . &show(ref($v)) . ")"
-        }
-        else {
+        } else {
             terseDumper($v)
         }
-    }
-    else {
+    } else {
         terseDumper($v)
     }
 }

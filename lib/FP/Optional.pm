@@ -198,8 +198,7 @@ sub perhaps_to_maybe ($) {
     sub {
         if (my ($v) = &$f(@_)) {
             $v
-        }
-        else {
+        } else {
             undef
         }
     }
@@ -210,8 +209,7 @@ sub perhaps_to_x ($$) {
     sub {
         if (my ($v) = &$f(@_)) {
             $v
-        }
-        else {
+        } else {
             die $exception
         }
     }
@@ -224,8 +222,7 @@ sub perhaps_to_or ($) {
         my ($t, $k, $other) = @_;
         if (my ($v) = &$f($t, $k)) {
             $v
-        }
-        else {
+        } else {
             $other
         }
     }
@@ -236,8 +233,7 @@ sub perhaps_to_exists ($) {
     sub {
         if (my ($_v) = &$f(@_)) {
             1
-        }
-        else {
+        } else {
             ''
         }
     }
@@ -253,8 +249,8 @@ sub optionally ($;$) {
     sub {
         if (defined $_[$pos]) {
             goto &$f
-        }
-        else {
+        } else {
+
             # pass on the undef value
             undef
         }
@@ -267,8 +263,8 @@ sub poptionally ($) {
     sub {
         if (@_) {
             goto &$f
-        }
-        else {
+        } else {
+
             # pass on the empty list
             ()
         }

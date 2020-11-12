@@ -81,7 +81,7 @@ fun mediawiki_prepare($str, $token) {
 }
 
 TEST { [mediawiki_prepare 'foo [[bar]] [[baz]].', 'LO'] }
-['foo LO-1- LO-2-.', {'1' => 'bar', '2' => 'baz'}];
+['foo LO-1- LO-2-.', { '1' => 'bar', '2' => 'baz' }];
 
 # possibly should build PXML directly from here instead of string
 # replace, but I'm lazy right now.
@@ -142,8 +142,7 @@ fun mediawiki_expand($str) {
                     # well.. that's lossy!)
                     $f =~ s/_/ /sg;
                     " ($f)";
-                }
-                else {
+                } else {
                     ""
                 }
             };
@@ -165,12 +164,11 @@ fun mediawiki_expand($str) {
                 },
                 $text . $fragmenttext
             );
-        }
-        elsif (@parts == 2) {
+        } elsif (@parts == 2) {
             my ($loc, $text) = @parts;
-            push @$res, A({href => $loc}, $text)
-        }
-        else {
+            push @$res, A({ href => $loc }, $text)
+        } else {
+
             # XX location?...
             die "more than 2 parts in a wiki style link: " . show($cont);
         }
@@ -183,7 +181,7 @@ fun mediawiki_expand($str) {
 }
 
 TEST { mediawiki_expand "<foo>[[bar]] baz</foo>" }
-['<foo>', A({href => "//bar.md"}, "bar"), ' baz</foo>'];
+['<foo>', A({ href => "//bar.md" }, "bar"), ' baz</foo>'];
 
 TEST {
     mediawiki_expand
@@ -202,16 +200,16 @@ TEST {
 ];
 
 TEST { mediawiki_expand ' [[Foo#yah_Hey\\[1\\]]] ' }
-[' ', A({href => '//Foo.md#yah_Hey[1]'}, 'Foo (yah Hey[1])'), ' '];
+[' ', A({ href => '//Foo.md#yah_Hey[1]' }, 'Foo (yah Hey[1])'), ' '];
 
 TEST { mediawiki_expand ' [[Foo#(yah_Hey)\\[1\\]|Some \\[text\\]]] ' }
-[' ', A({href => 'Foo#(yah_Hey)[1]'}, 'Some [text]'), ' ']
+[' ', A({ href => 'Foo#(yah_Hey)[1]' }, 'Some [text]'), ' ']
 ;    # note: no // and .md added to Foo!
 
 TEST { mediawiki_expand 'foo [[bar]]' }
-['foo ', A {href => "//bar.md"}, "bar"];
+['foo ', A { href => "//bar.md" }, "bar"];
 TEST { mediawiki_expand '[[bar]]' }
-[A {href => "//bar.md"}, "bar"];
+[A { href => "//bar.md" }, "bar"];
 TEST { mediawiki_expand ' \[[bar]]' }
 [' \[[bar]]'];
 

@@ -69,8 +69,7 @@ sub git_dir_from_work_tree {
             my $d = "$wd/.git";
             -d $d or die "can't find git_dir from work_tree";
             $d
-        }
-        else {
+        } else {
             undef
         }
     }
@@ -92,7 +91,7 @@ sub command_records {
         if (defined(my $d = $self->chdir)) {
             xchdir $d;
         }
-        my $env = {$self->perhaps_GIT_DIR, $self->perhaps_GIT_WORK_TREE};
+        my $env = { $self->perhaps_GIT_DIR, $self->perhaps_GIT_WORK_TREE };
         for my $var (keys %$env) {
             $ENV{$var} = $$env{$var}
         }
@@ -139,8 +138,7 @@ sub author_date {
     my $self = shift;
     if (my ($d) = $self->perhaps_author_date(@_)) {
         $d
-    }
-    else {
+    } else {
         warn "Note: can't get author date for (file not committed): "
             . singlequote_many(@_) . ".\n";
         ()

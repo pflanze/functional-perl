@@ -162,8 +162,7 @@ BEGIN {
     {
         $has_posix = 1;
         POSIX->import(qw(EINVAL ENOENT));
-    }
-    else {
+    } else {
         $has_posix = 0;
         require Errno;
         Errno->import(qw(EINVAL ENOENT));
@@ -178,7 +177,7 @@ my %filemetadata;
 sub set_path {    # sets name, too
     my $self   = shift;
     my ($path) = @_;
-    my $meta   = $filemetadata{pack "I", $self} || [];
+    my $meta   = $filemetadata{ pack "I", $self } || [];
     $$meta[1] = $path;
     $$meta[2] = $path;
 }
@@ -186,38 +185,38 @@ sub set_path {    # sets name, too
 sub unset_path {    # sets name, too
     my $self   = shift;
     my ($path) = @_;
-    my $meta   = $filemetadata{pack "I", $self} || [];
+    my $meta   = $filemetadata{ pack "I", $self } || [];
     $$meta[1] = undef;    # do not play games like "former '$$meta[1]'"
     $$meta[2] = undef;
 }
 
 sub set_opened {
     my $self = shift;
-    my $meta = $filemetadata{pack "I", $self} || [];
+    my $meta = $filemetadata{ pack "I", $self } || [];
     ($$meta[0]) = @_;
 }
 
 sub opened {
     my $self = shift;
-    my $meta = $filemetadata{pack "I", $self} or return;
+    my $meta = $filemetadata{ pack "I", $self } or return;
     $$meta[0]
 }
 
 sub name {
     my $self = shift;
-    my $meta = $filemetadata{pack "I", $self} or return;
+    my $meta = $filemetadata{ pack "I", $self } or return;
     $$meta[1]
 }
 
 sub path {
     my $self = shift;
-    my $meta = $filemetadata{pack "I", $self} or return;
+    my $meta = $filemetadata{ pack "I", $self } or return;
     $$meta[2]
 }
 
 sub xpath {    # ATTENTION: if path is overridden, xpath must be as well!
     my $self = shift;
-    my $meta = $filemetadata{pack "I", $self}
+    my $meta = $filemetadata{ pack "I", $self }
         or croak "xpath: file object has not yet been opened";
     defined $$meta[2]
         or croak "xpath: file object does not have a path - "
@@ -229,13 +228,13 @@ sub set_opened_name {
 
     # arguments: opened,name; well could give _path too as third argument.
     my $self = shift;
-    $filemetadata{pack "I", $self} = [@_];
+    $filemetadata{ pack "I", $self } = [@_];
 }
 
 sub set_opened_path {
     my $self = shift;
     my ($opened, $path) = @_;
-    $filemetadata{pack "I", $self} = [$opened, $path, $path];
+    $filemetadata{ pack "I", $self } = [$opened, $path, $path];
 }
 
 sub _quote {
@@ -243,8 +242,7 @@ sub _quote {
     if (defined $str) {
         $str =~ s/'/\\'/sg;
         "'$str'"
-    }
-    else {
+    } else {
         $alternative || "undef"
     }
 }
@@ -258,8 +256,7 @@ sub _numquote {
     my ($num) = @_;
     if (defined $num) {
         $num
-    }
-    else {
+    } else {
         "undef"
     }
 }
@@ -282,16 +279,14 @@ sub perhaps_open {
     $! = undef;
     if (@_ == 1) {
         $rv = open $self->fh, $_[0];
-    }
-    elsif (@_ >= 2) {
+    } elsif (@_ >= 2) {
         $rv = open $self->fh, $_[0], @_[1 .. $#_];
-    }
-    else {
+    } else {
         croak "xopen @_: wrong number of arguments";
     }
     $rv // do {
         $Chj::IO::ERRSTR = $!;
-        $Chj::IO::ERRNO  = $! + 0;
+        $Chj::IO::ERRNO  = $! +0;
         return ()
     };
 
@@ -301,8 +296,8 @@ sub perhaps_open {
 
         # separated flags and filepath, cool
         $self->set_opened_path(1, $_[1]);
-    }
-    else {
+    } else {
+
         # one-big-mix pathspec
         $self->set_opened_name(1, $_[0]);
     }
@@ -313,8 +308,7 @@ sub xopen {
     my $proto = shift;
     if (my ($fh) = $proto->perhaps_open(@_)) {
         $fh
-    }
-    else {
+    } else {
         croak "xopen @_: $Chj::IO::ERRSTR";
     }
 }
@@ -324,9 +318,7 @@ sub perhaps_xopen {
     my $proto = shift;
     if (my ($fh) = $proto->perhaps_open(@_)) {
         $fh
-    }
-    elsif ($Chj::IO::ERRNO == ENOENT) { () }
-    else {
+    } elsif ($Chj::IO::ERRNO == ENOENT) { () } else {
         croak "xopen @_: $Chj::IO::ERRSTR";
     }
 }
@@ -338,16 +330,14 @@ sub xsysopen {
     $! = undef;
     if (@_ == 2) {
         $rv = sysopen $self->fh, $_[0], $_[1];
-    }
-    elsif (@_ == 3) {
+    } elsif (@_ == 3) {
         $rv = sysopen $self->fh, $_[0], $_[1], $_[2];
-    }
-    else {
+    } else {
         croak "xsysopen @_: wrong number of arguments";
     }
     $rv // do {
         $Chj::IO::ERRSTR = $!;
-        $Chj::IO::ERRNO  = $! + 0;
+        $Chj::IO::ERRNO  = $! +0;
         croak(    "xsysopen "
                 . _quote($_[0])
                 . ", mode $_[1], perms "
@@ -364,11 +354,9 @@ sub sysopen {
     my $rv;
     if (@_ == 2) {
         $rv = sysopen $self->fh, $_[0], $_[1];
-    }
-    elsif (@_ == 3) {
+    } elsif (@_ == 3) {
         $rv = sysopen $self->fh, $_[0], $_[1], $_[2];
-    }
-    else {
+    } else {
         croak "sysopen @_: wrong number of arguments";
     }
     $rv // return undef;
@@ -381,11 +369,9 @@ sub xbinmode {
     my $self = shift;
     if (@_ == 1) {
         binmode($self->fh, $_[0]) or die "binmode: $!";
-    }
-    elsif (@_ == 0) {
+    } elsif (@_ == 0) {
         binmode($self->fh) or die "binmode: $!";
-    }
-    else {
+    } else {
         die "wrong number of arguments";
     }
 }
@@ -475,11 +461,9 @@ sub xsysreadcompletely {
     my $offset;
     if (@_ == 2) {
         $offset = 0;
-    }
-    elsif (@_ == 3) {
+    } elsif (@_ == 3) {
         $offset = $_[2];
-    }
-    else {
+    } else {
         croak "xsysreadcompletely: wrong number of arguments"
     }
     my $restlen    = $len;
@@ -496,30 +480,25 @@ LP: {
 
                         # nothing was read
                         0
-                    }
-                    else {
+                    } else {
                         croak "xsysreadcompletely: unexpected EOF";
                     }
-                }
-                else {
+                } else {
                     redo LP;
                 }
-            }
-            else {
+            } else {
                 1
 
                     # or $len? but that might actually be 0
             }
-        }
-        else {
-            my $errno = $! + 0;
+        } else {
+            my $errno = $! +0;
             require Errno;
             if ($errno == Errno::EINTR()) {
 
                 #warn "interrupted system call, redo"; # yep happens
                 redo LP;
-            }
-            else {
+            } else {
                 croak "xsysreadcompletely from " . ($self->quotedname) . ": $!";
             }
         }
@@ -569,15 +548,13 @@ LP: {
             if ($restlen > 0) {
                 redo LP;
             }
-        }
-        else {
-            my $errno = $! + 0;
+        } else {
+            my $errno = $! +0;
             require Errno;
             if ($errno == Errno::EINTR()) {
                 warn "interrupted system call, redo";    #
                 redo LP;
-            }
-            else {
+            } else {
                 croak "xsyswritecompletely to " . ($self->quotedname) . ": $!";
             }
         }
@@ -593,8 +570,7 @@ sub xreadline {    # XX: test error case (difficult to do)
             croak "xreadline from " . ($self->quotedname) . ": $!";
         }
         @$lines
-    }
-    else {
+    } else {
         my $bufref = \(scalar CORE::readline($self->fh));    # dito
         if ($!) {
             croak "xreadline from " . ($self->quotedname) . ": $!";
@@ -610,13 +586,11 @@ sub xreadline_chomp {
             chomp;
             $_
             } $s->xreadline
-    }
-    else {
+    } else {
         if (defined(my $ln = $s->xreadline)) {
             chomp $ln;
             $ln
-        }
-        else {
+        } else {
             return
         }
     }
@@ -657,8 +631,7 @@ sub xreadline0_chop {
             chop;
             $_
             } $self->xreadline
-    }
-    else {
+    } else {
         my $str = $self->xreadline;
         chop $str if defined $str;
         $str
@@ -672,7 +645,7 @@ sub xreadline0_chop {
 
     sub xreadline_backwards {
         my $self    = shift;
-        my $meta    = $filemetadata{pack "I", $self} ||= [];
+        my $meta    = $filemetadata{ pack "I", $self } ||= [];
         my $data    = $$meta[3] ||= {};
         my $lines   = $$data{lines} ||= [];
         my $bufferp = \($$data{buffer} ||= "");
@@ -705,8 +678,8 @@ sub xreadline0_chop {
                         die
                             "strange error (bug?, or maybe file changed while reading?), len_to_go = $len_to_go";
                     }
-                }
-                else {
+                } else {
+
 #die "strange error (bug?, or maybe file changed while reading?): expecting len_to_go=$len_to_go but xread returns len $len";
 #return;
                 }
@@ -727,9 +700,8 @@ sub xreadline0_chop {
                 {
                     push @$lines, scalar reverse($1);
                 }
-            }
-            else {    # no need to require a linebreak, begin of string is
-                      # ok, too.
+            } else {    # no need to require a linebreak, begin of string is
+                        # ok, too.
                 while (length($$bufferp)
                     and $$bufferp
                     =~ s/^(\Q$REVERSELINEBREAK\E)(\Q$LINEBREAK\E|\z)/$2/s
@@ -901,8 +873,7 @@ sub xsendfile_to {
                 }
 
                 #/copy
-            }
-            else {
+            } else {
                 croak "xsendfile_to from " . $self->quotedname . ": $!" if $!;
             }
         }
@@ -912,8 +883,7 @@ sub xsendfile_to {
 
         ## should change position so that it's the same with pureperl
         ## and C implementation.
-    }
-    else {
+    } else {
         croak "offset not implemented" if $offset;
 
         # pure perl:
@@ -926,8 +896,7 @@ sub xsendfile_to {
                     do {
                         if (($tot + $sendfile_bufsize) <= $count) {
                             $sendfile_bufsize
-                        }
-                        else {
+                        } else {
                             $count - $tot
                         }
 
@@ -940,8 +909,7 @@ sub xsendfile_to {
 
                 #warn "wrote a piece" if $DEBUG;
             }
-        }
-        else {
+        } else {
             while ($self->xsysread($buf, $sendfile_bufsize)) {
                 $out->xsyswritecompletely($buf);
 
@@ -973,8 +941,7 @@ sub xprintfile_to {
                 do {
                     if (($tot + $sendfile_bufsize) <= $count) {
                         $sendfile_bufsize
-                    }
-                    else {
+                    } else {
                         $count - $tot
                     }
 
@@ -987,8 +954,7 @@ sub xprintfile_to {
 
             #warn "wrote a piece" if $DEBUG;
         }
-    }
-    else {
+    } else {
         while ($self->xread($buf, $sendfile_bufsize)) {
             $out->xprint($buf);
 
@@ -1025,8 +991,7 @@ sub xtell {
     my $res = tell $self->fh;
     if ($res == -1) {
         croak "xtell on " . ($self->quotedname) . ": $!";
-    }
-    else {
+    } else {
         $res
     }
 }
@@ -1037,8 +1002,7 @@ sub tell {
     my $res = tell $self->fh;
     if ($res == -1) {
         undef
-    }
-    else {
+    } else {
         $res
     }
 }
@@ -1138,8 +1102,7 @@ sub autoflush {
         $| = $v;
         select $old;
         $oldv
-    }
-    else {
+    } else {
         defined wantarray
             or croak
             "autoflush: used in void context without arguments (note that this is "
@@ -1215,13 +1178,11 @@ if ($has_posix) {    # untested?
         my $self = shift;
         if (defined(my $fd = CORE::fileno($self->fh))) {
             POSIX::fstat($fd);
-        }
-        else {
+        } else {
             ();      ## or die?
         }
     };
-}
-else {
+} else {
     *stat = sub {
         die(      "this system does not have POSIX so we can't fstat; "
                 . "if you wish you could stat the saved filename instead, "
@@ -1251,11 +1212,9 @@ if ($has_posix) {
         $_base //= do {
             if (-d "/dev/fd") {
                 "/dev/fd"
-            }
-            elsif (-d "/proc/self/fd") {
+            } elsif (-d "/proc/self/fd") {
                 "/proc/self/fd"
-            }
-            else {
+            } else {
                 die "missing /dev/fd or /proc/self/fd"
             }
         }
@@ -1276,7 +1235,7 @@ sub DESTROY {
     if ($self->opened) {
         CORE::close($self->fh) or carp "$self DESTROY: close: $!";
     }
-    delete $filemetadata{pack "I", $self};
+    delete $filemetadata{ pack "I", $self };
 }
 
 1

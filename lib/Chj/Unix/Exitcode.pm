@@ -53,12 +53,10 @@ package Chj::Unix::Exitcode::Exitcode {
         my $code = $$s[Code];
         if ($code < 256) {
             "signal $code (" . Chj::Unix::Signal->new($code)->as_string . ")"
-        }
-        else {
+        } else {
             if (($code & 255) == 0) {
                 "exit value " . ($code >> 8)
-            }
-            else {
+            } else {
                 warn "does this ever happen?";
                 "both exit value and signal ($code)"
             }

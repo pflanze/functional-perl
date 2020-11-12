@@ -340,7 +340,7 @@ sub is_procedure ($) {
     (
         defined $_[0]
             and (ref($_[0]) eq "CODE"
-            or (ref \($_[0]) eq "GLOB" ? *{$_[0]}{CODE} ? 1 : '' : ''))
+            or (ref \($_[0]) eq "GLOB" ? *{ $_[0] }{CODE} ? 1 : '' : ''))
         )
 
         # XX: also check for objects that overload '&'?
@@ -514,8 +514,7 @@ sub either {
                 push @failures, $r
             }
             failwith \@failures, "either"
-        }
-        else {
+        } else {
             for my $fn (@fn) {
                 my $r = &$fn;
                 return $r if $r;

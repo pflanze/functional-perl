@@ -47,21 +47,21 @@ sub CMD_ARGS () {1}
 
 sub pid {
     my $self = shift;
-    my $meta = $metadata{pack "I", $self}
+    my $meta = $metadata{ pack "I", $self }
         || die "missing metadata";    # || []; why?
     $$meta[PID]
 }
 
 sub name {
     my $self = shift;
-    my $meta = $metadata{pack "I", $self} || die "missing metadata";
+    my $meta = $metadata{ pack "I", $self } || die "missing metadata";
     $$meta[CMD_ARGS][0]               # XX ok? what use is it?
 }
 
 sub quotedname {
     my $self = shift;
-    my $meta = $metadata{pack "I", $self} || die "missing metadata";
-    join(" ", map { singlequote_sh $_ } @{$$meta[CMD_ARGS]})
+    my $meta = $metadata{ pack "I", $self } || die "missing metadata";
+    join(" ", map { singlequote_sh $_ } @{ $$meta[CMD_ARGS] })
 }
 
 sub _launch {
@@ -78,7 +78,7 @@ sub _launch {
         xpipe
     };
     if (my $pid = xfork) {
-        $metadata{pack "I", $self} = [$pid, $cmd];
+        $metadata{ pack "I", $self } = [$pid, $cmd];
         &$otherendclose;
         $writeerr->xclose;    #" here it's clear that it's needed."
             # close all handles that have been given for redirections?
@@ -91,8 +91,7 @@ sub _launch {
                     . ": $err");
         }
         return $self
-    }
-    else {
+    } else {
         &$closeinchild;
         if (defined $maybe_env) {
             my @newcmd = ("/usr/bin/env");
@@ -112,8 +111,7 @@ sub _launch {
                 die "coderf did return";
             };
             $writeerr->xprint($@);    # [well serialize it?..tja..]
-        }
-        else {
+        } else {
             no warnings;
             exec @$cmd;
             $writeerr->xprint($!);
@@ -168,14 +166,14 @@ sub finish {
     my $s = shift;
     $s->close;
     my $rv = $s->wait;
-    delete $metadata{pack "I", $s};
+    delete $metadata{ pack "I", $s };
     $rv;
 }
 
 sub finish_nowait {
     my $s = shift;
     $s->close;
-    delete $metadata{pack "I", $s};
+    delete $metadata{ pack "I", $s };
 }
 
 sub xfinish {    # Note: does not throw on error exit codes. Just throws
@@ -183,7 +181,7 @@ sub xfinish {    # Note: does not throw on error exit codes. Just throws
     my $self = shift;
     $self->xclose;
     waitpid $self->pid, 0;
-    delete $metadata{pack "I", $self};
+    delete $metadata{ pack "I", $self };
     $?
 }
 
@@ -192,18 +190,16 @@ sub xxfinish {    # does also throw on error exit codes.
     $self->xclose;
     waitpid $self->pid, 0;
     if ($? == 0) {
-        delete $metadata{pack "I", $self};
-    }
-    else {
+        delete $metadata{ pack "I", $self };
+    } else {
         my $qn = $self->quotedname;
-        delete $metadata{pack "I", $self};    # [XX really? or only in DESTROY?]
+        delete $metadata{ pack "I", $self };  # [XX really? or only in DESTROY?]
         if ($? & 127) {
             croak(    "xxfinish on "
                     . $qn
                     . ": subcommand has been killed with signal "
                     . ($? & 127));
-        }
-        else {
+        } else {
             croak(
                 "xxfinish on " . $qn . ": subcommand gave error " . ($? >> 8));
         }
@@ -213,7 +209,7 @@ sub xxfinish {    # does also throw on error exit codes.
 sub DESTROY {    # no exceptions thrown from here
     my $self = shift;
     local ($@, $!, $?);
-    if (defined $metadata{pack "I", $self}) {
+    if (defined $metadata{ pack "I", $self }) {
         $self->finish;
     }
     $self->NEXT::DESTROY;

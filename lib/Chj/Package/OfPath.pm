@@ -50,8 +50,7 @@ sub package_of_path {
     if ($path =~ m{^/}) {
 
         # absolute
-    }
-    else {
+    } else {
         my $p = abs_path $path or die "abs_path '$path': $!";
         $path = $p;
     }
@@ -81,15 +80,12 @@ sub package_of_path_or_package {
     my ($path_or_package) = @_;
     if ($path_or_package =~ m{(\S+\.pm)}) {
         package_of_path($1)
-    }
-    elsif ($path_or_package =~ m{^(\w+\:\:)*\w+\z}s) {
+    } elsif ($path_or_package =~ m{^(\w+\:\:)*\w+\z}s) {
         $path_or_package
-    }
-    elsif ($path_or_package =~ m{^(\w+/)*\w+\z}s) {
+    } elsif ($path_or_package =~ m{^(\w+/)*\w+\z}s) {
         $path_or_package =~ s|/|::|sg;
         $path_or_package
-    }
-    else {
+    } else {
         die "doesn't look sane: " . singlequote($path_or_package)
     }
 }

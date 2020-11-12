@@ -175,8 +175,7 @@ sub clean_dot {
         $$s{has_endslash} or do {
             if (is_null $rseg) {
                 0
-            }
-            else {
+            } else {
                 $rseg->first eq "."
             }
         }
@@ -197,12 +196,10 @@ sub perhaps_clean_dotdot {
         if ($seg eq "..") {
             if (@s) {
                 pop @s;
-            }
-            else {
+            } else {
                 return ()
             }
-        }
-        else {
+        } else {
             push @s, $seg
         }
     }
@@ -218,8 +215,7 @@ sub xclean_dotdot {
     my $s = shift;
     if (my ($v) = $s->perhaps_clean_dotdot) {
         $v
-    }
-    else {
+    } else {
         die "can't take '..' of root directory"
     }
 }
@@ -252,8 +248,7 @@ sub add {
     my ($b, $is_url) = @_;    # when is_url is true, it cleans dit
     if ($b->is_absolute) {
         $b
-    }
-    else {
+    } else {
         my $c = $a->rsegments_set($b->rsegments->append($a->rsegments))
             ->clean_dot;
         $is_url ? $c->xclean_dotdot : $c
@@ -309,8 +304,7 @@ sub perhaps_resplit_next_segment {
             ),
             $class->new($rest->reverse, $p1->has_endslash, '')
         )
-    }
-    else { () }
+    } else { () }
 }
 
 _END_

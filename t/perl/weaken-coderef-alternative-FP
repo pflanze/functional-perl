@@ -35,8 +35,7 @@ sub naturals {
         lazy {
             if ($n > 0) {
                 cons $n, &$f($n - 1)
-            }
-            else {
+            } else {
                 null
             }
         }
@@ -59,8 +58,7 @@ sub stream_sum {
         FORCE $s;
         if (is_null $s) {
             $tot
-        }
-        else {
+        } else {
             @_ = (car($s) + $tot, cdr $s);
             goto &$lp;
         }

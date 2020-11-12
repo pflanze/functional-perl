@@ -40,7 +40,7 @@ $foo::foo = \%metadata;
 
 sub path {
     my $self = shift;
-    $metadata{pack "I", $self}[1]
+    $metadata{ pack "I", $self }[1]
 }
 
 sub xopendir {
@@ -49,10 +49,9 @@ sub xopendir {
     $! = undef;
     if (opendir $hdl, $_[0]) {
         bless $hdl, $class;
-        $metadata{pack "I", $hdl} = [1, $_[0]];
+        $metadata{ pack "I", $hdl } = [1, $_[0]];
         return $hdl;
-    }
-    else {
+    } else {
         croak "xopendir " . Chj::singlequote::singlequote_many(@_) . ": $!";
     }
 }
@@ -65,10 +64,9 @@ sub opendir {
     $! = undef;
     if (opendir $hdl, $_[0]) {
         bless $hdl, $class;
-        $metadata{pack "I", $hdl} = [1, $_[0]];
+        $metadata{ pack "I", $hdl } = [1, $_[0]];
         return $hdl;
-    }
-    else {
+    } else {
         undef
     }
 }
@@ -78,8 +76,7 @@ sub perhaps_opendir {
     $! = undef;
     if (defined(my $fh = $class->opendir(@_))) {
         $fh
-    }
-    else { () }
+    } else { () }
 }
 
 # (adapted copy of perhaps_xopen of File.pm)
@@ -88,9 +85,7 @@ sub perhaps_xopendir {
     my $proto = shift;
     if (my ($fh) = $proto->perhaps_opendir(@_)) {
         $fh
-    }
-    elsif ($! == ENOENT) { () }
-    else {
+    } elsif ($! == ENOENT) { () } else {
         croak "xopen @_: $!";
     }
 }
@@ -124,8 +119,7 @@ sub xread {
             croak "xread: $!";
         }
         @$res
-    }
-    else {
+    } else {
         my $res = CORE::readdir $self;
         if ($! and $! != EBADF) {
             croak "xread: $!";
@@ -141,8 +135,7 @@ sub nread {    # ignore . and .. entries
     $! = undef;
     if (wantarray) {
         grep { $_ ne '.' and $_ ne '..' } readdir $self
-    }
-    else {
+    } else {
         while (defined(my $item = readdir $self)) {
             return $item unless $item eq '.' or $item eq '..';
         }
@@ -156,8 +149,7 @@ sub xnread {
     if (wantarray) {
         my $res = [grep { $_ ne '.' and $_ ne '..' } readdir $self];
         @$res
-    }
-    else {
+    } else {
         while (defined(my $item = readdir $self)) {
             return $item unless $item eq '.' or $item eq '..';
         }
@@ -199,16 +191,16 @@ sub xclose {
     #(maybe check metadata is_open first? not really useful)
     $! = undef;
     closedir $self or croak "xclose: $!";
-    $metadata{pack "I", $self}[0] = 0
+    $metadata{ pack "I", $self }[0] = 0
 }
 
 sub DESTROY {
     my $self = shift;
     local ($@, $!, $?);
-    if ($metadata{pack "I", $self}[0]) {
+    if ($metadata{ pack "I", $self }[0]) {
         closedir $self or carp "$self DESTROY: $!";
     }
-    delete $metadata{pack "I", $self};
+    delete $metadata{ pack "I", $self };
 }
 
 1;

@@ -42,8 +42,8 @@ sub functional_fact_iter {
     push @functional_inspect, sub { ($x, $res) };
     if ($x < 2) {
         return $res;
-    }
-    else {
+    } else {
+
         # This is a tail call. Instead of doing it unoptimized like:
         #
         #  functional_fact_iter($x - 1,  $x * $res)
@@ -66,8 +66,7 @@ sub odd {
     my ($n) = @_;
     if ($n == 0) {
         0
-    }
-    else {
+    } else {
         even($n - 1)
     }
 }
@@ -76,8 +75,7 @@ sub even {
     my ($n) = @_;
     if ($n == 0) {
         1
-    }
-    else {
+    } else {
         odd($n - 1)
     }
 }
@@ -102,8 +100,7 @@ sub opt_odd {
     my ($n) = @_;
     if ($n == 0) {
         0
-    }
-    else {
+    } else {
         @_ = ($n - 1);
         goto \&opt_even
     }
@@ -113,8 +110,7 @@ sub opt_even {
     my ($n) = @_;
     if ($n == 0) {
         1
-    }
-    else {
+    } else {
         @_ = ($n - 1);
         goto \&opt_odd
     }

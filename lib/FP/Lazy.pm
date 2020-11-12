@@ -261,8 +261,7 @@ LP: {
             if (UNIVERSAL::isa($perhaps_promise, "FP::Lazy::PromiseLight")) {
                 $perhaps_promise = &$perhaps_promise;
                 redo LP;
-            }
-            elsif (UNIVERSAL::isa($perhaps_promise, "FP::Lazy::Promise")) {
+            } elsif (UNIVERSAL::isa($perhaps_promise, "FP::Lazy::Promise")) {
                 if (my $thunk = $$perhaps_promise[0]) {
                     my $v = &$thunk();
                     unless ($nocache) {
@@ -271,17 +270,14 @@ LP: {
                     }
                     $perhaps_promise = $v;
                     redo LP;
-                }
-                else {
+                } else {
                     $perhaps_promise = $$perhaps_promise[1];
                     redo LP;
                 }
-            }
-            else {
+            } else {
                 $perhaps_promise
             }
-        }
-        else {
+        } else {
             $perhaps_promise
         }
     }
@@ -294,16 +290,13 @@ sub force_noeval ($) {
         if (UNIVERSAL::isa($s, "FP::Lazy::Promise")) {
             if ($$s[0]) {
                 $s
-            }
-            else {
+            } else {
                 $$s[1]
             }
-        }
-        else {
+        } else {
             $s
         }
-    }
-    else {
+    } else {
         $s
     }
 }
@@ -321,8 +314,7 @@ sub strshow {
     if (defined $v) {
         require overload;
         overload::StrVal($v)
-    }
-    else {
+    } else {
         "undef"
     }
 }
@@ -390,8 +382,8 @@ package FP::Lazy::AnyPromise {
             # our env, too, but so what? XX still somewhat bad.
             $_[0] = $v;
             goto &$method;
-        }
-        else {
+        } else {
+
             # XX imitate perl's ~exact error message?
             Carp::croak "no method '$methodname' found for object: "
                 . FP::Lazy::strshow($v);
@@ -425,8 +417,7 @@ package FP::Lazy::Promise {
         # do not force unforced promises
         if ($$s[0]) {
             &$lazy_thunk_show($$s[0])
-        }
-        else {
+        } else {
             &$show($$s[1])
         }
     }

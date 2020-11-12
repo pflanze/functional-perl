@@ -57,7 +57,7 @@ package FunctionalPerl::Htmlgen::Linking::Anchors {
     method map_element($e, $uplist) {
         my $text = $e->text;
         $text =~ s/ /_/sg;
-        A({name => $text}, $e)
+        A({ name => $text }, $e)
     }
     _END_
 }
@@ -112,7 +112,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
 
     # XX most of those would simply go to local scripts and functions if
     # these were checked for.
-    $$ignore_module_name{"X" x 3} = 1;    # avoid tripping search for to-do tags
+    $$ignore_module_name{ "X" x 3 } = 1;  # avoid tripping search for to-do tags
 
     fun ignore_module_name($name) {
         $$ignore_module_name{$name}
@@ -133,8 +133,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
                 # to make sure? (add a xtext method that dies when
                 # encountering non-sequence non-string parts?)
                 $e->body_set(&$f($e->text, $uplist, $self->path0))
-            }
-            else {
+            } else {
                 $e
             }
         };
@@ -148,8 +147,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
         {
             # already linked
             &$mapped_e()
-        }
-        else {
+        } else {
             my $t = $e->text;
             if (is_class_name($t)) {
                 my $module_subpath = $t;
@@ -166,7 +164,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
 
                 my $wrap_with_link = sub {
                     my ($url) = @_;
-                    A {href => $url}, $e
+                    A { href => $url }, $e
                 };
 
                 my $maybe_cpan_url
@@ -174,15 +172,12 @@ package FunctionalPerl::Htmlgen::Linking::code {
 
                 if (defined $maybe_cpan_url) {
                     &$wrap_with_link($maybe_cpan_url)
-                }
-                elsif (defined $maybe_path) {
+                } elsif (defined $maybe_path) {
                     &$wrap_with_link(path_diff $self->path0, $maybe_path)
-                }
-                else {
+                } else {
                     &$mapped_e()
                 }
-            }
-            else {
+            } else {
                 &$mapped_e()
             }
         }
@@ -275,8 +270,7 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                             warn "unknown link target '$op' (from '$href')";
                             (path_diff($selfpath0, "UNKNOWN/$op"), $uri, 1)
                         }
-                    }
-                    elsif (length $path) {
+                    } elsif (length $path) {
                         my $p0 = path_add(dirname($selfpath0), $path);
                         $p0 =~ s|^\./||;    #hack. grr y
                         unless ($self->maybe_have_path0->($p0)) {
@@ -287,16 +281,16 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                             #use FP::Repl;repl;
                         }
                         ($path, $uri, $self->pathtranslate->is_md($path))
-                    }
-                    else { ($path, $uri, $self->pathtranslate->is_md($path)) }
+                    } else { ($path, $uri, $self->pathtranslate->is_md($path)) }
                 };
 
                 my $cont_uri = fun($uri) {
                     $e->attribute_set("href", "$uri")
                 };
                 my $cont_path = fun($path) {
-                    $uri->path($self->pathtranslate->possibly_suffix_md_to_html(
-                        $path));
+                    $uri->path(
+                        $self->pathtranslate->possibly_suffix_md_to_html($path)
+                    );
                     &$cont_uri($uri);
                 };
 
@@ -305,8 +299,7 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                     # * change links to non-.md files to go to Github
                     if ($is_md) {
                         &$cont_path($path)
-                    }
-                    else {
+                    } else {
                         if (length(my $p = $uri->path)) {
                             $uri->path(path_add(dirname($self->path0), $p));
 
@@ -319,17 +312,14 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                             # yes, the `path` method is a mutator, `abs` is not!
                         }
                     }
-                }
-                else {
+                } else {
                     $e
                 }
 
-            }
-            else {
+            } else {
                 $e
             }
-        }
-        else {
+        } else {
             $e
         }
     }

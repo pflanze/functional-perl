@@ -67,7 +67,7 @@ sub unsafe_new_from_array {
     my ($a) = @_;
     my %h;
     for my $i (0 .. $#$a) {
-        $h{$$a[$i]} = $i;
+        $h{ $$a[$i] } = $i;
     }
     $cl->new($a, \%h)
 }
@@ -87,13 +87,13 @@ sub new_from_values {
 sub contains {
     my $s = shift;
     @_ == 1 or die "wrong number of arguments";
-    exists $$s{hash}{$_[0]}
+    exists $$s{hash}{ $_[0] }
 }
 
 sub maybe_position {
     my $s = shift;
     @_ == 1 or die "wrong number of arguments";
-    $$s{hash}{$_[0]}
+    $$s{hash}{ $_[0] }
 }
 
 sub perhaps_following {

@@ -109,7 +109,7 @@ sub purearray {
 }
 
 sub array_clone_to_purearray ($) {
-    FP::_::PureArray->new_from_array([@{$_[0]}])
+    FP::_::PureArray->new_from_array([@{ $_[0] }])
 }
 
 sub array_to_purearray ($) {
@@ -125,8 +125,7 @@ package FP::PureArray::autobox {
         my $v = FP::_::PureArray->new_from_array($_[0]);
         if (my $m = UNIVERSAL::can($v, $methodname)) {
             goto $m
-        }
-        else {
+        } else {
             die "no method '$methodname' found for object: $v";
         }
     }

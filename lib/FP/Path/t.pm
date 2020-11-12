@@ -256,7 +256,7 @@ sub tupleify ($) {
     my ($f) = @_;
     sub {
         @_ == 1 or die "wrong number of arguments";
-        [&$f(@{$_[0]})]
+        [&$f(@{ $_[0] })]
     }
 }
 

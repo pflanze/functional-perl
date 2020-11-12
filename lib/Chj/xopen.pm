@@ -153,8 +153,7 @@ sub possibly_fh_to_fh ($) {
     my ($fh) = @_;
     if (length ref $fh and UNIVERSAL::isa($fh, "Chj::IO::File")) {
         $fh
-    }
-    else {
+    } else {
         fh_to_fh $fh
     }
 }
@@ -172,11 +171,9 @@ sub xopen_read($) {
     if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_read: mode $1 not allowed"
             unless $2;    # XXX isn't this wong? Too many parens above?
-    }
-    elsif (@_ == 1 and $_[0] eq '-') {
+    } elsif (@_ == 1 and $_[0] eq '-') {
         @_ = ("<-")
-    }
-    else {
+    } else {
         unshift @_, "<";
     }
     unshift @_, 'Chj::IO::File';
@@ -202,11 +199,9 @@ sub perhaps_open_read ($) {
 sub xopen_write($) {
     if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_write: mode $1 not allowed" unless $3 or $4;
-    }
-    elsif (@_ == 1 and $_[0] eq '-') {
+    } elsif (@_ == 1 and $_[0] eq '-') {
         @_ = (">-")
-    }
-    else {
+    } else {
         unshift @_, ">";
     }
     unshift @_, 'Chj::IO::File';
@@ -216,11 +211,9 @@ sub xopen_write($) {
 sub xopen_append($) {
     if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_append: mode $1 not allowed" unless $3;
-    }
-    elsif (@_ == 1 and $_[0] eq '-') {
+    } elsif (@_ == 1 and $_[0] eq '-') {
         @_ = (" >> -")
-    }
-    else {
+    } else {
         unshift @_, " >> ";
     }
     unshift @_, 'Chj::IO::File';
@@ -230,11 +223,9 @@ sub xopen_append($) {
 sub xopen_update($) {
     if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_update: mode $1 not allowed" unless $5 or $6;
-    }
-    elsif (@_ == 1 and $_[0] eq '-') {
+    } elsif (@_ == 1 and $_[0] eq '-') {
         @_ = ("+<-")
-    }
-    else {
+    } else {
         unshift @_, "+<";
     }
     unshift @_, 'Chj::IO::File';

@@ -170,22 +170,21 @@ fun pxml_name_to_mapper(@PXMLMapper_args) {
                             my $e2 = $m->map_element($e, $uplist);
                             if (pointer_eq $e, $e2) {
                                 &$prev($e, $uplist)
-                            }
-                            else {
+                            } else {
                                 $e2
                             }
                         }
                     }, fun($e, $uplist) {$e}
                 );
                 map { ($_, $fn) } @$elnames
-            }
-            else {
+            } else {
+
                 # instantiate a mapper
                 my $m = $_->new_(@PXMLMapper_args);
 
                 # register it for all the element names it wants to see
                 map { ($_, sub { $m->map_element(@_) }) }
-                    @{$m->match_element_names}
+                    @{ $m->match_element_names }
             }
         } @$pxml_mappers
     )
@@ -227,8 +226,7 @@ fun process_body(
 
             # don't expand it in code segments
             mediawiki_replace($v, $mediawikitoken, $mediawikitable)
-        }
-        else {
+        } else {
             my $body = mediawiki_rexpand($v, $mediawikitoken, $mediawikitable);
             array_map(
                 fun($e)
@@ -246,7 +244,7 @@ fun process_body(
 }
 
 TEST {
-    HTML(process_body(["Hello", WITH_TOC({level => 1}, H1 "world")]))->string
+    HTML(process_body(["Hello", WITH_TOC({ level => 1 }, H1 "world")]))->string
 }
 '<html>Hello<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#world">1. world</a></dir></li></dir></div><a name="world"><h1>1. world</h1></a></html>';
 
@@ -258,8 +256,8 @@ TEST {
 TEST {
     HTML(process_body([
         P("Hello"),
-        WITH_TOC {level => 1},
-        [" ", P("blabla"), A({name => "a"}, " ", DIV H1("for one")),]
+        WITH_TOC { level => 1 },
+        [" ", P("blabla"), A({ name => "a" }, " ", DIV H1("for one")),]
     ]))->string
 }
 '<html><p>Hello</p><div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#for_one">1. for one</a></dir></li></dir></div> <p>blabla</p><a name="a"> <div><a name="for_one"><h1>1. for one</h1></a></div></a></html>';
@@ -267,7 +265,7 @@ TEST {
 TEST {
     HTML(process_body([
         P("Hello"),
-        WITH_TOC {level => 1},
+        WITH_TOC { level => 1 },
         [
             " ", P("blabla"), H1("for one"), H2("more one"),
             TABLE(TR TD P("blah"), H1("sub two"), DIV("bla")),
@@ -315,11 +313,9 @@ package FunctionalPerl::Htmlgen::_::Filesinfo {
         my $p0 = path0 $path;
         if ($p0 =~ m|^bugs/|) {
             "bugs"
-        }
-        elsif ($p0 =~ m|^docs/bugs.*\.md$|) {
+        } elsif ($p0 =~ m|^docs/bugs.*\.md$|) {
             "buglist"
-        }
-        else {
+        } else {
             "normal"
         }
     }
@@ -345,11 +341,11 @@ package FunctionalPerl::Htmlgen::_::Filesinfo {
     }
     method all_path0_exists($path0) {
         defined $$self{all_path0_exists}{$path0}
-            or defined $$self{all_path0_exists}{$path0 . "/"}
+            or defined $$self{all_path0_exists}{ $path0 . "/" }
     }
     method path0_is_directory($path0) {
         $path0 =~ s|/+$||s;
-        defined $$self{all_path0_exists}{$path0 . "/"}
+        defined $$self{all_path0_exists}{ $path0 . "/" }
     }
     method path0_exists($path0) {
         defined $$self{path0_exists}{$path0}
@@ -362,8 +358,8 @@ package FunctionalPerl::Htmlgen::_::Filesinfo {
     method new_genfilestate() {
         my $groupedfiles = array_to_hash_group_by $self->files, \&groupkey;
 
-        my $nonbugfiles = purearray(@{$$groupedfiles{normal}},
-            @{$$groupedfiles{buglist} || []});
+        my $nonbugfiles = purearray(@{ $$groupedfiles{normal} },
+            @{ $$groupedfiles{buglist} || [] });
 
         FunctionalPerl::Htmlgen::_::Genfilestate->new(
             $self,    # just so as to bundle it up, too, ugly?
@@ -382,7 +378,7 @@ fun get_filesinfo() {
 
     my $files = array_filter(cut_method($pathtranslate, "is_md"), $all_files);
 
-    my $filename_to_path0 = +{map { basename($_) => path0($_) } @$files};
+    my $filename_to_path0 = +{ map { basename($_) => path0($_) } @$files };
 
     my $all_path0_exists = +{
         map { path0($_) => 1 } @$all_files,
@@ -392,7 +388,7 @@ fun get_filesinfo() {
         map { dirname($_) . "/" } @$all_files
     };
 
-    my $path0_exists = +{map { path0($_) => 1 } @$files};
+    my $path0_exists = +{ map { path0($_) => 1 } @$files };
 
     FunctionalPerl::Htmlgen::_::Filesinfo->new(
         $files, $filename_to_path0, $all_path0_exists, $path0_exists,
@@ -404,7 +400,7 @@ fun get_filesinfo() {
 
 fun nav_bar($items_in_level, $item_selected, $viewed_at_item) {
     UL(
-        {class => "menu"},
+        { class => "menu" },
         $items_in_level->map_with_islast(
             fun($is_last, $item)
             {
@@ -413,10 +409,10 @@ fun nav_bar($items_in_level, $item_selected, $viewed_at_item) {
                 my $is_open   = equal($item, $item_selected);
 
                 LI(
-                    {class => ($is_last ? "menu_last" : "menu")},
+                    { class => ($is_last ? "menu_last" : "menu") },
                     (
                         $is_viewed
-                        ? SPAN({class => "menu_selected"}, $filetitle)
+                        ? SPAN({ class => "menu_selected" }, $filetitle)
                         : A(
                             {
                                 class => ($is_open ? "menu_open" : "menu"),
@@ -448,7 +444,7 @@ sub nav {
 
 our $HEAD = pxmlpre 3, fun($title, $csspath, $user_additions) {
     HEAD(TITLE($title),
-        LINK({rel => "stylesheet", href => $csspath, type => "text/css"}),
+        LINK({ rel => "stylesheet", href => $csspath, type => "text/css" }),
         $user_additions)
 };
 
@@ -484,8 +480,7 @@ fun genfile($path, $groupname, $genfilestate) {
             if (defined $maybe_nameplus) {
                 my ($name) = $maybe_nameplus =~ qr/($namere)/ or die "bug";
                 $name
-            }
-            else {
+            } else {
                 undef
             }
         };
@@ -544,7 +539,7 @@ fun genfile($path, $groupname, $genfilestate) {
         );
 
         TABLE(
-            {class => "costlist"},
+            { class => "costlist" },
             THEAD(TH("Type"), TH("Title"), TH("Cost range (USD)")),
             map {
                 my ($title, $p0, $costrange) = @$_;
@@ -554,8 +549,8 @@ fun genfile($path, $groupname, $genfilestate) {
                     basename($path0));
                 TR(
                     TD($pathtranslate->path0_to_bugtype($p0)),
-                    TD(A({href => $relurl}, $title)),
-                    TD({align => "center"}, $costrange)
+                    TD(A({ href => $relurl }, $title)),
+                    TD({ align => "center" }, $costrange)
                 )
             } @$bugs
         )
@@ -569,8 +564,7 @@ fun genfile($path, $groupname, $genfilestate) {
             if ($filesinfo->all_path0_exists($path0)) {
                 $filesinfo->all_path0_used_inc($path0);
                 $path0
-            }
-            else {
+            } else {
                 undef
             }
         },
@@ -639,7 +633,7 @@ fun genfile($path, $groupname, $genfilestate) {
                 ? P("\x{21d2} Cost range: \$", $maybe_costrange)
                 : ()
             ),
-            DIV({class => "footer_date"}, $gitrepository->author_date($path)),
+            DIV({ class => "footer_date" }, $gitrepository->author_date($path)),
             $config->{footer}->($path0)
         )
     );
@@ -650,7 +644,7 @@ fun genfile($path, $groupname, $genfilestate) {
 fun genfiles($filesinfo) {
     my $genfilestate = $filesinfo->new_genfilestate;
     for my $groupname (qw(bugs normal buglist)) {
-        for (@{$genfilestate->groupedfiles->{$groupname}}) {
+        for (@{ $genfilestate->groupedfiles->{$groupname} }) {
             genfile $_, $groupname, $genfilestate
         }
     }
@@ -670,7 +664,7 @@ fun copyfiles($filesinfo) {
     }
     if (my ($separate) = hash_perhaps_ref($config, "copy_paths_separate")) {
         for my $root (keys %$separate) {
-            for my $path0 (@{$$separate{$root}}) {
+            for my $path0 (@{ $$separate{$root} }) {
                 xcopyfile "$root/$path0", path0_to_outpath $path0
             }
         }

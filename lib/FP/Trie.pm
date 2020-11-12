@@ -138,8 +138,7 @@ use warnings FATAL => 'uninitialized';
         my ($t, $l) = @_;
         if (my ($t2) = $t->perhaps_skip($l)) {
             $t2->perhaps_value
-        }
-        else { () }
+        } else { () }
     }
     *maybe_ref = perhaps_to_maybe * perhaps_ref;
     *ref_or    = perhaps_to_or * perhaps_ref;
@@ -159,15 +158,14 @@ use warnings FATAL => 'uninitialized';
 
             # found the node, which is perhaps holding a value
             ($t, undef, $maybe_lvl, $maybe_r_lvl)
-        }
-        else {
+        } else {
             my ($a, $l2) = $l->first_and_rest;
             if (my ($t2) = hash_perhaps_ref($$t{sublevels}, $a)) {
 
                 # XX TCO
                 $t2->skip($l2, $maybe_lvl, $maybe_r_lvl)
-            }
-            else {
+            } else {
+
                 # no value for the full key; $t is the last seen
                 # level, $l the remainder of the key
                 ($t, $l, $maybe_lvl, $maybe_r_lvl)
@@ -180,16 +178,14 @@ use warnings FATAL => 'uninitialized';
         my ($t, $l, $fn) = @_;
         if ($l->is_null) {
             FP::Trie::ValueLevel->new($$t{sublevels}, &$fn($t->perhaps_value))
-        }
-        else {
+        } else {
             my ($a, $l2) = $l->first_and_rest;
             $t->sublevels_update(sub {
                 hash_update $_[0], $a, sub {
                     do {
                         if (my ($t2) = @_) {
                             $t2
-                        }
-                        else {
+                        } else {
                             $FP::Trie::empty_trie
                         }
                         }
@@ -204,28 +200,26 @@ use warnings FATAL => 'uninitialized';
         my ($t, $l) = @_;
         if ($l->is_null) {
             if (UNIVERSAL::isa($t, "FP::Trie::ValueLevel")) {
-                if (keys %{$$t{sublevels}}) {
+                if (keys %{ $$t{sublevels} }) {
                     FP::Trie::BareLevel->new($$t{sublevels})
-                }
-                else {
+                } else {
+
                     # equivalent but detectable to be empty from outer
                     # layers
                     $FP::Trie::empty_trie
                 }
-            }
-            else {
+            } else {
                 die $key_not_found_exception
             }
-        }
-        else {
+        } else {
             my ($a, $l2) = $l->first_and_rest;
             $t->sublevels_update(sub {
                 hash_update $_[0], $a, sub {
                     if (my ($t2) = @_) {
                         my $t3 = $t2->xdelete($l2);
                         $t3 eq $FP::Trie::empty_trie ? () : $t3
-                    }
-                    else {
+                    } else {
+
                         #()
                         # When does this happen? When the key goes
                         # past the existing tree.
@@ -250,14 +244,12 @@ use warnings FATAL => 'uninitialized';
         })
         {
             $res
-        }
-        else {
+        } else {
             my $e = $@;
             if (ref $e and UNIVERSAL::isa($e, "FP::Trie::KeyNotFoundException"))
             {
                 $t
-            }
-            else {
+            } else {
                 die $e
             }
         }
@@ -283,22 +275,21 @@ use warnings FATAL => 'uninitialized';
 
             # XXX Why the hell does this not work, while the non-OO
             # variant does?
-            stream(keys %{$$t{sublevels}})->fold_right(
+            stream(keys %{ $$t{sublevels} })->fold_right(
                 sub {
                     my ($k, $rest) = @_;
                     $$t{sublevels}{$k}->alist(cons($k, $rprefix), $rest)
                 },
                 $maybe_tail // null
             );
-        }
-        else {
+        } else {
             stream_fold_right(
                 sub {
                     my ($k, $rest) = @_;
                     $$t{sublevels}{$k}->alist(cons($k, $rprefix), $rest)
                 },
                 $maybe_tail // null,
-                stream keys %{$$t{sublevels}}
+                stream keys %{ $$t{sublevels} }
             );
         }
     }

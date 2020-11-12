@@ -94,7 +94,7 @@ use Text::CSV;
 use FP::HashSet 'hashset_union';
 use Chj::xopen 'xopen_read';
 
-our $defaults = +{binary => 1, sep_char => "\t", eol => "\r\n",};
+our $defaults = +{ binary => 1, sep_char => "\t", eol => "\r\n", };
 
 sub params ($) {
     my ($maybe_params) = @_;
@@ -130,14 +130,13 @@ sub csv_fh_to_rows ($;$) {
 
                 # XX error checks?
                 cons $row, &$next;
-            }
-            else {
+            } else {
                 $in->xclose;
                 null
             }
         }
     };
-    &{Weakened $next}
+    &{ Weakened $next}
 }
 
 sub csv_file_to_rows ($;$) {

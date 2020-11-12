@@ -128,7 +128,7 @@ TEST {
 TEST {
     (purearray ["a", 1], ["b", 2], ["a", 4])->hash_group_by(*array_first)
 }
-{'a' => [['a', 1], ['a', 4]], 'b' => [['b', 2]]};
+{ 'a' => [['a', 1], ['a', 4]], 'b' => [['b', 2]] };
 
 TEST { purearray(3)->xone } 3;
 TEST_EXCEPTION { purearray(3, 4)->xone } 'expecting 1 element, got 2';

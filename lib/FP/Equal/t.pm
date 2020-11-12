@@ -45,8 +45,7 @@ sub tequals {
                 return $x
             }
         }
-    }
-    else {
+    } else {
         if (defined $y) { [$x, $y] }
         else {
             undef
@@ -74,16 +73,16 @@ TEST { equal [], [] } 1;
 TEST { my $v = []; equal $v, $v } 1;
 TEST { equal [], {} } undef;
 TEST { equal {}, {} } 1;
-TEST { equal {}, {a => 1} } '';
-TEST { equal {a => 2}, {a => 1} } '';
-TEST { equal {a => 1}, {b => 1} } '';
-TEST { equal {a => 1}, {a => 1} } 1;
-TEST { equal {a => 1, b => 2}, {a => 1} } '';
-TEST { equal {a => 1, b => 2}, {a => 1, b => 2} } 1;
-TEST { equal {a => 1, b => 2}, {a => 1, B => 2} } '';
-TEST { equal {a => 1, b => 2}, {a => 1, b => 3} } '';
-TEST { equal {a => [1, 3]}, {a => [1, 2 + 1]} } 1;
-TEST { equal {a => [1, 3]}, {a => [1, 2]} } '';
+TEST { equal {}, { a => 1 } } '';
+TEST { equal { a => 2 }, { a => 1 } } '';
+TEST { equal { a => 1 }, { b => 1 } } '';
+TEST { equal { a => 1 }, { a => 1 } } 1;
+TEST { equal { a => 1, b => 2 }, { a => 1 } } '';
+TEST { equal { a => 1, b => 2 }, { a => 1, b => 2 } } 1;
+TEST { equal { a => 1, b => 2 }, { a => 1, B => 2 } } '';
+TEST { equal { a => 1, b => 2 }, { a => 1, b => 3 } } '';
+TEST { equal { a => [1, 3] }, { a => [1, 2 + 1] } } 1;
+TEST { equal { a => [1, 3] }, { a => [1, 2] } } '';
 
 TEST { equal "a", "b" } '';
 TEST { equal "a", "a" } 1;
@@ -98,7 +97,7 @@ TEST { tequals "2.0", 2.0 } '';
 # version exactly changed it (if it's a precise version at all) try to
 # determine the right way automatically:
 sub positive_inf {
-    my $inf = "inf" + 0;
+    my $inf = "inf" +0;
     $inf =~ /^\+?inf$/i or warn "positive_inf: got '$inf'";
     $inf
 }

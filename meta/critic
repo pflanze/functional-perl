@@ -76,7 +76,7 @@ use FP::Repl;
     package PFLANZE::OK;
     use FP::Struct ["critiques"], "PFLANZE::Result";
     method has_critique {
-        @{$self->critiques} > 0
+        @{ $self->critiques } > 0
     }
     method string {
         my $p = $self->prefix;
@@ -101,8 +101,7 @@ our $critiques = array_to_stream(modulepathlist)->map(*critique);
 
 if ($opt_repl) {
     repl;
-}
-else {
+} else {
     $critiques->filter(the_method "has_critique")->for_each(
         fun($c)
         {

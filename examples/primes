@@ -120,11 +120,9 @@ func merge($xs, $ys) {
 
         if ($x < $y) {
             cons($x, merge($xt, $ys))
-        }
-        elsif ($x == $y) {
+        } elsif ($x == $y) {
             cons($x, merge($xt, $yt))
-        }
-        else {
+        } else {
             cons($y, merge($xs, $yt))
         }
     }
@@ -137,11 +135,9 @@ func diff($xs, $ys) {
 
         if ($x < $y) {
             cons($x, diff($xt, $ys))
-        }
-        elsif ($x == $y) {
+        } elsif ($x == $y) {
             diff($xt, $yt)
-        }
-        else {
+        } else {
             diff($xs, $yt)
         }
     }

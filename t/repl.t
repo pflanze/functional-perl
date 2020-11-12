@@ -81,8 +81,7 @@ sub t {
             xlaunch "tkdiff", @p;
         }
         goto \&is;
-    }
-    else {
+    } else {
         $outr->xclose;
         $inw->xclose;
 

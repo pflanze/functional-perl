@@ -65,7 +65,7 @@ fun htmlmap($e) {
     for ($e->all_external_attr_names) {
         next if $_ eq "/";
         die "att name '$_'" unless /^\w+\z/s;
-        $$atts{lc $_} = $e->attr($_);
+        $$atts{ lc $_ } = $e->attr($_);
     }
 
     # XX unsafe, if we don't check that a corresponding constructor
@@ -80,12 +80,12 @@ fun htmlmap($e) {
                     # another HTML::Element
                     no warnings "recursion";  # XX should rather sanitize input?
                     htmlmap($_)
-                }
-                else {
+                } else {
+
                     # a string
                     $_
                 }
-            } @{$e->content || []}
+            } @{ $e->content || [] }
         ]
     );
 }

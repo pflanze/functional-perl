@@ -47,8 +47,7 @@ sub blessing ($) {
         my $class = ref $_[0];
         if (my ($v) = &$m(@_)) {
             $class->new_from_array($v)
-        }
-        else { () }
+        } else { () }
     }
 }
 
@@ -79,7 +78,7 @@ use Chj::NamespaceCleanAbove;
 
 sub FP_Show_show {
     my ($s, $show) = @_;
-    $s->constructor_name . "(" . join(", ", @{array_map($show, $s)}) . ")"
+    $s->constructor_name . "(" . join(", ", @{ array_map($show, $s) }) . ")"
 }
 
 *FP_Equal_equal = *array_equal;
@@ -129,7 +128,7 @@ sub string {
 
 sub is_null {
     @_ == 1 or die "wrong number of arguments";
-    not @{$_[0]}
+    not @{ $_[0] }
 }
 
 # Do *not* provide `is_pair`, though, since this is not a pair based
@@ -137,7 +136,7 @@ sub is_null {
 # should be named `is_empty`?
 
 sub values {
-    @{$_[0]}
+    @{ $_[0] }
 }
 
 *cons          = flip \&FP::List::pair;    # XX ?  Also, XXX FP::List might not

@@ -102,12 +102,10 @@ fun find_below($path, $pred) {
             if ($s->is_dir) {
                 if (&$pred($path)) {
                     cons(find_maildirs::Success->new($path), $rest)
-                }
-                else {
+                } else {
                     &$fold_dirpath($path, $rest)
                 }
-            }
-            else {
+            } else {
                 $rest
             }
         },
@@ -115,8 +113,7 @@ fun find_below($path, $pred) {
         fun($fold_path, $fold_dirpath, $path, $rest) {
             if (my ($s) = perhaps_directory_paths($path)) {
                 stream_fold_right($fold_path, $rest, $s)
-            }
-            else {
+            } else {
                 cons(find_maildirs::Failure->new($path, "$!"), $rest)
             }
         }

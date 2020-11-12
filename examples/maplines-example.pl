@@ -16,8 +16,7 @@ my $m = +{
         my ($addr) = @_;
         if (exists $$m{$addr}) {
             $$m{$addr}
-        }
-        else {
+        } else {
             die "unknown address: '$addr'";
         }
     },

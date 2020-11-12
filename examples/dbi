@@ -47,7 +47,7 @@ TEST {
     my $s = $get->hash_stream;
     [Keep($s)->length, $s->second]
 }
-[2, {a => 4, b => 3.3, c => "foo", d => "bar"}];
+[2, { a => 4, b => 3.3, c => "foo", d => "bar" }];
 
 # interlock tests:
 

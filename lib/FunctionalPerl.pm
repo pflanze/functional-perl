@@ -214,8 +214,7 @@ sub check_off {
         if ($tag_or_module =~ /^:/) {
             $$seen_tags{$tag_or_module}++;
             check_off($tag_or_module, $seen_tags, $seen_modules);
-        }
-        else {
+        } else {
             $$seen_modules{$tag_or_module}++;
         }
     }
@@ -226,7 +225,7 @@ sub expand_import_tags {
     # Arguments: tag names and other things. Returns (which tag names
     # are unused, used modules, the other things).
     my @tags         = grep {/^:/} @_;
-    my $seen_tags    = +{map { $_ => 1 } @tags};
+    my $seen_tags    = +{ map { $_ => 1 } @tags };
     my $seen_modules = +{};
     for my $tag (@tags) {
         check_off $tag, $seen_tags, $seen_modules;
@@ -236,7 +235,7 @@ sub expand_import_tags {
         $seen_modules,
         [
             sort keys
-                %{FP::HashSet::hashset_difference($export_desc, $seen_tags)}
+                %{ FP::HashSet::hashset_difference($export_desc, $seen_tags) }
         ],
         [grep { not /^:/ } @_]
     )
@@ -260,8 +259,7 @@ sub export_desc2pod {
                 map {
                     if (/^:/) {
                         "C<$_>"
-                    }
-                    else {
+                    } else {
                         my ($module, $maybe_tags) = split_moduledesc $_;
                         "L<$module>"
                     }
@@ -297,8 +295,7 @@ sub import {
         })
         {
             $module->import::into($caller, @tags)
-        }
-        else {
+        } else {
             my $e    = $@;
             my $estr = "$e";
             $estr =~ s/\n.*//s unless $ENV{FUNCTIONALPERL_VERBOSE};

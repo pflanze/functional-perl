@@ -78,8 +78,7 @@ sub WithRepl_eval (&;$) {
         @_ == 1 or die "wrong number of arguments";
         my ($arg) = @_;
         eval { &$arg() }
-    }
-    else {
+    } else {
         eval do {
             @_ == 1 or @_ == 2 or die "wrong number of arguments";
             my ($arg, $maybe_package) = @_;
@@ -94,8 +93,7 @@ sub WithRepl_eval_e ($;$$) {
     # my ($arg, $maybe_package, $wantarray) = @_;
     if (ref $_[0]) {
         die "WithRepl_eval_e only supports string eval";
-    }
-    else {
+    } else {
         my $success = eval do {
             (@_ >= 1 and @_ <= 3) or die "wrong number of arguments";
             my ($arg, $maybe_package, $wantarray) = @_;
@@ -189,26 +187,22 @@ SKIP: {
         if ($f->equal($startframe)) {
             warn "reached startframe, thus return false" if $debug;
             return ''
-        }
-        elsif ($f->subroutine eq "(eval)") {
+        } elsif ($f->subroutine eq "(eval)") {
             if ((@v) = caller $i++) {
                 my $f   = FP::Repl::StackFrame->new(undef, @v);
                 my $sub = $f->subroutine;
                 if ($sub =~ /::WithRepl_eval(?:_e)?\z/) {
                     warn "(ignore eval since it's from a WithRepl_eval)"
                         if $debug;
-                }
-                elsif ($sub =~ /::BEGIN\z/) {
+                } elsif ($sub =~ /::BEGIN\z/) {
 
                     # (why does BEGIN use eval?)
                     warn "(ignore eval since it's from a BEGIN)" if $debug;
-                }
-                else {
+                } else {
                     warn "GOT eval (standalone)" if $debug;
                     return 1
                 }
-            }
-            else {
+            } else {
                 warn "GOT eval right at end of stack" if $debug;
                 return 1
             }
@@ -241,13 +235,12 @@ sub handler_for ($$) {
                 # ^ just doesn't work, seems to undo the looping
                 #   protection. so..:  -- XX test goto &$orig_handler
                 &$orig_handler($e)
-            }
-            else {
+            } else {
+
                 #warn "no orig_handler, returning";
                 return
             }
-        }
-        else {
+        } else {
             my $err = $FP::Repl::Repl::maybe_output // *STDERR{IO};
             print $err "Exception: " . show($e) . "\n";
 
@@ -268,7 +261,7 @@ sub handler ($) {
 
 sub withrepl (&) {
     local $SIG{__DIE__} = handler(0);
-    &{$_[0]}()
+    &{ $_[0] }()
 }
 
 TEST {

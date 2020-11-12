@@ -41,7 +41,7 @@ TEST_STDOUT { pxml_print_fragment_fast ["abc"], *STDOUT }
 'abc';
 
 TEST_STDOUT {
-    pxml_print_fragment_fast P({foo => ["a", ["b", pxmlflush, "c"], "d"]},
+    pxml_print_fragment_fast P({ foo => ["a", ["b", pxmlflush, "c"], "d"] },
         "abc"), *STDOUT{IO}
 }
 '<p foo="abcd">abc</p>';

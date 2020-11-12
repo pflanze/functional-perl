@@ -143,7 +143,7 @@ TEST {
 }
 bless(
     {
-        'env'     => {'$hello' => \'Hello', '$a' => \'the', '$b' => \'world',},
+        'env' => { '$hello' => \'Hello', '$a' => \'the', '$b' => \'world', },
         'code_id' => 0
     },
     'Chj::Serializable::Closure'
@@ -154,7 +154,7 @@ TEST {
 }
 bless(
     {
-        'env'     => {'$hello' => \'Hello', '$a' => \'fool', '$b' => \'!',},
+        'env'     => { '$hello' => \'Hello', '$a' => \'fool', '$b' => \'!', },
         'code_id' => 0
     },
     'Chj::Serializable::Closure'

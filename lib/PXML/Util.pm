@@ -76,12 +76,10 @@ sub pxml_deferred_map ($$;$$) {
 
             # XX TCO?
             &$elementfn($v, $uplist, &$make_inferior_map($uplist2))
-        }
-        else {
+        } else {
             stream_map(&$make_inferior_map($uplist), stream_mixed_flatten($v))
         }
-    }
-    else {
+    } else {
         $maybe_otherfn ? &$maybe_otherfn($v, $uplist) : $v
     }
 }
@@ -186,8 +184,7 @@ sub pxml_map_elements ($$;$) {
             my ($e, $uplist) = @_;
             if (my ($mapper) = hash_perhaps_ref $name_to_mapper, $e->name) {
                 &$mapper($e, $uplist)
-            }
-            else {
+            } else {
                 $e
             }
         },
@@ -216,16 +213,13 @@ sub pxml_map_elements_exhaustively ($$;$) {
                         $e = $v;
                         if ($e->name eq $name) {
                             $e
-                        }
-                        else {
+                        } else {
                             redo LP
                         }
-                    }
-                    else {
+                    } else {
                         $v
                     }
-                }
-                else {
+                } else {
                     $e
                 }
             }
@@ -237,7 +231,7 @@ sub pxml_map_elements_exhaustively ($$;$) {
 sub t_exh {
     my ($map) = @_;
     &$map(
-        P(A({href => "fun"}, "hey"), B(CODE("boo")), B("fi")),
+        P(A({ href => "fun" }, "hey"), B(CODE("boo")), B("fi")),
         {    # a mapper does not go into an endless loop:
             a =>
                 sub { my ($e, $uplist) = @_; $e->attribute_set(href => "foo") },
@@ -250,9 +244,8 @@ sub t_exh {
             b => sub {
                 my ($e, $uplist) = @_;
                 if (is_pxml_element stream_mixed_flatten($e->body)->first) {
-                    A({name => "x"}, $e->body)
-                }
-                else {
+                    A({ name => "x" }, $e->body)
+                } else {
                     $e->body
                 }
             }

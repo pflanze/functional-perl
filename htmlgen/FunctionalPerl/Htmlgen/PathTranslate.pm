@@ -74,13 +74,11 @@ method is_md($path) {
 method if_suffix_md_to_html($path0, $for_title, $then, $otherwise) {
     if (!$for_title and $$self{is_indexpath0}->($path0)) {
         tail &$then(path_path0_append(dirname($path0), "index.xhtml"))
-    }
-    else {
+    } else {
         if ($path0 =~ s/(.*?)([^\/]*)\.md$/$1$2.xhtml/) {
             tail &$then($$self{downcaps}
                     && is_allcaps($2) ? $1 . lc($2) . ".xhtml" : $path0);
-        }
-        else {
+        } else {
             tail &$otherwise($path0)
         }
     }
@@ -116,8 +114,7 @@ method path0_to_title($path0) {
     if ($dn ne "." and $$self{is_indexpath0}->($path0)) {
         _path0_to_title_mod basename($self->xsuffix_md_to_html($dn . ".md", 1),
             ".xhtml");
-    }
-    else {
+    } else {
         _path0_to_title_mod basename($self->xsuffix_md_to_html($path0, 1),
             ".xhtml");
     }

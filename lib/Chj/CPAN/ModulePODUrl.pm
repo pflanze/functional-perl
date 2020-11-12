@@ -61,11 +61,10 @@ sub if_get ($&&&) {
     do {
         if ($response->is_success) {
             $success
-        }
-        elsif ($response->code == 404) {
+        } elsif ($response->code == 404) {
             $res404
-        }
-        else {
+        } else {
+
             # XX todo: handle redirects transparently?
             $error
         }

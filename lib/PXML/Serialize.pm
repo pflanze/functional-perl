@@ -118,12 +118,10 @@ sub pxmlforce ($) {
     if (my $r = ref $v) {
         if ($r eq "CODE") {
             pxmlforce(&$r())
-        }
-        else {
+        } else {
             force $v
         }
-    }
-    else {
+    } else {
         $v
     }
 }
@@ -136,8 +134,7 @@ sub object_force_escape ($$$$) {
 
         # no escaping
         &$m($v, $fh)
-    }
-    elsif (
+    } elsif (
         $m =
 
         # XX should this instead simply stringify using
@@ -151,8 +148,7 @@ sub object_force_escape ($$$$) {
         )
     {
         &$escape(&$m($v))
-    }
-    else {
+    } else {
         die "unexpected type of reference that doesn't have a 'string' method: "
             . (show $v);
     }
@@ -220,7 +216,7 @@ LP: {
                                 ( # XX remove undef check here now, too? OK?--nope, necessary
                                     not defined $$body[0]
                                     or (is_somearray($$body[0])
-                                        and not @{$$body[0]})
+                                        and not @{ $$body[0] })
                                     or is_empty_string($$body[0])
                                 )
                             )
@@ -233,8 +229,7 @@ LP: {
                     if ($$void_element_h{$n}) {
                         if ($looksempty) {
                             $selfreferential = 1;
-                        }
-                        else {
+                        } else {
                             my $isempty =    # slow path
                                 is_null(stream_mixed_flatten($body));
                             $selfreferential = $isempty;
@@ -242,26 +237,22 @@ LP: {
                                 . "but got void element '$n' that is not empty"
                                 if not $isempty;
                         }
-                    }
-                    else {
+                    } else {
                         $selfreferential = 0;
                     }
-                }
-                else {
+                } else {
                     $selfreferential = $looksempty;
                 }
                 if ($selfreferential) {
                     print $fh "/>" or die $!;
-                }
-                else {
+                } else {
                     print $fh ">" or die $!;
                     no warnings "recursion";    # hu.
                     _pxml_print_fragment_fast($body, $fh, $html5compat,
                         $void_element_h);
                     print $fh "</$n>" or die $!;
                 }
-            }
-            elsif (my $car_and_cdr = UNIVERSAL::can($v, "car_and_cdr")) {
+            } elsif (my $car_and_cdr = UNIVERSAL::can($v, "car_and_cdr")) {
             PAIR:
 
                 #my $a;
@@ -271,8 +262,7 @@ LP: {
 
                 #_pxml_print_fragment_fast (cdr $v, $fh);
                 redo LP;
-            }
-            elsif (my $for_each = UNIVERSAL::can($v, "for_each")) {
+            } elsif (my $for_each = UNIVERSAL::can($v, "for_each")) {
 
                 # catches null, too. Well.
                 &$for_each(
@@ -283,16 +273,14 @@ LP: {
                             $void_element_h);
                     }
                 );
-            }
-            elsif (UNIVERSAL::isa($ref, "FP::Lazy::Promise")) {
+            } elsif (UNIVERSAL::isa($ref, "FP::Lazy::Promise")) {
             PROMISE:
 
                 #_pxml_print_fragment_fast (force($v), $fh,
                 #                           $html5compat, $void_element_h);
                 $v = force($v, 1);    # XXX why nocache?
                 redo LP;
-            }
-            else {
+            } else {
                 if (is_somearray($v)) {
                     no warnings "recursion";    # hu.
                     for (@$v) {
@@ -311,17 +299,15 @@ LP: {
                 elsif ($ref eq "CODE") {
                     $v = &$v();
                     redo LP;
-                }
-                elsif (is_null $v) {
+                } elsif (is_null $v) {
 
                     # end of linked list, nothing
                     # XX obsolete now, since UNIVERSAL::can ($v,
                     # "for_each") above will catch it already.
-                }
-                elsif (is_pxmlflush $v) {
+                } elsif (is_pxmlflush $v) {
                     flush $fh or die $!
-                }
-                else {
+                } else {
+
                     # slow fallback...  again, see above **NOTE** re
                     # evil.
                     $ref or die "BUG";    # we're in the if ref scope, right?
@@ -334,8 +320,7 @@ LP: {
                         or die $!;
                 }
             }
-        }
-        elsif (not defined $v) {
+        } elsif (not defined $v) {
 
             # (previously end of linked list marker) nothing; XX
             # should this give exception (to point out any issue with
@@ -344,8 +329,8 @@ LP: {
             # backtrace anyway at this point.
             #warn "warning: ignoring undef in PXML datastructure";
             # XXX what to do about this?
-        }
-        else {
+        } else {
+
             #print $fh content_escape($v) or die $!;
             $v =~ s/([&<>])/$content_escape{$1}/sg;
             print $fh $v or die $!;
@@ -375,19 +360,16 @@ sub pxml_print_fragment_fast ($ $ ) {
         if (UNIVERSAL::isa($v, "PXML::XHTML")) {
             @_ = ($v);
             goto &$with_first_element;
-        }
-        else {
+        } else {
             my $s = force(stream_mixed_flatten($v)->filter(*is_pxml_element));
             if (is_null $s) {
                 goto &$no_element
-            }
-            else {
+            } else {
                 @_ = (car $s);
                 goto &$with_first_element;
             }
         }
-    }
-    else {
+    } else {
         goto &$no_element
     }
 }

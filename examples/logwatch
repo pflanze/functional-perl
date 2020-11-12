@@ -9,8 +9,8 @@
 BEGIN {
     if (!${^TAINT}) {
         exec $^X, '-T', '--', $0, @ARGV or die "exec '$^X': $!";
-    }
-    else {
+    } else {
+
         # trust PERL5LIB:
         if (my $lib = $ENV{PERL5LIB}) {
             my @paths = $lib =~ m{([^:]+)(?::|\z)}sg;
@@ -102,8 +102,7 @@ sub forked (&) {
     my ($thunk) = @_;
     if (my $pid = xfork) {
         $pid
-    }
-    else {
+    } else {
         &$thunk();
         exit 0;
     }
@@ -191,8 +190,7 @@ fun processlines_($lines, $out, $maybe_reporterpid) {
         $$config{report}->($out->path);
         xxwaitpid $maybe_reporterpid;
         tail processlines_($rest, xtmpfile_noautoclean, undef)
-    }
-    else {
+    } else {
         if ($$config{match}->($line)) {
             my $t_report = time + $$config{collecttime};
             $out->xprint($line);
@@ -206,8 +204,7 @@ fun processlines_($lines, $out, $maybe_reporterpid) {
                     warn "sent $REPORTMSG" if $verbose;
                 }
             );
-        }
-        else {
+        } else {
             tail processlines_($rest, $out, $maybe_reporterpid)
         }
     }

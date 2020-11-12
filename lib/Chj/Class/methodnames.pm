@@ -77,17 +77,16 @@ sub methods_of_class {
     }
     no strict 'refs';
     my $class_array_namehash = do {
-        if (defined *{$class . "::_CLASS_ARRAY_COUNTER"}{SCALAR}) {
+        if (defined *{ $class . "::_CLASS_ARRAY_COUNTER" }{SCALAR}) {
             +{
                 map { $_ => 1 } (
-                    @{$class . "::_CLASS_ARRAY_PUBLIC_FIELDS"},
-                    @{$class . "::_CLASS_ARRAY_PUBLICA_FIELDS"},
-                    @{$class . "::_CLASS_ARRAY_PROTECTED_FIELDS"},
-                    @{$class . "::_CLASS_ARRAY_PRIVATE_FIELDS"}
+                    @{ $class . "::_CLASS_ARRAY_PUBLIC_FIELDS" },
+                    @{ $class . "::_CLASS_ARRAY_PUBLICA_FIELDS" },
+                    @{ $class . "::_CLASS_ARRAY_PROTECTED_FIELDS" },
+                    @{ $class . "::_CLASS_ARRAY_PRIVATE_FIELDS" }
                 )
             }
-        }
-        else {
+        } else {
             undef
         }
     };
@@ -100,7 +99,7 @@ sub methods_of_class {
             (*Carp::cluck{CODE}          || ())
         )
     };
-    if (my $hash = *{$class . "::"}{HASH}) {
+    if (my $hash = *{ $class . "::" }{HASH}) {
         my $code;    # (ugly?)
         (
             (
@@ -112,7 +111,7 @@ sub methods_of_class {
                         $class_array_namehash
                             and exists $class_array_namehash->{$_}
                         }
-                        and $code = *{$class . "::" . $_}{CODE} and not do {
+                        and $code = *{ $class . "::" . $_ }{CODE} and not do {
 
                         # exclude carp/croak, Dumper etc.
                         $ignore_codes->{$code}
@@ -120,14 +119,12 @@ sub methods_of_class {
                 ) } keys %$hash
             ),
             do {
-                if (my $isa = *{$class . "::ISA"}{ARRAY}) {
+                if (my $isa = *{ $class . "::ISA" }{ARRAY}) {
                     map { methods_of_class($_, $ignore_codes) } @$isa
-                }
-                else { () }
+                } else { () }
             }
         )
-    }
-    else {
+    } else {
         ()    # or exception?
     }
 }

@@ -90,8 +90,7 @@ sub maybeIO_to_stream {
         lazy {
             if (defined(my $v = &$maybeIO())) {
                 cons($v, &$next)
-            }
-            else {
+            } else {
                 if (defined $maybe_close) {
                     &$maybe_close()
                 }
@@ -99,7 +98,7 @@ sub maybeIO_to_stream {
             }
         }
     };
-    &{Weakened $next}
+    &{ Weakened $next}
 }
 
 sub _perhaps_opendir_stream ($) {
@@ -111,16 +110,14 @@ sub _perhaps_opendir_stream ($) {
             lazy {
                 if (defined(my $item = $d->xnread)) {
                     cons $item, &$next
-                }
-                else {
+                } else {
                     $d->xclose;
                     null
                 }
             }
         };
-        &{Weakened $next}
-    }
-    else { () }
+        &{ Weakened $next}
+    } else { () }
 }
 
 sub _perhaps_opendir_stream_sorted ($$) {
@@ -129,16 +126,14 @@ sub _perhaps_opendir_stream_sorted ($$) {
         my $items = array_sort [$d->xnread], $cmp;
         $d->xclose;
         array_to_purearray $items
-    }
-    else { () }
+    } else { () }
 }
 
 sub perhaps_directory_items ($;$) {
     my ($path, $maybe_cmp) = @_;
     if ($maybe_cmp) {
         _perhaps_opendir_stream_sorted $path, $maybe_cmp;
-    }
-    else {
+    } else {
         _perhaps_opendir_stream $path;
     }
 }
@@ -151,16 +146,14 @@ sub perhaps_directory_paths ($;$) {
             my ($item) = @_;
             "$base$item"
         })
-    }
-    else { () }
+    } else { () }
 }
 
 sub xdirectory_items ($;$) {
     my ($path, $maybe_cmp) = @_;
     if (my ($s) = perhaps_directory_items($path, $maybe_cmp)) {
         $s
-    }
-    else {
+    } else {
         croak "xdirectory_items(" . singlequote_many(@_) . "): $!";
     }
 }
@@ -169,8 +162,7 @@ sub xdirectory_paths ($;$) {
     my ($path, $maybe_cmp) = @_;
     if (my ($s) = perhaps_directory_paths($path, $maybe_cmp)) {
         $s
-    }
-    else {
+    } else {
         croak "xdirectory_paths(" . singlequote_many(@_) . "): $!";
     }
 }
@@ -183,14 +175,13 @@ sub fh_to_stream ($$$) {
         lazy {
             if (defined(my $item = &$read($fh))) {
                 cons $item, &$next
-            }
-            else {
+            } else {
                 &$close($fh);
                 null
             }
         }
     };
-    &{Weakened $next}
+    &{ Weakened $next}
 }
 
 # And (all?, no, can't proxy 'xopen' for both in and out) some of the

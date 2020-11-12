@@ -31,8 +31,7 @@ sub stream_sum_LEAK {
     if (my $fs = &$s) {
         @_ = ($$fs[1], $$fs[0] + $tot);
         goto \&stream_sum_LEAK;
-    }
-    else {
+    } else {
         $tot
     }
 }
@@ -48,8 +47,7 @@ stream_sum_OK: {
         if (my $fs = &$s) {
             @_ = ($$fs[1], $$fs[0] + $tot);
             goto stream_sum_OK;
-        }
-        else {
+        } else {
             $tot
         }
     }
@@ -76,8 +74,7 @@ sub _stream_sum_TRAMPOLINE {
     my ($s, $tot) = @_;
     if (my $fs = &$s) {
         T { _stream_sum_TRAMPOLINE($$fs[1], $$fs[0] + $tot) }
-    }
-    else {
+    } else {
         $tot
     }
 }

@@ -92,8 +92,8 @@ sub run_tests_style {    # "old" or "tap"
 
             #$rt =~ /(new|tap)/i ? "tap" :
             "tap"
-    ) }
-    else {
+    ) } else {
+
         # Use from the repl can't run "tap" style as that one will
         # fail on re-runs
         "old"
@@ -125,9 +125,7 @@ sub import {
             my ($module, @args) = do {
                 if (ref($val) eq "ARRAY") {
                     @$val
-                }
-                elsif (length $val) { ($val) }
-                else {
+                } elsif (length $val) { ($val) } else {
                     croak
                         "value given as 'require' parameter must be a string or array";
                 }
@@ -141,25 +139,21 @@ sub import {
             if (eval $code) {
 
                 # ok
-            }
-            else {
+            } else {
                 if (my $rt = $ENV{RUN_TESTS}) {
                     if ($rt =~ /pod_snippets/i) {
                         die "TEST use<$module> failed: $smallcode";
-                    }
-                    else {
+                    } else {
                         require Test::More;
                         Test::More::plan(skip_all => "could not $smallcode");
-                        exit 1;    # necessary?
+                        exit 1;               # necessary?
                     }
-                }
-                else {
+                } else {
                     die $@
                 }
             }
             $i++;
-        }
-        else {
+        } else {
             push @args, $v
         }
     }
@@ -184,11 +178,10 @@ sub _TEST {
     my ($proc, $res) = @_;
     if (no_tests) {
         $dropped_tests++;
-    }
-    else {
+    } else {
         my ($package, $filename, $line) = caller(1);
         $$num_by_package{$package}++;
-        push @{$$tests_by_package{$package}},
+        push @{ $$tests_by_package{$package} },
             [
             $proc, $res,
             $$num_by_package{$package}, ($package, $filename, $line)
@@ -215,8 +208,7 @@ sub TEST_EXCEPTION (&$) {
             })
             {
                 undef
-            }
-            else {
+            } else {
                 my $msg = "$@";
                 $msg =~ s| at .*? line \d*.*||s;
                 $msg
@@ -249,8 +241,7 @@ package Chj::TEST::Test::Builder {
         my ($self, $height) = @_;
         if ($fake_caller) {
             wantarray ? @$fake_caller : $$fake_caller[0]
-        }
-        else {
+        } else {
             my $m = $self->can("SUPER::caller") or die "bug";
             goto $m
         }
@@ -305,8 +296,7 @@ sub eval_test ($$) {
             },
         };
         $$stat{success}++
-    }
-    else {
+    } else {
         my $gotstr = show $got;
         my $resstr = show $res;
 
@@ -342,8 +332,7 @@ sub eval_test ($$) {
 
                 if (defined $maybe_e) {
                     diag("Exception: $$maybe_e[0]");
-                }
-                else {
+                } else {
                     diag("       got: $gotstr\n" . "  expected: $resstr\n");
                 }
             },
@@ -376,13 +365,11 @@ sub run_tests_for_package {
                         and (my $test = $$tests[$number - 1]))
                     {
                         eval_test $test, $stat
-                    }
-                    else {
+                    } else {
                         warn "ignoring invalid test number '$number'";
                     }
                 }
-            }
-            else {
+            } else {
                 my $action = sub {
                     for my $test (@$tests) {
                         eval_test $test, $stat
@@ -400,8 +387,7 @@ sub run_tests_for_package {
                     }
                 };
             }
-        }
-        else {
+        } else {
             style_switch + {
                 old => sub {
                     print "=== no tests for package '$package'\n";
@@ -432,8 +418,7 @@ sub unify_values {
     for (@_) {
         if (ref $_) {
             push @$maybe_values, @$_
-        }
-        elsif (defined $_) {
+        } elsif (defined $_) {
             push @$maybe_values, $_
         }
     }
@@ -475,13 +460,12 @@ sub run_tests_ {
         },
     };
 
-    my $stat = bless {success => 0, fail => 0}, "Chj::TEST::Result";
+    my $stat = bless { success => 0, fail => 0 }, "Chj::TEST::Result";
 
     my $packages = do {
         if (defined $maybe_packages and @$maybe_packages) {
             $maybe_packages;
-        }
-        else { [sort keys %$tests_by_package] }
+        } else { [sort keys %$tests_by_package] }
     };
     my $action = sub {
         run_tests_for_package $_, $stat, $maybe_testnumbers for @$packages;
@@ -547,8 +531,7 @@ sub perhaps_run_tests {
         };
 
         1    # so that one can write  `perhaps_run_tests or something_else;`
-    }
-    else { () }
+    } else { () }
 }
 
 1

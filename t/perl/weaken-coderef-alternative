@@ -15,9 +15,8 @@ sub foo {
         my ($f, $n) = @_;
         sub {
             if ($n > 0) {
-                $n + &{&$f($f, $n - 1)}
-            }
-            else {
+                $n + &{ &$f($f, $n - 1) }
+            } else {
                 0
             }
         }
@@ -25,7 +24,7 @@ sub foo {
     &$f($f, @_);
 }
 
-my $res = &{foo 2};
+my $res = &{ foo 2 };
 
 print $res, "\n";
 

@@ -30,7 +30,7 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
 +{
     map_code_body => fun($str, $uplist, $path0)
     {
-        my ($version, $maybe_numrevisions) = @{force $version_numrevisions};
+        my ($version, $maybe_numrevisions) = @{ force $version_numrevisions};
         my $version_underscores = $version;
         $version_underscores =~ tr/./_/;
         my $commits
@@ -50,7 +50,7 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
     copy_paths_separate =>
 
         # source_root => path0s
-        +{"." => ["FP-logo.png", $css_path0,]},
+        +{ "." => ["FP-logo.png", $css_path0,] },
     path0_handlers => +{},
     title          => fun($filetitle)
     { (
@@ -96,7 +96,7 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
         # path0 is the source (.md) file.
 
         DIV(
-            {class => "editandhist"},
+            { class => "editandhist" },
             A(
                 {
                     href =>
@@ -119,16 +119,16 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
         my $yearstart = 2014;
         my $years     = $year == $yearstart ? $year : "$yearstart-$year";
         DIV(
-            {class => "footer_legalese"},
+            { class => "footer_legalese" },
 
             # our part
-            "© $years ", A({href => "mailto:$email"}, "Christian Jaeger"),
+            "© $years ", A({ href => "mailto:$email" }, "Christian Jaeger"),
 
             ". ",
 
             # camel logo
             "The Perl camel image is a trademark of ",
-            A({href => "http://www.oreilly.com"}, "O'Reilly Media, Inc."),
+            A({ href => "http://www.oreilly.com" }, "O'Reilly Media, Inc."),
             " Used with permission."
         )
     },

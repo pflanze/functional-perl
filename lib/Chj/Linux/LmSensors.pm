@@ -160,8 +160,7 @@ sub parse_value {
 
     if ($rest1 =~ m{^N/A\s*\z}sx) {
         ValueNA($name)
-    }
-    else {
+    } else {
         my ($value, $unit, $rest)
             = $rest1 =~ m{^([+-]?\d+(?:\.\d*)?)\s*([°A-Za-z]\w*)\s*(.*)\z}sx
 
@@ -199,7 +198,7 @@ sub parse_measurement {
 use Chj::IO::Command;
 
 sub sensors_get_string {
-    my $p = Chj::IO::Command->new_sender({LANG => "C"}, "sensors", "-A");
+    my $p = Chj::IO::Command->new_sender({ LANG => "C" }, "sensors", "-A");
     $p->set_encoding("utf-8");
     my $str = $p->xcontent;
     $p->xxfinish;

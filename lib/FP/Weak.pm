@@ -134,7 +134,7 @@ sub noWeakened ($) {
     $_[0]
 }
 
-sub with_noweaken (&) { local $weaken = \&noweaken; &{$_[0]}() }
+sub with_noweaken (&) { local $weaken = \&noweaken; &{ $_[0] }() }
 
 use Carp;
 
@@ -148,7 +148,7 @@ sub warnWeakened ($) {
     Weakened($_[0]);
 }
 
-sub with_warnweaken (&) { local $weaken = \&warnweaken; &{$_[0]}() }
+sub with_warnweaken (&) { local $weaken = \&warnweaken; &{ $_[0] }() }
 
 use Carp 'cluck';
 
@@ -162,7 +162,7 @@ sub cluckWeakened ($) {
     Weakened($_[0]);
 }
 
-sub with_cluckweaken (&) { local $weaken = \&cluckweaken; &{$_[0]}() }
+sub with_cluckweaken (&) { local $weaken = \&cluckweaken; &{ $_[0] }() }
 
 sub do_weaken ($) {
     my ($v) = @_;

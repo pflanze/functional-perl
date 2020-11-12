@@ -44,7 +44,7 @@ sub package_keys {
         map {
             if (my $c = *{"${package}::$_"}{CODE}) { [$_, $c] }
             else                                   { () }
-        } keys %{$package . "::"}
+        } keys %{ $package . "::" }
     ]
 }
 
@@ -65,7 +65,7 @@ sub package_delete {
 
             #warn "deleting ${package}::$key ($val)";
             my @v = map { *{"${package}::$key"}{$_} } @slotnames;
-            delete ${$package . "::"}{$key};
+            delete ${ $package . "::" }{$key};
             for (@v) {
                 *{"${package}::$key"} = $_ if defined $_
             }

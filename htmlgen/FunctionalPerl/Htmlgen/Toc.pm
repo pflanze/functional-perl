@@ -82,8 +82,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
         my $ss = $self->subnodes;
         if (is_null $ss) {
             die "skipped level"    ## nicer message and all?
-        }
-        else {
+        } else {
             $self->subnodes_set(cons(&$fn($ss->first), $ss->rest))
         }
     }
@@ -97,8 +96,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
                     $subnode->level_add($levelsdown - 1, $node)
                 }
             )
-        }
-        else {
+        } else {
             $self->subnodes_add($node)
         }
     }
@@ -107,8 +105,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
     method ref($indices) {
         if (is_null $indices) {
             $self
-        }
-        else {
+        } else {
             my ($i, $indices1) = $indices->first_and_rest;
             my $subnodes = $self->subnodes;
             $subnodes->ref($subnodes->length - $i)->ref($indices1)
@@ -135,10 +132,10 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
             $self->header_pxml_for_toc
         ];
         DIR(
-            {class => "toc"},
+            { class => "toc" },
             (
                 defined $maybe_name
-                ? A({href => "#" . $maybe_name}, $shown)
+                ? A({ href => "#" . $maybe_name }, $shown)
                 : $shown
             ),
             $self->subnodes->array__reverse__map_with_length(
@@ -184,14 +181,14 @@ package FunctionalPerl::Htmlgen::Toc::TocRootNode {
     method name() {undef}
 
     method html() {
-        DIV({class => "toc_box"}, $self->html_with_parents(null))
+        DIV({ class => "toc_box" }, $self->html_with_parents(null))
     }
 
     _END__
 }
 
 our $empty_toc = FunctionalPerl::Htmlgen::Toc::TocRootNode->new(strictnull,
-    H3({class => "toc_title"}, "Contents"));
+    H3({ class => "toc_title" }, "Contents"));
 
 sub tocnode ($$) {
     my ($name, $header) = @_;
@@ -262,8 +259,8 @@ fun process__with_toc__body($body, $first_level, $toc, $parents) {
                         ),
                         $toc2
                     )
-                }
-                else {
+                } else {
+
                     # map $v's body
                     my ($body2, $toc2)
                         = process__with_toc__body($v->body, $first_level, $toc,
@@ -273,8 +270,7 @@ fun process__with_toc__body($body, $first_level, $toc, $parents) {
 
                     (cons($v->body_set($body2), $tail), $toc3)
                 }
-            }
-            else {
+            } else {
                 my ($tail, $toc2) = &$rest($toc);
                 (cons($v, $tail), $toc2)
             }
@@ -300,7 +296,8 @@ TEST {
 TEST {
     HTML(
         (
-            process__with_toc__body ["foo", A({name => "a"}, H1("hed")), "bar"],
+            process__with_toc__body ["foo", A({ name => "a" }, H1("hed")),
+                "bar"],
             1, $empty_toc, null
         )[0]
         )->string
@@ -310,7 +307,7 @@ TEST {
 TEST {
     HTML(
         (
-            process__with_toc__body ["foo", A({name => "a"}, H1("hed")),
+            process__with_toc__body ["foo", A({ name => "a" }, H1("hed")),
                 P("bar")],
             1, $empty_toc, null
         )[0]
@@ -324,8 +321,8 @@ TEST {
             process__with_toc__body [
                 cons "foo",
                 [
-                    A({name => "a"}, H1("hed")),
-                    A({name => "b"}, H2("hud")),
+                    A({ name => "a" }, H1("hed")),
+                    A({ name => "b" }, H2("hud")),
                     ["", P("bar")]
                 ]
             ],
@@ -341,7 +338,7 @@ TEST {
     HTML(
         (
             process__with_toc__body [" ", P("blabla"),
-                A({name => "a"}, H1("for one"))],
+                A({ name => "a" }, H1("for one"))],
             1, $empty_toc, null
         )[0]
         )->string

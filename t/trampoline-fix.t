@@ -29,8 +29,8 @@ if (eval { require Sub::Call::Tail; 1 }) {
     $ENV{RUN_TESTS} = 1;
     xexec_safe $^X, "intro/more_tailcalls";
 
-}
-else {
+} else {
+
     # hack to run it without Sub::Call::Tail, e.g. on bleadperl where
     # this can't be installed currently.
     xxsystem_safe($^X, "bin/expand-tail", "intro/more_tailcalls",

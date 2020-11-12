@@ -39,8 +39,7 @@ TRY: {
         my $path = "$base-${$}${perhapsrnd}";
         if (mkdir $path, 0700) {
             return $path
-        }
-        else {
+        } else {
             $tries++;
             $perhapsrnd = "-" . substr(rand, 2, 7);
             redo TRY if ($tries < 10);

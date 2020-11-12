@@ -279,8 +279,7 @@ BEGIN {
     if ($^O eq 'linux') {
         eval 'sub EEXIST() {17} sub ENOENT() {2}';
         die if $@;
-    }
-    else {
+    } else {
         eval 'use POSIX "EEXIST","ENOENT"';
         die if $@;
     }
@@ -298,8 +297,8 @@ sub xfork_(&) {
     my $pid = xfork;
     if ($pid) {
         $pid
-    }
-    else {
+    } else {
+
         # kinda run in a new dynamic context, please... (evil,
         # e.g. $SIG{__WARN__} is still set; do all of this?)
         eval {
@@ -322,7 +321,7 @@ sub xexec {
 
 sub xexec_safe {
     no warnings;
-    exec {$_[0]} @_;
+    exec { $_[0] } @_;
     croak "xexec_safe " . singlequote_many(@_) . ": $!";
 }
 
@@ -339,8 +338,7 @@ sub xspawn {
         }
         close READ;
         return $pid;
-    }
-    else {
+    } else {
         no warnings;
         close READ;
         exec @_;
@@ -356,8 +354,8 @@ sub xlaunch
     my $pid = xfork;
     if ($pid) {
         waitpid $pid, 0;    # !
-    }
-    else {
+    } else {
+
         # evtl. set session zeugs.
         xspawn @_;
         exit;               # !
@@ -382,7 +380,7 @@ sub xxsystem {
 sub xsystem_safe {
     @_ > 0 or croak "xsystem_safe: missing arguments";
     no warnings;
-    (system {$_[0]} @_) >= 0
+    (system { $_[0] } @_) >= 0
         or croak "xsystem_safe: could not start command '$_[0]': $!";
     $?
 }
@@ -390,7 +388,7 @@ sub xsystem_safe {
 sub xxsystem_safe {
     @_ > 0 or croak "xxsystem_safe: missing arguments";
     no warnings;
-    (system {$_[0]} @_) >= 0
+    (system { $_[0] } @_) >= 0
         or croak "xxsystem_safe: could not start command '$_[0]': $!";
     $? == 0 or croak "xxsystem_safe: process terminated with " . exitcode($?);
 }
@@ -453,8 +451,7 @@ sub xlinkunlink {
             croak "xlinkunlink("
                 . join(", ", @_)
                 . "): can't unlink source: $err, so removed target again";
-        }
-        else {
+        } else {
             croak "xlinkunlink("
                 . join(", ", @_)
                 . "): can't unlink source: $err, "
@@ -486,23 +483,20 @@ sub xxcarefulrename {
                 # (non-owned source file in sticky source dir (we're
                 # not even talking about the case where both source
                 # and target are in sticky dirs..)).
-            }
-            else {
+            } else {
                 croak "xxcarefulrename("
                     . join(", ", @_)
                     . "): can't unlink source: $err, additionally an error "
                     . "occured while trying to unlink the target again: $!";
             }
         };
-    }
-    else {
+    } else {
         if (lstat $dest) {
 
             # (yes, link too already fails if target exists as a
             # dangling symlink)
             croak "xxcarefulrename: target '$dest' already exists";
-        }
-        else {
+        } else {
             rename $source, $dest
                 or croak "xxcarefulrename(" . join(", ", @_) . "): $!";
         }
@@ -535,11 +529,9 @@ TRY: {
 sub xmkdir {
     if (@_ == 1) {
         mkdir $_[0] or croak "xmkdir($_[0]): $!";
-    }
-    elsif (@_ == 2) {
+    } elsif (@_ == 2) {
         mkdir $_[0], $_[1] or croak "xmkdir(" . join(", ", @_) . "): $!";
-    }
-    else {
+    } else {
         croak "xmkdir: wrong number of arguments";
     }
 }
@@ -547,8 +539,7 @@ sub xmkdir {
 sub xrmdir {
     if (@_ == 1) {
         rmdir $_[0] or croak "xrmdir($_[0]): $!";
-    }
-    else {
+    } else {
         croak "xrmdir: wrong number of arguments";
     }
 }
@@ -575,17 +566,14 @@ sub stat_possiblyhires {
         if (@_) {
             @_ == 1 or die "wrong number of arguments";
             Time::HiRes::stat($_[0])
-        }
-        else {
+        } else {
             Time::HiRes::stat($_)
         }
-    }
-    else {
+    } else {
         if (@_) {
             @_ == 1 or die "wrong number of arguments";
             stat($_[0])
-        }
-        else {
+        } else {
             stat($_)
         }
     }
@@ -597,17 +585,14 @@ sub lstat_possiblyhires {
         if (@_) {
             @_ == 1 or die "wrong number of arguments";
             Chj::Linux::HiRes::lstat($_[0])
-        }
-        else {
+        } else {
             Chj::Linux::HiRes::lstat($_)
         }
-    }
-    else {
+    } else {
         if (@_) {
             @_ == 1 or die "wrong number of arguments";
             lstat($_[0])
-        }
-        else {
+        } else {
             lstat($_)
         }
     }
@@ -620,8 +605,7 @@ sub xstat {
     @r or croak(@_ ? "xstat: '@_': $!" : "xstat: '$_': $!");
     if (wantarray) {
         @r
-    }
-    elsif (defined wantarray) {
+    } elsif (defined wantarray) {
         my $self = \@r;
         bless $self, 'Chj::xperlfunc::xstat'
     }
@@ -634,8 +618,7 @@ sub xlstat {
     @r or croak(@_ ? "xlstat: '@_': $!" : "xlstat: '$_': $!");
     if (wantarray) {
         @r
-    }
-    elsif (defined wantarray) {
+    } elsif (defined wantarray) {
         my $self = \@r;
         bless $self, 'Chj::xperlfunc::xstat'
     }
@@ -650,19 +633,16 @@ sub Xstat {
     @r or do {
         if ($! == ENOENT) {
             return;
-        }
-        else {
+        } else {
             croak(@_ ? "Xstat: '@_': $!" : "Xstat: '$_': $!");
         }
     };
     if (wantarray) {
         cluck "Xstat call in array context doesn't make sense";
         @r
-    }
-    elsif (defined wantarray) {
+    } elsif (defined wantarray) {
         bless \@r, 'Chj::xperlfunc::xstat'
-    }
-    else {
+    } else {
         cluck "Xstat call in void context doesn't make sense";
     }
 }
@@ -675,19 +655,16 @@ sub Xlstat {
     @r or do {
         if ($accept_errors or $! == ENOENT) {
             return;
-        }
-        else {
+        } else {
             croak("Xlstat: '$path': $!");
         }
     };
     if (wantarray) {
         cluck "Xlstat call in array context doesn't make sense";
         @r
-    }
-    elsif (defined wantarray) {
+    } elsif (defined wantarray) {
         bless \@r, 'Chj::xperlfunc::xstat'
-    }
-    else {
+    } else {
         cluck "Xlstat call in void context doesn't make sense";
     }
 }
@@ -707,8 +684,7 @@ sub mk_caching_getANYid {
                 $cache{$id} = $v;
             }
             wantarray ? @$v : $$v[$scalarindex]
-        }
-        else {
+        } else {
             croak "$methodname: got undefined value";
         }
     }
@@ -749,8 +725,7 @@ sub fstype_for_device_init() {
         {
             # Ignore and count on the second entry from /proc/mounts
             # for the same mount.
-        }
-        else {
+        } else {
             if (defined(my $s = Xlstat($mountpoint, 1))) {
                 my $dev = $s->dev;
                 if (defined $t{$dev}) {
@@ -758,7 +733,7 @@ sub fstype_for_device_init() {
                         or die
                         "entry for '$dev' was previously set to '$t{$dev}', now '$fstype'";
                 }
-                $t{$s->dev} = $fstype;
+                $t{ $s->dev } = $fstype;
             }
         }
 
@@ -855,8 +830,7 @@ sub fstype_for_device($) {
                 ? die
                 "bug: dir on device node $dev has < 2 links, need to ignore this file system"
                 : $n == 2;
-        }
-        else {
+        } else {
             undef
         }
     }
@@ -873,11 +847,10 @@ sub fstype_for_device($) {
             #    XXX how should it behave in other cases?
         if ($s->[4] == $uid) {
             return !!($s->[2] & (00100 * $mod))
-        }
-        else {
+        } else {
             if ($gids) {
                 for my $gid (@$gids) {
-                    length($gid) == length($gid + 0)
+                    length($gid) == length($gid +0)
                         or Carp::croak "invalid gid argument '$gid' - maybe "
                         . " you forgot to split '\$)'?";
 
@@ -885,16 +858,15 @@ sub fstype_for_device($) {
                     if ($s->[5] == $gid) {
                         if ($s->[2] & (00010 * $mod)) {
                             return 1;
-                        }
-                        else {
+                        } else {
+
                             # even if others are allowed, we are not
                             return 0;
                         }
                     }
                 }
                 return !!($s->[2] & (00001 * $mod))
-            }
-            else {
+            } else {
                 Carp::croak "missing gids argument - might just be a ref to "
                     . "an empty array";
             }
@@ -1073,11 +1045,9 @@ sub XLmtimed ($) {
                 if (my $s = Xstat $path)
                 { [$path, max($ls->mtime, $s->mtime), $ls, $s] }
                 else { [$path, $ls->mtime, $ls, undef] }
-            }
-            else { [$path, $ls->mtime, $ls, undef] }
+            } else { [$path, $ls->mtime, $ls, undef] }
             }, "Chj::xperlfunc::mtimed"
-    }
-    else {
+    } else {
         undef
     }
 }
@@ -1097,8 +1067,7 @@ sub XLmtime ($) {
     my ($path) = @_;
     if (defined(my $s = XLmtimed($path))) {
         $s->mtime
-    }
-    else {
+    } else {
         undef
     }
 }
@@ -1259,22 +1228,18 @@ sub xeval( $ ) {    # meant for string eval only, of course.
             my @res = eval $_[0];
             if (ref $@ or $@) {
                 die $@
-            }
-            else {
+            } else {
                 @res
             }
-        }
-        else {
+        } else {
             my $res = eval $_[0];
             if (ref $@ or $@) {
                 die $@
-            }
-            else {
+            } else {
                 $res
             }
         }
-    }
-    else {
+    } else {
         eval $_[0];
         if (ref $@ or $@) {
             die $@
@@ -1287,8 +1252,8 @@ sub xfileno {
     # takes fh or integer
     my ($arg) = @_;
     my $fd = fileno $arg;
-    return $fd      if defined $fd;
-    return $arg + 0 if $arg =~ /^\s*\d+\s*\z/;
+    return $fd     if defined $fd;
+    return $arg +0 if $arg =~ /^\s*\d+\s*\z/;
     croak "xfileno: '$arg' is not a filehandle nor a file descriptor number";
 }
 
@@ -1296,8 +1261,7 @@ sub xsysread ( $ $ $ ; $ ) {
     my $rv = do {
         if (@_ == 4) {
             sysread $_[0], $_[1], $_[2], $_[3]
-        }
-        else {
+        } else {
             sysread $_[0], $_[1], $_[2]
         }
     };
@@ -1325,12 +1289,10 @@ sub basename ($;$$) {
                 #   before!
                 if (length $path) {
                     $path
-                }
-                else {
+                } else {
                     "/"    # or die? no.
                 }
-            }
-            else {
+            } else {
                 croak "basename("
                     . show_many(@_) . "): "
                     . "cannot get basename from empty string";
@@ -1348,8 +1310,7 @@ sub basename ($;$$) {
                 }
                 croak "basename(" . show_many(@_) . "): " . "no suffix matches";
             }
-        }
-        else {
+        } else {
             (     $insensitive
                 ? $res =~ s/\Q$maybe_suffixS\E\z//i
                 : $res =~ s/\Q$maybe_suffixS\E\z//)
@@ -1374,23 +1335,19 @@ sub dirname ($ ) {
     if ($path =~ s|/+[^/]+/*\z||) {
         if (length $path) {
             $path
-        }
-        else {
+        } else {
             "/"
         }
-    }
-    else {
+    } else {
+
         # deviates from the shell in that dirname of . and / are errors. good?
         if ($path =~ m|^/+\z|) {
             die "can't go out of file system"
-        }
-        elsif ($path eq ".") {
+        } elsif ($path eq ".") {
             die "can't go above cur dir in a relative path";
-        }
-        elsif ($path eq "") {
+        } elsif ($path eq "") {
             die "can't take dirname of empty string";
-        }
-        else {
+        } else {
             "."
         }
     }
@@ -1406,19 +1363,16 @@ sub xmkdir_p ($ ) {
 
         #done
         ()
-    }
-    else {
+    } else {
         if (mkdir $path) {
 
             #done
             ()
-        }
-        else {
+        } else {
             if ($! == ENOENT) {
                 xmkdir_p(dirname $path);
                 mkdir $path or die "could not mkdir('$path'): $!";
-            }
-            else {
+            } else {
                 die "could not mkdir('$path'): $!";
             }
         }
@@ -1449,8 +1403,7 @@ sub xlink_p ($ $ ) {
         my $s      = bless [getpwnam($user)], $class;
         if (@$s) {
             wantarray ? @$s : $s
-        }
-        else {
+        } else {
             return
         }
     }
@@ -1463,8 +1416,7 @@ sub xgetpwnam ( $ ) {
         my @f = Chj::xperlfunc::Getpwnam->perhaps_get($user);
         @f or croak "xgetpwnam: '$user' not in passwd file";
         @f
-    }
-    else {
+    } else {
         Chj::xperlfunc::Getpwnam->perhaps_get($user)
             or croak "xgetpwnam: '$user' not in passwd file";
     }
@@ -1481,8 +1433,7 @@ sub xgetpwnam ( $ ) {
         my $s      = bless [getgrnam($user)], $class;
         if (@$s) {
             wantarray ? @$s : $s
-        }
-        else {
+        } else {
             return
         }
     }
@@ -1495,8 +1446,7 @@ sub xgetgrnam ( $ ) {
         my @f = Chj::xperlfunc::Getgrnam->perhaps_get($group);
         @f or croak "xgetgrnam: '$group' not in group file";
         @f
-    }
-    else {
+    } else {
         Chj::xperlfunc::Getgrnam->perhaps_get($group)
             or croak "xgetgrnam: '$group' not in group file";
     }

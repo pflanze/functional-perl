@@ -51,19 +51,15 @@ sub xprint_object ($$) {
     if (ref $v) {
         if (ref($v) eq "ARRAY") {
             xprint_object($fh, $_) for @$v;
-        }
-        elsif (is_pair $v) {
+        } elsif (is_pair $v) {
             xprint_object($fh, car $v);
             xprint_object($fh, cdr $v);
-        }
-        elsif (is_promise $v) {
+        } elsif (is_promise $v) {
             xprint_object($fh, force $v)
-        }
-        else {
+        } else {
             die "don't know how to print a " . ref($v) . " ('$v')";
         }
-    }
-    else {
+    } else {
         xprint $fh, $v
     }
 }

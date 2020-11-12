@@ -38,12 +38,12 @@ use PXML::XHTML qw(A B);
 
 my $link_normal = sub {
     my ($href, $body) = @_;
-    A {href => $href}, $body
+    A { href => $href }, $body
 };
 
 my $link_fast = pxmlfunc {
     my ($href, $body) = @_;    # can take up to 10[?] arguments.
-    A {href => $href}, $body
+    A { href => $href }, $body
 };
 
 # the `2` is the number of arguments
@@ -73,7 +73,7 @@ TEST {
 TEST_EXCEPTION {
     pxmlfunc {
         my ($loc, $body) = @_;
-        A {href => "http://$loc"}, $body
+        A { href => "http://$loc" }, $body
 
             # yes, already *that* is forbidden.
     }
@@ -83,7 +83,7 @@ TEST_EXCEPTION {
 TEST_EXCEPTION {
     pxmlfunc {
         my ($loc, $body) = @_;
-        A {href => $loc}, 0 - $body
+        A { href => $loc }, 0 - $body
     }
 }
 "tried to access a PXML::Preserialize::Argument object";
@@ -91,7 +91,7 @@ TEST_EXCEPTION {
 TEST_EXCEPTION {
     pxmlfunc {
         my ($loc, $body) = @_;
-        A {href => $loc}, $loc ? $body : 1
+        A { href => $loc }, $loc ? $body : 1
     }
 }
 "tried to access a PXML::Preserialize::Argument object";

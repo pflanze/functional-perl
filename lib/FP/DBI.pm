@@ -112,8 +112,7 @@ use Chj::NamespaceCleanAbove;
                             . " or stream request");
                     if (my $v = $s->$method) {
                         cons($maybe_mapfn ? &$maybe_mapfn($v) : $v, &$lp);
-                    }
-                    else {
+                    } else {
                         null
                     }
                 }
@@ -133,7 +132,7 @@ use Chj::NamespaceCleanAbove;
     *row_stream = make_X_stream(
         "fetchrow_arrayref",
         sub {
-            bless([@{$_[0]}], "FP::DBI::Row")
+            bless([@{ $_[0] }], "FP::DBI::Row")
         }
     );
     *array_stream = make_X_stream("fetchrow_arrayref");

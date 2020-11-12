@@ -26,8 +26,7 @@ sub accept {
     if ($sock) {
         ${*$sock}{'httpd_daemon'} = $self;
         return wantarray ? ($sock, $peer) : $sock;
-    }
-    else {
+    } else {
         return;
     }
 }
@@ -39,11 +38,9 @@ sub url {
     if (!$addr || $addr eq INADDR_ANY) {
         require Sys::Hostname;
         $url .= lc Sys::Hostname::hostname();
-    }
-    elsif ($addr eq INADDR_LOOPBACK) {
+    } elsif ($addr eq INADDR_LOOPBACK) {
         $url .= inet_ntoa($addr);
-    }
-    else {
+    } else {
         $url .= gethostbyaddr($addr, AF_INET) || inet_ntoa($addr);
     }
     my $port = $self->sockport;
@@ -108,18 +105,15 @@ READ_HEADER:
             if ($buf =~ /^\w+[^\012]+HTTP\/\d+\.\d+\015?\012/) {
                 if ($buf =~ /\015?\012\015?\012/) {
                     last READ_HEADER;    # we have it
-                }
-                elsif (length($buf) > 16 * 1024) {
+                } elsif (length($buf) > 16 * 1024) {
                     $self->send_error(413);    # REQUEST_ENTITY_TOO_LARGE
                     $self->reason("Very long header");
                     return;
                 }
-            }
-            else {
+            } else {
                 last READ_HEADER;              # HTTP/0.9 client
             }
-        }
-        elsif (length($buf) > 16 * 1024) {
+        } elsif (length($buf) > 16 * 1024) {
             $self->send_error(414);            # REQUEST_URI_TOO_LARGE
             $self->reason("Very long first line");
             return;
@@ -154,11 +148,9 @@ READ_HEADER:
             if (/^([^:\s]+)\s*:\s*(.*)/) {
                 $r->push_header($key, $val) if $key;
                 ($key, $val) = ($1, $2);
-            }
-            elsif (/^\s+(.*)/) {
+            } elsif (/^\s+(.*)/) {
                 $val .= " $1";
-            }
-            else {
+            } else {
                 last HEADER;
             }
         }
@@ -168,8 +160,7 @@ READ_HEADER:
     my $conn = $r->header('Connection');
     if ($proto >= $HTTP_1_1) {
         ${*$self}{'httpd_nomore'}++ if $conn && lc($conn) =~ /\bclose\b/;
-    }
-    else {
+    } else {
         ${*$self}{'httpd_nomore'}++
             unless $conn && lc($conn) =~ /\bkeep-alive\b/;
     }
@@ -189,8 +180,7 @@ READ_HEADER:
         if (lc($e) eq '100-continue') {
             $self->send_status_line(100);
             $self->send_crlf;
-        }
-        else {
+        } else {
             $self->send_error(417);
             $self->reason("Unsupported Expect header value");
             return;
@@ -225,8 +215,8 @@ READ_HEADER:
                 $body .= substr($buf, 0, $size);
                 substr($buf, 0, $size + 2) = '';
 
-            }
-            else {
+            } else {
+
                 # need more data in order to have a complete chunk header
                 return unless $self->_need_more($buf, $timeout, $fdset);
             }
@@ -244,22 +234,18 @@ READ_HEADER:
 
                 # need at least one line to look at
                 return unless $self->_need_more($buf, $timeout, $fdset);
-            }
-            else {
+            } else {
                 $buf =~ s/^([^\012]*)\012//;
                 $_ = $1;
                 s/\015$//;
                 if (/^([\w\-]+)\s*:\s*(.*)/) {
                     $r->push_header($key, $val) if $key;
                     ($key, $val) = ($1, $2);
-                }
-                elsif (/^\s+(.*)/) {
+                } elsif (/^\s+(.*)/) {
                     $val .= " $1";
-                }
-                elsif (!length) {
+                } elsif (!length) {
                     last FOOTER;
-                }
-                else {
+                } else {
                     $self->reason("Bad footer syntax");
                     return;
                 }
@@ -267,14 +253,12 @@ READ_HEADER:
         }
         $r->push_header($key, $val) if $key;
 
-    }
-    elsif ($te) {
+    } elsif ($te) {
         $self->send_error(501);    # Unknown transfer encoding
         $self->reason("Unknown transfer encoding '$te'");
         return;
 
-    }
-    elsif ($len) {
+    } elsif ($len) {
 
         # Plain body specified by "Content-Length"
         my $missing = $len - length($buf);
@@ -287,13 +271,12 @@ READ_HEADER:
         if (length($buf) > $len) {
             $r->content(substr($buf, 0, $len));
             substr($buf, 0, $len) = '';
-        }
-        else {
+        } else {
             $r->content($buf);
             $buf = '';
         }
-    }
-    elsif ($ct && $ct =~ m/^multipart\/\w+\s*;.*boundary\s* = \s*("?)(\w+)\1/i)
+    } elsif ($ct
+        && $ct =~ m/^multipart\/\w+\s*;.*boundary\s* = \s*("?)(\w+)\1/i)
     {
         # Handle multipart content type
         my $boundary = "$CRLF--$2--";
@@ -427,28 +410,22 @@ sub send_response {
             # make sure content is empty
             $res->remove_header("Content-Length");
             $content = "";
-        }
-        elsif ($res->request && $res->request->method eq "HEAD") {
+        } elsif ($res->request && $res->request->method eq "HEAD") {
 
             # probably OK
-        }
-        elsif (ref($content) eq "CODE") {
+        } elsif (ref($content) eq "CODE") {
             if ($self->proto_ge("HTTP/1.1")) {
                 $res->push_header("Transfer-Encoding" => "chunked");
                 $chunked++;
-            }
-            else {
+            } else {
                 $self->force_last_request;
             }
-        }
-        elsif (length($content)) {
+        } elsif (length($content)) {
             $res->header("Content-Length" => length($content));
-        }
-        elsif (lc($res->header('connection') // "") =~ /\bkeep-alive\b/) {
+        } elsif (lc($res->header('connection') // "") =~ /\bkeep-alive\b/) {
 
             # don't close connection if user asks for it to stay open
-        }
-        else {
+        } else {
             $self->force_last_request;
             $res->header('connection', 'close');
         }
@@ -458,22 +435,19 @@ sub send_response {
     if ($self->head_request) {
 
         # no content
-    }
-    elsif (ref($content) eq "CODE") {
+    } elsif (ref($content) eq "CODE") {
         while (1) {
             my $chunk = &$content();
             last unless defined($chunk) && length($chunk);
             if ($chunked) {
                 printf $self "%x%s%s%s", length($chunk), $CRLF, $chunk, $CRLF
                     or die $!;
-            }
-            else {
+            } else {
                 print $self $chunk or die $!;
             }
         }
         print $self "0$CRLF$CRLF" or die $! if $chunked;    # no trailers either
-    }
-    elsif (length $content) {
+    } elsif (length $content) {
         print $self $content or die $!;
     }
 }
@@ -522,8 +496,7 @@ sub send_file_response {
     my ($self, $file) = @_;
     if (-d $file) {
         $self->send_dir($file);
-    }
-    elsif (-f _) {
+    } elsif (-f _) {
 
         # plain file
         local (*F);
@@ -543,8 +516,7 @@ sub send_file_response {
         }
         $self->send_file(\*F) unless $self->head_request;
         return RC_OK;
-    }
-    else {
+    } else {
         $self->send_error(RC_NOT_FOUND);
     }
 }

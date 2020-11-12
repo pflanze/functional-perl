@@ -99,8 +99,7 @@ $in->xclose;
 
 if (keys %o) {
     say "DEPENDENCY: $_" for sort keys %o;
-}
-else {
+} else {
     say "Ok, no missed dependency.";
 }
 

@@ -264,12 +264,10 @@ package Company {
                 my @vo = $order < 0 ? @v : reverse @v;
                 if ($vo[0] =~ /^[0-9]/ and $vo[1] =~ /^[a-x]/) {
                     -$order
-                }
-                else {
+                } else {
                     $order
                 }
-            }
-            else {
+            } else {
                 0
             }
         }
@@ -290,8 +288,7 @@ package Company {
                 . do {
                 if (defined(my $p = $self->maybe_process)) {
                     " | $p"
-                }
-                else {
+                } else {
                     ""
                 }
             }
@@ -395,8 +392,7 @@ fun is_heading_of($pred) {
     fun($s) {
         if (my ($txt) = $s =~ /^\s*#+\s*(.*)/) {
             &$pred($txt)
-        }
-        else {
+        } else {
             0
         }
     }
@@ -420,33 +416,27 @@ fun parse_country($str) {
 fun parse_location($str) {
     if ($str =~ /^remote$/i) {
         $Remote
-    }
-    else {
+    } else {
         my @s = split /\s*,\s*/, $str;
         if (@s == 1) {
             parse_country($s[0])
-        }
-        elsif (@s == 2) {
+        } elsif (@s == 2) {
             my ($city, $country) = @s;
             City($city, parse_country($country))
-        }
-        elsif (@s == 3) {
+        } elsif (@s == 3) {
             my ($city, $state, $country) = @s;
             if ($country eq "USA") {
                 my $s = parse_country($state);
                 if ($s->is_USA) {
                     City($city, $s)
-                }
-                else {
+                } else {
                     die "presumed state '$state' is not a state in the USA";
                 }
-            }
-            else {
+            } else {
                 die
                     "don't know how to deal with presumed state '$state' in country '$country': don't know that country";
             }
-        }
-        else {
+        } else {
             die "more than two commas in: '$str'"
         }
     }
@@ -515,16 +505,14 @@ fun grouped_companies_from($datalines) {
     # maintain the wrong grouping before re-grouping automatically.
     if ($datalines->is_null) {
         null
-    }
-    else {
+    } else {
         my ($heading, $r) = $datalines->first_and_rest;
         if (is_heading($heading)) {
             my ($groupitems, $r)
                 = $r->take_while_and_rest(complement * is_heading);
             cons(Group(parse_heading($heading), $groupitems->map(*parse_line)),
                 grouped_companies_from $r)
-        }
-        else {
+        } else {
             die "expecting a header, got: '$heading'";
         }
     }

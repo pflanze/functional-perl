@@ -107,8 +107,7 @@ sub WithRepl_eval (&;$) {
     my ($arg, $maybe_package) = @_;
     if (ref $arg) {
         eval { &$arg() }
-    }
-    else {
+    } else {
         my $package = $maybe_package // caller;
         eval "package $package; $arg"
     }
@@ -132,8 +131,7 @@ sub maybe_tty {
     my $path = "/dev/tty";
     if (open my $fh, "+>", $path) {
         $fh
-    }
-    else {
+    } else {
         warn "opening '$path': $!";
         undef
     }
@@ -216,13 +214,13 @@ input output env_PATH))
 
 sub use_lexical_persistence {
     my $self = shift;
-    hash_xref(+{m => 1, M => 1, x => 0, X => 0},
+    hash_xref(+{ m => 1, M => 1, x => 0, X => 0 },
         $self->mode_lexical_persistence)
 }
 
 sub use_strict_vars {
     my $self = shift;
-    hash_xref(+{m => 1, M => 0, x => 1, X => 0},
+    hash_xref(+{ m => 1, M => 0, x => 1, X => 0 },
         $self->mode_lexical_persistence)
 }
 
@@ -264,8 +262,7 @@ sub possibly_restore_settings {
                     my $method = "set_" . $$settings_fields[$i];
                     $self->$method($v[$i]);
                 }
-            }
-            else {
+            } else {
                 warn "note: not reading settings of other version from '$path'";
             }
         }
@@ -516,7 +513,7 @@ sub eval_code {
         return unless $maybe_kept_results;
         my %r;
         for (my $i = 0; $i < @$maybe_kept_results; $i++) {
-            $r{'$VAR' . ($i + 1)} = \($$maybe_kept_results[$i]);
+            $r{ '$VAR' . ($i + 1) } = \($$maybe_kept_results[$i]);
         }
         \%r
     };
@@ -551,8 +548,7 @@ sub eval_code {
         my $context = wantarray ? "list" : "scalar";
         $lp->context($context);
         WithRepl_eval { $lp->eval($allcode) }
-    }
-    else {
+    } else {
         my @v = sort keys %$maybe_lexicals if defined $maybe_lexicals;
         my $allcode
             = $prelude
@@ -589,15 +585,14 @@ sub _completion_function {
 
                 # try to get the value, or at least the package.
                 my $val = do {
-                    if (my $ref = $$lexicals{'$' . $varnam}) {
+                    if (my $ref = $$lexicals{ '$' . $varnam }) {
                         $$ref
-                    }
-                    else {
-                        my $v = ${$package . "::" . $varnam};
+                    } else {
+                        my $v = ${ $package . "::" . $varnam };
                         if (defined $v) {
                             $v
-                        }
-                        else {
+                        } else {
+
                             # (if I could run code side-effect free... or
                             # compile-only and disassemble....)  Try to
                             # parse the perl myself
@@ -615,8 +610,7 @@ sub _completion_function {
                             {
                                 $r = $1;
                                 1
-                            }
-                            else {
+                            } else {
                                 0
                             }
                         }
@@ -645,28 +639,23 @@ sub _completion_function {
                             #("{foo}","{bar}")
                             if ($brace) {
                                 map {"$_}"} keys %$val
-                            }
-                            else {
+                            } else {
                                 map {"{$_}"} keys %$val
                             }
-                        }
-                        elsif ($r eq 'ARRAY'
+                        } elsif ($r eq 'ARRAY'
                             or ($brace and UNIVERSAL::isa($val, 'ARRAY')))
                         {
                             # ^ not sure this works here; see commit messages
                             ("[")
-                        }
-                        elsif ($r eq 'CODE') { ("(") }
-                        elsif ($r eq 'SCALAR') {
+                        } elsif ($r eq 'CODE') { ("(") } elsif ($r eq 'SCALAR')
+                        {
                             ("SCALAR")    ##
-                        }
-                        elsif ($r eq 'IO') {
+                        } elsif ($r eq 'IO') {
                             ("IO")        ##
-                        }
-                        elsif ($r eq 'GLOB') {
+                        } elsif ($r eq 'GLOB') {
                             ("GLOB")      ##
-                        }
-                        else {
+                        } else {
+
                             # object
                             my @a = methodnames($r);
                             grep {
@@ -682,26 +671,22 @@ sub _completion_function {
                                 not(/[A-Z]/ and uc($_) eq $_)
                                 } @a
                         }
-                    }
-                    else { () }
-                }
-                else {
+                    } else { () }
+                } else {
+
                     #warn "no value from \$$varnam";
                     ()
                 }
-            }
-            elsif ($part =~ tr/"/"/ % 2) {
+            } elsif ($part =~ tr/"/"/ % 2) {
 
                 # odd number of quotes means we are inside
                 ()
-            }
-            elsif ($part =~ tr/'/'/ % 2) {
+            } elsif ($part =~ tr/'/'/ % 2) {
 
                 # odd number of quotes means we are inside
                 ()
-            }
-            elsif (
-                   $part =~ /(^|.)\s*(${PACKAGE}(?:::)?)\z/s
+            } elsif (
+                $part =~ /(^|.)\s*(${PACKAGE}(?:::)?)\z/s
                 or $part =~ /([\$\@\%\*\&])
                               \s*
                               (${PACKAGE}(?:::)?|)
@@ -757,12 +742,11 @@ sub _completion_function {
                                     # either it's a namespace which we
                                     # want to see regardless of type, or:
                                     # type exists
-                                    or *{$package . "::" . $_}{$globentry}
+                                    or *{ $package . "::" . $_ }{$globentry}
                             ) }
-                                keys %{$package . "::"}
-                        }
-                        else {
-                            keys %{$package . "::"}
+                                keys %{ $package . "::" }
+                        } else {
+                            keys %{ $package . "::" }
                         }
                     }
                 };
@@ -789,8 +773,7 @@ sub _completion_function {
                     map {
                         if (/::\z/) {
                             $_
-                        }
-                        else {
+                        } else {
                             "$_ "
                         }
                     } (
@@ -799,8 +782,7 @@ sub _completion_function {
                         : @a
                     )
                 )
-            }
-            else { () }
+            } else { () }
         };
         if (@matches) {
 
@@ -812,8 +794,8 @@ sub _completion_function {
 
             return $term->completion_matches($text,
                 $attribs->{list_completion_function})
-        }
-        else {
+        } else {
+
             # restore defaults.
             $attribs->{completion_append_character} = " ";
             return ()
@@ -882,8 +864,7 @@ sub run {
 
             # XX will that work?
             $SIG{INT} = \&__signalhandler;
-        }
-        else {
+        } else {
             warn "could not set up signal handler: $@ ";
         }
     };
@@ -966,8 +947,7 @@ sub run {
                     if (!length ref($@) and $@ =~ /^SIGINT\n/s) {
                         print $OUTPUT "\n";
                         redo DO;
-                    }
-                    else {
+                    } else {
                         die $@
                     }
                 };
@@ -1057,8 +1037,7 @@ sub run {
                                 if (defined $maybe_frameno) {
                                     if ($maybe_frameno <= $stack->max_frameno) {
                                         $frameno = $maybe_frameno
-                                    }
-                                    else {
+                                    } else {
                                         &$printerror_frameno($maybe_frameno);
                                         return;
                                     }
@@ -1180,14 +1159,11 @@ sub run {
                                                 if ($key =~ /^\$/) {
                                                     $o->xprint(
                                                         "$key = "
-                                                            . &$format(
-                                                            ${
-                                                                $$lexicals{$key}
-                                                            }
-                                                            )
+                                                            . &$format(${
+                                                            $$lexicals{$key}
+                                                            })
                                                     );
-                                                }
-                                                else {
+                                                } else {
                                                     $o->xprint(
                                                         "\\$key = "
                                                             . &$format(
@@ -1197,8 +1173,7 @@ sub run {
                                                 }
                                             }
                                         });
-                                    }
-                                    else {
+                                    } else {
                                         &$printerror_frameno($fno);
                                     }
                                 },
@@ -1222,16 +1197,14 @@ sub run {
                                 if (my $sub = $commands{$cmd}) {
                                     &$sub;
                                     last;
-                                }
-                                else {
+                                } else {
                                     my $subcmd = chop $cmd;
                                     if (my $sub = $commands{$subcmd}) {
                                         &$sub;
                                         last;    # XX why last? shouldn't we
                                                  # continue with what's left of
                                                  # $cmd ?
-                                    }
-                                    else {
+                                    } else {
                                         print $ERROR "unknown command "
                                             . "or mode: '$subcmd'\n";
                                         last;
@@ -1283,8 +1256,7 @@ sub run {
                                 ))
                                 {
                                     $frame->args
-                                }
-                                else {
+                                } else {
                                     "TOP"
                                 }
                             };
@@ -1308,8 +1280,7 @@ sub run {
                                 chomp $err;
                                 $err . "\n"
                                     ; # no prefix? no safe way to differentiate.
-                            }
-                            else {
+                            } else {
                                 if (my $varname = $$self[Maybe_keepResultIn]) {
                                     $varname = &$get_package() . "::$varname"
                                         unless $varname =~ /::/;
@@ -1328,11 +1299,9 @@ sub run {
 
                     &$evaluator();
 
-                }
-                elsif ($$self[DoRepeatWhenEmpty]) {
+                } elsif ($$self[DoRepeatWhenEmpty]) {
                     &$evaluator();
-                }
-                else {
+                } else {
                     next;
                 }
 

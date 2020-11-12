@@ -31,8 +31,7 @@ sub myeval ($) {
         withrepl {
             &WithRepl_eval($str)
         }
-    }
-    else {
+    } else {
         &WithRepl_eval($str)
     }
 }
@@ -122,7 +121,8 @@ sub save {
 }
 
 sub numfailures {
-    my @failures = grep { not $_->{ok} } @{Test::Builder->new->{Test_Results}};
+    my @failures
+        = grep { not $_->{ok} } @{ Test::Builder->new->{Test_Results} };
 
     #warn "failures: @failures";
     scalar @failures
@@ -136,8 +136,7 @@ my $namespacenum = 0;
 for my $module (@$modules) {
     if ($ignore{$module}) {
         print "=== Ignoring pod snippets in $module.\n";
-    }
-    else {
+    } else {
         subtest "pod snippets in $module" => sub {
 
             if (my @needs = module_needs $module) {
@@ -159,13 +158,11 @@ for my $module (@$modules) {
                 if ($fail_after == $fail_before) {
 
                   # done_testing("snippets in $module") but that's part of $code
-                }
-                else {
+                } else {
                     fail("pod snippets in $module");
                     save $module, $code;
                 }
-            }
-            else {
+            } else {
                 my $e = $@;
                 if (my ($use_module) = $e =~ /^TEST use<(.*?)> failed:/) {
                     plan
@@ -173,8 +170,7 @@ for my $module (@$modules) {
                         "test pod snippets in $module - use $use_module failed",
                         1;
                     return;
-                }
-                else {
+                } else {
                     warn "Exception: $@\n";
                     fail("pod snippets in $module");
                     save $module, $code;

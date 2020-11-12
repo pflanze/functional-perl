@@ -180,8 +180,7 @@ sub file_cache ($$$) {
         my $val = fh_xdeserialize($in);
         $in->xclose;
         $val
-    }
-    else {
+    } else {
         my $out = xtmpfile $path;
         my $val = &$generate();
         fh_xnstore($out, $val);

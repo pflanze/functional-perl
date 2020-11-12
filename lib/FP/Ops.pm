@@ -372,13 +372,11 @@ sub make_regex_substitute_coderef {
                 &$coderef or $allow_failures || die "no match";
                 $_
             }
-        }
-        elsif (@_ == 1) {
+        } elsif (@_ == 1) {
             local $_ = $_[0];
             &$coderef or $allow_failures || die "no match";
             $_
-        }
-        else {
+        } else {
             die "$name: expecting 1 or 2 arguments, got " . @_;
         }
     }
@@ -412,8 +410,7 @@ sub make_regex_substitute_re {
                 ) or $allow_failures || die "$name: no match";
                 $str
             }
-        }
-        elsif (@_ == 3) {
+        } elsif (@_ == 3) {
             my ($re, $str_or_coderef, $str) = @_;
             {
                 # copy-paste of above
@@ -428,8 +425,7 @@ sub make_regex_substitute_re {
                 ) or $allow_failures || die "$name: no match";
             }
             $str
-        }
-        else {
+        } else {
             die "$name: expecting 2 or 3 arguments, got " . @_;
         }
     }

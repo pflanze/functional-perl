@@ -225,8 +225,7 @@ sub import {
         ($fields, @perhaps_isa) = @_;
         $package            = caller;
         $is_expandedvariant = 1;
-    }
-    else {
+    } else {
         ($package, $fields, @perhaps_isa) = @_;
         $is_expandedvariant = 0;
     }
@@ -306,7 +305,7 @@ sub import {
     };
 
     # constructor with keyword/value parameters:
-    my $allfields_h = +{map { field_name($_) => undef } @$allfields};
+    my $allfields_h = +{ map { field_name($_) => undef } @$allfields };
     my $allfields_with_predicate
         = [grep { field_maybe_predicate $_ } @$allfields];
     *{"${package}::new_"} = sub {
@@ -356,7 +355,7 @@ sub import {
     my $exports = [$package_lastpart, "${package_lastpart}_"];
     *{"${package}::constructors::EXPORT"}      = $exports;
     *{"${package}::constructors::EXPORT_OK"}   = [];
-    *{"${package}::constructors::EXPORT_TAGS"} = +{all => $exports};
+    *{"${package}::constructors::EXPORT_TAGS"} = +{ all => $exports };
 
     my $end = sub {
 

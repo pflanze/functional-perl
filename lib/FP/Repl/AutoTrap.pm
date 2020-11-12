@@ -52,8 +52,7 @@ sub possibly_activate {
         import FP::Repl::WithRepl;
         push_withrepl(0);
         1
-    }
-    else {
+    } else {
         require Chj::Backtrace;
         import Chj::Backtrace;
         0
@@ -62,8 +61,7 @@ sub possibly_activate {
 
 if (($ENV{RUN_TESTS} // '') eq '1') {
     warn "not activating since running in test mode";
-}
-else {
+} else {
     possibly_activate
 }
 

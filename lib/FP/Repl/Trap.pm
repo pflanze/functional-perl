@@ -45,8 +45,7 @@ use FP::Repl::WithRepl;
 
 if (($ENV{RUN_TESTS} // '') eq '1') {
     warn "not activating since running in test mode";
-}
-else {
+} else {
     push_withrepl(0);
 }
 

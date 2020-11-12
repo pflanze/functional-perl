@@ -44,7 +44,7 @@ package FunctionalPerl::Htmlgen::Cost::_::Cost {
     method cost($index) {
         $$self{_cost} ||= do {
             add($self->val,
-                map { $$index{$_}->cost($index) } @{$self->basecosts});
+                map { $$index{$_}->cost($index) } @{ $self->basecosts });
         }
     }
     _END_
@@ -56,14 +56,14 @@ package FunctionalPerl::Htmlgen::Cost::_::Totalcost {
     use FP::Struct [qw(costs)];
 
     method range() {
-        @{$$self{costs}} or die "no costs given";    #
+        @{ $$self{costs} } or die "no costs given";    #
         my $index;
-        for (@{$$self{costs}}) {
+        for (@{ $$self{costs} }) {
             if (defined(my $name = $_->name)) {
                 $$index{$name} = $_
             }
         }
-        my $purchaseable = [grep { $_->is_purchaseable } @{$$self{costs}}];
+        my $purchaseable = [grep { $_->is_purchaseable } @{ $$self{costs} }];
         @$purchaseable or die "no purchaseable costs";    #
         local our $all
             = array_sort($purchaseable, on the_method("cost", $index),

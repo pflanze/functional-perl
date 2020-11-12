@@ -78,7 +78,7 @@ our $maybe_maxlen;
 
 sub with_maxlen ($&) {
     local $maybe_maxlen = $_[0];
-    &{$_[1]}()
+    &{ $_[1] }()
 }
 
 # Perl style:
@@ -96,8 +96,7 @@ sub singlequote($ ;$ ) {
         $str =~ s/([\t\n\r])/sprintf ('\\x{%x}', ord $1)/sge
             if defined $maybe_maxlen;
         "'$str'"
-    }
-    else {
+    } else {
         defined($alternative) ? $alternative : "undef"
     }
 }
@@ -108,8 +107,7 @@ sub many {
         my $str;
         if (eval { $str = singlequote($_); 1 }) {
             $str
-        }
-        else {
+        } else {
             my $e = "$@";
             $e =~ s/\n.*//s;
             "<stringification error: $e>"
@@ -117,8 +115,7 @@ sub many {
     } @_;
     if (wantarray) {
         @strs
-    }
-    else {
+    } else {
         join ", ", @strs
     }
 }
@@ -131,8 +128,7 @@ sub singlequote_sh($ ;$ ) {
     if (defined $str) {
         $str =~ s/\'/'\\\''/sg;
         "'$str'"
-    }
-    else {
+    } else {
         defined($alternative) ? $alternative : "undef"
     }
 }
@@ -144,8 +140,7 @@ sub possibly_singlequote_sh ($) {
     my ($str) = @_;
     if ($str =~ m{^[\w/.-]+\z}) {
         $str
-    }
-    else {
+    } else {
         singlequote_sh $str
     }
 }

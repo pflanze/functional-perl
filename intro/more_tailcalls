@@ -56,8 +56,8 @@ func functional_fact_iter($x, $res) {
     push @functional_inspect, func { ($x, $res) };
     if ($x < 2) {
         return $res;
-    }
-    else {
+    } else {
+
         # This is a tail call. Instead of doing it unoptimized like:
         #
         #  functional_fact_iter($x - 1,  $x * $res)
@@ -79,8 +79,7 @@ func functional_fact_iter($x, $res) {
 func odd($n) {
     if ($n == 0) {
         0
-    }
-    else {
+    } else {
         even($n - 1)
     }
 }
@@ -88,8 +87,7 @@ func odd($n) {
 func even($n) {
     if ($n == 0) {
         1
-    }
-    else {
+    } else {
         odd($n - 1)
     }
 }
@@ -113,8 +111,7 @@ func even($n) {
 func opt_odd($n) {
     if ($n == 0) {
         0
-    }
-    else {
+    } else {
         tail opt_even($n - 1);
     }
 }
@@ -122,8 +119,7 @@ func opt_odd($n) {
 func opt_even($n) {
     if ($n == 0) {
         1
-    }
-    else {
+    } else {
         tail opt_odd($n - 1);
     }
 }
@@ -143,8 +139,7 @@ use Chj::time_this;
 func tramp_odd($n) {
     if ($n == 0) {
         0
-    }
-    else {
+    } else {
         T { tramp_even($n - 1) }
     }
 }
@@ -152,8 +147,7 @@ func tramp_odd($n) {
 func tramp_even($n) {
     if ($n == 0) {
         1
-    }
-    else {
+    } else {
         T { tramp_odd($n - 1) }
     }
 }
@@ -168,8 +162,7 @@ TEST {
 func tramp2_odd($n) {
     if ($n == 0) {
         0
-    }
-    else {
+    } else {
         TC * tramp2_even, $n - 1
     }
 }
@@ -177,8 +170,7 @@ func tramp2_odd($n) {
 func tramp2_even($n) {
     if ($n == 0) {
         1
-    }
-    else {
+    } else {
         TC * tramp2_odd, $n - 1
     }
 }
@@ -204,16 +196,14 @@ func weakened_even($n) {
     $odd = func($n) {
         if ($n == 0) {
             0
-        }
-        else {
+        } else {
             tail &$even($n - 1)
         }
     };
     $even = func($n) {
         if ($n == 0) {
             1
-        }
-        else {
+        } else {
             tail &$odd($n - 1)
         }
     };
@@ -244,8 +234,7 @@ func fix_even($n) {
         {
             if ($n == 0) {
                 0
-            }
-            else {
+            } else {
                 tail &$even($n - 1)
             }
         },
@@ -253,8 +242,7 @@ func fix_even($n) {
         {
             if ($n == 0) {
                 1
-            }
-            else {
+            } else {
                 tail &$odd($n - 1)
             }
         }

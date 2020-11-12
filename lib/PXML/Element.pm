@@ -96,8 +96,7 @@ sub perhaps_attribute {
     my ($name) = @_;
     if (defined(my $h = $$s[ATTRIBUTES])) {
         exists $$h{$name} ? $$h{$name} : ()
-    }
-    else { () }
+    } else { () }
 }
 
 # functional setters (following the convention I've started to use of
@@ -173,32 +172,25 @@ sub _text {
         if (ref $v) {
             if (UNIVERSAL::isa($v, "PXML::Element")) {
                 $v->text
-            }
-            elsif (UNIVERSAL::isa($v, "ARRAY")) {
+            } elsif (UNIVERSAL::isa($v, "ARRAY")) {
                 join("", map { _text($_) } @$v);
-            }
-            elsif (UNIVERSAL::isa($v, "CODE")) {
+            } elsif (UNIVERSAL::isa($v, "CODE")) {
 
                 # correct? XX why does A(string_to_stream("You're
                 # great."))->text trigger this case?
                 _text(&$v());
-            }
-            elsif (is_pair $v) {
+            } elsif (is_pair $v) {
                 my ($a, $v2) = $v->car_and_cdr;
                 _text($a) . _text($v2);    # XXX quadratic complexity?
-            }
-            elsif (is_promise $v) {
+            } elsif (is_promise $v) {
                 _text(force $v);
-            }
-            else {
+            } else {
                 die "don't know how to get text of: $v";
             }
-        }
-        else {
+        } else {
             $v
         }
-    }
-    else {
+    } else {
         ""
     }
 }

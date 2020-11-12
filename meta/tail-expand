@@ -27,8 +27,7 @@ sub executable {
         my $line = <$in>;
         close $in;
         $line =~ /^#!/
-    }
-    else {
+    } else {
         -x $path
     }
 }
@@ -51,8 +50,7 @@ while (<$manif>) {
         if ($t_from >= $t_to) {
             &$expand;
         }
-    }
-    else {
+    } else {
         xmkdir_p dirname $to;
         &$expand;
     }

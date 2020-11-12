@@ -62,23 +62,18 @@ sub translate {
     my @p;
     if ($c =~ /\#/) {
         undef
-    }
-    elsif (@p = split /->/, $c and @p == 2) {
+    } elsif (@p = split /->/, $c and @p == 2) {
         my ($before, $after) = @p;
         '@_=' . $after . '; goto &{' . $before . '}'
-    }
-    elsif ($c =~ s/^\&//) {
+    } elsif ($c =~ s/^\&//) {
         if (my ($ident, $args) = $c =~ m/^(\$${IDENT})\s*(\(.*)/s) {
             '@_=' . $args . '; goto &' . $ident
-        }
-        else {
+        } else {
             die "dunno about '$c'";
         }
-    }
-    elsif (my ($ident, $args) = $c =~ m/^($IDENT)\s*(\(.*)/s) {
+    } elsif (my ($ident, $args) = $c =~ m/^($IDENT)\s*(\(.*)/s) {
         '@_=' . $args . '; goto \&' . $ident
-    }
-    else {
+    } else {
         undef
     }
 }
@@ -116,13 +111,11 @@ sub get_line_position_and_indents {
         for (split //, $indentstr) {
             if ($_ eq ' ') {
                 $i++
-            }
-            elsif ($_ eq "\t") {
+            } elsif ($_ eq "\t") {
 
                 # 8-based tabs
                 $i = (int($i / 8) + 1) * 8
-            }
-            else {
+            } else {
                 die "??"
             }
         }
@@ -162,7 +155,7 @@ sub expand_tail_at_pos {
     # -1 so as to leave the ';' in *afterwards*.
 
     my ($tailline_lineno, $tailline_pos0, $tailline_i)
-        = @{find_line_by_pos $pos};
+        = @{ find_line_by_pos $pos};
     my $afterline;
     for my $lineno ($tailline_lineno + 1 .. $#$line_position_and_indents) {
         $afterline = $$line_position_and_indents[$lineno];
@@ -188,13 +181,12 @@ sub expand_tail_at_pos {
             pos($code) = $startpos + length $replacement;
 
             #warn "right: '$args'";
-        }
-        else {
+        } else {
+
             #warn "wrong1: '$args'";
             pos($code) = $pos + 1;
         }
-    }
-    else {
+    } else {
         warn "wrong2"
     }
 }
@@ -205,8 +197,7 @@ if ($opt_repl) {
     FP::Repl::repl();
     exit;
 
-}
-else {
+} else {
 
     # be insensitive to 'tail ' mentioned in comments; so bad. but
     # lookbehind are not variable width, and setting pos($code) from

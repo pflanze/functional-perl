@@ -75,12 +75,10 @@ sub xtmpfile {
                     my ($n) = @_;
                     &$maybe_basepath($basepath, $n)
                 }
-            }
-            else {
+            } else {
                 &$mk_basepath_n($maybe_basepath)
             }
-        }
-        else {
+        } else {
             &$mk_basepath_n(&$gen_base)
         }
     };
@@ -111,7 +109,7 @@ TRY: {
                     . " that we created moments ago ???: $!";
                 undef $path;
             }
-            $metadata{pack "I", $self} = [&$genpath(""), $autoclean];
+            $metadata{ pack "I", $self } = [&$genpath(""), $autoclean];
         };
         if ($@) {
             if ($Chj::IO::ERRNO == EEXIST or $Chj::IO::ERRNO == EINTR) {
@@ -119,27 +117,24 @@ TRY: {
                 # ^ not sure whether the latter test is needed
                 if (++$tries < $MAXTRIES) {
                     redo TRY;
-                }
-                else {
+                } else {
                     croak "xtmpfile: too many attempts to create a "
                         . "tempfile, last attempt was "
                         . Chj::singlequote($last_path);
                 }
-            }
-            elsif ($Chj::IO::ERRNO == ENOENT and $mkdircb) {
+            } elsif ($Chj::IO::ERRNO == ENOENT and $mkdircb) {
                 if ($called_mkdircb) {
                     croak "xtmpfile: got ENOENT but mkdir-callback has "
                         . "already been called, for attempt "
                         . Chj::singlequote($last_path);
-                }
-                else {
+                } else {
+
                     #&$mkdircb;
                     $mkdircb->(&$genpath(""));
                     $called_mkdircb = 1;
                     redo TRY;
                 }
-            }
-            else {
+            } else {
                 croak "xtmpfile: could not create tempfile at "
                     . Chj::singlequote($last_path) . ": $@";
             }
@@ -152,12 +147,11 @@ sub autoclean {
     my $self = shift;
     if (@_) {    # set
         my ($v) = @_;
-        $metadata{pack "I", $self}[1] = $v;
+        $metadata{ pack "I", $self }[1] = $v;
 
         # should we return former setting? does that really make sense?
-    }
-    else {
-        $metadata{pack "I", $self}[1]
+    } else {
+        $metadata{ pack "I", $self }[1]
     }
 }
 
@@ -166,7 +160,7 @@ sub autoclean {
 sub xrename {
     my $self = shift;
     $self->SUPER::xrename(@_);
-    $metadata{pack "I", $self}[1] = 0;
+    $metadata{ pack "I", $self }[1] = 0;
 }
 
 # This one is a bit non-sensible, since xlink is enough, unlinkig
@@ -174,19 +168,19 @@ sub xrename {
 sub xlinkunlink {
     my $self = shift;
     $self->SUPER::xlinkunlink(@_);
-    $metadata{pack "I", $self}[1] = 0;
+    $metadata{ pack "I", $self }[1] = 0;
 }
 
 sub DESTROY {
     my $self = shift;
     local ($@, $!, $?);
     if (defined(my $path = $self->path)) {
-        if ($metadata{pack "I", $self}[1] == 1) {
+        if ($metadata{ pack "I", $self }[1] == 1) {
             unlink $path
                 or warn "DESTROY: unlink " . $self->quotedname . ": $!";
         }
     }
-    delete $metadata{pack "I", $self};
+    delete $metadata{ pack "I", $self };
     $self->SUPER::DESTROY;
 }
 
@@ -195,10 +189,9 @@ sub attribute {    # :lvalue does not work because of perl bugs. :-(
     my $self = shift;
     my $key  = shift;
     if (@_) {
-        ($metadata{pack "I", $self}[2]{$key}) = @_
-    }
-    else {
-        $metadata{pack "I", $self}[2]{$key}
+        ($metadata{ pack "I", $self }[2]{$key}) = @_
+    } else {
+        $metadata{ pack "I", $self }[2]{$key}
     }
 }
 
@@ -213,18 +206,15 @@ sub _xlinkrename {
         if (link $from, $tmppath) {
             if (rename $tmppath, $to) {
                 return;
-            }
-            else {
+            } else {
                 croak "_xlinkrename: rename "
                     . Chj::singlequote($tmppath) . ", "
                     . Chj::singlequote($to) . ": $!";
             }
-        }
-        else {
+        } else {
             if ($! == EEXIST) {
                 next;
-            }
-            else {
+            } else {
                 croak "_xlinkrename: link "
                     . Chj::singlequote($from) . ", "
                     . Chj::singlequote($tmppath) . ": $!";
@@ -258,8 +248,7 @@ sub xreplace_or_withmode {
             chown $uid, $gid, $path
                 or croak "xreplace_or_withmode: chown "
                 . Chj::singlequote($path) . ": $!";
-        }
-        else {
+        } else {
             if ($uid != $euid) {
                 carp "xreplace_or_withmode: warning: cannot set owner of "
                     . Chj::singlequote($path)
@@ -288,8 +277,7 @@ sub xreplace_or_withmode {
             warn "xreplace_or_withmode: warning: could not make backup file: $@"
                 if $warn_all_failures;
         }
-    }
-    else {
+    } else {
         if (defined $orwithmode) {
             if (ref $orwithmode) {
 
@@ -301,8 +289,7 @@ sub xreplace_or_withmode {
                         or croak "xreplace_or_withmode: chown "
                         . Chj::singlequote($path) . ": $!";
                 }
-            }
-            else {
+            } else {
                 if ($orwithmode =~ /^0/) {
                     $orwithmode = oct $orwithmode;
                     defined($orwithmode)
@@ -314,8 +301,7 @@ sub xreplace_or_withmode {
                 $mode = $orwithmode
                     ; # & 0777; # mask off dito, since we do not know which uid/gid the programmer meant. which is a bug in itself.   wellll , programmer should know what he's doing then, right?
             }
-        }
-        else {
+        } else {
             croak "xreplace_or_withmode: error getting target permissions"
                 . " and no default mode given, stat "
                 . Chj::singlequote($targetpath) . ": $!";
@@ -333,13 +319,13 @@ sub xputback {    # better name?
     my ($maybe_orwithmode) = @_;
     croak "xputback: file " . $self->quotedname . " is still open"
         if $self->opened;
-    my $basepath = $metadata{pack "I", $self}[0];
+    my $basepath = $metadata{ pack "I", $self }[0];
     $self->xreplace_or_withmode($basepath, $maybe_orwithmode);
 }
 
 sub basepath {
     my $self = shift;
-    $metadata{pack "I", $self}[0]
+    $metadata{ pack "I", $self }[0]
 }
 
 1

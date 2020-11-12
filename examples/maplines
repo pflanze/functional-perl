@@ -63,7 +63,7 @@ my $config = require $mappingfile;
 ref($config) eq "HASH"
     or usage "invalid mappingfile, does not return a hash ref";
 
-my ($mapfn, $cmp) = @$config{"map", "cmp"};
+my ($mapfn, $cmp) = @$config{ "map", "cmp" };
 
 my $in  = glob_to_fh(*STDIN);
 my $out = glob_to_fh(*STDOUT);

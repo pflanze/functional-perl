@@ -53,8 +53,7 @@ sub bin {
     my $this = shift;
     if (ref $this) {
         sprintf('%b', $$this)
-    }
-    else {
+    } else {
         my $data = oct('0b' . shift);
         bless \$data, $this
     }
@@ -64,8 +63,7 @@ sub dec {
     my $this = shift;
     if (ref $this) {
         $$this
-    }
-    else {
+    } else {
         my $data = shift;
         bless \$data, $this
     }
@@ -75,8 +73,7 @@ sub oct {
     my $this = shift;
     if (ref $this) {
         sprintf('%o', $$this)
-    }
-    else {
+    } else {
         my $data = oct('0' . shift);
         bless \$data, $this
     }
@@ -86,8 +83,7 @@ sub hex {
     my $this = shift;
     if (ref $this) {
         sprintf('%x', $$this)
-    }
-    else {
+    } else {
         my $data = hex(shift);    # oct('0x'.shift); should work as well
         bless \$data, $this
     }
