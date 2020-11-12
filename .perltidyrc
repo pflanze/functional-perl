@@ -9,4 +9,6 @@
 -wn      # Weld nested containers
 -isbc    # Don't indent comments without leading space
 -nst     # Don't output to STDOUT
+-nasc    # Do not add semicolons to tail expressions (they are used to
+         # indicate that the value is explicitly used as the return value
 -b
