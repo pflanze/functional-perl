@@ -598,8 +598,8 @@ sub is_list ($) {
     my ($v) = @_;
     FORCE $v;
     (
-        is_null $v ? 1 : (
-            is_pair $v ? do {
+        is_null($v) ? 1 : (
+            is_pair($v) ? do {
                 @_ = unsafe_cdr $v;
                 goto \&is_list;
                 }
@@ -1157,7 +1157,7 @@ sub list_take ($ $) {
     my ($s, $n) = @_;
     if ($n > 0) {
         $s = force $s;
-        is_null $s ? $s : cons(car $s, list_take(cdr $s, $n - 1));
+        is_null($s) ? $s : cons(car $s, list_take(cdr $s, $n - 1));
     } else {
         null
     }
@@ -1368,9 +1368,9 @@ sub list_zip2 ($$);
 sub list_zip2 ($$) {
     @_ == 2 or die "expecting 2 arguments";
     my ($l, $m) = @_;
-    (     is_null $l ? $l
-        : is_null $m ? $m
-        :              cons([car $l, car $m], list_zip2(cdr $l, cdr $m)))
+    (     is_null($l) ? $l
+        : is_null($m) ? $m
+        :               cons([car $l, car $m], list_zip2(cdr $l, cdr $m)))
 }
 
 TEST { list_to_array list_zip2 list(qw(a b c)), list(2, 3) }
@@ -1405,7 +1405,7 @@ sub make_filter {
         weaken $_[1] if $is_stream;
         lazy_if {
             $l = force $l;
-            is_null $l ? $l : do {
+            is_null($l) ? $l : do {
                 my ($a, $r) = $l->first_and_rest;
                 no warnings 'recursion';
                 my $r2 = &$filter($fn, $r);
@@ -1431,7 +1431,7 @@ sub make_filter_with_tail {
         weaken $_[1] if $is_stream;
         lazy_if {
             $l = force $l;
-            is_null $l ? $tail : do {
+            is_null($l) ? $tail : do {
                 my $a = car $l;
                 my $r = &$filter_with_tail($fn, cdr $l, $tail);
                 &$fn($a) ? cons($a, $r) : $r
@@ -1450,7 +1450,7 @@ sub list_map ($ $);
 
 sub list_map ($ $) {
     my ($fn, $l) = @_;
-    is_null $l ? $l : cons(&$fn(car $l), list_map($fn, cdr $l))
+    is_null($l) ? $l : cons(&$fn(car $l), list_map($fn, cdr $l))
 }
 
 TEST {
@@ -1515,7 +1515,7 @@ TEST {
 sub list_map_with_islast {
     @_ > 1 or die "wrong number of arguments";
     my $fn      = shift;
-    my @rest    = map { is_null $_ ? return null : rest $_ } @_;
+    my @rest    = map { is_null($_) ? return null : rest $_ } @_;
     my $is_last = '';
 
     # return *number* of ending streams, ok? XX this is unlike

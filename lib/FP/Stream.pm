@@ -450,7 +450,7 @@ sub stream_map ($ $) {
     weaken $_[1];
     lazy {
         $l = force $l;
-        is_null $l ? null : cons(&$fn(car $l), stream_map($fn, cdr $l))
+        is_null($l) ? null : cons(&$fn(car $l), stream_map($fn, cdr $l))
     }
 }
 
@@ -463,7 +463,7 @@ sub stream_map_with_tail ($ $ $) {
     weaken $_[1];
     lazy {
         $l = force $l;
-        is_null $l
+        is_null($l)
             ? $tail
             : cons(&$fn(car $l), stream_map_with_tail($fn, cdr $l, $tail))
     }
@@ -497,7 +497,7 @@ sub stream_zip {
     lazy {
         my @vs = map {
             my $v = force $_;
-            is_null $v ? return null : $v
+            is_null($v) ? return null : $v
         } @ps;
         my $a = [map { car $_ } @vs];
         my $b = stream_zip(map { cdr $_ } @vs);
@@ -718,7 +718,7 @@ sub stream_take ($ $) {
     lazy {
         if ($n > 0) {
             $s = force $s;
-            is_null $s ? $s : cons(car $s, stream_take(cdr $s, $n - 1));
+            is_null($s) ? $s : cons(car $s, stream_take(cdr $s, $n - 1));
         } else {
             null
         }
