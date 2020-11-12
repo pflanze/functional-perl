@@ -17,3 +17,6 @@ website/.ModulePODUrl-cache/
 # expansions from meta/tail-expand
 .*/
 .test.pl
+
+# Backup files from perltidy
+*.bak
