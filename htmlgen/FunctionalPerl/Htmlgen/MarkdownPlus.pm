@@ -61,7 +61,8 @@ require Exporter;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 use FP::Docstring;
 use Chj::TEST;
@@ -74,7 +75,7 @@ use FP::Lazy;
 use FunctionalPerl::Htmlgen::Mediawiki qw(mediawiki_prepare);
 
 # Return <h1> element if available, and rest.
-fun pxml_body_split_h1($body) {
+sub pxml_body_split_h1($body) {
     my $b = stream_mixed_flatten $body;
     my ($v, $rest) = $b->first_and_rest;
     if (is_pxml_element $v and $v->name eq "h1") { ($v, $rest) }
@@ -93,7 +94,7 @@ TEST {
 }
 ['<h1>xy</h1>', '<body>foo<b>bar</b></body>'];
 
-fun markdownplus_parse($str, $alternative_title, $mediawikitoken) {
+sub markdownplus_parse($str, $alternative_title, $mediawikitoken) {
     __
         '($str, $alternative_title, $tokenstr)-> ($h1, [$body_PXML_Elements], $hashtbl) '
         . '-- markdown parsing to PXML, extracting title, and replacing'

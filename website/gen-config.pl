@@ -2,8 +2,8 @@ use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use utf8;
+use experimental "signatures"; 
 
-use Function::Parameters qw(:strict);
 our ($mydir, $gitrepository);    # 'import' from main
 
 use PXML::XHTML ":all";
@@ -28,7 +28,7 @@ my $year = (localtime)[5] + 1900;
 my $email = "copying\@christianjaeger.ch";    # ? or ch@?
 
 +{
-    map_code_body => fun($str, $uplist, $path0)
+    map_code_body => sub($str, $uplist, $path0)
     {
         my ($version, $maybe_numrevisions) = @{ force $version_numrevisions};
         my $version_underscores = $version;
@@ -52,12 +52,12 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
         # source_root => path0s
         +{ "." => ["FP-logo.png", $css_path0,] },
     path0_handlers => +{},
-    title          => fun($filetitle)
+    title          => sub($filetitle)
     { (
         $filetitle eq "Readme" ? "Functional programming in Perl" : $filetitle,
         " - functional-perl.org"
     ) },
-    head => fun($path0)
+    head => sub($path0)
     {
         # HTML to add to the <head> section
         LINK({
@@ -67,7 +67,7 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
         })
     },
 
-    header => fun($path0) {
+    header => sub($path0) {
 
         # HTML above navigation
 
@@ -90,7 +90,7 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
         entry("docs/links.md"),
         entry("docs/contact.md", entry("docs/mailing_list.md"))
     ),
-    belownav => fun($path0)
+    belownav => sub($path0)
     {
         # HTML between navigation and page content.
         # path0 is the source (.md) file.
@@ -114,7 +114,7 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
             )
         )
     },
-    footer => fun($path0)
+    footer => sub($path0)
     {
         my $yearstart = 2014;
         my $years     = $year == $yearstart ? $year : "$yearstart-$year";

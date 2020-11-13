@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures"; 
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -48,20 +48,20 @@ local $Chj::IO::Tempfile::warn_all_failures = 0;
 
 # Split lines into head and body (at the first empty line)
 
-fun lines_head_and_body($lines) {
+sub lines_head_and_body($lines) {
     $lines->take_while_and_rest(complement regex_match qr/^\n\z/s)
 }
 
 # Get headers of given name; this ad-hoc mail "parser" unsafely assumes
 # that the headers we're interested in consist of one line only
 
-fun head_get($head, $name) {
+sub head_get($head, $name) {
     $head->filter(regex_match qr/^\Q$name:/i)
 }
 
 # Get one of the headers
 
-fun head_xgetone($head, $name) {
+sub head_xgetone($head, $name) {
     my ($header) = head_get($head, $name)->perhaps_one
         or die "missing header '$name'";
     $header
@@ -69,7 +69,7 @@ fun head_xgetone($head, $name) {
 
 # Extract the value of a header
 
-fun header_value($header) {
+sub header_value($header) {
     $header =~ s/^[^:]+:// or die "header line missing a key: '$header'";
     chompspace $header
 }
@@ -88,7 +88,7 @@ my $drop_header_name_regex = regex_from_strings(qw(
     Date
 Message-ID));
 
-fun fixlines($lines) {
+sub fixlines($lines) {
     my ($head, $body) = lines_head_and_body $lines;
 
     my $from = head_xgetone $head, "From";
@@ -113,7 +113,7 @@ fun fixlines($lines) {
     )
 }
 
-fun string2lines($str) {
+sub string2lines($str) {
     list map {"$_\n"} split /\n/, $str
 }
 
@@ -143,7 +143,7 @@ Hi There!
 All good?
 ';
 
-fun sendprepare($path) {
+sub sendprepare($path) {
     xfile_replace_lines $path, *fixlines;
 }
 

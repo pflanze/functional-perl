@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures"; 
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -63,7 +63,7 @@ sub note {
     print STDERR "$myname: note: ", @_, "\n";
 }
 
-fun css_link($src) {
+sub css_link($src) {
     LINK({ rel => "stylesheet", href => $src, type => "text/css" })
 }
 
@@ -101,7 +101,7 @@ li.menu_last {
 }
 ';
 
-fun svgpaths($dir) {
+sub svgpaths($dir) {
     xdirectory_paths($dir)->filter(regex_match $svgpath_re)
         ->sort(on * svgpath_to_pageno, *number_cmp)
 }
@@ -109,17 +109,17 @@ fun svgpaths($dir) {
 # ------------------------------------------------------------------
 # file conversion
 
-fun possibly_symlink($old, $new) {
+sub possibly_symlink($old, $new) {
     symlink $old, $new or note "could not add symlink at '$new': $!";
 }
 
 # wrapper just because Perl's core ops can't be passed by *
-fun possibly_unlink($path) {
+sub possibly_unlink($path) {
     unlink $path
 }
 
 # convert pdf to svg unless already done
-fun possibly_do_pdf2svg($infile, $outdir) {
+sub possibly_do_pdf2svg($infile, $outdir) {
     my $outfiles = svgpaths($outdir);
     my $t_in     = sub { xstat($infile)->mtime };
     my $t_oldest = sub {
@@ -138,13 +138,13 @@ fun possibly_do_pdf2svg($infile, $outdir) {
 # shorten the navigation to only the pages around the current one plus
 # first and last if necessary
 
-fun possibly_shortened($l, $selected_i, $window_sidelen, $before, $after) {
+sub possibly_shortened($l, $selected_i, $window_sidelen, $before, $after) {
     my $len = $l->length;
 
     my $i1 = max(0, $selected_i - $window_sidelen);
     my $i2 = min($len, $selected_i + $window_sidelen + 1);
 
-    my $remainder = fun($l, $li) {
+    my $remainder = sub($l, $li) {
         if ($i2 < ($len - 1)) {
 
             # cut out right part
@@ -227,7 +227,7 @@ $l;
 TEST { possibly_shortened($l, 7, 5, $lu, $lu) }
 list('a', undef, qw(c d e f g h));
 
-fun paging_js_fragment($keycode, $svgpath) {
+sub paging_js_fragment($keycode, $svgpath) {
     my $htmlpath = svgpath_to_htmlpath($svgpath);
 
     # HACK: make path correctly locally relative, and avoid having to
@@ -240,7 +240,7 @@ fun paging_js_fragment($keycode, $svgpath) {
                 break;"
 }
 
-fun paging_js($svgpaths, $maybe_i) {
+sub paging_js($svgpaths, $maybe_i) {
     if (defined $maybe_i) {
         my $len = $svgpaths->length;
         my $i   = $maybe_i;
@@ -331,8 +331,8 @@ our $nav_window_sidelen = 10;
 
 my $insert = list(undef);
 
-fun navigation_html($svgpaths, $for_svgpath, $is_single) {
-    my $is_selected = fun($path) {
+sub navigation_html($svgpaths, $for_svgpath, $is_single) {
+    my $is_selected = sub($path) {
         $path eq $for_svgpath
     };
 
@@ -343,7 +343,7 @@ fun navigation_html($svgpaths, $for_svgpath, $is_single) {
     my $ul = UL(
         { class => "menu" },
         $possibly_shortened_svgpaths->map_with_islast(
-            fun($is_last, $maybe_svgpath)
+            sub($is_last, $maybe_svgpath)
             {
                 if (defined $maybe_svgpath) {
                     my $svgpath = $maybe_svgpath;
@@ -380,13 +380,13 @@ fun navigation_html($svgpaths, $for_svgpath, $is_single) {
 # pure function that returns the actions to be taken (this allows us
 # to inspect them before their execution, for debugging or testing):
 
-fun _svgpaths_to_html_actions($svgpaths, $title, $outdir) {
+sub _svgpaths_to_html_actions($svgpaths, $title, $outdir) {
 
     # (No need to protect $svgpaths with `Keep` here since it's a
     # purearray because of the sorting)
 
     # the html fragment for one page from the pdf
-    my $page_htmlfragment = fun($is_last, $for_svgpath) {
+    my $page_htmlfragment = sub($is_last, $for_svgpath) {
 
         # sub needed to work around destruction of document by
         # weakening done in serializer (ugly, really replace all
@@ -402,7 +402,7 @@ fun _svgpaths_to_html_actions($svgpaths, $title, $outdir) {
         ]
     };
 
-    my $html = fun($title, $body, $maybe_for_svgpath) {
+    my $html = sub($title, $body, $maybe_for_svgpath) {
         HTML(
             { lang => 'en' },    # XX should not assume 'en' (use HTML5)
             HEAD(
@@ -441,7 +441,7 @@ fun _svgpaths_to_html_actions($svgpaths, $title, $outdir) {
                 "$outdir/index.html"
             ],
             $svgpaths->map_with_index(
-                fun($i, $svgpath)
+                sub($i, $svgpath)
                 { [
                     *puthtmlfile,
                     svgpath_to_htmlpath($svgpath),
@@ -455,11 +455,11 @@ fun _svgpaths_to_html_actions($svgpaths, $title, $outdir) {
     )
 }
 
-fun svgpaths_to_html_actions($infile, $outdir) {
+sub svgpaths_to_html_actions($infile, $outdir) {
     _svgpaths_to_html_actions(svgpaths($outdir), basename($infile), $outdir)
 }
 
-fun pdf_to_html($infile) {
+sub pdf_to_html($infile) {
     my $outdir = $opt_outdir
         // dirname($infile) . "/" . basename($infile, ".pdf", 1);
 
@@ -468,7 +468,7 @@ fun pdf_to_html($infile) {
     possibly_do_pdf2svg($infile, $outdir) or note "svg files are up to date";
 
     svgpaths_to_html_actions($infile, $outdir)->for_each(
-        fun($action)
+        sub($action)
         {
             my ($proc, @args) = @$action;
             &$proc(@args)

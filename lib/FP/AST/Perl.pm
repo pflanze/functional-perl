@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -114,7 +114,7 @@ my @classes = qw(
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures"; 
 use FP::Predicates ":all";
 
 #use Chj::TEST;
@@ -132,7 +132,7 @@ package FP::AST::_::Perl {
     use FP::Struct [] => "FP::Abstract::Pure",
         "FP::Struct::Equal", "FP::Struct::Show";
 
-    method string_proto() {
+    sub string_proto($self) {
         __ "stringification when used as the callee in AppP";
         $self->string
     }
@@ -153,10 +153,10 @@ package FP::AST::Perl::Var {
         #FUTURE: [*is_bool, 'is_lexical'] ?
     ] => "FP::AST::_::Perl";
 
-    method string() {
+    sub string($self) {
         $self->sigil . $self->name
     }
-    method callderef() { die $self->type_name . " var can't be called" }
+    sub callderef($self) { die $self->type_name . " var can't be called" }
 
     _END_
 }
@@ -172,40 +172,40 @@ sub is_lexvar_string ($) {
 
 package FP::AST::Perl::ScalarVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
-    method type_name() {"SCALAR"}
-    method sigil() {'$'}
-    method callderef() {'->'}
+    sub type_name($self) {"SCALAR"}
+    sub sigil($self) {'$'}
+    sub callderef($self) {'->'}
     _END_
 }
 
 package FP::AST::Perl::CodeVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
-    method type_name() {"CODE"}
-    method sigil() {'&'}
-    method callderef() {''}
+    sub type_name($self) {"CODE"}
+    sub sigil($self) {'&'}
+    sub callderef($self) {''}
 
-    method string_proto() { $self->name }
+    sub string_proto($self) { $self->name }
     _END_
 }
 
 package FP::AST::Perl::HashVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
-    method type_name() {"HASH"}
-    method sigil() {'%'}
+    sub type_name($self) {"HASH"}
+    sub sigil($self) {'%'}
     _END_
 }
 
 package FP::AST::Perl::ArrayVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
-    method type_name() {"ARRAY"}
-    method sigil() {'@'}
+    sub type_name($self) {"ARRAY"}
+    sub sigil($self) {'@'}
     _END_
 }
 
 package FP::AST::Perl::Glob {
     use FP::Struct [] => "FP::AST::Perl::Var";    # XX *?*
-    method type_name() {"GLOB"}
-    method sigil() {'*'}
+    sub type_name($self) {"GLOB"}
+    sub sigil($self) {'*'}
     _END_
 }
 
@@ -236,15 +236,15 @@ package FP::AST::Perl::Get {
     # XX BTW eliminate those delegates? Just call manually? OR: use
     # Var directly in App proc ??
 
-    method string() {
+    sub string($self) {
         $self->var->string
     }
 
-    method string_proto() {
+    sub string_proto($self) {
         $self->var->string_proto
     }
 
-    method callderef() {
+    sub callderef($self) {
         $self->var->callderef
     }
 
@@ -258,18 +258,18 @@ package FP::AST::Perl::Ref {
 
     use FP::Struct [[*FP::AST::Perl::is_var, 'var'],] => "FP::AST::Perl::Expr";
 
-    method string() {
+    sub string($self) {
         "\\" . $self->var->string
     }
 
-    # method string_proto () {
+    # sub string_proto ($self) {
     #     # $self->var->string_proto
     #     #die "there is no prototype call with a ref expression"
     #         # ok? or just omit and let it fall back to ->string ? but
     #         # i DO think this call should never happen, right?
     # }
 
-    method callderef() {
+    sub callderef($self) {
 
         # taking a ref means the call will have to deref it, always
         '->'
@@ -295,7 +295,7 @@ package FP::AST::Perl::App {
         # (necessarily) in AppP).
     ] => "FP::AST::Perl::Expr";
 
-    method string() {
+    sub string($self) {
         $self->proc_string
             . $self->proc->callderef . "("
             . $self->argexprs->map(the_method "string")->strings_join(", ")
@@ -304,7 +304,7 @@ package FP::AST::Perl::App {
             # ^ XX are parens needed around arguments?
             ")"
     }
-    method proc_string() {
+    sub proc_string($self) {
         $self->proc->string
     }
     _END_
@@ -315,7 +315,7 @@ package FP::AST::Perl::AppP {
     # App with exposure to prototypes
     use FP::Struct [] => "FP::AST::Perl::App";
 
-    method proc_string() {
+    sub proc_string($self) {
         $self->proc->string_proto
     }
 
@@ -343,7 +343,7 @@ package FP::AST::Perl::Number {
     use FP::Struct [[*looks_like_number, 'perlvalue'],] =>
         "FP::AST::Perl::Value";
 
-    method string() {
+    sub string($self) {
         $self->perlvalue    # no quoting
     }
 
@@ -356,7 +356,7 @@ package FP::AST::Perl::String {
 
     use FP::Struct ['perlvalue',] => "FP::AST::Perl::Value";
 
-    method string() {
+    sub string($self) {
         singlequote($self->perlvalue)
     }
 
@@ -371,7 +371,7 @@ package FP::AST::Perl::Literal {
     use FP::Struct [[*FP::AST::Perl::is_value, 'value'],] =>
         "FP::AST::Perl::Expr";
 
-    method string() {
+    sub string($self) {
         $self->value->string
     }
 
@@ -382,7 +382,7 @@ package FP::AST::Perl::Semicolon {
     use FP::Struct [[*FP::AST::Perl::is_expr, 'a'],
         [*FP::AST::Perl::is_expr, 'b'],] => "FP::AST::Perl::Expr";
 
-    method string() {
+    sub string($self) {
         $self->a->string . "; " . $self->b->string
     }
     _END_
@@ -393,7 +393,7 @@ package FP::AST::Perl::Comma {
     use FP::Struct [[*FP::AST::Perl::is_expr, 'a'],
         [*FP::AST::Perl::is_expr, 'b'],] => "FP::AST::Perl::Expr";
 
-    method string() {
+    sub string($self) {
         $self->a->string . ", " . $self->b->string
     }
     _END_
@@ -402,7 +402,7 @@ package FP::AST::Perl::Comma {
 package FP::AST::Perl::Noop {
     use FP::Struct [] => "FP::AST::Perl::Expr";
 
-    method string() {
+    sub string($self) {
         ""
     }
     _END_
@@ -424,7 +424,7 @@ package FP::AST::Perl::Let {
         [*FP::AST::Perl::is_expr,         'body'],
     ] => "FP::AST::Perl::Expr";
 
-    method string() {
+    sub string($self) {
         my $vars     = $self->vars;
         my $multiple = $vars->length > 1;
         "my "

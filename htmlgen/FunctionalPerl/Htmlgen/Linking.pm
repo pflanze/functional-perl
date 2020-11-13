@@ -41,7 +41,8 @@ package FunctionalPerl::Htmlgen::Linking;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 
 package FunctionalPerl::Htmlgen::Linking::Anchors {
@@ -52,9 +53,9 @@ package FunctionalPerl::Htmlgen::Linking::Anchors {
 
     use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
-    method match_element_names() { [qw(h1 h2 h3 h4)] }
+    sub match_element_names($self) { [qw(h1 h2 h3 h4)] }
 
-    method map_element($e, $uplist) {
+    sub map_element($self, $e, $uplist) {
         my $text = $e->text;
         $text =~ s/ /_/sg;
         A({ name => $text }, $e)
@@ -79,7 +80,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
         wantarray ? @res : $res[-1]
     };
 
-    fun maybe_module_pod_url($v) {
+    sub maybe_module_pod_url($v) {
         my $res;
         eval {
             $res = xmaybe_module_pod_url($v);
@@ -114,18 +115,18 @@ package FunctionalPerl::Htmlgen::Linking::code {
     # these were checked for.
     $$ignore_module_name{ "X" x 3 } = 1;  # avoid tripping search for to-do tags
 
-    fun ignore_module_name($name) {
+    sub ignore_module_name($name) {
         $$ignore_module_name{$name}
     }
 
     use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
-    method match_element_names() { ["code"] }
+    sub match_element_names($self) { ["code"] }
 
-    method map_element($e, $uplist) {
+    sub map_element($self, $e, $uplist) {
 
         # possibly *map contents* of inline code or code sections
-        my $mapped_e = fun() {
+        my $mapped_e = sub() {
             if (defined(my $f = $self->map_code_body)) {
 
                 # rely on code never containing markup, at least *as long
@@ -193,7 +194,7 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
 
     use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
-    method match_element_names() { ["a"] }
+    sub match_element_names($self) { ["a"] }
 
     # XX dito config, well all of the map_a_href (also, NOTE the 'XX'
     # comment below about /tree/master instead; well, perhaps
@@ -202,7 +203,7 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
     our $github_base
         = "https://github.com/pflanze/functional-perl/blob/master/";
 
-    method map_element($e, $uplist) {
+    sub map_element($self, $e, $uplist) {
         if (my ($href) = $e->perhaps_attribute("href")) {
 
             my $uri = URI->new($href);
@@ -284,13 +285,12 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                     } else { ($path, $uri, $self->pathtranslate->is_md($path)) }
                 };
 
-                my $cont_uri = fun($uri) {
+                my $cont_uri = sub($uri) {
                     $e->attribute_set("href", "$uri")
                 };
-                my $cont_path = fun($path) {
-                    $uri->path(
-                        $self->pathtranslate->possibly_suffix_md_to_html($path)
-                    );
+                my $cont_path = sub($path) {
+                    $uri->path($self->pathtranslate->possibly_suffix_md_to_html(
+                        $path));
                     &$cont_uri($uri);
                 };
 

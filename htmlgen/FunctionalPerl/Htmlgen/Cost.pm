@@ -33,7 +33,8 @@ package FunctionalPerl::Htmlgen::Cost;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 
 package FunctionalPerl::Htmlgen::Cost::_::Cost {
@@ -41,7 +42,7 @@ package FunctionalPerl::Htmlgen::Cost::_::Cost {
 
     use FP::Struct [qw(name is_purchaseable basecosts val)];
 
-    method cost($index) {
+    sub cost($self, $index) {
         $$self{_cost} ||= do {
             add($self->val,
                 map { $$index{$_}->cost($index) } @{ $self->basecosts });
@@ -55,7 +56,7 @@ package FunctionalPerl::Htmlgen::Cost::_::Totalcost {
 
     use FP::Struct [qw(costs)];
 
-    method range() {
+    sub range($self) {
         @{ $$self{costs} } or die "no costs given";    #
         my $index;
         for (@{ $$self{costs} }) {

@@ -33,13 +33,14 @@ require Exporter;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 
 #use Sub::Call::Tail;
 
 use Chj::xperlfunc qw(basename);
 
-fun default__is_indexpath0($path0) {
+sub default__is_indexpath0($path0) {
     my $bn = lc basename($path0);
     $bn eq "index.md" or $bn eq "readme.md"
 }

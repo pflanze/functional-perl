@@ -1,12 +1,13 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use experimental "signatures"; 
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -41,7 +42,6 @@ GetOptions(
 ) or exit 1;
 usage if @ARGV;
 
-use Function::Parameters qw(:strict);
 use Perl::Critic;
 use FunctionalPerl::ModuleList;
 use Chj::Backtrace;
@@ -57,7 +57,7 @@ use FP::Repl;
 
     package PFLANZE::Result;
     use FP::Struct ["path"];
-    method prefix {
+    sub prefix($self) {
         $self->path . "\t"
     }
     _END_;
@@ -66,7 +66,7 @@ use FP::Repl;
 
     package PFLANZE::ERR;
     use FP::Struct ["message"], "PFLANZE::Result";
-    method string {
+    sub string($self) {
         $self->prefix . $self->messsage
     }
     _END_;
@@ -75,13 +75,13 @@ use FP::Repl;
 
     package PFLANZE::OK;
     use FP::Struct ["critiques"], "PFLANZE::Result";
-    method has_critique {
+    sub has_critique($self) {
         @{ $self->critiques } > 0
     }
-    method string {
+    sub string($self) {
         my $p = $self->prefix;
         $self->critiques->map (
-            fun($c)
+            sub($c)
             {
                 "$p$c"
             }
@@ -90,7 +90,7 @@ use FP::Repl;
     _END_;
 }
 
-fun critique($path) {
+sub critique($path) {
     eval {
         my $critic = Perl::Critic->new();
         PFLANZE::OK->new($path, purearray $critic->critique($path));
@@ -103,7 +103,7 @@ if ($opt_repl) {
     repl;
 } else {
     $critiques->filter(the_method "has_critique")->for_each(
-        fun($c)
+        sub($c)
         {
             xprintln $c->string
         }

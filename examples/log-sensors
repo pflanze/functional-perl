@@ -9,7 +9,6 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use utf8;
 
-#use Function::Parameters qw(:strict);
 #use Sub::Call::Tail;
 
 # find modules from functional-perl working directory (not installed)

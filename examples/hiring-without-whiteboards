@@ -9,7 +9,7 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use utf8;
 binmode *STDOUT{IO}, ":encoding(UTF-8)";
-use Function::Parameters qw(:strict);
+use experimental "signatures"; 
 
 #use Sub::Call::Tail;
 
@@ -36,7 +36,7 @@ sub usage {
 
   You can then enter 'queries' like:
 
-     cs->filter(fun(\$r) { \$r->locations->any(fun(\$l) { \$l =~ /\\bUK\\b/ }) })->show_items
+     cs->filter(sub(\$r) { \$r->locations->any(sub(\$l) { \$l =~ /\\bUK\\b/ }) })->show_items
 
   The 'show_items' method shows the object structure. If you instead
   use the 'print' method, it will serialize back to markdown, although
@@ -101,9 +101,9 @@ package CountryOrRemote {
 
 package Remote {
     use FP::Struct [], 'CountryOrRemote';
-    method is_USA() {undef}
-    method is_remote() {1}
-    method string() {"Remote"}
+    sub is_USA($self) {undef}
+    sub is_remote($self) {1}
+    sub string($self) {"Remote"}
     _END_
 }
 import Remote::constructors;
@@ -111,7 +111,7 @@ my $Remote = Remote();
 
 package Country {
     use FP::Struct [], 'CountryOrRemote';
-    method is_remote() {0}
+    sub is_remote($self) {0}
     _END_
 }
 
@@ -185,17 +185,17 @@ my $nonstates = "
 
 package USPSCode {
     use FP::Struct ["name", "code", "is_state"], 'Country';
-    method is_USA() {1}
-    method country_name() {"USA"}
-    method string() { $$self{code} }
+    sub is_USA($self) {1}
+    sub country_name($self) {"USA"}
+    sub string($self) { $$self{code} }
     _END_
 }
 import USPSCode::constructors;
 
-fun parse_USPS_segment($str, $is_state) {
+sub parse_USPS_segment($str, $is_state) {
     $str =~ s/^\s+//;
     purearray(split /\n/, $str)->map(
-        fun($line)
+        sub($line)
         {
             $line =~ s/^\s*(.*?)\s*\z/$1/s;
             my ($name, $code) = $line =~ /^(\S.*?\S)\s+(\w{2})\z/
@@ -211,8 +211,8 @@ my %USfromCode = map { $_->code => $_ } $USPSCodes->values;
 
 package NonUSCountry {
     use FP::Struct ["country_name"], 'Country';
-    method is_USA() {0}
-    method string() { $$self{country_name} }
+    sub is_USA($self) {0}
+    sub string($self) { $$self{country_name} }
     _END_
 }
 import NonUSCountry::constructors;
@@ -221,7 +221,7 @@ package City {
     use FP::Struct ["city", "country"], 'FP::Struct::Show';
     use overload '""' => sub { shift->string };
 
-    method string() {
+    sub string($self) {
         $self->city . ", " . $self->country
     }
 
@@ -229,7 +229,7 @@ package City {
 }
 import City::constructors;
 
-fun sortstring($str) {
+sub sortstring($str) {
     my $s = lc($str);
 
     # I'm sure there might be a library for this? Anyway, the
@@ -273,11 +273,11 @@ package Company {
         }
     );
 
-    method sortstring() {
+    sub sortstring($self) {
         main::sortstring($self->name)
     }
 
-    method string() {
+    sub string($self) {
 
         # back to markdown
         (
@@ -295,7 +295,7 @@ package Company {
         )
     }
 
-    method remote() {
+    sub remote($self) {
 
         # not calling it is_remote since has_remote might be more
         # appropriate, and then just keep it short.
@@ -321,11 +321,11 @@ package InclusiveRange {
         }
     );
 
-    method string() {
+    sub string($self) {
         $self->from . " - " . $self->to
     }
 
-    method contains_item($v) {
+    sub contains_item($self, $v) {
 
         # super HACK to accomodate for the '#' thing (should use a
         # maybe type instead for ranges which are open above--except
@@ -344,7 +344,7 @@ package CatchallRange {
     # with the '#', as the letter '#' isn't actually covering over the
     # digits so would otherwise have to hack InclusiveRange.
     use FP::Struct [], 'InclusiveRange';
-    method contains_item($v) {
+    sub contains_item($self, $v) {
         1
     }
     _END_
@@ -360,19 +360,19 @@ package Group {
 import Group::constructors;
 
 my $ranges = triples('A' .. 'Z', '#')->map_with_islast(
-    fun($islast, $a)
+    sub($islast, $a)
     {
         ($islast ? \&CatchallRange : \&InclusiveRange)->($$a[0], $$a[2])
     }
 )->list;
 
-fun group_companies($l, $ranges) {
+sub group_companies($l, $ranges) {
 
     # sortedlist -> list_of(Group)
     return null if $l->is_null;
     my $range = $ranges->first;
     my ($groupitems, $rest) = $l->take_while_and_rest(
-        fun($company)
+        sub($company)
         {
             $range->contains_item(uc substr($company->name, 0, 1))
         }
@@ -384,12 +384,12 @@ fun group_companies($l, $ranges) {
 # ==================================================================
 # markdown line parsing
 
-fun is_item($s) {
+sub is_item($s) {
     $s =~ /^-\s+/
 }
 
-fun is_heading_of($pred) {
-    fun($s) {
+sub is_heading_of($pred) {
+    sub($s) {
         if (my ($txt) = $s =~ /^\s*#+\s*(.*)/) {
             &$pred($txt)
         } else {
@@ -398,22 +398,22 @@ fun is_heading_of($pred) {
     }
 }
 
-*is_heading = is_heading_of(fun($s) {1});
-*is_AlsoSee = is_heading_of(fun($s) { $s =~ /also *see/i });
+*is_heading = is_heading_of(sub($s) {1});
+*is_AlsoSee = is_heading_of(sub($s) { $s =~ /also *see/i });
 
-fun is_hr($s) {
+sub is_hr($s) {
     $s =~ /^---\s*$/
 }
 
-fun is_empty($s) {
+sub is_empty($s) {
     $s =~ /^\s*$/
 }
 
-fun parse_country($str) {
+sub parse_country($str) {
     $USfromCode{$str} // NonUSCountry($str)
 }
 
-fun parse_location($str) {
+sub parse_location($str) {
     if ($str =~ /^remote$/i) {
         $Remote
     } else {
@@ -442,7 +442,7 @@ fun parse_location($str) {
     }
 }
 
-fun parse_line($line) {
+sub parse_line($line) {
     my $s = $line;
     $s =~ s/^-\s*// or die "line is not an item";
     my ($name, $url, $rest) = $s =~ /^\[(.*?)\] *\((.*?)\)\s*(.*)$/
@@ -476,29 +476,29 @@ Company(
 );
 
 # XX move?; name?
-fun FP::Abstract::Sequence::drop_over($l, $pred) {
+sub FP::Abstract::Sequence::drop_over($l, $pred) {
     $l->drop_while(complement $pred)->drop_while($pred)
 }
 
-fun datalines() {
+sub datalines() {
     xfile_lines_chomp("$basedir/$mainfile", "UTF-8")->drop_over(*is_hr)
         ->take_while(complement * is_AlsoSee)->filter(complement * is_empty)
 }
 
-fun companies() {
+sub companies() {
 
     # Simply ignore the grouping headings.
     datalines->filter(complement * is_heading)->map (*parse_line)
 }
 
-fun parse_heading($str) {
+sub parse_heading($str) {
     my ($from, $to) = $str =~ /^#+\s+(\w)\s*-\s*(\w|\\?#)\s*$/
         or die "not a heading: '$str'";
     $to =~ s/^\\//;
     InclusiveRange($from, $to)
 }
 
-fun grouped_companies_from($datalines) {
+sub grouped_companies_from($datalines) {
 
     # Capture the groupings as well, as the original file is badly
     # grouping them, so to keep a diff minimal we first have to
@@ -518,19 +518,19 @@ fun grouped_companies_from($datalines) {
     }
 }
 
-fun grouped_companies() {
+sub grouped_companies() {
     grouped_companies_from datalines
 }
 
-fun print_groups($s) {
+sub print_groups($s) {
     $s->for_each(
-        fun($group)
+        sub($group)
         {
             my $range = $group->range->string;
             $range =~ s/#/\\#/;
             xprintln "## $range";
             $group->items->for_each(
-                fun($company)
+                sub($company)
                 {
                     xprintln $company;
                 }
@@ -543,20 +543,20 @@ fun print_groups($s) {
 # HACK: should really just use the repl printer (show) directly to
 # show the whole results list, but show currently doesn't do
 # multi-line pretty-printing; so:
-fun print_showln($v) {
+sub print_showln($v) {
     xprintln show $v
 }
 
 # XX see above, and move?
-fun FP::Abstract::Sequence::show_items($l) {
+sub FP::Abstract::Sequence::show_items($l) {
     $l->for_each(*print_showln)
 }
 
-fun FP::Abstract::Sequence::print($l) {
+sub FP::Abstract::Sequence::print($l) {
     $l->for_each(*xprintln)
 }
 
-fun FP::Abstract::Sequence::print_grouped($l, $please_sort = 1) {
+sub FP::Abstract::Sequence::print_grouped($l, $please_sort = 1) {
     my $l = $please_sort ? $l->sort : $l;
     print_groups(group_companies($l, $ranges));
 }
@@ -564,7 +564,7 @@ fun FP::Abstract::Sequence::print_grouped($l, $please_sort = 1) {
 # ==================================================================
 # main
 
-fun cs() { companies() }
+sub cs() { companies() }
 
 perhaps_run_tests "main" or do {
     usage unless @ARGV == 1;

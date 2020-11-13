@@ -33,11 +33,12 @@ require Exporter;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 
 # lib?
-fun existingpath_or(@paths) {
+sub existingpath_or(@paths) {
     for (@paths) {
         return $_ if -e $_
     }
@@ -48,7 +49,7 @@ use POSIX qw(EEXIST ENOENT);
 use Chj::xperlfunc qw(dirname xmkdir);
 
 # XX how is this different from xmkdir_p ?
-fun create_parent_dirs($path0, $path0_to_outpath) {
+sub create_parent_dirs($path0, $path0_to_outpath) {
     my $path0   = dirname $path0;
     my $outpath = &$path0_to_outpath($path0);
     if (mkdir $outpath) {

@@ -38,7 +38,8 @@ require Exporter;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 use FP::Docstring;
 use HTML::TreeBuilder;
@@ -47,7 +48,7 @@ use HTML::TreeBuilder;
 use PXML::XHTML;
 use Chj::TEST;
 
-fun htmlparse_raw($htmlstr, $whichtag) {
+sub htmlparse_raw($htmlstr, $whichtag) {
     my $t = HTML::TreeBuilder->new;
     $t->ignore_unknown(0);    # allow <with_toc> elements
     $t->parse_content($htmlstr);
@@ -57,7 +58,7 @@ fun htmlparse_raw($htmlstr, $whichtag) {
     $e->find_by_tag_name($whichtag)
 }
 
-fun htmlmap($e) {
+sub htmlmap($e) {
     __ '(HTML::Element) -> PXML::_::XHTML '
         . '-- convert output from HTML::TreeBuilder to PXML::XHTML (PXML::Element)';
     my $name = lc($e->tag);
@@ -90,7 +91,7 @@ fun htmlmap($e) {
     );
 }
 
-fun htmlparse($str, $whichtag) {
+sub htmlparse($str, $whichtag) {
     __ '($str,$whichtag) -> PXML::Element '
         . '-- parse HTML string to PXML; $whichtag is passed to'
         . ' find_by_tag_name from HTML::TreeBuilder';

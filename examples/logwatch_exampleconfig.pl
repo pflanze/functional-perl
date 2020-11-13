@@ -1,13 +1,13 @@
-use Function::Parameters ':strict';
+use experimental "signatures"; 
 
 +{
     logfile => "logwatch_example.log",
-    match   => fun($line)
+    match   => sub($line)
     {
         $line =~ /yes/
     },
     collecttime => 4,
-    report      => fun($path)
+    report      => sub($path)
     {
         print " == REPORT: ======= \n";
         system "cat", $path;

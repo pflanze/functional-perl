@@ -30,7 +30,8 @@ package FunctionalPerl::Htmlgen::PXMLMapper;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 use FP::Docstring;
 use FP::Predicates;
@@ -43,12 +44,12 @@ use FP::Struct [
     [instance_of("FunctionalPerl::Htmlgen::PathTranslate"), "pathtranslate"],
 ];
 
-method match_element_names() {
+sub match_element_names($self) {
     __ 'method () -> [string] -- array of element names';
     die "abstract class, missing implementation";
 }
 
-method map_element($e, $uplist) {
+sub map_element($self, $e, $uplist) {
     __
         'method ($e: PXML::Element, $uplist: list_of PXML::Element) -> PXML::Element';
     die "abstract class, missing implementation";

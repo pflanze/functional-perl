@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters ":strict";
+use experimental "signatures"; 
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -56,7 +56,7 @@ use FP::fix qw(fixn);
 
     package find_maildirs::Failure;
     use FP::Struct ["path", "message"];
-    method xprintln() {
+    sub xprintln($self) {
         print STDERR $self->path, ": ", $self->message, "\n"
     }
     _END_
@@ -66,7 +66,7 @@ use FP::fix qw(fixn);
 
     package find_maildirs::Success;
     use FP::Struct ["path"];
-    method xprintln() {
+    sub xprintln($self) {
         print STDOUT $self->path, "\n" or die $!;
     }
     _END_
@@ -78,19 +78,19 @@ use FP::fix qw(fixn);
 
 my $is_gitdir_subdirs = list qw(refs branches objects info);    # hooks ?
 
-fun is_gitdir($path) {
+sub is_gitdir($path) {
     $path =~ /\.git\z/ and $is_gitdir_subdirs->all(sub { -d "$path/$_[0]" })
 }
 
-fun is_maildir($path) { (-d "$path/cur" and -d "$path/new" and -d "$path/tmp") }
+sub is_maildir($path) { (-d "$path/cur" and -d "$path/new" and -d "$path/tmp") }
 
-fun is_maildir_plusplus_subfolder($path) {
+sub is_maildir_plusplus_subfolder($path) {
     -f "$path/maildirfolder" and is_maildir $path
 }
 
 # ---- tree folding -----------------------------------------------------
 
-fun find_below($path, $pred) {
+sub find_below($path, $pred) {
 
     my ($fold_path, $fold_dirpath) = fixn(
         fun($fold_path, $fold_dirpath, $path, $rest)

@@ -36,7 +36,8 @@ require Exporter;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 use FP::Docstring;
 
@@ -46,7 +47,7 @@ use FP::Path;
 use Chj::xperlfunc qw(dirname);
 use Chj::TEST ":all";
 
-fun path_add($base, $rel) {
+sub path_add($base, $rel) {
     __ '($basestr, $relstr) -> $str '
         . '-- throws exception if $relstr goes above all of $basestr (via FP::Path)';
     FP::Path->new_from_string($base)->add(FP::Path->new_from_string($rel), 1)
@@ -63,7 +64,7 @@ TEST_EXCEPTION { path_add ".", "../zoo/loo" }
 # "../zoo/loo"; # yes that's something I want, ok?
 "can't take '..' of root directory";                      # well, ok?
 
-fun path_diff($path0from, $path0to) {
+sub path_diff($path0from, $path0to) {
     __ '($path0from, $path0to) -> $patstr '
         . '-- (via File::Spec with Windows hack)';
     my $from = $path0from =~ m|(.*?)/+$|s ? $1 : dirname $path0from;
@@ -82,7 +83,7 @@ TEST { path_diff "foo",          "bar.css" } 'bar.css';
 
 #/lib
 
-fun path0($path) {
+sub path0($path) {
     __ 'delete "(../)*" prefix, just a hacky way to strip path prefix';
     my $path0 = $path;
     while ($path0 =~ s|^\.\./||) { }
@@ -90,7 +91,7 @@ fun path0($path) {
     $path0
 }
 
-fun path_path0_append($dir, $relpath0) {
+sub path_path0_append($dir, $relpath0) {
     __ "a path-append that doesn't result in a leading './'";
     my $p = "$dir/$relpath0";
     $p =~ s|^\./||;

@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 #
-# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -12,13 +12,7 @@
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-
-# Method::Signatures versions 20120523 and 20141021 are working badly
-# for this file, because (1) each package needs its own import, (2)
-# error locations are completely off. Thus, still use the trusty
-# Function::Parameters.
-
-use Function::Parameters qw(:strict);
+use experimental "signatures"; 
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -116,11 +110,11 @@ our $pathtranslate
 
 our $gitrepository = FP::Git::Repository->new_(chdir => $inbase);
 
-fun path0_to_inpath($path0) {
+sub path0_to_inpath($path0) {
     "$inbase/" . $path0
 }
 
-fun path0_to_outpath($path0) {
+sub path0_to_outpath($path0) {
 
     #"$outbase/".$pathtranslate->xsuffix_md_to_html($path0,0)
     # nope, also used for .pl file copying,
@@ -147,14 +141,14 @@ our $pxml_mappers =
     "FunctionalPerl::Htmlgen::Linking::a_href",
     ];
 
-fun pxml_name_to_mapper(@PXMLMapper_args) {
+sub pxml_name_to_mapper(@PXMLMapper_args) {
     purehash(
         map {
             if (ref $_) {    # subarray given (autobox coming into play)
                 my $ms      = $_->map(the_method "new_", @PXMLMapper_args);
                 my $elnames = $ms->first->match_element_names;
                 $ms->rest->every(
-                    fun($v)
+                    sub($v)
                     {
                         equal $elnames, $v->match_element_names
                     }
@@ -162,9 +156,9 @@ fun pxml_name_to_mapper(@PXMLMapper_args) {
 
                 # chain element $e through them until it was processed:
                 my $fn = $ms->fold_right(
-                    fun($m, $prev)
+                    sub($m, $prev)
                     {
-                        fun($e, $uplist) {
+                        sub($e, $uplist) {
 
                             #warn "checking out $m..";
                             my $e2 = $m->map_element($e, $uplist);
@@ -174,7 +168,7 @@ fun pxml_name_to_mapper(@PXMLMapper_args) {
                                 $e2
                             }
                         }
-                    }, fun($e, $uplist) {$e}
+                    }, sub($e, $uplist) {$e}
                 );
                 map { ($_, $fn) } @$elnames
             } else {
@@ -190,7 +184,7 @@ fun pxml_name_to_mapper(@PXMLMapper_args) {
     )
 }
 
-fun default_pxml_name_to_mapper() {
+sub default_pxml_name_to_mapper() {
 
     # fake instance for tests only
     pxml_name_to_mapper(
@@ -201,7 +195,7 @@ fun default_pxml_name_to_mapper() {
     )
 }
 
-fun process_body(
+sub process_body(
     $v,
     $pxml_name_to_mapper = default_pxml_name_to_mapper(),
     $mediawikitoken      = "NOTOKEN",
@@ -219,7 +213,7 @@ fun process_body(
     # update here when prepending another mapping phase or so, right?)
     # the same way the rest of the document is treated.
 
-    my $map_text_mediawiki = fun($v, $uplist) {
+    my $map_text_mediawiki = sub($v, $uplist) {
 
         # ($uplist might be empty in tests)
         if (is_pair $uplist and $uplist->first->name eq "code") {
@@ -229,7 +223,7 @@ fun process_body(
         } else {
             my $body = mediawiki_rexpand($v, $mediawikitoken, $mediawikitable);
             array_map(
-                fun($e)
+                sub($e)
                 {
                     pxml_map_elements_exhaustively($e, $pxml_name_to_mapper,
                         undef);
@@ -289,11 +283,11 @@ package FunctionalPerl::Htmlgen::_::Genfilestate {
                          # non-buglist groups
     ];
 
-    method set_costrange($path0, $maybe_costrange) {
+    sub set_costrange($self, $path0, $maybe_costrange) {
         __ '~ugly, mutates';
         $$self{costranges}{$path0} = $maybe_costrange;
     }
-    method costrange($path0) {
+    sub costrange($self, $path0) {
         $$self{costranges}{$path0}
     }
 
@@ -307,7 +301,7 @@ package FunctionalPerl::Htmlgen::_::Filesinfo {
     use FP::PureArray;
     use FP::Docstring;
 
-    fun groupkey($path) {
+    sub groupkey($path) {
         __ 'a string key for grouping this path amongst other files, to '
             . 'process them in an order that satisfies dependency on costranges';
         my $p0 = path0 $path;
@@ -325,37 +319,37 @@ package FunctionalPerl::Htmlgen::_::Filesinfo {
         'path0_exists',      # path0 => ()
         'all_path0_used',    # path0 => usecount, mutated
     ];
-    method filename_to_path0($filename) {
+    sub filename_to_path0($self, $filename) {
         $$self{filename_to_path0}{$filename}
             // die "no mapping for filename '$filename'"
     }
-    method filename_to_maybe_path0($filename) {
+    sub filename_to_maybe_path0($self, $filename) {
         $$self{filename_to_path0}{$filename}
     }
 
     # still very unclear about the exact name styling. Prefer perhaps,
     # and "then" also move the qualificator to the front? (but leave
     # the one for hash_ where it is since hash_ is the type prefix?) :
-    method perhaps_filename_to_path0($filename) {
+    sub perhaps_filename_to_path0($self, $filename) {
         hash_perhaps_ref($$self{filename_to_path0}, $filename)
     }
-    method all_path0_exists($path0) {
+    sub all_path0_exists($self, $path0) {
         defined $$self{all_path0_exists}{$path0}
             or defined $$self{all_path0_exists}{ $path0 . "/" }
     }
-    method path0_is_directory($path0) {
+    sub path0_is_directory($self, $path0) {
         $path0 =~ s|/+$||s;
         defined $$self{all_path0_exists}{ $path0 . "/" }
     }
-    method path0_exists($path0) {
+    sub path0_exists($self, $path0) {
         defined $$self{path0_exists}{$path0}
     }
-    method all_path0_used_inc($path0) {
+    sub all_path0_used_inc($self, $path0) {
         __ '~ugly, mutates';
         $$self{all_path0_used}{$path0}++
     }
 
-    method new_genfilestate() {
+    sub new_genfilestate($self) {
         my $groupedfiles = array_to_hash_group_by $self->files, \&groupkey;
 
         my $nonbugfiles = purearray(@{ $$groupedfiles{normal} },
@@ -370,7 +364,7 @@ package FunctionalPerl::Htmlgen::_::Filesinfo {
     _END_
 }
 
-fun get_filesinfo() {
+sub get_filesinfo() {
     __ '() -> Filesinfo '
         . '-- read info about files from disk as immutable struct';
 
@@ -398,11 +392,11 @@ fun get_filesinfo() {
 
 # Navigation:
 
-fun nav_bar($items_in_level, $item_selected, $viewed_at_item) {
+sub nav_bar($items_in_level, $item_selected, $viewed_at_item) {
     UL(
         { class => "menu" },
         $items_in_level->map_with_islast(
-            fun($is_last, $item)
+            sub($is_last, $item)
             {
                 my $filetitle = $pathtranslate->path0_to_title($item->path0);
                 my $is_viewed = equal($item, $viewed_at_item);
@@ -442,13 +436,13 @@ sub nav {
 
 # /for access from main:: by the code in the configuration file.
 
-our $HEAD = pxmlpre 3, fun($title, $csspath, $user_additions) {
+our $HEAD = pxmlpre 3, sub($title, $csspath, $user_additions) {
     HEAD(TITLE($title),
         LINK({ rel => "stylesheet", href => $csspath, type => "text/css" }),
         $user_additions)
 };
 
-fun genfile($path, $groupname, $genfilestate) {
+sub genfile($path, $groupname, $genfilestate) {
     __ '($path, $groupname, $genfilestate) -> () '
         . '-- convert markdown file at $path to xhtml file at '
         . 'corresponding output path';
@@ -476,7 +470,7 @@ fun genfile($path, $groupname, $genfilestate) {
         # extract Cost indicators:
         my $namere                    = qr/\w+/;
         my $nameplusre                = qr/\(?$namere\)?/;
-        my $possibly_nameplus_to_name = fun($maybe_nameplus) {
+        my $possibly_nameplus_to_name = sub($maybe_nameplus) {
             if (defined $maybe_nameplus) {
                 my ($name) = $maybe_nameplus =~ qr/($namere)/ or die "bug";
                 $name
@@ -526,7 +520,7 @@ fun genfile($path, $groupname, $genfilestate) {
     my $maybe_buglist = $groupname eq "buglist" && do {
         my $bugs = array_sort(
             array_map(
-                fun($path)
+                sub($path)
                 {
                     my $path0 = path0 $path;
                     my $title = $pathtranslate->path0_to_title($path0);
@@ -559,7 +553,7 @@ fun genfile($path, $groupname, $genfilestate) {
     my $filesinfo           = $genfilestate->filesinfo;
     my $pxml_name_to_mapper = pxml_name_to_mapper(
         path0            => $path0,
-        maybe_have_path0 => fun($path0)
+        maybe_have_path0 => sub($path0)
         {
             if ($filesinfo->all_path0_exists($path0)) {
                 $filesinfo->all_path0_used_inc($path0);
@@ -568,7 +562,7 @@ fun genfile($path, $groupname, $genfilestate) {
                 undef
             }
         },
-        perhaps_filename_to_path0 => fun($filename)
+        perhaps_filename_to_path0 => sub($filename)
         {
             $filesinfo->perhaps_filename_to_path0($filename)
         },
@@ -603,7 +597,7 @@ fun genfile($path, $groupname, $genfilestate) {
                     (
                     $nav->nav_bar_level0(
                         $genfilestate->nonbugfiles->map (
-                            fun($p0)
+                            sub($p0)
                             {
                                 $nav_index->path0_to_item($p0)
                             }
@@ -641,7 +635,7 @@ fun genfile($path, $groupname, $genfilestate) {
     puthtmlfile($outpath, $html);
 }
 
-fun genfiles($filesinfo) {
+sub genfiles($filesinfo) {
     my $genfilestate = $filesinfo->new_genfilestate;
     for my $groupname (qw(bugs normal buglist)) {
         for (@{ $genfilestate->groupedfiles->{$groupname} }) {
@@ -651,7 +645,7 @@ fun genfiles($filesinfo) {
 }
 
 # copy referenced non-.md files:
-fun copyfiles($filesinfo) {
+sub copyfiles($filesinfo) {
     for my $path0 (hashset_keys hashset_union(
         $filesinfo->all_path0_used,
         array_to_hashset(hash_ref_or($config, "copy_paths", []))
@@ -680,7 +674,7 @@ fun copyfiles($filesinfo) {
     );
 }
 
-fun main() {
+sub main() {
     mkdir $outbase;
     warn "running get_filesinfo..";
     my $filesinfo = get_filesinfo;

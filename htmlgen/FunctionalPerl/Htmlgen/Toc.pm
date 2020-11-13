@@ -38,7 +38,8 @@ package FunctionalPerl::Htmlgen::Toc;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 
 use FP::StrictList;
@@ -49,8 +50,8 @@ use FP::Stream qw(stream_mixed_state_fold_right);
 use PXML ":all";
 use FP::Predicates qw(is_natural);
 
-fun rindices_numberstring($rindices) {
-    is_null($rindices) ? "" : $rindices->reverse->map(fun($i) {"$i."})
+sub rindices_numberstring($rindices) {
+    is_null($rindices) ? "" : $rindices->reverse->map(sub($i) {"$i."})
         ->strings_join("") . " "
 }
 
@@ -65,20 +66,20 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
 
     use FP::Struct [[*is_strictlist, "subnodes"]];
 
-    method subnodes_length() {
+    sub subnodes_length($self) {
         $self->subnodes->length
     }
 
-    method subnodes_add($node) {
+    sub subnodes_add($self, $node) {
         is_instance_of $node, "FunctionalPerl::Htmlgen::Toc::TocNode"
             or die "wrong type";
 
         # (^ XX so poor, neither do I have a TypedList yet, nor the
         # syntax to add it to the method declaration)
-        $self->subnodes_update(fun($l) { cons $node, $l })
+        $self->subnodes_update(sub($l) { cons $node, $l })
     }
 
-    method subnodes_head_update($fn) {
+    sub subnodes_head_update($self, $fn) {
         my $ss = $self->subnodes;
         if (is_null $ss) {
             die "skipped level"    ## nicer message and all?
@@ -87,11 +88,11 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
         }
     }
 
-    method level_add($levelsdown, $node) {
+    sub level_add($self, $levelsdown, $node) {
         is_natural $levelsdown or die "wrong type: $levelsdown";
         if ($levelsdown > 1) {
             $self->subnodes_head_update(
-                fun($subnode)
+                sub($subnode)
                 {
                     $subnode->level_add($levelsdown - 1, $node)
                 }
@@ -102,7 +103,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
     }
 
     # just for debugging? $indices is a list of 1-based indices
-    method ref($indices) {
+    sub ref($self, $indices) {
         if (is_null $indices) {
             $self
         } else {
@@ -113,7 +114,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
     }
 
     # used during document mapping (while the toc is collected)
-    method numberstring() {
+    sub numberstring($self) {
         my $ss  = $self->subnodes;
         my $len = $ss->length;
 
@@ -125,7 +126,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
 
     # build the TOC html. Need to get the numberstring differently
     # now.
-    method html_with_parents($rindices) {
+    sub html_with_parents($self, $rindices) {
         my $maybe_name = $self->name;
         my $shown      = [
             FunctionalPerl::Htmlgen::Toc::rindices_numberstring($rindices),
@@ -139,8 +140,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
                 : $shown
             ),
             $self->subnodes->array__reverse__map_with_length(
-                fun($node, $num)
-                {
+                sub ($node, $num) {
                     LI($node->html_with_parents(cons $num, $rindices))
                 }
             )
@@ -162,7 +162,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNode {
         ],
         "FunctionalPerl::Htmlgen::Toc::TocNodeBase";
 
-    method header_pxml_for_toc() {
+    sub header_pxml_for_toc($self) {
 
         # XX keep some formatting?
         $self->header->text
@@ -178,9 +178,9 @@ package FunctionalPerl::Htmlgen::Toc::TocRootNode {
     use FP::Struct ["header_pxml_for_toc"],
         "FunctionalPerl::Htmlgen::Toc::TocNodeBase";
 
-    method name() {undef}
+    sub name($self) {undef}
 
-    method html() {
+    sub html($self) {
         DIV({ class => "toc_box" }, $self->html_with_parents(null))
     }
 
@@ -207,7 +207,7 @@ TEST {
 
 TEST {
     my $t_paths = list(list(1), list(2), list(1, 1));
-    $t_paths->map (fun($path) { $ttoc->ref($path)->name })->array
+    $t_paths->map (sub($path) { $ttoc->ref($path)->name })->array
 }
 [qw(a c b)];
 
@@ -220,11 +220,11 @@ TEST { $ttoc->html->string }
     . '<li><dir class="toc"><a href="#c">2. Second</a></dir></li>'
     . '</dir></div>';
 
-fun process__with_toc__body($body, $first_level, $toc, $parents) {
+sub process__with_toc__body($body, $first_level, $toc, $parents) {
 
     # -> (processed_body, toc)
     stream_mixed_state_fold_right(
-        fun($v, $toc, $rest)
+        sub($v, $toc, $rest)
         {
             if (is_pxml_element($v)) {
                 if (my ($_level) = $v->name =~ /^[hH](\d+)$/s) {
@@ -236,7 +236,7 @@ fun process__with_toc__body($body, $first_level, $toc, $parents) {
                         . $v->name . ">";
 
                     my $anchor = $parents->find(
-                        fun($e)
+                        sub($e)
                         {
                             $e->name eq "a" and $e->maybe_attribute("name")
                         }
@@ -250,7 +250,7 @@ fun process__with_toc__body($body, $first_level, $toc, $parents) {
                     (
                         cons(
                             $v->body_update(
-                                fun($body)
+                                sub($body)
                                 {
                                     cons($toc->numberstring . " ", $body)
                                 }
@@ -275,7 +275,7 @@ fun process__with_toc__body($body, $first_level, $toc, $parents) {
                 (cons($v, $tail), $toc2)
             }
         },
-        fun($toc)
+        sub($toc)
         {
             # return counter back up the chain
             (null, $toc)
@@ -349,9 +349,9 @@ TEST {
 
 use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
-method match_element_names() { ["with_toc"] }
+sub match_element_names($self) { ["with_toc"] }
 
-method map_element($e, $uplist) {
+sub map_element($self, $e, $uplist) {
     my ($body, $toc)
         = process__with_toc__body($e->body, $e->maybe_attribute("level") // 2,
         $empty_toc, null);

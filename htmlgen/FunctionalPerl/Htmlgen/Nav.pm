@@ -33,17 +33,18 @@ require Exporter;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 
 # Constructors
 
-fun _nav($items, $nav_bar) {
+sub _nav($items, $nav_bar) {
     my $nav
         = FunctionalPerl::Htmlgen::Nav::TopEntry->new($items, $nav_bar, undef);
     $nav->index_set(nav_index($nav))
 }
 
-fun entry($path0, @subentries) {
+sub entry($path0, @subentries) {
     FunctionalPerl::Htmlgen::Nav::RealEntry->new_(
         path0      => $path0,
         subentries => list(@subentries)
@@ -65,7 +66,7 @@ package FunctionalPerl::Htmlgen::Nav::Entry {
         list_of(instance_of "FunctionalPerl::Htmlgen::Nav::Entry"), "subentries"
     ]];
 
-    method subentries_of_subentries() {
+    sub subentries_of_subentries($self) {
         $self->subentries->map(the_method "subentries")
     }
 
@@ -75,9 +76,9 @@ package FunctionalPerl::Htmlgen::Nav::Entry {
     # non-existing pages show up). Feel free to drop it and replace with
     # nav_bar_level0.
 
-    method nav_bar_levels($viewed_at_item, $upitems) {
+    sub nav_bar_levels($self, $viewed_at_item, $upitems) {
         fix(
-            fun($rec, $nav, $downitems, $upitem)
+            sub($rec, $nav, $downitems, $upitem)
             {
                 # only show subnavs until the given location
                 # ($viewed_at_item), and then one more (to go down)?
@@ -133,14 +134,14 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
         ],
         "FunctionalPerl::Htmlgen::Nav::Entry";
 
-    method FP_Show_show($show)
+    sub FP_Show_show($self, $show)
     { ("nav(" . $self->subentries->map($show)->strings_join(", ") . ")") }
 
     # nav level 0: this is special since it does not just
     # show what the navigation defines, but show all
     # pages that are not in deeper levels
 
-    method item_is_in_lower_hierarchy() {
+    sub item_is_in_lower_hierarchy($self) {
         compose(
             hashset_to_predicate array_to_hashset(
                 $self->subentries_of_subentries->flatten->map(
@@ -154,7 +155,7 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
     # In the toplevel of the nav hierarchy, still also show pages that are
     # missing in the nav declaration; thus, use the nav declaration to
     # *order* the pages instead:
-    method path0_to_sortkey() {
+    sub path0_to_sortkey($self) {
         my $sortprio = do {
             my $i = 1;
             +{
@@ -165,16 +166,16 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
                 } $self->subentries->map(the_method "path0")->values
             }
         };
-        fun($path0) {
+        sub($path0) {
             $$sortprio{$path0} || $path0
         }
     }
 
-    method path0_navigation_cmp() {
+    sub path0_navigation_cmp($self) {
         on $self->path0_to_sortkey, *string_cmp
     }
 
-    method nav_bar_level0($items, $item_selected, $viewed_at_item) {
+    sub nav_bar_level0($self, $items, $item_selected, $viewed_at_item) {
         my $shownitems
             = $items->filter(complement $self->item_is_in_lower_hierarchy)
             ->sort(on the_method("path0"), $self->path0_navigation_cmp);
@@ -192,13 +193,13 @@ package FunctionalPerl::Htmlgen::Nav::RealEntry {
     use FP::Struct [[*is_string, "path0"]],
         "FunctionalPerl::Htmlgen::Nav::Entry", "FP::Abstract::Equal";
 
-    method FP_Show_show($show)
+    sub FP_Show_show($self, $show)
     { ("entry("
             . $self->subentries->map($show)->cons(&$show($self->path0))
             ->strings_join(", ")
             . ")") }
 
-    method FP_Equal_equal($v)
+    sub FP_Equal_equal($self, $v)
     { ($self->path0 eq $v->path0 and equal($self->subentries, $v->subentries)) }
 
     _END_
@@ -216,24 +217,24 @@ package FunctionalPerl::Htmlgen::Nav::Index {
 
     use FP::Struct ["p0_to_upitems", "p0_to_item"];
 
-    method path0_to_upitems($p0) {
+    sub path0_to_upitems($self, $p0) {
 
         # now includes the $p0 item itself
         $self->p0_to_upitems->{$p0}
             // FunctionalPerl::Htmlgen::Nav::entry($p0)    # not null
     }
 
-    method path0_to_item($p0) {
+    sub path0_to_item($self, $p0) {
         $self->p0_to_item->{$p0} // FunctionalPerl::Htmlgen::Nav::entry($p0)
     }
     _END_
 }
 
-fun nav_index($nav) {
+sub nav_index($nav) {
     my (%p0_to_upitems, %p0_to_item);
-    my $index_level = fix fun($index_level, $items, $upitems) {
+    my $index_level = fix sub($index_level, $items, $upitems) {
         $items->subentries->for_each(
-            fun($item)
+            sub($item)
             {
                 my $p0       = $item->path0;
                 my $upitems1 = $upitems->cons($item);

@@ -31,7 +31,8 @@ package FunctionalPerl::Htmlgen::PerlTidy;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 use FP::Docstring;
 use FP::Show;
@@ -60,9 +61,9 @@ sub tidyhtml {
 
 use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
-method match_element_names() { [qw(code)] }
+sub match_element_names($self) { [qw(code)] }
 
-method map_element($e, $uplist) {
+sub map_element($self, $e, $uplist) {
 
 #warn "hm: ".show($e->name). ", uplist= ".show($uplist->map(the_method "name"));
     if (not $uplist->is_null and $uplist->first->lcname eq "pre") {

@@ -36,7 +36,8 @@ use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 
-use Function::Parameters qw(:strict);
+use experimental "signatures";
+
 use Sub::Call::Tail;
 use FP::Docstring;
 use Chj::chompspace;
@@ -57,7 +58,7 @@ sub url_decode {
 }
 
 # escape [ ] for markdown; XX is this correct?
-fun squarebracked_escape($str) {
+sub squarebracked_escape($str) {
     $str =~ s%([\[\]])%\\$1%sg;
     $str
 }
@@ -65,7 +66,7 @@ fun squarebracked_escape($str) {
 # meant to preprocess the whole markdown document; keep the returned
 # table and the used token for mediawiki_expand.
 
-fun mediawiki_prepare($str, $token) {
+sub mediawiki_prepare($str, $token) {
     __ '($str, $tokenstr) -> ($str, $hashtable) '
         . '-- replace "[[...]]" syntax in $str with replacement tokens '
         . 'which use $tokenstr as prefix';
@@ -86,7 +87,7 @@ TEST { [mediawiki_prepare 'foo [[bar]] [[baz]].', 'LO'] }
 # possibly should build PXML directly from here instead of string
 # replace, but I'm lazy right now.
 
-fun mediawiki_replace($str, $token, $table) {
+sub mediawiki_replace($str, $token, $table) {
     __ '($str, $token, {tokenargument => $value,..}) -> $str '
         . '-- re-insert hidden parts';
     $str =~ s%\Q$token\E-(\d+)-%
@@ -98,13 +99,13 @@ fun mediawiki_replace($str, $token, $table) {
 # here's the version that returns PXML, through the indirection of a
 # string, which XXX may very well be unsafe.
 
-fun mediawiki_rexpand($str, $token, $table) {
+sub mediawiki_rexpand($str, $token, $table) {
     __ '($str, $token, $table) -> [PXML::Element] '
         . '-- mediawiki_replace then _expand';
     mediawiki_expand(mediawiki_replace($str, $token, $table))
 }
 
-fun mediawiki_expand($str) {
+sub mediawiki_expand($str) {
     __ '($text_segment_str) -> [string|PXML::Element] '
         . '-- expand "[[...]]" in $text_segment_str to link elements';
     my $res     = [];

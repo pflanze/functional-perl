@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Function::Parameters qw(:strict);
+use experimental "signatures"; 
 
 #use Sub::Call::Tail;
 
@@ -68,7 +68,7 @@ import definitionlists::Link::constructors;
 import definitionlists::Match::constructors;
 import definitionlists::NonMatch::constructors;
 
-fun parselinks($str, $processmatch = *Link, $processnonmatch = *NonMatch) {
+sub parselinks($str, $processmatch = *Link, $processnonmatch = *NonMatch) {
     my $pos = 0;
     my @res;
     while ($str =~ /\[([^\[\]]+)\]\(([^()]+)\)/sgc) {
@@ -104,7 +104,7 @@ TEST {
 }
 purearray(NonMatch("a "), Link('fun', 'World'), NonMatch(" world"));
 
-fun parse($str, $processmatch, $processnonmatch) {
+sub parse($str, $processmatch, $processnonmatch) {
     my $pos = 0;
     my @res;
     while ($str =~ /(?:\n|\G)\* (.*?)\n([^ \n]|\z)/sgc) {
@@ -126,14 +126,14 @@ fun parse($str, $processmatch, $processnonmatch) {
     array_to_purearray \@res
 }
 
-fun translate_paragraphs($str) {
+sub translate_paragraphs($str) {
     purearray map { P $_ } split /\n\n/, $str
 }
 
 # XX move this somewhere
 *is_empty_string = *PXML::Serialize::is_empty_string;
 
-fun pxml_body_is_empty($e) {
+sub pxml_body_is_empty($e) {
     my $l = mixed_flatten($e->body);
     $l->every(
         fun($v)
@@ -146,7 +146,7 @@ fun pxml_body_is_empty($e) {
 TEST { pxml_body_is_empty P(" ", ["1"]) } '';
 TEST { pxml_body_is_empty P(" ", [" "]) } 1;
 
-fun pxml_de_paragraphy($e) {
+sub pxml_de_paragraphy($e) {
     if ($e->name eq "p") {
         if (pxml_body_is_empty $e) {
             BR    # HACK.
@@ -158,7 +158,7 @@ fun pxml_de_paragraphy($e) {
     }
 }
 
-fun de_paragraphy($v) {
+sub de_paragraphy($v) {
     if (is_pxml_element $v) {
         pxml_de_paragraphy $v
     } elsif (my ($v0) = $v->perhaps_one) {
@@ -168,7 +168,7 @@ fun de_paragraphy($v) {
     }
 }
 
-fun translate_links($str) {
+sub translate_links($str) {
     my $l = parselinks(
         $str,
         fun($txt, $url)
@@ -183,7 +183,7 @@ fun translate_links($str) {
     $l->map(*de_paragraphy)
 }
 
-fun translate_listitem($str) {
+sub translate_listitem($str) {
     my ($first, $rest) = $str =~ /^(.*?)\n\n(.*)/s
         or die "invalid listitem '$str'";
     my $ff = translate_links($first)->xone;
@@ -202,13 +202,13 @@ method definitionlists::NonMatch::translate() {
 }
 
 # XX move to lib
-fun type_eq($a, $b) {
+sub type_eq($a, $b) {
 
     #XX simplified; not merged yet, right?
     ref($a) eq ref($b)
 }
 
-fun translate($str) {
+sub translate($str) {
     my $parsed = parse(
         $str,
         *definitionlists::Match::c::Match,
