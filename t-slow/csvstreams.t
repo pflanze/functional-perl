@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 
-use Test::Requires qw(Function::Parameters Text::CSV);
+use Test::Requires qw(5.020 Text::CSV);
 use Test::More;
 
 use lib "./lib";

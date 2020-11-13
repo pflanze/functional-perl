@@ -8,8 +8,9 @@ use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 
+use Test::Requires '5.020';
+
 use Test::Requires + {
-    'Function::Parameters' => 0,
 
     #'Sub::Call::Tail' => 0,
     'Text::Markdown'    => 0,

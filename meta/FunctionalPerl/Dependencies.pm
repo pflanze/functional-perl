@@ -52,30 +52,27 @@ our %dependencies = (
     'FP::url_'                => ['URI'],
     'Chj::CPAN::ModulePODUrl' => ['LWP::UserAgent'],
     'FP::DBI'                 => ['DBI'],
-    'FunctionalPerl::Htmlgen::UriUtil' => ['Function::Parameters', 'URI'],
-    'FunctionalPerl::Htmlgen::PathUtil' =>
-        ['Function::Parameters', 'File::Spec',],
+    'FunctionalPerl::Htmlgen::UriUtil'  => [ '5.020', 'URI'],
+    'FunctionalPerl::Htmlgen::PathUtil' => [ '5.020', 'File::Spec',],
     'FunctionalPerl::Htmlgen::PathTranslate' =>
-        ['Function::Parameters', 'FunctionalPerl::Htmlgen::PathUtil'],
-    'FunctionalPerl::Htmlgen::Mediawiki' =>
-        ['Function::Parameters', 'Encode', 'URI',],
+        ['5.020', 'FunctionalPerl::Htmlgen::PathUtil'],
+    'FunctionalPerl::Htmlgen::Mediawiki'    => ['5.020', 'Encode', 'URI',],
     'FunctionalPerl::Htmlgen::MarkdownPlus' => [
-        'Function::Parameters', 'FunctionalPerl::Htmlgen::Htmlparse',
-        'Text::Markdown',       'FunctionalPerl::Htmlgen::Mediawiki'
+        '5.020', 
+        'FunctionalPerl::Htmlgen::Htmlparse', 'Text::Markdown',
+        'FunctionalPerl::Htmlgen::Mediawiki'
     ],
     'FunctionalPerl::Htmlgen::Linking' => [
-        'Function::Parameters',    'FunctionalPerl::Htmlgen::PathUtil',
-        'Chj::CPAN::ModulePODUrl', 'FunctionalPerl::Htmlgen::UriUtil',
+        '5.020', 
+        'FunctionalPerl::Htmlgen::PathUtil', 'Chj::CPAN::ModulePODUrl',
+        'FunctionalPerl::Htmlgen::UriUtil',
     ],
-    'FunctionalPerl::Htmlgen::Htmlparse' =>
-        ['Function::Parameters', 'HTML::TreeBuilder',],
-    'Chj::HTTP::Daemon'                 => ['HTTP::Request',],
-    'FunctionalPerl::Htmlgen::PerlTidy' => [
-        'Function::Parameters', 'Perl::Tidy',
-        'FunctionalPerl::Htmlgen::Htmlparse',
-    ],
+    'FunctionalPerl::Htmlgen::Htmlparse' => ['5.020', 'HTML::TreeBuilder',],
+    'Chj::HTTP::Daemon'                  => ['HTTP::Request',],
+    'FunctionalPerl::Htmlgen::PerlTidy' =>
+        ['5.020', 'Perl::Tidy', 'FunctionalPerl::Htmlgen::Htmlparse',],
     (
-        map { $_ => ['Function::Parameters'] }
+        map { $_ => ['5.020'] }
             qw(
             FP::AST::Perl
             FunctionalPerl::Htmlgen::Toc
@@ -87,7 +84,7 @@ our %dependencies = (
             FunctionalPerl::Htmlgen::Sourcelang
             )
     ),
-    (
+   (
         map { $_ => ['FP::Repl::Dependencies'] }
             qw(
             FP::Repl::Dependencies

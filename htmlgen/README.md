@@ -103,7 +103,7 @@ The *.md files support standard
 
 ## Dependencies
 
-Htmlgen needs `Function::Parameters`, `Sub::Call::Tail`,
+Htmlgen needs Perl version >= 5.20.0, `Sub::Call::Tail`,
 `LWP::UserAgent`, `LWP::Protocol::https`, and `Text::Markdown` (and
 `URI` which is probably depended on by LWP anyway.)
 

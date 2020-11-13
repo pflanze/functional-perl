@@ -324,8 +324,8 @@ in London, Berlin or Switzerland to get an introduction in person.
 * to run the test suite: `Test::Requires`
 
 * to run all the tests (otherwise some are skipped): in addition to
-  the above, `Test::Pod::Snippets`, `BSD::Resource`,
-  `Method::Signatures`, `Function::Parameters`, `Sub::Call::Tail`,
+  the above, Perl version >= 5.020, `Test::Pod::Snippets`,
+  `BSD::Resource`, `Method::Signatures`, `Sub::Call::Tail`,
   `Text::CSV`, `DBD::CSV`, `Text::CSV`, `URI`, `Text::Markdown`,
   `Clone`. Some of these are also necessary to run `htmlgen/gen` (or
   `website/gen` to build the website), see

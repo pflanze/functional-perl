@@ -36,7 +36,7 @@ jobs:
             make test
       - name: Extended tests
         run: |
-            cpanm --notest PadWalker FP::Repl::Dependencies Method::Signatures Function::Parameters Text::Markdown Moo Perl::Tidy Term::ReadLine::Gnu
+            cpanm --notest PadWalker FP::Repl::Dependencies Method::Signatures Text::Markdown Moo Perl::Tidy Term::ReadLine::Gnu
             perl Makefile.PL
             make
             make test

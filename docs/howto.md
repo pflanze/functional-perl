@@ -846,6 +846,9 @@ the tips above:
   (Todo: see how argument type assertments using predicate functions
   could be done.)
 
+  Note that Perl now also offers `use experimental "signatures"`,
+  which is what is now generally used over `Method::Signatures` and
+  `Function::Parameters`.
 
 </with_toc>
 

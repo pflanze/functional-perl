@@ -337,12 +337,13 @@ If one of the following modules, which modify the Perl syntax, is
 loaded, then the repl automatically makes them available to the
 entered code.  Also, [bin/fperl](../bin/fperl) automatically tries to
 load them if present on the system: `Function::Parameters`,
-`Method::Signatures`, `Sub::Call::Tail`. Since Function::Parameters
-simplifies writing functions a lot and works better in some ways than
-Method::Signatures, we're going to use it from now on. If you don't
-have it installed, do that now and then restart the fperl (first exit
-it by typing ctl-d, or :q -- note that currently :q prevents it from
-saving the history (todo)). Now you can type the nicer:
+`Method::Signatures`, `Sub::Call::Tail`. The repl used by the `fperl`
+script also enables `use experimental "signatures"` if running on a
+recent enough Perl. If you're running on a Perl version < 5.020,
+install `Function::Parameters` and replace `sub` with `fun` below
+(first exit fperl by typing ctl-d, or :q -- note that currently :q
+prevents it from saving the history (todo)). Now you can type the
+nicer:
 
     fperl> list(3,4,5)->map(fun($x){ $x*$x })
     $VAR1 = list(9, 16, 25);
@@ -465,8 +466,8 @@ expressions in argument position of a subroutine or method call are
 evaluated before the statements in the subroutine are evaluated. This
 means for example that we get this behaviour:
 
-    fperl> fun inverse ($x) { 1 / $x }
-    fperl> fun or_square ($x,$y) { $x || $y * $y }
+    fperl> sub inverse ($x) { 1 / $x }
+    fperl> sub or_square ($x,$y) { $x || $y * $y }
     fperl> or_square 2, inverse 0
     Exception: 'Illegal division by zero at (eval 137) line 1.
     '
@@ -489,7 +490,7 @@ Only when `$y` is actually used, we get the exception:
 
 Alternatively we could redefine inverse to evaluate its body lazily:
 
-    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> sub inverse ($x) { lazy { 1 / $x } }
     Subroutine inverse redefined at (eval 143) line 1.
     fperl> or_square 2, inverse 0
     $VAR1 = 2;
@@ -648,13 +649,13 @@ So, the first cell is going to hold `inverse(3)` as its value, and the
 remainder of the list (i.e. holding `inverse(2)` etc.) as its
 rest. Let's see how we can state this recursively:
 
-    fperl> fun inverse ($x) { lazy { 1 / $x } }
-    fperl> fun ourlist ($i) { cons inverse($i), ourlist($i-1) }
+    fperl> sub inverse ($x) { lazy { 1 / $x } }
+    fperl> sub ourlist ($i) { cons inverse($i), ourlist($i-1) }
 
 Well, we need a termination condition.
 
-    fperl> fun inverse ($x) { lazy { 1 / $x } }
-    fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), ourlist($i-1) : null }
+    fperl> sub inverse ($x) { lazy { 1 / $x } }
+    fperl> sub ourlist ($i) { $i >= -1 ? cons inverse($i), ourlist($i-1) : null }
     fperl> our $l = ourlist 3
     $VAR1 = list(lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" });
     fperl> F $l->drop(4)
@@ -681,8 +682,8 @@ also called the "spine".)
 What if we made the rest slot contain a lazily evaluated term as well?
 Well, let's simply try:
 
-    fperl> fun inverse ($x) { lazy { 1 / $x } }
-    fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
+    fperl> sub inverse ($x) { lazy { 1 / $x } }
+    fperl> sub ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
     fperl> our $l = ourlist 3
     $VAR1 = improper_list(lazy { "DUMMY" }, lazy { "DUMMY" });
 
@@ -723,8 +724,8 @@ evaluate lazily is interesting, though: our list generation now might
 survive with our original definition of `inverse`, if we're only
 forcing the first few cells:
 
-    fperl> fun inverse ($x) { 1 / $x }
-    fperl> fun ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
+    fperl> sub inverse ($x) { 1 / $x }
+    fperl> sub ourlist ($i) { $i >= -1 ? cons inverse($i), lazy{ ourlist($i-1) } : null }
     fperl> our $l = ourlist 3
     $VAR1 = improper_list('0.333333333333333', lazy { "DUMMY" });
 
@@ -737,7 +738,7 @@ Feel free to do your forcing of the above to see how it behaves.
 Another interesting observation we can make is that we don't really
 need the termination condition anymore now:
 
-    fperl> fun ourlist ($i) { cons inverse($i), lazy{ ourlist($i-1) } }
+    fperl> sub ourlist ($i) { cons inverse($i), lazy{ ourlist($i-1) } }
     fperl> our $l = ourlist 3
     $VAR1 = improper_list('0.333333333333333', lazy { "DUMMY" });
 
@@ -772,7 +773,7 @@ simply move the lazy keyword to enclose the whole cell generation
 instead only its rest slot (the rest slot will be lazy itself, too,
 since recursing into ourlist will again return a lazy term):
 
-    fperl> fun ourlist ($i) { lazy { cons inverse($i), ourlist($i-1) } }
+    fperl> sub ourlist ($i) { lazy { cons inverse($i), ourlist($i-1) } }
     Subroutine ourlist redefined at (eval 145) line 1.
     fperl> our $l = ourlist -1
     $VAR1 = lazy { "DUMMY" };
@@ -958,7 +959,7 @@ is supposed to vary, no? But notice that each function call (even of
 the same function) opens a new scope, and the variables introduced in
 it are hence fresh instances every time it is called:
 
-    fperl> fun f ($x) { fun ($y) { [$x,$y] }}
+    fperl> sub f ($x) { fun ($y) { [$x,$y] }}
     fperl> our $f1 = f(12); our $f2 = f(14); &$f1("f1")
     $VAR1 = [12, 'f1'];
     fperl> &$f2("f2")
@@ -980,7 +981,7 @@ the relevant pieces of information (remainder of the work, accumulated
 result), checks to see if the work is done and if it isn't, calls
 itself with the remainder and new result.
 
-    fperl> fun build ($i,$l) { if ($i > 0) { build($i-1, cons fun () { $i }, $l) } else { $l }}
+    fperl> sub build ($i,$l) { if ($i > 0) { build($i-1, cons fun () { $i }, $l) } else { $l }}
     fperl> build(3, null)
     $VAR1 = list(sub { "DUMMY" }, sub { "DUMMY" }, sub { "DUMMY" });
 
@@ -995,12 +996,12 @@ allocates a new frame on the call stack for every nested call to
 `build`, which means it needs memory proportional to the number of
 iterations. But perl also offers a solution for this:
 
-    fperl> fun build ($i,$l) { if ($i > 0) { @_ = ($i-1, cons fun () { $i }, $l); goto &build } else { $l }}
+    fperl> sub build ($i,$l) { if ($i > 0) { @_ = ($i-1, cons fun () { $i }, $l); goto &build } else { $l }}
 
 Sorry for the one-line formatting here, our examples are starting to
 get a bit long for the repl, here is the same with line breaks:
 
-    fun build ($i,$l) {
+    sub build ($i,$l) {
         if ($i > 0) {
             @_ = ($i-1, cons fun () { $i }, $l);
             goto &build
@@ -1014,11 +1015,11 @@ That still looks pretty ugly, though. But there's also a solution for
 it on start), then you can instead simply prepend the `tail` keyword
 to the recursive function call to achieve the same:
 
-    fperl> fun build ($i,$l) { if ($i > 0) { tail build($i-1, cons fun () { $i }, $l) } else { $l }}
+    fperl> sub build ($i,$l) { if ($i > 0) { tail build($i-1, cons fun () { $i }, $l) } else { $l }}
 
 i.e.
 
-    fun build ($i,$l) {
+    sub build ($i,$l) {
         if ($i > 0) {
             tail build($i-1, cons fun () { $i }, $l)
         } else {
@@ -1042,11 +1043,11 @@ one line anymore. Let's start a file. Quit the repl, then:
     $ cp examples/{template,introexample}
     $ $EDITOR examples/introexample 
 
-You'll want to un-comment the "use Function::Parameters" line, and
+You'll want to un-comment the `use experimental "signatures";` line, and
 remove the commented "add your own code" part, and put the following
 there:
 
-    fun hello ($n) {
+    sub hello ($n) {
         repl;
         print "$n worlds\n";
     }
@@ -1135,7 +1136,7 @@ Let's adapt the example from "Writing a list-generating function":
     use Chj::xperlfunc qw(xprintln);
     use FP::TransparentLazy;
 
-    fun hello ($start, $end) {
+    sub hello ($start, $end) {
         my $inverse = fun ($x) { lazy { 1 / $x } };
 
         my $ourlist; $ourlist = fun ($i) {
@@ -1169,7 +1170,7 @@ argument. That was a mouthful, let's see how it looks:
 
     use FP::fix;
 
-    fun hello ($start, $end) {
+    sub hello ($start, $end) {
         my $inverse = fun ($x) { lazy { 1 / $x } };
 
         my $ourlist = fix fun ($self, $i) {
@@ -1231,8 +1232,8 @@ In 'Writing a list-generating function' we have written a function
 goes through. Let's turn that into a reusable function by making it
 higher-order:
 
-    fperl> fun inverse ($x) { lazy { 1 / $x } }
-    fperl> fun ourlist ($f, $from, $to) { $from >= $to ? cons &$f($from), ourlist($f, $from - 1, $to) : null }
+    fperl> sub inverse ($x) { lazy { 1 / $x } }
+    fperl> sub ourlist ($f, $from, $to) { $from >= $to ? cons &$f($from), ourlist($f, $from - 1, $to) : null }
     fperl> F ourlist (*inverse, 4, 1)
     $VAR1 = list('0.25', '0.333333333333333', '0.5', '1');
 
@@ -1280,7 +1281,7 @@ defined (equivalently) in `FP::Ops`. This module provides subroutine
 wrappers around Perl operators, so that they can be easily passed as
 arguments to other functions like `flip` or the `map` methods.
 
-    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> sub inverse ($x) { lazy { 1 / $x } }
     fperl> *add_then_invert = compose *inverse, *add
     $VAR1 = *fperl::add_then_invert;
     fperl> add_then_invert 1,2
@@ -1319,7 +1320,7 @@ setting the TEST environment variable to 0 or ''.
 
 You can in principle use it without leaving the repl:
 
-    fperl> fun inverse ($x) { lazy { 1 / $x } }
+    fperl> sub inverse ($x) { lazy { 1 / $x } }
     fperl> TEST { F inverse 2 } 0.5;
     $VAR1 = 1;
     fperl> run_tests "fperl"
@@ -1392,7 +1393,7 @@ Update the examples/introexample script with the following:
                         [instance_of("Point"), "bottomright"]],
           "Shape";
 
-        method area () {
+        sub area ($self) {
             ($self->bottomright->x - $self->topleft->x)
               *
             ($self->bottomright->y - $self->topleft->y)
@@ -1426,13 +1427,13 @@ on the value that is passed by map as the (first and only) argument.
 
 If you'd like to get nicer pretty-printing, simply add:
 
-        method FP_Show_show ($show) {
+        sub FP_Show_show ($self, $show) {
             "Point(".&$show($self->x).", ".&$show($self->y).")"
         }
 
 to the Point package and
 
-        method FP_Show_show ($show) {
+        sub FP_Show_show ($self, $show) {
             "Rectangle(".&$show($self->topleft).", ".&$show($self->bottomright).")"
         }
 
