@@ -105,8 +105,8 @@ our $config = hashset_union($user_config, $default_config);
 lock_hash %$config;
 
 our $pathtranslate
-    = FunctionalPerl::Htmlgen::PathTranslate->new__(subhash $config,
-    "is_indexpath0", "downcaps");
+    = FunctionalPerl::Htmlgen::PathTranslate->new__(
+    subhash($config, "is_indexpath0", "downcaps"));
 
 our $gitrepository = FP::Git::Repository->new_(chdir => $inbase);
 
