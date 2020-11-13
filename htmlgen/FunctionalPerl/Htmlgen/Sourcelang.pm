@@ -56,7 +56,7 @@ sub sourcelang {
     $perl++ if $str =~ /\bsub\s*\{/;
     $perl += 1
         if $str
-        =~ /\bfunc?\b\s*(?:\w+\s*)?\((?:(?:\s*\$\w+\s*,)*\s*\$\w+\s*)?\)\s*\{/s;
+        =~ /\b(?:func?|sub)\b\s*(?:\w+\s*)?\((?:(?:\s*\$\w+\s*,)*\s*\$\w+\s*)?\)\s*\{/s;
     $perl += 0.5 if $str =~ /\@\{\s*/;
     $perl += 0.5 if $str =~ /\bcompose\s*\(/;
     $perl += 0.5 if $str =~ /\\\&\w+/;
@@ -81,9 +81,10 @@ TEST {
         'Foo::bar;', 'Foo;', 'use Foo;', 'my $a', 'my $a;',
         'my $abc = 2+ 2;',
         'tar -xzf foo.tgz',
+        'fun inverse ($x) { 1 / $x }',
         'sub inverse ($x) { 1 / $x }'
     )->map(*sourcelang)
 }
-purearray("Perl", "shell", "Perl", "shell", "Perl", "Perl", "shell", "Perl");
+purearray("Perl", "shell", "Perl", "shell", "Perl", "Perl", "shell", "Perl", "Perl");
 
 1
