@@ -36,7 +36,6 @@ package FunctionalPerl::Htmlgen::Sourcelang;
 
 use strict; use warnings; use warnings FATAL => 'uninitialized';
 use Function::Parameters qw(:strict);
-use Sub::Call::Tail;
 use FP::Docstring;
 
 sub sourcelang {
