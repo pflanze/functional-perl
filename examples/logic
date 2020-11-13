@@ -13,7 +13,7 @@
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+use experimental "signatures";
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -45,7 +45,8 @@ use FP::Array_sort ":all";
     package examples_logic::Predicate;
     use FP::Struct ["coderef", "stack"];
     use overload ('&{}' => "coderef", '""' => "FP_Show_show");
-    sub FP_Show_show($self, @args) {
+
+    sub FP_Show_show ($self, @args) {
 
         # 2 args what for?
         "predicate from:\n" . $self->stack->backtrace(0)
@@ -54,29 +55,29 @@ use FP::Array_sort ":all";
 }
 
 my @tests;
+
 sub test($pred) {
     push @tests, examples_logic::Predicate->new($pred, FP::Repl::Stack->get(1));
 }
 
-sub matrix_likes($matrix, $subj, $obj) {
+sub matrix_likes ($matrix, $subj, $obj) {
     $$matrix{$subj}{$obj}
 }
 
-sub likes($subj, $obj) {
+sub likes ($subj, $obj) {
     sub($matrix) {
         matrix_likes $matrix, $subj, $obj
     }
 }
 
-sub does_not_like($subj, $obj) {
+sub does_not_like ($subj, $obj) {
     complement likes($subj, $obj)
 }
 
-sub likes_either($subj, @objs) {
+sub likes_either ($subj, @objs) {
     sub($matrix) {
         array_any(
-            sub($obj)
-            {
+            sub($obj) {
                 matrix_likes $matrix, $subj, $obj
             },
             \@objs
@@ -91,18 +92,17 @@ sub matrix_people($matrix) {
     [keys %$matrix]
 }
 
-sub matrix_likers($matrix, $liked) {
+sub matrix_likers ($matrix, $liked) {
 
     # find who likes $liked
     array_filter(
-        sub($person)
-        {
+        sub($person) {
             matrix_likes $matrix, $person, $liked
         },
         matrix_people $matrix);
 }
 
-sub matrix_liked($matrix, $subj) {
+sub matrix_liked ($matrix, $subj) {
 
     # array of who $subj likes
     my $l2 = $$matrix{$subj};
@@ -120,11 +120,10 @@ sub matrix_numrelations($matrix) {
     $n
 }
 
-sub likes_everyone_that_x_likes($subj, $othersubj) {
+sub likes_everyone_that_x_likes ($subj, $othersubj) {
     sub($matrix) {
         array_every(
-            sub($obj)
-            {
+            sub($obj) {
                 matrix_likes $matrix, $subj, $obj
             },
             matrix_liked $matrix,
@@ -133,14 +132,13 @@ sub likes_everyone_that_x_likes($subj, $othersubj) {
     }
 }
 
-sub likes_everyone_who_likes($subj, $liked) {
+sub likes_everyone_who_likes ($subj, $liked) {
 
     # is this cheating, walking the matrix? Should it look at
     # predicates? ehr no, ehr?
     sub($matrix) {
         array_every(
-            sub($liker)
-            {
+            sub($liker) {
                 matrix_likes $matrix, $subj, $liker
             },
             matrix_likers $matrix,
@@ -149,7 +147,7 @@ sub likes_everyone_who_likes($subj, $liked) {
     }
 }
 
-sub Or($t0, $t1) {
+sub Or ($t0, $t1) {
     sub($matrix) {
         &$t0($matrix) or &$t1($matrix)
     }
@@ -248,11 +246,9 @@ our $people_i = [0 .. $#$people];
 
 sub buildmatrix($bits) {
     array_to_hash_map(
-        sub($subj, $subji)
-        {
+        sub ($subj, $subji) {
             $subj => array_to_hash_map(
-                sub($obj, $obji)
-                {
+                sub ($obj, $obji) {
                     my $i = $subji * 4 + $obji;
                     $obj => !!($bits & (1 << $i))
                 },

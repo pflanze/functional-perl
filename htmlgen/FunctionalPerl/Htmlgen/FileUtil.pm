@@ -35,7 +35,6 @@ our @EXPORT      = qw();
 our @EXPORT_OK   = qw(existingpath_or create_parent_dirs);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 # lib?
 sub existingpath_or(@paths) {
     for (@paths) {
@@ -48,8 +47,8 @@ use POSIX qw(EEXIST ENOENT);
 use Chj::xperlfunc qw(dirname xmkdir);
 
 # XX how is this different from xmkdir_p ?
-sub create_parent_dirs($path0, $path0_to_outpath) {
-    $path0   = dirname $path0;
+sub create_parent_dirs ($path0, $path0_to_outpath) {
+    $path0 = dirname $path0;
     my $outpath = &$path0_to_outpath($path0);
     if (mkdir $outpath) {
 

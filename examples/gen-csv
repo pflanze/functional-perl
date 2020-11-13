@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+use experimental "signatures";
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -61,7 +61,7 @@ sub fibs() {
 #sub exps($base, $start)
 sub exps;
 *exps = uncurry fun($base) {
-    fix sub($rec, $x) {
+    fix sub ($rec, $x) {
         lazy { cons $x, &$rec($x * $base) }
     }
 };
@@ -77,7 +77,7 @@ sub series() {
     (["n", "$a^n", "$b^n", "fib"], stream_zip $ns, $as, $bs, $fibs)
 }
 
-sub page($title, $rows) {
+sub page ($title, $rows) {
     cons $title, $rows->take($numrows)
 }
 

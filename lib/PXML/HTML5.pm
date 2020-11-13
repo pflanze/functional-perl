@@ -34,7 +34,6 @@ our @EXPORT      = qw();
 our @EXPORT_OK   = qw( $html5_void_elements $html5_void_element_h);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 # the set of tags that are allowed to be self-closing (<foo/>) without
 # semantical changes
 our $html5_void_elements = [

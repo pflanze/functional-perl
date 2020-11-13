@@ -71,7 +71,6 @@ our @EXPORT      = qw(constructorexporter);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 sub constructorexporter {
     my %exportdecl = @_;
     sub {

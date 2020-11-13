@@ -61,7 +61,6 @@ our @EXPORT_OK = qw(xHOME
     xsafehome);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 # use File::HomeDir qw(home);
 
 # But File::HomeDir is not installed with either Cygwin or Strawberry

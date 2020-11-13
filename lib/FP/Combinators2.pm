@@ -60,7 +60,6 @@ our @EXPORT_OK = qw(
     left_associate_);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 #use Chj::TEST;
 use FP::PureArray;
 use FP::Combinators qw(flip);

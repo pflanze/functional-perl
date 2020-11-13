@@ -26,14 +26,13 @@ our $opt_functionparameters2signatures;
 
 #our $opt_dry;
 GetOptions(
-    "verbose" => \$verbose,
-    "help"    => sub {usage},
-    "opspaces"=> \$opt_opspaces,
-    "functionparameters2signatures"=> \$opt_functionparameters2signatures,
-    
+    "verbose"                       => \$verbose,
+    "help"                          => sub {usage},
+    "opspaces"                      => \$opt_opspaces,
+    "functionparameters2signatures" => \$opt_functionparameters2signatures,
+
     #"dry-run"=> \$opt_dry,
 ) or exit 1;
-
 
 sub opspaces {
     if (/http|href/) {
@@ -90,7 +89,7 @@ for my $file (@ARGV) {
     my @lines = do {
         local $/ = $opt_functionparameters2signatures ? undef : $/;
         die "can't satisfy both options at same time here^ "
-          if $opt_functionparameters2signatures && $opt_opspaces;
+            if $opt_functionparameters2signatures && $opt_opspaces;
         $f->xreadline;
     };
     $f->xclose;
@@ -98,10 +97,9 @@ for my $file (@ARGV) {
     my $t = xtmpfile $file;
     $t->xprint(
         map {
-            $_ = opspaces $_
-              if $opt_opspaces;
+            $_ = opspaces $_ if $opt_opspaces;
             $_ = functionparameters2signatures $_
-              if $opt_functionparameters2signatures;
+                if $opt_functionparameters2signatures;
             $_
         } @lines
     );

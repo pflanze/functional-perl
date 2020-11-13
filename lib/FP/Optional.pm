@@ -185,11 +185,11 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
-our @EXPORT    = qw();
-our @EXPORT_OK = qw(perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists
+our @EXPORT = qw();
+our @EXPORT_OK
+    = qw(perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists
     optionally poptionally);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 
 # Functions to change the kind of optionals API:
 

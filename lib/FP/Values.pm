@@ -33,7 +33,6 @@ our @EXPORT      = qw();
 our @EXPORT_OK   = qw(fst snd);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 sub fst {
     $_[0]
 }

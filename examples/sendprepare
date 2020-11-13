@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+use experimental "signatures";
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -55,13 +55,13 @@ sub lines_head_and_body($lines) {
 # Get headers of given name; this ad-hoc mail "parser" unsafely assumes
 # that the headers we're interested in consist of one line only
 
-sub head_get($head, $name) {
+sub head_get ($head, $name) {
     $head->filter(regex_match qr/^\Q$name:/i)
 }
 
 # Get one of the headers
 
-sub head_xgetone($head, $name) {
+sub head_xgetone ($head, $name) {
     my ($header) = head_get($head, $name)->perhaps_one
         or die "missing header '$name'";
     $header

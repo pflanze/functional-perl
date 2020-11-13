@@ -51,20 +51,18 @@ our %dependencies = (
     'FP::url_'                => ['URI'],
     'Chj::CPAN::ModulePODUrl' => ['LWP::UserAgent'],
     'FP::DBI'                 => ['DBI'],
-    'FunctionalPerl::Htmlgen::UriUtil'  => [ '5.020', 'URI'],
-    'FunctionalPerl::Htmlgen::PathUtil' => [ '5.020', 'File::Spec',],
+    'FunctionalPerl::Htmlgen::UriUtil'  => ['5.020', 'URI'],
+    'FunctionalPerl::Htmlgen::PathUtil' => ['5.020', 'File::Spec',],
     'FunctionalPerl::Htmlgen::PathTranslate' =>
         ['5.020', 'FunctionalPerl::Htmlgen::PathUtil'],
     'FunctionalPerl::Htmlgen::Mediawiki'    => ['5.020', 'Encode', 'URI',],
     'FunctionalPerl::Htmlgen::MarkdownPlus' => [
-        '5.020', 
-        'FunctionalPerl::Htmlgen::Htmlparse', 'Text::Markdown',
-        'FunctionalPerl::Htmlgen::Mediawiki'
+        '5.020',          'FunctionalPerl::Htmlgen::Htmlparse',
+        'Text::Markdown', 'FunctionalPerl::Htmlgen::Mediawiki'
     ],
     'FunctionalPerl::Htmlgen::Linking' => [
-        '5.020', 
-        'FunctionalPerl::Htmlgen::PathUtil', 'Chj::CPAN::ModulePODUrl',
-        'FunctionalPerl::Htmlgen::UriUtil',
+        '5.020',                   'FunctionalPerl::Htmlgen::PathUtil',
+        'Chj::CPAN::ModulePODUrl', 'FunctionalPerl::Htmlgen::UriUtil',
     ],
     'FunctionalPerl::Htmlgen::Htmlparse' => ['5.020', 'HTML::TreeBuilder',],
     'Chj::HTTP::Daemon'                  => ['HTTP::Request',],
@@ -83,7 +81,7 @@ our %dependencies = (
             FunctionalPerl::Htmlgen::Sourcelang
             )
     ),
-   (
+    (
         map { $_ => ['FP::Repl::Dependencies'] }
             qw(
             FP::Repl::Dependencies

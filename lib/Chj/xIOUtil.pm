@@ -34,7 +34,6 @@ our @EXPORT_OK = qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
     xcopyfile);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 use Chj::xopen ":all";
 
 # ^ well, this voids the purpose of Chj::xIO (to avoid Chj::IO::*)

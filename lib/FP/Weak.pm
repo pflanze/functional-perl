@@ -98,7 +98,6 @@ our @EXPORT_OK = qw(
 );
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 use Scalar::Util ();
 
 our $weaken = \&Scalar::Util::weaken;

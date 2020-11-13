@@ -56,7 +56,6 @@ our @EXPORT      = qw(time_this);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 my $fields = [qw(user system cuser csystem)];
 
 sub time_this (&;@) {

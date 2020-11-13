@@ -92,7 +92,6 @@ our @EXPORT      = qw(empty_trie);
 our @EXPORT_OK   = qw($empty_trie);                  # ok?
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 {
 
     package FP::Trie::KeyNotFoundException;

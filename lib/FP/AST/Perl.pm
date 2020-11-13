@@ -95,7 +95,7 @@ package FP::AST::Perl;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+use experimental "signatures";
 use Exporter "import";
 
 our @EXPORT = qw();
@@ -114,7 +114,6 @@ our @EXPORT_OK = (
 );
 
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 
 use FP::Predicates ":all";
 
@@ -174,7 +173,7 @@ sub is_lexvar_string ($) {
 package FP::AST::Perl::ScalarVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
     sub type_name($self) {"SCALAR"}
-    sub sigil($self) {'$'}
+    sub sigil($self)     {'$'}
     sub callderef($self) {'->'}
     _END_
 }
@@ -182,7 +181,7 @@ package FP::AST::Perl::ScalarVar {
 package FP::AST::Perl::CodeVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
     sub type_name($self) {"CODE"}
-    sub sigil($self) {'&'}
+    sub sigil($self)     {'&'}
     sub callderef($self) {''}
 
     sub string_proto($self) { $self->name }
@@ -192,21 +191,21 @@ package FP::AST::Perl::CodeVar {
 package FP::AST::Perl::HashVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
     sub type_name($self) {"HASH"}
-    sub sigil($self) {'%'}
+    sub sigil($self)     {'%'}
     _END_
 }
 
 package FP::AST::Perl::ArrayVar {
     use FP::Struct [] => "FP::AST::Perl::Var";
     sub type_name($self) {"ARRAY"}
-    sub sigil($self) {'@'}
+    sub sigil($self)     {'@'}
     _END_
 }
 
 package FP::AST::Perl::Glob {
     use FP::Struct [] => "FP::AST::Perl::Var";    # XX *?*
     sub type_name($self) {"GLOB"}
-    sub sigil($self) {'*'}
+    sub sigil($self)     {'*'}
     _END_
 }
 
@@ -305,6 +304,7 @@ package FP::AST::Perl::App {
             # ^ XX are parens needed around arguments?
             ")"
     }
+
     sub proc_string($self) {
         $self->proc->string
     }

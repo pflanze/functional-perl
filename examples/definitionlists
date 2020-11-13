@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+use experimental "signatures";
 
 #use Sub::Call::Tail;
 
@@ -68,7 +68,7 @@ import definitionlists::Link::constructors;
 import definitionlists::Match::constructors;
 import definitionlists::NonMatch::constructors;
 
-sub parselinks($str, $processmatch = *Link, $processnonmatch = *NonMatch) {
+sub parselinks ($str, $processmatch = *Link, $processnonmatch = *NonMatch) {
     my $pos = 0;
     my @res;
     while ($str =~ /\[([^\[\]]+)\]\(([^()]+)\)/sgc) {
@@ -104,7 +104,7 @@ TEST {
 }
 purearray(NonMatch("a "), Link('fun', 'World'), NonMatch(" world"));
 
-sub parse($str, $processmatch, $processnonmatch) {
+sub parse ($str, $processmatch, $processnonmatch) {
     my $pos = 0;
     my @res;
     while ($str =~ /(?:\n|\G)\* (.*?)\n([^ \n]|\z)/sgc) {
@@ -202,7 +202,7 @@ method definitionlists::NonMatch::translate() {
 }
 
 # XX move to lib
-sub type_eq($a, $b) {
+sub type_eq ($a, $b) {
 
     #XX simplified; not merged yet, right?
     ref($a) eq ref($b)

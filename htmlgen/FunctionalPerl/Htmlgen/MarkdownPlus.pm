@@ -93,7 +93,7 @@ TEST {
 }
 ['<h1>xy</h1>', '<body>foo<b>bar</b></body>'];
 
-sub markdownplus_parse($str, $alternative_title, $mediawikitoken) {
+sub markdownplus_parse ($str, $alternative_title, $mediawikitoken) {
     __
         '($str, $alternative_title, $tokenstr)-> ($h1, [$body_PXML_Elements], $hashtbl) '
         . '-- markdown parsing to PXML, extracting title, and replacing'

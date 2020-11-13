@@ -55,7 +55,7 @@ package FunctionalPerl::Htmlgen::Linking::Anchors {
 
     sub match_element_names($self) { [qw(h1 h2 h3 h4)] }
 
-    sub map_element($self, $e, $uplist) {
+    sub map_element ($self, $e, $uplist) {
         my $text = $e->text;
         $text =~ s/ /_/sg;
         A({ name => $text }, $e)
@@ -123,7 +123,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
 
     sub match_element_names($self) { ["code"] }
 
-    sub map_element($self, $e, $uplist) {
+    sub map_element ($self, $e, $uplist) {
 
         # possibly *map contents* of inline code or code sections
         my $mapped_e = sub() {
@@ -203,7 +203,7 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
     our $github_base
         = "https://github.com/pflanze/functional-perl/blob/master/";
 
-    sub map_element($self, $e, $uplist) {
+    sub map_element ($self, $e, $uplist) {
         if (my ($href) = $e->perhaps_attribute("href")) {
 
             my $uri = URI->new($href);
@@ -289,8 +289,9 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                     $e->attribute_set("href", "$uri")
                 };
                 my $cont_path = sub($path) {
-                    $uri->path($self->pathtranslate->possibly_suffix_md_to_html(
-                        $path));
+                    $uri->path(
+                        $self->pathtranslate->possibly_suffix_md_to_html($path)
+                    );
                     &$cont_uri($uri);
                 };
 

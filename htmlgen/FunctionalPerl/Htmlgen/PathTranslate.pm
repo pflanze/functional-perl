@@ -47,7 +47,7 @@ our $t = __PACKAGE__->new_(
     downcaps      => 1
 );
 
-sub t_if_suffix_md_to_html($in, $for_title = 0) {
+sub t_if_suffix_md_to_html ($in, $for_title = 0) {
     $t->if_suffix_md_to_html(
         $in, $for_title,
         sub { ["then",      @_] },
@@ -68,11 +68,11 @@ sub _path0_to_title_mod($str) {
 
 use FP::Struct [[*is_procedure, "is_indexpath0"], [*is_boolean, "downcaps"],];
 
-sub is_md($self, $path) {
+sub is_md ($self, $path) {
     $path =~ /\.md$/s
 }
 
-sub if_suffix_md_to_html($self, $path0, $for_title, $then, $otherwise) {
+sub if_suffix_md_to_html ($self, $path0, $for_title, $then, $otherwise) {
     if (!$for_title and $$self{is_indexpath0}->($path0)) {
         tail &$then(path_path0_append(dirname($path0), "index.xhtml"))
     } else {
@@ -96,11 +96,11 @@ TEST { t_if_suffix_md_to_html "Foo/READMe.md" }['then', 'Foo/index.xhtml'];
 # ^ XX really?
 TEST { t_if_suffix_md_to_html "Foo/MY.css" }['otherwise', 'Foo/MY.css'];
 
-sub possibly_suffix_md_to_html($self, $path, $for_title = 0) {
+sub possibly_suffix_md_to_html ($self, $path, $for_title = 0) {
     $self->if_suffix_md_to_html($path, $for_title, *identity, *identity)
 }
 
-sub xsuffix_md_to_html($self, $path0, $for_title) {
+sub xsuffix_md_to_html ($self, $path0, $for_title) {
     $self->if_suffix_md_to_html($path0, $for_title, *identity,
         sub { die "file does not end in .md: " . show($path0) })
 }
@@ -110,7 +110,7 @@ TEST { $t->possibly_suffix_md_to_html("foo.md") } "foo.xhtml";
 TEST_EXCEPTION { $t->xsuffix_md_to_html("foo", 0) }
 "file does not end in .md: 'foo'";
 
-sub path0_to_title($self, $path0) {
+sub path0_to_title ($self, $path0) {
     my $dn = dirname($path0);
     if ($dn ne "." and $$self{is_indexpath0}->($path0)) {
         _path0_to_title_mod basename($self->xsuffix_md_to_html($dn . ".md", 1),
@@ -136,7 +136,7 @@ TEST { $t->path0_to_title("bugs/wishlist/line_wrapping_in_pre-MIME_mails.md") }
 # even with lcfirst
 'Line wrapping in pre-MIME mails';
 
-sub path0_to_bugtype($self, $path0) {
+sub path0_to_bugtype ($self, $path0) {
     $path0 =~ m|\bbugs/([^/]+)/| or die "no match, '$path0'";
     ucfirst $1
 }

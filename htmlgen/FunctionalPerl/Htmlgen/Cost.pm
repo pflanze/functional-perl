@@ -40,7 +40,7 @@ package FunctionalPerl::Htmlgen::Cost::_::Cost {
 
     use FP::Struct [qw(name is_purchaseable basecosts val)];
 
-    sub cost($self, $index) {
+    sub cost ($self, $index) {
         $$self{_cost} ||= do {
             add($self->val,
                 map { $$index{$_}->cost($index) } @{ $self->basecosts });

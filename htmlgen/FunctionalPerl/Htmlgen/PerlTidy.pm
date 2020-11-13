@@ -63,7 +63,7 @@ use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
 sub match_element_names($self) { [qw(code)] }
 
-sub map_element($self, $e, $uplist) {
+sub map_element ($self, $e, $uplist) {
 
 #warn "hm: ".show($e->name). ", uplist= ".show($uplist->map(the_method "name"));
     if (not $uplist->is_null and $uplist->first->lcname eq "pre") {

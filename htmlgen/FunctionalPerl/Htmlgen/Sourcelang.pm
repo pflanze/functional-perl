@@ -77,13 +77,20 @@ use FP::PureArray;
 
 TEST {
     purearray(
-        'Foo::bar;', 'Foo;', 'use Foo;', 'my $a', 'my $a;',
+        'Foo::bar;',
+        'Foo;',
+        'use Foo;',
+        'my $a',
+        'my $a;',
         'my $abc = 2+ 2;',
         'tar -xzf foo.tgz',
         'fun inverse ($x) { 1 / $x }',
         'sub inverse ($x) { 1 / $x }'
     )->map(*sourcelang)
 }
-purearray("Perl", "shell", "Perl", "shell", "Perl", "Perl", "shell", "Perl", "Perl");
+purearray(
+    "Perl",  "shell", "Perl", "shell", "Perl", "Perl",
+    "shell", "Perl",  "Perl"
+);
 
 1

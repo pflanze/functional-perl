@@ -38,7 +38,6 @@ our @EXPORT      = qw(url_);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 use URI;
 
 our @keys = qw(scheme path fragment);

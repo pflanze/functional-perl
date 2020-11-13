@@ -51,8 +51,9 @@ use PXML ":all";
 use FP::Predicates qw(is_natural);
 
 sub rindices_numberstring($rindices) {
-    is_null($rindices) ? "" : $rindices->reverse->map(sub($i) {"$i."})
-        ->strings_join("") . " "
+    is_null($rindices)
+        ? ""
+        : $rindices->reverse->map(sub($i) {"$i."})->strings_join("") . " "
 }
 
 TEST { rindices_numberstring(list()) } "";
@@ -70,7 +71,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
         $self->subnodes->length
     }
 
-    sub subnodes_add($self, $node) {
+    sub subnodes_add ($self, $node) {
         is_instance_of $node, "FunctionalPerl::Htmlgen::Toc::TocNode"
             or die "wrong type";
 
@@ -79,7 +80,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
         $self->subnodes_update(sub($l) { cons $node, $l })
     }
 
-    sub subnodes_head_update($self, $fn) {
+    sub subnodes_head_update ($self, $fn) {
         my $ss = $self->subnodes;
         if (is_null $ss) {
             die "skipped level"    ## nicer message and all?
@@ -88,22 +89,19 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
         }
     }
 
-    sub level_add($self, $levelsdown, $node) {
+    sub level_add ($self, $levelsdown, $node) {
         is_natural $levelsdown or die "wrong type: $levelsdown";
         if ($levelsdown > 1) {
-            $self->subnodes_head_update(
-                sub($subnode)
-                {
-                    $subnode->level_add($levelsdown - 1, $node)
-                }
-            )
+            $self->subnodes_head_update(sub($subnode) {
+                $subnode->level_add($levelsdown - 1, $node)
+            })
         } else {
             $self->subnodes_add($node)
         }
     }
 
     # just for debugging? $indices is a list of 1-based indices
-    sub ref($self, $indices) {
+    sub ref ($self, $indices) {
         if (is_null $indices) {
             $self
         } else {
@@ -126,7 +124,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
 
     # build the TOC html. Need to get the numberstring differently
     # now.
-    sub html_with_parents($self, $rindices) {
+    sub html_with_parents ($self, $rindices) {
         my $maybe_name = $self->name;
         my $shown      = [
             FunctionalPerl::Htmlgen::Toc::rindices_numberstring($rindices),
@@ -190,7 +188,7 @@ package FunctionalPerl::Htmlgen::Toc::TocRootNode {
 our $empty_toc = FunctionalPerl::Htmlgen::Toc::TocRootNode->new(strictnull,
     H3({ class => "toc_title" }, "Contents"));
 
-sub tocnode($name, $header) {
+sub tocnode ($name, $header) {
     FunctionalPerl::Htmlgen::Toc::TocNode->new(strictnull, $name, $header);
 }
 
@@ -219,12 +217,11 @@ TEST { $ttoc->html->string }
     . '<li><dir class="toc"><a href="#c">2. Second</a></dir></li>'
     . '</dir></div>';
 
-sub process__with_toc__body($body, $first_level, $toc, $parents) {
+sub process__with_toc__body ($body, $first_level, $toc, $parents) {
 
     # -> (processed_body, toc)
     stream_mixed_state_fold_right(
-        sub($v, $toc, $rest)
-        {
+        sub ($v, $toc, $rest) {
             if (is_pxml_element($v)) {
                 if (my ($_level) = $v->name =~ /^[hH](\d+)$/s) {
                     my $level = $_level - $first_level + 1;
@@ -234,12 +231,9 @@ sub process__with_toc__body($body, $first_level, $toc, $parents) {
                         . "encountering <"
                         . $v->name . ">";
 
-                    my $anchor = $parents->find(
-                        sub($e)
-                        {
-                            $e->name eq "a" and $e->maybe_attribute("name")
-                        }
-                    ) // die "bug, missing anchor element";
+                    my $anchor = $parents->find(sub($e) {
+                        $e->name eq "a" and $e->maybe_attribute("name")
+                    }) // die "bug, missing anchor element";
 
                     my $toc = $toc->level_add($level,
                         tocnode($anchor->maybe_attribute("name"), $v));
@@ -248,12 +242,9 @@ sub process__with_toc__body($body, $first_level, $toc, $parents) {
 
                     (
                         cons(
-                            $v->body_update(
-                                sub($body)
-                                {
-                                    cons($toc->numberstring . " ", $body)
-                                }
-                            ),
+                            $v->body_update(sub($body) {
+                                cons($toc->numberstring . " ", $body)
+                            }),
                             $tail
                         ),
                         $toc2
@@ -274,8 +265,8 @@ sub process__with_toc__body($body, $first_level, $toc, $parents) {
                 (cons($v, $tail), $toc2)
             }
         },
-        sub($toc)
-        {
+        sub($toc) {
+
             # return counter back up the chain
             (null, $toc)
         },
@@ -350,7 +341,7 @@ use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
 sub match_element_names($self) { ["with_toc"] }
 
-sub map_element($self, $e, $uplist) {
+sub map_element ($self, $e, $uplist) {
     my ($body, $toc)
         = process__with_toc__body($e->body, $e->maybe_attribute("level") // 2,
         $empty_toc, null);

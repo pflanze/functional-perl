@@ -83,7 +83,6 @@ our @EXPORT      = qw(T TC trampoline);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 sub T (&) {
     bless $_[0], "FP::Trampoline::Continuation"
 }

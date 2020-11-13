@@ -39,7 +39,7 @@ use FP::Docstring;
 use Chj::TEST;
 use URI;
 
-sub uri_add($base, $rel) {
+sub uri_add ($base, $rel) {
     __ '($basestr,$relstr) -> $str ' . '-- (via URI.pm)';
     URI->new($rel)->abs(URI->new($base)) . ""
 }

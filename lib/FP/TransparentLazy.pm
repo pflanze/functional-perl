@@ -62,7 +62,6 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Lazy qw(force FORCE is_promise);    # for re-export
 
-
 sub lazy (&) {
     bless [$_[0], undef], "FP::TransparentLazy::Promise"
 }

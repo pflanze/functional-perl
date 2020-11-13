@@ -109,7 +109,6 @@ our @EXPORT = qw(
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 sub curry ($) {
     @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;

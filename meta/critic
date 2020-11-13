@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+use experimental "signatures";
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -57,6 +57,7 @@ use FP::Repl;
 
     package PFLANZE::Result;
     use FP::Struct ["path"];
+
     sub prefix($self) {
         $self->path . "\t"
     }
@@ -66,6 +67,7 @@ use FP::Repl;
 
     package PFLANZE::ERR;
     use FP::Struct ["message"], "PFLANZE::Result";
+
     sub string($self) {
         $self->prefix . $self->messsage
     }
@@ -75,17 +77,16 @@ use FP::Repl;
 
     package PFLANZE::OK;
     use FP::Struct ["critiques"], "PFLANZE::Result";
+
     sub has_critique($self) {
         @{ $self->critiques } > 0
     }
+
     sub string($self) {
         my $p = $self->prefix;
-        $self->critiques->map (
-            sub($c)
-            {
-                "$p$c"
-            }
-        )->strings_join("");
+        $self->critiques->map (sub($c) {
+            "$p$c"
+        })->strings_join("");
     }
     _END_;
 }
@@ -102,11 +103,8 @@ our $critiques = array_to_stream(modulepathlist)->map(*critique);
 if ($opt_repl) {
     repl;
 } else {
-    $critiques->filter(the_method "has_critique")->for_each(
-        sub($c)
-        {
-            xprintln $c->string
-        }
-    );
+    $critiques->filter(the_method "has_critique")->for_each(sub($c) {
+        xprintln $c->string
+    });
 }
 

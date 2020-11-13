@@ -99,7 +99,6 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use Carp;
 use Chj::IO::File;
 
-
 sub glob_to_fh ($;$) {
     my ($glob, $maybe_layer_or_encoding) = @_;
     my $fh = bless(*{$glob}{IO}, "Chj::IO::File");

@@ -69,7 +69,6 @@ our @EXPORT      = qw(array_sort array_sortCompare on on_maybe cmp_complement);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 use FP::Ops qw(string_cmp number_cmp binary_operator);
 use Chj::TEST;
 

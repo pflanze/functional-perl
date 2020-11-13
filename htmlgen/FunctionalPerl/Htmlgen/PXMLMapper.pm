@@ -49,7 +49,7 @@ sub match_element_names($self) {
     die "abstract class, missing implementation";
 }
 
-sub map_element($self, $e, $uplist) {
+sub map_element ($self, $e, $uplist) {
     __
         'method ($e: PXML::Element, $uplist: list_of PXML::Element) -> PXML::Element';
     die "abstract class, missing implementation";

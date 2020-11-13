@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+use experimental "signatures";
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -56,6 +56,7 @@ use FP::fix qw(fixn);
 
     package find_maildirs::Failure;
     use FP::Struct ["path", "message"];
+
     sub xprintln($self) {
         print STDERR $self->path, ": ", $self->message, "\n"
     }
@@ -66,6 +67,7 @@ use FP::fix qw(fixn);
 
     package find_maildirs::Success;
     use FP::Struct ["path"];
+
     sub xprintln($self) {
         print STDOUT $self->path, "\n" or die $!;
     }
@@ -90,7 +92,7 @@ sub is_maildir_plusplus_subfolder($path) {
 
 # ---- tree folding -----------------------------------------------------
 
-sub find_below($path, $pred) {
+sub find_below ($path, $pred) {
 
     my ($fold_path, $fold_dirpath) = fixn(
         fun($fold_path, $fold_dirpath, $path, $rest)

@@ -136,7 +136,6 @@ our @EXPORT      = qw(pxmlpre pxmlfunc);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 {
 
     package PXML::Preserialize::Serialized;

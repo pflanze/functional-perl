@@ -55,7 +55,6 @@ our @EXPORT      = qw(dumperequal dumperequal_utf8);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 use Data::Dumper;
 
 # XX these are expensive, of course. Better solution?

@@ -63,7 +63,6 @@ our @EXPORT      = qw(__ docstring);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 use Chj::TEST;
 
 sub __ ($) { }

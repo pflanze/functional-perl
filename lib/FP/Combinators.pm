@@ -53,7 +53,6 @@ our @EXPORT_OK = qw(compose compose_scalar maybe_compose compose_1side
     flip flip2of3 rot3right rot3left);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 use Chj::TEST;
 
 sub compose {

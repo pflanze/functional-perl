@@ -22,7 +22,7 @@ BEGIN {
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+use experimental "signatures";
 use Sub::Call::Tail;
 
 # find modules from functional-perl working directory (not installed)
@@ -81,7 +81,7 @@ our ($configpath) = @ARGV;
 use FP::IOStream qw(fh_to_stream);
 use FP::Ops qw(the_method);
 
-sub fh_to_linestream($fh, $close) {
+sub fh_to_linestream ($fh, $close) {
     fh_to_stream $fh, the_method("xreadline"), $close
 }
 
@@ -129,7 +129,7 @@ sub safe_for_mail($str) {
 }
 
 # to be accessible by code at $configpath (hacky?)
-sub report_mailto($from, $to) {
+sub report_mailto ($from, $to) {
     my $_from = safe_for_mail($from);
     my $_to   = safe_for_mail($to);
     sub($path) {
@@ -176,7 +176,7 @@ sub xtmpfile_noautoclean() {
     $t
 }
 
-sub processlines_($lines, $out, $maybe_reporterpid) {
+sub processlines_ ($lines, $out, $maybe_reporterpid) {
     weaken $_[0];
     my ($line, $rest) = $lines->first_and_rest;
     warn "line='$line', maybe_reporterpid=" . singlequote($maybe_reporterpid)
@@ -223,8 +223,7 @@ my $tailpid = forked {
 
 my $lines = fh_to_linestream(
     $r,
-    sub($fh)
-    {
+    sub($fh) {
         $fh->xclose;
         xxwait $tailpid;
     }

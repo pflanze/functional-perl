@@ -30,8 +30,8 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT = qw(chompspace);
-#@EXPORT_OK = qw();
 
+#@EXPORT_OK = qw();
 
 sub chompspace($) {
     my ($str) = @_;

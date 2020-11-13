@@ -64,7 +64,7 @@ sub squarebracked_escape($str) {
 # meant to preprocess the whole markdown document; keep the returned
 # table and the used token for mediawiki_expand.
 
-sub mediawiki_prepare($str, $token) {
+sub mediawiki_prepare ($str, $token) {
     __ '($str, $tokenstr) -> ($str, $hashtable) '
         . '-- replace "[[...]]" syntax in $str with replacement tokens '
         . 'which use $tokenstr as prefix';
@@ -85,7 +85,7 @@ TEST { [mediawiki_prepare 'foo [[bar]] [[baz]].', 'LO'] }
 # possibly should build PXML directly from here instead of string
 # replace, but I'm lazy right now.
 
-sub mediawiki_replace($str, $token, $table) {
+sub mediawiki_replace ($str, $token, $table) {
     __ '($str, $token, {tokenargument => $value,..}) -> $str '
         . '-- re-insert hidden parts';
     $str =~ s%\Q$token\E-(\d+)-%
@@ -97,7 +97,7 @@ sub mediawiki_replace($str, $token, $table) {
 # here's the version that returns PXML, through the indirection of a
 # string, which XXX may very well be unsafe.
 
-sub mediawiki_rexpand($str, $token, $table) {
+sub mediawiki_rexpand ($str, $token, $table) {
     __ '($str, $token, $table) -> [PXML::Element] '
         . '-- mediawiki_replace then _expand';
     mediawiki_expand(mediawiki_replace($str, $token, $table))

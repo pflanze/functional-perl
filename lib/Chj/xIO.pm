@@ -50,7 +50,6 @@ our @EXPORT_OK = qw(
 );
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-
 sub capture_stdout_ {
     my ($thunk) = @_;
     my $buf = "";

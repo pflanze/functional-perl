@@ -47,7 +47,7 @@ use HTML::TreeBuilder;
 use PXML::XHTML;
 use Chj::TEST;
 
-sub htmlparse_raw($htmlstr, $whichtag) {
+sub htmlparse_raw ($htmlstr, $whichtag) {
     my $t = HTML::TreeBuilder->new;
     $t->ignore_unknown(0);    # allow <with_toc> elements
     $t->parse_content($htmlstr);
@@ -90,7 +90,7 @@ sub htmlmap($e) {
     );
 }
 
-sub htmlparse($str, $whichtag) {
+sub htmlparse ($str, $whichtag) {
     __ '($str,$whichtag) -> PXML::Element '
         . '-- parse HTML string to PXML; $whichtag is passed to'
         . ' find_by_tag_name from HTML::TreeBuilder';

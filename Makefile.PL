@@ -84,7 +84,8 @@ WriteMakefile(
                     "Eval::WithLexicals"  => 0,
 
                     #"Sub::Call::Tail" => 0, currently broken
-                    "Method::Signatures"   => 0,
+                    "Method::Signatures" => 0,
+
                     #"Function::Parameters" => 0, not used anymore
 
                     # for running htmlgen
