@@ -10,6 +10,11 @@
 # http://logic.stanford.edu/intrologic/
 # http://logic.stanford.edu/intrologic/chapters/chapter_01.html
 
+# It mostly uses functions (like array_any) over methods (like ->any),
+# for demonstration purposes and since we can here since there's no
+# need for this code to be generic, otherwise the latter would be the
+# right choice.
+
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
@@ -47,8 +52,6 @@ use FP::Array_sort ":all";
     use overload ('&{}' => "coderef", '""' => "FP_Show_show");
 
     sub FP_Show_show ($self, @args) {
-
-        # 2 args what for?
         "predicate from:\n" . $self->stack->backtrace(0)
     }
     _END_
@@ -76,12 +79,9 @@ sub does_not_like ($subj, $obj) {
 
 sub likes_either ($subj, @objs) {
     sub($matrix) {
-        array_any(
-            sub($obj) {
-                matrix_likes $matrix, $subj, $obj
-            },
-            \@objs
-        );
+        array_any sub($obj) {
+            matrix_likes $matrix, $subj, $obj
+            }, \@objs
     }
 }
 
@@ -95,11 +95,9 @@ sub matrix_people($matrix) {
 sub matrix_likers ($matrix, $liked) {
 
     # find who likes $liked
-    array_filter(
-        sub($person) {
-            matrix_likes $matrix, $person, $liked
-        },
-        matrix_people $matrix);
+    array_filter sub($person) {
+        matrix_likes $matrix, $person, $liked
+        }, matrix_people $matrix
 }
 
 sub matrix_liked ($matrix, $subj) {
@@ -122,13 +120,9 @@ sub matrix_numrelations($matrix) {
 
 sub likes_everyone_that_x_likes ($subj, $othersubj) {
     sub($matrix) {
-        array_every(
-            sub($obj) {
-                matrix_likes $matrix, $subj, $obj
-            },
-            matrix_liked $matrix,
-            $othersubj
-        );
+        array_every sub($obj) {
+            matrix_likes $matrix, $subj, $obj
+        }, matrix_liked($matrix, $othersubj)
     }
 }
 
@@ -137,13 +131,9 @@ sub likes_everyone_who_likes ($subj, $liked) {
     # is this cheating, walking the matrix? Should it look at
     # predicates? ehr no, ehr?
     sub($matrix) {
-        array_every(
-            sub($liker) {
-                matrix_likes $matrix, $subj, $liker
-            },
-            matrix_likers $matrix,
-            $liked
-        );
+        array_every sub($liker) {
+            matrix_likes $matrix, $subj, $liker
+        }, matrix_likers($matrix, $liked)
     }
 }
 
@@ -245,24 +235,20 @@ our $people   = matrix_people $onesolution;
 our $people_i = [0 .. $#$people];
 
 sub buildmatrix($bits) {
-    array_to_hash_map(
-        sub ($subj, $subji) {
-            $subj => array_to_hash_map(
-                sub ($obj, $obji) {
-                    my $i = $subji * 4 + $obji;
-                    $obj => !!($bits & (1 << $i))
-                },
-                $people,
-                $people_i
-            );
-        },
-        $people,
-        $people_i
-    );
+    array_to_hash_map sub ($subj, $subji) {
+        $subj => array_to_hash_map(
+            sub ($obj, $obji) {
+                my $i = $subji * 4 + $obji;
+                $obj => !!($bits & (1 << $i))
+            },
+            $people,
+            $people_i
+        )
+        }, $people, $people_i
 }
 
 sub search() {
-    stream_iota->take(2**16)->map(*buildmatrix)->filter(*checks)
+    stream_iota->take(2**16)->map(\&buildmatrix)->filter(\&checks)
 }
 
 if ($ENV{RUN_SLOW_TESTS}) {
@@ -274,13 +260,13 @@ if ($ENV{RUN_SLOW_TESTS}) {
     2;
 
     TEST {
-        array_length array_filter sub($v) { equal $v, $onesolution }, $results
+        array_length array_filter(sub($v) { equal $v, $onesolution }, $results)
     }
     1;
 
     my $sorted;
     TEST {
-        $sorted = array_sort $results, on * matrix_numrelations, *number_cmp;
+        $sorted = array_sort $results, on \&matrix_numrelations, \&number_cmp;
         [matrix_numrelations($$sorted[0]), matrix_numrelations($$sorted[-1])]
     }
     [7, 8];
