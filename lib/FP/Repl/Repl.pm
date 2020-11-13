@@ -528,6 +528,7 @@ sub eval_code {
         = $Function::Parameters::VERSION
         ? "use Function::Parameters ':strict'"
         : "";
+    my $use_signatures = ($] >= 5.020) ? "use experimental 'signatures'" : "";
     my $use_tail    = $Sub::Call::Tail::VERSION ? "use Sub::Call::Tail" : "";
     my $use_autobox = @FP::autobox::ISA         ? "use FP::autobox"     : "";
 
@@ -537,8 +538,8 @@ sub eval_code {
         . "use strict; "
         . ($self->use_strict_vars ? "" : "no strict 'vars'; ")
         . "$use_warnings; "
-        . "$use_method_signatures; $use_functional_parameters_; $use_tail; "
-        . "$use_autobox; ";
+        . "$use_method_signatures; $use_functional_parameters_; "
+        . "$use_signatures; $use_tail; $use_autobox; ";
 
     if (my $lp = $maybe_lexical_persistence) {
         my $allcode = $prelude . $code;
