@@ -190,8 +190,7 @@ package FunctionalPerl::Htmlgen::Toc::TocRootNode {
 our $empty_toc = FunctionalPerl::Htmlgen::Toc::TocRootNode->new(strictnull,
     H3({ class => "toc_title" }, "Contents"));
 
-sub tocnode ($$) {
-    my ($name, $header) = @_;
+sub tocnode($name, $header) {
     FunctionalPerl::Htmlgen::Toc::TocNode->new(strictnull, $name, $header);
 }
 
