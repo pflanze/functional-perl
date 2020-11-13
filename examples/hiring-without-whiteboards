@@ -557,7 +557,7 @@ sub FP::Abstract::Sequence::print($l) {
 }
 
 sub FP::Abstract::Sequence::print_grouped($l, $please_sort = 1) {
-    my $l = $please_sort ? $l->sort : $l;
+    $l = $please_sort ? $l->sort : $l;
     print_groups(group_companies($l, $ranges));
 }
 

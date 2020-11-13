@@ -50,7 +50,7 @@ use Chj::xperlfunc qw(dirname xmkdir);
 
 # XX how is this different from xmkdir_p ?
 sub create_parent_dirs($path0, $path0_to_outpath) {
-    my $path0   = dirname $path0;
+    $path0   = dirname $path0;
     my $outpath = &$path0_to_outpath($path0);
     if (mkdir $outpath) {
 
