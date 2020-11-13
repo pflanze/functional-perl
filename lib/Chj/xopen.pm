@@ -77,10 +77,13 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::xopen;
-@ISA = 'Exporter';
-require Exporter;
-@EXPORT    = qw(xopen xopen_read);
-@EXPORT_OK = qw(xopen_write xopen_append xopen_update
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw(xopen xopen_read);
+our @EXPORT_OK = qw(xopen_write xopen_append xopen_update
     perhaps_open_read perhaps_xopen_read
     devnull devzero
     glob_to_fh
@@ -91,14 +94,11 @@ require Exporter;
     fh_to_fh
     possibly_fh_to_fh
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
 use Carp;
-
 use Chj::IO::File;
+
 
 sub glob_to_fh ($;$) {
     my ($glob, $maybe_layer_or_encoding) = @_;

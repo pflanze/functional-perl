@@ -110,15 +110,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Show;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(show);
-@EXPORT_OK   = qw(show_many subprefix_to_show_coderef);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(show);
+our @EXPORT_OK   = qw(show_many subprefix_to_show_coderef);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TerseDumper qw(terseDumper);
 use Scalar::Util qw(reftype);

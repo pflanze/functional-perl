@@ -41,10 +41,13 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Array;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(array
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(array
     array_equal
     array_first
     array_maybe_first
@@ -93,11 +96,8 @@ require Exporter;
     array_last
     array_to_hash_group_by
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
 use Carp;
 use Chj::TEST;
 use FP::Div qw(min);

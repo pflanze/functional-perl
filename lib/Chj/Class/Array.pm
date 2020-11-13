@@ -853,7 +853,7 @@ Arguments listed I<before the first option> are interpreted as symbol names
 to be imported into your namespace directly (apart from the field names).
 This is handy to import constants and `L<enum|enum>'s. (Note that unlike the
 usual L<Exporter|Exporter>, the one from Chj::Class::Array doesn't look at the
-@EXPORT* variables yet. Drop me a note if you would like to have that.)
+our @EXPORT* variables yet. Drop me a note if you would like to have that.)
 
 =over 4
 

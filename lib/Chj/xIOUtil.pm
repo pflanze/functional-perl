@@ -24,16 +24,16 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::xIOUtil;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
-    xcopyfile);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
+    xcopyfile);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 use Chj::xopen ":all";
 

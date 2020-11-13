@@ -24,18 +24,17 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FunctionalPerl::Htmlgen::UriUtil;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw();
-@EXPORT_OK   = qw(uri_add URI_is_internal);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental "signatures";
-
 use Sub::Call::Tail;
+use Exporter "import";
+
+our @EXPORT      = qw();
+our @EXPORT_OK   = qw(uri_add URI_is_internal);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 use FP::Docstring;
 use Chj::TEST;
 use URI;

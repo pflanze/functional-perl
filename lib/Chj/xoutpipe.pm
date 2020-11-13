@@ -40,7 +40,7 @@ or on the L<website|http://functional-perl.org/>.
 package Chj::xoutpipe;
 @ISA = 'Exporter';
 require Exporter;
-@EXPORT = qw(xoutpipe);
+our @EXPORT = qw(xoutpipe);
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';

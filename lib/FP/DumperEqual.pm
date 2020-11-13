@@ -46,15 +46,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::DumperEqual;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(dumperequal dumperequal_utf8);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(dumperequal dumperequal_utf8);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 use Data::Dumper;
 

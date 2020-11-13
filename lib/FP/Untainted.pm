@@ -43,15 +43,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Untainted;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(untainted);
-@EXPORT_OK   = qw(untainted_with is_untainted);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(untainted);
+our @EXPORT_OK   = qw(untainted_with is_untainted);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 

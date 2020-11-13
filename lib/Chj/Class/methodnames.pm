@@ -42,9 +42,8 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::Class::methodnames;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(methodnames);
+use Exporter "import";
+our @EXPORT = qw(methodnames);
 
 use strict;
 use warnings;

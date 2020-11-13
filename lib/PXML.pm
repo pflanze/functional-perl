@@ -42,15 +42,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package PXML;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(is_pxml_element);
-@EXPORT_OK   = qw(pxmlbody pxmlflush is_pxmlflush);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(is_pxml_element);
+our @EXPORT_OK   = qw(pxmlbody pxmlflush is_pxmlflush);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 use PXML::Element;
 

@@ -58,21 +58,20 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::singlequote;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw(singlequote);
-@EXPORT_OK = qw(singlequote_sh singlequote_many many with_maxlen
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw(singlequote);
+our @EXPORT_OK = qw(singlequote_sh singlequote_many many with_maxlen
     possibly_singlequote_sh singlequote_sh_many
     quote_javascript
     quote_C _quote_C
 );
 
 # importing 'many' is probably not a good idea (depreciated)
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 our $maybe_maxlen;
 

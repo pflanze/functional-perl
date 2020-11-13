@@ -26,7 +26,7 @@ or on the L<website|http://functional-perl.org/>.
 package Chj::xtmpfile;
 @ISA = 'Exporter';
 require Exporter;
-@EXPORT = qw(xtmpfile);
+our @EXPORT = qw(xtmpfile);
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';

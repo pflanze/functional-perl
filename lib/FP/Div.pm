@@ -24,19 +24,19 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Div;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(inc dec square average
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(inc dec square average
     identity
     min max minmax
     Chomp
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 
 # XX should `indentity` pass multiple values, and this be called

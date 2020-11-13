@@ -50,17 +50,17 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::xhome;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw(xhome);
-@EXPORT_OK = qw(xHOME
-    xeffectiveuserhome
-    xsafehome);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw(xhome);
+our @EXPORT_OK = qw(xHOME
+    xeffectiveuserhome
+    xsafehome);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 # use File::HomeDir qw(home);
 

@@ -128,15 +128,15 @@ or on the L<website|http://functional-perl.org/>.
 #   **NOTE**  running meta/update-pod (at release time) will take care of it.
 
 package FunctionalPerl;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = ();
-@EXPORT_OK   = (expand_import_tags);
-%EXPORT_TAGS = ();
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use base "Exporter";
+
+our @EXPORT      = ();
+our @EXPORT_OK   = qw(expand_import_tags);
+our %EXPORT_TAGS = ();
+
 
 our $VERSION = "0.72.36";
 

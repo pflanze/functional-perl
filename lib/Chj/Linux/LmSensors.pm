@@ -28,21 +28,20 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::Linux::LmSensors;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(sensors_get
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(sensors_get
     Selector
     Value
     ValueNA
     ValueGroup
     Measurement
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use utf8;
 use Chj::TEST;

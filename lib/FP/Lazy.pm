@@ -192,15 +192,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Lazy;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(lazy lazy_if lazyLight force FORCE is_promise);
-@EXPORT_OK   = qw(delay force_noeval lazy_backtrace);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(lazy lazy_if lazyLight force FORCE is_promise);
+our @EXPORT_OK   = qw(delay force_noeval lazy_backtrace);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Carp;
 use FP::Mixin::Utils;

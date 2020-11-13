@@ -85,15 +85,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::PureArray;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(is_purearray purearray);
-@EXPORT_OK   = qw(array_clone_to_purearray array_to_purearray);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(is_purearray purearray);
+our @EXPORT_OK   = qw(array_clone_to_purearray array_to_purearray);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Interfaces;
 use Carp;

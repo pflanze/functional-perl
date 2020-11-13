@@ -74,15 +74,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Trampoline;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(T TC trampoline);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(T TC trampoline);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 sub T (&) {
     bless $_[0], "FP::Trampoline::Continuation"

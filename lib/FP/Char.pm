@@ -29,15 +29,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Char;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw();
-@EXPORT_OK   = qw(is_char char_is_whitespace char_is_alphanumeric);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw();
+our @EXPORT_OK   = qw(is_char char_is_whitespace char_is_alphanumeric);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 sub is_char ($) {
     my ($v) = @_;

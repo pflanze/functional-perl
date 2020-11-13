@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -24,15 +24,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FunctionalPerl::ModuleList;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(modulenamelist modulepathlist);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(modulenamelist modulepathlist);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::xopen 'xopen_read';
 

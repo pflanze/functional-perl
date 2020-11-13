@@ -84,20 +84,20 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Weak;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw(weaken Weakened Keep);
-@EXPORT_OK = qw(
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw(weaken Weakened Keep);
+our @EXPORT_OK = qw(
     do_weaken
     noweaken noWeakened with_noweaken
     warnweaken warnWeakened with_warnweaken
     cluckweaken cluckWeakened with_cluckweaken
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
 
 use Scalar::Util ();
 

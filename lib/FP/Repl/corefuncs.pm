@@ -25,9 +25,8 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Repl::corefuncs;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(corefuncs);
+use Exporter "import";
+our @EXPORT = qw(corefuncs);
 
 use strict;
 use warnings;

@@ -199,9 +199,12 @@ or on the L<website|http://functional-perl.org/>.
 #'
 
 package Chj::xperlfunc;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT = qw(
     xfork
     xfork_
     xexec
@@ -235,7 +238,7 @@ require Exporter;
     xsysread
     xchroot
 );
-@EXPORT_OK = qw(
+our @EXPORT_OK = qw(
     xspawn
     xlaunch
     xmvmkdir
@@ -267,10 +270,8 @@ require Exporter;
 # would we really want to export these?:
 #caching_getpwuid
 #caching_getgrgid
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 use Carp;
 use Chj::singlequote 'singlequote_many';    # the only dependency so far
 use Chj::Unix::Exitcode qw(exitcode);

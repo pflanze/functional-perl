@@ -54,15 +54,15 @@ L<FP::Repl>
 =cut
 
 package FP::Docstring;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(__ docstring);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(__ docstring);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 use Chj::TEST;
 

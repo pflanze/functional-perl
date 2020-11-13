@@ -24,15 +24,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Values;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw();
-@EXPORT_OK   = qw(fst snd);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw();
+our @EXPORT_OK   = qw(fst snd);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 sub fst {
     $_[0]

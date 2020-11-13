@@ -34,11 +34,6 @@ the source repository, i.e. during testing (or build).
 
 package FunctionalPerl::TailExpand;
 
-#@ISA = "Exporter"; require Exporter;
-#@EXPORT = qw();
-#@EXPORT_OK = qw();
-#%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';

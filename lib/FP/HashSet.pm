@@ -59,9 +59,12 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::HashSet;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(array_to_hashset
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT = qw(array_to_hashset
     array_to_lchashset
     hashset_to_array
     hashset_to_predicate
@@ -76,12 +79,9 @@ require Exporter;
     hashset_empty
     hashset_diff
 );
-@EXPORT_OK   = qw(hashset_add_hashset_d);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our @EXPORT_OK   = qw(hashset_add_hashset_d);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 
 sub array_to_hashset ($) {

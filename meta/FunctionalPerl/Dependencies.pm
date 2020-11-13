@@ -25,15 +25,14 @@ FunctionalPerl::Dependencies
 =cut
 
 package FunctionalPerl::Dependencies;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw();
-@EXPORT_OK   = qw(have_module module_needs);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw();
+our @EXPORT_OK   = qw(have_module module_needs);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 # ------------------------------------------------------------------
 # Non-core dependencies of modules to decide whether to skip testing

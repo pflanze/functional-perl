@@ -24,14 +24,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::chompspace;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(chompspace);
-
-#@EXPORT_OK = qw();
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT = qw(chompspace);
+#@EXPORT_OK = qw();
+
 
 sub chompspace($) {
     my ($str) = @_;

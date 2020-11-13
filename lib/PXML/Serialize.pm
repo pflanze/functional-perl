@@ -50,10 +50,13 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package PXML::Serialize;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw(pxml_xhtml_print);
-@EXPORT_OK = qw(pxml_print
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw(pxml_xhtml_print);
+our @EXPORT_OK = qw(pxml_print
     pxml_print_fragment
     pxml_xhtml_print_fast
     pxml_print_fragment_fast
@@ -62,11 +65,7 @@ require Exporter;
     attribute_escape
     content_escape
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Show;
 use PXML::Element;

@@ -41,7 +41,7 @@ or on the L<website|http://functional-perl.org/>.
 package Chj::xpipe;
 @ISA = 'Exporter';
 require Exporter;
-@EXPORT = qw(xpipe);
+our @EXPORT = qw(xpipe);
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';

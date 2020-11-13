@@ -24,12 +24,10 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package PXML::XHTML;
-@ISA = "Exporter";
-require Exporter;
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
 
 use PXML::Element;
 

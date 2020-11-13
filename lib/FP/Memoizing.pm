@@ -53,15 +53,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Memoizing;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(memoizing);
-@EXPORT_OK   = qw(memoizing_to_dir);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(memoizing);
+our @EXPORT_OK   = qw(memoizing_to_dir);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 use Storable qw(nfreeze nstore_fd fd_retrieve);

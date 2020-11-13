@@ -38,10 +38,13 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::IOStream;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(maybeIO_to_stream
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(maybeIO_to_stream
     fh_to_stream
     perhaps_directory_items
     perhaps_directory_paths
@@ -55,11 +58,7 @@ require Exporter;
     xstream_to_file
     xfile_replace_lines
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Lazy;
 use Chj::xopendir qw(perhaps_opendir);

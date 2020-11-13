@@ -22,14 +22,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::tempdir;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(tempdir);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(tempdir);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 sub tempdir ($) {
     my ($base)     = @_;

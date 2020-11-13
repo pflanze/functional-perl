@@ -90,9 +90,12 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Currying;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT = qw(
     curry
     curry_
     partial
@@ -103,12 +106,9 @@ require Exporter;
     uncurry_2_2
     uncurry_1_1_1
 );
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
 
 sub curry ($) {
     @_ == 1 or die "wrong number of arguments";

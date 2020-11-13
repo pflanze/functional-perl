@@ -85,9 +85,12 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Predicates;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT = qw(
     is_pure
     is_pure_object
     is_pure_class
@@ -131,14 +134,11 @@ require Exporter;
     either
     all_of both
 );
-@EXPORT_OK = qw(
+our @EXPORT_OK = qw(
     is_coderef
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use FP::Abstract::Pure;
 use Chj::BuiltinTypePredicates 'is_filehandle';

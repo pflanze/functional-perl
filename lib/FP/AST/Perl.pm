@@ -92,16 +92,20 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::AST::Perl;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw();
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use experimental "signatures"; 
+use Exporter "import";
+
+our @EXPORT = qw();
 my @classes = qw(
     ScalarVar CodeVar HashVar ArrayVar Glob
     App AppP Get Ref
     Number String
     Literal
     Semicolon Comma Noop Let);
-@EXPORT_OK = (
+our @EXPORT_OK = (
     @classes, qw(
         is_packvar_type
         is_var
@@ -109,12 +113,9 @@ my @classes = qw(
         semicolons commas)
 );
 
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
-use experimental "signatures"; 
+
 use FP::Predicates ":all";
 
 #use Chj::TEST;

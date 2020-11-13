@@ -111,9 +111,12 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Stream;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT = qw(
     is_null
     Keep
     Weakened
@@ -160,17 +163,13 @@ require Exporter;
     stream_any
     stream_show
 );
-@EXPORT_OK = qw(
+our @EXPORT_OK = qw(
     F weaken
     cons car cdr first rest
     stream_cartesian_product
     stream_cartesian_product_2
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Lazy;
 use FP::List ":all";

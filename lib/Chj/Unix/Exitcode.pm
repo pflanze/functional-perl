@@ -24,15 +24,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::Unix::Exitcode;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(exitcode);
-@EXPORT_OK   = qw(exitcode);
-%EXPORT_TAGS = (all => \@EXPORT_OK);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(exitcode);
+our @EXPORT_OK   = qw(exitcode);
+our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 package Chj::Unix::Exitcode::Exitcode {
 

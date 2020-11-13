@@ -25,15 +25,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package PXML::HTML5;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw();
-@EXPORT_OK   = qw( $html5_void_elements $html5_void_element_h);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw();
+our @EXPORT_OK   = qw( $html5_void_elements $html5_void_element_h);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 # the set of tags that are allowed to be self-closing (<foo/>) without
 # semantical changes

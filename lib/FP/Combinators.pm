@@ -43,16 +43,16 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Combinators;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(compose compose_scalar maybe_compose compose_1side
-    flip flip2of3 rot3right rot3left);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(compose compose_scalar maybe_compose compose_1side
+    flip flip2of3 rot3right rot3left);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 use Chj::TEST;
 

@@ -27,15 +27,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::NamespaceClean;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(package_keys package_delete);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(package_keys package_delete);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 sub package_keys {
     my ($package) = @_;

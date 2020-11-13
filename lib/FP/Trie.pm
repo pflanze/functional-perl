@@ -83,15 +83,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Trie;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(empty_trie);
-@EXPORT_OK   = qw($empty_trie);                  # ok?
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(empty_trie);
+our @EXPORT_OK   = qw($empty_trie);                  # ok?
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 {
 

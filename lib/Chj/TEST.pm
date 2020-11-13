@@ -71,15 +71,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::TEST;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
-@EXPORT_OK   = qw(run_tests run_tests_ no_tests);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use base "Exporter";
+
+our @EXPORT      = qw(TEST TEST_STDOUT TEST_EXCEPTION GIVES perhaps_run_tests);
+our @EXPORT_OK   = qw(run_tests run_tests_ no_tests);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Carp;
 use Chj::singlequote;

@@ -24,16 +24,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FunctionalPerl::Htmlgen::Nav;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw();
-@EXPORT_OK   = qw(_nav entry);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental "signatures";
+use Exporter "import";
+
+our @EXPORT      = qw();
+our @EXPORT_OK   = qw(_nav entry);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 
 # Constructors

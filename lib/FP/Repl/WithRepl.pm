@@ -56,13 +56,6 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Repl::WithRepl;
-
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(withrepl push_withrepl pop_withrepl);
-@EXPORT_OK   = qw(WithRepl_eval WithRepl_eval_e);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
@@ -106,6 +99,12 @@ sub WithRepl_eval_e ($;$$) {
         else          { (undef, $@, 1) }
     }
 }
+
+use Exporter "import";
+our @EXPORT      = qw(withrepl push_withrepl pop_withrepl);
+our @EXPORT_OK   = qw(WithRepl_eval WithRepl_eval_e);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 use FP::Repl;
 use FP::Repl::Stack;

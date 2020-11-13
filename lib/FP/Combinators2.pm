@@ -49,17 +49,17 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Combinators2;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(
-    right_associate_
-    left_associate_);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(
+    right_associate_
+    left_associate_);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 #use Chj::TEST;
 use FP::PureArray;

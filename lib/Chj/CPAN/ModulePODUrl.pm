@@ -33,15 +33,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::CPAN::ModulePODUrl;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(perhaps_module_pod_url);
-@EXPORT_OK   = qw(if_get);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(perhaps_module_pod_url);
+our @EXPORT_OK   = qw(if_get);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use LWP::UserAgent;
 use FP::Show;

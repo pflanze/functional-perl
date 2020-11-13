@@ -40,9 +40,8 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::Util::AskYN;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(maybe_askyn);
+use Exporter "import";
+our @EXPORT = qw(maybe_askyn);
 
 use strict;
 use warnings;

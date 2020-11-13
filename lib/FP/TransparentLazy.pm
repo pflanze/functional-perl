@@ -51,17 +51,17 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::TransparentLazy;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(lazy lazyLight force FORCE is_promise);
-@EXPORT_OK   = qw(delay);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(lazy lazyLight force FORCE is_promise);
+our @EXPORT_OK   = qw(delay);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Lazy qw(force FORCE is_promise);    # for re-export
+
 
 sub lazy (&) {
     bless [$_[0], undef], "FP::TransparentLazy::Promise"

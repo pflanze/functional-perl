@@ -24,17 +24,16 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package PXML::Util;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(pxml_deferred_map pxml_eager_map
-    pxml_map_elements pxml_map_elements_exhaustively
-);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(pxml_deferred_map pxml_eager_map
+    pxml_map_elements pxml_map_elements_exhaustively
+);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 use FP::List;

@@ -24,15 +24,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::Serialize;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(new_Serialize_Closure);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(new_Serialize_Closure);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 

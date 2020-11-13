@@ -58,10 +58,13 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Ops;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = (
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = (
     qw(
         add
         subt
@@ -120,11 +123,8 @@ require Exporter;
     'regex_substitute_globally',     # regex_substitute_re_globally
     'regex_xsubstitute_globally',    # regex_xsubstitute_re_globally
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use FP::Show;
 

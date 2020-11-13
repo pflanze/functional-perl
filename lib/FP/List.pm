@@ -125,15 +125,18 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::List;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT = qw(
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT = qw(
     cons cons_ is_pair null is_null is_pair_of is_pair_or_null
     list_of  is_null_or_pair_of null_or_pair_of is_list
     car cdr first rest
     car_and_cdr first_and_rest perhaps_first_and_rest
     list);
-@EXPORT_OK = qw(
+our @EXPORT_OK = qw(
     pair improper_list
     first_set first_update
     is_pair_noforce is_null_noforce
@@ -177,11 +180,7 @@ require Exporter;
     circularlist
     weaklycircularlist
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use 5.008;    # for Internals::SvREADONLY
 

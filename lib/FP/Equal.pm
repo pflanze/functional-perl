@@ -111,15 +111,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Equal;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(equal);
-@EXPORT_OK   = qw(equaln is_equal relaxedequal pointer_eq);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(equal);
+our @EXPORT_OK   = qw(equaln is_equal relaxedequal pointer_eq);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 # equal can easily recurse deeply into data structures.
 no warnings "recursion";

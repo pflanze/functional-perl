@@ -24,18 +24,16 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FunctionalPerl::Htmlgen::Cost;
-
-#@ISA = "Exporter"; require Exporter;
-#@EXPORT = qw();
-#@EXPORT_OK = qw();
-#%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental "signatures";
-
 use Sub::Call::Tail;
+
+#use Exporter "import";
+#@EXPORT = qw();
+#@EXPORT_OK = qw();
+#%EXPORT_TAGS = (all => [@EXPORT,@EXPORT_OK]);
 
 package FunctionalPerl::Htmlgen::Cost::_::Cost {
     use FP::Array ":all";

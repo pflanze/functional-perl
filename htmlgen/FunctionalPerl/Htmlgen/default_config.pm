@@ -24,19 +24,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FunctionalPerl::Htmlgen::default_config;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw($default_config);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental "signatures";
+use Exporter "import";
 
-
-#use Sub::Call::Tail;
+our @EXPORT      = qw($default_config);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::xperlfunc qw(basename);
 

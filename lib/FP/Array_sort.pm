@@ -60,15 +60,15 @@ or on the L<website|http://functional-perl.org/>.
 # XX Should `on` (and `cmp_complement`?) be moved to `FP::Combinators`?
 
 package FP::Array_sort;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT      = qw(array_sort array_sortCompare on on_maybe cmp_complement);
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT      = qw(array_sort array_sortCompare on on_maybe cmp_complement);
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
+
 
 use FP::Ops qw(string_cmp number_cmp binary_operator);
 use Chj::TEST;

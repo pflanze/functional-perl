@@ -26,18 +26,17 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::Package::OfPath;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT_OK = qw(
-    package_of_path
-    package_of_path_or_package
-);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use Cwd 'abs_path';
 use Chj::singlequote;
+use Exporter "import";
+
+our @EXPORT_OK = qw(
+    package_of_path
+    package_of_path_or_package
+);
 
 our $DEBUG = 0;
 

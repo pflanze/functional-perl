@@ -74,10 +74,13 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::StrictList;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw(strictnull is_strictlist strictlist);
-@EXPORT_OK = qw(
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw(strictnull is_strictlist strictlist);
+our @EXPORT_OK = qw(
     cons
     first second rest car cdr car_and_cdr first_and_rest
     strictlist_reverse__map_with_length_with_tail
@@ -85,11 +88,7 @@ require Exporter;
     strictlist_array__reverse__map_with_length
     strictlist_array__map_with_length
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::List;
 use Chj::TEST;

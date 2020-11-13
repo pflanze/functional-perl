@@ -69,10 +69,13 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Text::CSV;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw();
-@EXPORT_OK = qw(
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw();
+our @EXPORT_OK = qw(
     new_csv_instance
     csv_line_xparser
     csv_fh_to_rows
@@ -81,11 +84,7 @@ require Exporter;
     rows_to_csv_fh
     rows_to_csv_file
 );
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::List ":all";
 use FP::Lazy ":all";

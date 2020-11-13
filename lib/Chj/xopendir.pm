@@ -103,7 +103,7 @@ or on the L<website|http://functional-perl.org/>.
 package Chj::xopendir;
 @ISA = 'Exporter';
 require Exporter;
-@EXPORT = qw(xopendir perhaps_opendir perhaps_xopendir);
+our @EXPORT = qw(xopendir perhaps_opendir perhaps_xopendir);
 
 use strict;
 use warnings;

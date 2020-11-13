@@ -56,9 +56,12 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Hash;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT
     = qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref hash_ref_or hash_cache
     hash_delete hash_update hash_diff
     hash_length
@@ -66,12 +69,8 @@ require Exporter;
     hashes_keys $empty_hash
     hash2_set
 );
-@EXPORT_OK   = qw();
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
-use strict;
-use warnings;
-use warnings FATAL => 'uninitialized';
+our @EXPORT_OK   = qw();
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 

@@ -147,16 +147,15 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package FP::Failure;
-@ISA = "Exporter";
-require Exporter;
-@EXPORT    = qw(failure is_failure);
-@EXPORT_OK = qw(*trace_failures *use_failure fails
-    message messagefmt);
-%EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use Exporter "import";
+
+our @EXPORT    = qw(failure is_failure);
+our @EXPORT_OK = qw(*trace_failures *use_failure fails
+    message messagefmt);
+our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Lazy 'force';
 
