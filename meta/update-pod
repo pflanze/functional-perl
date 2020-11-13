@@ -44,11 +44,11 @@ use FunctionalPerl ":all";
 my $newpart = FunctionalPerl::export_desc2pod;
 
 sub is_see_also {
-    $_[0] =~ /^ = head1 SEE ALSO/
+    $_[0] =~ /^=head1 SEE ALSO/
 }
 
 sub is_head1 {
-    $_[0] =~ /^ = head1 /
+    $_[0] =~ /^=head1 /
 }
 
 my $file = "lib/FunctionalPerl.pm";
