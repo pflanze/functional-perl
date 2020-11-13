@@ -21,49 +21,88 @@ sub usage {
 
 use Getopt::Long;
 our $verbose = 0;
+our $opt_opspaces;
+our $opt_functionparameters2signatures;
 
 #our $opt_dry;
 GetOptions(
     "verbose" => \$verbose,
     "help"    => sub {usage},
-
+    "opspaces"=> \$opt_opspaces,
+    "functionparameters2signatures"=> \$opt_functionparameters2signatures,
+    
     #"dry-run"=> \$opt_dry,
 ) or exit 1;
+
+
+sub opspaces {
+    if (/http|href/) {
+        $_
+    } else {
+        s{ ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) }{
+            my ($a,$b,$c)=($1,$2,$3);
+            my $all = "$a$b$c";
+            my $pre= substr($_, 0, pos($_)+1);
+            my $is_perl = 0;
+            if ($b eq "=>") {
+                $is_perl = 1
+            } elsif (not substr($pre, length($pre)-1, 1)=~ /\w/) {
+                $is_perl = 1
+            } elsif (my ($sigil) = $pre =~ /([^\w])[A-Za-z_]\w*\s*$/) {
+                $is_perl= $sigil =~ /[\$*&@%]/
+            }
+            #use FP::Repl;repl;
+            if ($is_perl) {
+                ($a eq " " ? $a : "$a ").$b.($c eq " " ? $c : " $c")
+            } else {
+                $all
+            }
+        }sgex and s/[ \t]*$//;
+        $_
+    }
+}
+
+sub functionparameters2signatures {
+    s{
+         \b(method|fun)(\s+\w+)
+         (?:
+             (\s*\(\s*)
+             ([^()]*?)
+             (\s*\))
+         )?
+         (\s*\{)
+    }{
+         my ($which,$name,$a,$b,$c,$end)=($1,$2,$3,$4,$5,$6);
+         "sub$name"
+           . ($which eq "method" ? 
+              (defined($b) ? $a.(length($b) ? q{$self, }.$b : q{$self}).$c
+               : q{($self)})
+              : "$a$b$c")
+           . $end
+    }sgex;
+    $_
+}
 
 for my $file (@ARGV) {
     use Chj::xtmpfile;
     use Chj::xopen 'xopen_read';
     my $f     = xopen_read $file;
-    my @lines = $f->xreadline;
+    my @lines = do {
+        local $/ = $opt_functionparameters2signatures ? undef : $/;
+        die "can't satisfy both options at same time here^ "
+          if $opt_functionparameters2signatures && $opt_opspaces;
+        $f->xreadline;
+    };
     $f->xclose;
 
     my $t = xtmpfile $file;
     $t->xprint(
         map {
-            if (/http|href/) {
-                $_
-            } else {
-                s` ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) `
-                my ($a,$b,$c)=($1,$2,$3);
-                my $all = "$a$b$c";
-                my $pre= substr($_, 0, pos($_)+1);
-                my $is_perl = 0;
-                if ($b eq "=>") {
-                    $is_perl = 1
-                } elsif (not substr($pre, length($pre)-1, 1)=~ /\w/) {
-                    $is_perl = 1
-                } elsif (my ($sigil) = $pre =~ /([^\w])[A-Za-z_]\w*\s*$/) {
-                    $is_perl= $sigil =~ /[\$*&@%]/
-                }
-                #use FP::Repl;repl;
-                if ($is_perl) {
-                    ($a eq " " ? $a : "$a ").$b.($c eq " " ? $c : " $c")
-                } else {
-                    $all
-                }
-                `sgex and s/[ \t]*$//;
-                $_
-            }
+            $_ = opspaces $_
+              if $opt_opspaces;
+            $_ = functionparameters2signatures $_
+              if $opt_functionparameters2signatures;
+            $_
         } @lines
     );
     $t->xclose;
