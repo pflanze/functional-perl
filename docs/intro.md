@@ -1054,8 +1054,8 @@ there:
 
 Now, when you run it:
 
-$ examples/introexample 
-main> 
+    $ examples/introexample 
+    main> 
 
 you get to a repl prompt, this time showing "main" as the
 namespace. This comes from the "repl" call at the end of the script
