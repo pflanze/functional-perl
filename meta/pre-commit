@@ -1,0 +1,70 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings FATAL => 'uninitialized';
+
+use Cwd 'abs_path';
+
+my ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
+    $location =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+
+use lib "$mydir/../lib";
+
+use Chj::IsPerl 'is_perl_file';
+
+sub usage {
+    print STDERR map {"$_\n"} @_ if @_;
+    print "$myname
+
+  This is meant to be symlinked to \`.git/hooks\`. It gets all paths
+  from git status which are perl files and runs \`perltidy\` on them.
+
+";
+    exit(@_ ? 1 : 0);
+}
+
+sub xopen_sender {
+    my (@cmd) = @_;
+    open my $in, "-|", @cmd or die "can't open input pipe to @cmd: $!";
+    $in
+}
+
+my $top = `git rev-parse --show-toplevel`;
+$? == 0 or die "error from cmd";
+chomp $top;
+
+chdir $top or die "can't chdir to Git working dir top '$top': $!";
+
+local $/ = "\0";
+my $in = xopen_sender qw(git status -z);
+
+my @paths;
+while (defined(my $item = <$in>)) {
+    chomp $item;
+    my ($X, $Y, $path) = $item =~ /(.)(.) (.*)/s
+        or die "invalid git-status -z item '$item'";
+    next unless ($X eq 'A' or $X eq 'M' or $X eq 'R' or $X eq 'C');
+    if (is_perl_file($path)) {
+        push @paths, $path;
+    }
+}
+
+close $in or die "git status -z: $!";
+$? == 0   or die "git status -z failed";
+
+#use FP::Repl;repl;exit;
+
+if (@paths) {
+    my @cmd = ("perltidy", @paths);
+    warn "running @cmd...\n";
+    system @cmd;
+    $? == 0 or die "perltidy failed";
+    system "git", "add", "--", @paths;
+    $? == 0 or die "git add failed";
+}
+
