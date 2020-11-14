@@ -1,14 +1,25 @@
-#!/usr/bin/perl -w
-
-# Tue 10 Nov 15:23:33 GMT 2020
-(my $email = 'ch%christianjaeger,ch') =~ tr/%,/@./;
+#!/usr/bin/env perl
 
 use strict;
 use warnings FATAL => 'uninitialized';
 use utf8;
 
-$0 =~ /(.*?)([^\/]+)\z/s or die "?";
-my ($mydir, $myname) = ($1, $2);
+use Cwd 'abs_path';
+
+my ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
+    $location =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+
+use lib "$mydir/../lib";
+
+use Chj::xtmpfile;
+use Chj::xopen 'xopen_read';
+
+(my $email = 'ch%christianjaeger,ch') =~ tr/%,/@./;
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
@@ -83,8 +94,6 @@ sub functionparameters2signatures {
 }
 
 for my $file (@ARGV) {
-    use Chj::xtmpfile;
-    use Chj::xopen 'xopen_read';
     my $f     = xopen_read $file;
     my @lines = do {
         local $/ = $opt_functionparameters2signatures ? undef : $/;
