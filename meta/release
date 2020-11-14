@@ -60,6 +60,8 @@ sub version_inc {
     join '.', @v
 }
 
+xxsystem "meta/check-hardcoded-perl";
+
 xxsystem "meta/update-manifest";
 
 xxsystem "meta/update-pod";
