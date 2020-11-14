@@ -532,7 +532,7 @@ sub is_pair_or_null ($) {
 
 TEST { is_pair_or_null cons 1, 2 } 1;
 TEST { is_pair_or_null null } 1;
-TEST { is_pair_or_null 1 } '';
+TEST { is_pair_or_null 1 } undef;
 TEST { is_pair_or_null bless [], "NirvAna" } '';
 
 # test subclassing? whatever
@@ -571,7 +571,7 @@ TEST {
         ]
     )
 }
-[1, '', '', '', 1, ''];
+[1, undef, undef, '', 1, ''];
 
 sub is_list ($) {
     my ($v) = @_;
@@ -656,7 +656,7 @@ sub cdr ($) {
 }
 
 TEST { is_pair cons(2, 3) } 1;
-TEST { is_pair "FP::List::Pair" } '';
+TEST { is_pair "FP::List::Pair" } undef;
 TEST { car cons(2, 3) } 2;
 TEST_EXCEPTION { car "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
 TEST_EXCEPTION { cdr "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
