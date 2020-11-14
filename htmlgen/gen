@@ -146,9 +146,11 @@ sub pxml_name_to_mapper(@PXMLMapper_args) {
             if (ref $_) {    # subarray given (autobox coming into play)
                 my $ms      = $_->map(the_method "new_", @PXMLMapper_args);
                 my $elnames = $ms->first->match_element_names;
-                $ms->rest->every(sub($v) {
-                    equal $elnames, $v->match_element_names
-                }) or die "not all have the same elnames";
+                $ms->rest->every(
+                    sub($v) {
+                        equal $elnames, $v->match_element_names
+                    }
+                ) or die "not all have the same elnames";
 
                 # chain element $e through them until it was processed:
                 my $fn = $ms->fold_right(
@@ -172,8 +174,9 @@ sub pxml_name_to_mapper(@PXMLMapper_args) {
                 my $m = $_->new_(@PXMLMapper_args);
 
                 # register it for all the element names it wants to see
-                map { ($_, sub { $m->map_element(@_) }) }
-                    @{ $m->match_element_names }
+                map {
+                    ($_, sub { $m->map_element(@_) })
+                } @{ $m->match_element_names }
             }
         } @$pxml_mappers
     )
@@ -242,23 +245,31 @@ TEST {
 '<html>Hello<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#world">1. world</a></dir></li></dir></div>some<a name="world"><h2>1. world</h2></a></html>';
 
 TEST {
-    HTML(process_body([
-        P("Hello"),
-        WITH_TOC { level => 1 },
-        [" ", P("blabla"), A({ name => "a" }, " ", DIV H1("for one")),]
-    ]))->string
+    HTML(
+        process_body(
+            [
+                P("Hello"),
+                WITH_TOC { level => 1 },
+                [" ", P("blabla"), A({ name => "a" }, " ", DIV H1("for one")),]
+            ]
+        )
+        )->string
 }
 '<html><p>Hello</p><div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#for_one">1. for one</a></dir></li></dir></div> <p>blabla</p><a name="a"> <div><a name="for_one"><h1>1. for one</h1></a></div></a></html>';
 
 TEST {
-    HTML(process_body([
-        P("Hello"),
-        WITH_TOC { level => 1 },
-        [
-            " ", P("blabla"), H1("for one"), H2("more one"),
-            TABLE(TR TD P("blah"), H1("sub two"), DIV("bla")),
-        ]
-    ]))->string
+    HTML(
+        process_body(
+            [
+                P("Hello"),
+                WITH_TOC { level => 1 },
+                [
+                    " ", P("blabla"), H1("for one"), H2("more one"),
+                    TABLE(TR TD P("blah"), H1("sub two"), DIV("bla")),
+                ]
+            ]
+        )
+        )->string
 }
 '<html><p>Hello</p>'
     . '<div class="toc_box"><dir class="toc"><h3 class="toc_title">Contents</h3><li><dir class="toc"><a href="#for_one">1. for one</a><li><dir class="toc"><a href="#more_one">1.1. more one</a></dir></li></dir></li><li><dir class="toc"><a href="#sub_two">2. sub two</a></dir></li></dir></div>'
@@ -593,9 +604,11 @@ sub genfile ($path, $groupname, $genfilestate) {
                     # don't exist)
                     (
                     $nav->nav_bar_level0(
-                        $genfilestate->nonbugfiles->map (sub($p0) {
-                            $nav_index->path0_to_item($p0)
-                        }),
+                        $genfilestate->nonbugfiles->map (
+                            sub($p0) {
+                                $nav_index->path0_to_item($p0)
+                            }
+                        ),
                         $nav_upitems->last,
                         $nav_upitems->first
                     ),
@@ -640,10 +653,12 @@ sub genfiles($filesinfo) {
 
 # copy referenced non-.md files:
 sub copyfiles($filesinfo) {
-    for my $path0 (hashset_keys hashset_union(
-        $filesinfo->all_path0_used,
-        array_to_hashset(hash_ref_or($config, "copy_paths", []))
-    ))
+    for my $path0 (
+        hashset_keys hashset_union(
+            $filesinfo->all_path0_used,
+            array_to_hashset(hash_ref_or($config, "copy_paths", []))
+        )
+        )
     {
         next if $filesinfo->path0_exists($path0);         # md path
         next if $filesinfo->path0_is_directory($path0);

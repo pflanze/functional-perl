@@ -55,8 +55,12 @@ sub moduleandpathlist {
     }
 }
 
-sub modulenamelist { [map { $$_[0] } @{ moduleandpathlist() }] }
+sub modulenamelist {
+    [map { $$_[0] } @{ moduleandpathlist() }]
+}
 
-sub modulepathlist { [map { $$_[1] } @{ moduleandpathlist() }] }
+sub modulepathlist {
+    [map { $$_[1] } @{ moduleandpathlist() }]
+}
 
 1

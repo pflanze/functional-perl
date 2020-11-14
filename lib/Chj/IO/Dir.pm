@@ -76,7 +76,9 @@ sub perhaps_opendir {
     $! = undef;
     if (defined(my $fh = $class->opendir(@_))) {
         $fh
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 # (adapted copy of perhaps_xopen of File.pm)
@@ -85,7 +87,9 @@ sub perhaps_xopendir {
     my $proto = shift;
     if (my ($fh) = $proto->perhaps_opendir(@_)) {
         $fh
-    } elsif ($! == ENOENT) { () } else {
+    } elsif ($! == ENOENT) {
+        ()
+    } else {
         croak "xopen @_: $!";
     }
 }

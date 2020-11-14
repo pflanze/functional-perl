@@ -60,9 +60,12 @@ package FunctionalPerl::Htmlgen::Nav::Entry {
     use FP::fix;
     use FP::Equal qw(equal);
 
-    use FP::Struct [[
-        list_of(instance_of "FunctionalPerl::Htmlgen::Nav::Entry"), "subentries"
-    ]];
+    use FP::Struct [
+        [
+            list_of(instance_of "FunctionalPerl::Htmlgen::Nav::Entry"),
+            "subentries"
+        ]
+    ];
 
     sub subentries_of_subentries($self) {
         $self->subentries->map(the_method "subentries")
@@ -132,8 +135,9 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
         ],
         "FunctionalPerl::Htmlgen::Nav::Entry";
 
-    sub FP_Show_show ($self, $show)
-    { ("nav(" . $self->subentries->map($show)->strings_join(", ") . ")") }
+    sub FP_Show_show ($self, $show) {
+        ("nav(" . $self->subentries->map($show)->strings_join(", ") . ")")
+    }
 
     # nav level 0: this is special since it does not just
     # show what the navigation defines, but show all
@@ -191,14 +195,15 @@ package FunctionalPerl::Htmlgen::Nav::RealEntry {
     use FP::Struct [[*is_string, "path0"]],
         "FunctionalPerl::Htmlgen::Nav::Entry", "FP::Abstract::Equal";
 
-    sub FP_Show_show ($self, $show)
-    { ("entry("
-            . $self->subentries->map($show)->cons(&$show($self->path0))
-            ->strings_join(", ")
-            . ")") }
+    sub FP_Show_show ($self, $show) {
+        ("entry("
+                . $self->subentries->map($show)->cons(&$show($self->path0))
+                ->strings_join(", ") . ")")
+    }
 
-    sub FP_Equal_equal ($self, $v)
-    { ($self->path0 eq $v->path0 and equal($self->subentries, $v->subentries)) }
+    sub FP_Equal_equal ($self, $v) {
+        ($self->path0 eq $v->path0 and equal($self->subentries, $v->subentries))
+    }
 
     _END_
 }
@@ -231,13 +236,15 @@ package FunctionalPerl::Htmlgen::Nav::Index {
 sub nav_index($nav) {
     my (%p0_to_upitems, %p0_to_item);
     my $index_level = fix sub ($index_level, $items, $upitems) {
-        $items->subentries->for_each(sub($item) {
-            my $p0       = $item->path0;
-            my $upitems1 = $upitems->cons($item);
-            $p0_to_upitems{$p0} = $upitems1;
-            $p0_to_item{$p0}    = $item;
-            &$index_level($item, $upitems1);
-        });
+        $items->subentries->for_each(
+            sub($item) {
+                my $p0       = $item->path0;
+                my $upitems1 = $upitems->cons($item);
+                $p0_to_upitems{$p0} = $upitems1;
+                $p0_to_item{$p0}    = $item;
+                &$index_level($item, $upitems1);
+            }
+        );
     };
     &$index_level($nav, null);
     FunctionalPerl::Htmlgen::Nav::Index->new(\%p0_to_upitems, \%p0_to_item);

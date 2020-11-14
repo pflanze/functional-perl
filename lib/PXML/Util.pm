@@ -137,9 +137,11 @@ TEST {
         t_data,
         sub {
             my ($e, $uplist) = @_;
-            $e->body_update(sub {
-                cons(uplist_show($uplist), $_[0])
-            })
+            $e->body_update(
+                sub {
+                    cons(uplist_show($uplist), $_[0])
+                }
+            )
         },
         sub {
             my ($v, $uplist) = @_;
@@ -154,18 +156,20 @@ TEST {
         t_data,
         sub {
             my ($e, $uplist, $inferior_map) = @_;
-            $e->body_update(sub {
-                my ($body) = @_;
-                cons(
-                    uplist_show($uplist),
-                    $e->name eq "b"
-                    ? do {
-                        my $s = stream_mixed_flatten $body;
-                        cons(&$inferior_map(car $s), cdr $s )
-                        }
-                    : &$inferior_map($body)
-                )
-            });
+            $e->body_update(
+                sub {
+                    my ($body) = @_;
+                    cons(
+                        uplist_show($uplist),
+                        $e->name eq "b"
+                        ? do {
+                            my $s = stream_mixed_flatten $body;
+                            cons(&$inferior_map(car $s), cdr $s )
+                            }
+                        : &$inferior_map($body)
+                    )
+                }
+            );
         },
         sub {
             my ($v, $uplist) = @_;

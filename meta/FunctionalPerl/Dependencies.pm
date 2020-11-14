@@ -111,7 +111,9 @@ sub module_needs {
     my ($modulename) = @_;
     if (my $ds = $dependencies{$modulename}) {
         grep { not have_module $_ } sort @$ds
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 1

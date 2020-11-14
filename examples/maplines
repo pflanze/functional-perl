@@ -69,11 +69,13 @@ my $out = glob_to_fh(*STDOUT);
 
 my $lines = fh_to_lines $in;
 
-my $mapped = $lines->map (sub {
-    my ($line) = @_;
-    chomp $line;
-    &$mapfn($line)
-});
+my $mapped = $lines->map (
+    sub {
+        my ($line) = @_;
+        chomp $line;
+        &$mapfn($line)
+    }
+);
 
 my $result = do {
     my $l = $mapped->filter(unary_operator 'defined');

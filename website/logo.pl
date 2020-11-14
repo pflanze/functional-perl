@@ -15,11 +15,13 @@ sub {
             A(
                 { href => "$homeurl", class => "header" },
                 SPAN({ class => "logo2" }, "Functional "),
-                IMG({
-                    src    => path_diff($path0, $logo_from_base),
-                    alt    => "Logo",
-                    border => 0
-                }),
+                IMG(
+                    {
+                        src    => path_diff($path0, $logo_from_base),
+                        alt    => "Logo",
+                        border => 0
+                    }
+                ),
                 SPAN({ class => "logo2" }, " Perl")
             ),
             SPAN(

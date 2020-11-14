@@ -161,12 +161,14 @@ BEGIN {
             )
         };
         if (defined $v->args) {
-            if (defined $s->args) { (
-                &$equal_standard_fields and do {
-                    require FP::DumperEqual;
-                    FP::DumperEqual::dumperequal($v->args, $s->args)
-                }
-            ) } else {
+            if (defined $s->args) {
+                (
+                    &$equal_standard_fields and do {
+                        require FP::DumperEqual;
+                        FP::DumperEqual::dumperequal($v->args, $s->args)
+                    }
+                )
+            } else {
                 ''
             }
         } else {

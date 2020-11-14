@@ -440,14 +440,16 @@ sub _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
                 "$outdir/index.html"
             ],
             $svgpaths->map_with_index(
-                sub ($i, $svgpath) { [
-                    *puthtmlfile,
-                    svgpath_to_htmlpath($svgpath),
-                    &$html(
-                        "$title - page " . svgpath_to_pageno($svgpath),
-                        &$page_htmlfragment(0, $svgpath), $i
-                    ),
-                ] }
+                sub ($i, $svgpath) {
+                    [
+                        *puthtmlfile,
+                        svgpath_to_htmlpath($svgpath),
+                        &$html(
+                            "$title - page " . svgpath_to_pageno($svgpath),
+                            &$page_htmlfragment(0, $svgpath), $i
+                        ),
+                    ]
+                }
             )
             )
     )
@@ -465,10 +467,12 @@ sub pdf_to_html($infile) {
 
     possibly_do_pdf2svg($infile, $outdir) or note "svg files are up to date";
 
-    svgpaths_to_html_actions($infile, $outdir)->for_each(sub($action) {
-        my ($proc, @args) = @$action;
-        &$proc(@args)
-    });
+    svgpaths_to_html_actions($infile, $outdir)->for_each(
+        sub($action) {
+            my ($proc, @args) = @$action;
+            &$proc(@args)
+        }
+    );
 }
 
 if ($ENV{DEBUG}) {

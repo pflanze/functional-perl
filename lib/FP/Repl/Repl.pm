@@ -204,8 +204,10 @@ my $maybe_setter = sub {
         $self->$set_maybe_method($v);
     }
 };
-for my $method (qw(historypath settingspath prompt package keepResultIn
-input output env_PATH))
+for my $method (
+    qw(historypath settingspath prompt package keepResultIn
+    input output env_PATH)
+    )
 {
     no strict 'refs';
     my $var = "set_$method";
@@ -244,8 +246,8 @@ sub possibly_save_settings {
     my $self = shift;
     if (my $path = $self->maybe_settingspath) {
         my $f = xtmpfile $path;
-        $f->xprint(join(
-            "\0", $settings_version, map { $self->$_ } @$settings_fields));
+        $f->xprint(
+            join("\0", $settings_version, map { $self->$_ } @$settings_fields));
         $f->xclose;
         $f->xputback(0600);
     }
@@ -381,9 +383,9 @@ sub formatter {
     $mode = "d" if ($terse and $mode eq "p");
     hash_xref(
         +{
-            p =>
-                sub { (
-                join "", map { (defined $_ ? $_ : 'undef') . "\n" } @_) },
+            p => sub {
+                (join "", map { (defined $_ ? $_ : 'undef') . "\n" } @_)
+            },
             s => sub {
                 my $z = 1;
                 (
@@ -437,17 +439,19 @@ sub viewers {
                 # can be passed in $ENV{PAGER} !
                 # (stupid Perl btw). Ok hard code
                 # 'less' instead perhaps!
-                my $o = Chj::xoutpipe(sub {
+                my $o = Chj::xoutpipe(
+                    sub {
 
-                    # set stdout and stderr in case they are
-                    # redirected (stdin is the pipe)
-                    my $out = fh_to_fh($OUTPUT);
-                    $out->xdup2(1);
-                    $out->xdup2(2);
-                    $ENV{PATH} = $self->maybe_env_PATH
-                        if defined $self->maybe_env_PATH;
-                    xexec $pagercmd, @options
-                });
+                        # set stdout and stderr in case they are
+                        # redirected (stdin is the pipe)
+                        my $out = fh_to_fh($OUTPUT);
+                        $out->xdup2(1);
+                        $out->xdup2(2);
+                        $ENV{PATH} = $self->maybe_env_PATH
+                            if defined $self->maybe_env_PATH;
+                        xexec $pagercmd, @options
+                    }
+                );
                 &$printto($o);
                 $o->xfinish;
                 1
@@ -466,10 +470,12 @@ sub viewers {
         my $port_pager = &$port_pager_with_options(@_);
         sub {
             my ($v) = @_;
-            &$port_pager(sub {
-                my ($o) = @_;
-                $o->xprint($v);
-            });
+            &$port_pager(
+                sub {
+                    my ($o) = @_;
+                    $o->xprint($v);
+                }
+            );
         }
     };
 
@@ -648,8 +654,9 @@ sub _completion_function {
                         {
                             # ^ not sure this works here; see commit messages
                             ("[")
-                        } elsif ($r eq 'CODE') { ("(") } elsif ($r eq 'SCALAR')
-                        {
+                        } elsif ($r eq 'CODE') {
+                            ("(")
+                        } elsif ($r eq 'SCALAR') {
                             ("SCALAR")    ##
                         } elsif ($r eq 'IO') {
                             ("IO")        ##
@@ -672,7 +679,9 @@ sub _completion_function {
                                 not(/[A-Z]/ and uc($_) eq $_)
                                 } @a
                         }
-                    } else { () }
+                    } else {
+                        ()
+                    }
                 } else {
 
                     #warn "no value from \$$varnam";
@@ -737,15 +746,16 @@ sub _completion_function {
                         if ($globentry) {
 
                             #print $ERROR ".$globentry.";
-                            grep { (
-                                /::\z/
+                            grep {
+                                (
+                                    /::\z/
 
-                                    # either it's a namespace which we
-                                    # want to see regardless of type, or:
-                                    # type exists
-                                    or *{ $package . "::" . $_ }{$globentry}
-                            ) }
-                                keys %{ $package . "::" }
+                                        # either it's a namespace which we
+                                        # want to see regardless of type, or:
+                                        # type exists
+                                        or *{ $package . "::" . $_ }{$globentry}
+                                )
+                            } keys %{ $package . "::" }
                         } else {
                             keys %{ $package . "::" }
                         }
@@ -783,7 +793,9 @@ sub _completion_function {
                         : @a
                     )
                 )
-            } else { () }
+            } else {
+                ()
+            }
         };
         if (@matches) {
 
@@ -1153,27 +1165,35 @@ sub run {
                                     if (my ($lexicals)
                                         = $stack->perhaps_lexicals($fno))
                                     {
-                                        &$view_with_port(sub {
-                                            my ($o) = @_;
-                                            my $format = $self->formatter(1);
-                                            for my $key (sort keys %$lexicals) {
-                                                if ($key =~ /^\$/) {
-                                                    $o->xprint(
-                                                        "$key = "
-                                                            . &$format(${
-                                                            $$lexicals{$key}
-                                                            })
-                                                    );
-                                                } else {
-                                                    $o->xprint(
-                                                        "\\$key = "
-                                                            . &$format(
-                                                            $$lexicals{$key}
-                                                            )
-                                                    );
+                                        &$view_with_port(
+                                            sub {
+                                                my ($o) = @_;
+                                                my $format
+                                                    = $self->formatter(1);
+                                                for my $key (
+                                                    sort keys %$lexicals)
+                                                {
+                                                    if ($key =~ /^\$/) {
+                                                        $o->xprint(
+                                                            "$key = "
+                                                                . &$format(
+                                                                ${
+                                                                    $$lexicals{
+                                                                        $key}
+                                                                }
+                                                                )
+                                                        );
+                                                    } else {
+                                                        $o->xprint(
+                                                            "\\$key = "
+                                                                . &$format(
+                                                                $$lexicals{$key}
+                                                                )
+                                                        );
+                                                    }
                                                 }
                                             }
-                                        });
+                                        );
                                     } else {
                                         &$printerror_frameno($fno);
                                     }
@@ -1252,9 +1272,11 @@ sub run {
                             # accessing $FP::Repl::Repl::args :
                             my $getframe = sub {
                                 my ($i) = @_;
-                                if (defined(
-                                    my $frame = $stack->frame($frameno + $i)
-                                ))
+                                if (
+                                    defined(
+                                        my $frame = $stack->frame($frameno + $i)
+                                    )
+                                    )
                                 {
                                     $frame->args
                                 } else {
@@ -1266,34 +1288,39 @@ sub run {
                             &$eval()
                         };
 
-                        &$view_string(do {
-                            if (ref $error or $error) {
-                                my $err = (
-                                    UNIVERSAL::can($error, "plain")
-                                    ?
+                        &$view_string(
+                            do {
+                                if (ref $error or $error) {
+                                    my $err = (
+                                        UNIVERSAL::can($error, "plain")
+                                        ?
 
-                                        # error in plaintext; XX:
-                                        # change to better
-                                        # thought-out protocol?
-                                        $error->plain
-                                    : show($error)
-                                );
-                                chomp $err;
-                                $err . "\n"
-                                    ; # no prefix? no safe way to differentiate.
-                            } else {
-                                if (my $varname = $$self[Maybe_keepResultIn]) {
-                                    $varname = &$get_package() . "::$varname"
-                                        unless $varname =~ /::/;
-                                    no strict 'refs';
-                                    $$varname
-                                        = $self->mode_context eq "1"
-                                        ? $$results[0]
-                                        : $results;
+                                            # error in plaintext; XX:
+                                            # change to better
+                                            # thought-out protocol?
+                                            $error->plain
+                                        : show($error)
+                                    );
+                                    chomp $err;
+                                    $err . "\n"
+                                        ; # no prefix? no safe way to differentiate.
+                                } else {
+                                    if (my $varname
+                                        = $$self[Maybe_keepResultIn])
+                                    {
+                                        $varname
+                                            = &$get_package() . "::$varname"
+                                            unless $varname =~ /::/;
+                                        no strict 'refs';
+                                        $$varname
+                                            = $self->mode_context eq "1"
+                                            ? $$results[0]
+                                            : $results;
+                                    }
+                                    &$format_vals(@$results)
                                 }
-                                &$format_vals(@$results)
                             }
-                        });
+                        );
                         $maybe_kept_results = $results
                             if $$self[DoKeepResultsInVARX];
                     };

@@ -92,9 +92,11 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
     sub level_add ($self, $levelsdown, $node) {
         is_natural $levelsdown or die "wrong type: $levelsdown";
         if ($levelsdown > 1) {
-            $self->subnodes_head_update(sub($subnode) {
-                $subnode->level_add($levelsdown - 1, $node)
-            })
+            $self->subnodes_head_update(
+                sub($subnode) {
+                    $subnode->level_add($levelsdown - 1, $node)
+                }
+            )
         } else {
             $self->subnodes_add($node)
         }
@@ -231,9 +233,11 @@ sub process__with_toc__body ($body, $first_level, $toc, $parents) {
                         . "encountering <"
                         . $v->name . ">";
 
-                    my $anchor = $parents->find(sub($e) {
-                        $e->name eq "a" and $e->maybe_attribute("name")
-                    }) // die "bug, missing anchor element";
+                    my $anchor = $parents->find(
+                        sub($e) {
+                            $e->name eq "a" and $e->maybe_attribute("name")
+                        }
+                    ) // die "bug, missing anchor element";
 
                     my $toc = $toc->level_add($level,
                         tocnode($anchor->maybe_attribute("name"), $v));
@@ -242,9 +246,11 @@ sub process__with_toc__body ($body, $first_level, $toc, $parents) {
 
                     (
                         cons(
-                            $v->body_update(sub($body) {
-                                cons($toc->numberstring . " ", $body)
-                            }),
+                            $v->body_update(
+                                sub($body) {
+                                    cons($toc->numberstring . " ", $body)
+                                }
+                            ),
                             $tail
                         ),
                         $toc2

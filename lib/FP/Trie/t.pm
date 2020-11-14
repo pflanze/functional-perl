@@ -184,12 +184,14 @@ TEST {
             $trie->exists(string_to_list $k) or die "missing '$k' in trie";
         }
 
-        $trie->keys->for_each(sub {
-            my ($kl) = @_;
-            my $k = $kl->string;
-            exists $$hash{$k} or die "key in trie that shouldn't be: '$k'";
-            delete $$hash{$k};
-        });
+        $trie->keys->for_each(
+            sub {
+                my ($kl) = @_;
+                my $k = $kl->string;
+                exists $$hash{$k} or die "key in trie that shouldn't be: '$k'";
+                delete $$hash{$k};
+            }
+        );
 
         keys %$hash and die "keys didn't give all keys it should have";
     };

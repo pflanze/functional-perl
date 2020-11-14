@@ -388,16 +388,18 @@ sub pxml_xhtml_print_fast ($ $ ;$ ) {
     );
 
     # add attributes to toplevel element
-    my $v2 = $v->maybe_attributes ? $v : $v->attributes_set(do {
-        my $lang = $maybe_lang
-            or die
-            "missing 'lang' attribute from html element and no lang option given";
-        +{
-            xmlns      => "http://www.w3.org/1999/xhtml",
-            "xml:lang" => $lang,
-            lang       => $lang
+    my $v2 = $v->maybe_attributes ? $v : $v->attributes_set(
+        do {
+            my $lang = $maybe_lang
+                or die
+                "missing 'lang' attribute from html element and no lang option given";
+            +{
+                xmlns      => "http://www.w3.org/1999/xhtml",
+                "xml:lang" => $lang,
+                lang       => $lang
+            }
         }
-    });
+    );
     @_ = ($v2, $fh);
     goto \&pxml_print_fragment_fast;
 }

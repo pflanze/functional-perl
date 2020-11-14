@@ -44,10 +44,10 @@ calculate:
 
 use Chj::TEST ":all";
 
-TEST { [
-    map { [sumofsquares(@$_), Gsumofsquares(@$_)] }
-        ([0, 4], [1, 5], [3, 7], [-2, 4])
-] }
+TEST {
+    [map { [sumofsquares(@$_), Gsumofsquares(@$_)] }
+            ([0, 4], [1, 5], [3, 7], [-2, 4])]
+}
 [[30, 30], [55, 55], [135, 135], [35, 35]];
 
 use FP::Repl;

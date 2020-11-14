@@ -49,12 +49,17 @@ our $lines = fh_to_stream(
     the_method("xclose")
 );
 
-our $html = HTML(HEAD(
-    TITLE($myname),
-    META({
-        'http-equiv' => "Content-Type", content => "text/html;charset=utf-8" }),
-    STYLE(
-        { type => "text/css" }, '
+our $html = HTML(
+    HEAD(
+        TITLE($myname),
+        META(
+            {
+                'http-equiv' => "Content-Type",
+                content      => "text/html;charset=utf-8"
+            }
+        ),
+        STYLE(
+            { type => "text/css" }, '
 .diff {
   color: #008;
   border-top: 1px solid;
@@ -80,31 +85,34 @@ our $html = HTML(HEAD(
   color: orange;
 }
 '
-    ),
-    BODY(PRE(
-        stream_map func($line)
-        {
-            DIV(
+        ),
+        BODY(
+            PRE(
+                stream_map func($line)
                 {
-                    class => (
-                          $line =~ /^diff /                   ? "diff"
-                        : $line =~ /^(index|new|\+\+\+|---) / ? "meta"
-                        : do {
-                            my $c = substr $line, 0, 1;
-                            (     $c eq '@' ? "position"
-                                : $c eq '+' ? "add"
-                                : $c eq '-' ? "del"
-                                : $c eq ' ' ? "context"
-                                : "other")
-                        }
+                    DIV(
+                        {
+                            class => (
+                                  $line =~ /^diff /                   ? "diff"
+                                : $line =~ /^(index|new|\+\+\+|---) / ? "meta"
+                                : do {
+                                    my $c = substr $line, 0, 1;
+                                    (     $c eq '@' ? "position"
+                                        : $c eq '+' ? "add"
+                                        : $c eq '-' ? "del"
+                                        : $c eq ' ' ? "context"
+                                        :             "other")
+                                }
+                            )
+                        },
+                        $line
                     )
                 },
-                $line
+                $lines
             )
-        },
-        $lines
-    ))
-));
+        )
+    )
+);
 
 puthtmlfile("-", $html);
 

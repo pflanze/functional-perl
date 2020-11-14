@@ -854,9 +854,9 @@ sub F ($) {
                 cons(F(car $v), F(cdr $v))
             } elsif (is_null $v) {
                 $v
-            } elsif ($r eq "ARRAY")
-            { [map { F $_ } @$v] } elsif (UNIVERSAL::isa($v, "ARRAY"))
-            {
+            } elsif ($r eq "ARRAY") {
+                [map { F $_ } @$v]
+            } elsif (UNIVERSAL::isa($v, "ARRAY")) {
                 bless [map { F $_ } @$v], ref $v
             } else {
                 $v
@@ -1191,24 +1191,26 @@ sub make_chunks_of {
         $chunklen >= 1 or die "invalid chunklen: $chunklen";
         weaken $_[0] if $lazy;    # although tie down is only chunk sized
         require FP::PureArray;
-        fix(sub {
-            my ($rec, $s) = @_;
-            weaken $_[0] if $lazy;    # although tie down is only chunk sized
-            lazy_if {
-                return null if $s->is_null;
-                my @v;
-                for my $i (1 .. $chunklen) {
-                    if ($s->is_null) {
-                        die "premature end of input" if $strictly;
-                    } else {
-                        push @v, $s->first;
-                        $s = $s->rest;
+        fix(
+            sub {
+                my ($rec, $s) = @_;
+                weaken $_[0] if $lazy;   # although tie down is only chunk sized
+                lazy_if {
+                    return null if $s->is_null;
+                    my @v;
+                    for my $i (1 .. $chunklen) {
+                        if ($s->is_null) {
+                            die "premature end of input" if $strictly;
+                        } else {
+                            push @v, $s->first;
+                            $s = $s->rest;
+                        }
                     }
+                    cons FP::PureArray::array_to_purearray(\@v), &$rec($s)
                 }
-                cons FP::PureArray::array_to_purearray(\@v), &$rec($s)
+                $lazy
             }
-            $lazy
-        })->($s)
+        )->($s)
     }
 }
 

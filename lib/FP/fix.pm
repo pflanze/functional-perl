@@ -104,13 +104,15 @@ use FP::TransparentLazy qw(lazy lazyLight);
 
 use Chj::TEST;
 TEST {
-    my $f = haskell_curried(sub {
-        my ($self) = @_;
+    my $f = haskell_curried(
         sub {
-            my ($x) = @_;
-            $x > 0 ? $x * &$self($x - 1) : 1
+            my ($self) = @_;
+            sub {
+                my ($x) = @_;
+                $x > 0 ? $x * &$self($x - 1) : 1
+            }
         }
-    });
+    );
     [&$f(0), &$f(3)]
 }
 [1, 6];

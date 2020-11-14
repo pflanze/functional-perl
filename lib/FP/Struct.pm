@@ -183,9 +183,9 @@ sub all_fields {
         map {
             my ($package) = $_;
             no strict 'refs';
-            if (my $fields = \@{"${package}::__Struct__fields"})
-            { (all_fields(\@{"${package}::ISA"}), @$fields) }
-            else {
+            if (my $fields = \@{"${package}::__Struct__fields"}) {
+                (all_fields(\@{"${package}::ISA"}), @$fields)
+            } else {
                 ()      # don't even look at parent classes in that case, is
                         # that reasonable?
             }
@@ -259,9 +259,11 @@ sub import {
         [
             map {
                 $i++;
-                if (my $pred = field_maybe_predicate $_)
-                { [$pred, field_name($_), $i] }
-                else { () }
+                if (my $pred = field_maybe_predicate $_) {
+                    [$pred, field_name($_), $i]
+                } else {
+                    ()
+                }
             } @$allfields
         ]
     };

@@ -266,8 +266,9 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                             # use this to disambiguate?)
                             $self->perhaps_filename_to_path0->($op)
                             )
-                        { (path_diff($selfpath0, $p0), $uri, 1) }
-                        else {
+                        {
+                            (path_diff($selfpath0, $p0), $uri, 1)
+                        } else {
                             warn "unknown link target '$op' (from '$href')";
                             (path_diff($selfpath0, "UNKNOWN/$op"), $uri, 1)
                         }
@@ -282,7 +283,9 @@ package FunctionalPerl::Htmlgen::Linking::a_href {
                             #use FP::Repl;repl;
                         }
                         ($path, $uri, $self->pathtranslate->is_md($path))
-                    } else { ($path, $uri, $self->pathtranslate->is_md($path)) }
+                    } else {
+                        ($path, $uri, $self->pathtranslate->is_md($path))
+                    }
                 };
 
                 my $cont_uri = sub($uri) {

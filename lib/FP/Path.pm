@@ -234,9 +234,11 @@ sub add_segment {    # functionally. hm.
     my $s = shift;
     my ($segment) = @_;
     check_segment $segment;
-    $s->rsegments_update(sub {
-        cons $segment, $_[0]
-    })
+    $s->rsegments_update(
+        sub {
+            cons $segment, $_[0]
+        }
+        )
 
         # no forced endslash anymore
         ->has_endslash_set(0);
@@ -304,7 +306,9 @@ sub perhaps_resplit_next_segment {
             ),
             $class->new($rest->reverse, $p1->has_endslash, '')
         )
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 _END_

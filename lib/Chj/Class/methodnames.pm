@@ -61,10 +61,12 @@ sub set_stoplist {
     $stop = $newstop;
 }
 
-set_stoplist(qw(
-    BEGIN
-    Dumper
-));
+set_stoplist(
+    qw(
+        BEGIN
+        Dumper
+        )
+);
 
 sub methods_of_class {
     my ($class, $maybe_ignore_codes) = @_;
@@ -102,25 +104,30 @@ sub methods_of_class {
         my $code;    # (ugly?)
         (
             (
-                grep { (
-                    not(exists $stop->{$_}) and not do {
+                grep {
+                    (
+                        not(exists $stop->{$_}) and not do {
 
                      # constant name of class array based class.
                      # or: constant at all?. how to find out if it's a constant?
-                        $class_array_namehash
-                            and exists $class_array_namehash->{$_}
-                        }
-                        and $code = *{ $class . "::" . $_ }{CODE} and not do {
+                            $class_array_namehash
+                                and exists $class_array_namehash->{$_}
+                            }
+                            and $code = *{ $class . "::" . $_ }{CODE}
+                            and not do {
 
-                        # exclude carp/croak, Dumper etc.
-                        $ignore_codes->{$code}
-                    }
-                ) } keys %$hash
+                            # exclude carp/croak, Dumper etc.
+                            $ignore_codes->{$code}
+                        }
+                    )
+                } keys %$hash
             ),
             do {
                 if (my $isa = *{ $class . "::ISA" }{ARRAY}) {
                     map { methods_of_class($_, $ignore_codes) } @$isa
-                } else { () }
+                } else {
+                    ()
+                }
             }
         )
     } else {

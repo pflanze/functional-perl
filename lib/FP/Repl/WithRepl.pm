@@ -266,7 +266,9 @@ TEST {
     withrepl { 1 + 2 }
 }
 3;
-TEST { [withrepl { "hello", "world" }] }
+TEST {
+    [withrepl { "hello", "world" }]
+}
 ['hello', 'world'];
 
 our @stack;

@@ -214,9 +214,9 @@ TEST { t_equals_clean "/foo/..",     "/" } 1;
 sub path_split_first_segment {
     my ($str, $clean) = @_;
     my $p = path $str;
-    if (my @v = ($clean ? $p->xclean : $p)->perhaps_split_first_segment)
-    { [map { $_->string } @v] }
-    else {
+    if (my @v = ($clean ? $p->xclean : $p)->perhaps_split_first_segment) {
+        [map { $_->string } @v]
+    } else {
         "unsplittable"
     }
 }

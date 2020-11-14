@@ -1043,10 +1043,14 @@ sub XLmtimed ($) {
     if (my $ls = Xlstat $path) {
         bless do {
             if ($ls->is_link) {
-                if (my $s = Xstat $path)
-                { [$path, max($ls->mtime, $s->mtime), $ls, $s] }
-                else { [$path, $ls->mtime, $ls, undef] }
-            } else { [$path, $ls->mtime, $ls, undef] }
+                if (my $s = Xstat $path) {
+                    [$path, max($ls->mtime, $s->mtime), $ls, $s]
+                } else {
+                    [$path, $ls->mtime, $ls, undef]
+                }
+            } else {
+                [$path, $ls->mtime, $ls, undef]
+            }
             }, "Chj::xperlfunc::mtimed"
     } else {
         undef

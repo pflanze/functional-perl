@@ -47,7 +47,9 @@ sub blessing ($) {
         my $class = ref $_[0];
         if (my ($v) = &$m(@_)) {
             $class->new_from_array($v)
-        } else { () }
+        } else {
+            ()
+        }
     }
 }
 
@@ -55,9 +57,11 @@ sub blessing2 ($) {
     my ($m) = @_;
     sub {
         my $class = ref $_[0];
-        if (my ($v1, $v2) = &$m(@_))
-        { ($class->new_from_array($v1), $class->new_from_array($v2)) }
-        else { () }
+        if (my ($v1, $v2) = &$m(@_)) {
+            ($class->new_from_array($v1), $class->new_from_array($v2))
+        } else {
+            ()
+        }
     }
 }
 

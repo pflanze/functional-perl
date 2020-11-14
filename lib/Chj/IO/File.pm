@@ -155,10 +155,12 @@ use Fcntl qw(:DEFAULT :flock :seek :mode);
 my $has_posix;
 
 BEGIN {
-    if (eval {
-        require POSIX;
-        1
-    })
+    if (
+        eval {
+            require POSIX;
+            1
+        }
+        )
     {
         $has_posix = 1;
         POSIX->import(qw(EINVAL ENOENT));
@@ -318,7 +320,9 @@ sub perhaps_xopen {
     my $proto = shift;
     if (my ($fh) = $proto->perhaps_open(@_)) {
         $fh
-    } elsif ($Chj::IO::ERRNO == ENOENT) { () } else {
+    } elsif ($Chj::IO::ERRNO == ENOENT) {
+        ()
+    } else {
         croak "xopen @_: $Chj::IO::ERRSTR";
     }
 }

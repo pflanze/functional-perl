@@ -96,7 +96,9 @@ sub perhaps_attribute {
     my ($name) = @_;
     if (defined(my $h = $$s[ATTRIBUTES])) {
         exists $$h{$name} ? $$h{$name} : ()
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 # functional setters (following the convention I've started to use of

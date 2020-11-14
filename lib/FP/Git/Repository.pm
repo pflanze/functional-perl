@@ -87,16 +87,18 @@ sub git_dir {
 sub command_records {
     my $self = shift;
     my ($read, $close, $cmd_and_args) = @_;
-    my $in = Chj::IO::Command->new_sender(sub {
-        if (defined(my $d = $self->chdir)) {
-            xchdir $d;
+    my $in = Chj::IO::Command->new_sender(
+        sub {
+            if (defined(my $d = $self->chdir)) {
+                xchdir $d;
+            }
+            my $env = { $self->perhaps_GIT_DIR, $self->perhaps_GIT_WORK_TREE };
+            for my $var (keys %$env) {
+                $ENV{$var} = $$env{$var}
+            }
+            xexec(@git, @$cmd_and_args);
         }
-        my $env = { $self->perhaps_GIT_DIR, $self->perhaps_GIT_WORK_TREE };
-        for my $var (keys %$env) {
-            $ENV{$var} = $$env{$var}
-        }
-        xexec(@git, @$cmd_and_args);
-    });
+    );
     fh_to_stream($in, $read, $close)
 }
 

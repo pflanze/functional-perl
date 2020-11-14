@@ -116,7 +116,9 @@ sub _perhaps_opendir_stream ($) {
             }
         };
         &{ Weakened $next}
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 sub _perhaps_opendir_stream_sorted ($$) {
@@ -125,7 +127,9 @@ sub _perhaps_opendir_stream_sorted ($$) {
         my $items = array_sort [$d->xnread], $cmp;
         $d->xclose;
         array_to_purearray $items
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 sub perhaps_directory_items ($;$) {
@@ -141,11 +145,15 @@ sub perhaps_directory_paths ($;$) {
     my ($base, $maybe_cmp) = @_;
     $base .= "/" unless $base =~ /\/\z/;
     if (my ($s) = perhaps_directory_items $base, $maybe_cmp) {
-        $s->map(sub {
-            my ($item) = @_;
-            "$base$item"
-        })
-    } else { () }
+        $s->map(
+            sub {
+                my ($item) = @_;
+                "$base$item"
+            }
+        )
+    } else {
+        ()
+    }
 }
 
 sub xdirectory_items ($;$) {
@@ -262,9 +270,11 @@ sub xstream_print ($;$) {
     my ($s, $maybe_fh) = @_;
     my $fh = $maybe_fh // glob_to_fh * STDOUT;
     weaken $_[0];
-    $s->for_each(sub {
-        print $fh $_[0] or die "xstream_print: writing to $fh: $!";
-    });
+    $s->for_each(
+        sub {
+            print $fh $_[0] or die "xstream_print: writing to $fh: $!";
+        }
+    );
 }
 
 sub xstream_to_file ($$;$) {

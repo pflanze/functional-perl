@@ -137,7 +137,9 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
         my ($t, $l) = @_;
         if (my ($t2) = $t->perhaps_skip($l)) {
             $t2->perhaps_value
-        } else { () }
+        } else {
+            ()
+        }
     }
     *maybe_ref = perhaps_to_maybe * perhaps_ref;
     *ref_or    = perhaps_to_or * perhaps_ref;
@@ -179,18 +181,20 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
             FP::Trie::ValueLevel->new($$t{sublevels}, &$fn($t->perhaps_value))
         } else {
             my ($a, $l2) = $l->first_and_rest;
-            $t->sublevels_update(sub {
-                hash_update $_[0], $a, sub {
-                    do {
-                        if (my ($t2) = @_) {
-                            $t2
-                        } else {
-                            $FP::Trie::empty_trie
-                        }
-                        }
-                        ->update($l2, $fn)
+            $t->sublevels_update(
+                sub {
+                    hash_update $_[0], $a, sub {
+                        do {
+                            if (my ($t2) = @_) {
+                                $t2
+                            } else {
+                                $FP::Trie::empty_trie
+                            }
+                            }
+                            ->update($l2, $fn)
+                    }
                 }
-            })
+            )
         }
     }
 
@@ -212,20 +216,22 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
             }
         } else {
             my ($a, $l2) = $l->first_and_rest;
-            $t->sublevels_update(sub {
-                hash_update $_[0], $a, sub {
-                    if (my ($t2) = @_) {
-                        my $t3 = $t2->xdelete($l2);
-                        $t3 eq $FP::Trie::empty_trie ? () : $t3
-                    } else {
+            $t->sublevels_update(
+                sub {
+                    hash_update $_[0], $a, sub {
+                        if (my ($t2) = @_) {
+                            my $t3 = $t2->xdelete($l2);
+                            $t3 eq $FP::Trie::empty_trie ? () : $t3
+                        } else {
 
-                        #()
-                        # When does this happen? When the key goes
-                        # past the existing tree.
-                        die $key_not_found_exception
+                            #()
+                            # When does this happen? When the key goes
+                            # past the existing tree.
+                            die $key_not_found_exception
+                        }
                     }
                 }
-            })
+            )
         }
     }
 
@@ -237,10 +243,12 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
         # in xdelete, with either a continuation call or the call to
         # an exception handler). But we have what we have (for now).
         my $res;
-        if (eval {
-            $res = $t->xdelete($l);
-            1
-        })
+        if (
+            eval {
+                $res = $t->xdelete($l);
+                1
+            }
+            )
         {
             $res
         } else {

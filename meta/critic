@@ -84,9 +84,11 @@ use FP::Repl;
 
     sub string($self) {
         my $p = $self->prefix;
-        $self->critiques->map (sub($c) {
-            "$p$c"
-        })->strings_join("");
+        $self->critiques->map (
+            sub($c) {
+                "$p$c"
+            }
+        )->strings_join("");
     }
     _END_;
 }
@@ -103,8 +105,10 @@ our $critiques = array_to_stream(modulepathlist)->map(*critique);
 if ($opt_repl) {
     repl;
 } else {
-    $critiques->filter(the_method "has_critique")->for_each(sub($c) {
-        xprintln $c->string
-    });
+    $critiques->filter(the_method "has_critique")->for_each(
+        sub($c) {
+            xprintln $c->string
+        }
+    );
 }
 

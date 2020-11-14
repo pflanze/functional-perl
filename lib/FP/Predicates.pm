@@ -242,11 +242,17 @@ sub is_odd ($) {
     ($_[0] & 1) or fail "is_odd", $_[0]
 }
 
-TEST { [map { is_even $_ } -3 .. 3] }
+TEST {
+    [map { is_even $_ } -3 .. 3]
+}
 [0, 1, 0, 1, 0, 1, 0];
-TEST { [map { is_odd $_ } -3 .. 3] }
+TEST {
+    [map { is_odd $_ } -3 .. 3]
+}
 [1, 0, 1, 0, 1, 0, 1];
-TEST { [map { is_even $_ } 3, 3.1, 4, 4.1, -4.1] }
+TEST {
+    [map { is_even $_ } 3, 3.1, 4, 4.1, -4.1]
+}
 
 # XX what should it give?
 [0, 0, 1, 1, 1];
@@ -397,22 +403,24 @@ TEST {
 
 # is_filename in Chj::BuiltinTypePredicates
 
-TEST { [
-    map { is_filehandle $_ } "STDOUT",
-    undef, *STDOUT,
-    *STDOUT{IO},
-    \*STDOUT,
-    *SMK69GXDB,
-    *SMK69GXDB{IO},
-    \*SMK69GXDB,
-    bless(\*WOFWEOXVV, "ReallyNotIO"),
-    do {
-        open my $in, '<', __FILE__ or die $!;
+TEST {
+    [
+        map { is_filehandle $_ } "STDOUT",
+        undef, *STDOUT,
+        *STDOUT{IO},
+        \*STDOUT,
+        *SMK69GXDB,
+        *SMK69GXDB{IO},
+        \*SMK69GXDB,
+        bless(\*WOFWEOXVV, "ReallyNotIO"),
+        do {
+            open my $in, '<', __FILE__ or die $!;
 
-        #warn "HM".<$in>;  # works
-        bless $in, "MightActullyBeIO"
-    }
-] }
+            #warn "HM".<$in>;  # works
+            bless $in, "MightActullyBeIO"
+        }
+    ]
+}
 ['', '', '', 1, 1, '', '', '', '', 1];
 
 # should probably be in a filesystem lib instead?

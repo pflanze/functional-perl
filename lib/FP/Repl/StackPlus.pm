@@ -66,10 +66,12 @@ use PadWalker qw(peek_my);
 our $maybe_peek_my = sub {
     my ($skip) = @_;
     my $res;
-    if (eval {
-        $res = peek_my($skip);
-        1
-    })
+    if (
+        eval {
+            $res = peek_my($skip);
+            1
+        }
+        )
     {
         $res
     } else {

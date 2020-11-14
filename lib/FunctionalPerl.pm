@@ -161,32 +161,38 @@ our $export_desc = +{
     ":repl"  => [qw(FP::Repl FP::Repl::AutoTrap)],
     ":dev"   => [qw(:repl :test :debug Chj::ruse)],
 
-    ":functions" => [qw(FP::Combinators FP::Combinators2
-        FP::Ops FP::Div
-        FP::Predicates
-        FP::Optional FP::Values
-        FP::Memoizing FP::Currying
-        FP::Untainted
-    :show :equal :failure)],
+    ":functions" => [
+        qw(FP::Combinators FP::Combinators2
+            FP::Ops FP::Div
+            FP::Predicates
+            FP::Optional FP::Values
+            FP::Memoizing FP::Currying
+            FP::Untainted
+            :show :equal :failure)
+    ],
     ":git"  => [qw(FP::Git::Repository)],
     ":pxml" => [qw(PXML::Util PXML::XHTML PXML::Serialize)],
     ":ast"  => [qw(FP::AST::Perl)],
 
     ":numbers"   => [qw(FP::BigInt)],
     ":chars"     => [qw(FP::Char)],
-    ":sequences" => [qw(FP::List FP::StrictList FP::MutableArray
-        FP::Array FP::Array_sort
-        FP::PureArray
-    :stream)],
+    ":sequences" => [
+        qw(FP::List FP::StrictList FP::MutableArray
+            FP::Array FP::Array_sort
+            FP::PureArray
+            :stream)
+    ],
     ":maps"           => [qw(FP::Hash FP::PureHash)],
     ":sets"           => [qw(FP::HashSet FP::OrderedCollection)],
     ":tries"          => [qw(FP::Trie)],
     ":datastructures" => [qw(:chars :numbers :sequences :maps :sets :tries)],
 
-    ":io" => [qw(Chj::xIO Chj::xopen Chj::xtmpfile= Chj::tempdir
-        Chj::xpipe= Chj::xoutpipe= Chj::xopendir= Chj::xperlfunc
-        Chj::xhome
-    FP::IOStream)],
+    ":io" => [
+        qw(Chj::xIO Chj::xopen Chj::xtmpfile= Chj::tempdir
+            Chj::xpipe= Chj::xoutpipe= Chj::xopendir= Chj::xperlfunc
+            Chj::xhome
+            FP::IOStream)
+    ],
     ":dbi" => [qw(FP::DBI=)],
     ":csv" => [qw(FP::Text::CSV)],
 
@@ -288,10 +294,12 @@ sub import {
 
         # Do not die right away in an attempt at making this more
         # usable for users where some of the modules don't work:
-        if (eval {
-            require $path;
-            1
-        })
+        if (
+            eval {
+                require $path;
+                1
+            }
+            )
         {
             $module->import::into($caller, @tags)
         } else {

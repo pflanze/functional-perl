@@ -233,10 +233,12 @@ sub translate($str) {
 
             # Hack to try to get htmldoc to interpret content as
             # UTF-8, but doesn't work
-            META({
-                'http-equiv' => "Content-Type",
-                content      => "text/html;charset=UTF-8"
-            })
+            META(
+                {
+                    'http-equiv' => "Content-Type",
+                    content      => "text/html;charset=UTF-8"
+                }
+            )
         ),
         BODY($body)
     )

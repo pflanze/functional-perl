@@ -171,12 +171,14 @@ TEST {
     ]
 ];
 
-TEST { [
-    list(50, 40, -10)->sum,
-    list(50, 40, -10)->product,
-    stream(50, 40, -10)->product,
-    stream(50, 40, -10)->sum
-] }
+TEST {
+    [
+        list(50, 40, -10)->sum,
+        list(50, 40, -10)->product,
+        stream(50, 40, -10)->product,
+        stream(50, 40, -10)->sum
+    ]
+}
 [80, -20000, -20000, 80];
 
 TEST { [list(qw(a b c d e f g))->split_at(3)] }

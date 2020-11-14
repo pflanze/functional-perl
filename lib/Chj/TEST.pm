@@ -85,13 +85,15 @@ use Chj::singlequote;
 
 # get the style
 sub run_tests_style {    # "old" or "tap"
-    if (my $rt = $ENV{RUN_TESTS}) { (
-        $rt =~ /(old|pod_snippets)/i ? "old"
-        :
+    if (my $rt = $ENV{RUN_TESTS}) {
+        (
+            $rt =~ /(old|pod_snippets)/i ? "old"
+            :
 
-            #$rt =~ /(new|tap)/i ? "tap" :
-            "tap"
-    ) } else {
+                #$rt =~ /(new|tap)/i ? "tap" :
+                "tap"
+        )
+    } else {
 
         # Use from the repl can't run "tap" style as that one will
         # fail on re-runs
@@ -124,7 +126,9 @@ sub import {
             my ($module, @args) = do {
                 if (ref($val) eq "ARRAY") {
                     @$val
-                } elsif (length $val) { ($val) } else {
+                } elsif (length $val) {
+                    ($val)
+                } else {
                     croak
                         "value given as 'require' parameter must be a string or array";
                 }
@@ -201,10 +205,12 @@ sub TEST_EXCEPTION (&$) {
     my ($proc, $res) = @_;
     _TEST(
         sub {
-            if (eval {
-                &$proc();
-                1
-            })
+            if (
+                eval {
+                    &$proc();
+                    1
+                }
+                )
             {
                 undef
             } else {
@@ -464,7 +470,9 @@ sub run_tests_ {
     my $packages = do {
         if (defined $maybe_packages and @$maybe_packages) {
             $maybe_packages;
-        } else { [sort keys %$tests_by_package] }
+        } else {
+            [sort keys %$tests_by_package]
+        }
     };
     my $action = sub {
         run_tests_for_package $_, $stat, $maybe_testnumbers for @$packages;
@@ -532,7 +540,9 @@ sub perhaps_run_tests {
         };
 
         1    # so that one can write  `perhaps_run_tests or something_else;`
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 1

@@ -241,8 +241,8 @@ sub build {
                     ? do {
                     my ($is_attribute, $i) = @$_;
                     $is_attribute
-                        ? PXML::Preserialize::Serialized
-                        ->new(attribute_escape($_[$i]))
+                        ? PXML::Preserialize::Serialized->new(
+                        attribute_escape($_[$i]))
 
                         # otherwise let the default escaper in the
                         # serializer do it (this *should* always be in

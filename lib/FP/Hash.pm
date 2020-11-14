@@ -152,7 +152,9 @@ sub hash_perhaps_ref ($$) {
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 # difference of the following to just $$h{$k} is that it won't die on

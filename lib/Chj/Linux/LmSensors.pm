@@ -293,10 +293,12 @@ TEST {
     purearray(
         Selector('coretemp-isa-0000', 'Core 1'),
         Selector('thinkpad-isa-0000', 'temp14')
-    )->map(sub {
-        my ($sel) = @_;
-        $m->select($sel)->value_or("no val")
-    })
+    )->map(
+        sub {
+            my ($sel) = @_;
+            $m->select($sel)->value_or("no val")
+        }
+    )
 }
 purearray('+37.0', "no val");
 

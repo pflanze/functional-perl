@@ -54,10 +54,12 @@ MYEXAMPLE(
             ->rest
 
             # map rows to XML elements
-            ->map(sub {
-            my ($a, $b, $c, $d) = @{ $_[0] };
-            RECORD A($a), B($b), C($c), D($d)
-            })
+            ->map(
+            sub {
+                my ($a, $b, $c, $d) = @{ $_[0] };
+                RECORD A($a), B($b), C($c), D($d)
+            }
+            )
     )
     )
 

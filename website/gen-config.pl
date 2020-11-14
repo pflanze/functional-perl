@@ -51,18 +51,24 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
         # source_root => path0s
         +{ "." => ["FP-logo.png", $css_path0,] },
     path0_handlers => +{},
-    title          => sub($filetitle) { (
-        $filetitle eq "Readme" ? "Functional programming in Perl" : $filetitle,
-        " - functional-perl.org"
-    ) },
+    title          => sub($filetitle) {
+        (
+            $filetitle eq "Readme"
+            ? "Functional programming in Perl"
+            : $filetitle,
+            " - functional-perl.org"
+        )
+    },
     head => sub($path0) {
 
         # HTML to add to the <head> section
-        LINK({
-            rel  => "stylesheet",
-            href => path_diff($path0, $css_path0),
-            type => "text/css"
-        })
+        LINK(
+            {
+                rel  => "stylesheet",
+                href => path_diff($path0, $css_path0),
+                type => "text/css"
+            }
+        )
     },
 
     header => sub($path0) {

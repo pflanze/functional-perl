@@ -229,12 +229,14 @@ sub is_strictlist ($) {
     }
 }
 
-TEST { [
-    map { is_strictlist $_ } null,
-    strictnull,
-    cons(1, null),
-    cons(1, strictnull)
-] }
+TEST {
+    [
+        map { is_strictlist $_ } null,
+        strictnull,
+        cons(1, null),
+        cons(1, strictnull)
+    ]
+}
 ['', 1, '', 1];
 
 TEST {
@@ -342,13 +344,15 @@ sub strictlist_array__reverse__map_with_length ($$) {
     @_ == 2 or die "wrong number of arguments";
     my ($fn, $l) = @_;
     my $i = $l->length;
-    make_reverse__map_with_length_with_tail(sub {
-        my ($v, $ary) = @_;
+    make_reverse__map_with_length_with_tail(
+        sub {
+            my ($v, $ary) = @_;
 
-        #unshift @$ary, $v; is this faster?:
-        $$ary[--$i] = $v;
-        $ary
-    })->($fn, $l, []);
+            #unshift @$ary, $v; is this faster?:
+            $$ary[--$i] = $v;
+            $ary
+        }
+    )->($fn, $l, []);
 }
 
 *FP::StrictList::List::array__reverse__map_with_length
@@ -366,13 +370,15 @@ sub strictlist_array__map_with_length ($$) {
     my $len = $l->length;
     my $ary = [];
     $$ary[$len - 1] = undef;    # preallocate array, faster?
-    make_reverse__map_with_length_with_tail(sub {
-        my ($v, $ary) = @_;
+    make_reverse__map_with_length_with_tail(
+        sub {
+            my ($v, $ary) = @_;
 
-        #push @$ary, $v;
-        $$ary[$i++] = $v;
-        $ary
-    })->($fn, $l, $ary);
+            #push @$ary, $v;
+            $$ary[$i++] = $v;
+            $ary
+        }
+    )->($fn, $l, $ary);
 }
 
 *FP::StrictList::List::array__map_with_length

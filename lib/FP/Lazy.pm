@@ -228,16 +228,18 @@ sub lazy (&) {
         "FP::Lazy::Promise"
 }
 
-sub lazy_if (&$) { (
-    ($_[1] and not $eager)
-    ? bless([$_[0], undef, $debug && FP::Repl::Stack->get(1)->backtrace],
-        "FP::Lazy::Promise")
-    : do {
-        my ($thunk) = @_;
-        @_ = ();
-        goto $thunk;
-    }
-) }
+sub lazy_if (&$) {
+    (
+        ($_[1] and not $eager)
+        ? bless([$_[0], undef, $debug && FP::Repl::Stack->get(1)->backtrace],
+            "FP::Lazy::Promise")
+        : do {
+            my ($thunk) = @_;
+            @_ = ();
+            goto $thunk;
+        }
+    )
+}
 
 # not providing for caching (1-time-only evaluation)
 sub lazyLight (&) {

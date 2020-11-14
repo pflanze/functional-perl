@@ -736,7 +736,9 @@ sub perhaps_first_and_rest ($) {
         } elsif (is_promise $v) {
             @_ = force $v;
             goto \&perhaps_first_and_rest;
-        } elsif (UNIVERSAL::isa($v, "FP::List::Null")) { () } else {
+        } elsif (UNIVERSAL::isa($v, "FP::List::Null")) {
+            ()
+        } else {
             not_a_pair $v
         }
     } else {
@@ -758,7 +760,9 @@ sub list_perhaps_one ($) {
         my ($a, $r) = first_and_rest $s;
         if   (is_null $r) { ($a) }
         else              { () }
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 *FP::List::List::perhaps_one = *list_perhaps_one;
@@ -1886,13 +1890,15 @@ sub list_all ($$);
 
 *FP::List::List::all = flip \&list_every;
 
-TEST { [
-    map {
-        list_every sub { $_[0] > 0 }, $_
-    } list(1, 2, 3),
-    list(1, 0, 3),
-    list(),
-] }
+TEST {
+    [
+        map {
+            list_every sub { $_[0] > 0 }, $_
+        } list(1, 2, 3),
+        list(1, 0, 3),
+        list(),
+    ]
+}
 [1, '', 1];
 
 use FP::Char 'char_is_alphanumeric';
@@ -1992,7 +1998,9 @@ sub list_perhaps_find ($$) {
     my ($fn, $l) = @_;
     if (my ($l) = list_perhaps_find_tail($fn, $l)) {
         unsafe_car $l
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 *FP::List::List::perhaps_find = flip \&list_perhaps_find;
@@ -2095,10 +2103,12 @@ sub mixed_flatten ($;$$) {
 LP: {
         if ($maybe_delay and is_promise $v) {
             my $delay = $maybe_delay;
-            &$delay(sub {
-                @_ = (force($v), $tail, $delay);
-                goto \&mixed_flatten;
-            });
+            &$delay(
+                sub {
+                    @_ = (force($v), $tail, $delay);
+                    goto \&mixed_flatten;
+                }
+            );
         } else {
             if (is_null $v) {
                 $tail
@@ -2170,7 +2180,12 @@ TEST_STDOUT {
 TEST_STDOUT {
     write_sexpr(
         mixed_flatten lazyLight {
-            cons(lazy { [1 + 1, lazy { 2 + 1 }] }, null)
+            cons(
+                lazy {
+                    [1 + 1, lazy { 2 + 1 }]
+                },
+                null
+            )
         },
         undef,
         \&lazyLight

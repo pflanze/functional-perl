@@ -80,13 +80,15 @@ sub regex_from_strings {
     join("|", map { quotemeta $_ } @_)
 }
 
-my $drop_header_name_regex = regex_from_strings(qw(
-    Return-Path
-    BCC
-    X-K9mail-Identity
-    User-Agent
-    Date
-Message-ID));
+my $drop_header_name_regex = regex_from_strings(
+    qw(
+        Return-Path
+        BCC
+        X-K9mail-Identity
+        User-Agent
+        Date
+        Message-ID)
+);
 
 sub fixlines($lines) {
     my ($head, $body) = lines_head_and_body $lines;

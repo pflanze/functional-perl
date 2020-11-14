@@ -283,19 +283,21 @@ sub array_drop_while ($ $) {
 
 # various
 
-sub array_append { [
-    map {
-        # @$_ nope, that's totally unsafe, will open up array-based
-        # objects, like for example cons cells...
+sub array_append {
+    [
+        map {
+            # @$_ nope, that's totally unsafe, will open up array-based
+            # objects, like for example cons cells...
 
-        # evil inlined `is_array`
-        if (defined $_[0] and ref($_[0]) eq "ARRAY") {
-            @$_
-        } else {
-            $_->values
-        }
-    } @_
-] }
+            # evil inlined `is_array`
+            if (defined $_[0] and ref($_[0]) eq "ARRAY") {
+                @$_
+            } else {
+                $_->values
+            }
+        } @_
+    ]
+}
 
 sub array_reverse ($) {
     my ($v) = @_;
@@ -312,7 +314,9 @@ sub array_perhaps_one ($) {
     my ($a) = @_;
     if (@$a == 1) {
         $$a[0]
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 sub array_hashing_uniq ($;$ ) {
@@ -479,8 +483,8 @@ sub array_fold_right ($$$) {
 
 TEST {
     require FP::List;
-    FP::List::list_to_array(array_fold_right(
-        \&FP::List::cons, &FP::List::null, [1, 2, 3]))
+    FP::List::list_to_array(
+        array_fold_right(\&FP::List::cons, &FP::List::null, [1, 2, 3]))
 }
 [1, 2, 3];
 
@@ -612,7 +616,9 @@ sub array_perhaps_find ($$) {
     my ($fn, $l) = @_;
     if (my ($l) = array_perhaps_find_tail($fn, $l)) {
         $l->first
-    } else { () }
+    } else {
+        ()
+    }
 }
 
 1

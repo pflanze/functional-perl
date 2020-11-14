@@ -194,12 +194,14 @@ import USPSCode::constructors;
 
 sub parse_USPS_segment ($str, $is_state) {
     $str =~ s/^\s+//;
-    purearray(split /\n/, $str)->map(sub($line) {
-        $line =~ s/^\s*(.*?)\s*\z/$1/s;
-        my ($name, $code) = $line =~ /^(\S.*?\S)\s+(\w{2})\z/
-            or die "no parse: '$line'";
-        USPSCode($name, $code, $is_state)
-    })
+    purearray(split /\n/, $str)->map(
+        sub($line) {
+            $line =~ s/^\s*(.*?)\s*\z/$1/s;
+            my ($name, $code) = $line =~ /^(\S.*?\S)\s+(\w{2})\z/
+                or die "no parse: '$line'";
+            USPSCode($name, $code, $is_state)
+        }
+    )
 }
 
 my $USPSCodes
@@ -368,9 +370,11 @@ sub group_companies ($l, $ranges) {
     # sortedlist -> list_of(Group)
     return null if $l->is_null;
     my $range = $ranges->first;
-    my ($groupitems, $rest) = $l->take_while_and_rest(sub($company) {
-        $range->contains_item(uc substr($company->name, 0, 1))
-    });
+    my ($groupitems, $rest) = $l->take_while_and_rest(
+        sub($company) {
+            $range->contains_item(uc substr($company->name, 0, 1))
+        }
+    );
     no warnings "recursion";
     cons(Group($range, $groupitems), group_companies($rest, $ranges->rest))
 }
@@ -517,15 +521,19 @@ sub grouped_companies() {
 }
 
 sub print_groups($s) {
-    $s->for_each(sub($group) {
-        my $range = $group->range->string;
-        $range =~ s/#/\\#/;
-        xprintln "## $range";
-        $group->items->for_each(sub($company) {
-            xprintln $company;
-        });
-        xprintln;
-    })
+    $s->for_each(
+        sub($group) {
+            my $range = $group->range->string;
+            $range =~ s/#/\\#/;
+            xprintln "## $range";
+            $group->items->for_each(
+                sub($company) {
+                    xprintln $company;
+                }
+            );
+            xprintln;
+        }
+    )
 }
 
 # HACK: should really just use the repl printer (show) directly to
