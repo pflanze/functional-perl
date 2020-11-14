@@ -43,6 +43,7 @@ WriteMakefile(
         "Import::Into" => 0,
         "Math::BigInt" => 0,
         "File::Path"   => 0,
+        "Safe::Isa"    => 0,
 
         # could be optional (tests should skip if not available):
         "autobox" => 0,
