@@ -15,9 +15,13 @@ Chj::NamespaceClean
 
 =head1 DESCRIPTION
 
+=head1 TODO
+
+Reuse pieces of L<namespace::clean> or similar instead?
+
 =head1 SEE ALSO
 
-L<Chj::NamespaceCleanAbove>, L<FP::Struct>
+L<Chj::NamespaceCleanAbove>, L<FP::Struct>, L<namespace::clean>
 
 =head1 NOTE
 
