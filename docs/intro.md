@@ -431,29 +431,24 @@ too. Here's one (turning `:s` back on):
 
 All functional-perl data structures come with a predicate function,
 `is_strictlist` in this case, that returns true iff the argument is
-what the predicate name stands for. You might be thinking that
-`$VAR1->isa("FP::StrictList")` would be all that's required, but then
-to avoid failing on non-objects you'd really need
-`UNIVERSAL::isa($VAR1, "FP::StrictList")`, or since that returns true
-for strings you'd *really* need `ref ($VAR1) and UNIVERSAL::isa($VAR1,
-"FP::StrictList")` (or, since the "0" package would give false in the
-first check, `length ref ($VAR1) and UNIVERSAL::isa($VAR1,
-"FP::StrictList")`). Also, while that latter check would be right for
-strictlists, a similar test would not be right for `FP::List` lists if
-you want to know whether they are *proper* lists (i.e. precluding the
-`cons 2, 3` case from above): for that you need to walk the list. The
-`is_list` function from `FP::List` does that. Also, the predicates are
-forcing evaluation of their argument if it's a promise (we'll come to
-lazy evaluation soon.) That's why functional-perl data structures
-come with predicate functions.
+what the predicate name stands for. This is easier and (in this case)
+more efficient than `use Safe::Isa; $VAR1->$_isa("FP::StrictList")`.
+
+Also, for some types, the predicate may do more than just type
+checking: `is_list` from `FP::List` not only checks the type, but also
+if the list is a proper list (for example returning false for the
+`cons 2, 3` case from above). (XXX: rename to `is_proper_list`?)
+Also, the predicates are forcing evaluation of their argument if it's
+a promise (we'll come to lazy evaluation soon.) That's why
+functional-perl data structures come with predicate functions.
 
 The advantages of the strictlists are that `is_strictlist` only needs
 to check the first cell to know that it's a proper list. Also, each
 cell carries the length of the list, thus `length` is O(1) as well,
 unlike in the `FP::List` case where determining the length involves
-walking the whole list. Usually those points don't matter, but
-sometimes they do. The disadvantage of strictlists is that they can't
-be evaluated lazily, a topic we'll look into in the next section.
+walking the whole list. The disadvantage of strictlists is that they
+can't be evaluated lazily, a topic we'll look into in the next
+section.
 
 
 ## Lazy evaluation
