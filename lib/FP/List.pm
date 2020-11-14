@@ -455,10 +455,13 @@ sub unsafe_cons ($$) {
     \@p
 }
 
+# WARNING: be careful, this isn't safe even if `is_pair` returns true, as
+# that only assures that ->car etc. can be called.
 sub unsafe_car ($) {
     $_[0][0]
 }
 
+# WARNING: same as for unsafe_car
 sub unsafe_cdr ($) {
     $_[0][1]
 }
@@ -551,10 +554,7 @@ sub is_null_or_pair_of ($$$);
 sub is_null_or_pair_of ($$$) {
     my ($v, $p0, $p1) = @_;
     FORCE $v;
-    (
-        is_null $v
-            or (is_pair $v and &$p0(unsafe_car $v) and &$p1(unsafe_cdr $v))
-    )
+    (is_null $v or (is_pair $v and &$p0($v->car) and &$p1($v->cdr)))
 }
 
 sub null_or_pair_of ($$) {
@@ -588,7 +588,7 @@ sub is_list ($) {
     (
         is_null($v) ? 1 : (
             is_pair($v) ? do {
-                @_ = unsafe_cdr $v;
+                @_ = $v->cdr;
                 goto \&is_list;
                 }
             : ''
@@ -792,9 +792,9 @@ sub make_ref {
             $s = force $s;
             if (is_pair $s) {
                 if ($i <= 0) {
-                    unsafe_car $s
+                    $s->car
                 } else {
-                    $s = unsafe_cdr $s;
+                    $s = $s->cdr;
                     $i--;
                     redo LP;
                 }
@@ -941,7 +941,7 @@ sub make_length {
         while (!is_null $l) {
             if (is_pair $l) {
                 $len++;
-                $l = force unsafe_cdr $l;
+                $l = force $l->cdr;
             } elsif (my $m = UNIVERSAL::can($l, "FP_Sequence_length")) {
                 @_ = ($l, $len);
                 goto $m
@@ -1984,7 +1984,7 @@ sub list_perhaps_find ($$) {
     @_ == 2 or die "wrong number of arguments";
     my ($fn, $l) = @_;
     if (my ($l) = list_perhaps_find_tail($fn, $l)) {
-        unsafe_car $l
+        $l->car
     } else {
         ()
     }
