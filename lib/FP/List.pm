@@ -196,6 +196,7 @@ use FP::Show;
 use Scalar::Util "weaken";
 use FP::Weak qw(Weakened);
 use FP::Interfaces;
+use Safe::Isa;
 
 our $immutable = 1;    # whether pairs are to be made immutable
 
@@ -467,22 +468,15 @@ sub is_pair ($);
 
 sub is_pair ($) {
     my ($v) = @_;
-    my $r = ref $v;
-    length $r
-        ? (
-        UNIVERSAL::isa($v, "FP::List::Pair")
-            or
+    $v->$_isa("FP::List::Pair") or
 
-            # XX evil: inlined `is_promise`
-            UNIVERSAL::isa($v, "FP::Lazy::Promise") && is_pair(force $v)
-        )
-        : '';
+        # XX evil: inlined `is_promise`
+        $v->$_isa("FP::Lazy::Promise") && is_pair(force $v)
 }
 
 sub is_pair_noforce ($) {
     my ($v) = @_;
-    my $r = ref $v;
-    length $r ? UNIVERSAL::isa($v, "FP::List::Pair") : '';
+    $v->$_isa("FP::List::Pair")
 }
 
 sub is_pair_of ($$) {
@@ -515,39 +509,25 @@ sub is_null ($);
 
 sub is_null ($) {
     my ($v) = @_;
-    my $r = ref $v;
-    length $r
-        ? (
-        UNIVERSAL::isa($v, "FP::List::Null")
-            or
+    $v->$_isa("FP::List::Null") or
 
-            # XX evil: inlined `is_promise`
-            UNIVERSAL::isa($v, "FP::Lazy::Promise") && is_null(force $v)
-        )
-        : '';
+        # XX evil: inlined `is_promise`
+        $v->$_isa("FP::Lazy::Promise") && is_null(force $v)
 }
 
 sub is_null_noforce ($) {
     my ($v) = @_;
-    my $r = ref $v;
-    length $r ? UNIVERSAL::isa($v, "FP::List::Null") : '';
+    $v->$_isa("FP::List::Null")
 }
 
 sub is_pair_or_null ($);
 
 sub is_pair_or_null ($) {
     my ($v) = @_;
-    my $r = ref $v;
-    length $r
-        ? (
-               UNIVERSAL::isa($v, "FP::List::Pair")
-            or UNIVERSAL::isa($v, "FP::List::Null")
-            or
+    $v->$_isa("FP::List::Pair") or $v->$_isa("FP::List::Null") or
 
-            # XX evil: inlined `is_promise`
-            UNIVERSAL::isa($v, "FP::Lazy::Promise") && is_pair_or_null(force $v)
-        )
-        : '';
+        # XX evil: inlined `is_promise`
+        $v->$_isa("FP::Lazy::Promise") && is_pair_or_null(force $v)
 }
 
 TEST { is_pair_or_null cons 1, 2 } 1;
@@ -629,8 +609,7 @@ sub not_a_pair ($) {
 
 sub car ($) {
     my ($v) = @_;
-    my $r = ref $v;
-    if (length $r and UNIVERSAL::isa($v, "FP::List::Pair")) {
+    if ($v->$_isa("FP::List::Pair")) {
         $$v[0]
     } elsif (is_promise $v) {
         @_ = force $v;
@@ -666,8 +645,7 @@ bless [6, 4], 'FP::List::Pair';
 
 sub cdr ($) {
     my ($v) = @_;
-    my $r = ref $v;
-    if (length $r and UNIVERSAL::isa($v, "FP::List::Pair")) {
+    if ($v->$_isa("FP::List::Pair")) {
         $$v[1]
     } elsif (is_promise $v) {
         @_ = force $v;
@@ -715,8 +693,8 @@ TEST { list(1, list(4, 7, 9), 5)->c_r("addad") }
 
 sub car_and_cdr ($) {
     my ($v) = @_;
-    if (length ref $v and UNIVERSAL::isa($v, "FP::List::Pair")) {
-        @{ $_[0] }
+    if ($v->$_isa("FP::List::Pair")) {
+        @$v
     } elsif (is_promise $v) {
         @_ = force $v;
         goto \&car_and_cdr;
@@ -730,19 +708,15 @@ sub first_and_rest($);
 
 sub perhaps_first_and_rest ($) {
     my ($v) = @_;
-    if (length ref $v) {
-        if (UNIVERSAL::isa($v, "FP::List::Pair")) {
-            @{ $_[0] }
-        } elsif (is_promise $v) {
-            @_ = force $v;
-            goto \&perhaps_first_and_rest;
-        } elsif (UNIVERSAL::isa($v, "FP::List::Null")) {
-            ()
-        } else {
-            not_a_pair $v
-        }
+    if ($v->$_isa("FP::List::Pair")) {
+        @$v
+    } elsif (is_promise $v) {
+        @_ = force $v;
+        goto \&perhaps_first_and_rest;
+    } elsif ($v->$_isa("FP::List::Null")) {
+        ()
     } else {
-        not_a_pair $v;
+        not_a_pair $v
     }
 }
 
