@@ -7,7 +7,6 @@
 -bt=1    # brace tightness
 -bbt=1   # block brace tightness
 -sbt=2   # square bracket tightness
--wn      # Weld nested containers
 -isbc    # Don't indent comments without leading space
 -nst     # Don't output to STDOUT
 -nasc    # Do not add semicolons to tail expressions (they are used to
