@@ -1,5 +1,4 @@
 -pbp     # Start with Perl Best Practices
--w       # Show all warnings
 -iob     # Ignore old breakpoints
 -l=80    # characters per line
 -vt=0    # Less vertical tightness
@@ -18,3 +17,4 @@
 -nsfs    # --nospace-for-semicolon  Semicolons within for loops
 
 -b       # --backup-and-modify-in-place
+#-w       # Show all warnings
