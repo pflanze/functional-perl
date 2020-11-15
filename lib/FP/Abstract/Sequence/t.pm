@@ -61,13 +61,13 @@ sub t_fn {
 }
 
 TEST { t_fn *is_sequence }
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0];
+[1, 1, 1, 1, 1, 1, 1, 1, 1, undef, undef, undef, undef, undef];
 
 TEST { t_fn *is_proper_sequence }
-[1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0];
+[1, 1, 1, 1, 1, 1, 1, 1, 0, undef, undef, undef, undef, undef];
 
 TEST { t_fn *is_seq }
-[1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0];
+[1, 1, 1, 1, 0, 0, 0, 0, 1, undef, undef, undef, undef, undef];
 
 my $t_seqs = $t_vals->filter(*is_proper_sequence);
 TEST { $t_seqs->map(the_method "stream")->map(the_method "list") }
