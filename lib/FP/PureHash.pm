@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -72,6 +72,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Docstring;
 use FP::Show;
+use Scalar::Util qw(blessed);
 
 our $immutable = 1;
 
@@ -97,7 +98,9 @@ sub purehash {
 }
 
 sub is_purehash ($) {
-    length ref($_[0]) and UNIVERSAL::isa($_[0], "FP::_::PureHash")
+    my ($v) = @_;
+    my $r = blessed($v) // return;
+    $v->isa("FP::_::PureHash")
 }
 
 package FP::Hash::Mixin {
