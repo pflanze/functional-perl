@@ -193,10 +193,9 @@ use Chj::TEST;
 use FP::Predicates qw(is_natural0 either is_natural complement is_even is_zero);
 use FP::Div qw(inc dec);
 use FP::Show;
-use Scalar::Util "weaken";
+use Scalar::Util qw(weaken blessed);
 use FP::Weak qw(Weakened);
 use FP::Interfaces;
-use Safe::Isa;
 
 our $immutable = 1;    # whether pairs are to be made immutable
 
@@ -468,15 +467,20 @@ sub is_pair ($);
 
 sub is_pair ($) {
     my ($v) = @_;
-    $v->$_isa("FP::List::Pair") or
+    my $r = blessed($v) or return;
+    (
+               $r eq "FP::List::Pair"
+            or $v->isa("FP::List::Pair")
+            or $v->isa("FP::Lazy::Promise") && is_pair(force $v)
+    )
 
-        # XX evil: inlined `is_promise`
-        $v->$_isa("FP::Lazy::Promise") && is_pair(force $v)
+        # ^  XX evil: inlined `is_promise`
 }
 
 sub is_pair_noforce ($) {
     my ($v) = @_;
-    $v->$_isa("FP::List::Pair")
+    my $r = blessed($v) or return;
+    ($r eq "FP::List::Pair" or $v->isa("FP::List::Pair"))
 }
 
 sub is_pair_of ($$) {
@@ -509,25 +513,30 @@ sub is_null ($);
 
 sub is_null ($) {
     my ($v) = @_;
-    $v->$_isa("FP::List::Null") or
-
-        # XX evil: inlined `is_promise`
-        $v->$_isa("FP::Lazy::Promise") && is_null(force $v)
+    my $r = blessed($v) or return;
+    (
+               $r eq "FP::List::Null"
+            or $v->isa("FP::List::Null")
+            or $v->isa("FP::Lazy::Promise") && is_null(force $v)
+    )
 }
 
 sub is_null_noforce ($) {
     my ($v) = @_;
-    $v->$_isa("FP::List::Null")
+    my $r = blessed($v) or return;
+    ($r eq "FP::List::Null" or $v->isa("FP::List::Null"))
 }
 
 sub is_pair_or_null ($);
 
 sub is_pair_or_null ($) {
     my ($v) = @_;
-    $v->$_isa("FP::List::Pair") or $v->$_isa("FP::List::Null") or
-
-        # XX evil: inlined `is_promise`
-        $v->$_isa("FP::Lazy::Promise") && is_pair_or_null(force $v)
+    my $r = blessed($v) or return;
+    (
+               $r eq "FP::List::List"
+            or $v->isa("FP::List::List")
+            or $v->isa("FP::Lazy::Promise") && is_pair_or_null(force $v)
+    )
 }
 
 TEST { is_pair_or_null cons 1, 2 } 1;
@@ -609,13 +618,14 @@ sub not_a_pair ($) {
 
 sub car ($) {
     my ($v) = @_;
-    if ($v->$_isa("FP::List::Pair")) {
-        $$v[0]
+    my $r = blessed($v) or not_a_pair($v);
+    if ($r eq "FP::List::Pair") {
+        $v->[0]
     } elsif (is_promise $v) {
         @_ = force $v;
         goto \&car;
     } else {
-        not_a_pair $v;
+        $v->car
     }
 }
 
@@ -645,13 +655,14 @@ bless [6, 4], 'FP::List::Pair';
 
 sub cdr ($) {
     my ($v) = @_;
-    if ($v->$_isa("FP::List::Pair")) {
-        $$v[1]
+    my $r = blessed($v) or not_a_pair($v);
+    if ($r eq "FP::List::Pair") {
+        $v->[1]
     } elsif (is_promise $v) {
         @_ = force $v;
         goto \&cdr;
     } else {
-        not_a_pair $v;
+        $v->cdr
     }
 }
 
@@ -693,13 +704,14 @@ TEST { list(1, list(4, 7, 9), 5)->c_r("addad") }
 
 sub car_and_cdr ($) {
     my ($v) = @_;
-    if ($v->$_isa("FP::List::Pair")) {
+    my $r = blessed($v) or not_a_pair($v);
+    if ($r eq "FP::List::Pair") {
         @$v
     } elsif (is_promise $v) {
         @_ = force $v;
         goto \&car_and_cdr;
     } else {
-        not_a_pair $v;
+        $v->car_and_cdr
     }
 }
 
@@ -708,15 +720,16 @@ sub first_and_rest($);
 
 sub perhaps_first_and_rest ($) {
     my ($v) = @_;
-    if ($v->$_isa("FP::List::Pair")) {
+    my $r = blessed($v) or not_a_pair($v);
+    if ($r eq "FP::List::Pair") {
         @$v
     } elsif (is_promise $v) {
         @_ = force $v;
         goto \&perhaps_first_and_rest;
-    } elsif ($v->$_isa("FP::List::Null")) {
+    } elsif ($r eq "FP::List::Null") {
         ()
     } else {
-        not_a_pair $v
+        $v->perhaps_first_and_rest
     }
 }
 
