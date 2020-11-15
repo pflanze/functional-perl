@@ -144,7 +144,7 @@ use FP::Abstract::Pure;
 use Chj::BuiltinTypePredicates 'is_filehandle';
 
 # ^ should probably move more lowlevel predicates there
-use Scalar::Util qw(looks_like_number);
+use Scalar::Util qw(looks_like_number blessed);
 
 # Only use `FP::Failure` features if $FP::Failure::use_failure is
 # true--which means that FP::Failure should be loaded, no need to
@@ -175,19 +175,21 @@ sub fail {
 # is no reason for fear from mutations from scopes before it got
 # control of the value:
 sub is_pure ($) {
-    (length(ref $_[0]) ? UNIVERSAL::isa($_[0], "FP::Abstract::Pure") : 1)
-        or fail "is_pure", $_[0]
+    my ($v) = @_;
+    blessed($v) // return ((length ref $v) ? '' : 1);
+    $v->isa("FP::Abstract::Pure") or fail "is_pure", $v
 }
 
 sub is_pure_object ($) {
-    (length ref $_[0] and UNIVERSAL::isa($_[0], "FP::Abstract::Pure"))
-        or fail "is_pure_object", $_[0]
+    my ($v) = @_;
+    blessed($v) // return;
+    $v->isa("FP::Abstract::Pure") or fail "is_pure_object", $v
 }
 
 sub is_pure_class ($) {
     my $r = is_class_name($_[0]);
     $r or return failwith [$r], "is_pure_class";
-    UNIVERSAL::isa($_[0], "FP::Abstract::Pure") or fail "is_pure_class", $_[0]
+    $_[0]->isa("FP::Abstract::Pure") or fail "is_pure_class", $_[0]
 }
 
 sub is_string ($) {
@@ -367,29 +369,28 @@ sub is_class_name ($) {
 }
 
 sub instance_of ($) {
-    my ($cl) = @_;
-    is_class_name $cl or die "need class name string, got: $cl";
+    my ($class) = @_;
+    is_class_name $class or die "need class name string, got: $class";
 
     sub ($) {
-        length ref $_[0] ? UNIVERSAL::isa($_[0], $cl) : ''
-            or fail "instance_of", $cl, $_[0]
+        ((defined blessed $_[0]) ? $_[0]->isa($class) : '')
+            or fail "instance_of", $class, $_[0]
     }
 }
 
 sub is_instance_of ($$) {
-    my ($v, $cl) = @_;
+    my ($v, $class) = @_;
 
-    # is_class_name $cl or die "need class name string, got: $cl";
-    length ref $v ? UNIVERSAL::isa($v, $cl) : ''
-        or fail "is_instance_of", $v, $cl
+    # is_class_name $class or die "need class name string, got: $class";
+    ((defined blessed $v) ? $v->isa($class) : '')
+        or fail "is_instance_of", $v, $class
 }
 
 sub is_subclass_of ($$) {
-    my ($v, $cl) = @_;
+    my ($v, $class) = @_;
 
-    # is_class_name $cl or die "need class name string, got: $cl";
-    !length ref $v and UNIVERSAL::isa($v, $cl)
-        or fail "is_subclass_of", $v, $cl
+    # is_class_name $class or die "need class name string, got: $class";
+    (!length ref $v and $v->isa($class)) or fail "is_subclass_of", $v, $class
 }
 
 TEST { my $v = "IO"; is_instance_of $v, "IO" } 0;
@@ -436,19 +437,23 @@ use FP::Lazy;    # sigh dependency, too.
 
 sub is_sequence ($) {
     my $v = force $_[0];
-    UNIVERSAL::isa($v, "FP::Abstract::Sequence") or fail "is_sequence", $v
+    blessed($v) // return;
+    $v->isa("FP::Abstract::Sequence") or fail "is_sequence", $v
 }
 
 sub is_proper_sequence ($) {
     my $v = force $_[0];
-    (UNIVERSAL::isa($v, "FP::Abstract::Sequence") and $v->is_proper_sequence)
+    blessed($v) // return;
+    ($v->isa("FP::Abstract::Sequence") and $v->is_proper_sequence)
         or fail "is_sequence", $v
 }
 
 # Like is_sequence but only returns true when the sequence isn't empty
+# (similar to Clojure's `(seq? (seq v))`)
 sub is_seq ($) {
     my $v = force $_[0];
-    UNIVERSAL::isa($v, "FP::Abstract::Sequence") && (not $v->is_null)
+    blessed($v) // return;
+    ($v->isa("FP::Abstract::Sequence") && (not $v->is_null))
         or fail "is_sequence", $v
 }
 
