@@ -178,7 +178,7 @@ our $primitive_equals = +{
     #}
 };
 
-use Scalar::Util qw(refaddr);
+use Scalar::Util qw(refaddr blessed);
 use FP::Lazy;
 
 sub pointer_eq ($$) {
@@ -235,11 +235,9 @@ sub make_equal {
                                         &$cmp($a, $b, $equal)
                                     } else {
                                         if ($relaxed) {
-                                            if (
-                                                my $m = UNIVERSAL::can(
-                                                    $a, "FP_Equal_equal"
-                                                )
-                                                )
+                                            if (defined blessed($a)
+                                                and my $m
+                                                = $a->can("FP_Equal_equal"))
                                             {
                                   #@_ $a and $b are still the original $a and $b
                                                 goto $m
