@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -98,6 +98,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Carp;
 use Chj::IO::File;
+use Scalar::Util 'blessed';
 
 sub glob_to_fh ($;$) {
     my ($glob, $maybe_layer_or_encoding) = @_;
@@ -150,7 +151,7 @@ sub fh_to_fh ($) {
 
 sub possibly_fh_to_fh ($) {
     my ($fh) = @_;
-    if (length ref $fh and UNIVERSAL::isa($fh, "Chj::IO::File")) {
+    if (defined blessed($fh) and $fh->isa("Chj::IO::File")) {
         $fh
     } else {
         fh_to_fh $fh
