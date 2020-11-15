@@ -408,7 +408,7 @@ TEST {
 
 sub cons ($$) {
     @_ == 2 or die "wrong number of arguments";
-    if (blessed($_[1]) and my $f = $_[1]->can("cons")) {
+    if (defined blessed($_[1]) and my $f = $_[1]->can("cons")) {
         @_ = ($_[1], $_[0]);
         goto &$f;
     } else {
@@ -421,7 +421,7 @@ sub cons_ ($) {
     my ($item) = @_;
     sub {
         @_ == 1 or die "wrong number of arguments";
-        if (blessed($_[0]) and my $f = $_[0]->can("cons")) {
+        if (defined blessed($_[0]) and my $f = $_[0]->can("cons")) {
             push @_, $item;
             goto &$f;
         } else {
@@ -470,7 +470,7 @@ sub is_pair ($);
 
 sub is_pair ($) {
     my ($v) = @_;
-    my $r = blessed($v) or return;
+    my $r = blessed($v) // return;
     (
                $r eq "FP::List::Pair"
             or $v->isa("FP::List::Pair")
@@ -482,7 +482,7 @@ sub is_pair ($) {
 
 sub is_pair_noforce ($) {
     my ($v) = @_;
-    my $r = blessed($v) or return;
+    my $r = blessed($v) // return;
     ($r eq "FP::List::Pair" or $v->isa("FP::List::Pair"))
 }
 
@@ -516,7 +516,7 @@ sub is_null ($);
 
 sub is_null ($) {
     my ($v) = @_;
-    my $r = blessed($v) or return;
+    my $r = blessed($v) // return;
     (
                $r eq "FP::List::Null"
             or $v->isa("FP::List::Null")
@@ -526,7 +526,7 @@ sub is_null ($) {
 
 sub is_null_noforce ($) {
     my ($v) = @_;
-    my $r = blessed($v) or return;
+    my $r = blessed($v) // return;
     ($r eq "FP::List::Null" or $v->isa("FP::List::Null"))
 }
 
@@ -534,7 +534,7 @@ sub is_pair_or_null ($);
 
 sub is_pair_or_null ($) {
     my ($v) = @_;
-    my $r = blessed($v) or return;
+    my $r = blessed($v) // return;
     (
                $r eq "FP::List::List"
             or $v->isa("FP::List::List")
@@ -611,14 +611,14 @@ TEST {
 
 use Carp;
 
-sub not_a_pair ($) {
+sub die_not_a_pair ($) {
     my ($v) = @_;
     croak "not a pair: " . show($v);
 }
 
 sub car ($) {
     my ($v) = @_;
-    my $r = blessed($v) or not_a_pair($v);
+    my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
         $v->[0]
     } elsif (is_promise $v) {
@@ -655,7 +655,7 @@ bless [6, 4], 'FP::List::Pair';
 
 sub cdr ($) {
     my ($v) = @_;
-    my $r = blessed($v) or not_a_pair($v);
+    my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
         $v->[1]
     } elsif (is_promise $v) {
@@ -704,7 +704,7 @@ TEST { list(1, list(4, 7, 9), 5)->c_r("addad") }
 
 sub car_and_cdr ($) {
     my ($v) = @_;
-    my $r = blessed($v) or not_a_pair($v);
+    my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
         @$v
     } elsif (is_promise $v) {
@@ -720,7 +720,7 @@ sub first_and_rest($);
 
 sub perhaps_first_and_rest ($) {
     my ($v) = @_;
-    my $r = blessed($v) or not_a_pair($v);
+    my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
         @$v
     } elsif (is_promise $v) {
@@ -801,7 +801,8 @@ sub make_ref {
             } elsif (is_null $s) {
                 die "requested element $orig_i of $liststream of length "
                     . ($orig_i - $i)
-            } elsif (blessed($s) and my $m = $s->can("FP_Sequence_ref")) {
+            } elsif (defined blessed($s) and my $m = $s->can("FP_Sequence_ref"))
+            {
                 @_ = ($s, $i);
                 goto $m
             } else {
@@ -942,7 +943,9 @@ sub make_length {
             if (is_pair $l) {
                 $len++;
                 $l = force $l->cdr;
-            } elsif (blessed($l) and my $m = $l->can("FP_Sequence_length")) {
+            } elsif (defined blessed($l)
+                and my $m = $l->can("FP_Sequence_length"))
+            {
                 @_ = ($l, $len);
                 goto $m
             } else {
@@ -1103,7 +1106,7 @@ sub make_for_each {
             } elsif (is_null $s) {
 
                 # drop out
-            } elsif (blessed($s) and my $m = $s->can("for_each")) {
+            } elsif (defined blessed($s) and my $m = $s->can("for_each")) {
                 @_ = ($s, $proc);
                 goto $m
             } else {
