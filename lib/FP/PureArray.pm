@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -96,11 +96,14 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Interfaces;
 use Carp;
+use Scalar::Util qw(blessed);
 
 our $immutable = 1;    # whether new instances are to be immutable
 
 sub is_purearray ($) {
-    length ref($_[0]) and UNIVERSAL::isa($_[0], "FP::_::PureArray")
+    my ($v) = @_;
+    my $r = blessed($v) // return;
+    $v->isa("FP::_::PureArray")
 }
 
 sub purearray {
@@ -122,7 +125,7 @@ package FP::PureArray::autobox {
         my $methodname = $AUTOLOAD;
         $methodname =~ s/.*:://;
         my $v = FP::_::PureArray->new_from_array($_[0]);
-        if (my $m = UNIVERSAL::can($v, $methodname)) {
+        if (my $m = $v->can($methodname)) {
             goto $m
         } else {
             die "no method '$methodname' found for object: $v";
