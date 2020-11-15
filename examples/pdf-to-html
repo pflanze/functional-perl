@@ -271,7 +271,7 @@ TEST {
     paging_js(list(map {"page-$_.svg"} 0 .. 3), 3)
 }
 SCRIPT(
-    +{ language => 'JavaScript', type => 'text/javascript' }, '
+    { language => 'JavaScript', type => 'text/javascript' }, '
 function actUp(evt) {
     evt = (evt) ? evt : ((event) ? event : null);
     if (evt) {
@@ -290,7 +290,7 @@ TEST {
     paging_js(list(map {"page-$_.svg"} 0 .. 3), 2)
 }
 SCRIPT(
-    +{ language => 'JavaScript', type => 'text/javascript' }, '
+    { language => 'JavaScript', type => 'text/javascript' }, '
 function actUp(evt) {
     evt = (evt) ? evt : ((event) ? event : null);
     if (evt) {
@@ -312,7 +312,7 @@ TEST {
     paging_js(list(map {"page-$_.svg"} 0 .. 3), 0)
 }
 SCRIPT(
-    +{ language => 'JavaScript', type => 'text/javascript' }, '
+    { language => 'JavaScript', type => 'text/javascript' }, '
 function actUp(evt) {
     evt = (evt) ? evt : ((event) ? event : null);
     if (evt) {
@@ -396,7 +396,7 @@ sub _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
         };
         [
             &$TR_TD_nav,
-            TR(TD(IMG + { src => basename($for_svgpath), width => "100%" })),
+            TR(TD(IMG { src => basename($for_svgpath), width => "100%" })),
             $opt_single ? ($is_last ? (TR TD HR) : ()) : &$TR_TD_nav
         ]
     };
