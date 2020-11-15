@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -36,8 +36,8 @@ use FP::Hash qw($empty_hash hash_set);
 # serializes PXML would require them anyway.
 use FP::Lazy;
 use FP::List;
-
 use Chj::xIO qw(capture_stdout);
+use Scalar::Util qw(blessed);
 
 use Chj::NamespaceCleanAbove;
 
@@ -171,23 +171,29 @@ sub body_map {
 sub _text {
     my ($v) = @_;
     if (defined $v) {
-        if (ref $v) {
-            if (UNIVERSAL::isa($v, "PXML::Element")) {
-                $v->text
-            } elsif (UNIVERSAL::isa($v, "ARRAY")) {
-                join("", map { _text($_) } @$v);
-            } elsif (UNIVERSAL::isa($v, "CODE")) {
-
-                # correct? XX why does A(string_to_stream("You're
-                # great."))->text trigger this case?
-                _text(&$v());
-            } elsif (is_pair $v) {
-                my ($a, $v2) = $v->car_and_cdr;
-                _text($a) . _text($v2);    # XXX quadratic complexity?
-            } elsif (is_promise $v) {
-                _text(force $v);
+        if (length ref $v) {
+            if (defined blessed $v) {
+                if ($v->isa("PXML::Element")) {
+                    $v->text
+                } elsif (is_pair $v) {
+                    my ($a, $v2) = $v->car_and_cdr;
+                    _text($a) . _text($v2);    # XXX quadratic complexity?
+                } elsif (is_promise $v) {
+                    _text(force $v);
+                } else {
+                    die "don't know how to get text of: $v";
+                }
             } else {
-                die "don't know how to get text of: $v";
+                if (UNIVERSAL::isa($v, "ARRAY")) {
+                    join("", map { _text($_) } @$v);
+                } elsif (UNIVERSAL::isa($v, "CODE")) {
+
+                    # correct? XX why does A(string_to_stream("You're
+                    # great."))->text trigger this case?
+                    _text(&$v());
+                } else {
+                    die "don't know how to get text of: $v";
+                }
             }
         } else {
             $v
