@@ -126,6 +126,7 @@ use FP::Hash qw(hash_xref);
 use FP::Repl::StackPlus;
 use FP::Lazy;
 use FP::Show;
+use Scalar::Util qw(blessed);
 
 sub maybe_tty {
     my $path = "/dev/tty";
@@ -1292,7 +1293,8 @@ sub run {
                             do {
                                 if (ref $error or $error) {
                                     my $err = (
-                                        UNIVERSAL::can($error, "plain")
+                                        (defined blessed $error)
+                                            && $error->can("plain")
                                         ?
 
                                             # error in plaintext; XX:
