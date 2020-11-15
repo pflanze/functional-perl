@@ -1,6 +1,6 @@
 # Fri Oct 29 16:30:48 2004  Chris Tarnutzer, tarnutzer@ethlife.ethz.ch
 #
-# Copyright 2004 by Chris Tarnutzer
+# Copyright 2004 by Chris Tarnutzer, 2005-2020 by Christian Jaeger
 # Published under the same terms as perl itself
 #
 
@@ -28,6 +28,7 @@ use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use Carp;
+use Safe::Isa;
 
 # Carp::longmess 'usually' inserts a needless repetition
 # if the argument was already created by confess:
@@ -58,7 +59,7 @@ sub import {
 
     # Do not override any handler that a previous FP::Repl::Trap may
     # have installed (HACKY):
-    return if UNIVERSAL::isa($SIG{__DIE__}, "FP::Repl::WithRepl::Handler");
+    return if $SIG{__DIE__}->$_isa("FP::Repl::WithRepl::Handler");
 
     $SIG{__DIE__} = sub {
         $DB::single = 1 if $singlestep;
