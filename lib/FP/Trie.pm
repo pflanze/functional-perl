@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -92,26 +92,19 @@ our @EXPORT      = qw(empty_trie);
 our @EXPORT_OK   = qw($empty_trie);                  # ok?
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-{
-
-    package FP::Trie::KeyNotFoundException;
+package FP::Trie::KeyNotFoundException {
     use FP::Struct [], 'FP::Struct::Show', 'FP::Abstract::Pure';
     use overload '""' => 'string';
     sub string {"key not found"}
     _END_
 }
 
-{
-
-    package FP::Trie::Trie;
+package FP::Trie::Trie {
     use FP::Struct [], 'FP::Struct::Show', 'FP::Abstract::Pure';
     _END_
 }
 
-{
-
-    package FP::Trie::BareLevel;
-
+package FP::Trie::BareLevel {
     use FP::Hash ':all';
     use FP::Optional qw(perhaps_to_maybe perhaps_to_x
         perhaps_to_or perhaps_to_exists);
@@ -334,9 +327,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
     _END_
 }
 
-{
-
-    package FP::Trie::ValueLevel;
+package FP::Trie::ValueLevel {
 
     use FP::List;
     use FP::Lazy;
