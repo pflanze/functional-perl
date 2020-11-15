@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -70,13 +70,5 @@ sub is_filehandle ($) {
         ''
     }
 }
-
-# sub is_filehandle ($) {
-#     my ($v) = @_;
-#     my $r = ref ($v);
-#     (length $r and ($r eq "GLOB" ? (*{$v}{IO} ? 1 : '')
-#                   : UNIVERSAL::isa($v, "IO"))) ? 1 : ''
-# }
-# fails for bless $in, "MightActullyBeIO" case
 
 1
