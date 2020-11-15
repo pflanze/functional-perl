@@ -111,6 +111,7 @@ package FP::Trie::BareLevel {
     use FP::Lazy;
     use FP::List;
     use FP::Stream;
+    use Scalar::Util qw(blessed);
 
     use FP::Struct ["sublevels"], "FP::Trie::Trie";
 
@@ -145,7 +146,8 @@ package FP::Trie::BareLevel {
         @_ == 2 or @_ == 4 or die "wrong number of arguments";
         my ($t, $l, $maybe_lastvaluelevel, $maybe_keyremainder_lvl) = @_;
         my ($maybe_lvl, $maybe_r_lvl)
-            = UNIVERSAL::isa($t, "FP::Trie::ValueLevel")
+            = (defined blessed $t)
+            && $t->isa("FP::Trie::ValueLevel")
             ? ($t, $l)
             : ($maybe_lastvaluelevel, $maybe_keyremainder_lvl);
         if ($l->is_null) {
@@ -195,7 +197,7 @@ package FP::Trie::BareLevel {
         @_ == 2 or die "wrong number of arguments";
         my ($t, $l) = @_;
         if ($l->is_null) {
-            if (UNIVERSAL::isa($t, "FP::Trie::ValueLevel")) {
+            if ((defined blessed $t) && $t->isa("FP::Trie::ValueLevel")) {
                 if (keys %{ $$t{sublevels} }) {
                     FP::Trie::BareLevel->new($$t{sublevels})
                 } else {
@@ -246,7 +248,8 @@ package FP::Trie::BareLevel {
             $res
         } else {
             my $e = $@;
-            if (ref $e and UNIVERSAL::isa($e, "FP::Trie::KeyNotFoundException"))
+            if ((defined blessed $e)
+                and $e->isa("FP::Trie::KeyNotFoundException"))
             {
                 $t
             } else {
