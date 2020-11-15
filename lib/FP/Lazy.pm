@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -204,9 +204,15 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use Carp;
 use FP::Mixin::Utils;
 use FP::Show;
+use Scalar::Util 'blessed';
 
 our $eager = ($ENV{DEBUG_FP_LAZY} and $ENV{DEBUG_FP_LAZY} =~ /^eager$/i);
 our $debug = $ENV{DEBUG_FP_LAZY} ? (not $eager) : '';
+
+sub die_not_a_Lazy_Promise {
+    my ($v) = @_;
+    die "not a FP::Lazy::Promise: " . show($v);
+}
 
 # A promise is an array with two fields:
 # index 0: thunk when unevaluated, undef once evaluated
@@ -216,9 +222,15 @@ our $debug = $ENV{DEBUG_FP_LAZY} ? (not $eager) : '';
 sub lazy_backtrace ($) {    # not a method to avoid shadowing any
                             # 'contained' method
     my ($v) = @_;
-    UNIVERSAL::isa($v, "FP::Lazy::Promise")    # not working for Light ones*!*
-        or die "not a FP::Lazy::Promise: " . show($v);
-    $$v[2]
+    blessed($v) // die_not_a_Lazy_Promise($v);
+
+    # Consciously not working for Light ones!
+    if ($v->isa("FP::Lazy::Promise")) {
+        $$v[2]    # really assume such an access works, no fallback to a
+                  # method like in FP::List
+    } else {
+        die_not_a_Lazy_Promise($v);
+    }
 }
 
 sub lazy (&) {
@@ -247,7 +259,8 @@ sub lazyLight (&) {
 }
 
 sub is_promise ($) {
-    length ref $_[0] ? UNIVERSAL::isa($_[0], "FP::Lazy::AnyPromise") : ''
+    blessed($_[0]) // return;
+    $_[0]->isa("FP::Lazy::AnyPromise")
 }
 
 sub delay (&);
@@ -258,11 +271,11 @@ sub delayLight (&);
 sub force ($;$) {
     my ($perhaps_promise, $nocache) = @_;
 LP: {
-        if (length(my $r = ref $perhaps_promise)) {
-            if (UNIVERSAL::isa($perhaps_promise, "FP::Lazy::PromiseLight")) {
+        if (defined blessed($perhaps_promise)) {
+            if ($perhaps_promise->isa("FP::Lazy::PromiseLight")) {
                 $perhaps_promise = &$perhaps_promise;
                 redo LP;
-            } elsif (UNIVERSAL::isa($perhaps_promise, "FP::Lazy::Promise")) {
+            } elsif ($perhaps_promise->isa("FP::Lazy::Promise")) {
                 if (my $thunk = $$perhaps_promise[0]) {
                     my $v = &$thunk();
                     unless ($nocache) {
@@ -287,8 +300,8 @@ LP: {
 # just remove promise wrapper, don't actually force its evaluation
 sub force_noeval ($) {
     my ($s) = @_;
-    if (length(my $r = ref $s)) {
-        if (UNIVERSAL::isa($s, "FP::Lazy::Promise")) {
+    if (defined blessed($s)) {
+        if ($s->isa("FP::Lazy::Promise")) {
             if ($$s[0]) {
                 $s
             } else {
@@ -368,14 +381,15 @@ package FP::Lazy::AnyPromise {
 
         # To be able to select special implementations for lazy
         # inputs, select a method with `stream_` prefix if present.
-        # (No need to check whether $v is a reference, as the same
-        # code is valid for class names.)
+
+        # $v can be either a class name or object; it's guaranteed to
+        # be either of those, thus we can use ->can
+
         my $method
             = ($methodname =~ /^stream_/
-            ? UNIVERSAL::can($v, $methodname)
-            : UNIVERSAL::can($v, "stream_$methodname")
-                // UNIVERSAL::can($v,                 $methodname)
-                // UNIVERSAL::can("FP::Mixin::Utils", $methodname));
+            ? $v->can($methodname)
+            : $v->can("stream_$methodname") // $v->can($methodname)
+                // "FP::Mixin::Utils"->can($methodname));
         if ($method) {
 
             # can't change @_ or it would break 'env clearing' ability
@@ -390,6 +404,8 @@ package FP::Lazy::AnyPromise {
                 . FP::Lazy::strshow($v);
         }
     }
+
+    # XXX TODO: provide a `can` method, right?
 
     # should really have a maybe_ prefix, but since it's for debugging
     # purposes only (and in that case also likely always returns a
