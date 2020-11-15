@@ -93,6 +93,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use FP::List;
 use Chj::TEST;
 use FP::Combinators qw(flip2of3 flip);
+use Scalar::Util qw(blessed);
 
 package FP::StrictList::List {
 
@@ -218,15 +219,12 @@ cons(5, cons(6, strictnull));
 
 sub is_strictlist ($) {
     my ($v) = @_;
-    if (length(my $r = ref $v)) {
-        UNIVERSAL::isa($v, "FP::StrictList::List") or
-
-            # XX evil: inlined `is_promise`
-            UNIVERSAL::isa($v, "FP::Lazy::Promise") && &is_strictlist(force $v)
-            or ''
-    } else {
-        ''
-    }
+    my $r = blessed($v) // return;
+    (
+               $r eq "FP::StrictList::List"
+            or $v->isa("FP::StrictList::List")
+            or $v->isa("FP::Lazy::Promise") && &is_strictlist(force $v)
+    )
 }
 
 TEST {
