@@ -259,7 +259,7 @@ use FP::Show;
 sub eval_test ($$) {
     my ($t, $stat) = @_;
     my ($proc, $res, $num, $package, $filename, $line) = @$t;
-    style_switch + {
+    style_switch {
         old => sub {
             print "running test $num..";
         },
@@ -277,7 +277,7 @@ sub eval_test ($$) {
             $res = &$res;
         }
     };
-    style_switch + {
+    style_switch {
         old => $action,
         tap => sub {
             eval {
@@ -292,7 +292,7 @@ sub eval_test ($$) {
     my $location     = "at $filename line $line";
     my $nicelocation = "line $line";
     if (!$maybe_e and relaxedequal($got, $res)) {
-        style_switch + {
+        style_switch {
             old => sub {
                 print "ok\n";
             },
@@ -305,7 +305,7 @@ sub eval_test ($$) {
         my $gotstr = show $got;
         my $resstr = show $res;
 
-        style_switch + {
+        style_switch {
             old => sub {
                 die "bug, shouldn't happen in this mode" if defined $maybe_e;
                 print "FAIL $location:\n";
@@ -352,7 +352,7 @@ sub run_tests_for_package {
     my $action = sub {
         if (my $tests = $$tests_by_package{$package}) {
             if (defined $maybe_testnumbers) {
-                style_switch + {
+                style_switch {
                     old => sub {
                         print
                             "=== running selected tests in package '$package'\n";
@@ -380,7 +380,7 @@ sub run_tests_for_package {
                         eval_test $test, $stat
                     }
                 };
-                style_switch + {
+                style_switch {
                     old => sub {
                         print "=== running tests in package '$package'\n";
                         &$action;
@@ -393,7 +393,7 @@ sub run_tests_for_package {
                 };
             }
         } else {
-            style_switch + {
+            style_switch {
                 old => sub {
                     print "=== no tests for package '$package'\n";
                 },
@@ -410,7 +410,7 @@ sub run_tests_for_package {
         }
     };
 
-    style_switch + {
+    style_switch {
         old => $action,
         tap => sub {
             subtest("Package $package" => $action);
@@ -452,7 +452,7 @@ sub run_tests_ {
 
     local $| = 1;
 
-    style_switch + {
+    style_switch {
         old => sub {
             print "==== run_tests in $run_tests_style style ====\n";
         },
@@ -478,7 +478,7 @@ sub run_tests_ {
         run_tests_for_package $_, $stat, $maybe_testnumbers for @$packages;
     };
 
-    style_switch + {
+    style_switch {
         old => sub {
             &$action;
             print "===\n";
@@ -517,7 +517,7 @@ sub perhaps_run_tests {
         require Test::More;
         import Test::More;
 
-        style_switch + {
+        style_switch {
             old => sub {
 
                 # Outer single TAP wrapper around the running of the
