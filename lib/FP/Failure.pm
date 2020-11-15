@@ -158,10 +158,12 @@ our @EXPORT_OK = qw(*trace_failures *use_failure fails
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Lazy 'force';
+use Safe::Isa;
 
 package FP::Failure::Failure {
 
     use FP::Show;
+    use Safe::Isa;
 
     # avoid circular dependency on FP::Predicates
     sub maybe_array {
@@ -220,7 +222,7 @@ package FP::Failure::Failure {
 
         my $valuestr = do {
             my $value = $s->value;
-            UNIVERSAL::isa($value, 'FP::Failure::Abstract::Message')
+            $value->$_isa('FP::Failure::Abstract::Message')
                 ? $value->message
                 : show($value)
         };
@@ -266,7 +268,7 @@ sub failure ($;$) {
 }
 
 sub is_failure($) {
-    UNIVERSAL::isa(force($_[0]), "FP::Failure::Failure")
+    force($_[0])->$_isa("FP::Failure::Failure")
 }
 
 our $use_failure = 0;    # bool
