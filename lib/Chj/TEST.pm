@@ -38,8 +38,8 @@ Chj::TEST
     use Chj::TEST ':all';
 
     my $result = run_tests(__PACKAGE__);
-    is $result->fail, 0; # 0 failures
-    is $result->success > 0, 1;
+    is $result->failures, 0; # 0 failures
+    is $result->successes > 0, 1;
 
     #run_tests;
     #  or
@@ -294,7 +294,7 @@ sub eval_test ($$) {
                 pass($nicelocation);
             },
         };
-        $$stat{success}++
+        $$stat{successes}++
     } else {
         my $gotstr = show $got;
         my $resstr = show $res;
@@ -336,7 +336,7 @@ sub eval_test ($$) {
                 }
             },
         };
-        $$stat{fail}++
+        $$stat{failures}++
     }
 }
 
@@ -429,8 +429,8 @@ package Chj::TEST::Result {
         my ($field) = @_;
         sub { my $s = shift; $$s{$field} }
     };
-    *fail    = $accessor->("fail");
-    *success = $accessor->("success");
+    *failures  = $accessor->("failures");
+    *successes = $accessor->("successes");
 }
 
 sub run_tests_ {
@@ -459,7 +459,7 @@ sub run_tests_ {
         },
     };
 
-    my $stat = bless { success => 0, fail => 0 }, "Chj::TEST::Result";
+    my $stat = bless { successes => 0, failures => 0 }, "Chj::TEST::Result";
 
     my $packages = do {
         if (defined $maybe_packages and @$maybe_packages) {
@@ -474,7 +474,8 @@ sub run_tests_ {
         old => sub {
             &$action;
             print "===\n";
-            print " => $$stat{success} success(es), $$stat{fail} failure(s)\n";
+            print " => $$stat{successes} success(es), "
+                . "$$stat{failures} failure(s)\n";
         },
         tap => sub {
             plan(tests => scalar @$packages);
@@ -516,7 +517,8 @@ sub perhaps_run_tests {
                 # failures by collecting them up, perhaps even simply
                 # via Capture::Tiny. Not currently done.
                 is(
-                    eval { run_tests(@$args)->fail } // do { diag($@); undef },
+                    eval { run_tests(@$args)->failures }
+                        // do { diag($@); undef },
                     0, "run_tests"
                 );
                 done_testing();

@@ -1328,7 +1328,7 @@ You can in principle use it without leaving the repl:
     running test 1..ok
     ===
     => 1 success(es), 0 failure(s)
-    $VAR1 = bless(+{fail => 0, success => 1}, 'Chj::TEST::Result');
+    $VAR1 = bless(+{failures => 0, successes => 1}, 'Chj::TEST::Result');
 
 Although it will only ever accumulate test cases, never delete old
 ones; might add some way to improve that? But it's of course meant to
