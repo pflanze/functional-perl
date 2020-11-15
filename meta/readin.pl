@@ -1,3 +1,7 @@
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+
 use Test::More (
     $^O =~ /win32/i ? (skip_all => "on Windows (no shell support)") : ());
 

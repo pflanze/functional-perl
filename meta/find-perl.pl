@@ -1,3 +1,7 @@
+use strict;
+use warnings;
+use warnings FATAL => 'uninitialized';
+
 require "./meta/test.pl";
 
 my $path = $^X;
