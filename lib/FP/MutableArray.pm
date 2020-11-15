@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -64,8 +64,12 @@ our @EXPORT      = qw(is_mutablearray mutablearray array_to_mutablearray);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use Scalar::Util 'blessed';
+
 sub is_mutablearray ($) {
-    length ref($_[0]) and UNIVERSAL::isa($_[0], "FP::_::MutableArray")
+    my ($v) = @_;
+    my $r = blessed($v) // return;
+    ($r eq "FP::_::MutableArray" or $v->isa("FP::_::MutableArray"))
 }
 
 sub mutablearray {
