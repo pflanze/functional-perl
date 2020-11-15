@@ -175,9 +175,8 @@ sub _text {
             if (defined blessed $v) {
                 if ($v->isa("PXML::Element")) {
                     $v->text
-                } elsif (is_pair $v) {
-                    my ($a, $v2) = $v->car_and_cdr;
-                    _text($a) . _text($v2);    # XXX quadratic complexity?
+                } elsif ($v->isa("FP::Abstract::Sequence")) {
+                    join("", $v->map(\&_text)->values)
                 } elsif (is_promise $v) {
                     _text(force $v);
                 } else {
