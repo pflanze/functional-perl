@@ -102,15 +102,11 @@ sub require_package ($) {
 
 sub package_check_possible_interface ($$) {
     my ($caller, $possible_interface_package) = @_;
-    if (
-        my $m = UNIVERSAL::can(
-            $possible_interface_package, "FP_Interface__method_names"
-        )
-        )
+    if (my $m = $possible_interface_package->can("FP_Interface__method_names"))
     {
         my @missing;
         for my $method (&$m($possible_interface_package)) {
-            unless (UNIVERSAL::can($caller, $method)) {
+            unless ($caller->can($method)) {
                 push @missing, $method
             }
         }
