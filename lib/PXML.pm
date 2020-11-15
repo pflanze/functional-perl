@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -54,6 +54,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use PXML::Element;
 
 use FP::Predicates 'instance_of';
+use Scalar::Util qw(blessed);
 
 sub is_pxml_element ($);
 *is_pxml_element = instance_of("PXML::Element");
@@ -78,7 +79,8 @@ sub pxmlflush {
 
 sub is_pxmlflush ($) {
     my ($v) = @_;
-    ref $v and UNIVERSAL::isa($v, "PXML::Flush")
+    blessed($v) // return;
+    $v->isa("PXML::Flush")
 }
 
 # XX make this cleaner:
