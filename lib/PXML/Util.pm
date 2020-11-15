@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015,2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -40,6 +40,7 @@ use FP::List;
 use FP::Stream ":all";
 use FP::Hash "hash_perhaps_ref";
 use PXML "is_pxml_element";
+use Scalar::Util qw(blessed);
 
 # Mapping PXML data (works not just on elements).
 
@@ -71,7 +72,7 @@ sub pxml_deferred_map ($$;$$) {
 
     if (my $r = ref $v) {
         my $uplist2 = cons $v, $uplist;
-        if (UNIVERSAL::isa($v, "PXML::Element")) {
+        if (blessed($v) and $v->isa("PXML::Element")) {
 
             # XX TCO?
             &$elementfn($v, $uplist, &$make_inferior_map($uplist2))
