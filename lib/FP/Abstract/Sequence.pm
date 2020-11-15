@@ -145,6 +145,7 @@ sub FP_Interface__method_names {
             sort
             sortCompare
             string
+            values
             ),
 
         # $class->SUPER::FP_Interface__method_names
