@@ -21,6 +21,9 @@ See also [[design]].
   improved, but not essential under normal working conditions".
   In text files, 'todo' is used.
 
+* `perltidy` is used to format all Perl code. To have this done
+  automatically for each commit, run `cd .git/hooks && ln -s
+  ../../meta/pre-commit`.
 
 ## Testing
 
