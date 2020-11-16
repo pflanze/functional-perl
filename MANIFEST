@@ -90,6 +90,7 @@ lib/Chj/IO/PipelessCommand.pm
 lib/Chj/IO/Tempdir.pm
 lib/Chj/IO/Tempfile.pm
 lib/Chj/IO/WrappedFile.pm
+lib/Chj/IsPerl.pm
 lib/Chj/Linux/LmSensors.pm
 lib/Chj/NamespaceClean.pm
 lib/Chj/NamespaceCleanAbove.pm
@@ -208,15 +209,20 @@ meta/FunctionalPerl/Dependencies.pm
 meta/FunctionalPerl/ModuleList.pm
 meta/FunctionalPerl/TailExpand.pm
 meta/_critic.out
+meta/bisect-modules
+meta/check-hardcoded-perl
 meta/code-reformat
 meta/critic
 meta/dependencycheck
 meta/find-perl.pl
+meta/pre-commit
 meta/readin.pl
 meta/tail-expand
+meta/test-modules
 meta/test.pl
 meta/update-manifest
 meta/update-pod
+meta/with-profiling
 t-extra/evil-env.t
 t-extra/out-of-order.t
 t-slow/csvstreams.t
@@ -259,7 +265,6 @@ t/testlazy.t
 t/testlazy10.expected
 t/testlazy10.t
 t/trampoline-fix.t
-t/universal-isa.t
 testmem.pl
 website/FP-logo.png
 website/FP.css
