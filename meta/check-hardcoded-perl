@@ -3,7 +3,13 @@
 use strict;
 use warnings FATAL => 'uninitialized';
 
-if (my @files = `git grep --cached -l /usr/bin/perl`) {
+if (
+    my @files = grep {
+        chomp;
+        $_ ne "meta/check-hardcoded-perl"
+    } `git grep --cached -l /usr/bin/perl`
+    )
+{
     die "files containing hard-coded perl path: @files";
 }
 
