@@ -24,15 +24,15 @@ FP::Abstract::Sequence - functional sequence protocol
 
     use FP::Equal 'is_equal';
 
-    is_equal list(purearray(3,4),
-                  strictlist(3,4),
-                  list(3,4),
-                  stream(3,4),
-                  cons(3,4),
-                  array(3,4), # Should we change this given `FP::autobox`?
+    is_equal list(purearray(3, 4), 
+                  strictlist(3, 4), 
+                  list(3, 4), 
+                  stream(3, 4), 
+                  cons(3, 4), 
+                  array(3, 4),  # Should we change this given `FP::autobox`?
                   3,
                   {3 => 4})->map(*is_sequence),
-             list(1,1,1,1,1,0,0,0);
+             list(1, 1, 1, 1, 1, undef, undef, undef);
 
     is is_sequence(cons 3, 4), 1;
     is is_proper_sequence(cons 3, 4), 0; # improper list

@@ -39,7 +39,7 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
 
     # The following stores result of `force $b` back into $b
     FORCE $b;
-    is is_promise($b), '';
+    is is_promise($b), undef;
     is $b, 1/2;
     is $count, 1;
 
@@ -107,7 +107,7 @@ the saved value.
               # respectively (the commented example forces 3 (possibly)
               # separate values))
 
-    is is_promise($p), ''; # returns true iff $x holds a promise
+    is is_promise($p), undef; # returns true iff $x holds a promise
 
 
 =head1 NOTE
