@@ -176,7 +176,7 @@ sub _text {
                 if ($v->isa("PXML::Element")) {
                     $v->text
                 } elsif ($v->isa("FP::Abstract::Sequence")) {
-                    join("", $v->map(\&_text)->values)
+                    join("", map { _text($_) } $v->values)
                 } elsif (is_promise $v) {
                     _text(force $v);
                 } else {
