@@ -1,5 +1,13 @@
 Revision history for FunctionalPerl
 
+0.72.38 2020-11-16
+    - fix some newly introduced brokenness (dependency in a test,
+      broken `successes` and `failures` change, missed updates in pod
+      snippets because of using a new dev machine without all of the
+      optional modules installed)
+    - add `meta/install-development-dependencies-on-debian` so the
+      last subitem is less likely to happen again
+
 0.72.37 2020-11-16
     - another Windows fix
     - a fix for Solaris
