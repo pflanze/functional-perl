@@ -1,0 +1,60 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings FATAL => 'uninitialized';
+
+use Cwd 'abs_path';
+
+my ($mydir, $myname);
+
+BEGIN {
+    my $location = (-l $0) ? abs_path($0) : $0;
+    $location =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+
+use lib "$mydir/../lib";
+
+use Getopt::Long;
+use Chj::singlequote 'singlequote';
+
+sub usage {
+    print STDERR map {"$_\n"} @_ if @_;
+    print "$myname modulename...
+
+  Loads the given modules, then runs the test suite on those. Exits
+  with 0 for success, 1 for any kind of failure.
+
+";
+    exit(@_ ? 1 : 0);
+}
+
+our $verbose = 0;
+
+#our $opt_dry;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+
+    #"dry-run"=> \$opt_dry,
+) or exit 1;
+usage unless @ARGV;
+
+$ENV{RUN_TESTS} ||= 1;
+
+my @cmd = (
+    qw(perl -w -Mlib=lib -Mlib=htmlgen),
+    (map {"-M$_"} @ARGV),
+    "-MChj::TEST=:all",
+    "-e",
+    '$r= run_tests('
+        . join(", ", map { singlequote $_ } @ARGV)
+        . '); exit( $$r{failures} // $$r{fail})'
+);
+
+# Note: accessing field {fail} as a fall back above to cater for
+# older versions of Chj::TEST.
+
+system @cmd;
+
+exit($? == 0 ? 0 : 1);

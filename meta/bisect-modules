@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=
+
+usage() {
+    echo "$0 bad good modulename..."
+    echo "  Run git bisect, with bad as the bad commit (e.g. HEAD),"
+    echo "  good as the good commit, and running meta/test-modules"
+    echo "  with the given modulenames as the test."
+    echo "  Run \`git bisect reset\` as usual when you're done."
+    exit 1
+}
+
+if [ $# -lt 3 ]; then
+    usage
+fi
+
+bad="$1"
+good="$2"
+shift
+shift
+
+set -x
+
+git bisect start   
+git bisect bad "$bad"
+git bisect good "$good"
+git bisect run meta/test-modules "$@"
+
