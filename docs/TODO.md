@@ -103,12 +103,9 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 * Change `FP::Struct` to allow mutable private fields that don't
   impede `FP::Abstract::Pure` (see comments in FP::Struct)?
 
-* Think through UNIVERSAL::isa and UNIVERSAL::can, use `Safe::Isa` if
-  decide that have to, or otherwise appropriately (handling of
-  promises, should it let methods shine through via can?)
-
 * Consistently `use Scalar::Util qw(reftype)`? What was the point
-  again of using this over `ref`?
+  again of using this over `ref` or `UNIVERSAL::isa` for `CODE` and
+  such?
 
 * die vs. croak: die is nice since `FP::Repl::Trap` will go to the real
   location, how is the situation with croak? (Also, `Chj::Backtrace`?)
