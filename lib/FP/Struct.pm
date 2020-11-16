@@ -95,7 +95,7 @@ FP::Struct - classes for functional perl
 
     is $bar->hum, "Franz hums 1 over 2";
 
-    is Chj::TEST::run_tests("FPStructExample::Bar2")->success, 1;
+    is Chj::TEST::run_tests("FPStructExample::Bar2")->successes, 1;
     is (FPStructExample::Bar2->can("TEST"), undef);
     # ^ it was removed by namespace cleaning
 
