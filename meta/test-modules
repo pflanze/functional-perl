@@ -25,25 +25,24 @@ sub usage {
   Loads the given modules, then runs the test suite on those. Exits
   with 0 for success, 1 for any kind of failure.
 
+  Options:
+    -x   turn on tracing using -d:Trace
+
 ";
     exit(@_ ? 1 : 0);
 }
 
 our $verbose = 0;
-
-#our $opt_dry;
-GetOptions(
-    "verbose" => \$verbose,
-    "help"    => sub {usage},
-
-    #"dry-run"=> \$opt_dry,
-) or exit 1;
+our $opt_x;
+GetOptions("verbose" => \$verbose, "help" => sub {usage}, "x" => \$opt_x,)
+    or exit 1;
 usage unless @ARGV;
 
 $ENV{RUN_TESTS} ||= 1;
 
 my @cmd = (
     qw(perl -w -Mlib=lib -Mlib=htmlgen),
+    ($opt_x ? "-d:Trace" : ()),
     (map {"-M$_"} @ARGV),
     "-MChj::TEST=:all",
     "-e",
