@@ -215,6 +215,7 @@ meta/code-reformat
 meta/critic
 meta/dependencycheck
 meta/find-perl.pl
+meta/install-development-dependencies-on-debian
 meta/pre-commit
 meta/readin.pl
 meta/tail-expand
