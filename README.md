@@ -333,6 +333,9 @@ in London, Berlin or Switzerland to get an introduction in person.
 
 (Todo: should all of the above be listed in PREREQ_PM in Makefile.PL?)
 
+You can run `meta/install-development-dependencies-on-debian` to get
+those installed if you're on a Debian system.
+
 
 ## Installation
 
