@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=
+
+set -x
+
+apt-get install libtest-requires-perl libterm-readline-gnu-perl libpadwalker-perl libcapture-tiny-perl libbsd-resource-perl libmethod-signatures-perl libtext-csv-perl libdbd-csv-perl libtext-csv-perl liburi-perl libtext-markdown-perl libclone-perl
+
+did=0
+function needbuild {
+    if [ $did = 0 ]; then
+        apt-get install libmodule-build-perl libmoosex-semiaffordanceaccessor-perl
+        did=1
+    fi
+}
+
+
+# These don't exist:
+# libeval-withlexicals-perl
+# libsub-util-perl
+# libtest-pod-snippets-perl
+# libsub-call-tail-perl
+
+for module in Eval::WithLexicals Sub::Util Test::Pod::Snippets; do
+    if ! perl -w -M"$module" -e ''; then
+        needbuild
+        perl -w -MCPAN -e "install $module"
+    fi
+done
+
