@@ -9,7 +9,7 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 
 use lib "./lib";
-use Test::Requires qw(5.020);
+use Test::Requires qw(5.020 FP::Repl::Dependencies);
 use Chj::xperlfunc ":all";
 
 require "./meta/find-perl.pl";
