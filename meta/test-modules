@@ -26,7 +26,8 @@ sub usage {
   with 0 for success, 1 for any kind of failure.
 
   Options:
-    -x   turn on tracing using -d:Trace
+    -x                 turns on tracing using -d:Trace
+    -d ... or -d=...   passed to Perl as -d:...
 
 ";
     exit(@_ ? 1 : 0);
@@ -34,15 +35,21 @@ sub usage {
 
 our $verbose = 0;
 our $opt_x;
-GetOptions("verbose" => \$verbose, "help" => sub {usage}, "x" => \$opt_x,)
-    or exit 1;
+our $opt_d;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+    "x"       => \$opt_x,
+    "d=s"     => \$opt_d
+) or exit 1;
 usage unless @ARGV;
 
 $ENV{RUN_TESTS} ||= 1;
 
 my @cmd = (
     qw(perl -w -Mlib=lib -Mlib=htmlgen),
-    ($opt_x ? "-d:Trace" : ()),
+    ($opt_x         ? "-d:Trace"  : ()),
+    (defined $opt_d ? "-d:$opt_d" : ()),
     (map {"-M$_"} @ARGV),
     "-MChj::TEST=:all",
     "-e",
