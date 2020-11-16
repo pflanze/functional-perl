@@ -1,5 +1,20 @@
 Revision history for FunctionalPerl
 
+0.72.37 2020-11-16
+    - another Windows fix
+    - a fix for Solaris
+    - big formatting revamp:
+        - use perltidy (I haven't looked into adapting my Emacs
+          configuration yet, so there may be more changes ahead)
+        - move EXPORT variables after `use strict`
+        - use experimental "signatures" instead of
+          Function::Parameters
+    - some cleanup
+    - don't use EXPORT style without `our` anymore
+    - remove usage of UNIVERSAL::{isa,can} except those checking for
+      `CODE` and similar
+    - some nice new tools in meta/
+
 0.72.36 2020-10-29
     - make Chj::xhome hopefully finally work on Windows
 
