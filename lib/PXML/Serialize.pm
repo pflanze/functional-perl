@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -77,6 +77,7 @@ use Chj::xperlfunc qw(xprint xprintln);
 use FP::Weak 'weaken';    # instead of from Scalar::Util so that it can
                           # be turned off globally (and we depend on FP
                           # anyway)
+use Scalar::Util qw(blessed refaddr);
 
 sub is_somearray ($) {
     my $r = ref($_[0]);
@@ -129,50 +130,55 @@ sub object_force_escape ($$$$);
 
 sub object_force_escape ($$$$) {
     my ($v, $string_method_for_context, $escape, $fh) = @_;
-    if (my $m = UNIVERSAL::can($v, $string_method_for_context)) {
 
-        # no escaping
-        &$m($v, $fh)
-    } elsif (
-        $m =
+    # $v is certain to be a reference (XX ehr, not even that?!), but
+    # not necessarily blessed.
+    if (defined blessed $v) {
+        if (my $m = $v->can($string_method_for_context)) {
 
-        # XX should this instead simply stringify using
-        # '"$v"'? That would not show up errors with
-        # context. But it would be less interruptive
-        # perhaps? Just issue a warning? Ideal would
-        # probably be to do the '""', but give a warning
-        # if it was Perl's default stringification. How to
-        # do this?
-        UNIVERSAL::can($v, "string")
-        )
-    {
-        &$escape(&$m($v))
-    } else {
-        die "unexpected type of reference that doesn't have a 'string' method: "
-            . (show $v);
+            # no escaping
+            return &$m($v, $fh);
+        } elsif (
+            $m =
+
+            # XX should this instead simply stringify using
+            # '"$v"'? That would not show up errors with
+            # context. But it would be less interruptive
+            # perhaps? Just issue a warning? Ideal would
+            # probably be to do the '""', but give a warning
+            # if it was Perl's default stringification. How to
+            # do this?
+            $v->can("string")
+            )
+        {
+            return &$escape(&$m($v));
+        }
     }
+    die "unexpected type of reference that doesn't have a 'string' method: "
+        . (show $v);
 }
 
 # XXX hack, the code is really hopeless, should use ~same code as for
 # body parts.
-sub _attributeval_to_string {
+sub _attribute_val_to_string {
     my ($v, $fh) = @_;
     my $ref = ref $v;
-    (
-        length($ref)
-        ? (
-            $ref eq "ARRAY"
-            ? join("", map { _attributeval_to_string($_, $fh) } @$v)
-            : is_pxmlflush($v) ? do { flush $fh or die $!; "" }
-            : object_force_escape(
-                pxmlforce($v),     "pxml_serialized_attribute_string",
-                *attribute_escape, $fh
-            )
-            )
-        :
+    if (length($ref)) {
+        if ($ref eq "ARRAY") {
+            join("", map { _attribute_val_to_string($_, $fh) } @$v)
+        } elsif (is_pxmlflush($v)) {
+            flush $fh or die $!;
+            ""
+        } else {
+            object_force_escape(pxmlforce($v),
+                "pxml_serialized_attribute_string",
+                *attribute_escape, $fh)
+        }
+    } else {
 
-            # fast path:
-            attribute_escape $v)
+        # fast path:
+        attribute_escape $v
+    }
 }
 
 sub _pxml_print_fragment_fast {
@@ -187,98 +193,132 @@ LP: {
         ## working on the code, please undo them first by using git
         ## revert.
         if (my $ref = ref $v) {
-            if ($ref eq "PXML::Element" or $ref eq "PXML::_::XHTML") {
-            PXML:
-                my $n = $v->name;
-                print $fh "<$n" or die $!;
-                if (my $attrs = $v->maybe_attributes) {
-                    for my $k (sort keys %$attrs) {
-                        print $fh " $k=\"" or die $!;
-                        my $str = _attributeval_to_string $$attrs{$k}, $fh;
-                        print $fh "$str\"" or die $!;
+            if (defined(my $class = blessed $v)) {
+                if (
+                       $ref eq "PXML::Element"
+                    or $ref eq "PXML::_::XHTML"
+
+                    # ^ is this a worthwhile optimization?
+                    or $v->isa("PXML::Element")
+                    )
+                {
+                PXML:
+                    my $n = $v->name;
+                    print $fh "<$n" or die $!;
+                    if (my $attrs = $v->maybe_attributes) {
+                        for my $k (sort keys %$attrs) {
+                            print $fh " $k=\"" or die $!;
+                            my $str = _attribute_val_to_string $$attrs{$k}, $fh;
+                            print $fh "$str\"" or die $!;
+                        }
                     }
-                }
-                my $body = $v->body;
+                    my $body = $v->body;
 
-                my $looksempty =
+                    my $looksempty =
 
-                    # fast path
-                    (
-                    not defined $body    # XX allow undef or don't? Please
-                                         # finally settle this!
-                        or (not ref $body and length($body) == 0)
-                        or (
-                        is_somearray($body) and (
-                            not @$body or (
-                                @$body == 1
-                                and
-                                ( # XX remove undef check here now, too? OK?--nope, necessary
-                                    not defined $$body[0]
-                                    or (is_somearray($$body[0])
-                                        and not @{ $$body[0] })
-                                    or is_empty_string($$body[0])
+                        # fast path
+                        (
+                        not defined $body    # XX allow undef or don't? Please
+                                             # finally settle this!
+                            or (not ref $body and length($body) == 0)
+                            or (
+                            is_somearray($body) and (
+                                not @$body or (
+                                    @$body == 1
+                                    and
+                                    ( # XX remove undef check here now, too? OK?--nope, necessary
+                                        not defined $$body[0]
+                                        or (is_somearray($$body[0])
+                                            and not @{ $$body[0] })
+                                        or is_empty_string($$body[0])
+                                    )
                                 )
                             )
-                        )
-                        )
-                    );
+                            )
+                        );
 
-                my $selfreferential;
-                if ($html5compat) {
-                    if ($$void_element_h{$n}) {
-                        if ($looksempty) {
-                            $selfreferential = 1;
+                    my $selfreferential;
+                    if ($html5compat) {
+                        if ($$void_element_h{$n}) {
+                            if ($looksempty) {
+                                $selfreferential = 1;
+                            } else {
+                                my $isempty =    # slow path
+                                    is_null(stream_mixed_flatten($body));
+                                $selfreferential = $isempty;
+                                warn "html5 compatible serialization requested "
+                                    . "but got void element '$n' that is not empty"
+                                    if not $isempty;
+                            }
                         } else {
-                            my $isempty =    # slow path
-                                is_null(stream_mixed_flatten($body));
-                            $selfreferential = $isempty;
-                            warn "html5 compatible serialization requested "
-                                . "but got void element '$n' that is not empty"
-                                if not $isempty;
+                            $selfreferential = 0;
                         }
                     } else {
-                        $selfreferential = 0;
+                        $selfreferential = $looksempty;
                     }
-                } else {
-                    $selfreferential = $looksempty;
-                }
-                if ($selfreferential) {
-                    print $fh "/>" or die $!;
-                } else {
-                    print $fh ">" or die $!;
-                    no warnings "recursion";    # hu.
-                    _pxml_print_fragment_fast($body, $fh, $html5compat,
-                        $void_element_h);
-                    print $fh "</$n>" or die $!;
-                }
-            } elsif (my $car_and_cdr = UNIVERSAL::can($v, "car_and_cdr")) {
-            PAIR:
-
-                #my $a;
-                ($a, $v) = &$car_and_cdr($v);
-                _pxml_print_fragment_fast($a, $fh, $html5compat,
-                    $void_element_h);
-
-                #_pxml_print_fragment_fast (cdr $v, $fh);
-                redo LP;
-            } elsif (my $for_each = UNIVERSAL::can($v, "for_each")) {
-
-                # catches null, too. Well.
-                &$for_each(
-                    $v,
-                    sub {
-                        my ($a) = @_;
-                        _pxml_print_fragment_fast($a, $fh, $html5compat,
+                    if ($selfreferential) {
+                        print $fh "/>" or die $!;
+                    } else {
+                        print $fh ">" or die $!;
+                        no warnings "recursion";    # hu.
+                        _pxml_print_fragment_fast($body, $fh, $html5compat,
                             $void_element_h);
+                        print $fh "</$n>" or die $!;
                     }
-                );
-            } elsif (UNIVERSAL::isa($ref, "FP::Lazy::Promise")) {
-            PROMISE:
+                } elsif (my $car_and_cdr = $v->can("car_and_cdr")) {
+                PAIR:
 
-                #_pxml_print_fragment_fast (force($v), $fh,
-                #                           $html5compat, $void_element_h);
-                $v = force($v, 1);    # XXX why nocache?
-                redo LP;
+                    #my $a;
+                    ($a, $v) = &$car_and_cdr($v);
+                    _pxml_print_fragment_fast($a, $fh, $html5compat,
+                        $void_element_h);
+
+                    #_pxml_print_fragment_fast (cdr $v, $fh);
+                    redo LP;
+                } elsif (my $for_each = $v->can("for_each")) {
+
+                    # catches null, too. Well.
+                    &$for_each(
+                        $v,
+                        sub {
+                            my ($a) = @_;
+                            _pxml_print_fragment_fast($a, $fh, $html5compat,
+                                $void_element_h);
+                        }
+                    );
+                } else {
+                    my $v2 = force($v, 1);
+
+                    # ^XX why pass nocache flag? (Was this to avoid
+                    # memory retention issues?)
+                    my $addr2 = refaddr($v2);
+                    if (defined($addr2) and $addr2 != refaddr($v)) {
+
+                        $v = $v2;
+                        redo LP;
+                    } elsif (is_somearray($v)) {
+
+                        # COPY-PASTE. Really should refactor
+                        # _pxml_print_fragment_fast into local hash-table
+                        # based dispatcher.
+                        no warnings "recursion";    # hu.
+                        for (@$v) {
+
+                           # XXX use Keep around $_ to prevent mutation of tree?
+                           # nope, can't, will prevent streaming.
+                            _pxml_print_fragment_fast($_, $fh, $html5compat,
+                                $void_element_h);
+                        }
+                    } elsif (is_pxmlflush $v) {
+                        flush $fh or die $!
+                    } else {
+
+                        # Fallback for references, XX copy-paste
+                        print $fh object_force_escape($v,
+                            "pxml_serialized_body_string", *content_escape, $fh)
+                            or die $!;
+                    }
+                }
             } else {
                 if (is_somearray($v)) {
                     no warnings "recursion";    # hu.
@@ -299,21 +339,27 @@ LP: {
                     $v = &$v();
                     redo LP;
                 } elsif (is_null $v) {
+                    die "OBSOLETE?";
 
                     # end of linked list, nothing
-                    # XX obsolete now, since UNIVERSAL::can ($v,
-                    # "for_each") above will catch it already.
-                } elsif (is_pxmlflush $v) {
-                    flush $fh or die $!
+                    # XX obsolete now, since $v->can("for_each") above
+                    # will catch it already.
                 } else {
+
+                    warn "XXX when does this happen?";
+
+                    #use FP::Repl;
+                    #repl;
 
                     # slow fallback...  again, see above **NOTE** re
                     # evil.
                     $ref or die "BUG";    # we're in the if ref scope, right?
-                    goto PXML    if UNIVERSAL::isa($v, "PXML::Element");
-                    goto PAIR    if is_pair $v;
-                    goto PROMISE if is_promise $v;
+                    goto PXML if $v->isa("PXML::Element");
+                    goto PAIR if is_pair $v;
 
+                    # goto PROMISE if is_promise $v;
+
+                    # Fallback for references, XX copy-paste
                     print $fh object_force_escape($v,
                         "pxml_serialized_body_string", *content_escape, $fh)
                         or die $!;
@@ -356,7 +402,7 @@ sub pxml_print_fragment_fast ($ $ ) {
         goto \&_pxml_print_fragment_fast;
     };
     if (length(my $r = ref $v)) {
-        if (UNIVERSAL::isa($v, "PXML::XHTML")) {
+        if (defined blessed $v and $v->isa("PXML::XHTML")) {
             @_ = ($v);
             goto &$with_first_element;
         } else {
@@ -376,7 +422,7 @@ sub pxml_print_fragment_fast ($ $ ) {
 sub pxml_xhtml_print_fast ($ $ ;$ ) {
     my ($v, $fh, $maybe_lang) = @_;
     weaken $_[0] if ref $_[0];    # ref check perhaps unnecessary here
-    if (not ref $v or not UNIVERSAL::isa($v, "PXML::Element")) {
+    if (not ref $v or (defined(blessed $v) and not $v->isa("PXML::Element"))) {
         die "not an element: " . (show $v);
     }
     if (not "html" eq $v->name) {
