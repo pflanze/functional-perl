@@ -2,6 +2,7 @@
 
 use strict;
 use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
 
 use Cwd 'abs_path';
 
@@ -40,42 +41,67 @@ chomp $top;
 
 chdir $top or die "can't chdir to Git working dir top '$top': $!";
 
-local $/ = "\0";
-my $in = xopen_sender qw(git status -z);
+sub git_status () {
+    local $/ = "\0";
+    my $in = xopen_sender qw(git status -z);
 
-my %indicating_modification = map { $_ => 1 } qw(A M R C);
+    my @items;
 
-my @paths;
+    while (defined(my $item = <$in>)) {
+        chomp $item;
 
-while (defined(my $item = <$in>)) {
-    chomp $item;
-
-    # X = staged, Y = unstaged changes
-    my ($X, $Y, $path) = $item =~ /(.)(.) (.*)/s
-        or die "invalid git-status -z item '$item'";
-    my $x = $indicating_modification{$X};
-    my $y = $indicating_modification{$Y};
-    next unless ($x or $y);
-    if (is_perl_file($path)) {
-        if ($x and $y) {
-            warn "$path: can't perltidy only part, thus skipped\n";
-        } else {
-            push @paths, $path;
-        }
+        # X = staged, Y = unstaged changes
+        my ($X, $Y, $path) = $item =~ /(.)(.) (.*)/s
+            or die "invalid git-status -z item '$item'";
+        push @items, [$X, $Y, $path]
     }
+    close $in or die "git status -z: $!";
+    $? == 0   or die "git status -z failed";
+
+    \@items
 }
 
-close $in or die "git status -z: $!";
-$? == 0   or die "git status -z failed";
+sub filter_status ($items) {
+
+    my %indicating_modification = map { $_ => 1 } qw(A M R C);
+
+    my @paths;
+
+    for my $item (@$items) {
+
+        # X = staged, Y = unstaged changes
+        my ($X, $Y, $path) = @$item;
+        my $x = $indicating_modification{$X};
+        my $y = $indicating_modification{$Y};
+        next unless ($x or $y);
+        if (is_perl_file($path)) {
+            if ($x and $y) {
+                warn "$path: can't perltidy only part, thus skipped\n";
+            } else {
+                push @paths, $path;
+            }
+        }
+    }
+
+    \@paths
+}
+
+my $paths = filter_status git_status;
 
 #use FP::Repl;repl;exit;
 
-if (@paths) {
-    my @cmd = ("perltidy", @paths);
+if (@$paths) {
+    my @cmd = ("perltidy", @$paths);
     warn "running @cmd...\n";
     system @cmd;
     $? == 0 or die "perltidy failed";
-    system "git", "add", "--", @paths;
+    system "git", "add", "--", @$paths;
     $? == 0 or die "git add failed";
+
+    my $items = git_status;
+    if (!@$items) {
+        warn "Nothing to commit after perltidy, aborting commit.\n";
+        exit 1
+    }
 }
 
