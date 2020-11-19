@@ -43,14 +43,25 @@ chdir $top or die "can't chdir to Git working dir top '$top': $!";
 local $/ = "\0";
 my $in = xopen_sender qw(git status -z);
 
+my %indicating_modification = map { $_ => 1 } qw(A M R C);
+
 my @paths;
+
 while (defined(my $item = <$in>)) {
     chomp $item;
+
+    # X = staged, Y = unstaged changes
     my ($X, $Y, $path) = $item =~ /(.)(.) (.*)/s
         or die "invalid git-status -z item '$item'";
-    next unless ($X eq 'A' or $X eq 'M' or $X eq 'R' or $X eq 'C');
+    my $x = $indicating_modification{$X};
+    my $y = $indicating_modification{$Y};
+    next unless ($x or $y);
     if (is_perl_file($path)) {
-        push @paths, $path;
+        if ($x and $y) {
+            warn "$path: can't perltidy only part, thus skipped\n";
+        } else {
+            push @paths, $path;
+        }
     }
 }
 
