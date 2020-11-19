@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -64,11 +64,12 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::ruse;
-require Exporter;
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use Carp;
+use Exporter ();
+
 our $DEBUG = 0
     ; # -1 = more than normal-silent. 0 = no debugging. 1,2,3= debugging levels.
 

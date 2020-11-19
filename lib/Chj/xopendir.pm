@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2014 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -101,14 +101,13 @@ or on the L<website|http://functional-perl.org/>.
 #'
 
 package Chj::xopendir;
-@ISA = 'Exporter';
-require Exporter;
-our @EXPORT = qw(xopendir perhaps_opendir perhaps_xopendir);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use Chj::IO::Dir;
+use Exporter 'import';
+
+our @EXPORT = qw(xopendir perhaps_opendir perhaps_xopendir);
 
 sub xopendir($) {
     unshift @_, 'Chj::IO::Dir';
