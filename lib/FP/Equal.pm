@@ -182,7 +182,9 @@ use Scalar::Util qw(refaddr blessed);
 use FP::Lazy;
 
 sub pointer_eq ($$) {
-    refaddr($_[0]) == refaddr($_[1])
+    my $a = refaddr($_[0]) // return;
+    my $b = refaddr($_[1]) // return;
+    $a == $b
 }
 
 sub make_equal {
