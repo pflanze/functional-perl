@@ -237,18 +237,18 @@ sub show ($) {
     my ($v) = @_;
     if (defined blessed($v)) {
         if (my $m = $v->can("FP_Show_show")) {
-            (&$m($v, *show))[0]
+            (&$m($v, \&show))[0]
         } elsif ($m = $$primitive_show{ reftype $v}) {
 
             # blessed basic type
-            my ($str, $includes_blessing) = &$m($v, *show);
+            my ($str, $includes_blessing) = &$m($v, \&show);
             $includes_blessing ? $str : "bless($str, " . &show(ref($v)) . ")"
         } else {
             terseDumper($v)
         }
     } elsif (length(my $r = ref $v)) {
         if (my $m = $$primitive_show{$r}) {
-            (&$m($v, *show))[0]
+            (&$m($v, \&show))[0]
         } else {
             terseDumper($v)
         }
