@@ -130,8 +130,8 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
         array_to_hashset);
 
     use FP::Struct [
-        [*is_procedure,                                           "nav_bar"],
-        [maybe instance_of "FunctionalPerl::Htmlgen::Nav::Index", "index"]
+        [*is_procedure,                                            "nav_bar"],
+        [maybe(instance_of "FunctionalPerl::Htmlgen::Nav::Index"), "index"]
         ],
         "FunctionalPerl::Htmlgen::Nav::Entry";
 
