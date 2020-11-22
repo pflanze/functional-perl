@@ -56,7 +56,7 @@ use PXML::Element;
 use FP::Predicates 'instance_of';
 use Scalar::Util qw(blessed);
 
-sub is_pxml_element ($);
+sub is_pxml_element;
 *is_pxml_element = instance_of("PXML::Element");
 
 {
@@ -77,7 +77,7 @@ sub pxmlflush {
     $flush
 }
 
-sub is_pxmlflush ($) {
+sub is_pxmlflush {
     my ($v) = @_;
     blessed($v) // return;
     $v->isa("PXML::Flush")
