@@ -174,31 +174,31 @@ sub fail {
 # that the caller created a copy of those anyway, in which case there
 # is no reason for fear from mutations from scopes before it got
 # control of the value:
-sub is_pure ($) {
+sub is_pure {
     my ($v) = @_;
     blessed($v) // return ((length ref $v) ? '' : 1);
     $v->isa("FP::Abstract::Pure") or fail "is_pure", $v
 }
 
-sub is_pure_object ($) {
+sub is_pure_object {
     my ($v) = @_;
     blessed($v) // return;
     $v->isa("FP::Abstract::Pure") or fail "is_pure_object", $v
 }
 
-sub is_pure_class ($) {
+sub is_pure_class {
     my $r = is_class_name($_[0]);
     $r or return failwith [$r], "is_pure_class";
     $_[0]->isa("FP::Abstract::Pure") or fail "is_pure_class", $_[0]
 }
 
-sub is_string ($) {
+sub is_string {
     my ($v) = @_;
     (defined $v and not ref $v)    # relax?
         or fail "is_string", $v
 }
 
-sub is_nonnumeric_string ($) {
+sub is_nonnumeric_string {
     my ($v) = @_;
     (
         defined $v and not ref $v    # relax?
@@ -207,7 +207,7 @@ sub is_nonnumeric_string ($) {
         or fail "is_string", $v
 }
 
-sub is_nonnullstring ($) {
+sub is_nonnullstring {
     my ($v) = @_;
     (
         defined $v and not ref $v    # relax?
@@ -216,7 +216,7 @@ sub is_nonnullstring ($) {
         or fail "is_nonnullstring", $v
 }
 
-sub is_natural0 ($) {
+sub is_natural0 {
     my ($v) = @_;
     (
         defined $v and not ref $v    # relax?
@@ -225,7 +225,7 @@ sub is_natural0 ($) {
         or fail "is_natural0", $v
 }
 
-sub is_natural ($) {
+sub is_natural {
     my ($v) = @_;
     (
         defined $v and not ref $v       # relax?
@@ -236,11 +236,11 @@ sub is_natural ($) {
 
 # XX careful these do not check for number types first
 
-sub is_even ($) {
+sub is_even {
     ($_[0] & 1) == 0 or fail "is_even", $_[0]
 }
 
-sub is_odd ($) {
+sub is_odd {
     ($_[0] & 1) or fail "is_odd", $_[0]
 }
 
@@ -265,44 +265,44 @@ TEST {
 # names? (number versus string comparison) (wish Perl hat generics
 # for those instead..)
 
-sub less_than ($) {
+sub less_than {
     my ($x) = @_;
 
-    sub ($) {
+    sub {
         $_[0] < $x or fail "less_than", $x, $_[0]    # last value last, ok?
     }
 }
 
-sub greater_than ($) {
+sub greater_than {
     my ($x) = @_;
 
-    sub ($) {
+    sub {
         $_[0] > $x or fail "greater_than", $x, $_[0]    # last value last, ok?
     }
 }
 
-sub less_equal ($) {
+sub less_equal {
     my ($x) = @_;
 
-    sub ($) {
+    sub {
         $_[0] <= $x or fail "less_equal", $x, $_[0]     # last value last, ok?
     }
 }
 
-sub greater_equal ($) {
+sub greater_equal {
     my ($x) = @_;
 
-    sub ($) {
+    sub {
         $_[0] >= $x or fail "greater_equal", $x, $_[0]    # last value last, ok?
     }
 }
 
-sub is_zero ($) {
+sub is_zero {
     $_[0] == 0 or fail "is_zero", $_[0]
 }
 
 # strictly 0 or 1
-sub is_boolean01 ($) {
+sub is_boolean01 {
     (
         not ref($_[0])                                    # relax?
             and $_[0] =~ /^[01]\z/
@@ -310,13 +310,13 @@ sub is_boolean01 ($) {
         or fail "is_boolean01", $_[0]
 }
 
-sub is_booleanyesno ($) {
+sub is_booleanyesno {
     my ($v) = @_;
     (not ref $v and $v eq "yes" or $v eq "no") or fail "is_booleanyesno", $v
 }
 
 # undef, 0, "", or 1
-sub is_boolean ($) {
+sub is_boolean {
     (
         not ref($_[0])    # relax?
             and (!$_[0] or $_[0] eq "1")
@@ -324,18 +324,18 @@ sub is_boolean ($) {
         or fail "is_boolean", $_[0]
 }
 
-sub is_hash ($) {
+sub is_hash {
     (defined $_[0] and ref($_[0]) eq "HASH") or fail "is_hash", $_[0]
 }
 
-sub is_array ($) {
+sub is_array {
     (defined $_[0] and ref($_[0]) eq "ARRAY") or fail "is_array", $_[0]
 }
 
 # Usually you should prefer `is_procedure` (see below) over this, as
 # we like to pass globs as subroutine place holders, too.
 
-sub is_coderef ($) {
+sub is_coderef {
     (defined $_[0] and ref($_[0]) eq "CODE") or fail "is_coderef", $_[0]
 }
 
@@ -344,7 +344,7 @@ sub is_coderef ($) {
 # inconsistent, too, calling those code refs, which matches the
 # is_coderef naming above.
 
-sub is_procedure ($) {
+sub is_procedure {
     (
         defined $_[0]
             and (ref($_[0]) eq "CODE"
@@ -362,23 +362,23 @@ TEST { is_procedure *fifu } 0;
 
 my $classpart_re = qr/\w+/;
 
-sub is_class_name ($) {
+sub is_class_name {
     my ($v) = @_;
     !length ref($v) and $v =~ /^(?:${classpart_re}::)*$classpart_re\z/
         or fail "is_class_name", $v
 }
 
-sub instance_of ($) {
+sub instance_of {
     my ($class) = @_;
     is_class_name $class or die "need class name string, got: $class";
 
-    sub ($) {
+    sub {
         ((defined blessed $_[0]) ? $_[0]->isa($class) : '')
             or fail "instance_of", $class, $_[0]
     }
 }
 
-sub is_instance_of ($$) {
+sub is_instance_of {
     my ($v, $class) = @_;
 
     # is_class_name $class or die "need class name string, got: $class";
@@ -386,7 +386,7 @@ sub is_instance_of ($$) {
         or fail "is_instance_of", $v, $class
 }
 
-sub is_subclass_of ($$) {
+sub is_subclass_of {
     my ($v, $class) = @_;
 
     # is_class_name $class or die "need class name string, got: $class";
@@ -425,7 +425,7 @@ TEST {
 ['', '', '', 1, 1, '', '', '', '', 1];
 
 # should probably be in a filesystem lib instead?
-sub is_filename ($) {
+sub is_filename {
     my ($v) = @_;
     (is_nonnullstring($v) and !($v =~ m|/|) and !($v eq ".") and !($v eq ".."))
         or fail "is_filename", $v
@@ -435,13 +435,13 @@ sub is_filename ($) {
 # to do about it?
 use FP::Lazy;    # sigh dependency, too.
 
-sub is_sequence ($) {
+sub is_sequence {
     my $v = force $_[0];
     blessed($v) // return;
     $v->isa("FP::Abstract::Sequence") or fail "is_sequence", $v
 }
 
-sub is_proper_sequence ($) {
+sub is_proper_sequence {
     my $v = force $_[0];
     blessed($v) // return;
     ($v->isa("FP::Abstract::Sequence") and $v->is_proper_sequence)
@@ -450,18 +450,18 @@ sub is_proper_sequence ($) {
 
 # Like is_sequence but only returns true when the sequence isn't empty
 # (similar to Clojure's `(seq? (seq v))`)
-sub is_seq ($) {
+sub is_seq {
     my $v = force $_[0];
     blessed($v) // return;
     ($v->isa("FP::Abstract::Sequence") && (not $v->is_null))
         or fail "is_sequence", $v
 }
 
-sub maybe ($) {
+sub maybe {
     @_ == 1 or die "wrong number of arguments";
     my ($pred) = @_;
 
-    sub ($) {
+    sub {
         my ($v) = @_;
         defined $v
             ? do {
@@ -473,17 +473,17 @@ sub maybe ($) {
 }
 
 # (this would also be a candidate for FP::Ops)
-sub is_defined ($) {
+sub is_defined {
     defined $_[0] or fail "is_defined", $_[0]
 }
 
-sub is_true ($) {
+sub is_true {
     $_[0] or fail "is_true", $_[0]
 }
 
 # (this would also be a candidate as 'not' with a different name for
 # FP::Ops)
-sub is_false ($) {
+sub is_false {
     @_ == 1 or die "wrong number of arguments";
     !$_[0] or fail "is_false", $_[0]
 }
@@ -496,7 +496,7 @@ sub false {
     0
 }
 
-sub complement ($) {
+sub complement {
     @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
@@ -554,7 +554,7 @@ sub all_of {
     }
 }
 
-sub both ($$) {
+sub both {
     @_ == 2 or die "expecting 2 arguments";
     all_of(@_)
 }
