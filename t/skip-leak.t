@@ -20,7 +20,7 @@ use Chj::chompspace;
 
 is chompspace(
     readin(
-        "head -c 200000000 /dev/zero | perl examples/skip --leaktest 10000000 1 | wc -c |"
+        "( dd bs=10000 count=20000 2>/dev/null < /dev/zero || head -c 200000000 /dev/zero) | perl examples/skip --leaktest 10000000 1 | wc -c |"
     )
     ),
     "189999999";
