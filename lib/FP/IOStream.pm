@@ -268,7 +268,7 @@ sub timestream (;$) {
 sub xstream_print ($;$) {
     @_ == 2 or @_ == 1 or die "wrong number of arguments";
     my ($s, $maybe_fh) = @_;
-    my $fh = $maybe_fh // glob_to_fh * STDOUT;
+    my $fh = $maybe_fh // glob_to_fh(*STDOUT);
     weaken $_[0];
     $s->for_each(
         sub {
