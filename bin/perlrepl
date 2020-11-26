@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 #
-# Copyright (c) 2002,2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2002,2014-2015,2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -112,7 +112,8 @@ use FP::Repl::WithRepl qw(push_withrepl WithRepl_eval WithRepl_eval_e);
 
 push_withrepl(0) if $opt_t;
 
-sub moduleoption_to_code ($) {
+sub moduleoption_to_code {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     $a =~ s/([^=]+)//s or die "invalid -M option '$_'";
     my $path_or_package = $1;

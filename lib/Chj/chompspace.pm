@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -33,7 +33,8 @@ our @EXPORT = qw(chompspace);
 
 #@EXPORT_OK = qw();
 
-sub chompspace($) {
+sub chompspace {
+    @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
     $str =~ s/^\s+//s;
     $str =~ s/\s+\z//s;

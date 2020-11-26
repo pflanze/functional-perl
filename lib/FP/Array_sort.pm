@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -88,7 +88,7 @@ sub array_sort ($;$) {
     }
 }
 
-sub array_sortCompare ($) {
+sub array_sortCompare {
     @_ == 1 or die "wrong number of arguments";
     my ($in) = @_;
     [sort { $a->FP_Compare_compare($b) } @$in]
@@ -111,7 +111,7 @@ sub on_maybe ($$) {
 }
 
 # see also `complement` from FP::Predicates
-sub cmp_complement ($) {
+sub cmp_complement {
     @_ == 1 or die "expecting 1 argument";
     my ($cmp) = @_;
     sub {

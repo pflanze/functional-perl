@@ -217,7 +217,8 @@ TEST {
 }
 cons(5, cons(6, strictnull));
 
-sub is_strictlist ($) {
+sub is_strictlist {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     (

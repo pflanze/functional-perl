@@ -165,7 +165,8 @@ package FP::AST::Perl::Var {
     "FP::AST::Perl::Var";    ## XX Are those not all auto generated MAN ???
 
 # XX move to FP::Predicates? Or FP::Parser::Perl ?
-sub is_lexvar_string ($) {
+sub is_lexvar_string {
+    @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
     $str =~ /^\w+\z/
 }

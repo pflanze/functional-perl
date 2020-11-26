@@ -122,7 +122,8 @@ list('a', '-', 'b', '-', 'c');
 TEST { stream(1, 44, 2)->join("-") }
 '1-44-2';
 
-sub is_pair_purearray ($) {
+sub is_pair_purearray {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     [is_pair $v, is_purearray $v ]
 }

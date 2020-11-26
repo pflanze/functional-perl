@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -151,7 +151,8 @@ use Carp;
 # two? That would save the need for flip2of3 etc., but it would also
 # be less helpful for error-checking.
 
-sub flip ($) {
+sub flip {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 2 or croak "expecting 2 arguments";
@@ -166,7 +167,8 @@ TEST {
 3 / 2;
 
 # same as flip but pass a 3rd argument unchanged (flip 2 in 3)
-sub flip2of3 ($) {
+sub flip2of3 {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 3 or croak "expecting 3 arguments";
@@ -175,7 +177,8 @@ sub flip2of3 ($) {
     }
 }
 
-sub rot3right ($) {
+sub rot3right {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 3 or croak "expecting 3 arguments";
@@ -184,7 +187,8 @@ sub rot3right ($) {
     }
 }
 
-sub rot3left ($) {
+sub rot3left {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 3 or croak "expecting 3 arguments";

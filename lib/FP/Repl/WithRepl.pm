@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -139,7 +139,8 @@ TEST {
 # bigger stack depths, easily turning algorithms into O(n^2)! Needs a
 # solution in XS.
 
-sub current_user_frame ($) {
+sub current_user_frame {
+    @_ == 1 or die "wrong number of arguments";
     my ($skip) = @_;
     if ($skip) { $skip >= 0 or die "expecting maybe(natural0), got '$skip'"; }
     my @v;
@@ -167,7 +168,8 @@ sub current_user_frame ($) {
 
 our $debug = 0;
 
-sub have_eval_since_frame ($) {
+sub have_eval_since_frame {
+    @_ == 1 or die "wrong number of arguments";
     my ($startframe) = @_;
 
     my @v;
@@ -252,7 +254,8 @@ sub handler_for ($$) {
         }, "FP::Repl::WithRepl::Handler"  # just to mark, for Chj::Backtrace ugh
 }
 
-sub handler ($) {
+sub handler {
+    @_ == 1 or die "wrong number of arguments";
     my ($skip) = @_;
     handler_for(current_user_frame($skip), $SIG{__DIE__})
 }
@@ -273,7 +276,8 @@ TEST {
 
 our @stack;
 
-sub push_withrepl ($) {
+sub push_withrepl {
+    @_ == 1 or die "wrong number of arguments";
     my ($skip) = @_;
     push @stack, $SIG{__DIE__};
     $SIG{__DIE__} = handler($skip);

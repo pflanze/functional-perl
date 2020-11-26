@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2011-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2011-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -193,7 +193,8 @@ TEST {
 }
 1;
 
-sub t_str_clean ($) {
+sub t_str_clean {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     path($a)->clean_dot->xclean_dotdot;
 }
@@ -252,7 +253,8 @@ use FP::List qw(unfold);
 use FP::Array qw(array_is_null array_map);
 use FP::Ops qw(the_method);
 
-sub tupleify ($) {
+sub tupleify {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 1 or die "wrong number of arguments";

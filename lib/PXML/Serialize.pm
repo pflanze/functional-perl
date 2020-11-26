@@ -79,14 +79,16 @@ use FP::Weak 'weaken';    # instead of from Scalar::Util so that it can
                           # anyway)
 use Scalar::Util qw(blessed refaddr);
 
-sub is_somearray ($) {
+sub is_somearray {
+    @_ == 1 or die "wrong number of arguments";
     my $r = ref($_[0]);
 
     # XX mess, make this a proper dependency
     $r eq "ARRAY" or $r eq "PXML::Body"
 }
 
-sub is_empty_string ($) {
+sub is_empty_string {
+    @_ == 1 or die "wrong number of arguments";
     defined $_[0] and !length ref $_[0] and $_[0] eq ""
 }
 
@@ -111,9 +113,10 @@ sub content_escape {
     $str
 }
 
-sub pxmlforce ($);
+sub pxmlforce;
 
-sub pxmlforce ($) {
+sub pxmlforce {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     if (my $r = ref $v) {
         if ($r eq "CODE") {

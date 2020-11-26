@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2018 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -135,7 +135,8 @@ sub singlequote_sh($ ;$ ) {
 
 # don't quote bare words or simply formatted paths that don't need to
 # be quoted
-sub possibly_singlequote_sh ($) {
+sub possibly_singlequote_sh {
+    @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
     if ($str =~ m{^[\w/.-]+\z}) {
         $str
@@ -148,7 +149,8 @@ sub singlequote_sh_many {
     join " ", map { possibly_singlequote_sh $_ } @_
 }
 
-sub quote_javascript ($) {
+sub quote_javascript {
+    @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
 
     #require JSON::MaybeXS;
@@ -168,7 +170,8 @@ sub quote_javascript ($) {
         # <mst> intentionally
 }
 
-sub _quote_C($) {
+sub _quote_C {
+    @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
     $str =~ s{(.)}{
         my $c = $1;
@@ -186,7 +189,8 @@ sub _quote_C($) {
     $str
 }
 
-sub quote_C($) {
+sub quote_C {
+    @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
     '"' . _quote_C($str) . '"'
 }

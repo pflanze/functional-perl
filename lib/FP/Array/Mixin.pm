@@ -41,7 +41,8 @@ use FP::Combinators qw (flip flip2of3 rot3right rot3left);
 use FP::Array ":all";
 use FP::Array_sort qw(array_sort array_sortCompare);
 
-sub blessing ($) {
+sub blessing {
+    @_ == 1 or die "wrong number of arguments";
     my ($m) = @_;
     sub {
         my $class = ref $_[0];
@@ -53,7 +54,8 @@ sub blessing ($) {
     }
 }
 
-sub blessing2 ($) {
+sub blessing2 {
+    @_ == 1 or die "wrong number of arguments";
     my ($m) = @_;
     sub {
         my $class = ref $_[0];
@@ -65,7 +67,8 @@ sub blessing2 ($) {
     }
 }
 
-sub blessing_snd ($) {
+sub blessing_snd {
+    @_ == 1 or die "wrong number of arguments";
     my ($m) = @_;
     sub {
         my $class = ref $_[0];

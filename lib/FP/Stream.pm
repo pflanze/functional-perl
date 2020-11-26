@@ -273,7 +273,7 @@ TEST { stream_step_range(2, 3, 7)->array }
 TEST { stream_step_range(-1, 3, 1)->array }
 [3, 2, 1];
 
-sub stream_length ($);
+sub stream_length;
 *stream_length = FP::List::make_length(1);
 
 *FP::List::List::stream_length = *stream_length;
@@ -339,7 +339,8 @@ TEST {
 TEST { stream_fold(\&cons, null, stream(1, 2))->array }
 [2, 1];
 
-sub stream_sum ($) {
+sub stream_sum {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     weaken $_[0];
     stream_fold(sub { $_[0] + $_[1] }, 0, $s)
@@ -655,7 +656,8 @@ sub string_to_stream ($;$) {
     stream__string_fold_right(*cons, $maybe_tail // null, $str)
 }
 
-sub stream_to_string ($) {
+sub stream_to_string {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     weaken $_[0];
     my $str = "";
@@ -839,9 +841,10 @@ TEST { list_ref cons(0, stream(1, 2, 3)), 2 } 2;
 TEST { stream_ref cons(0, stream(1, 2, 3)), 2 } 2;
 
 # force everything deeply
-sub F ($);
+sub F;
 
-sub F ($) {
+sub F {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
 
     #weaken $_[0]; since I usually use it interactively, and should
@@ -867,7 +870,8 @@ sub F ($) {
     }
 }
 
-sub stream_to_array ($) {
+sub stream_to_array {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     weaken $_[0];
     my $res = [];
@@ -899,7 +903,8 @@ TEST {
 }
 bless [1, 9, 16], "FP::_::PureArray";
 
-sub stream_to_list ($) {
+sub stream_to_list {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     weaken $_[0];
     array_to_list stream_to_array $l
@@ -974,7 +979,8 @@ sub stream_any ($ $) {
 *FP::List::List::stream_any = flip * stream_any;
 
 # (meant as a debugging tool: turn stream to string)
-sub stream_show ($) {
+sub stream_show {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     join("", map {"  '$_'\n"} @{ stream_to_array $s })
 }

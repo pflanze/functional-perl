@@ -43,7 +43,8 @@ use Scalar::Util 'reftype';
 
 # for tests, see FP::Predicates
 
-sub is_filehandle ($) {
+sub is_filehandle {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
 
     # NOTE: never returns true for strings, even though plain strings

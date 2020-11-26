@@ -1,5 +1,5 @@
 #
-# Copyright 2013 by Christian Jaeger, ch at christianjaeger ch
+# Copyright 2013-2020 by Christian Jaeger, ch at christianjaeger ch
 # This is free software, offered under the terms of the MIT License.
 # See the file COPYING that came bundled with this file.
 #
@@ -30,7 +30,8 @@ our @EXPORT      = qw(tempdir);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-sub tempdir ($) {
+sub tempdir {
+    @_ == 1 or die "wrong number of arguments";
     my ($base)     = @_;
     my $tries      = 0;
     my $perhapsrnd = "";

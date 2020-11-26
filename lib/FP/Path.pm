@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2011-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2011-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -69,7 +69,8 @@ use FP::Predicates qw(is_string is_boolean);
 use FP::Show;
 use FP::Equal;
 
-sub perhaps_segment_error ($) {
+sub perhaps_segment_error {
+    @_ == 1 or die "wrong number of arguments";
     my ($segment) = @_;
     return "segments must be strings" unless is_string $segment;
     return "segments cannot be the empty string" unless length $segment;
@@ -77,9 +78,13 @@ sub perhaps_segment_error ($) {
     ()
 }
 
-sub is_segment ($) { not perhaps_segment_error $_[0] }
+sub is_segment {
+    @_ == 1 or die "wrong number of arguments";
+    not perhaps_segment_error $_[0]
+}
 
-sub check_segment ($) {
+sub check_segment {
+    @_ == 1 or die "wrong number of arguments";
     if (my ($e) = perhaps_segment_error $_[0]) {
         die $e
     }

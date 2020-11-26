@@ -1,6 +1,6 @@
 # Mon Jul 14 07:58:53 2003  Christian Jaeger, christian.jaeger@ethlife.ethz.ch
 #
-# Copyright 2003 by Christian Jaeger
+# Copyright 2003-2020 by Christian Jaeger
 # Published under the same terms as perl itself.
 #
 # $Id$
@@ -58,7 +58,8 @@ sub stringify {
     $self->path
 }
 
-sub _Addslash ($) {
+sub _Addslash {
+    @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
     $str =~ m|/$|s ? $str : $str . "/"
 }

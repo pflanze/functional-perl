@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -54,7 +54,8 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 
-sub untainted ($) {
+sub untainted {
+    @_ == 1          or die "wrong number of arguments";
     $_[0] =~ /(.*)/s or die "??";
     $1
 }
@@ -77,7 +78,8 @@ TEST_EXCEPTION { untainted_with "Foo ", '^\w+$' }    # /s missing.
 
 use Scalar::Util 'tainted';
 
-sub is_untainted ($) {
+sub is_untainted {
+    @_ == 1 or die "wrong number of arguments";
     not tainted $_[0]
 }
 

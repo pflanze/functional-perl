@@ -1,7 +1,8 @@
 use Test::Requires qw(BSD::Resource);
 import BSD::Resource;
 
-sub MB ($) {
+sub MB {
+    @_ == 1 or die "wrong number of arguments";
     $_[0] * 1048576
 }
 
@@ -11,7 +12,8 @@ my $RLIMIT_KIND =
     # memory limit it supports. Linux does, too, so just use that one
     RLIMIT_DATA;
 
-sub setlimit_mem_MB ($) {
+sub setlimit_mem_MB {
+    @_ == 1 or die "wrong number of arguments";
     my ($limit_MB) = @_;
     my $limit = MB $limit_MB;
     setrlimit $RLIMIT_KIND, $limit, $limit or die "setrlimit: $!";

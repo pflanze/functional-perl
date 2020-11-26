@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -65,6 +65,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 
+# Exception: use prototype here? Really DSL. Point it out early.
 sub __ ($) { }
 
 # optimization would be to make it syntax...
@@ -73,7 +74,8 @@ my %endquote = ('[' => ']', '(' => ')', '{' => '}');
 
 my $warned;
 
-sub docstring ($) {
+sub docstring {
+    @_ == 1 or die "wrong number of arguments";
     my ($fn_or_glob) = @_;
     my $fn
         = UNIVERSAL::isa($fn_or_glob,  "CODE") ? $fn_or_glob

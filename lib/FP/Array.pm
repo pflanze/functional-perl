@@ -117,48 +117,57 @@ sub array_equal {
     }
 }
 
-sub array_maybe_first ($) {
+sub array_maybe_first {
+    @_ == 1 or die "wrong number of arguments";
     $_[0][0]
 }
 
-sub array_perhaps_first ($) {
+sub array_perhaps_first {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     @$a ? $$a[0] : ()
 }
 
-sub array_first ($) {
+sub array_first {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     @$a or die "can't take the first of an empty array";
     $$a[0]
 }
 
-sub array_maybe_rest ($) {
+sub array_maybe_rest {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     @$a ? [@$a[1 .. $#$a]] : undef
 }
 
-sub array_perhaps_rest ($) {
+sub array_perhaps_rest {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     @$a ? [@$a[1 .. $#$a]] : ()
 }
 
-sub array_rest ($) {
+sub array_rest {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     @$a or die "can't take the rest of an empty array";
     [@$a[1 .. $#$a]]
 }
 
-sub array_maybe_first_and_rest ($) {
+sub array_maybe_first_and_rest {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     @$a ? (array_first $a, array_rest $a) : undef
 }
 
-sub array_first_and_rest ($) {
+sub array_first_and_rest {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     (array_first $a, array_rest $a)
 }
 
-sub array_second ($) {
+sub array_second {
+    @_ == 1 or die "wrong number of arguments";
     $_[0][1]
 }
 
@@ -180,11 +189,13 @@ TEST { array_ref [5], 0 } 5;
 TEST_EXCEPTION { array_ref [5], 1 } "index out of bounds: 1";
 TEST_EXCEPTION { array_ref [5], -1 } "index out of bounds: -1";
 
-sub array_length ($) {
+sub array_length {
+    @_ == 1 or die "wrong number of arguments";
     scalar @{ $_[0] }
 }
 
-sub array_is_null ($) {
+sub array_is_null {
+    @_ == 1 or die "wrong number of arguments";
     @{ $_[0] } == 0
 }
 
@@ -213,14 +224,16 @@ sub array_push {
     $a2
 }
 
-sub array_pop ($) {
+sub array_pop {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     my $a2  = [@$a];
     my $v   = pop @$a2;
     ($v, $a2)
 }
 
-sub array_shift ($) {
+sub array_shift {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     my $a2  = [@$a];
     my $v   = shift @$a2;
@@ -299,18 +312,21 @@ sub array_append {
     ]
 }
 
-sub array_reverse ($) {
+sub array_reverse {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     [reverse @$v]
 }
 
-sub array_xone ($) {
+sub array_xone {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     @$a == 1 or croak "expecting 1 element, got " . @$a;
     $$a[0]
 }
 
-sub array_perhaps_one ($) {
+sub array_perhaps_one {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     if (@$a == 1) {
         $$a[0]
@@ -511,8 +527,8 @@ sub array_strings_join ($$) {
 TEST { array_strings_join [1, 2, 3], "-" }
 "1-2-3";
 
-sub array_to_string ($) {
-    @_ == 1 or croak "wrong number of arguments";
+sub array_to_string {
+    @_ == 1 or die "wrong number of arguments";
     my ($ary) = @_;
     join "", @$ary
 }
@@ -566,11 +582,13 @@ TEST {
 }
 1;
 
-sub array_sum ($) {
+sub array_sum {
+    @_ == 1 or die "wrong number of arguments";
     array_fold \&add, 0, $_[0]
 }
 
-sub array_last ($) {
+sub array_last {
+    @_ == 1 or die "wrong number of arguments";
     my ($a) = @_;
     $$a[-1]
 }

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -84,17 +84,23 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 
-sub array_to_hashset ($) {
+sub array_to_hashset {
+    @_ == 1 or die "wrong number of arguments";
     +{ map { $_ => $_ } @{ $_[0] } }
 }
 
-sub array_to_lchashset ($) {
+sub array_to_lchashset {
+    @_ == 1 or die "wrong number of arguments";
     +{ map { lc($_) => $_ } @{ $_[0] } }
 }
 
-sub hashset_to_array ($) { [sort values %{ $_[0] }] }
+sub hashset_to_array {
+    @_ == 1 or die "wrong number of arguments";
+    [sort values %{ $_[0] }]
+}
 
-sub hashset_to_predicate ($) {
+sub hashset_to_predicate {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     sub {
         @_ == 1 or die "wrong number of arguments";
@@ -102,11 +108,13 @@ sub hashset_to_predicate ($) {
     }
 }
 
-sub hashset_keys_unsorted ($) {
+sub hashset_keys_unsorted {
+    @_ == 1 or die "wrong number of arguments";
     keys %{ $_[0] }
 }
 
-sub hashset_keys ($) {
+sub hashset_keys {
+    @_ == 1 or die "wrong number of arguments";
     sort keys %{ $_[0] }
 }
 
@@ -167,11 +175,13 @@ sub hashset_is_subset ($ $) {
     1
 }
 
-sub hashset_size ($) {
+sub hashset_size {
+    @_ == 1 or die "wrong number of arguments";
     scalar keys %{ $_[0] }
 }
 
-sub hashset_empty ($) {
+sub hashset_empty {
+    @_ == 1 or die "wrong number of arguments";
     not keys %{ $_[0] }
 }
 

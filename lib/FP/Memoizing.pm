@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -72,17 +72,20 @@ use FP::Hash qw(hash_cache);
 # ----------------------------------------------------------------
 # For keys:
 
-# sub xnfreeze ($) {
+# sub xnfreeze {
+#    @_ == 1 or die "wrong number of arguments";
 #     nfreeze ($_[0])
 #       // die "can't freeze this: ".TerseDumper ($_[0]);
 # }
 
-sub xncanonicalfreeze ($) {
+sub xncanonicalfreeze {
+    @_ == 1 or die "wrong number of arguments";
     local $Storable::canonical = 1;
     nfreeze($_[0])
 }
 
-#sub xthaw ($) {
+#sub xthaw {
+#    @_ == 1 or die "wrong number of arguments";
 #    thaw ($_[0])
 #      // die "corrupted file, can't thaw";
 #}
@@ -132,7 +135,8 @@ sub fh_xnstore ($$) {
     # either. Sigh.
 }
 
-sub fh_xdeserialize ($) {
+sub fh_xdeserialize {
+    @_ == 1 or die "wrong number of arguments";
     fd_retrieve($_[0]) // die "SOME retrieval error";
 }
 
@@ -158,7 +162,8 @@ sub memoizing_ ($$$) {
     }
 }
 
-sub memoizing ($) {
+sub memoizing {
+    @_ == 1 or die "wrong number of arguments";
     my ($fn) = @_;
     memoizing_ $fn, +{}, \&hash_cache
 }
@@ -195,7 +200,8 @@ sub memoizing_to_dir ($$) {
     memoizing_ $f, $dirpath, \&file_cache
 }
 
-sub tests_for ($) {
+sub tests_for {
+    @_ == 1 or die "wrong number of arguments";
     my ($memoizing) = @_;
 
     my ($t_count, $f);

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -21,7 +21,8 @@ use Chj::xperlfunc qw(xlaunch);
 use Chj::xhome qw(xeffectiveuserhome);
 my $HOME = xeffectiveuserhome;
 
-sub clean ($) {
+sub clean {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
 
     $s =~ s/^\s*//s;

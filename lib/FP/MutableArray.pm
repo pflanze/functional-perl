@@ -66,7 +66,8 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Scalar::Util 'blessed';
 
-sub is_mutablearray ($) {
+sub is_mutablearray {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     ($r eq "FP::_::MutableArray" or $v->isa("FP::_::MutableArray"))
@@ -76,7 +77,8 @@ sub mutablearray {
     FP::_::MutableArray->new_from_array([@_])
 }
 
-sub array_to_purearray ($) {
+sub array_to_purearray {
+    @_ == 1 or die "wrong number of arguments";
     FP::_::MutableArray->new_from_array($_[0])
 }
 

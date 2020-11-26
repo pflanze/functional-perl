@@ -97,7 +97,8 @@ sub purehash {
     $res
 }
 
-sub is_purehash ($) {
+sub is_purehash {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     $v->isa("FP::_::PureHash")

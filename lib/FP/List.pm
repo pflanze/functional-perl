@@ -416,7 +416,7 @@ sub cons ($$) {
     }
 }
 
-sub cons_ ($) {
+sub cons_ {
     @_ == 1 or die "wrong number of arguments";
     my ($item) = @_;
     sub {
@@ -457,18 +457,21 @@ sub unsafe_cons ($$) {
 
 # WARNING: be careful, this isn't safe even if `is_pair` returns true, as
 # that only assures that ->car etc. can be called.
-sub unsafe_car ($) {
+sub unsafe_car {
+    @_ == 1 or die "wrong number of arguments";
     $_[0][0]
 }
 
 # WARNING: same as for unsafe_car
-sub unsafe_cdr ($) {
+sub unsafe_cdr {
+    @_ == 1 or die "wrong number of arguments";
     $_[0][1]
 }
 
-sub is_pair ($);
+sub is_pair;
 
-sub is_pair ($) {
+sub is_pair {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     (
@@ -480,7 +483,8 @@ sub is_pair ($) {
         # ^  XX evil: inlined `is_promise`
 }
 
-sub is_pair_noforce ($) {
+sub is_pair_noforce {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     ($r eq "FP::List::Pair" or $v->isa("FP::List::Pair"))
@@ -512,9 +516,10 @@ sub null () {
 TEST { null->cons(1)->cons(2)->array }
 [2, 1];
 
-sub is_null ($);
+sub is_null;
 
-sub is_null ($) {
+sub is_null {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     (
@@ -524,15 +529,17 @@ sub is_null ($) {
     )
 }
 
-sub is_null_noforce ($) {
+sub is_null_noforce {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     ($r eq "FP::List::Null" or $v->isa("FP::List::Null"))
 }
 
-sub is_pair_or_null ($);
+sub is_pair_or_null;
 
-sub is_pair_or_null ($) {
+sub is_pair_or_null {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     (
@@ -560,7 +567,8 @@ sub is_null_or_pair_of ($$$) {
 sub null_or_pair_of ($$) {
     my ($p0, $p1) = @_;
 
-    sub ($) {
+    sub {
+        @_ == 1 or die "wrong number of arguments";
         my ($v) = @_;
         is_null_or_pair_of($v, $p0, $p1)
     }
@@ -582,7 +590,8 @@ TEST {
 }
 [1, undef, undef, '', 1, ''];
 
-sub is_list ($) {
+sub is_list {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     FORCE $v;
     (
@@ -611,12 +620,14 @@ TEST {
 
 use Carp;
 
-sub die_not_a_pair ($) {
+sub die_not_a_pair {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     croak "not a pair: " . show($v);
 }
 
-sub car ($) {
+sub car {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
@@ -629,7 +640,7 @@ sub car ($) {
     }
 }
 
-sub first ($);
+sub first;
 *first = *car;
 
 # XX add maybe_first and perhaps_first wrappers here? Shouldn't this
@@ -653,7 +664,8 @@ TEST {
 }
 bless [6, 4], 'FP::List::Pair';
 
-sub cdr ($) {
+sub cdr {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
@@ -672,17 +684,43 @@ TEST { car cons(2, 3) } 2;
 TEST_EXCEPTION { car "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
 TEST_EXCEPTION { cdr "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
 
-sub rest ($);
+sub rest;
 *rest = *cdr;
 
-sub cddr ($)   { cdr cdr $_[0] }
-sub cdddr ($)  { cdr cdr cdr $_[0] }
-sub cddddr ($) { cdr cdr cdr cdr $_[0] }
+sub cddr {
+    @_ == 1 or die "wrong number of arguments";
+    cdr cdr $_[0]
+}
 
-sub cadr ($)    { car cdr $_[0] }
-sub caddr ($)   { car cdr cdr $_[0] }
-sub cadddr ($)  { car cdr cdr cdr $_[0] }
-sub caddddr ($) { car cdr cdr cdr cdr $_[0] }
+sub cdddr {
+    @_ == 1 or die "wrong number of arguments";
+    cdr cdr cdr $_[0]
+}
+
+sub cddddr {
+    @_ == 1 or die "wrong number of arguments";
+    cdr cdr cdr cdr $_[0]
+}
+
+sub cadr {
+    @_ == 1 or die "wrong number of arguments";
+    car cdr $_[0]
+}
+
+sub caddr {
+    @_ == 1 or die "wrong number of arguments";
+    car cdr cdr $_[0]
+}
+
+sub cadddr {
+    @_ == 1 or die "wrong number of arguments";
+    car cdr cdr cdr $_[0]
+}
+
+sub caddddr {
+    @_ == 1 or die "wrong number of arguments";
+    car cdr cdr cdr cdr $_[0]
+}
 
 sub c_r {
     @_ == 2 or die "wrong number of arguments";
@@ -702,7 +740,8 @@ sub c_r {
 TEST { list(1, list(4, 7, 9), 5)->c_r("addad") }
 9;
 
-sub car_and_cdr ($) {
+sub car_and_cdr {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
@@ -715,10 +754,11 @@ sub car_and_cdr ($) {
     }
 }
 
-sub first_and_rest($);
+sub first_and_rest;
 *first_and_rest = *car_and_cdr;
 
-sub perhaps_first_and_rest ($) {
+sub perhaps_first_and_rest {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
@@ -740,7 +780,8 @@ TEST { [perhaps_first_and_rest null] } [];
 TEST_EXCEPTION { [perhaps_first_and_rest "FP::List::Null"] }
 "not a pair: 'FP::List::Null'";    # and XX actually not a null either.
 
-sub list_perhaps_one ($) {
+sub list_perhaps_one {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     FORCE $s;                      # make work for stre
     if (is_pair($s)) {
@@ -758,7 +799,8 @@ TEST { [list(8)->perhaps_one] } [8];
 TEST { [list(8, 9)->perhaps_one] } [];
 TEST { [list()->perhaps_one] } [];
 
-sub list_xone ($) {
+sub list_xone {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     FORCE $s;    # make work for streams
     if (is_pair($s)) {
@@ -918,9 +960,10 @@ sub delayed (&) {
     }
 }
 
-sub list_of ($);
+sub list_of;
 
-sub list_of ($) {
+sub list_of {
+    @_ == 1 or die "wrong number of arguments";
     my ($p) = @_;
     either \&is_null, is_pair_of($p, delayed { list_of $p })
 }
@@ -934,7 +977,8 @@ sub make_length {
     my ($is_stream) = @_;
     my $liststream = $is_stream ? "stream" : "list";
 
-    sub ($) {
+    sub {
+        @_ == 1 or die "wrong number of arguments";
         my ($l) = @_;
         weaken $_[0] if $is_stream;
         my $len = 0;
@@ -956,7 +1000,7 @@ sub make_length {
     }
 }
 
-sub list_length ($);
+sub list_length;
 *list_length = make_length(0);
 
 *FP::List::Pair::length = *list_length;
@@ -968,7 +1012,8 @@ TEST { list(4, 5, 6)->caddr } 6;
 TEST { list()->length } 0;
 TEST { list(4, 5)->length } 2;
 
-sub list_to_string ($) {
+sub list_to_string {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     my $len = list_length $l;
 
@@ -993,7 +1038,8 @@ TEST { list("Ha", "ll", "o")->string } "Hallo";
 TEST { list("", "", "o")->string } 'o';
 TEST { list("a", "", "o")->string } 'ao';
 
-sub list_to_array ($) {
+sub list_to_array {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     my $res = [];
     my $i   = 0;
@@ -1029,7 +1075,7 @@ sub list_sort ($;$) {
 
 *FP::List::List::sort = *list_sort;
 
-sub list_sortCompare ($) {
+sub list_sortCompare {
     @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     list_to_purearray($l)->sortCompare
@@ -1056,7 +1102,8 @@ TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->first }
 TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->stream->car }
 3;
 
-sub rlist_to_array ($) {
+sub rlist_to_array {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     my $res = [];
     my $len = list_length $l;
@@ -1071,7 +1118,8 @@ sub rlist_to_array ($) {
 
 *FP::List::List::reverse_array = *rlist_to_array;
 
-sub list_to_values ($) {
+sub list_to_values {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     @{ list_to_array($l) }
 }
@@ -1080,7 +1128,8 @@ sub list_to_values ($) {
 
 # XX naming inconsistency versus docs/design.md ? Same with
 # rlist_to_array.
-sub rlist_to_values ($) {
+sub rlist_to_values {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     @{ rlist_to_array($l) }
 }
@@ -1254,7 +1303,8 @@ sub list_reverse_with_tail ($$) {
     $tail
 }
 
-sub list_reverse ($) {
+sub list_reverse {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     list_reverse_with_tail($l, $l->null)
 }
@@ -1374,9 +1424,9 @@ TEST { list_to_array list_zip2 list(qw(a b)), list(2, 3, 4) }
 
 *FP::List::List::zip = *list_zip2;    # XX make n-ary
 
-sub list_to_alist ($);
+sub list_to_alist;
 
-sub list_to_alist ($) {
+sub list_to_alist {
     @_ == 1 or die "expecting 2 arguments";
     my ($l) = @_;
     is_null($l) ? $l : do {
@@ -1693,7 +1743,8 @@ TEST {
 TEST { array_to_list(["a", "b"])->append(array_to_list([1, 2]))->array }
 ['a', 'b', 1, 2];
 
-sub list_to_perlstring ($) {
+sub list_to_perlstring {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     list_to_string cons(
         "'",
@@ -1718,9 +1769,10 @@ q{'Hello\'s'};
 
 *FP::List::List::perlstring = *list_to_perlstring;
 
-sub list_butlast ($);
+sub list_butlast;
 
-sub list_butlast ($) {
+sub list_butlast {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     if (is_null($l)) {
         die "butlast: got empty list"
@@ -1827,7 +1879,8 @@ TEST {
 }
 "";
 
-sub list_last ($) {
+sub list_last {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
 LIST_LAST: {
         my ($a, $r) = $v->first_and_rest;
@@ -2214,7 +2267,8 @@ TEST_STDOUT {
 
 use FP::Char 'is_char';
 
-sub is_charlist ($) {
+sub is_charlist {
+    @_ == 1 or die "wrong number of arguments";
     my ($l) = @_;
     list_every \&is_char, $l
 }

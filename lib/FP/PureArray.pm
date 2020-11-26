@@ -100,7 +100,8 @@ use Scalar::Util qw(blessed);
 
 our $immutable = 1;    # whether new instances are to be immutable
 
-sub is_purearray ($) {
+sub is_purearray {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     $v->isa("FP::_::PureArray")
@@ -110,11 +111,13 @@ sub purearray {
     FP::_::PureArray->new_from_array([@_])
 }
 
-sub array_clone_to_purearray ($) {
+sub array_clone_to_purearray {
+    @_ == 1 or die "wrong number of arguments";
     FP::_::PureArray->new_from_array([@{ $_[0] }])
 }
 
-sub array_to_purearray ($) {
+sub array_to_purearray {
+    @_ == 1 or die "wrong number of arguments";
     FP::_::PureArray->new_from_array($_[0])
 }
 

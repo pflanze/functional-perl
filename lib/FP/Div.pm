@@ -42,22 +42,22 @@ use Chj::TEST;
 # XX should `indentity` pass multiple values, and this be called
 # `identity_scalar`? :
 
-sub identity ($) {
+sub identity {
     @_ == 1 or die "wrong number of arguments";
     $_[0]
 }
 
-sub inc ($) {
+sub inc {
     @_ == 1 or die "wrong number of arguments";
     $_[0] + 1
 }
 
-sub dec ($) {
+sub dec {
     @_ == 1 or die "wrong number of arguments";
     $_[0] - 1
 }
 
-sub square ($) {
+sub square {
     @_ == 1 or die "wrong number of arguments";
     $_[0] * $_[0]
 }
@@ -95,7 +95,7 @@ sub minmax {
 
 # is there any better idea than ucfirst to distinguish from the
 # builtin? `fchomp` ?
-sub Chomp ($) {
+sub Chomp {
     @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
     chomp $str;

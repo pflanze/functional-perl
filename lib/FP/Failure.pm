@@ -267,7 +267,8 @@ sub failure ($;$) {
     defined wantarray ? $v : die $v
 }
 
-sub is_failure($) {
+sub is_failure {
+    @_ == 1 or die "wrong number of arguments";
     force($_[0])->$_isa("FP::Failure::Failure")
 }
 

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -102,7 +102,8 @@ use Scalar::Util ();
 
 our $weaken = \&Scalar::Util::weaken;
 
-sub weaken ($) {
+sub weaken {
+    @_ == 1 or die "wrong number of arguments";
     goto &$weaken
 }
 
@@ -111,25 +112,29 @@ sub weaken ($) {
 
 # protect a variable from being pruned by callees that prune their
 # arguments
-sub Keep ($) {
+sub Keep {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     $v
 }
 
 # weaken a variable, but also provide a non-weakened reference to its
 # value as result
-sub Weakened ($) {
+sub Weakened {
+    @_ == 1 or die "wrong number of arguments";
     my ($ref) = @_;
     weaken $_[0];
     $ref
 }
 
-sub noweaken ($) {
+sub noweaken {
+    @_ == 1 or die "wrong number of arguments";
 
     # noop
 }
 
-sub noWeakened ($) {
+sub noWeakened {
+    @_ == 1 or die "wrong number of arguments";
     $_[0]
 }
 
@@ -137,12 +142,14 @@ sub with_noweaken (&) { local $weaken = \&noweaken; &{ $_[0] }() }
 
 use Carp;
 
-sub warnweaken ($) {
+sub warnweaken {
+    @_ == 1 or die "wrong number of arguments";
     carp "weaken ($_[0])";
     Scalar::Util::weaken($_[0]);
 }
 
-sub warnWeakened ($) {
+sub warnWeakened {
+    @_ == 1 or die "wrong number of arguments";
     carp "weaken ($_[0])";
     Weakened($_[0]);
 }
@@ -151,19 +158,22 @@ sub with_warnweaken (&) { local $weaken = \&warnweaken; &{ $_[0] }() }
 
 use Carp 'cluck';
 
-sub cluckweaken ($) {
+sub cluckweaken {
+    @_ == 1 or die "wrong number of arguments";
     cluck "weaken ($_[0])";
     Scalar::Util::weaken($_[0]);
 }
 
-sub cluckWeakened ($) {
+sub cluckWeakened {
+    @_ == 1 or die "wrong number of arguments";
     cluck "weaken ($_[0])";
     Weakened($_[0]);
 }
 
 sub with_cluckweaken (&) { local $weaken = \&cluckweaken; &{ $_[0] }() }
 
-sub do_weaken ($) {
+sub do_weaken {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     my $w = $v
         ? (

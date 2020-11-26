@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -62,7 +62,8 @@ sub T (&) {
     bless $_[0], "TrampolineContinuation"
 }
 
-sub trampoline ($) {
+sub trampoline {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     while (ref($v) eq "TrampolineContinuation") {
         $v = &$v()

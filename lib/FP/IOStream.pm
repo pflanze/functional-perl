@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -100,7 +100,8 @@ sub maybeIO_to_stream {
     &{ Weakened $next}
 }
 
-sub _perhaps_opendir_stream ($) {
+sub _perhaps_opendir_stream {
+    @_ == 1 or die "wrong number of arguments";
     my ($path) = @_;
     if (my ($d) = perhaps_opendir $path) {
         my $next;
@@ -224,7 +225,8 @@ sub xfile_lines_chomp;
 
 # Clojure calls this line-seq
 #  (http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/line-seq)
-sub fh_to_lines ($) {
+sub fh_to_lines {
+    @_ == 1 or die "wrong number of arguments";
     my ($fh) = @_;
     fh_to_stream(possibly_fh_to_fh($fh), the_method("xreadline"),
         the_method("xclose"))

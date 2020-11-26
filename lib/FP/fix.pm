@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -81,7 +81,8 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
         }
     };
 
-    sub ($) {
+    sub {
+        @_ == 1 or die "wrong number of arguments";
         my ($f) = @_;
         &$fix0($fix0, $f)
     }
@@ -132,7 +133,8 @@ TEST {
 };
 
 # indirectly self-referencing through package variable
-*rec = sub ($) {
+*rec = sub {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         #@_ = (fix ($f), @_); goto &$f;
@@ -145,7 +147,8 @@ TEST {
 
 use Scalar::Util 'weaken';
 
-*weakcycle = sub ($) {
+*weakcycle = sub {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     my $f2;
     $f2 = sub {
@@ -159,7 +162,7 @@ use Scalar::Util 'weaken';
 
 # choose implementation:
 
-sub fix ($);
+sub fix;
 
 *fix = *weakcycle;
 

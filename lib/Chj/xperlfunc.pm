@@ -93,7 +93,7 @@ Forks then runs the passed thunk in the child. The child process
 captures any uncaught exceptions and runs exit(1), otherwise upon
 ending the thunk exit(0).
 
-=item xLmtimed($), XLmtimed($)
+=item xLmtimed($path), XLmtimed($path)
 
 Those call lstat first, then if it's a symlink, also stat, then return
 an object with an mtime method that returns the newer mtime of the
@@ -106,7 +106,7 @@ any directory in any of the paths has newer mtime. Thus the result
 can't be relied on for security (well, couldn't anyway since mtime can
 be set, of course).
 
-=item xLmtime($), XLmtime($)
+=item xLmtime($path), XLmtime($path)
 
 Same as xLmtimed, XLmtimed but return the mtime value (or undef)
 instead of a wrapper object.
@@ -746,7 +746,8 @@ sub fstype_for_device_init() {
     $fstype_for_device = \%t;
 }
 
-sub fstype_for_device($) {
+sub fstype_for_device {
+    @_ == 1 or die "wrong number of arguments";
     my ($dev) = @_;
     my $t = $fstype_for_device->{$dev};
     if (!defined $t) {
@@ -1038,7 +1039,8 @@ use FP::Div qw(min max);    # min just for the backwards-compatible
     }
 }
 
-sub XLmtimed ($) {
+sub XLmtimed {
+    @_ == 1 or die "wrong number of arguments";
     my ($path) = @_;
     if (my $ls = Xlstat $path) {
         bless do {
@@ -1057,18 +1059,21 @@ sub XLmtimed ($) {
     }
 }
 
-sub xLmtimed ($) {
+sub xLmtimed {
+    @_ == 1 or die "wrong number of arguments";
     my ($path) = @_;
     my $t = XLmtimed $path;
     (defined $t) ? $t : die "xLmtimed: '$path': $!"
 }
 
-sub xLmtime ($) {
+sub xLmtime {
+    @_ == 1 or die "wrong number of arguments";
     my ($path) = @_;
     xLmtimed($path)->mtime
 }
 
-sub XLmtime ($) {
+sub XLmtime {
+    @_ == 1 or die "wrong number of arguments";
     my ($path) = @_;
     if (defined(my $s = XLmtimed($path))) {
         $s->mtime
@@ -1221,12 +1226,14 @@ sub xkill {
     kill $sig, @_ or croak "xkill $sig @_: $!";
 }
 
-sub xchroot ( $ ) {
+sub xchroot {
+    @_ == 1 or die "wrong number of arguments";
     my ($rtd) = @_;
     chroot $rtd or die "could not chroot to '$rtd': $!";
 }
 
-sub xeval( $ ) {    # meant for string eval only, of course.
+sub xeval {    # meant for string eval only, of course.
+    @_ == 1 or die "wrong number of arguments";
     ## hm ps should one localize $@ here?
     if (defined wantarray) {
         if (wantarray) {
@@ -1335,7 +1342,8 @@ sub basename ($;$$) {
 #blabla
 # so no, do not strip before basenaming, really do it afterwards as I do
 
-sub dirname ($ ) {
+sub dirname {
+    @_ == 1 or die "wrong number of arguments";
     my ($path) = @_;
     if ($path =~ s|/+[^/]+/*\z||) {
         if (length $path) {
@@ -1358,9 +1366,10 @@ sub dirname ($ ) {
     }
 }
 
-sub xmkdir_p ($ );
+sub xmkdir_p;
 
-sub xmkdir_p ($ ) {
+sub xmkdir_p {
+    @_ == 1 or die "wrong number of arguments";
     my ($path) = @_;
 
     # (XX: see commit d1abd3c2 in megacopy for possible improvement)
@@ -1390,7 +1399,8 @@ sub xlink_p ($ $ ) {
     xlink $from, $to
 }
 
-# sub xuser_uid ( $ ) {
+# sub xuser_uid  {
+#     @_ == 1 or die "wrong number of arguments";
 #     my ($user) = @_;
 #     my ($login,$pass,$uid,$gid) = getpwnam($user)
 #       or die "xuser_uid: '$user' not in passwd file";
@@ -1415,7 +1425,8 @@ sub xlink_p ($ $ ) {
     end Chj::Class::Array;
 }
 
-sub xgetpwnam ( $ ) {
+sub xgetpwnam {
+    @_ == 1 or die "wrong number of arguments";
     my ($user) = @_;
     if (wantarray) {
         my @f = Chj::xperlfunc::Getpwnam->perhaps_get($user);
@@ -1445,7 +1456,8 @@ sub xgetpwnam ( $ ) {
     end Chj::Class::Array;
 }
 
-sub xgetgrnam ( $ ) {
+sub xgetgrnam {
+    @_ == 1 or die "wrong number of arguments";
     my ($group) = @_;
     if (wantarray) {
         my @f = Chj::xperlfunc::Getgrnam->perhaps_get($group);
@@ -1471,7 +1483,8 @@ sub xprintln {
     print $fh @_, "\n" or die "printing to $fh: $!"
 }
 
-sub xgetfile_utf8 ($) {
+sub xgetfile_utf8 {
+    @_ == 1 or die "wrong number of arguments";
     my ($path) = @_;
     open my $in, "<", $path or die "xgetfile_utf8($path): open: $!";
     binmode $in, ":encoding(UTF-8)" or die "binmode";
@@ -1481,7 +1494,7 @@ sub xgetfile_utf8 ($) {
     $cnt
 }
 
-sub xslurp ($);
+sub xslurp;
 *xslurp = \&xgetfile_utf8;
 
 1;

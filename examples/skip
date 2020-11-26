@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015,2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -105,7 +105,8 @@ sub chunks_change_tail {
     Weakened($next)->($chunks, $chunks, 0);
 }
 
-sub test_with_size ($) {
+sub test_with_size {
+    @_ == 1 or die "wrong number of arguments";
     my ($size) = @_;
     stream_to_array chunks_change_tail(array_to_stream(["foo", "bars", "baz"]),
         $size, sub { my ($tail, $len) = @_; cons $len, $tail });

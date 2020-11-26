@@ -193,24 +193,28 @@ sub all_fields {
     )
 }
 
-sub field_maybe_predicate ($) {
+sub field_maybe_predicate {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     (ref $s) ? $$s[0] : undef
 }
 
-sub field_name ($) {
+sub field_name {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     (ref $s) ? $$s[1] : $s
 }
 
-sub field_maybe_predicate_and_name ($) {
+sub field_maybe_predicate_and_name {
 
     # returns nothing at all if a predicate was given but is undef
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     (ref $s) ? (defined($$s[0]) ? @$s : ()) : (undef, $s)
 }
 
-sub field_has_predicate ($) {
+sub field_has_predicate {
+    @_ == 1 or die "wrong number of arguments";
     my ($s) = @_;
     ref $s
 }

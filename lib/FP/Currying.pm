@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -109,7 +109,7 @@ our @EXPORT = qw(
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-sub curry ($) {
+sub curry {
     @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
@@ -149,7 +149,8 @@ sub partial {
 
 # Macros would be useful here.
 
-sub uncurry_1_1 ($) {
+sub uncurry_1_1 {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 2 or die "expecting 2 arguments";
@@ -158,10 +159,11 @@ sub uncurry_1_1 ($) {
     }
 }
 
-sub uncurry ($);
+sub uncurry;
 *uncurry = *uncurry_1_1;
 
-sub uncurry_2_1 ($) {
+sub uncurry_2_1 {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 3 or die "expecting 3 arguments";
@@ -170,7 +172,8 @@ sub uncurry_2_1 ($) {
     }
 }
 
-sub uncurry_1_2 ($) {
+sub uncurry_1_2 {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 3 or die "expecting 3 arguments";
@@ -179,7 +182,8 @@ sub uncurry_1_2 ($) {
     }
 }
 
-sub uncurry_2_2 ($) {
+sub uncurry_2_2 {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 4 or die "expecting 4 arguments";
@@ -188,7 +192,8 @@ sub uncurry_2_2 ($) {
     }
 }
 
-sub uncurry_1_1_1 ($) {
+sub uncurry_1_1_1 {
+    @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
     sub {
         @_ == 3 or die "expecting 3 arguments";

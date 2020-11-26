@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -25,7 +25,8 @@ use Test::Requires qw(Test::Pod::Snippets PadWalker FP::Repl::AutoTrap);
 use Test::More;
 use FP::Repl::WithRepl qw(withrepl WithRepl_eval);
 
-sub myeval ($) {
+sub myeval {
+    @_ == 1 or die "wrong number of arguments";
     my ($str) = @_;
     if (FP::Repl::AutoTrap::possibly_activate) {
         withrepl {

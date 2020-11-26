@@ -91,7 +91,8 @@ sub package_is_populated {
     %$pr ? 1 : 0
 }
 
-sub require_package ($) {
+sub require_package {
+    @_ == 1 or die "wrong number of arguments";
     my ($package) = @_;
     if (not package_is_populated $package) {
         $package =~ s|::|/|g;

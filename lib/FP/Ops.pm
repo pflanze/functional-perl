@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -205,26 +205,27 @@ sub string_ge ($ $) {
     $_[0] ge $_[1]
 }
 
-sub stringify ($) {
+sub stringify {
+    @_ == 1 or die "wrong number of arguments";
     "$_[0]"
 }
 
-sub string_lc ($) {
+sub string_lc {
     @_ == 1 or die "need 1 argument";
     lc $_[0]
 }
 
-sub string_uc ($) {
+sub string_uc {
     @_ == 1 or die "need 1 argument";
     uc $_[0]
 }
 
-sub string_lcfirst ($) {
+sub string_lcfirst {
     @_ == 1 or die "need 1 argument";
     lcfirst $_[0]
 }
 
-sub string_ucfirst ($) {
+sub string_ucfirst {
     @_ == 1 or die "need 1 argument";
     ucfirst $_[0]
 }
@@ -284,11 +285,11 @@ sub cut_method {
     }
 }
 
-sub applying ($) {
+sub applying {
     @_ == 1 or die "wrong number of arguments";
     my ($f) = @_;
 
-    sub ($) {
+    sub {
         @_ == 1 or die "wrong number of arguments";
         my ($argv) = @_;
         @_ = ref($argv) eq "ARRAY" ? @$argv : $argv->values;
@@ -299,7 +300,7 @@ sub applying ($) {
 sub applying_to {
     my @v = @_;
 
-    sub ($) {
+    sub {
         @_ == 1 or die "wrong number of arguments";
         my ($f) = @_;
         @_ = @v;
@@ -307,7 +308,7 @@ sub applying_to {
     }
 }
 
-sub binary_operator ($) {
+sub binary_operator {
     @_ == 1 or die "need 1 argument";
     my ($code) = @_;
     eval 'sub ($$) { @_ == 2 or die "need 2 arguments"; $_[0] ' . $code
@@ -316,10 +317,10 @@ sub binary_operator ($) {
     # XX security?
 }
 
-sub unary_operator ($) {
+sub unary_operator {
     @_ == 1 or die "need 1 argument";
     my ($code) = @_;
-    eval 'sub ($) { @_ == 1 or die "need 1 argument"; ' . $code . ' $_[0] }'
+    eval 'sub { @_ == 1 or die "need 1 argument"; ' . $code . ' $_[0] }'
         || die "unary_operator: " . show($code) . ": $@";
 
     # XX security?
@@ -346,7 +347,7 @@ TEST {
 }
 [-3, 2.5, 0];
 
-sub regex_match ($) {
+sub regex_match {
     @_ == 1 or die "wrong number of arguments";
     my ($re) = @_;
     sub {

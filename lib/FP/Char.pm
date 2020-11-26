@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -38,7 +38,8 @@ our @EXPORT      = qw();
 our @EXPORT_OK   = qw(is_char char_is_whitespace char_is_alphanumeric);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-sub is_char ($) {
+sub is_char {
+    @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
     defined $v and not(ref $v) and length($v) == 1
 }
