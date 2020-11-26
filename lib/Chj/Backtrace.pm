@@ -15,6 +15,9 @@ Add backtrace to all string based exceptions (those thrown by die
 
 =head1 DESCRIPTION
 
+=head1 TODO
+
+Use L<Devel::Confess> or L<Carp Always> instead?
 
 =head1 NOTE
 
