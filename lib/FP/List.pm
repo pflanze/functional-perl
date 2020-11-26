@@ -1835,7 +1835,7 @@ sub list_rtake_while_and_rest ($ $) {
 sub list_rtake_while ($ $) {
     my ($pred, $l)    = @_;
     my ($res,  $rest) = list_rtake_while_and_rest($pred, $l);
-    wantarray ? ($res, $rest) : $res
+    $res
 }
 
 *FP::List::List::rtake_while = flip \&list_rtake_while;
@@ -1857,7 +1857,7 @@ sub list_take_while_and_rest ($ $) {
 sub list_take_while ($ $) {
     my ($pred, $l)    = @_;
     my ($res,  $rest) = list_take_while_and_rest($pred, $l);
-    wantarray ? ($res, $rest) : $res
+    $res
 }
 
 *FP::List::List::take_while = flip \&list_take_while;
