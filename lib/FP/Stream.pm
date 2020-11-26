@@ -322,7 +322,7 @@ LP: {
     $start
 }
 
-*FP::List::List::stream_fold = rot3left * stream_fold;
+*FP::List::List::stream_fold = rot3left \&stream_fold;
 
 TEST {
     stream_fold sub { $_[0] + $_[1] }, 5, stream_iota(10, 2)
@@ -454,7 +454,7 @@ sub stream_map ($ $) {
     }
 }
 
-*FP::List::List::stream_map = flip * stream_map;
+*FP::List::List::stream_map = flip \&stream_map;
 
 sub stream_map_with_tail ($ $ $);
 
@@ -469,7 +469,7 @@ sub stream_map_with_tail ($ $ $) {
     }
 }
 
-*FP::List::List::stream_map_with_tail = flip2of3 * stream_map_with_tail;
+*FP::List::List::stream_map_with_tail = flip2of3 \&stream_map_with_tail;
 
 # 2-ary (possibly slightly faster) version of stream_zip
 sub stream_zip2 ($$);
@@ -520,15 +520,15 @@ sub stream_zip_with {
     }
 }
 
-*FP::List::List::stream_zip_with = flip2of3 * stream_zip_with;
+*FP::List::List::stream_zip_with = flip2of3 \&stream_zip_with;
 
 sub stream_filter ($ $);
 *stream_filter                 = FP::List::make_filter(1);
-*FP::List::List::stream_filter = flip * stream_filter;
+*FP::List::List::stream_filter = flip \&stream_filter;
 
 sub stream_filter_with_tail ($$$);
 *stream_filter_with_tail                 = FP::List::make_filter_with_tail(1);
-*FP::List::List::stream_filter_with_tail = flip2of3 * stream_filter_with_tail;
+*FP::List::List::stream_filter_with_tail = flip2of3 \&stream_filter_with_tail;
 
 # http://hackage.haskell.org/package/base-4.7.0.2/docs/Prelude.html#v:foldr1
 
@@ -552,7 +552,7 @@ sub stream_foldr1 ($ $) {
     }
 }
 
-*FP::List::List::stream_foldr1 = flip * stream_foldr1;
+*FP::List::List::stream_foldr1 = flip \&stream_foldr1;
 
 sub stream_fold_right ($ $ $);
 
@@ -571,7 +571,7 @@ sub stream_fold_right ($ $ $) {
     }
 }
 
-*FP::List::List::stream_fold_right = rot3left * stream_fold_right;
+*FP::List::List::stream_fold_right = rot3left \&stream_fold_right;
 
 *FP::List::List::stream_preferred_fold = *FP::List::List::stream_fold_right;
 
@@ -693,7 +693,7 @@ TEST { stream(1, 2, 3)->strings_join("-") }
 sub stream_for_each ($ $ );
 *stream_for_each = FP::List::make_for_each(1);
 
-*FP::List::List::stream_for_each = flip * stream_for_each;
+*FP::List::List::stream_for_each = flip \&stream_for_each;
 
 sub stream_drop ($ $);
 
@@ -748,7 +748,7 @@ sub stream_take_while ($ $) {
     }
 }
 
-*FP::List::List::stream_take_while = flip * stream_take_while;
+*FP::List::List::stream_take_while = flip \&stream_take_while;
 
 sub stream_slice ($ $);
 
@@ -799,7 +799,7 @@ sub stream_drop_while ($ $) {
     }
 }
 
-*FP::List::List::stream_drop_while = flip * stream_drop_while;
+*FP::List::List::stream_drop_while = flip \&stream_drop_while;
 
 sub stream_ref ($$);
 *stream_ref                 = FP::List::make_ref(1);
@@ -976,7 +976,7 @@ sub stream_any ($ $) {
     }
 }
 
-*FP::List::List::stream_any = flip * stream_any;
+*FP::List::List::stream_any = flip \&stream_any;
 
 # (meant as a debugging tool: turn stream to string)
 sub stream_show {
@@ -1009,7 +1009,7 @@ sub stream_state_fold_right {
     }
 }
 
-*FP::List::List::stream_state_fold_right = rot3left * stream_state_fold_right;
+*FP::List::List::stream_state_fold_right = rot3left \&stream_state_fold_right;
 
 TEST {
     stream_state_fold_right(
@@ -1089,7 +1089,7 @@ sub stream_mixed_fold_right {
     goto \&stream_fold_right
 }
 
-*FP::List::List::stream_mixed_fold_right = rot3left * stream_mixed_fold_right;
+*FP::List::List::stream_mixed_fold_right = rot3left \&stream_mixed_fold_right;
 
 sub stream_mixed_state_fold_right {
     @_ == 3 or die "wrong number of arguments";
@@ -1100,7 +1100,7 @@ sub stream_mixed_state_fold_right {
 }
 
 *FP::List::List::stream_mixed_state_fold_right
-    = rot3left * stream_mixed_state_fold_right;
+    = rot3left \&stream_mixed_state_fold_right;
 
 # 'cross product'
 
