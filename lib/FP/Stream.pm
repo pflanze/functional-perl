@@ -179,9 +179,10 @@ use FP::Weak;
 use FP::Predicates 'is_natural0';
 use FP::Show;
 use FP::fix;
+use Carp;
 
 sub stream_iota {
-    @_ <= 2 or die "wrong number of arguments";
+    @_ <= 2 or croak "wrong number of arguments";
     my ($maybe_start, $maybe_n) = @_;
     my $start = $maybe_start // 0;
     if (defined $maybe_n) {
@@ -216,7 +217,7 @@ sub stream_iota {
 
 # Like perl's `..`
 sub stream_range {
-    @_ <= 2 or die "wrong number of arguments";
+    @_ <= 2 or croak "wrong number of arguments";
     my ($maybe_start, $maybe_end) = @_;
     my $start = $maybe_start // 0;
     stream_iota($start, defined $maybe_end ? $maybe_end + 1 - $start : undef);
@@ -230,7 +231,7 @@ TEST { stream_range(2, 1)->array }
 [];
 
 sub stream_step_range {
-    (@_ >= 1 and @_ <= 3) or die "wrong number of arguments";
+    (@_ >= 1 and @_ <= 3) or croak "wrong number of arguments";
     my ($step, $maybe_start, $maybe_end) = @_;
     my $start   = $maybe_start // 0;
     my $inverse = $step < 0;
@@ -340,7 +341,7 @@ TEST { stream_fold(\&cons, null, stream(1, 2))->array }
 [2, 1];
 
 sub stream_sum {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($s) = @_;
     weaken $_[0];
     stream_fold(sub { $_[0] + $_[1] }, 0, $s)
@@ -359,7 +360,7 @@ TEST {
 #  5000050000;
 
 sub stream_append2 ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     my ($l1, $l2) = @_;
     weaken $_[0];
     weaken $_[1];
@@ -579,7 +580,7 @@ sub make_stream__fold_right {
     my ($length, $ref, $start, $d, $whileP) = @_;
 
     sub ($$$) {
-        @_ == 3 or die "wrong number of arguments";
+        @_ == 3 or croak "wrong number of arguments";
         my ($fn, $tail, $a) = @_;
         my $len = &$length($a);
         my $rec;
@@ -657,7 +658,7 @@ sub string_to_stream ($;$) {
 }
 
 sub stream_to_string {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     weaken $_[0];
     my $str = "";
@@ -673,7 +674,7 @@ sub stream_to_string {
 TEST { stream("Ha", "ll", "o")->string } "Hallo";
 
 sub stream_strings_join ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     my ($l, $val) = @_;
     weaken $_[0];
 
@@ -844,7 +845,7 @@ TEST { stream_ref cons(0, stream(1, 2, 3)), 2 } 2;
 sub F;
 
 sub F {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
 
     #weaken $_[0]; since I usually use it interactively, and should
@@ -871,7 +872,7 @@ sub F {
 }
 
 sub stream_to_array {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     weaken $_[0];
     my $res = [];
@@ -904,7 +905,7 @@ TEST {
 bless [1, 9, 16], "FP::_::PureArray";
 
 sub stream_to_list {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     weaken $_[0];
     array_to_list stream_to_array $l
@@ -913,7 +914,7 @@ sub stream_to_list {
 *FP::List::List::stream_list = *stream_to_list;
 
 sub stream_sort ($;$) {
-    @_ == 1 or @_ == 2 or die "wrong number of arguments";
+    @_ == 1 or @_ == 2 or croak "wrong number of arguments";
     my ($l, $maybe_cmp) = @_;
     stream_to_purearray($l)->sort ($maybe_cmp)
 }
@@ -943,7 +944,7 @@ sub stream_group ($$;$);
 *stream_group = FP::List::make_group(1);
 
 sub FP::List::List::stream_group {
-    @_ >= 2 and @_ <= 3 or die "wrong number of arguments";
+    @_ >= 2 and @_ <= 3 or croak "wrong number of arguments";
     my ($self, $equal, $maybe_tail) = @_;
     weaken $_[0];
     stream_group($equal, $self, $maybe_tail)
@@ -980,7 +981,7 @@ sub stream_any ($ $) {
 
 # (meant as a debugging tool: turn stream to string)
 sub stream_show {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($s) = @_;
     join("", map {"  '$_'\n"} @{ stream_to_array $s })
 }
@@ -991,10 +992,10 @@ sub stream_show {
 # the left). Then it's basically a fold_right.
 
 sub stream_state_fold_right {
-    @_ == 3 or die "wrong number of arguments";
+    @_ == 3 or croak "wrong number of arguments";
     my ($fn, $stateupfn, $s) = @_;
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         my ($statedown) = @_;
         no warnings 'recursion';
         FORCE $s;
@@ -1082,7 +1083,7 @@ TEST {
 # introduction?)
 
 sub stream_mixed_fold_right {
-    @_ == 3 or die "wrong number of arguments";
+    @_ == 3 or croak "wrong number of arguments";
     my ($fn, $state, $v) = @_;
     weaken $_[2] if ref $_[2];
     @_ = ($fn, $state, stream_mixed_flatten $v);
@@ -1092,7 +1093,7 @@ sub stream_mixed_fold_right {
 *FP::List::List::stream_mixed_fold_right = rot3left \&stream_mixed_fold_right;
 
 sub stream_mixed_state_fold_right {
-    @_ == 3 or die "wrong number of arguments";
+    @_ == 3 or croak "wrong number of arguments";
     my ($fn, $statefn, $v) = @_;
     weaken $_[2] if ref $_[2];
     @_ = ($fn, $statefn, stream_mixed_flatten $v);
@@ -1105,7 +1106,7 @@ sub stream_mixed_state_fold_right {
 # 'cross product'
 
 sub stream_cartesian_product_2 {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     my ($a, $orig_b) = @_;
     weaken $_[0];
     weaken $_[1];
@@ -1192,9 +1193,9 @@ list(list(1, 3), list(1, 4), list(2, 3), list(2, 4));
 sub make_chunks_of {
     my ($strictly, $lazy) = @_;
     sub {
-        @_ == 2 or die "wrong number of arguments";
+        @_ == 2 or croak "wrong number of arguments";
         my ($s, $chunklen) = @_;
-        $chunklen >= 1 or die "invalid chunklen: $chunklen";
+        $chunklen >= 1 or croak "invalid chunklen: $chunklen";
         weaken $_[0] if $lazy;    # although tie down is only chunk sized
         require FP::PureArray;
         fix(
