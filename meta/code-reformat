@@ -23,7 +23,7 @@ use Chj::xopen 'xopen_read';
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
-    print "$myname ..
+    print "$myname --op opname file(s)
 
   (Christian Jaeger <$email>)
 ";
@@ -31,25 +31,31 @@ sub usage {
 }
 
 use Getopt::Long;
-our $verbose = 0;
-our $opt_opspaces;
-our $opt_functionparameters2signatures;
+my $verbose = 0;
+my @opt_op;
 
 #our $opt_dry;
 GetOptions(
-    "verbose"                       => \$verbose,
-    "help"                          => sub {usage},
-    "opspaces"                      => \$opt_opspaces,
-    "functionparameters2signatures" => \$opt_functionparameters2signatures,
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+    "op=s"    => sub {
+        my (undef, $val) = @_;
+        push @opt_op, $val;
+    },
 
     #"dry-run"=> \$opt_dry,
 ) or exit 1;
 
-sub opspaces {
-    if (/http|href/) {
-        $_
-    } else {
-        s{ ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) }{
+@opt_op or usage "no op given, use the --op option";
+
+my %opt_op = map { $_ => 1 } @opt_op;
+
+my %ops = (
+    opspaces => sub {
+        if (/http|href/) {
+            $_
+        } else {
+            s{ ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) }{
             my ($a,$b,$c)=($1,$2,$3);
             my $all = "$a$b$c";
             my $pre= substr($_, 0, pos($_)+1);
@@ -68,12 +74,12 @@ sub opspaces {
                 $all
             }
         }sgex and s/[ \t]*$//;
-        $_
-    }
-}
+            $_
+        }
+    },
 
-sub functionparameters2signatures {
-    s{
+    functionparameters2signatures => sub {
+        s{
          \b(method|fun)(\s+\w+)
          (?:
              (\s*\(\s*)
@@ -90,15 +96,17 @@ sub functionparameters2signatures {
               : "$a$b$c")
            . $end
     }sgex;
-    $_
-}
+        $_
+    },
+);
 
 for my $file (@ARGV) {
     my $f     = xopen_read $file;
     my @lines = do {
-        local $/ = $opt_functionparameters2signatures ? undef : $/;
-        die "can't satisfy both options at same time here^ "
-            if $opt_functionparameters2signatures && $opt_opspaces;
+        local $/ = $opt_op{functionparameters2signatures} ? undef : $/;
+        die
+            "can't satisfy other ops when using op functionparameters2signatures"
+            if ($opt_op{functionparameters2signatures} and @opt_op > 1);
         $f->xreadline;
     };
     $f->xclose;
@@ -106,9 +114,10 @@ for my $file (@ARGV) {
     my $t = xtmpfile $file;
     $t->xprint(
         map {
-            $_ = opspaces $_ if $opt_opspaces;
-            $_ = functionparameters2signatures $_
-                if $opt_functionparameters2signatures;
+            for my $op (@opt_op) {
+                my $proc = $ops{$op} // die "unknown op '$op'";
+                $_ = &$proc($_);
+            }
             $_
         } @lines
     );
