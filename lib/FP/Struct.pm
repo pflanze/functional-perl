@@ -205,10 +205,9 @@ sub field_name {
     (ref $s) ? $$s[1] : $s
 }
 
+# returns nothing at all if a predicate was given but is undef
 sub field_maybe_predicate_and_name {
-
-    # returns nothing at all if a predicate was given but is undef
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s) = @_;
     (ref $s) ? (defined($$s[0]) ? @$s : ()) : (undef, $s)
 }
@@ -277,7 +276,8 @@ sub import {
         for (@$allfields_i_with_predicate) {
             my ($pred, $name, $i) = @$_;
             &$pred($_[$i])
-                or die "unacceptable value for field '$name': " . show($_[$i]);
+                or fp_croak "unacceptable value for field '$name': "
+                . show($_[$i]);
         }
         my %s;
         for (my $i = 0; $i < @_; $i++) {
@@ -297,7 +297,8 @@ sub import {
         for (@$allfields_i_with_predicate) {
             my ($pred, $name, $i) = @$_;
             &$pred($_[$i])
-                or die "unacceptable value for field '$name': " . show($_[$i]);
+                or fp_croak "unacceptable value for field '$name': "
+                . show($_[$i]);
         }
         my %s;
         for (my $i = 0; $i < @_; $i++) {
@@ -340,13 +341,13 @@ sub import {
         scalar(keys %$s) <= (@$allfields * 2)
             or fp_croak "too many arguments to ${package}::new_";
         for (keys %$s) {
-            exists $$allfields_h{$_} or die "unknown field '$_'";
+            exists $$allfields_h{$_} or fp_croak "unknown field '$_'";
             Internals::SvREADONLY $$s{$_}, 1 if $is_pure && $immutable;
         }
         for (@$allfields_with_predicate) {
             my ($pred, $name) = @$_;
             &$pred($$s{$name})
-                or die "unacceptable value for field '$name': "
+                or fp_croak "unacceptable value for field '$name': "
                 . show($$s{$name});
         }
         bless $s, $class;
@@ -399,7 +400,7 @@ sub import {
                     @_ == 1 or fp_croak "${name}_set: need 1 argument";
                     my $v = shift;
                     &$maybe_predicate($v)
-                        or die "unacceptable value for field '$name': "
+                        or fp_croak "unacceptable value for field '$name': "
                         . show($v);
                     my $new = +{%$s};
                     $$new{$name} = $v;
@@ -422,7 +423,7 @@ sub import {
                     my ($s, $fn) = @_;
                     my $v = &$fn($s->{$name});
                     &$maybe_predicate($v)
-                        or die "unacceptable value for field '$name': "
+                        or fp_croak "unacceptable value for field '$name': "
                         . show($v);
                     my $new = +{%$s};
                     $$new{$name} = $v;
