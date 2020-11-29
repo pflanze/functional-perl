@@ -99,6 +99,7 @@ our @EXPORT_OK = qw(array
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Carp;
+use FP::Carp;
 use Chj::TEST;
 use FP::Div qw(min);
 use FP::Ops 'add';
@@ -118,56 +119,56 @@ sub array_equal {
 }
 
 sub array_maybe_first {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     $_[0][0]
 }
 
 sub array_perhaps_first {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a ? $$a[0] : ()
 }
 
 sub array_first {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a or die "can't take the first of an empty array";
     $$a[0]
 }
 
 sub array_maybe_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a ? [@$a[1 .. $#$a]] : undef
 }
 
 sub array_perhaps_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a ? [@$a[1 .. $#$a]] : ()
 }
 
 sub array_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a or die "can't take the rest of an empty array";
     [@$a[1 .. $#$a]]
 }
 
 sub array_maybe_first_and_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a ? (array_first $a, array_rest $a) : undef
 }
 
 sub array_first_and_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     (array_first $a, array_rest $a)
 }
 
 sub array_second {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     $_[0][1]
 }
 
@@ -190,19 +191,19 @@ TEST_EXCEPTION { array_ref [5], 1 } "index out of bounds: 1";
 TEST_EXCEPTION { array_ref [5], -1 } "index out of bounds: -1";
 
 sub array_length {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     scalar @{ $_[0] }
 }
 
 sub array_is_null {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     @{ $_[0] } == 0
 }
 
 # functional updates
 
 sub array_set ($$$) {
-    @_ == 3 or croak "wrong number of arguments";
+    @_ == 3 or fp_croak_nargs 3;
     my ($a, $i, $v) = @_;
     my $a2 = [@$a];
     $$a2[$i] = $v;
@@ -210,7 +211,7 @@ sub array_set ($$$) {
 }
 
 sub array_update ($$$) {
-    @_ == 3 or croak "wrong number of arguments";
+    @_ == 3 or fp_croak_nargs 3;
     my ($a, $i, $fn) = @_;
     my $a2 = [@$a];
     $$a2[$i] = &$fn($$a2[$i]);
@@ -225,7 +226,7 @@ sub array_push {
 }
 
 sub array_pop {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     my $a2  = [@$a];
     my $v   = pop @$a2;
@@ -233,7 +234,7 @@ sub array_pop {
 }
 
 sub array_shift {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     my $a2  = [@$a];
     my $v   = shift @$a2;
@@ -313,20 +314,20 @@ sub array_append {
 }
 
 sub array_reverse {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
     [reverse @$v]
 }
 
 sub array_xone {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a == 1 or croak "expecting 1 element, got " . @$a;
     $$a[0]
 }
 
 sub array_perhaps_one {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     if (@$a == 1) {
         $$a[0]
@@ -366,7 +367,7 @@ sub array_for_each ($$) {
 }
 
 sub array_map {
-    @_ > 1 or croak "wrong number of arguments";
+    @_ > 1 or fp_croak_nargs "> 1";
     my $fn  = shift;
     my $len = min(map { scalar @$_ } @_);
     my @res;
@@ -387,7 +388,7 @@ TEST {
 
 # (should one use multi-arg stream_map with stream_iota instead?..)
 sub array_map_with_index {
-    @_ > 1 or croak "wrong number of arguments";
+    @_ > 1 or fp_croak_nargs "> 1";
     my $fn  = shift;
     my $len = min(map { scalar @$_ } @_);
     my @res;
@@ -403,7 +404,7 @@ TEST {
 [[0, "a", 20], [1, "b", 21]];
 
 sub array_map_with_islast {
-    @_ > 1 or croak "wrong number of arguments";
+    @_ > 1 or fp_croak_nargs "> 1";
     my $fn   = shift;
     my $len  = min(map { scalar @$_ } @_);
     my $last = $len - 1;
@@ -424,7 +425,7 @@ TEST {
 [['', 1, "b"], [1, 2, "c"]];
 
 sub array_to_hash_map {
-    @_ > 1 or croak "wrong number of arguments";
+    @_ > 1 or fp_croak_nargs "> 1";
     my $fn  = shift;
     my $len = min(map { scalar @$_ } @_);
     my %res;
@@ -446,7 +447,7 @@ TEST {
 +{ 'a' => 4, 'b' => 9, 'c' => 16 };
 
 sub array_filter ($$) {
-    @_ == 2 or croak "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $v) = @_;
     [grep { &$fn($_) } @$v]
 }
@@ -487,7 +488,7 @@ TEST {
 [2, 1];
 
 sub array_fold_right ($$$) {
-    @_ == 3 or croak "wrong number of arguments";
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $tail, $a) = @_;
     my $i = @$a - 1;
     while ($i >= 0) {
@@ -519,7 +520,7 @@ TEST { array_intersperse [1, 2, 3], "a" }
 TEST { array_intersperse [], "a" } [];
 
 sub array_strings_join ($$) {
-    @_ == 2 or croak "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($ary, $val) = @_;
     join $val, @$ary
 }
@@ -528,7 +529,7 @@ TEST { array_strings_join [1, 2, 3], "-" }
 "1-2-3";
 
 sub array_to_string {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($ary) = @_;
     join "", @$ary
 }
@@ -583,12 +584,12 @@ TEST {
 1;
 
 sub array_sum {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     array_fold \&add, 0, $_[0]
 }
 
 sub array_last {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     $$a[-1]
 }
@@ -604,7 +605,7 @@ sub array_to_hash_group_by ($$) {
 
 # adapted from FP::List
 sub array_perhaps_find_tail ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $s,) = @_;
     my $len = @$s;
     my $i   = 0;
@@ -630,7 +631,7 @@ LP: {
 }
 
 sub array_perhaps_find ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $l) = @_;
     if (my ($l) = array_perhaps_find_tail($fn, $l)) {
         $l->first
