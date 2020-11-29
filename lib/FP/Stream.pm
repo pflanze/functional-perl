@@ -309,7 +309,8 @@ TEST {
 # fold. If nothing more this allows `*cons` to be passed as $fn
 # directly to construct a list.
 
-sub stream_fold ($$$) {
+sub stream_fold {
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $start, $l) = @_;
     weaken $_[2];
     my $v;
@@ -360,7 +361,7 @@ TEST {
 #TEST{ stream_iota->rest->take(100000)->sum }
 #  5000050000;
 
-sub stream_append2 ($$) {
+sub stream_append2 {
     @_ == 2 or fp_croak_nargs 2;
     my ($l1, $l2) = @_;
     weaken $_[0];
@@ -445,9 +446,8 @@ TEST {
     ["take 6", "a", "b", "c"]
 ];
 
-sub stream_map ($ $);
-
-sub stream_map ($ $) {
+sub stream_map {
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $l) = @_;
     weaken $_[1];
     lazy {
@@ -458,9 +458,8 @@ sub stream_map ($ $) {
 
 *FP::List::List::stream_map = flip \&stream_map;
 
-sub stream_map_with_tail ($ $ $);
-
-sub stream_map_with_tail ($ $ $) {
+sub stream_map_with_tail {
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $l, $tail) = @_;
     weaken $_[1];
     lazy {
@@ -474,9 +473,8 @@ sub stream_map_with_tail ($ $ $) {
 *FP::List::List::stream_map_with_tail = flip2of3 \&stream_map_with_tail;
 
 # 2-ary (possibly slightly faster) version of stream_zip
-sub stream_zip2 ($$);
-
-sub stream_zip2 ($$) {
+sub stream_zip2 {
+    @_ == 2 or fp_croak_nargs 2;
     my ($l, $m) = @_;
     do { weaken $_ if is_promise $_ }
         for @_;    #needed?
@@ -524,11 +522,11 @@ sub stream_zip_with {
 
 *FP::List::List::stream_zip_with = flip2of3 \&stream_zip_with;
 
-sub stream_filter ($ $);
+sub stream_filter;
 *stream_filter                 = FP::List::make_filter(1);
 *FP::List::List::stream_filter = flip \&stream_filter;
 
-sub stream_filter_with_tail ($$$);
+sub stream_filter_with_tail;
 *stream_filter_with_tail                 = FP::List::make_filter_with_tail(1);
 *FP::List::List::stream_filter_with_tail = flip2of3 \&stream_filter_with_tail;
 
@@ -537,9 +535,8 @@ sub stream_filter_with_tail ($$$);
 # foldr1 is a variant of foldr that has no starting value argument,
 # and thus must be applied to non-empty lists.
 
-sub stream_foldr1 ($ $);
-
-sub stream_foldr1 ($ $) {
+sub stream_foldr1 {
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $l) = @_;
     weaken $_[1];
     lazy {
@@ -556,9 +553,8 @@ sub stream_foldr1 ($ $) {
 
 *FP::List::List::stream_foldr1 = flip \&stream_foldr1;
 
-sub stream_fold_right ($ $ $);
-
-sub stream_fold_right ($ $ $) {
+sub stream_fold_right {
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $start, $l) = @_;
     weaken $_[2];
     lazy {
@@ -580,7 +576,7 @@ sub stream_fold_right ($ $ $) {
 sub make_stream__fold_right {
     my ($length, $ref, $start, $d, $whileP) = @_;
 
-    sub ($$$) {
+    sub {
         @_ == 3 or fp_croak_nargs 3;
         my ($fn, $tail, $a) = @_;
         my $len = &$length($a);
@@ -607,24 +603,26 @@ our $array_ref     = sub { $_[0][$_[1]] };
 our $string_length = sub { length $_[0] };
 our $string_ref    = sub { substr $_[0], $_[1], 1 };
 
-sub stream__array_fold_right ($$$);
+sub stream__array_fold_right;
 *stream__array_fold_right
     = make_stream__fold_right($array_length, $array_ref, 0, 1, $lt);
 
 # XX export these array functions as methods to ARRAY library
 
-sub stream__string_fold_right ($$$);
+sub stream__string_fold_right;
 *stream__string_fold_right
     = make_stream__fold_right($string_length, $string_ref, 0, 1, $lt);
 
-sub stream__subarray_fold_right ($$$$$) {
+sub stream__subarray_fold_right {
+    @_ == 5 or fp_croak_nargs 5;
     my ($fn, $tail, $a, $start, $maybe_end) = @_;
     make_stream__fold_right($array_length, $array_ref, $start, 1,
         defined $maybe_end ? sub { $_[0] < $_[1] and $_[0] < $maybe_end } : $lt)
         ->($fn, $tail, $a);
 }
 
-sub stream__subarray_fold_right_reverse ($$$$$) {
+sub stream__subarray_fold_right_reverse {
+    @_ == 5 or fp_croak_nargs 5;
     my ($fn, $tail, $a, $start, $maybe_end) = @_;
     make_stream__fold_right($array_length, $array_ref, $start, -1,
         defined $maybe_end
@@ -632,7 +630,8 @@ sub stream__subarray_fold_right_reverse ($$$$$) {
         : sub { $_[0] >= 0 })->($fn, $tail, $a);
 }
 
-sub array_to_stream ($;$) {
+sub array_to_stream {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($a, $maybe_tail) = @_;
     stream__array_fold_right(*cons, $maybe_tail // null, $a)
 }
@@ -641,19 +640,22 @@ sub stream {
     array_to_stream [@_]
 }
 
-sub subarray_to_stream ($$;$$) {
+sub subarray_to_stream {
+    @_ >= 2 and @_ <= 4 or fp_croak_nargs "2-4";
     my ($a, $start, $maybe_end, $maybe_tail) = @_;
     stream__subarray_fold_right(*cons, $maybe_tail // null,
         $a, $start, $maybe_end)
 }
 
-sub subarray_to_stream_reverse ($$;$$) {
+sub subarray_to_stream_reverse {
+    @_ >= 2 and @_ <= 4 or fp_croak_nargs "2-4";
     my ($a, $start, $maybe_end, $maybe_tail) = @_;
     stream__subarray_fold_right_reverse(*cons, $maybe_tail // null,
         $a, $start, $maybe_end)
 }
 
-sub string_to_stream ($;$) {
+sub string_to_stream {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($str, $maybe_tail) = @_;
     stream__string_fold_right(*cons, $maybe_tail // null, $str)
 }
@@ -674,7 +676,7 @@ sub stream_to_string {
 
 TEST { stream("Ha", "ll", "o")->string } "Hallo";
 
-sub stream_strings_join ($$) {
+sub stream_strings_join {
     @_ == 2 or fp_croak_nargs 2;
     my ($l, $val) = @_;
     weaken $_[0];
@@ -692,14 +694,13 @@ sub stream_strings_join ($$) {
 TEST { stream(1, 2, 3)->strings_join("-") }
 "1-2-3";
 
-sub stream_for_each ($ $ );
+sub stream_for_each;
 *stream_for_each = FP::List::make_for_each(1);
 
 *FP::List::List::stream_for_each = flip \&stream_for_each;
 
-sub stream_drop ($ $);
-
-sub stream_drop ($ $) {
+sub stream_drop {
+    @_ == 2 or fp_croak_nargs 2;
     my ($s, $n) = @_;
     weaken $_[0];
     while ($n > 0) {
@@ -713,9 +714,8 @@ sub stream_drop ($ $) {
 
 *FP::List::List::stream_drop = *stream_drop;
 
-sub stream_take ($ $);
-
-sub stream_take ($ $) {
+sub stream_take {
+    @_ == 2 or fp_croak_nargs 2;
     my ($s, $n) = @_;
     weaken $_[0];
     lazy {
@@ -730,9 +730,8 @@ sub stream_take ($ $) {
 
 *FP::List::List::stream_take = *stream_take;
 
-sub stream_take_while ($ $);
-
-sub stream_take_while ($ $) {
+sub stream_take_while {
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $s) = @_;
     weaken $_[1];
     lazy {
@@ -752,9 +751,8 @@ sub stream_take_while ($ $) {
 
 *FP::List::List::stream_take_while = flip \&stream_take_while;
 
-sub stream_slice ($ $);
-
-sub stream_slice ($ $) {
+sub stream_slice {
+    @_ == 2 or fp_croak_nargs 2;
     my ($start, $end) = @_;
     weaken $_[0];
     weaken $_[1];
@@ -785,7 +783,8 @@ sub stream_slice ($ $) {
 
 # maybe call it `cut_at` instead?
 
-sub stream_drop_while ($ $) {
+sub stream_drop_while {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $s) = @_;
     weaken $_[1];
     lazy {
@@ -803,11 +802,12 @@ sub stream_drop_while ($ $) {
 
 *FP::List::List::stream_drop_while = flip \&stream_drop_while;
 
-sub stream_ref ($$);
+sub stream_ref;
 *stream_ref                 = FP::List::make_ref(1);
 *FP::List::List::stream_ref = *stream_ref;
 
 sub exn (&) {
+    @_ == 1 or fp_croak_nargs 1;
     my ($thunk) = @_;
     eval { &$thunk(); '' } // do { $@ =~ /(.*?) at/; $1 }
 }
@@ -843,8 +843,6 @@ TEST { list_ref cons(0, stream(1, 2, 3)), 2 } 2;
 TEST { stream_ref cons(0, stream(1, 2, 3)), 2 } 2;
 
 # force everything deeply
-sub F;
-
 sub F {
     @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
@@ -852,7 +850,7 @@ sub F {
     #weaken $_[0]; since I usually use it interactively, and should
     # only be good for short sequences, better don't
     if (is_promise $v) {
-        F force $v;
+        F(force $v);
     } else {
         if (length(my $r = ref $v)) {
             if (is_pair $v) {
@@ -860,9 +858,9 @@ sub F {
             } elsif (is_null $v) {
                 $v
             } elsif ($r eq "ARRAY") {
-                [map { F $_ } @$v]
+                [map { F($_) } @$v]
             } elsif (UNIVERSAL::isa($v, "ARRAY")) {
-                bless [map { F $_ } @$v], ref $v
+                bless [map { F($_) } @$v], ref $v
             } else {
                 $v
             }
@@ -914,7 +912,7 @@ sub stream_to_list {
 
 *FP::List::List::stream_list = *stream_to_list;
 
-sub stream_sort ($;$) {
+sub stream_sort {
     @_ == 1 or @_ == 2 or fp_croak_nargs "1 or 2";
     my ($l, $maybe_cmp) = @_;
     stream_to_purearray($l)->sort ($maybe_cmp)
@@ -941,7 +939,7 @@ TEST { stream(5, 3, 10, 8, 4)->sort->stream->car }
 
 # add a lazy merge sort instead/in addition?
 
-sub stream_group ($$;$);
+sub stream_group;
 *stream_group = FP::List::make_group(1);
 
 sub FP::List::List::stream_group {
@@ -951,7 +949,8 @@ sub FP::List::List::stream_group {
     stream_group($equal, $self, $maybe_tail)
 }
 
-sub stream_mixed_flatten ($;$$) {
+sub stream_mixed_flatten {
+    @_ >= 1 and @_ <= 3 or fp_croak_nargs "1-3";
     my ($v, $maybe_tail, $maybe_delay) = @_;
 
     #XXX needed, no? weaken $_[0] if ref $_[0];
@@ -960,9 +959,8 @@ sub stream_mixed_flatten ($;$$) {
 
 *FP::List::List::stream_mixed_flatten = *stream_mixed_flatten;
 
-sub stream_any ($ $);
-
-sub stream_any ($ $) {
+sub stream_any {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l) = @_;
     weaken $_[1];
     $l = force $l;

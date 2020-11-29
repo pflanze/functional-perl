@@ -62,6 +62,7 @@ use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
+use FP::Carp;
 
 our @EXPORT    = qw(singlequote);
 our @EXPORT_OK = qw(singlequote_sh singlequote_many many with_maxlen
@@ -82,7 +83,8 @@ sub with_maxlen ($&) {
 
 # Perl style:
 
-sub singlequote($ ;$ ) {
+sub singlequote {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($str, $alternative) = @_;
     if (defined $str) {
         if (defined $maybe_maxlen and length($str) > $maybe_maxlen) {
@@ -122,7 +124,8 @@ sub many {
 
 # Shell (Bash) style:
 
-sub singlequote_sh($ ;$ ) {
+sub singlequote_sh {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($str, $alternative) = @_;
     if (defined $str) {
         $str =~ s/\'/'\\\''/sg;

@@ -68,6 +68,7 @@ use Chj::constructorexporter;
 use FP::Predicates qw(is_string is_boolean);
 use FP::Show;
 use FP::Equal;
+use FP::Carp;
 
 sub perhaps_segment_error {
     @_ == 1 or die "wrong number of arguments";
@@ -92,10 +93,14 @@ sub check_segment {
 
 # Toggle typing, off for speed (checking FP::List costs O(length);
 # better use FP::StrictList if really interested in strict typing!)
-sub use_costly_typing () {0}
+sub use_costly_typing {
+    @_ == 0 or fp_croak_nargs 0;
+    0
+}
 our $use_costly_typing = use_costly_typing;    # for access from FP::Path::t
 
-sub typed ($$) {
+sub typed {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $name) = @_;
     if (use_costly_typing) { [$pred, $name] }
     else {

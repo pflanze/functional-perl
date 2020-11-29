@@ -97,10 +97,12 @@ our @EXPORT_OK = qw(xopen_write xopen_append xopen_update
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Carp;
+use FP::Carp;
 use Chj::IO::File;
 use Scalar::Util 'blessed';
 
-sub glob_to_fh ($;$) {
+sub glob_to_fh {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($glob, $maybe_layer_or_encoding) = @_;
     my $fh = bless(*{$glob}{IO}, "Chj::IO::File");
     $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);
@@ -115,7 +117,8 @@ sub glob_to_fh ($;$) {
 
 use IO::Handle;
 
-sub fd_to_fh ($$;$) {
+sub fd_to_fh {
+    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
     my ($fd, $mode, $maybe_layer_or_encoding) = @_;
     $fd =~ /^\d+\z/s or die "fd argument must be a natural number";
     my $fh = IO::Handle->new_from_fd($fd, $mode);
@@ -124,17 +127,20 @@ sub fd_to_fh ($$;$) {
     $fh
 }
 
-sub inout_fd_to_fh ($;$) {
+sub inout_fd_to_fh {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($fd, $maybe_layer_or_encoding) = @_;
     fd_to_fh $fd, "rw", $maybe_layer_or_encoding
 }
 
-sub input_fd_to_fh ($;$) {
+sub input_fd_to_fh {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($fd, $maybe_layer_or_encoding) = @_;
     fd_to_fh $fd, "r", $maybe_layer_or_encoding
 }
 
-sub output_fd_to_fh ($;$) {
+sub output_fd_to_fh {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($fd, $maybe_layer_or_encoding) = @_;
     fd_to_fh $fd, "w", $maybe_layer_or_encoding
 }

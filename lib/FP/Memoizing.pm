@@ -65,9 +65,10 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use Chj::TEST;
 use Storable qw(nfreeze nstore_fd fd_retrieve);
 use Digest;
+use FP::Hash qw(hash_cache);
+use FP::Carp;
 
 #use Chj::TerseDumper;
-use FP::Hash qw(hash_cache);
 
 # ----------------------------------------------------------------
 # For keys:
@@ -122,7 +123,8 @@ our $digest_args = sub {
 # 1. values must be wrapped in an array;
 # 2. OS errors versus format errors? No go, right?
 
-sub fh_xnstore ($$) {
+sub fh_xnstore {
+    @_ == 2 or fp_croak_nargs 2;
 
     # fh, arrayref
     nstore_fd($_[1], $_[0])
@@ -142,7 +144,8 @@ sub fh_xdeserialize {
 
 # ----------------------------------------------------------------
 
-sub memoizing_ ($$$) {
+sub memoizing_ {
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $cache, $getcache) = @_;
     sub {
         my @args      = @_;
@@ -175,7 +178,8 @@ use Chj::xtmpfile;
 # CAREFUL, $k is not checked for subversive values ("../" etc.), only
 # use with hashed keys or so!
 
-sub file_cache ($$$) {
+sub file_cache {
+    @_ == 3 or fp_croak_nargs 3;
     my ($basepath, $k, $generate) = @_;
 
     my $path = $basepath . $k;
@@ -194,7 +198,8 @@ sub file_cache ($$$) {
     }
 }
 
-sub memoizing_to_dir ($$) {
+sub memoizing_to_dir {
+    @_ == 2 or fp_croak_nargs 2;
     my ($dirpath, $f) = @_;
     $dirpath .= "/" unless $dirpath =~ /\/$/s;
     memoizing_ $f, $dirpath, \&file_cache

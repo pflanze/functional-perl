@@ -72,7 +72,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use FP::Ops qw(string_cmp number_cmp binary_operator);
 use Chj::TEST;
 
-sub array_sort ($;$) {
+sub array_sort {
     @_ == 1 or @_ == 2 or die "wrong number of arguments";
     my ($in, $maybe_cmp) = @_;
     if (defined $maybe_cmp) {
@@ -94,7 +94,7 @@ sub array_sortCompare {
     [sort { $a->FP_Compare_compare($b) } @$in]
 }
 
-sub on ($ $) {
+sub on {
     @_ == 2 or die "expecting 2 arguments";
     my ($select, $cmp) = @_;
     sub {
@@ -104,7 +104,7 @@ sub on ($ $) {
     }
 }
 
-sub on_maybe ($$) {
+sub on_maybe {
     @_ == 2 or die "expecting 2 arguments";
     my ($maybe_select, $cmp) = @_;
     defined $maybe_select ? on($maybe_select, $cmp) : $cmp

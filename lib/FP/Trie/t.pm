@@ -34,6 +34,7 @@ use FP::Trie;
 use FP::List qw(string_to_list);
 use FP::Ops "the_method";
 use Chj::TEST;
+use FP::Carp;
 
 my $t = empty_trie->set(string_to_list("Hello"), "World");
 
@@ -152,7 +153,8 @@ TEST {
     my $trie = empty_trie;
     my $hash = {};
 
-    my $set_both = sub ($$) {
+    my $set_both = sub {
+        @_ == 2 or fp_croak_nargs 2;
         my ($k, $i) = @_;
         $trie = $trie->set(string_to_list($k), $i);
         $$hash{$k} = $i;

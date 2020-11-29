@@ -19,6 +19,17 @@ BEGIN {
 }
 use lib "$mydir/../lib";
 
+use Getopt::Long;
+use FP::Predicates 'is_natural0';
+use Chj::xopen 'glob_to_fh';
+use FP::IOStream 'fh_to_chunks';
+use FP::Stream ":all";
+use FP::List ":all";
+use FP::Lazy ":all";
+use POSIX 'ESPIPE';
+use Chj::TEST;
+use FP::Carp;
+
 our $BUFSIZ = 1024 * 16;
 
 sub usage {
@@ -34,17 +45,8 @@ sub usage {
     exit @_ ? 1 : 0;
 }
 
-use Getopt::Long;
-use FP::Predicates 'is_natural0';
-use Chj::xopen 'glob_to_fh';
-use FP::IOStream 'fh_to_chunks';
-use FP::Stream ":all";
-use FP::List ":all";
-use FP::Lazy ":all";
-use POSIX 'ESPIPE';
-use Chj::TEST;
-
-sub resource_rss () {
+sub resource_rss {
+    @_ == 0 or fp_croak_nargs 0;
     require BSD::Resource;
     (BSD::Resource::getrusage(BSD::Resource::RUSAGE_SELF()))[2]
 }

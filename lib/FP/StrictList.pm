@@ -94,6 +94,7 @@ use FP::List;
 use Chj::TEST;
 use FP::Combinators qw(flip2of3 flip);
 use Scalar::Util qw(blessed);
+use FP::Carp;
 
 package FP::StrictList::List {
 
@@ -185,6 +186,9 @@ package FP::StrictList::Pair {
 my $null = bless [], "FP::StrictList::Null";
 
 sub strictnull () {
+
+    # @_ == 0 or fp_croak_nargs 0;
+    # no, is also called as a method
     $null
 }
 
@@ -297,7 +301,7 @@ bless([7, 8], 'FP::List::Pair');
 sub make_reverse__map_with_length_with_tail {
     my ($cons) = @_;
 
-    sub ($$$) {
+    sub {
         @_ == 3 or die "wrong number of arguments";
         my ($fn, $l, $tail) = @_;
         my $a;
@@ -310,7 +314,7 @@ sub make_reverse__map_with_length_with_tail {
     }
 }
 
-sub strictlist_reverse__map_with_length_with_tail ($$$);
+sub strictlist_reverse__map_with_length_with_tail;
 *strictlist_reverse__map_with_length_with_tail
     = make_reverse__map_with_length_with_tail(\&cons);
 
@@ -324,7 +328,7 @@ TEST {
 }
 ['', [[c => 1], [b => 2], [a => 3]]];
 
-sub strictlist_reverse__map_with_length ($$) {
+sub strictlist_reverse__map_with_length {
     @_ == 2 or die "wrong number of arguments";
     my ($fn, $l) = @_;
     strictlist_reverse__map_with_length_with_tail($fn, $l, strictnull)
@@ -339,7 +343,7 @@ TEST {
 }
 [1, [[c => 1], [b => 2], [a => 3]]];
 
-sub strictlist_array__reverse__map_with_length ($$) {
+sub strictlist_array__reverse__map_with_length {
     @_ == 2 or die "wrong number of arguments";
     my ($fn, $l) = @_;
     my $i = $l->length;
@@ -362,7 +366,7 @@ TEST {
 }
 [[c => 1], [b => 2], [a => 3]];
 
-sub strictlist_array__map_with_length ($$) {
+sub strictlist_array__map_with_length {
     @_ == 2 or die "wrong number of arguments";
     my ($fn, $l) = @_;
     my $i   = 0;

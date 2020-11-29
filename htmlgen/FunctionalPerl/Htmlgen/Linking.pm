@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -70,6 +70,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
     use PXML::XHTML ":all";
     use Chj::CPAN::ModulePODUrl 'perhaps_module_pod_url';
     use FP::Memoizing 'memoizing_to_dir';
+    use FP::Carp;
 
     our $podurl_cache = ".ModulePODUrl-cache";
     mkdir $podurl_cache;
@@ -126,7 +127,8 @@ package FunctionalPerl::Htmlgen::Linking::code {
     sub map_element ($self, $e, $uplist) {
 
         # possibly *map contents* of inline code or code sections
-        my $mapped_e = sub() {
+        my $mapped_e = sub {
+            @_ == 0 or fp_croak_nargs 0;
             if (defined(my $f = $self->map_code_body)) {
 
                 # rely on code never containing markup, at least *as long

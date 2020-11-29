@@ -53,6 +53,7 @@ our @EXPORT_OK   = qw(untainted_with is_untainted);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
+use FP::Carp;
 
 sub untainted {
     @_ == 1          or die "wrong number of arguments";
@@ -60,7 +61,8 @@ sub untainted {
     $1
 }
 
-sub untainted_with ($$) {
+sub untainted_with {
+    @_ == 2 or fp_croak_nargs 2;
     my ($v, $re) = @_;
     $v =~ /($re)/ or die "untainted_with: does not match regex $re: '$v'";
     $1

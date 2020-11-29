@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -136,6 +136,8 @@ our @EXPORT      = qw(pxmlpre pxmlfunc);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Carp;
+
 {
 
     package PXML::Preserialize::Serialized;
@@ -194,7 +196,8 @@ use FP::Div qw(max);
 
 # passes $fn $nargs arguments that it will use during serialization to
 # cut apart the serialized representation.
-sub _pxmlpre ($$) {
+sub _pxmlpre {
+    @_ == 2 or fp_croak_nargs 2;
     my ($nargs, $fn) = @_;
 
     my @items;
@@ -255,7 +258,8 @@ sub build {
     }
 }
 
-sub pxmlpre ($$) {
+sub pxmlpre {
+    @_ == 2 or fp_croak_nargs 2;
     my ($nargs, $fn) = @_;
     build($nargs, _pxmlpre($nargs, $fn))
 }

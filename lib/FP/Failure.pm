@@ -159,6 +159,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Lazy 'force';
 use Safe::Isa;
+use FP::Carp;
 
 package FP::Failure::Failure {
 
@@ -245,7 +246,8 @@ package FP::Failure::Failure {
 
 our $trace_failures = 0;    # bool
 
-sub failure ($;$) {
+sub failure {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($value, $maybe_parents) = @_;
     my $v = FP::Failure::Failure->new(
         $value,
@@ -274,7 +276,8 @@ sub is_failure {
 
 our $use_failure = 0;    # bool
 
-sub fails ($;$) {
+sub fails {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     $use_failure            ? &failure(@_)
         : defined wantarray ? 0
         :                     die "fails called in void context";

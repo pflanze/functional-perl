@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -56,6 +56,7 @@ our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Data::Dumper;
+use FP::Carp;
 
 # XX these are expensive, of course. Better solution?
 
@@ -69,7 +70,8 @@ sub dumperequal {
     1
 }
 
-sub dumperequal_utf8 ($$) {
+sub dumperequal_utf8 {
+    @_ == 2 or fp_croak_nargs 2;
     local $Data::Dumper::Sortkeys = 1;
 
     # compare ignoring utf8 flags on strings

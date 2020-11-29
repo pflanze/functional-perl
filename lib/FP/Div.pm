@@ -62,7 +62,7 @@ sub square {
     $_[0] * $_[0]
 }
 
-sub average($$) {
+sub average {
     @_ == 2 or die "wrong number of arguments";
     ($_[0] + $_[1]) / 2
 }

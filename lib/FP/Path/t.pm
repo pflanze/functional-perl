@@ -33,6 +33,7 @@ use warnings FATAL => 'uninitialized';
 use Chj::TEST;
 use FP::Path "path";
 use FP::Equal;
+use FP::Carp;
 
 TEST {
     path("a/b/C")->add(path("d/e"), 0)->string
@@ -173,7 +174,8 @@ TEST_EXCEPTION { FP::Path->new(list("/foo"), 1, 1)->string }
 
 # equal:
 
-sub t_equal ($$) {
+sub t_equal {
+    @_ == 2 or fp_croak_nargs 2;
     my ($a, $b) = @_;
     equal(path($a), path($b))
 }
@@ -199,7 +201,8 @@ sub t_str_clean {
     path($a)->clean_dot->xclean_dotdot;
 }
 
-sub t_equals_clean ($$) {
+sub t_equals_clean {
+    @_ == 2 or fp_croak_nargs 2;
     my ($a, $b) = @_;
     equal(t_str_clean($a), t_str_clean($b));
 }

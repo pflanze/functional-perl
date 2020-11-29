@@ -61,6 +61,8 @@ our @EXPORT_OK = qw(xHOME
     xsafehome);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Carp;
+
 # use File::HomeDir qw(home);
 
 # But File::HomeDir is not installed with either Cygwin or Strawberry
@@ -81,16 +83,19 @@ sub xcheck_home {
     }
 }
 
-sub xHOME () {
+sub xHOME {
+    @_ == 0 or fp_croak_nargs 0;
     defined(my $home = $ENV{HOME})
         or die "environment variable HOME is not set";
     xcheck_home $home;
     $home
 }
 
-sub xeffectiveuserhome () {
+sub xeffectiveuserhome {
 
-    # (Don't bother about caching, premature opt & dangerous.)
+    @_ == 0 or fp_croak_nargs 0;
+
+# (Don't bother about caching, premature opt & dangerous.)
     my $uid = $>;
     my (
         $name,    $passwd, $_uid, $gid,   $quota,
@@ -101,7 +106,8 @@ sub xeffectiveuserhome () {
     $dir
 }
 
-sub xsafehome () {
+sub xsafehome {
+    @_ == 0 or fp_croak_nargs 0;
     if ($^O eq 'MSWin32') {
 
         # XX or how to look it up on Windows again? If implemented, update pod.
@@ -119,7 +125,8 @@ sub xsafehome () {
 
 our $warned = 0;
 
-sub xchecked_home ($$) {
+sub xchecked_home {
+    @_ == 2 or fp_croak_nargs 2;
     my ($home, $what) = @_;
     xcheck_home $home;
     if (-d $home) {
@@ -148,7 +155,8 @@ sub maybe_globhome {
     }
 }
 
-sub xhome () {
+sub xhome {
+    @_ == 0 or fp_croak_nargs 0;
     maybe_HOME() // maybe_globhome() // xeffectiveuserhome()
 }
 

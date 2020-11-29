@@ -172,12 +172,14 @@ sub array_second {
     $_[0][1]
 }
 
-sub array_maybe_ref ($$) {
+sub array_maybe_ref {
+    @_ == 2 or fp_croak_nargs 2;
     my ($a, $i) = @_;
     $$a[$i]
 }
 
-sub array_ref ($$) {
+sub array_ref {
+    @_ == 2 or fp_croak_nargs 2;
     my ($a, $i) = @_;
 
     # XX also check that $i is integer?
@@ -202,7 +204,7 @@ sub array_is_null {
 
 # functional updates
 
-sub array_set ($$$) {
+sub array_set {
     @_ == 3 or fp_croak_nargs 3;
     my ($a, $i, $v) = @_;
     my $a2 = [@$a];
@@ -210,7 +212,7 @@ sub array_set ($$$) {
     $a2
 }
 
-sub array_update ($$$) {
+sub array_update {
     @_ == 3 or fp_croak_nargs 3;
     my ($a, $i, $fn) = @_;
     my $a2 = [@$a];
@@ -255,17 +257,20 @@ sub array_sub {
     bless [@$a[$from .. $to - 1]], ref $a
 }
 
-sub array_take ($$) {
+sub array_take {
+    @_ == 2 or fp_croak_nargs 2;
     my ($a, $n) = @_;
     array_sub $a, 0, $n
 }
 
-sub array_drop ($$) {
+sub array_drop {
+    @_ == 2 or fp_croak_nargs 2;
     my ($a, $n) = @_;
     array_sub $a, $n, array_length $a
 }
 
-sub array_take_while ($$) {
+sub array_take_while {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $s) = @_;
     my $i   = 0;
     my $len = @$s;
@@ -275,7 +280,8 @@ sub array_take_while ($$) {
     [@$s[0 .. $i - 1]]
 }
 
-sub array_take_while_and_rest ($$) {
+sub array_take_while_and_rest {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $s) = @_;
     my $i   = 0;
     my $len = @$s;
@@ -285,7 +291,8 @@ sub array_take_while_and_rest ($$) {
     ([@$s[0 .. $i - 1]], [@$s[$i .. $len - 1]])
 }
 
-sub array_drop_while ($ $) {
+sub array_drop_while {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $s) = @_;
     my $i   = 0;
     my $len = @$s;
@@ -336,7 +343,8 @@ sub array_perhaps_one {
     }
 }
 
-sub array_hashing_uniq ($;$ ) {
+sub array_hashing_uniq {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($ary, $maybe_warn) = @_;
     my %seen;
     [
@@ -349,9 +357,8 @@ sub array_hashing_uniq ($;$ ) {
     ]
 }
 
-sub array_zip2 ($$);
-
-sub array_zip2 ($$) {
+sub array_zip2 {
+    @_ == 2 or fp_croak_nargs 2;
     my ($l, $m) = @_;
     my @res;
     my $len = min(scalar @$l, scalar @$m);
@@ -361,7 +368,8 @@ sub array_zip2 ($$) {
     \@res
 }
 
-sub array_for_each ($$) {
+sub array_for_each {
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $v) = @_;
     for my $a (@$v) { &$fn($a) }
 }
@@ -446,7 +454,7 @@ TEST {
 }
 +{ 'a' => 4, 'b' => 9, 'c' => 16 };
 
-sub array_filter ($$) {
+sub array_filter {
     @_ == 2 or fp_croak_nargs 2;
     my ($fn, $v) = @_;
     [grep { &$fn($_) } @$v]
@@ -468,7 +476,8 @@ TEST { array_zip [3, 4], [qw(a b c)] }
 
 # see discussion for `stream_fold` in `FP::Stream` for the reasoning
 # behind the argument order of $fn
-sub array_fold ($$$) {
+sub array_fold {
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $start, $ary) = @_;
     for (@$ary) {
         $start = &$fn($_, $start);
@@ -487,7 +496,7 @@ TEST {
 }
 [2, 1];
 
-sub array_fold_right ($$$) {
+sub array_fold_right {
     @_ == 3 or fp_croak_nargs 3;
     my ($fn, $tail, $a) = @_;
     my $i = @$a - 1;
@@ -505,7 +514,8 @@ TEST {
 }
 [1, 2, 3];
 
-sub array_intersperse ($$) {
+sub array_intersperse {
+    @_ == 2 or fp_croak_nargs 2;
     my ($ary, $val) = @_;
     my @res;
     for (@$ary) {
@@ -519,7 +529,7 @@ TEST { array_intersperse [1, 2, 3], "a" }
 [1, 'a', 2, 'a', 3];
 TEST { array_intersperse [], "a" } [];
 
-sub array_strings_join ($$) {
+sub array_strings_join {
     @_ == 2 or fp_croak_nargs 2;
     my ($ary, $val) = @_;
     join $val, @$ary
@@ -537,7 +547,8 @@ sub array_to_string {
 TEST { array_to_string [1, 2, 3] }
 "123";
 
-sub array_every ($$) {
+sub array_every {
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $ary) = @_;
     for (@$ary) {
         return 0 unless &$fn($_);
@@ -558,7 +569,8 @@ TEST {
 }
 1;
 
-sub array_any ($$) {
+sub array_any {
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $ary) = @_;
     for (@$ary) {
         return 1 if &$fn($_);
@@ -594,7 +606,8 @@ sub array_last {
     $$a[-1]
 }
 
-sub array_to_hash_group_by ($$) {
+sub array_to_hash_group_by {
+    @_ == 2 or fp_croak_nargs 2;
     my ($ary, $on) = @_;
     my %res;
     for (@$ary) {
@@ -604,7 +617,7 @@ sub array_to_hash_group_by ($$) {
 }
 
 # adapted from FP::List
-sub array_perhaps_find_tail ($$) {
+sub array_perhaps_find_tail {
     @_ == 2 or fp_croak_nargs 2;
     my ($fn, $s,) = @_;
     my $len = @$s;
@@ -630,7 +643,7 @@ LP: {
     }
 }
 
-sub array_perhaps_find ($$) {
+sub array_perhaps_find {
     @_ == 2 or fp_croak_nargs 2;
     my ($fn, $l) = @_;
     if (my ($l) = array_perhaps_find_tail($fn, $l)) {

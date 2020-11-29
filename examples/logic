@@ -44,6 +44,7 @@ use FP::Repl;
 use FP::Hash ":all";
 use FP::Show;
 use FP::Array_sort ":all";
+use FP::Carp;
 
 {
 
@@ -247,7 +248,8 @@ sub buildmatrix($bits) {
         }, $people, $people_i
 }
 
-sub search() {
+sub search {
+    @_ == 0 or fp_croak_nargs 0;
     stream_iota->take(2**16)->map(\&buildmatrix)->filter(\&checks)
 }
 

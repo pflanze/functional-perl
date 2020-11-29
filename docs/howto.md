@@ -437,7 +437,7 @@ are not written to support lazy evaluation) have. Luckily in the case
 of Perl, it can be worked around, by assigning `undef` or better
 weakening the variable from within the called method:
 
-    sub for_each ($ $ ) {
+    sub for_each {
         my ($s, $proc) = @_;
         weaken $_[0];
         ...

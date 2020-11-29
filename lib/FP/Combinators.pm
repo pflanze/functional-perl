@@ -54,6 +54,7 @@ our @EXPORT_OK = qw(compose compose_scalar maybe_compose compose_1side
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
+use FP::Carp;
 
 sub compose {
     my (@fn) = reverse @_;
@@ -134,7 +135,8 @@ TEST {
 [2, 3];
 
 # a compose with 1 "side argument" (passed to subsequent invocations unmodified)
-sub compose_1side ($$) {
+sub compose_1side {
+    @_ == 2 or fp_croak_nargs 2;
     my ($f, $g) = @_;
     sub {
         my ($a, $b) = @_;

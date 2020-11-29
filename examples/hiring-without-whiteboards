@@ -24,6 +24,25 @@ BEGIN {
 }
 use lib "$mydir/../lib";
 
+use Getopt::Long;
+use Chj::ruse;
+use FP::Repl::Trap;
+use FP::Repl;
+use FP::List ":all";
+use FP::Stream ":all";
+use FP::IOStream ":all";
+use FP::Path;
+use FP::Array ":all";
+use FP::Array_sort ":all";
+use FP::Predicates ":all";
+use FP::Ops ":all";
+use FP::Combinators ":all";
+use FP::Show;
+use Chj::xperlfunc ":all";
+use FP::PureArray ":all";
+use Chj::TEST ":all";
+use FP::Carp;
+
 my $mainfile = "README.md";
 
 sub usage {
@@ -54,30 +73,10 @@ sub usage {
     exit 1;
 }
 
-use Getopt::Long;
 our $verbose = 0;
 GetOptions("verbose" => \$verbose, "help" => sub {usage},) or exit 1;
 
 my ($basedir) = @ARGV;
-
-use Chj::ruse;
-use FP::Repl::Trap;
-use FP::Repl;
-
-use FP::List ":all";
-use FP::Stream ":all";
-use FP::IOStream ":all";
-use FP::Path;
-use FP::Array ":all";
-use FP::Array_sort ":all";
-use FP::Predicates ":all";
-use FP::Ops ":all";
-use FP::Combinators ":all";
-use FP::Show;
-use Chj::xperlfunc ":all";
-use FP::PureArray ":all";
-
-use Chj::TEST ":all";
 
 # XX lib
 sub triples {
@@ -478,12 +477,14 @@ sub FP::Abstract::Sequence::drop_over ($l, $pred) {
     $l->drop_while(complement $pred)->drop_while($pred)
 }
 
-sub datalines() {
+sub datalines {
+    @_ == 0 or fp_croak_nargs 0;
     xfile_lines_chomp("$basedir/$mainfile", "UTF-8")->drop_over(*is_hr)
         ->take_while(complement * is_AlsoSee)->filter(complement * is_empty)
 }
 
-sub companies() {
+sub companies {
+    @_ == 0 or fp_croak_nargs 0;
 
     # Simply ignore the grouping headings.
     datalines->filter(complement * is_heading)->map (*parse_line)
@@ -516,7 +517,8 @@ sub grouped_companies_from($datalines) {
     }
 }
 
-sub grouped_companies() {
+sub grouped_companies {
+    @_ == 0 or fp_croak_nargs 0;
     grouped_companies_from datalines
 }
 
@@ -560,7 +562,10 @@ sub FP::Abstract::Sequence::print_grouped ($l, $please_sort = 1) {
 # ==================================================================
 # main
 
-sub cs() { companies() }
+sub cs {
+    @_ == 0 or fp_croak_nargs 0;
+    companies()
+}
 
 perhaps_run_tests "main" or do {
     usage unless @ARGV == 1;

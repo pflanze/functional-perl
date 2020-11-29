@@ -202,6 +202,7 @@ our @EXPORT_OK   = qw(delay force_noeval lazy_backtrace);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Carp;
+use FP::Carp;
 use FP::Mixin::Utils;
 use FP::Show;
 use Scalar::Util 'blessed';
@@ -270,7 +271,8 @@ sub delay (&);
 sub delayLight (&);
 *delayLight = \&lazyLight;
 
-sub force ($;$) {
+sub force {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($perhaps_promise, $nocache) = @_;
 LP: {
         if (defined blessed($perhaps_promise)) {

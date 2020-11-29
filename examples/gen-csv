@@ -47,8 +47,8 @@ use FP::Ops qw(add);
 use FP::fix;
 use FP::Currying;
 
-sub fibs() {
-
+sub fibs {
+    @_ == 0 or fp_croak_nargs 0;
     # (Also see the [[fibs]] example script; unlike there, where
     # global scope is used, here we don't use Keep around $fibs as
     # it's correct when the local variable, which goes out of scope,
@@ -66,7 +66,8 @@ sub exps;
     }
 };
 
-sub series() {
+sub series {
+    @_ == 0 or fp_croak_nargs 0;
     my $a    = 1.01;
     my $b    = 0.99;
     my $ns   = rest stream_iota;

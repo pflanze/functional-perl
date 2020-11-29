@@ -273,6 +273,7 @@ our @EXPORT_OK = qw(
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Carp;
+use FP::Carp;
 use Chj::singlequote 'singlequote_many';    # the only dependency so far
 use Chj::Unix::Exitcode qw(exitcode);
 
@@ -286,7 +287,8 @@ BEGIN {
     }
 }
 
-sub xfork() {
+sub xfork {
+    @_ == 0 or fp_croak_nargs 0;
     my $pid = fork;
     defined $pid or croak "xfork: $!";
     $pid
@@ -294,6 +296,7 @@ sub xfork() {
 
 # thread-like API; incomplete, for sure.
 sub xfork_(&) {
+    @_ == 1 or fp_croak_nargs 1;
     my ($thunk) = @_;
     my $pid = xfork;
     if ($pid) {
@@ -394,7 +397,8 @@ sub xxsystem_safe {
     $? == 0 or croak "xxsystem_safe: process terminated with " . exitcode($?);
 }
 
-sub xwaitpid ( $ ; $ ) {
+sub xwaitpid {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($pid, $flags) = @_;
     defined $flags or $flags = 0;
     my $kid = waitpid $pid, $flags;
@@ -405,7 +409,8 @@ sub xwaitpid ( $ ; $ ) {
     $kid
 }
 
-sub xxwaitpid ( $ ; $ ) {
+sub xxwaitpid {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($pid, $flags) = @_;
     defined $flags or $flags = 0;
     my $kid = xwaitpid $pid, $flags;
@@ -702,7 +707,8 @@ sub mk_caching_getANYid {
 
 our $fstype_for_device;
 
-sub fstype_for_device_init() {
+sub fstype_for_device_init {
+    @_ == 0 or fp_croak_nargs 0;
     open my $mounts, "<", "/proc/mounts" or die "/proc/mounts: $!";
     local $/ = "\n";
     my %t;
@@ -1121,7 +1127,8 @@ sub XLmtime {
     }
 }
 
-sub xlocaltime (;$ ) {
+sub xlocaltime {
+    @_ >= 0 and @_ <= 1 or fp_croak_nargs "0-1";
     bless [localtime(defined $_[0] ? $_[0] : time)],
         "Chj::xperlfunc::xlocaltime"
 }
@@ -1269,7 +1276,8 @@ sub xfileno {
     croak "xfileno: '$arg' is not a filehandle nor a file descriptor number";
 }
 
-sub xsysread ( $ $ $ ; $ ) {
+sub xsysread {
+    @_ >= 3 and @_ <= 4 or fp_croak_nargs "3-4";
     my $rv = do {
         if (@_ == 4) {
             sysread $_[0], $_[1], $_[2], $_[3]
@@ -1286,7 +1294,8 @@ sub xsysread ( $ $ $ ; $ ) {
 
 use FP::Show qw(show_many);
 
-sub basename ($;$$) {
+sub basename {
+    @_ >= 1 and @_ <= 3 or fp_croak_nargs "1-3";
     my ($path, $maybe_suffixS, $insensitive) = @_;
     my $copy = $path;
     $copy =~ s|.*/||s;
@@ -1393,7 +1402,8 @@ sub xmkdir_p {
     }
 }
 
-sub xlink_p ($ $ ) {
+sub xlink_p {
+    @_ == 2 or fp_croak_nargs 2;
     my ($from, $to) = @_;
     xmkdir_p(dirname $to);
     xlink $from, $to

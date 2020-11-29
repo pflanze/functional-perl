@@ -170,37 +170,37 @@ sub expt {
     $a**$b
 }
 
-sub string_cmp ($ $) {
+sub string_cmp {
     @_ == 2 or die "need 2 arguments";
     $_[0] cmp $_[1]
 }
 
-sub string_eq ($ $) {
+sub string_eq {
     @_ == 2 or die "need 2 arguments";
     $_[0] eq $_[1]
 }
 
-sub string_ne ($ $) {
+sub string_ne {
     @_ == 2 or die "need 2 arguments";
     $_[0] ne $_[1]
 }
 
-sub string_lt ($ $) {
+sub string_lt {
     @_ == 2 or die "need 2 arguments";
     $_[0] lt $_[1]
 }
 
-sub string_le ($ $) {
+sub string_le {
     @_ == 2 or die "need 2 arguments";
     $_[0] le $_[1]
 }
 
-sub string_gt ($ $) {
+sub string_gt {
     @_ == 2 or die "need 2 arguments";
     $_[0] gt $_[1]
 }
 
-sub string_ge ($ $) {
+sub string_ge {
     @_ == 2 or die "need 2 arguments";
     $_[0] ge $_[1]
 }
@@ -230,37 +230,37 @@ sub string_ucfirst {
     ucfirst $_[0]
 }
 
-sub number_cmp ($ $) {
+sub number_cmp {
     @_ == 2 or die "need 2 arguments";
     $_[0] <=> $_[1]
 }
 
-sub number_eq ($ $) {
+sub number_eq {
     @_ == 2 or die "need 2 arguments";
     $_[0] == $_[1]
 }
 
-sub number_ne ($ $) {
+sub number_ne {
     @_ == 2 or die "need 2 arguments";
     $_[0] != $_[1]
 }
 
-sub number_lt ($ $) {
+sub number_lt {
     @_ == 2 or die "need 2 arguments";
     $_[0] < $_[1]
 }
 
-sub number_le ($ $) {
+sub number_le {
     @_ == 2 or die "need 2 arguments";
     $_[0] <= $_[1]
 }
 
-sub number_gt ($ $) {
+sub number_gt {
     @_ == 2 or die "need 2 arguments";
     $_[0] > $_[1]
 }
 
-sub number_ge ($ $) {
+sub number_ge {
     @_ == 2 or die "need 2 arguments";
     $_[0] >= $_[1]
 }
@@ -311,7 +311,7 @@ sub applying_to {
 sub binary_operator {
     @_ == 1 or die "need 1 argument";
     my ($code) = @_;
-    eval 'sub ($$) { @_ == 2 or die "need 2 arguments"; $_[0] ' . $code
+    eval 'sub  {     @_ == 2 or die "need 2 arguments"; $_[0] ' . $code
         . ' $_[1] }' || die "binary_operator: " . show($code) . ": $@";
 
     # XX security?

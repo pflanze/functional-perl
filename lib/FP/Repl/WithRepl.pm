@@ -81,7 +81,8 @@ sub WithRepl_eval (&;$) {
     }
 }
 
-sub WithRepl_eval_e ($;$$) {
+sub WithRepl_eval_e {
+    @_ >= 1 and @_ <= 3 or fp_croak_nargs("1-3");
 
     # my ($arg, $maybe_package, $wantarray) = @_;
     if (ref $_[0]) {
@@ -109,6 +110,7 @@ use FP::Repl;
 use FP::Repl::Stack;
 use Chj::TEST;
 use FP::Show;
+use FP::Carp;
 
 # test that 'no' variables are seen (yeah, could do better)
 TEST { &WithRepl_eval('"Hello $arg"') } ();
@@ -216,7 +218,8 @@ SKIP: {
     0
 }
 
-sub handler_for ($$) {
+sub handler_for {
+    @_ == 2 or fp_croak_nargs 2;
     my ($startframe, $orig_handler) = @_;
     bless sub {
         my ($e) = @_;
@@ -283,7 +286,8 @@ sub push_withrepl {
     $SIG{__DIE__} = handler($skip);
 }
 
-sub pop_withrepl () {
+sub pop_withrepl {
+    @_ == 0 or fp_croak_nargs 0;
     $SIG{__DIE__} = pop @stack;
 }
 

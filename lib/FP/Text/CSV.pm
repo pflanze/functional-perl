@@ -92,6 +92,7 @@ use FP::Stream 'Weakened', 'weaken';
 use Text::CSV;
 use FP::HashSet 'hashset_union';
 use Chj::xopen 'xopen_read';
+use FP::Carp;
 
 our $defaults = +{ binary => 1, sep_char => "\t", eol => "\r\n", };
 
@@ -101,12 +102,14 @@ sub params {
     defined $maybe_params ? hashset_union($maybe_params, $defaults) : $defaults
 }
 
-sub new_csv_instance (;$) {
+sub new_csv_instance {
+    @_ >= 0 and @_ <= 1 or fp_croak_nargs "0-1";
     my ($maybe_params) = @_;
     Text::CSV->new(params $maybe_params)
 }
 
-sub csv_line_xparser (;$) {
+sub csv_line_xparser {
+    @_ >= 0 and @_ <= 1 or fp_croak_nargs "0-1";
     my ($maybe_params) = @_;
     my $csv = new_csv_instance $maybe_params;
 
@@ -120,7 +123,8 @@ sub csv_line_xparser (;$) {
     }
 }
 
-sub csv_fh_to_rows ($;$) {
+sub csv_fh_to_rows {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($in, $maybe_params) = @_;
     my $csv = new_csv_instance($maybe_params);
     my $next;
@@ -140,7 +144,8 @@ sub csv_fh_to_rows ($;$) {
     &{ Weakened $next}
 }
 
-sub csv_file_to_rows ($;$) {
+sub csv_file_to_rows {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($path, $maybe_params) = @_;
     my $in = xopen_read $path;
     binmode($in, ":encoding(utf-8)") or die "binmode";
@@ -149,7 +154,8 @@ sub csv_file_to_rows ($;$) {
 
 # -- Output: ---
 
-sub csv_printer ($;$) {
+sub csv_printer {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($fh, $maybe_params) = @_;
     my $csv = new_csv_instance($maybe_params);
     sub {
@@ -163,7 +169,8 @@ sub csv_printer ($;$) {
 
 use FP::Stream "stream_for_each";
 
-sub rows_to_csv_fh ($$;$) {
+sub rows_to_csv_fh {
+    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
     my ($s, $fh, $maybe_params) = @_;
     weaken $_[0];
     stream_for_each csv_printer($fh, $maybe_params), $s
@@ -171,7 +178,8 @@ sub rows_to_csv_fh ($$;$) {
 
 use Chj::xtmpfile;
 
-sub rows_to_csv_file ($$;$) {
+sub rows_to_csv_file {
+    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
     my ($s, $path, $maybe_params) = @_;
     weaken $_[0];
     my $out = xtmpfile $path;

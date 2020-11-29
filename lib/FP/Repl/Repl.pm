@@ -127,6 +127,7 @@ use FP::Repl::StackPlus;
 use FP::Lazy;
 use FP::Show;
 use Scalar::Util qw(blessed);
+use FP::Carp;
 
 sub maybe_tty {
     my $path = "/dev/tty";
@@ -272,7 +273,8 @@ sub possibly_restore_settings {
     }
 }
 
-sub saving ($$) {
+sub saving {
+    @_ == 2 or fp_croak_nargs 2;
     my ($self, $proc) = @_;
     sub {
         &$proc(@_);

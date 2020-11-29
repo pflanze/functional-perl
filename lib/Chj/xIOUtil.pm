@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -40,12 +40,12 @@ use Chj::xopen ":all";
 use FP::Lazy;
 use FP::List;
 use Chj::xperlfunc qw(xxsystem_safe xprint xgetfile_utf8);
+use FP::Carp;
 
 # print, not write, i.e. flatten nested structures out, but don't
 # print parens for lists etc., just print the contained basic types.
-sub xprint_object ($$);
-
-sub xprint_object ($$) {
+sub xprint_object {
+    @_ == 2 or fp_croak_nargs 2;
     my ($fh, $v) = @_;
     if (ref $v) {
         if (ref($v) eq "ARRAY") {
@@ -63,7 +63,8 @@ sub xprint_object ($$) {
     }
 }
 
-sub xputfile_utf8 ($$) {
+sub xputfile_utf8 {
+    @_ == 2 or fp_croak_nargs 2;
     my ($path, $str) = @_;
     my $out = xopen_write($path);
     binmode $out, ":encoding(UTF-8)" or die "binmode";
@@ -71,12 +72,14 @@ sub xputfile_utf8 ($$) {
     $out->xclose;
 }
 
-sub xcopyfile_utf8 ($$) {
+sub xcopyfile_utf8 {
+    @_ == 2 or fp_croak_nargs 2;
     my ($src, $dest) = @_;
     xputfile_utf8($dest, xgetfile_utf8($src));
 }
 
-sub xcopyfile ($$) {
+sub xcopyfile {
+    @_ == 2 or fp_croak_nargs 2;
     my ($src, $dest) = @_;
 
     # yes, giving up here. XX write something else or just use

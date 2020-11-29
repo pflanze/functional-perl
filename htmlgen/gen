@@ -28,42 +28,7 @@ use lib "$mydir/../lib";
 # and the htmlgen/ directory
 use lib $mydir;
 
-our $css_path = "htmlgen.css";
-
-sub usage {
-    print "$myname config inbase outbase
-
-  config is the path to a Perl file ending in a hash with config
-  values, see functional-perl/website/gen-config.pl for an example.
-
-  inbase needs to be a git working directory.
-
-  Assumes that there is a file '$css_path', which is included in the
-  <head/> and copied to outbase.
-
-  Options:
-    --repl  open a repl instead of running the main action
-    --trap  trap uncached exception in a repl (implied by --repl)
-
-";
-    exit 1;
-}
-
 use Getopt::Long;
-our $verbose = 0;
-our ($opt_repl, $opt_trap);
-GetOptions(
-    "verbose" => \$verbose,
-    "help"    => sub {usage},
-    "repl"    => \$opt_repl,
-    "trap"    => \$opt_trap,
-) or exit 1;
-usage unless @ARGV == 3 or ($opt_repl and @ARGV >= 1);
-
-our ($configpath, $inbase, $outbase) = @ARGV;
-
-our $user_config = require $configpath;
-
 use FP::Docstring;
 use Chj::Backtrace;
 use Hash::Util 'lock_hash';
@@ -97,6 +62,42 @@ use FunctionalPerl::Htmlgen::Mediawiki qw(mediawiki_prepare mediawiki_replace
 use PXML::Preserialize qw(pxmlpre);
 use FP::PureHash;
 use FP::Equal qw(pointer_eq);
+use FP::Carp;
+
+our $css_path = "htmlgen.css";
+
+sub usage {
+    print "$myname config inbase outbase
+
+  config is the path to a Perl file ending in a hash with config
+  values, see functional-perl/website/gen-config.pl for an example.
+
+  inbase needs to be a git working directory.
+
+  Assumes that there is a file '$css_path', which is included in the
+  <head/> and copied to outbase.
+
+  Options:
+    --repl  open a repl instead of running the main action
+    --trap  trap uncached exception in a repl (implied by --repl)
+
+";
+    exit 1;
+}
+
+our $verbose = 0;
+our ($opt_repl, $opt_trap);
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+    "repl"    => \$opt_repl,
+    "trap"    => \$opt_trap,
+) or exit 1;
+usage unless @ARGV == 3 or ($opt_repl and @ARGV >= 1);
+
+our ($configpath, $inbase, $outbase) = @ARGV;
+
+our $user_config = require $configpath;
 
 require FP::Repl::Trap if $opt_trap;
 
@@ -182,7 +183,8 @@ sub pxml_name_to_mapper(@PXMLMapper_args) {
     )
 }
 
-sub default_pxml_name_to_mapper() {
+sub default_pxml_name_to_mapper {
+    @_ == 0 or fp_croak_nargs 0;
 
     # fake instance for tests only
     pxml_name_to_mapper(
@@ -376,7 +378,8 @@ package FunctionalPerl::Htmlgen::_::Filesinfo {
     _END_
 }
 
-sub get_filesinfo() {
+sub get_filesinfo {
+    @_ == 0 or fp_croak_nargs 0;
     __ '() -> Filesinfo '
         . '-- read info about files from disk as immutable struct';
 
@@ -683,7 +686,8 @@ sub copyfiles($filesinfo) {
     );
 }
 
-sub main() {
+sub main {
+    @_ == 0 or fp_croak_nargs 0;
     mkdir $outbase;
     warn "running get_filesinfo..";
     my $filesinfo = get_filesinfo;

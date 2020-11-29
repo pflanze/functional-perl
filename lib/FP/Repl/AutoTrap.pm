@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -45,6 +45,7 @@ use warnings FATAL => 'uninitialized';
 # Interesting, FP::Repl::Repl::maybe_tty works differently; well makes
 # sense. So this is the "non-forcing" way to check:
 use POSIX qw(isatty);
+use FP::Carp;
 
 sub possibly_activate {
     if (isatty(0) and isatty(1)) {

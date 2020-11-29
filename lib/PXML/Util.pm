@@ -41,6 +41,7 @@ use FP::Stream ":all";
 use FP::Hash "hash_perhaps_ref";
 use PXML "is_pxml_element";
 use Scalar::Util qw(blessed);
+use FP::Carp;
 
 # Mapping PXML data (works not just on elements).
 
@@ -51,7 +52,8 @@ use Scalar::Util qw(blessed);
 # element with unmapped body; the body needs to be mapped or replaced
 # explicitely.
 
-sub pxml_deferred_map ($$;$$) {
+sub pxml_deferred_map {
+    @_ >= 2 and @_ <= 4 or fp_croak_nargs "2-4";
 
     # Elementfn receives (element, up-list, inferior-map), where
     # up-list is a linked list to the parents and inferior-map is a
@@ -87,7 +89,8 @@ sub pxml_deferred_map ($$;$$) {
 # 'Eager' mapping, meaning, the body is mapped already when $elementfn
 # receives an element.
 
-sub pxml_eager_map ($$;$$) {
+sub pxml_eager_map {
+    @_ >= 2 and @_ <= 4 or fp_croak_nargs "2-4";
 
     # The functions receive (value, up-list), where up-list is a
     # linked list to the parents
@@ -180,7 +183,8 @@ TEST {
 }
 '<p>[][p]foo.<b>[p][b|p]bar.5678</b></p>';
 
-sub pxml_map_elements ($$;$) {
+sub pxml_map_elements {
+    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
     my ($v, $name_to_mapper, $maybe_otherfn) = @_;
     pxml_eager_map(
         $v,
@@ -203,7 +207,8 @@ sub pxml_map_elements ($$;$) {
 # instead of replacing them)
 
 # (do you have a better name?)
-sub pxml_map_elements_exhaustively ($$;$) {
+sub pxml_map_elements_exhaustively {
+    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
     my ($v, $name_to_mapper, $maybe_otherfn) = @_;
     pxml_eager_map(
         $v,

@@ -191,6 +191,8 @@ our @EXPORT_OK
     optionally poptionally);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Carp;
+
 # Functions to change the kind of optionals API:
 
 sub perhaps_to_maybe {
@@ -205,7 +207,8 @@ sub perhaps_to_maybe {
     }
 }
 
-sub perhaps_to_x ($$) {
+sub perhaps_to_x {
+    @_ == 2 or fp_croak_nargs 2;
     my ($f, $exception) = @_;
     sub {
         if (my ($v) = &$f(@_)) {
@@ -246,7 +249,8 @@ sub perhaps_to_exists {
 
 # build functions that short-cut the 'nothing' case:
 
-sub optionally ($;$) {
+sub optionally {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($f, $maybe_pos) = @_;
     my $pos = $maybe_pos // 0;
     sub {

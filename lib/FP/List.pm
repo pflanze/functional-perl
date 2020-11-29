@@ -411,7 +411,7 @@ TEST {
 }
 1;
 
-sub cons ($$) {
+sub cons {
     @_ == 2 or fp_croak_nargs 2;
     if (defined blessed($_[1]) and my $f = $_[1]->can("cons")) {
         @_ = ($_[1], $_[0]);
@@ -438,7 +438,7 @@ sub cons_ {
 TEST { cons_(1)->(list(2)) } GIVES { list(1, 2) };
 TEST { cons_(1)->(2) } GIVES       { cons 1, 2 };
 
-sub pair ($$) {
+sub pair {
     @_ == 2 or fp_croak_nargs 2;
     goto \&unsafe_cons
 }
@@ -449,7 +449,8 @@ sub pair ($$) {
 # was confirmed to be a pair with `is_pair`. unsafe_cons is safe if
 # the rest argument should never dictate the type of the result.
 
-sub unsafe_cons ($$) {
+sub unsafe_cons {
+    @_ == 2 or fp_croak_nargs 2;
     my @p = @_;
     bless \@p, "FP::List::Pair";
     if ($immutable) {
@@ -473,8 +474,6 @@ sub unsafe_cdr {
     $_[0][1]
 }
 
-sub is_pair;
-
 sub is_pair {
     @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
@@ -495,7 +494,7 @@ sub is_pair_noforce {
     ($r eq "FP::List::Pair" or $v->isa("FP::List::Pair"))
 }
 
-sub is_pair_of ($$) {
+sub is_pair_of {
     my ($p0, $p1) = @_;
     sub {
         @_ == 1 or fp_croak_nargs 1;
@@ -515,13 +514,14 @@ my $null = do {
 Internals::SvREADONLY $null, 1;
 
 sub null () {
+
+    # @_ == 0 or fp_croak_nargs 0;
+    # nope, it is also called as a method
     $null
 }
 
 TEST { null->cons(1)->cons(2)->array }
 [2, 1];
-
-sub is_null;
 
 sub is_null {
     @_ == 1 or fp_croak_nargs 1;
@@ -541,8 +541,6 @@ sub is_null_noforce {
     ($r eq "FP::List::Null" or $v->isa("FP::List::Null"))
 }
 
-sub is_pair_or_null;
-
 sub is_pair_or_null {
     @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
@@ -561,15 +559,15 @@ TEST { is_pair_or_null bless [], "NirvAna" } '';
 
 # test subclassing? whatever
 
-sub is_null_or_pair_of ($$$);
-
-sub is_null_or_pair_of ($$$) {
+sub is_null_or_pair_of {
+    @_ == 3 or fp_croak_nargs 3;
     my ($v, $p0, $p1) = @_;
     FORCE $v;
     (is_null $v or (is_pair $v and &$p0($v->car) and &$p1($v->cdr)))
 }
 
-sub null_or_pair_of ($$) {
+sub null_or_pair_of {
+    @_ == 2 or fp_croak_nargs 2;
     my ($p0, $p1) = @_;
 
     sub {
@@ -649,14 +647,16 @@ sub first;
 # XX add maybe_first and perhaps_first wrappers here? Shouldn't this
 # be more structured/automatic, finally.
 
-sub first_set ($$) {
+sub first_set {
+    @_ == 2 or fp_croak_nargs 2;
     my ($p, $v) = @_;
     cons($v, $p->rest)
 }
 
 TEST { cons(3, 4)->first_set("a") } bless ["a", 4], 'FP::List::Pair';
 
-sub first_update ($$) {
+sub first_update {
+    @_ == 2 or fp_croak_nargs 2;
     my ($p, $fn) = @_;
     my ($v, $r)  = $p->first_and_rest;
     cons(&$fn($v), $r)
@@ -828,7 +828,8 @@ sub make_ref {
     my ($is_stream) = @_;
     my $liststream = $is_stream ? "stream" : "list";
 
-    sub ($ $) {
+    sub {
+        @_ == 2 or fp_croak_nargs 2;
         my ($s, $i) = @_;
         weaken $_[0] if $is_stream;
         is_natural0 $i or fp_croak "invalid index: " . show($i);
@@ -857,7 +858,7 @@ sub make_ref {
     }
 }
 
-sub list_ref ($$);
+sub list_ref;
 *list_ref            = make_ref(0);
 *FP::List::List::ref = *list_ref;
 
@@ -954,6 +955,7 @@ TEST_EXCEPTION {
 'improper list';    # nice message at least, thanks to undef != null
 
 sub delayed (&) {
+    @_ == 1 or fp_croak_nargs 1;
     my ($thunk) = @_;
     sub {
         # evaluate thunk, expecting a function and pass our arguments
@@ -963,12 +965,10 @@ sub delayed (&) {
     }
 }
 
-sub list_of;
-
 sub list_of {
     @_ == 1 or fp_croak_nargs 1;
     my ($p) = @_;
-    either \&is_null, is_pair_of($p, delayed { list_of $p })
+    either \&is_null, is_pair_of($p, delayed { list_of($p) })
 }
 
 TEST { list_of(\&is_natural)->(list 1,  2, 3) } 1;
@@ -1070,7 +1070,7 @@ TEST {
 }
 bless [1, 9, 16], "FP::_::PureArray";
 
-sub list_sort ($;$) {
+sub list_sort {
     @_ == 1 or @_ == 2 or fp_croak_nargs "1 or 2";
     my ($l, $maybe_cmp) = @_;
     list_to_purearray($l)->sort ($maybe_cmp)
@@ -1146,7 +1146,8 @@ sub make_for_each {
     my ($is_stream) = @_;
     my $liststream = $is_stream ? "stream" : "list";
 
-    sub ($ $ ) {
+    sub {
+        @_ == 2 or fp_croak_nargs 2;
         my ($proc, $s) = @_;
         weaken $_[1] if $is_stream;
     LP: {
@@ -1168,7 +1169,7 @@ sub make_for_each {
     }
 }
 
-sub list_for_each ($ $ );
+sub list_for_each;
 *list_for_each = make_for_each(1);
 
 *FP::List::List::for_each = flip \&list_for_each;
@@ -1181,9 +1182,8 @@ TEST_STDOUT {
 # tons of slightly adapted COPIES from FP::Stream. XX finally find a
 # solution for this
 
-sub list_drop ($ $);
-
-sub list_drop ($ $) {
+sub list_drop {
+    @_ == 2 or fp_croak_nargs 2;
     my ($s, $n) = @_;
     while ($n > 0) {
         $s = force $s;
@@ -1196,9 +1196,8 @@ sub list_drop ($ $) {
 
 *FP::List::List::drop = *list_drop;
 
-sub list_take ($ $);
-
-sub list_take ($ $) {
+sub list_take {
+    @_ == 2 or fp_croak_nargs 2;
     my ($s, $n) = @_;
     if ($n > 0) {
         $s = force $s;
@@ -1210,9 +1209,8 @@ sub list_take ($ $) {
 
 *FP::List::List::take = *list_take;
 
-sub list_slice ($ $);
-
-sub list_slice ($ $) {
+sub list_slice {
+    @_ == 2 or fp_croak_nargs 2;
     my ($start, $end) = @_;
     $end = force $end;
     my $rec;
@@ -1240,7 +1238,8 @@ sub list_slice ($ $) {
 
 # /COPIES
 
-sub string_to_list ($;$) {
+sub string_to_list {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($str, $maybe_tail) = @_;
     my $tail = $maybe_tail // null;
     my $i    = length($str) - 1;
@@ -1259,7 +1258,7 @@ TEST { list_to_string string_to_list "Hello" }
 'Hello';
 
 # XX HACK, COPY from FP::Array to work around circular dependency
-sub array_fold_right ($$$) {
+sub array_fold_right {
     @_ == 3 or fp_croak_nargs 3;
     my ($fn, $tail, $a) = @_;
     my $i = @$a - 1;
@@ -1270,7 +1269,8 @@ sub array_fold_right ($$$) {
     $tail
 }
 
-sub array_fold ($$$) {
+sub array_fold {
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $start, $ary) = @_;
     for (@$ary) {
         $start = &$fn($_, $start);
@@ -1280,7 +1280,8 @@ sub array_fold ($$$) {
 
 # /HACK
 
-sub array_to_list ($;$) {
+sub array_to_list {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($a, $maybe_tail) = @_;
     array_fold_right(\&cons, $maybe_tail // null, $a)
 }
@@ -1289,7 +1290,8 @@ TEST { list_to_string array_to_list [1, 2, 3] }
 '123';
 
 # XX naming correct?
-sub array_to_list_reverse ($;$) {
+sub array_to_list_reverse {
+    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
     my ($a, $maybe_tail) = @_;
     array_fold(\&cons, $maybe_tail // null, $a)
 }
@@ -1297,7 +1299,8 @@ sub array_to_list_reverse ($;$) {
 TEST { list_to_string array_to_list_reverse [1, 2, 3] }
 '321';
 
-sub list_reverse_with_tail ($$) {
+sub list_reverse_with_tail {
+    @_ == 2 or fp_croak_nargs 2;
     my ($l, $tail) = @_;
     while (!is_null $l) {
         $tail = cons car($l), $tail;
@@ -1318,7 +1321,7 @@ sub list_reverse {
 TEST { list_to_string list_reverse string_to_list "Hello" }
 'olleH';
 
-sub list_strings_join ($$) {
+sub list_strings_join {
     @_ == 2 or fp_croak_nargs 2;
     my ($l, $val) = @_;
 
@@ -1332,7 +1335,7 @@ sub list_strings_join ($$) {
 TEST { list(1, 2, 3)->strings_join("-") }
 "1-2-3";
 
-sub list_strings_join_reverse ($$) {
+sub list_strings_join_reverse {
     @_ == 2 or fp_croak_nargs 2;
     my ($l, $val) = @_;
 
@@ -1347,15 +1350,14 @@ TEST { list(1, 2, 3)->strings_join_reverse("-") }
 "3-2-1";
 
 # write as a S-expr (trying to follow R5RS Scheme)
-sub _write_sexpr ($ $ $);
-
-sub _write_sexpr ($ $ $) {
+sub _write_sexpr {
+    @_ == 3 or fp_croak_nargs 3;
     my ($l, $fh, $already_in_a_list) = @_;
 _WRITE_SEXPR: {
         $l = force($l, 1);
         if (is_pair $l) {
             xprint $fh, $already_in_a_list ? ' ' : '(';
-            _write_sexpr car($l), $fh, 0;
+            _write_sexpr(car($l), $fh, 0);
             my $d = force(cdr($l), 1);
             if (is_null $d) {
                 xprint $fh, ')';
@@ -1367,7 +1369,7 @@ _WRITE_SEXPR: {
                 redo _WRITE_SEXPR;
             } else {
                 xprint $fh, " . ";
-                _write_sexpr $d, $fh, 0;
+                _write_sexpr($d, $fh, 0);
                 xprint $fh, ')';
             }
         } elsif (is_null $l) {
@@ -1387,9 +1389,9 @@ _WRITE_SEXPR: {
         }
     }
 }
-sub write_sexpr ($ ; );
 
-sub write_sexpr ($ ; ) {
+sub write_sexpr {
+    @_ == 1 or fp_croak_nargs 1;
     my ($l, $fh) = @_;
     _write_sexpr($l, $fh || *STDOUT{IO}, 0)
 }
@@ -1409,9 +1411,7 @@ TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null)) }
 
 *FP::List::List::write_sexpr = *write_sexpr;
 
-sub list_zip2 ($$);
-
-sub list_zip2 ($$) {
+sub list_zip2 {
     @_ == 2 or fp_croak_nargs 2;
     my ($l, $m) = @_;
     (     is_null($l) ? $l
@@ -1427,15 +1427,13 @@ TEST { list_to_array list_zip2 list(qw(a b)), list(2, 3, 4) }
 
 *FP::List::List::zip = *list_zip2;    # XX make n-ary
 
-sub list_to_alist;
-
 sub list_to_alist {
     @_ == 1 or fp_croak_nargs 1;
     my ($l) = @_;
     is_null($l) ? $l : do {
         my ($k, $l2) = $l->first_and_rest;
         my ($v, $l3) = $l2->first_and_rest;
-        cons(cons($k, $v), list_to_alist $l3)
+        cons(cons($k, $v), list_to_alist($l3))
     }
 }
 *FP::List::List::alist = *list_to_alist;
@@ -1446,7 +1444,8 @@ TEST_STDOUT { list(a => 10, b => 20)->alist->write_sexpr }
 sub make_filter {
     my ($is_stream) = @_;
     my $filter;
-    $filter = sub ($$) {
+    $filter = sub {
+        @_ == 2 or fp_croak_nargs 2;
         my ($fn, $l) = @_;
         weaken $_[1] if $is_stream;
         lazy_if {
@@ -1463,7 +1462,7 @@ sub make_filter {
     Weakened($filter)
 }
 
-sub list_filter ($ $);
+sub list_filter;
 *list_filter = make_filter(0);
 
 *FP::List::List::filter = flip \&list_filter;
@@ -1472,7 +1471,8 @@ sub list_filter ($ $);
 sub make_filter_with_tail {
     my ($is_stream) = @_;
     my $filter_with_tail;
-    $filter_with_tail = sub ($$$) {
+    $filter_with_tail = sub {
+        @_ == 3 or fp_croak_nargs 3;
         my ($fn, $l, $tail) = @_;
         weaken $_[1] if $is_stream;
         lazy_if {
@@ -1488,15 +1488,14 @@ sub make_filter_with_tail {
     Weakened($filter_with_tail)
 }
 
-sub list_filter_with_tail ($$$);
+sub list_filter_with_tail;
 *list_filter_with_tail            = make_filter_with_tail(0);
 *FP::List::List::filter_with_tail = flip2of3 * list_filter_with_tail;
 
-sub list_map ($ $);
-
-sub list_map ($ $) {
+sub list_map {
+    @_ == 2 or fp_croak_nargs 2;
     my ($fn, $l) = @_;
-    is_null($l) ? $l : cons(&$fn(car $l), list_map($fn, cdr $l))
+    is_null($l) ? $l : cons(scalar &$fn(car $l), list_map($fn, cdr $l))
 }
 
 TEST {
@@ -1587,7 +1586,8 @@ TEST {
 
 # left fold, sometimes called `foldl` or `reduce`
 # (XX adapted copy from Stream.pm)
-sub list_fold ($$$) {
+sub list_fold {
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $start, $l) = @_;
     my $v;
 LP: {
@@ -1610,9 +1610,8 @@ TEST {
 }
 9;
 
-sub list_fold_right ($ $ $);
-
-sub list_fold_right ($ $ $) {
+sub list_fold_right {
+    @_ == 3 or fp_croak_nargs 3;
     my ($fn, $start, $l) = @_;
     if (is_pair $l) {
         no warnings 'recursion';
@@ -1647,9 +1646,7 @@ TEST {
 
 # same as fold_right but passes the whole list remainder instead of
 # only the car to the function
-sub list_pair_fold_right ($$$);
-
-sub list_pair_fold_right ($$$) {
+sub list_pair_fold_right {
     @_ == 3 or fp_croak_nargs 3;
     my ($fn, $start, $l) = @_;
     if (is_pair $l) {
@@ -1685,9 +1682,7 @@ TEST_STDOUT { list(5, 6, 9)->pair_fold_right(*cons, null)->write_sexpr }
 # For more documentation, see
 # http://srfi.schemers.org/srfi-1/srfi-1.html#FoldUnfoldMap
 
-sub unfold ($$$$;$);
-
-sub unfold ($$$$;$) {
+sub unfold {
     @_ == 4 or @_ == 5 or fp_croak_nargs "4 or 5";
     my ($p, $f, $g, $seed, $maybe_tail_gen) = @_;
     &$p($seed)
@@ -1700,9 +1695,7 @@ TEST { unfold(*is_zero, *inc, *dec, 5, *list)->array } [6, 5, 4, 3, 2, 0];
 
 # unfold-right p f g seed [tail] -> list
 
-sub unfold_right ($$$$;$);
-
-sub unfold_right ($$$$;$) {
+sub unfold_right {
     @_ == 4 or @_ == 5 or fp_croak_nargs "4 or 5";
     my ($p, $f, $g, $seed, $maybe_tail) = @_;
     my $tail = @_ == 5 ? $maybe_tail : null;
@@ -1772,8 +1765,6 @@ q{'Hello\'s'};
 
 *FP::List::List::perlstring = *list_to_perlstring;
 
-sub list_butlast;
-
 sub list_butlast {
     @_ == 1 or fp_croak_nargs 1;
     my ($l) = @_;
@@ -1783,7 +1774,7 @@ sub list_butlast {
             # XX could make use of OO for the distinction instead
     } else {
         my ($a, $r) = $l->first_and_rest;
-        is_null($r) ? $r : cons($a, list_butlast $r)
+        is_null($r) ? $r : cons($a, list_butlast($r))
     }
 }
 
@@ -1794,7 +1785,8 @@ TEST { list(3, 4, 5)->butlast->array }
 TEST_EXCEPTION { list()->butlast->array }
 'can\'t take the butlast of the empty list';
 
-sub list_drop_while ($ $) {
+sub list_drop_while {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l) = @_;
     while (!is_null $l and &$pred(car $l)) {
         $l = cdr $l;
@@ -1820,7 +1812,8 @@ TEST {
 }
 "o World";
 
-sub list_rtake_while_and_rest ($ $) {
+sub list_rtake_while_and_rest {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l) = @_;
     my $res = $l->null;
     my $c;
@@ -1833,7 +1826,8 @@ sub list_rtake_while_and_rest ($ $) {
 
 *FP::List::List::rtake_while_and_rest = flip \&list_rtake_while_and_rest;
 
-sub list_rtake_while ($ $) {
+sub list_rtake_while {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l)    = @_;
     my ($res,  $rest) = list_rtake_while_and_rest($pred, $l);
     $res
@@ -1847,7 +1841,8 @@ TEST {
 }
 'Hello';
 
-sub list_take_while_and_rest ($ $) {
+sub list_take_while_and_rest {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l)    = @_;
     my ($rres, $rest) = list_rtake_while($pred, $l);
     (list_reverse($rres), $rest)
@@ -1855,7 +1850,8 @@ sub list_take_while_and_rest ($ $) {
 
 *FP::List::List::take_while_and_rest = flip \&list_take_while_and_rest;
 
-sub list_take_while ($ $) {
+sub list_take_while {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l)    = @_;
     my ($res,  $rest) = list_take_while_and_rest($pred, $l);
     $res
@@ -1907,7 +1903,8 @@ TEST_EXCEPTION { list(qw())->last }
 
 # XX: add list_last_pair (see SRFI 1)
 
-sub list_every ($$) {
+sub list_every {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l) = @_;
 LP: {
         if (is_pair $l) {
@@ -1931,7 +1928,7 @@ LP: {
 
 # XXX do we want this alias? Or do we just want to rename every to
 # all?
-sub list_all ($$);
+sub list_all;
 *list_all = *list_every;
 
 *FP::List::List::all = flip \&list_every;
@@ -1974,7 +1971,8 @@ TEST {
 }
 [2, 0];
 
-sub list_any ($ $) {
+sub list_any {
+    @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l) = @_;
 LP: {
         if (is_pair $l) {
@@ -2013,7 +2011,7 @@ TEST {
 # in that they do not return false or undef on failure, but (), and
 # carry `perhaps` in their name of this reason.
 
-sub list_perhaps_find_tail ($$) {
+sub list_perhaps_find_tail {
     @_ == 2 or fp_croak_nargs 2;
     my ($fn, $l) = @_;
 LP: {
@@ -2039,7 +2037,7 @@ TEST {
 TEST { [list(3, 1, 37, -5)->perhaps_find_tail(*is_even)] }
 [];
 
-sub list_perhaps_find ($$) {
+sub list_perhaps_find {
     @_ == 2 or fp_croak_nargs 2;
     my ($fn, $l) = @_;
     if (my ($l) = list_perhaps_find_tail($fn, $l)) {
@@ -2057,13 +2055,11 @@ TEST { list(3, 1, 4, 1, 5, 9)->perhaps_find(*is_even) }
 # And then still also add the SRFI-1 counterparts, without `maybe` in
 # the names as they should have according to our guidelines, XX hmm.
 
-#sub list_find_tail ($$);
-#  sigh, can't retain the prototypes unless writing perhaps_to_maybe
-#  for every number of arguments.
+sub list_find_tail;
 *list_find_tail            = perhaps_to_maybe(\&list_perhaps_find_tail);
 *FP::List::List::find_tail = flip \&list_find_tail;
 
-#sub list_find ($$);
+sub list_find;
 *list_find            = perhaps_to_maybe(\&list_perhaps_find);
 *FP::List::List::find = flip \&list_find;
 
@@ -2078,7 +2074,8 @@ TEST { [list(3, 1, 37, -5)->find_tail(*is_even)] }
 
 sub make_group {
     my ($is_stream) = @_;
-    my $group = sub ($$;$) {
+    my $group = sub {
+        @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
         my ($equal, $s, $maybe_tail) = @_;
         weaken $_[1] if $is_stream;
         lazy_if {
@@ -2121,7 +2118,7 @@ sub make_group {
     }
 }
 
-sub list_group ($$;$);
+sub list_group;
 *list_group = make_group(0);
 
 sub FP::List::List::group {
@@ -2141,9 +2138,8 @@ list(list(3), list(4, 4), list(5), list(6), list(8), list(5, 5));
 # lazy or lazyLight. In that case it will force promises, but only
 # lazily (i.e. provide a promise that will do the forcing and consing).
 
-sub mixed_flatten ($;$$);
-
-sub mixed_flatten ($;$$) {
+sub mixed_flatten {
+    @_ >= 1 and @_ <= 3 or fp_croak_nargs "1-3";
     my ($v, $maybe_tail, $maybe_delay) = @_;
     my $tail = $maybe_tail // null;
 LP: {

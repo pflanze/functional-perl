@@ -73,6 +73,7 @@ our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
+use FP::Carp;
 
 #use Const::Fast;
 #const my %empty_hash;
@@ -96,7 +97,8 @@ our $empty_hash = \%empty_hash;
 TEST_EXCEPTION { $$empty_hash{a} = 1 }
 'Attempt to access disallowed key \'a\' in a restricted hash';
 
-sub hash_set ($$$) {
+sub hash_set {
+    @_ == 3 or fp_croak_nargs 3;
     my ($h, $k, $v) = @_;
     my $h2 = +{%$h};
     $$h2{$k} = $v;
@@ -109,14 +111,16 @@ TEST { hash_set $h, b => 3 }
 TEST {$h}
 +{ 'a' => 1, 'b' => 2 };
 
-sub hash_delete ($$) {
+sub hash_delete {
+    @_ == 2 or fp_croak_nargs 2;
     my ($h, $k) = @_;
     my $h2 = +{%$h};
     delete $$h2{$k};
     $h2
 }
 
-sub hash_update ($$$) {
+sub hash_update {
+    @_ == 3 or fp_croak_nargs 3;
     my ($h, $k, $fn) = @_;
     my $h2 = +{%$h};
     if (my ($v) = &$fn(exists $$h{$k} ? $$h{$k} : ())) {
@@ -149,7 +153,8 @@ sub hash_length {
 TEST { hash_length +{} } 0;
 TEST { hash_length +{ a => 4, b => 5 } } 2;
 
-sub hash_perhaps_ref ($$) {
+sub hash_perhaps_ref {
+    @_ == 2 or fp_croak_nargs 2;
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -160,7 +165,8 @@ sub hash_perhaps_ref ($$) {
 
 # difference of the following to just $$h{$k} is that it won't die on
 # locked hashes
-sub hash_maybe_ref ($$) {
+sub hash_maybe_ref {
+    @_ == 2 or fp_croak_nargs 2;
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -169,7 +175,8 @@ sub hash_maybe_ref ($$) {
     }
 }
 
-sub hash_xref ($$) {
+sub hash_xref {
+    @_ == 2 or fp_croak_nargs 2;
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -179,7 +186,8 @@ sub hash_xref ($$) {
     }
 }
 
-sub hash_ref_or ($$$) {
+sub hash_ref_or {
+    @_ == 3 or fp_croak_nargs 3;
     my ($h, $k, $other) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -188,9 +196,11 @@ sub hash_ref_or ($$$) {
     }
 }
 
-sub hash_cache ($$$) {
+sub hash_cache {
 
-    # only allowing for scalar context
+    @_ == 3 or fp_croak_nargs 3;
+
+# only allowing for scalar context
     my ($h, $k, $generate) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -201,7 +211,8 @@ sub hash_cache ($$$) {
 
 # looking for definedness, not exists. Ok? Also, only handles strings
 # as values.
-sub hash_diff ($$) {
+sub hash_diff {
+    @_ == 2 or fp_croak_nargs 2;
     my ($h1, $h2) = @_;
     my $changes = {};
     for my $key (keys %$h2) {
@@ -251,7 +262,8 @@ sub hashes_keys {
 }
 
 # set leafs in 2-level hash structure:
-sub hash2_set ($$$$) {
+sub hash2_set {
+    @_ == 4 or fp_croak_nargs 4;
     my ($h, $k0, $k1, $v) = @_;
     hash_update $h, $k0, sub { my ($h1) = @_; hash_set $h1, $k1, $v }
 }

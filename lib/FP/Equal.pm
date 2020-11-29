@@ -120,6 +120,10 @@ our @EXPORT      = qw(equal);
 our @EXPORT_OK   = qw(equaln is_equal relaxedequal pointer_eq);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use Scalar::Util qw(refaddr blessed);
+use FP::Lazy;
+use FP::Carp;
+
 # equal can easily recurse deeply into data structures.
 no warnings "recursion";
 
@@ -178,10 +182,8 @@ our $primitive_equals = +{
     #}
 };
 
-use Scalar::Util qw(refaddr blessed);
-use FP::Lazy;
-
-sub pointer_eq ($$) {
+sub pointer_eq {
+    @_ == 2 or fp_croak_nargs 2;
     my $a = refaddr($_[0]) // return;
     my $b = refaddr($_[1]) // return;
     $a == $b
@@ -190,7 +192,7 @@ sub pointer_eq ($$) {
 sub make_equal {
     my ($relaxed) = @_;
     my $equal;
-    $equal = sub ($$) {
+    $equal = sub {
         @_ == 2 or die "wrong number of arguments";
     EQUAL: {
             my ($a, $b) = @_;
@@ -317,9 +319,9 @@ sub make_equal {
     }
 }
 
-sub equal($$);
+sub equal;
 *equal = make_equal(0);
-sub relaxedequal($$);
+sub relaxedequal;
 *relaxedequal = make_equal(1);
 
 sub equaln {
@@ -337,7 +339,8 @@ sub equaln {
     }
 }
 
-sub is_equal ($$;$) {
+sub is_equal {
+    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
     my ($a, $b, $maybe_name) = @_;
     require Test::More;
     my $tb = Test::More->builder;
