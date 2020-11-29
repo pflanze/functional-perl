@@ -146,27 +146,36 @@ my %ops = (
         1,
         sub {
             s{
-                 (\bsub\b \ *(?:\w+)?) \ *
+                 (\bsub\b \ *)(\w+)?( \ *)
                  \(([\@\$; ]*)\)  # do *not* include & here, as those are needed
                  (\s* \{ \s*)
                  ( (?:[^\n]*\n){0,2})
             }{
-                my ($pre, $protos, $post, $bodystart)=($1,$2,$3,$4);
-                # make sure bodystart doesn't slurp over a subsequent definition
-                die "accidentally slurping up subsequent definition"
-                    if $bodystart =~ /(\bsub\b \ *(?:\w+)?) \ * (?:\([@$&;]*\))? (\s* \{)/;
+                my ($_pre, $maybe_name, $_post, $protos, $post, $bodystart)
+                   = ($1,$2,$3,$4,$5,$6);
+                my $pre = $_pre . ($maybe_name // "") . $_post;
 
-                my $checkcode= do {
-                    if ($bodystart=~ /\@_ *(?:==|<=|>=|<|>) *\d+/) {
-                        ""
-                    } else {
-                        checkcode_for_arity(protos_to_arity($protos))
-                    }
-                };
-                # Make sure there's no empty line before the checkcode
-                my $post_and_checkcode= "$post$checkcode";
-                $post_and_checkcode=~ s/^(\s*\{)[ \t]*\n\s*/$1\n    /s;
-                "$pre$post_and_checkcode    $bodystart"
+                if (defined $maybe_name and $maybe_name =~ /^[A-Z0-9_]+\z/
+                    and $protos =~ /^\s*\z/ and $bodystart =~ /^\s*\d+\}/) {
+                    # constant, leave as is
+                    "$pre($protos)$post$bodystart"
+                } else {
+                    # make sure bodystart doesn't slurp over a subsequent definition
+                    die "accidentally slurping up subsequent definition"
+                        if $bodystart =~ /(\bsub\b \ *(?:\w+)?) \ * (?:\([@$&;]*\))? (\s* \{)/;
+
+                    my $checkcode = do {
+                        if ($bodystart =~ /\@_ *(?:==|<=|>=|<|>) *\d+/) {
+                            ""
+                        } else {
+                            checkcode_for_arity(protos_to_arity($protos))
+                        }
+                    };
+                    # Make sure there's no empty line before the checkcode
+                    my $post_and_checkcode = "$post$checkcode";
+                    $post_and_checkcode =~ s/^(\s*\{)[ \t]*\n\s*/$1\n    /s;
+                    "$pre$post_and_checkcode    $bodystart"
+                }
             }sgex;
             $_
         }
