@@ -161,7 +161,10 @@ my %ops = (
                         checkcode_for_arity(protos_to_arity($protos))
                     }
                 };
-                "$pre$post$checkcode    $bodystart"
+                # Make sure there's no empty line before the checkcode
+                my $post_and_checkcode= "$post$checkcode";
+                $post_and_checkcode=~ s/^(\s*\{)[ \t]*\n\s*/$1\n    /s;
+                "$pre$post_and_checkcode    $bodystart"
             }sgex;
             $_
         }
