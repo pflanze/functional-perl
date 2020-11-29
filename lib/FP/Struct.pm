@@ -176,6 +176,7 @@ use Carp;
 use Chj::NamespaceClean;
 use FP::Show qw(show);
 use FP::Interface qw(require_package package_check_possible_interface);
+use FP::Carp;
 
 sub all_fields {
     my ($isa) = @_;
@@ -194,13 +195,13 @@ sub all_fields {
 }
 
 sub field_maybe_predicate {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s) = @_;
     (ref $s) ? $$s[0] : undef
 }
 
 sub field_name {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s) = @_;
     (ref $s) ? $$s[1] : $s
 }
@@ -214,7 +215,7 @@ sub field_maybe_predicate_and_name {
 }
 
 sub field_has_predicate {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s) = @_;
     ref $s
 }
