@@ -161,7 +161,7 @@ my %ops = (
                         checkcode_for_arity(protos_to_arity($protos))
                     }
                 };
-                "$pre$post$checkcode$bodystart"
+                "$pre$post$checkcode    $bodystart"
             }sgex;
             $_
         }
