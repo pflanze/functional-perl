@@ -36,13 +36,14 @@ use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 
+use FP::Carp;
 use FP::Optional qw(perhaps_to_maybe);
 use FP::Combinators qw (flip flip2of3 rot3right rot3left);
 use FP::Array ":all";
 use FP::Array_sort qw(array_sort array_sortCompare);
 
 sub blessing {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($m) = @_;
     sub {
         my $class = ref $_[0];
@@ -55,7 +56,7 @@ sub blessing {
 }
 
 sub blessing2 {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($m) = @_;
     sub {
         my $class = ref $_[0];
@@ -68,7 +69,7 @@ sub blessing2 {
 }
 
 sub blessing_snd {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($m) = @_;
     sub {
         my $class = ref $_[0];
@@ -96,7 +97,7 @@ sub is_proper_sequence {1}
 BEGIN { undef *array }
 
 sub array {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my $s = shift;
 
     # 'debless', and copy necessary as the user is entitled to mod it
@@ -106,21 +107,21 @@ sub array {
 }
 
 sub list {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my $s = shift;
     require FP::List;    # (overhead of repeated require?)
     FP::List::array_to_list($s)
 }
 
 sub stream {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my $s = shift;
     require FP::Stream;    # (ditto)
     FP::Stream::array_to_stream($s)
 }
 
 sub strictlist {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my $s = shift;
 
     # XX could be more efficient via an
@@ -129,12 +130,12 @@ sub strictlist {
 }
 
 sub string {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     array_to_string $_[0]
 }
 
 sub is_null {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     not @{ $_[0] }
 }
 
@@ -156,20 +157,20 @@ sub values {
 *perhaps_rest = blessing \&array_perhaps_rest;
 
 sub first_and_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     (array_first $a, ref($a)->new_from_array(array_rest($a)))
 }
 
 # XXX ah could have used blessing_snd ^ v
 sub maybe_first_and_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a ? (array_first $a, ref($a)->new_from_array(array_rest($a))) : undef
 }
 
 sub perhaps_first_and_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     @$a ? (array_first $a, ref($a)->new_from_array(array_rest($a))) : ()
 }
