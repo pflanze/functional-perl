@@ -189,6 +189,9 @@ my %ops = (
     excise_prototypes => [
         1,
         sub {
+            return $_
+                if /use +experimental [^\n;]*signatures[^\n;]*;/
+                ;    # since `()` is ambiguous
             s{
                  ( \bsub\b \ *)(\w+)?( \ * )
                  \( ([\@\$; ]*) \)  # do *not* include & here, as those are needed
