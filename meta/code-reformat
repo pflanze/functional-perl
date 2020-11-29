@@ -146,10 +146,10 @@ my %ops = (
         1,
         sub {
             s{
-                 (\bsub\b \ *)(\w+)?( \ *)
-                 \(([\@\$; ]*)\)  # do *not* include & here, as those are needed
-                 (\s* \{ \s*)
-                 ( (?:[^\n]*\n){0,2})
+                 ( \bsub\b \ *)(\w+)?( \ * )
+                 \( ([\@\$; ]*) \)  # do *not* include & here, as those are needed
+                 ( \s* \{ \s* )
+                 ( (?:[^\n]*\n){0,2} )
             }{
                 my ($_pre, $maybe_name, $_post, $protos, $post, $bodystart)
                    = ($1,$2,$3,$4,$5,$6);
