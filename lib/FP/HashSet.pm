@@ -83,38 +83,39 @@ our @EXPORT_OK   = qw(hashset_add_hashset_d);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
+use FP::Carp;
 
 sub array_to_hashset {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     +{ map { $_ => $_ } @{ $_[0] } }
 }
 
 sub array_to_lchashset {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     +{ map { lc($_) => $_ } @{ $_[0] } }
 }
 
 sub hashset_to_array {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     [sort values %{ $_[0] }]
 }
 
 sub hashset_to_predicate {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s) = @_;
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or fp_croak_nargs 1;
         exists $$s{ $_[0] }
     }
 }
 
 sub hashset_keys_unsorted {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     keys %{ $_[0] }
 }
 
 sub hashset_keys {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     sort keys %{ $_[0] }
 }
 
@@ -176,12 +177,12 @@ sub hashset_is_subset ($ $) {
 }
 
 sub hashset_size {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     scalar keys %{ $_[0] }
 }
 
 sub hashset_empty {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     not keys %{ $_[0] }
 }
 
