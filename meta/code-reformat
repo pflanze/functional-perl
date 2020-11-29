@@ -48,14 +48,16 @@ GetOptions(
 
 @opt_op or usage "no op given, use the --op option";
 
-my %opt_op = map { $_ => 1 } @opt_op;
-
 my %ops = (
-    opspaces => sub {
-        if (/http|href/) {
-            $_
-        } else {
-            s{ ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) }{
+
+    # [ needs_whole_file, proc ]
+    opspaces => [
+        0,
+        sub {
+            if (/http|href/) {
+                $_
+            } else {
+                s{ ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) }{
             my ($a,$b,$c)=($1,$2,$3);
             my $all = "$a$b$c";
             my $pre= substr($_, 0, pos($_)+1);
@@ -74,12 +76,15 @@ my %ops = (
                 $all
             }
         }sgex and s/[ \t]*$//;
-            $_
+                $_
+            }
         }
-    },
+    ],
 
-    functionparameters2signatures => sub {
-        s{
+    functionparameters2signatures => [
+        1,
+        sub {
+            s{
          \b(method|fun)(\s+\w+)
          (?:
              (\s*\(\s*)
@@ -96,17 +101,25 @@ my %ops = (
               : "$a$b$c")
            . $end
     }sgex;
-        $_
-    },
+            $_
+        }
+    ],
 );
+
+my @op = map { $ops{$_} // die "unknown op '$_'" } @opt_op;
+
+my %needs_whole_file = map { $_->[0] ? (1 => undef) : (0 => undef) } @op;
+
+(keys %needs_whole_file) == 1
+    or die
+    "can't satisfy ops of different needs_whole_file requirement at the same time";
+
+my ($needs_whole_file) = keys %needs_whole_file;
 
 for my $file (@ARGV) {
     my $f     = xopen_read $file;
     my @lines = do {
-        local $/ = $opt_op{functionparameters2signatures} ? undef : $/;
-        die
-            "can't satisfy other ops when using op functionparameters2signatures"
-            if ($opt_op{functionparameters2signatures} and @opt_op > 1);
+        local $/ = $needs_whole_file ? undef : $/;
         $f->xreadline;
     };
     $f->xclose;
@@ -114,8 +127,8 @@ for my $file (@ARGV) {
     my $t = xtmpfile $file;
     $t->xprint(
         map {
-            for my $op (@opt_op) {
-                my $proc = $ops{$op} // die "unknown op '$op'";
+            for my $op (@op) {
+                my (undef, $proc) = @$op;
                 $_ = &$proc($_);
             }
             $_
