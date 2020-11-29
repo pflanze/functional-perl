@@ -134,6 +134,7 @@ package FP::Hash::Mixin {
 package FP::_::PureHash {
     use base "FP::Hash::Mixin";
     use FP::Interfaces;
+    use FP::Carp;
     use Chj::NamespaceCleanAbove;
 
     sub constructor_name {"purehash"}

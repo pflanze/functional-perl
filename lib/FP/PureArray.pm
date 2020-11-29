@@ -141,6 +141,7 @@ package FP::_::PureArray {
     use base qw(FP::Array::Mixin);
     use FP::Interfaces;
     use Carp;
+    use FP::Carp;
     use Chj::NamespaceCleanAbove;
 
     sub new_from_array {

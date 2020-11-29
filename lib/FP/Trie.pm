@@ -92,6 +92,8 @@ our @EXPORT      = qw(empty_trie);
 our @EXPORT_OK   = qw($empty_trie);                  # ok?
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Carp;
+
 package FP::Trie::KeyNotFoundException {
     use FP::Struct [], 'FP::Struct::Show', 'FP::Abstract::Pure';
     use overload '""' => 'string';
@@ -112,6 +114,7 @@ package FP::Trie::BareLevel {
     use FP::List;
     use FP::Stream;
     use Scalar::Util qw(blessed);
+    use FP::Carp;
 
     use FP::Struct ["sublevels"], "FP::Trie::Trie";
 

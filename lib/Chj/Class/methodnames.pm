@@ -42,12 +42,14 @@ or on the L<website|http://functional-perl.org/>.
 =cut
 
 package Chj::Class::methodnames;
-use Exporter "import";
-our @EXPORT = qw(methodnames);
-
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
+
+use Exporter "import";
+our @EXPORT = qw(methodnames);
+
+use FP::Carp;
 
 our $stop = {};
 

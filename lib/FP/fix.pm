@@ -69,6 +69,8 @@ our @EXPORT      = qw(fix fixn);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Carp;
+
 # Alternative implementations:
 
 # Y combinator

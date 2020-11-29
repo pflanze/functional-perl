@@ -109,6 +109,8 @@ our @EXPORT = qw(
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Carp;
+
 sub curry {
     @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;

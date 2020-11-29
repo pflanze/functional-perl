@@ -68,7 +68,7 @@ sub WithRepl_eval (&;$) {
 
     # my ($arg, $maybe_package) = @_;
     if (ref $_[0]) {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_nargs(1);
         my ($arg) = @_;
         eval { &$arg() }
     } else {

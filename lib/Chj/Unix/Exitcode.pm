@@ -33,6 +33,8 @@ our @EXPORT      = qw(exitcode);
 our @EXPORT_OK   = qw(exitcode);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
+use FP::Carp;
+
 package Chj::Unix::Exitcode::Exitcode {
 
     use Chj::Unix::Signal;

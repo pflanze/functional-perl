@@ -290,6 +290,7 @@ package FP::Failure::Abstract::Message {
 
 package FP::Failure::Message {
     use FP::Show;
+    use FP::Carp;
 
     use FP::Struct ['messagestring', 'arguments'],
         'FP::Failure::Abstract::Message';
@@ -311,6 +312,7 @@ sub message {
 
 package FP::Failure::MessageFmt {
     use FP::Show;
+    use FP::Carp;
 
     use FP::Struct ['formatstring', 'arguments'],
         'FP::Failure::Abstract::Message';

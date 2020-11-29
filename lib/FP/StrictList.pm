@@ -97,6 +97,8 @@ use Scalar::Util qw(blessed);
 use FP::Carp;
 
 package FP::StrictList::List {
+    use FP::Carp;
+    use Chj::NamespaceCleanAbove;
 
     sub strictlist {
         @_ == 1 or fp_croak_nargs 1;
@@ -131,6 +133,9 @@ package FP::StrictList::List {
 package FP::StrictList::Null {
     our @ISA = qw(FP::StrictList::List FP::List::Null);
 
+    use FP::Carp;
+    use Chj::NamespaceCleanAbove;
+
     sub pair_namespace {"FP::StrictList::Pair"}
     *null = \&FP::StrictList::strictnull;
 
@@ -156,6 +161,9 @@ package FP::StrictList::Null {
 
 package FP::StrictList::Pair {
     our @ISA = qw(FP::StrictList::List FP::List::Pair);
+
+    use FP::Carp;
+    use Chj::NamespaceCleanAbove;
 
     *null = \&FP::StrictList::strictnull;
 

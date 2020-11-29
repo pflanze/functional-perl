@@ -1,4 +1,5 @@
 use Test::Requires qw(BSD::Resource);
+use FP::Carp;
 import BSD::Resource;
 
 sub MB {

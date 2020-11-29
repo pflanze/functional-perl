@@ -109,6 +109,8 @@ use Exporter 'import';
 
 our @EXPORT = qw(xopendir perhaps_opendir perhaps_xopendir);
 
+use FP::Carp;
+
 sub xopendir {
     @_ == 1 or fp_croak_nargs 1;
     unshift @_, 'Chj::IO::Dir';

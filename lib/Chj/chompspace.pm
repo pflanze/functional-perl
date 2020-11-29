@@ -33,6 +33,8 @@ our @EXPORT = qw(chompspace);
 
 #@EXPORT_OK = qw();
 
+use FP::Carp;
+
 sub chompspace {
     @_ == 1 or fp_croak_nargs 1;
     my ($str) = @_;

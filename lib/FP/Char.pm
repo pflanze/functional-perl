@@ -38,6 +38,8 @@ our @EXPORT      = qw();
 our @EXPORT_OK   = qw(is_char char_is_whitespace char_is_alphanumeric);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Carp;
+
 sub is_char {
     @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;

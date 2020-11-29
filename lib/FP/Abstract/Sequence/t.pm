@@ -31,6 +31,8 @@ use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
 
+use FP::Carp;
+
 # from SYNOPSIS:
 
 use FP::Predicates;    # qw(is_sequence is_seq);
@@ -216,7 +218,6 @@ use FP::Show;
 use FP::PureArray;
 use FP::MutableArray;
 use FP::StrictList;
-use FP::Carp;
 
 for my $orig (@sequencetypes) {
     my $constructor = eval '\&' . $orig;
