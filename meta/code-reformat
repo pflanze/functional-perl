@@ -154,7 +154,7 @@ my %ops = (
                 my ($pre, $protos, $post, $bodystart)=($1,$2,$3,$4);
                 # make sure bodystart doesn't slurp over a subsequent definition
                 die "accidentally slurping up subsequent definition"
-                    if $bodystart =~ /(\bsub\b \ *(?:\w+)?) \ * \(([@$&;]*)\) (\s* \{)/;
+                    if $bodystart =~ /(\bsub\b \ *(?:\w+)?) \ * (?:\([@$&;]*\))? (\s* \{)/;
 
                 my $checkcode= do {
                     if ($bodystart=~ /\@_ *(?:==|<=|>=|<|>) *\d+/) {
