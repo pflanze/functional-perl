@@ -146,8 +146,10 @@ my %ops = (
         1,
         sub {
             s{
-                (\bsub\b \ *(?:\w+)?) \ * \(([\@\$&; ]*)\) (\s* \{ \s*)
-                ( (?:[^\n]*\n){0,3})
+                 (\bsub\b \ *(?:\w+)?) \ *
+                 \(([\@\$; ]*)\)  # do *not* include & here, as those are needed
+                 (\s* \{ \s*)
+                 ( (?:[^\n]*\n){0,3})
             }{
                 my ($pre, $protos, $post, $bodystart)=($1,$2,$3,$4);
                 # make sure bodystart doesn't slurp over a subsequent definition
