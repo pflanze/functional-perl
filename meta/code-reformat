@@ -85,6 +85,50 @@ sub checkcode_for_arity ($arity) {
     }
 }
 
+my $compare_re = qr(<|>|<=|>=|==);
+
+my %rising  = map { $_ => 1 } qw(> >=);
+my %falling = map { $_ => 1 } qw(< <=);
+my %equal   = map { $_ => 1 } qw(==);
+
+sub compare_range {
+    my ($compare1, $n1, $maybe_andor, $maybe_compare2, $maybe_n2) = @_;
+    if (defined $maybe_andor) {
+        if ($maybe_andor eq '&&' or $maybe_andor eq 'and') {
+            if ($rising{$compare1} and $falling{$maybe_compare2}) {
+                "$n1-$maybe_n2"
+            } else {
+                die "don't know how to handle '$compare1 and $maybe_compare2'"
+            }
+        } elsif ($maybe_andor eq '||' or $maybe_andor eq 'or') {
+            if ($equal{$compare1} and $equal{$maybe_compare2}) {
+                "$n1 or $maybe_n2"
+            } else {
+
+                # XX could simply say "$compare1 $n1 or $maybe_compare2
+                # $maybe_n2" or 'optimize' it in the cases where it's
+                # ==
+                die "don't know how to handle '$compare1 and $maybe_compare2'"
+            }
+        } else {
+            die "invalid andor: $maybe_andor"
+        }
+    } else {
+        $compare1 eq "==" ? $n1 : "$compare1 $n1"
+    }
+}
+
+TEST { compare_range qw(> 5) } '> 5';
+TEST { compare_range qw(<= 5) } '<= 5';
+TEST { compare_range qw(== 5) } '5';
+TEST_EXCEPTION { compare_range qw(== 5 and == 6) }
+'don\'t know how to handle \'== and ==\'';
+TEST { compare_range qw(== 5 or == 6) } '5 or 6';
+TEST_EXCEPTION { compare_range qw(== 5 or > 6) }
+'don\'t know how to handle \'== and >\'';
+
+our $current_file;
+
 my %ops = (
 
     # [ needs_whole_file, proc ]
@@ -180,6 +224,47 @@ my %ops = (
             $_
         }
     ],
+
+    move_to_fp_croak_nargs => [
+        1,
+        sub {
+            my $replacements = s{
+                 ( ; | \{ \s* )
+                 ( \(? \s* \@_ \s* ($compare_re) \s* (\d+) \s*
+                     (?: ( and | && | or | \|\| ) \s* \@_ ($compare_re) (\d+) )? \s* \)?  \s* )
+                 ( or \s+ (?:die|(?:\w+::)*croak) \s*
+                     (?: "[^"]*wrong\ number\ of\ arguments[^"]*" |
+                         "[^"]*(?:expecting|expects|needs?) \s+ \d+
+                            (?: \ * (?:-|to) \ * \d+)? \s+ (?:parameter|argument)s?[^"]*" |
+                         "[^"]*not\ enough\ arguments[^"]*"
+                     ) \s* ;)
+            }{
+                my ($pre, $compare, $compare1, $n1, $maybe_andor, $maybe_compare2, $maybe_n2, $or_part)
+                  = ($1,$2,$3,$4,$5,$6,$7,$8);
+                my $range = compare_range($compare1, $n1, $maybe_andor, $maybe_compare2, $maybe_n2);
+                unless ($range =~ /^\d+$/s) {
+                    $range = "\"$range\"";
+                }
+                "$pre$compare or fp_croak_nargs $range;"
+            }sgex;
+            if ($replacements) {
+                unless (/use FP::Carp/) {
+                    do {
+                        if (/[\@\%]EXPORT/) {
+
+                            # force it after 'EXPORT'
+                            s{(.*[\@\%]EXPORT.*\nuse [A-Z][^;\n]+;[^\n]*\n)}{${1}use FP::Carp;\n}s
+                        } else {
+                            s{(.*\nuse [A-Z][^;\n]+;[^\n]*\n)}{${1}use FP::Carp;\n}s
+                        }
+                        }
+                        or
+                        warn "could not insert FP::Carp into $current_file\n";
+                }
+            }
+            $_
+        }
+    ],
 );
 
 sub run {
@@ -196,6 +281,7 @@ sub run {
     my ($needs_whole_file) = keys %needs_whole_file;
 
     for my $file (@ARGV) {
+        local $current_file = $file;
         my $f     = xopen_read $file;
         my @lines = do {
             local $/ = $needs_whole_file ? undef : $/;
