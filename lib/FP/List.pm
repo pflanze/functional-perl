@@ -196,6 +196,7 @@ use FP::Show;
 use Scalar::Util qw(weaken blessed);
 use FP::Weak qw(Weakened);
 use FP::Interfaces;
+use Carp;
 
 our $immutable = 1;    # whether pairs are to be made immutable
 
@@ -204,6 +205,7 @@ our $immutable = 1;    # whether pairs are to be made immutable
 
 package FP::List::List {
     use FP::Lazy;
+    use Carp;
 
     use Chj::NamespaceCleanAbove;
 
@@ -211,30 +213,30 @@ package FP::List::List {
 
     # return this sequence as a list, i.e. identity
     sub list {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         $_[0]
     }
 
     sub stream {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         my ($l) = @_;
         lazy {$l}
     }
 
     sub strictlist {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         my $s = shift;
         FP::StrictList::strictlist($s->values)
     }
 
     sub purearray {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         my $s = shift;
         FP::_::PureArray->new_from_array([$s->values])
     }
 
     sub mutablearray {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         my $s = shift;
         FP::_::MutableArray->new_from_array([$s->values])
     }
@@ -248,6 +250,7 @@ package FP::List::List {
 }
 
 package FP::List::Null {
+    use Carp;
     our @ISA = qw(FP::List::List);
 
     sub pair_namespace {"FP::List::Pair"}
@@ -256,7 +259,7 @@ package FP::List::Null {
 
     sub cons {
         my $s = shift;
-        @_ == 1 or die "expecting 1 method argument";
+        @_ == 1 or croak "expecting 1 method argument";
         my @p = ($_[0], $s);
         bless \@p, $s->pair_namespace;
         if ($immutable) {
@@ -303,13 +306,14 @@ package FP::List::Null {
 }
 
 package FP::List::Pair {
+    use Carp;
     our @ISA = qw(FP::List::List);
 
     sub is_null {''}
 
     sub cons {
         my $s = shift;
-        @_ == 1 or die "expecting 1 method argument";
+        @_ == 1 or croak "expecting 1 method argument";
         my @p = ($_[0], $s);
         bless \@p, ref($s);
         if ($immutable) {
@@ -407,7 +411,7 @@ TEST {
 1;
 
 sub cons ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     if (defined blessed($_[1]) and my $f = $_[1]->can("cons")) {
         @_ = ($_[1], $_[0]);
         goto &$f;
@@ -417,10 +421,10 @@ sub cons ($$) {
 }
 
 sub cons_ {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($item) = @_;
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         if (defined blessed($_[0]) and my $f = $_[0]->can("cons")) {
             push @_, $item;
             goto &$f;
@@ -434,7 +438,7 @@ TEST { cons_(1)->(list(2)) } GIVES { list(1, 2) };
 TEST { cons_(1)->(2) } GIVES       { cons 1, 2 };
 
 sub pair ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     goto \&unsafe_cons
 }
 
@@ -458,20 +462,20 @@ sub unsafe_cons ($$) {
 # WARNING: be careful, this isn't safe even if `is_pair` returns true, as
 # that only assures that ->car etc. can be called.
 sub unsafe_car {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     $_[0][0]
 }
 
 # WARNING: same as for unsafe_car
 sub unsafe_cdr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     $_[0][1]
 }
 
 sub is_pair;
 
 sub is_pair {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     (
@@ -484,7 +488,7 @@ sub is_pair {
 }
 
 sub is_pair_noforce {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     ($r eq "FP::List::Pair" or $v->isa("FP::List::Pair"))
@@ -493,7 +497,7 @@ sub is_pair_noforce {
 sub is_pair_of ($$) {
     my ($p0, $p1) = @_;
     sub {
-        @_ == 1 or die "expecting 1 argument";
+        @_ == 1 or croak "expecting 1 argument";
         my ($v) = @_;
         (is_pair($v) and &$p0($$v[0]) and &$p1($$v[1]))
     }
@@ -519,7 +523,7 @@ TEST { null->cons(1)->cons(2)->array }
 sub is_null;
 
 sub is_null {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     (
@@ -530,7 +534,7 @@ sub is_null {
 }
 
 sub is_null_noforce {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     ($r eq "FP::List::Null" or $v->isa("FP::List::Null"))
@@ -539,7 +543,7 @@ sub is_null_noforce {
 sub is_pair_or_null;
 
 sub is_pair_or_null {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // return;
     (
@@ -568,7 +572,7 @@ sub null_or_pair_of ($$) {
     my ($p0, $p1) = @_;
 
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         my ($v) = @_;
         is_null_or_pair_of($v, $p0, $p1)
     }
@@ -591,7 +595,7 @@ TEST {
 [1, undef, undef, '', 1, ''];
 
 sub is_list {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     FORCE $v;
     (
@@ -618,16 +622,14 @@ TEST {
 }
 '';
 
-use Carp;
-
 sub die_not_a_pair {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     croak "not a pair: " . show($v);
 }
 
 sub car {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
@@ -665,7 +667,7 @@ TEST {
 bless [6, 4], 'FP::List::Pair';
 
 sub cdr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
@@ -688,42 +690,42 @@ sub rest;
 *rest = *cdr;
 
 sub cddr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     cdr cdr $_[0]
 }
 
 sub cdddr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     cdr cdr cdr $_[0]
 }
 
 sub cddddr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     cdr cdr cdr cdr $_[0]
 }
 
 sub cadr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     car cdr $_[0]
 }
 
 sub caddr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     car cdr cdr $_[0]
 }
 
 sub cadddr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     car cdr cdr cdr $_[0]
 }
 
 sub caddddr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     car cdr cdr cdr cdr $_[0]
 }
 
 sub c_r {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     my ($s, $chain) = @_;
     my $c;
     while (length($c = chop $chain)) {
@@ -741,7 +743,7 @@ TEST { list(1, list(4, 7, 9), 5)->c_r("addad") }
 9;
 
 sub car_and_cdr {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
@@ -758,7 +760,7 @@ sub first_and_rest;
 *first_and_rest = *car_and_cdr;
 
 sub perhaps_first_and_rest {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
     if ($r eq "FP::List::Pair") {
@@ -781,7 +783,7 @@ TEST_EXCEPTION { [perhaps_first_and_rest "FP::List::Null"] }
 "not a pair: 'FP::List::Null'";    # and XX actually not a null either.
 
 sub list_perhaps_one {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($s) = @_;
     FORCE $s;                      # make work for stre
     if (is_pair($s)) {
@@ -800,7 +802,7 @@ TEST { [list(8, 9)->perhaps_one] } [];
 TEST { [list()->perhaps_one] } [];
 
 sub list_xone {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($s) = @_;
     FORCE $s;    # make work for streams
     if (is_pair($s)) {
@@ -828,7 +830,7 @@ sub make_ref {
     sub ($ $) {
         my ($s, $i) = @_;
         weaken $_[0] if $is_stream;
-        is_natural0 $i or die "invalid index: " . show($i);
+        is_natural0 $i or croak "invalid index: " . show($i);
         my $orig_i = $i;
     LP: {
             $s = force $s;
@@ -963,7 +965,7 @@ sub delayed (&) {
 sub list_of;
 
 sub list_of {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($p) = @_;
     either \&is_null, is_pair_of($p, delayed { list_of $p })
 }
@@ -978,7 +980,7 @@ sub make_length {
     my $liststream = $is_stream ? "stream" : "list";
 
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or croak "wrong number of arguments";
         my ($l) = @_;
         weaken $_[0] if $is_stream;
         my $len = 0;
@@ -1013,7 +1015,7 @@ TEST { list()->length } 0;
 TEST { list(4, 5)->length } 2;
 
 sub list_to_string {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     my $len = list_length $l;
 
@@ -1039,7 +1041,7 @@ TEST { list("", "", "o")->string } 'o';
 TEST { list("a", "", "o")->string } 'ao';
 
 sub list_to_array {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     my $res = [];
     my $i   = 0;
@@ -1068,7 +1070,7 @@ TEST {
 bless [1, 9, 16], "FP::_::PureArray";
 
 sub list_sort ($;$) {
-    @_ == 1 or @_ == 2 or die "wrong number of arguments";
+    @_ == 1 or @_ == 2 or croak "wrong number of arguments";
     my ($l, $maybe_cmp) = @_;
     list_to_purearray($l)->sort ($maybe_cmp)
 }
@@ -1076,7 +1078,7 @@ sub list_sort ($;$) {
 *FP::List::List::sort = *list_sort;
 
 sub list_sortCompare {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     list_to_purearray($l)->sortCompare
 }
@@ -1103,7 +1105,7 @@ TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->stream->car }
 3;
 
 sub rlist_to_array {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     my $res = [];
     my $len = list_length $l;
@@ -1119,7 +1121,7 @@ sub rlist_to_array {
 *FP::List::List::reverse_array = *rlist_to_array;
 
 sub list_to_values {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     @{ list_to_array($l) }
 }
@@ -1129,7 +1131,7 @@ sub list_to_values {
 # XX naming inconsistency versus docs/design.md ? Same with
 # rlist_to_array.
 sub rlist_to_values {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     @{ rlist_to_array($l) }
 }
@@ -1257,7 +1259,7 @@ TEST { list_to_string string_to_list "Hello" }
 
 # XX HACK, COPY from FP::Array to work around circular dependency
 sub array_fold_right ($$$) {
-    @_ == 3 or die "wrong number of arguments";
+    @_ == 3 or croak "wrong number of arguments";
     my ($fn, $tail, $a) = @_;
     my $i = @$a - 1;
     while ($i >= 0) {
@@ -1304,7 +1306,7 @@ sub list_reverse_with_tail ($$) {
 }
 
 sub list_reverse {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     list_reverse_with_tail($l, $l->null)
 }
@@ -1316,7 +1318,7 @@ TEST { list_to_string list_reverse string_to_list "Hello" }
 'olleH';
 
 sub list_strings_join ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     my ($l, $val) = @_;
 
     # now depend on FP::Array anyway. Lazily. XX hack~
@@ -1330,7 +1332,7 @@ TEST { list(1, 2, 3)->strings_join("-") }
 "1-2-3";
 
 sub list_strings_join_reverse ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     my ($l, $val) = @_;
 
     # now depend on FP::Array anyway. Lazily. XX hack~
@@ -1409,7 +1411,7 @@ TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null)) }
 sub list_zip2 ($$);
 
 sub list_zip2 ($$) {
-    @_ == 2 or die "expecting 2 arguments";
+    @_ == 2 or croak "expecting 2 arguments";
     my ($l, $m) = @_;
     (     is_null($l) ? $l
         : is_null($m) ? $m
@@ -1427,7 +1429,7 @@ TEST { list_to_array list_zip2 list(qw(a b)), list(2, 3, 4) }
 sub list_to_alist;
 
 sub list_to_alist {
-    @_ == 1 or die "expecting 2 arguments";
+    @_ == 1 or croak "expecting 2 arguments";
     my ($l) = @_;
     is_null($l) ? $l : do {
         my ($k, $l2) = $l->first_and_rest;
@@ -1522,7 +1524,7 @@ TEST {
 [[1, 'a'], [2, 'b']];
 
 sub FP::List::List::map {
-    @_ >= 2 or die "not enough arguments";
+    @_ >= 2 or croak "not enough arguments";
     my $l  = shift;
     my $fn = shift;
     @_ ? list_mapn($fn, $l, @_) : list_map($fn, $l)
@@ -1539,12 +1541,12 @@ sub list_map_with_index_ {
 }
 
 sub list_map_with_index {
-    @_ >= 2 or die "not enough arguments";
+    @_ >= 2 or croak "not enough arguments";
     list_map_with_index_(0, @_)
 }
 
 sub FP::List::List::map_with_index {
-    @_ >= 2 or die "not enough arguments";
+    @_ >= 2 or croak "not enough arguments";
     my $l  = shift;
     my $fn = shift;
     list_map_with_index($fn, $l, @_)
@@ -1556,7 +1558,7 @@ TEST {
 [[0, 1], [1, 2], [2, 20]];
 
 sub list_map_with_islast {
-    @_ > 1 or die "wrong number of arguments";
+    @_ > 1 or croak "wrong number of arguments";
     my $fn      = shift;
     my @rest    = map { is_null($_) ? return null : rest $_ } @_;
     my $is_last = '';
@@ -1632,7 +1634,7 @@ TEST {
 
 sub FP::List::List::fold_right {
     my $l = shift;
-    @_ == 2 or die "expecting 2 arguments";
+    @_ == 2 or croak "expecting 2 arguments";
     my ($fn, $start) = @_;
     list_fold_right($fn, $start, $l)
 }
@@ -1647,7 +1649,7 @@ TEST {
 sub list_pair_fold_right ($$$);
 
 sub list_pair_fold_right ($$$) {
-    @_ == 3 or die "wrong number of arguments";
+    @_ == 3 or croak "wrong number of arguments";
     my ($fn, $start, $l) = @_;
     if (is_pair $l) {
         no warnings 'recursion';
@@ -1685,7 +1687,7 @@ TEST_STDOUT { list(5, 6, 9)->pair_fold_right(*cons, null)->write_sexpr }
 sub unfold ($$$$;$);
 
 sub unfold ($$$$;$) {
-    @_ == 4 or @_ == 5 or die "wrong number of arguments";
+    @_ == 4 or @_ == 5 or croak "wrong number of arguments";
     my ($p, $f, $g, $seed, $maybe_tail_gen) = @_;
     &$p($seed)
         ? (defined $maybe_tail_gen ? &$maybe_tail_gen($seed) : null)
@@ -1700,7 +1702,7 @@ TEST { unfold(*is_zero, *inc, *dec, 5, *list)->array } [6, 5, 4, 3, 2, 0];
 sub unfold_right ($$$$;$);
 
 sub unfold_right ($$$$;$) {
-    @_ == 4 or @_ == 5 or die "wrong number of arguments";
+    @_ == 4 or @_ == 5 or croak "wrong number of arguments";
     my ($p, $f, $g, $seed, $maybe_tail) = @_;
     my $tail = @_ == 5 ? $maybe_tail : null;
 LP: {
@@ -1744,7 +1746,7 @@ TEST { array_to_list(["a", "b"])->append(array_to_list([1, 2]))->array }
 ['a', 'b', 1, 2];
 
 sub list_to_perlstring {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     list_to_string cons(
         "'",
@@ -1772,7 +1774,7 @@ q{'Hello\'s'};
 sub list_butlast;
 
 sub list_butlast {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     if (is_null($l)) {
         die "butlast: got empty list"
@@ -1880,7 +1882,7 @@ TEST {
 "";
 
 sub list_last {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($v) = @_;
 LIST_LAST: {
         my ($a, $r) = $v->first_and_rest;
@@ -2011,7 +2013,7 @@ TEST {
 # carry `perhaps` in their name of this reason.
 
 sub list_perhaps_find_tail ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     my ($fn, $l) = @_;
 LP: {
         if (is_null $l) { () }
@@ -2037,7 +2039,7 @@ TEST { [list(3, 1, 37, -5)->perhaps_find_tail(*is_even)] }
 [];
 
 sub list_perhaps_find ($$) {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or croak "wrong number of arguments";
     my ($fn, $l) = @_;
     if (my ($l) = list_perhaps_find_tail($fn, $l)) {
         $l->car
@@ -2122,7 +2124,7 @@ sub list_group ($$;$);
 *list_group = make_group(0);
 
 sub FP::List::List::group {
-    @_ >= 2 and @_ <= 3 or die "wrong number of arguments";
+    @_ >= 2 and @_ <= 3 or croak "wrong number of arguments";
     my ($self, $equal, $maybe_tail) = @_;
     list_group($equal, $self, $maybe_tail)
 }
@@ -2163,7 +2165,7 @@ LP: {
             } elsif (ref $v eq "ARRAY") {
                 @_ = (
                     sub {
-                        @_ == 2 or die "wrong number of arguments";
+                        @_ == 2 or croak "wrong number of arguments";
                         my ($v, $tail) = @_;
                         no warnings 'recursion';
 
@@ -2268,7 +2270,7 @@ TEST_STDOUT {
 use FP::Char 'is_char';
 
 sub is_charlist {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or croak "wrong number of arguments";
     my ($l) = @_;
     list_every \&is_char, $l
 }
