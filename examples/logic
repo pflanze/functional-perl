@@ -248,8 +248,7 @@ sub buildmatrix($bits) {
         }, $people, $people_i
 }
 
-sub search {
-    @_ == 0 or fp_croak_nargs 0;
+sub search () {
     stream_iota->take(2**16)->map(\&buildmatrix)->filter(\&checks)
 }
 

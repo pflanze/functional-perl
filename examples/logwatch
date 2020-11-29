@@ -170,8 +170,7 @@ my ($r, $w) = xpipe;
 
 use Chj::xtmpfile;
 
-sub xtmpfile_noautoclean {
-    @_ == 0 or fp_croak_nargs 0;
+sub xtmpfile_noautoclean () {
     my $t = xtmpfile;
     $t->autoclean(0);
     $t

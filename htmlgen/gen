@@ -183,8 +183,7 @@ sub pxml_name_to_mapper(@PXMLMapper_args) {
     )
 }
 
-sub default_pxml_name_to_mapper {
-    @_ == 0 or fp_croak_nargs 0;
+sub default_pxml_name_to_mapper () {
 
     # fake instance for tests only
     pxml_name_to_mapper(
@@ -378,8 +377,7 @@ package FunctionalPerl::Htmlgen::_::Filesinfo {
     _END_
 }
 
-sub get_filesinfo {
-    @_ == 0 or fp_croak_nargs 0;
+sub get_filesinfo () {
     __ '() -> Filesinfo '
         . '-- read info about files from disk as immutable struct';
 
@@ -686,8 +684,7 @@ sub copyfiles($filesinfo) {
     );
 }
 
-sub main {
-    @_ == 0 or fp_croak_nargs 0;
+sub main () {
     mkdir $outbase;
     warn "running get_filesinfo..";
     my $filesinfo = get_filesinfo;

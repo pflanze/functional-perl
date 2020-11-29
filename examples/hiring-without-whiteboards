@@ -477,14 +477,12 @@ sub FP::Abstract::Sequence::drop_over ($l, $pred) {
     $l->drop_while(complement $pred)->drop_while($pred)
 }
 
-sub datalines {
-    @_ == 0 or fp_croak_nargs 0;
+sub datalines () {
     xfile_lines_chomp("$basedir/$mainfile", "UTF-8")->drop_over(*is_hr)
         ->take_while(complement * is_AlsoSee)->filter(complement * is_empty)
 }
 
-sub companies {
-    @_ == 0 or fp_croak_nargs 0;
+sub companies () {
 
     # Simply ignore the grouping headings.
     datalines->filter(complement * is_heading)->map (*parse_line)
@@ -517,8 +515,7 @@ sub grouped_companies_from($datalines) {
     }
 }
 
-sub grouped_companies {
-    @_ == 0 or fp_croak_nargs 0;
+sub grouped_companies () {
     grouped_companies_from datalines
 }
 
@@ -562,8 +559,7 @@ sub FP::Abstract::Sequence::print_grouped ($l, $please_sort = 1) {
 # ==================================================================
 # main
 
-sub cs {
-    @_ == 0 or fp_croak_nargs 0;
+sub cs () {
     companies()
 }
 

@@ -127,8 +127,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
     sub map_element ($self, $e, $uplist) {
 
         # possibly *map contents* of inline code or code sections
-        my $mapped_e = sub {
-            @_ == 0 or fp_croak_nargs 0;
+        my $mapped_e = sub () {
             if (defined(my $f = $self->map_code_body)) {
 
                 # rely on code never containing markup, at least *as long
