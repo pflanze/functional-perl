@@ -118,9 +118,8 @@ TEST { test_with_size 1 }
 ['foo', 'bars', 3, 'baz'];
 
 TEST {
-    dumperequal test_with_size(2), test_with_size(1)
-        and dumperequal test_with_size(3),
-        test_with_size(1)
+    dumperequal(test_with_size(2), test_with_size(1))
+        and dumperequal(test_with_size(3), test_with_size(1))
 }
 1;
 
