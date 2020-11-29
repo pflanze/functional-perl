@@ -102,7 +102,7 @@ sub maybeIO_to_stream {
 }
 
 sub _perhaps_opendir_stream {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($path) = @_;
     if (my ($d) = perhaps_opendir $path) {
         my $next;
@@ -233,7 +233,7 @@ sub xfile_lines_chomp;
 # Clojure calls this line-seq
 #  (http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/line-seq)
 sub fh_to_lines {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fh) = @_;
     fh_to_stream(possibly_fh_to_fh($fh), the_method("xreadline"),
         the_method("xclose"))

@@ -197,7 +197,7 @@ sub new {
 my $maybe_setter = sub {
     my ($method) = @_;
     sub {
-        @_ == 2 or die "wrong number of arguments";
+        @_ == 2 or fp_croak_nargs 2;
         my ($self, $v) = @_;
         my $set_maybe_method = "set_maybe_${method}";
         defined $v
@@ -512,7 +512,7 @@ our $use_warnings = q{use warnings; use warnings FATAL => 'uninitialized';};
 
 sub eval_code {
     my $self = shift;
-    @_ == 5 or die "wrong number of arguments";
+    @_ == 5 or fp_croak_nargs 5;
     my ($code, $in_package, $maybe_lexicals, $maybe_kept_results,
         $maybe_lexical_persistence)
         = @_;

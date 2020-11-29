@@ -24,9 +24,10 @@ use Test::Requires qw(Test::Pod::Snippets PadWalker FP::Repl::AutoTrap);
 # ^ PadWalker only to give a more proper error message to the user; sigh.
 use Test::More;
 use FP::Repl::WithRepl qw(withrepl WithRepl_eval);
+use FP::Carp;
 
 sub myeval {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($str) = @_;
     if (FP::Repl::AutoTrap::possibly_activate) {
         withrepl {

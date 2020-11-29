@@ -66,7 +66,7 @@ package Chj::Unix::Exitcode::Exitcode {
 }
 
 sub exitcode {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($code) = @_;
     Chj::Unix::Exitcode::Exitcode->new($code)->as_string;
 }

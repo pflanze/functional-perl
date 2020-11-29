@@ -71,6 +71,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Ops qw(string_cmp number_cmp binary_operator);
 use Chj::TEST;
+use FP::Carp;
 
 sub array_sort {
     @_ == 1 or @_ == 2 or die "wrong number of arguments";
@@ -89,30 +90,30 @@ sub array_sort {
 }
 
 sub array_sortCompare {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($in) = @_;
     [sort { $a->FP_Compare_compare($b) } @$in]
 }
 
 sub on {
-    @_ == 2 or die "expecting 2 arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($select, $cmp) = @_;
     sub {
-        @_ == 2 or die "expecting 2 arguments";
+        @_ == 2 or fp_croak_nargs 2;
         my ($a, $b) = @_;
         &$cmp(&$select($a), &$select($b))
     }
 }
 
 sub on_maybe {
-    @_ == 2 or die "expecting 2 arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($maybe_select, $cmp) = @_;
     defined $maybe_select ? on($maybe_select, $cmp) : $cmp
 }
 
 # see also `complement` from FP::Predicates
 sub cmp_complement {
-    @_ == 1 or die "expecting 1 argument";
+    @_ == 1 or fp_croak_nargs 1;
     my ($cmp) = @_;
     sub {
         -&$cmp(@_)

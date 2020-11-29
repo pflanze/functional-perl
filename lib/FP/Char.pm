@@ -39,7 +39,7 @@ our @EXPORT_OK   = qw(is_char char_is_whitespace char_is_alphanumeric);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 sub is_char {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
     defined $v and not(ref $v) and length($v) == 1
 }

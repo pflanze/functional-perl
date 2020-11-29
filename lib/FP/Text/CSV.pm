@@ -97,7 +97,7 @@ use FP::Carp;
 our $defaults = +{ binary => 1, sep_char => "\t", eol => "\r\n", };
 
 sub params {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($maybe_params) = @_;
     defined $maybe_params ? hashset_union($maybe_params, $defaults) : $defaults
 }
@@ -114,7 +114,7 @@ sub csv_line_xparser {
     my $csv = new_csv_instance $maybe_params;
 
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or fp_croak_nargs 1;
         my ($line) = @_;
         $csv->parse($line)
             or die

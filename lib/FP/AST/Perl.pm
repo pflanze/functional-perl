@@ -120,6 +120,7 @@ use FP::Predicates ":all";
 #use Chj::TEST;
 use FP::List;
 use FP::Combinators2 qw(right_associate_);
+use FP::Carp;
 
 # import the constructors of the classes defined below
 for my $name (@classes) {
@@ -166,7 +167,7 @@ package FP::AST::Perl::Var {
 
 # XX move to FP::Predicates? Or FP::Parser::Perl ?
 sub is_lexvar_string {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($str) = @_;
     $str =~ /^\w+\z/
 }

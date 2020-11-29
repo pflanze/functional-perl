@@ -31,7 +31,7 @@ our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 sub tempdir {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($base)     = @_;
     my $tries      = 0;
     my $perhapsrnd = "";

@@ -261,7 +261,7 @@ sub lazyLight (&) {
 }
 
 sub is_promise {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     blessed($_[0]) // return;
     $_[0]->isa("FP::Lazy::AnyPromise")
 }
@@ -303,7 +303,7 @@ LP: {
 
 # just remove promise wrapper, don't actually force its evaluation
 sub force_noeval {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s) = @_;
     if (defined blessed($s)) {
         if ($s->isa("FP::Lazy::Promise")) {

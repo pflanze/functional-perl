@@ -47,11 +47,12 @@ our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Math::BigInt;
+use FP::Carp;
 
 #use FP::Interfaces;
 
 sub bigint {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     Math::BigInt->new($_[0])
 }
 

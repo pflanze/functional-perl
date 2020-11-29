@@ -82,7 +82,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
     };
 
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or fp_croak_nargs 1;
         my ($f) = @_;
         &$fix0($fix0, $f)
     }
@@ -134,7 +134,7 @@ TEST {
 
 # indirectly self-referencing through package variable
 *rec = sub {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;
     sub {
         #@_ = (fix ($f), @_); goto &$f;
@@ -146,9 +146,10 @@ TEST {
 # directly locally self-referencing
 
 use Scalar::Util 'weaken';
+use FP::Carp;
 
 *weakcycle = sub {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;
     my $f2;
     $f2 = sub {

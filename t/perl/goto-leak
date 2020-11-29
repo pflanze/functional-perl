@@ -63,7 +63,7 @@ sub T (&) {
 }
 
 sub trampoline {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
     while (ref($v) eq "TrampolineContinuation") {
         $v = &$v()

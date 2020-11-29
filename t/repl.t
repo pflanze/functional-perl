@@ -19,10 +19,11 @@ use Chj::xpipe;
 use Chj::xperlfunc;
 use Chj::xperlfunc qw(xlaunch);
 use Chj::xhome qw(xeffectiveuserhome);
+use FP::Carp;
 my $HOME = xeffectiveuserhome;
 
 sub clean {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s) = @_;
 
     $s =~ s/^\s*//s;

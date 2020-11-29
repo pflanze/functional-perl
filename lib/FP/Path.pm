@@ -71,7 +71,7 @@ use FP::Equal;
 use FP::Carp;
 
 sub perhaps_segment_error {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($segment) = @_;
     return "segments must be strings" unless is_string $segment;
     return "segments cannot be the empty string" unless length $segment;
@@ -80,12 +80,12 @@ sub perhaps_segment_error {
 }
 
 sub is_segment {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     not perhaps_segment_error $_[0]
 }
 
 sub check_segment {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     if (my ($e) = perhaps_segment_error $_[0]) {
         die $e
     }
@@ -124,7 +124,7 @@ use FP::Struct [
 *import = constructorexporter new_from_string => "path";
 
 sub new_from_string {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($class, $str) = @_;
     my @p = split m{/+}, $str;
     shift @p if (@p and $p[0] eq "");
@@ -136,7 +136,7 @@ sub new_from_string {
 }
 
 sub FP_Equal_equal {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($a, $b) = @_;
 
     # no need to compare is_absolute, since it is being distinguished
@@ -256,7 +256,7 @@ sub add_segment {    # functionally. hm.
 
 sub add {
     my $a = shift;
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($b, $is_url) = @_;    # when is_url is true, it cleans dit
     if ($b->is_absolute) {
         $b
@@ -291,7 +291,7 @@ sub contains_dotdot {
 # split a path into two parts, one with the first segment and one with
 # the rest
 sub perhaps_split_first_segment {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($p) = @_;
     perhaps_resplit_next_segment($p->rsegments_set(null), $p)
 }
@@ -299,7 +299,7 @@ sub perhaps_split_first_segment {
 # re-split two paths so that the first gains another segment from the
 # second
 sub perhaps_resplit_next_segment {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($p0, $p1) = @_;
 
     # XX the reversing makes this O(n). Use a better list

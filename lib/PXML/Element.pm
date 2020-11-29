@@ -40,6 +40,7 @@ use Chj::xIO qw(capture_stdout);
 use Scalar::Util qw(blessed);
 
 use Chj::NamespaceCleanAbove;
+use FP::Carp;
 
 # [ name, attributes, body ]
 BEGIN {
@@ -50,7 +51,7 @@ BEGIN {
 
 sub new {
     my $cl = shift;
-    @_ == 3 or die "wrong number of arguments";
+    @_ == 3 or fp_croak_nargs 3;
     bless [@_], $cl
 }
 
@@ -84,14 +85,14 @@ sub body {
 }
 
 sub maybe_attribute {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my $s = shift;
     my ($name) = @_;
     defined($$s[ATTRIBUTES]) ? $$s[ATTRIBUTES]{$name} : undef
 }
 
 sub perhaps_attribute {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my $s = shift;
     my ($name) = @_;
     if (defined(my $h = $$s[ATTRIBUTES])) {
@@ -106,26 +107,26 @@ sub perhaps_attribute {
 
 sub name_set {
     my $s = shift;
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     bless [$_[0], $$s[ATTRIBUTES], $$s[BODY]], ref $s
 }
 
 sub attributes_set {
     my $s = shift;
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     bless [$$s[NAME], $_[0], $$s[BODY]], ref $s
 }
 
 sub attribute_set {
     my $s = shift;
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($nam, $v) = @_;
     bless [$$s[NAME], hash_set($$s[1] // {}, $nam, $v), $$s[BODY]], ref $s
 }
 
 sub body_set {
     my $s = shift;
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     bless [$$s[NAME], $$s[ATTRIBUTES], $_[0]], ref $s
 }
 
@@ -133,21 +134,21 @@ sub body_set {
 
 sub name_update {
     my $s = shift;
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fn) = @_;
     bless [&$fn($$s[NAME]), $$s[ATTRIBUTES], $$s[BODY]], ref $s
 }
 
 sub attributes_update {
     my $s = shift;
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fn) = @_;
     bless [$$s[NAME], &$fn($$s[ATTRIBUTES]), $$s[BODY]], ref $s
 }
 
 sub body_update {
     my $s = shift;
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fn) = @_;
     bless [$$s[NAME], $$s[ATTRIBUTES], &$fn($$s[BODY])], ref $s
 }
@@ -156,7 +157,7 @@ sub body_update {
 
 sub body_map {
     my $s = shift;
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fn) = @_;
     $s->body_update(sub { stream_map $fn, stream_mixed_flatten $_[0] })
 }

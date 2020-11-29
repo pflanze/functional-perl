@@ -154,10 +154,10 @@ use Carp;
 # be less helpful for error-checking.
 
 sub flip {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;
     sub {
-        @_ == 2 or croak "expecting 2 arguments";
+        @_ == 2 or fp_croak_nargs 2;
         @_ = ($_[1], $_[0]);
         goto &$f
     }
@@ -170,30 +170,30 @@ TEST {
 
 # same as flip but pass a 3rd argument unchanged (flip 2 in 3)
 sub flip2of3 {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;
     sub {
-        @_ == 3 or croak "expecting 3 arguments";
+        @_ == 3 or fp_croak_nargs 3;
         @_ = ($_[1], $_[0], $_[2]);
         goto &$f
     }
 }
 
 sub rot3right {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;
     sub {
-        @_ == 3 or croak "expecting 3 arguments";
+        @_ == 3 or fp_croak_nargs 3;
         @_ = ($_[2], $_[0], $_[1]);
         goto &$f
     }
 }
 
 sub rot3left {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;
     sub {
-        @_ == 3 or croak "expecting 3 arguments";
+        @_ == 3 or fp_croak_nargs 3;
         @_ = ($_[1], $_[2], $_[0]);
         goto &$f
     }

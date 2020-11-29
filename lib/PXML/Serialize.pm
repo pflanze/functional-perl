@@ -81,7 +81,7 @@ use Scalar::Util qw(blessed refaddr);
 use FP::Carp;
 
 sub is_somearray {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my $r = ref($_[0]);
 
     # XX mess, make this a proper dependency
@@ -89,7 +89,7 @@ sub is_somearray {
 }
 
 sub is_empty_string {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     defined $_[0] and !length ref $_[0] and $_[0] eq ""
 }
 
@@ -117,7 +117,7 @@ sub content_escape {
 sub pxmlforce;
 
 sub pxmlforce {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
     if (my $r = ref $v) {
         if ($r eq "CODE") {
@@ -185,7 +185,7 @@ sub _attribute_val_to_string {
 }
 
 sub _pxml_print_fragment_fast {
-    @_ == 4 or die "wrong number of arguments";
+    @_ == 4 or fp_croak_nargs 4;
     my ($v, $fh, $html5compat, $void_element_h) = @_;
     weaken $_[0]
 

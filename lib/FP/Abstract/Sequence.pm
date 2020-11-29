@@ -75,6 +75,7 @@ use FP::Predicates qw(complement is_even);
 use FP::Div qw(average);
 
 use Chj::NamespaceCleanAbove;
+use FP::Carp;
 
 sub FP_Interface__method_names {
     my $class = shift;
@@ -192,7 +193,7 @@ sub flatten {
 # introduce an FP::Abstract::IterativeSequence or so and move it
 # there?)
 sub intersperse {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($self, $value) = @_;
 
     # (should we recurse locally like most sequence functions? Or is
@@ -212,7 +213,7 @@ sub intersperse {
 
 # XX better name?
 sub extreme {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($self, $cmp) = @_;
 
     # XXX: fold_right is good for FP::Stream streaming. left fold will
@@ -268,7 +269,7 @@ sub minmax {
 }
 
 sub subsection {
-    @_ == 3 or die "wrong number of arguments";
+    @_ == 3 or fp_croak_nargs 3;
     my ($self, $i0, $i1) = @_;
 
     # XXX same comment as in `extreme`
@@ -288,7 +289,7 @@ sub subsection {
 sub make_reduce {
     my ($_class, $fold) = @_;
     sub {
-        @_ == 2 or die "wrong number of arguments";
+        @_ == 2 or fp_croak_nargs 2;
         my ($seq, $fn) = @_;
         if ($seq->is_null()) {
             &$fn()
@@ -315,12 +316,12 @@ sub reduce_right;
 *reduce_right = __PACKAGE__->make_reduce("fold_right");
 
 sub sum {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     $_[0]->reduce(*add)
 }
 
 sub mean {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s) = @_;
 
     # XX imprecise for large numbers of items
@@ -328,7 +329,7 @@ sub mean {
 }
 
 sub median {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($s)    = @_;
     my $sorted = $s->sort(\&number_cmp);
     my $len    = $s->length;
@@ -341,18 +342,18 @@ sub median {
 }
 
 sub product {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     $_[0]->reduce(*mult)
 }
 
 sub none {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($s, $pred) = @_;
     $s->every(complement $pred)
 }
 
 sub split_at {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($s, $pos) = @_;
 
     # XXX weaken as all of them.
@@ -360,7 +361,7 @@ sub split_at {
 }
 
 sub chunks_of {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($s, $chunklen) = @_;
 
     # XXX weaken as all of them.
@@ -368,7 +369,7 @@ sub chunks_of {
 }
 
 sub strictly_chunks_of {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($s, $chunklen) = @_;
 
     # XXX weaken as all of them.

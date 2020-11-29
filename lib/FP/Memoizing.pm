@@ -80,7 +80,7 @@ use FP::Carp;
 # }
 
 sub xncanonicalfreeze {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     local $Storable::canonical = 1;
     nfreeze($_[0])
 }
@@ -103,7 +103,7 @@ our $freeze_args = \&xncanonicalfreeze;
 # please
 
 our $digest = sub {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my $ctx = Digest->new("SHA-256");
     $ctx->add($_[0]);
     my $d = $ctx->b64digest;
@@ -138,7 +138,7 @@ sub fh_xnstore {
 }
 
 sub fh_xdeserialize {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     fd_retrieve($_[0]) // die "SOME retrieval error";
 }
 
@@ -166,7 +166,7 @@ sub memoizing_ {
 }
 
 sub memoizing {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fn) = @_;
     memoizing_ $fn, +{}, \&hash_cache
 }
@@ -206,7 +206,7 @@ sub memoizing_to_dir {
 }
 
 sub tests_for {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($memoizing) = @_;
 
     my ($t_count, $f);

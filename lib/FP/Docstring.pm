@@ -64,6 +64,7 @@ our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
+use FP::Carp;
 
 # Exception: use prototype here? Really DSL. Point it out early.
 sub __ ($) { }
@@ -75,7 +76,7 @@ my %endquote = ('[' => ']', '(' => ')', '{' => '}');
 my $warned;
 
 sub docstring {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fn_or_glob) = @_;
     my $fn
         = UNIVERSAL::isa($fn_or_glob,  "CODE") ? $fn_or_glob

@@ -30,6 +30,7 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Carp;
 use Errno qw(EEXIST EINTR);
+use FP::Carp;
 use overload
     '""' => \&stringify,
     '0+' => \&numify,
@@ -59,14 +60,14 @@ sub stringify {
 }
 
 sub _Addslash {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($str) = @_;
     $str =~ m|/$|s ? $str : $str . "/"
 }
 
 sub xtmpdir {
     my $class = shift;
-    @_ <= 2 or croak "xtmpdir expects 0 to 2 arguments";
+    @_ <= 2 or fp_croak_nargs "<= 2";
     my ($opt_basepath, $opt_mask) = @_;
     my $basepath
         = (defined($opt_basepath) ? $opt_basepath : $ENV{CHJ_TEMPDIR_BASEPATH}

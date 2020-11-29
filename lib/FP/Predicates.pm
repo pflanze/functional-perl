@@ -434,6 +434,7 @@ sub is_filename {
 # can't be in `FP::Abstract::Sequence` since that package is for OO, well, what
 # to do about it?
 use FP::Lazy;    # sigh dependency, too.
+use FP::Carp;
 
 sub is_sequence {
     my $v = force $_[0];
@@ -458,7 +459,7 @@ sub is_seq {
 }
 
 sub maybe {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($pred) = @_;
 
     sub {
@@ -484,7 +485,7 @@ sub is_true {
 # (this would also be a candidate as 'not' with a different name for
 # FP::Ops)
 sub is_false {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     !$_[0] or fail "is_false", $_[0]
 }
 
@@ -497,7 +498,7 @@ sub false {
 }
 
 sub complement {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;
     sub {
         my $r = &$f(@_);
@@ -555,7 +556,7 @@ sub all_of {
 }
 
 sub both {
-    @_ == 2 or die "expecting 2 arguments";
+    @_ == 2 or fp_croak_nargs 2;
     all_of(@_)
 }
 

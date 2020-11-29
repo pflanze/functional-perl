@@ -124,9 +124,10 @@ use Scalar::Util qw(reftype);
 use Devel::Peek q(DumpWithOP);
 use Capture::Tiny qw(capture_stderr);
 use Scalar::Util qw(blessed);
+use FP::Carp;
 
 sub keyshow {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($str) = @_;
     (
         $str =~ /^\w+$/s
@@ -235,7 +236,7 @@ our $primitive_show = +{
 };
 
 sub show {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
     if (defined blessed($v)) {
         if (my $m = $v->can("FP_Show_show")) {

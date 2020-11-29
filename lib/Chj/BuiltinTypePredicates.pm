@@ -40,11 +40,12 @@ our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Scalar::Util 'reftype';
+use FP::Carp;
 
 # for tests, see FP::Predicates
 
 sub is_filehandle {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
 
     # NOTE: never returns true for strings, even though plain strings

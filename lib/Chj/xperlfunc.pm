@@ -421,14 +421,14 @@ sub xxwaitpid {
 }
 
 sub xwait {
-    @_ == 0 or croak "xwait: expecting 0 arguments";
+    @_ == 0 or fp_croak_nargs 0;
     my $kid = wait;
     defined $kid or die "xwait: $!";    # when can this happen? EINTR?
     wantarray ? ($kid, $?) : $kid
 }
 
 sub xxwait {
-    @_ == 0 or croak "xxwait: expecting 0 arguments";
+    @_ == 0 or fp_croak_nargs 0;
     my $kid = wait;
     defined $kid or die "xxwait: $!";    # when can this happen? EINTR?
     my $status = $?;
@@ -438,12 +438,12 @@ sub xxwait {
 }
 
 sub xrename {
-    @_ == 2 or croak "xrename: wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     rename $_[0], $_[1] or croak "xrename(" . join(", ", @_) . "): $!";
 }
 
 sub xlinkunlink {
-    @_ == 2 or croak "xlinkunlink: wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     link $_[0], $_[1]
         or croak "xlinkunlink("
         . join(", ", @_)
@@ -470,7 +470,7 @@ sub xlinkunlink {
 # Since xlinkunlink doesn't work for directories, or not always under
 # grsec: (But note: it's careful, not guaranteed to be safe.)
 sub xxcarefulrename {
-    @_ == 2 or croak "xxcarefulrename: wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($source, $dest) = @_;
     if (link $source, $dest) {
         unlink $source or do {
@@ -510,7 +510,7 @@ sub xxcarefulrename {
 }
 
 sub xlinkreplace {
-    @_ == 2 or croak "xlinkreplace: wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($source, $dest) = @_;
     ## schon wieder dieser temporary try mechanismus. sollte ich dringend eine generische func oder ein makro dafür haben theoretisch
 # nun im gegensatz zu Tempfile.pm brauchen wir kein eval hier. Aber auch das waer ja per func/macro machbar
@@ -570,14 +570,14 @@ sub stat_possiblyhires {
     if ($time_hires) {
         require Time::HiRes;    # (that's not slow, right?)
         if (@_) {
-            @_ == 1 or die "wrong number of arguments";
+            @_ == 1 or fp_croak_nargs 1;
             Time::HiRes::stat($_[0])
         } else {
             Time::HiRes::stat($_)
         }
     } else {
         if (@_) {
-            @_ == 1 or die "wrong number of arguments";
+            @_ == 1 or fp_croak_nargs 1;
             stat($_[0])
         } else {
             stat($_)
@@ -589,14 +589,14 @@ sub lstat_possiblyhires {
     if ($time_hires) {
         require Chj::Linux::HiRes;
         if (@_) {
-            @_ == 1 or die "wrong number of arguments";
+            @_ == 1 or fp_croak_nargs 1;
             Chj::Linux::HiRes::lstat($_[0])
         } else {
             Chj::Linux::HiRes::lstat($_)
         }
     } else {
         if (@_) {
-            @_ == 1 or die "wrong number of arguments";
+            @_ == 1 or fp_croak_nargs 1;
             lstat($_[0])
         } else {
             lstat($_)
@@ -681,7 +681,7 @@ sub mk_caching_getANYid {
     my ($function, $scalarindex, $methodname) = @_;
     my %cache;
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or fp_croak_nargs 1;
         my ($id) = @_;
         if (defined $id) {
             my $v;
@@ -753,7 +753,7 @@ sub fstype_for_device_init {
 }
 
 sub fstype_for_device {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($dev) = @_;
     my $t = $fstype_for_device->{$dev};
     if (!defined $t) {
@@ -1046,7 +1046,7 @@ use FP::Div qw(min max);    # min just for the backwards-compatible
 }
 
 sub XLmtimed {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($path) = @_;
     if (my $ls = Xlstat $path) {
         bless do {
@@ -1066,20 +1066,20 @@ sub XLmtimed {
 }
 
 sub xLmtimed {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($path) = @_;
     my $t = XLmtimed $path;
     (defined $t) ? $t : die "xLmtimed: '$path': $!"
 }
 
 sub xLmtime {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($path) = @_;
     xLmtimed($path)->mtime
 }
 
 sub XLmtime {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($path) = @_;
     if (defined(my $s = XLmtimed($path))) {
         $s->mtime
@@ -1213,17 +1213,17 @@ sub xunlink {
 }
 
 sub xlink {
-    @_ == 2 or croak "xlink: wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     link $_[0], $_[1] or croak "xlink '$_[0]','$_[1]': $!";
 }
 
 sub xsymlink {
-    @_ == 2 or croak "xsymlink: wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     symlink $_[0], $_[1] or croak "xsymlink to '$_[1]': $!";
 }
 
 sub xutime {
-    @_ >= 2 or croak "xutime: wrong number of arguments";
+    @_ >= 2 or fp_croak_nargs ">= 2";
     my ($atime, $mtime) = (shift, shift);
     utime $atime, $mtime, @_ or croak "xutime @_: $!";
 }
@@ -1234,7 +1234,7 @@ sub xkill {
 }
 
 sub xchroot {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($rtd) = @_;
     chroot $rtd or die "could not chroot to '$rtd': $!";
 }
@@ -1352,7 +1352,7 @@ sub basename {
 # so no, do not strip before basenaming, really do it afterwards as I do
 
 sub dirname {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($path) = @_;
     if ($path =~ s|/+[^/]+/*\z||) {
         if (length $path) {
@@ -1378,7 +1378,7 @@ sub dirname {
 sub xmkdir_p;
 
 sub xmkdir_p {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($path) = @_;
 
     # (XX: see commit d1abd3c2 in megacopy for possible improvement)
@@ -1436,7 +1436,7 @@ sub xlink_p {
 }
 
 sub xgetpwnam {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($user) = @_;
     if (wantarray) {
         my @f = Chj::xperlfunc::Getpwnam->perhaps_get($user);
@@ -1467,7 +1467,7 @@ sub xgetpwnam {
 }
 
 sub xgetgrnam {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($group) = @_;
     if (wantarray) {
         my @f = Chj::xperlfunc::Getgrnam->perhaps_get($group);
@@ -1494,7 +1494,7 @@ sub xprintln {
 }
 
 sub xgetfile_utf8 {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($path) = @_;
     open my $in, "<", $path or die "xgetfile_utf8($path): open: $!";
     binmode $in, ":encoding(UTF-8)" or die "binmode";

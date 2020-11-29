@@ -150,14 +150,14 @@ sub output_fd_to_fh {
 # for cases where reblessing is not ok.
 
 sub fh_to_fh {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fh) = @_;
     require Chj::IO::WrappedFile;
     Chj::IO::WrappedFile->new($fh)
 }
 
 sub possibly_fh_to_fh {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($fh) = @_;
     if (defined blessed($fh) and $fh->isa("Chj::IO::File")) {
         $fh
@@ -176,7 +176,7 @@ sub xopen {
 }
 
 sub xopen_read {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_read: mode $1 not allowed"
             unless $2;    # XXX isn't this wong? Too many parens above?
@@ -192,21 +192,21 @@ sub xopen_read {
 # XX ok to simply use the 3-argument open and never allow 2-open
 # strings at all? See how I seem to have gotten it wrong anyway, above!
 sub perhaps_xopen_read {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     unshift @_, "<";
     unshift @_, 'Chj::IO::File';
     goto &Chj::IO::File::perhaps_xopen;
 }
 
 sub perhaps_open_read {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     unshift @_, "<";
     unshift @_, 'Chj::IO::File';
     goto &Chj::IO::File::perhaps_open;
 }
 
 sub xopen_write {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_write: mode $1 not allowed" unless $3 or $4;
     } elsif (@_ == 1 and $_[0] eq '-') {
@@ -219,7 +219,7 @@ sub xopen_write {
 }
 
 sub xopen_append {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_append: mode $1 not allowed" unless $3;
     } elsif (@_ == 1 and $_[0] eq '-') {
@@ -232,7 +232,7 @@ sub xopen_append {
 }
 
 sub xopen_update {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     if ($_[0] =~ /^((<)|( >> )|(>)|(\+<)|(\+>))/) {
         croak "xopen_update: mode $1 not allowed" unless $5 or $6;
     } elsif (@_ == 1 and $_[0] eq '-') {

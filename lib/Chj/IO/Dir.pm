@@ -34,6 +34,7 @@ use Symbol;
 use Carp;
 use Chj::singlequote ();
 use POSIX qw(EEXIST EBADF ENOENT);
+use FP::Carp;
 
 my %metadata;    # -> [ is_open, path ]
 $foo::foo = \%metadata;
@@ -169,7 +170,7 @@ sub telldir {
 
 sub seekdir {
     my $self = shift;
-    @_ == 1 or croak "seekdir: expecting 1 argument";
+    @_ == 1 or fp_croak_nargs 1;
     my ($pos) = @_;
     $! = undef;
     CORE::seekdir $self, $pos
@@ -177,7 +178,7 @@ sub seekdir {
 
 sub xseekdir {
     my $self = shift;
-    @_ == 1 or croak "xseekdir: expecting 1 argument";
+    @_ == 1 or fp_croak_nargs 1;
     my ($pos) = @_;
     $! = undef;
     CORE::seekdir $self, $pos or croak "xseekdir (UNTESTED): $!";    ##

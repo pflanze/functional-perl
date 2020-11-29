@@ -69,6 +69,7 @@ use base qw(
 sub import { }
 
 use Chj::xpipe;
+use FP::Carp;
 
 sub new_out {
     my $class = shift;
@@ -107,7 +108,7 @@ sub new_combinedsender_with_stdin {
 
 sub assume_with_maybe_stdin_stdout_stderr {
     my $class = shift;
-    @_ > 4 or die "not enough arguments";
+    @_ > 4 or fp_croak_nargs "> 4";
     my $self = shift;
     my $in   = shift;
     my $out  = shift;

@@ -34,7 +34,7 @@ our @EXPORT = qw(chompspace);
 #@EXPORT_OK = qw();
 
 sub chompspace {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($str) = @_;
     $str =~ s/^\s+//s;
     $str =~ s/\s+\z//s;

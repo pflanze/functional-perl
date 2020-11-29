@@ -65,7 +65,7 @@ sub resource_rss {
 # output stream. (See test cases below for illustration.)
 
 sub chunks_change_tail {
-    @_ == 3 or die "wrong number of arguments";
+    @_ == 3 or fp_croak_nargs 3;
     my ($chunks, $minsize, $fn) = @_;
     weaken $_[0];
 
@@ -75,7 +75,7 @@ sub chunks_change_tail {
     # windowsize is the number of bytes between them
     my $next;
     $next = sub {
-        @_ == 3 or die "wrong number of arguments";
+        @_ == 3 or fp_croak_nargs 3;
         my ($start, $rest, $windowsize) = @_;
         my $next = $next;
         lazy {
@@ -108,7 +108,7 @@ sub chunks_change_tail {
 }
 
 sub test_with_size {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($size) = @_;
     stream_to_array chunks_change_tail(array_to_stream(["foo", "bars", "baz"]),
         $size, sub { my ($tail, $len) = @_; cons $len, $tail });

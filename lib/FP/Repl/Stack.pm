@@ -208,6 +208,7 @@ our $make_perhaps_frame_accessor = sub {
 };
 
 use FP::Struct ["frames"], 'FP::Struct::Show', 'FP::Abstract::Pure';
+use FP::Carp;
 
 sub get {
     my $class = shift;
@@ -229,7 +230,7 @@ sub get {
 
 sub frame {
     my $s = shift;
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($i) = @_;
     $s->frames->[$i]
 }

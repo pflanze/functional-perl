@@ -145,7 +145,7 @@ TEST {
 +{ b => 2 };
 
 sub hash_length {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($h) = @_;
     scalar keys %$h
 }

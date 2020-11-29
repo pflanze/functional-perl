@@ -193,7 +193,7 @@ sub make_equal {
     my ($relaxed) = @_;
     my $equal;
     $equal = sub {
-        @_ == 2 or die "wrong number of arguments";
+        @_ == 2 or fp_croak_nargs 2;
     EQUAL: {
             my ($a, $b) = @_;
             if (!defined $a) {

@@ -196,7 +196,7 @@ TEST {
 1;
 
 sub t_str_clean {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     path($a)->clean_dot->xclean_dotdot;
 }
@@ -257,10 +257,10 @@ use FP::Array qw(array_is_null array_map);
 use FP::Ops qw(the_method);
 
 sub tupleify {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($f) = @_;
     sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or fp_croak_nargs 1;
         [&$f(@{ $_[0] })]
     }
 }

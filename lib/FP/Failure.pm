@@ -270,7 +270,7 @@ sub failure {
 }
 
 sub is_failure {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     force($_[0])->$_isa("FP::Failure::Failure")
 }
 
@@ -295,7 +295,7 @@ package FP::Failure::Message {
         'FP::Failure::Abstract::Message';
 
     sub message {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or fp_croak_nargs 1;
         my $s    = shift;
         my $args = $s->arguments;
         my $msg  = $s->messagestring;
@@ -316,7 +316,7 @@ package FP::Failure::MessageFmt {
         'FP::Failure::Abstract::Message';
 
     sub message {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or fp_croak_nargs 1;
         my $s = shift;
         sprintf($s->formatstring, map { show $_ } @{ $s->arguments })
     }

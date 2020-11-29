@@ -161,7 +161,7 @@ TEST {
     };
 
     my $delete_both = sub {
-        @_ == 1 or die "wrong number of arguments";
+        @_ == 1 or fp_croak_nargs 1;
         my ($k) = @_;
         $trie = $trie->delete(string_to_list $k);
         delete $$hash{$k};

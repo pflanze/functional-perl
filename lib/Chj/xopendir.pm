@@ -110,19 +110,19 @@ use Exporter 'import';
 our @EXPORT = qw(xopendir perhaps_opendir perhaps_xopendir);
 
 sub xopendir {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     unshift @_, 'Chj::IO::Dir';
     goto &Chj::IO::Dir::xopendir;
 }
 
 sub perhaps_opendir {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     unshift @_, 'Chj::IO::Dir';
     goto &Chj::IO::Dir::perhaps_opendir;
 }
 
 sub perhaps_xopendir {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     unshift @_, 'Chj::IO::Dir';
     goto &Chj::IO::Dir::perhaps_xopendir;
 }

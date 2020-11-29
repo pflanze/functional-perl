@@ -109,11 +109,12 @@ warn $@ if $@;
 
 use Chj::Package::OfPath qw(package_of_path_or_package);
 use FP::Repl::WithRepl qw(push_withrepl WithRepl_eval WithRepl_eval_e);
+use FP::Carp;
 
 push_withrepl(0) if $opt_t;
 
 sub moduleoption_to_code {
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
     $a =~ s/([^=]+)//s or die "invalid -M option '$_'";
     my $path_or_package = $1;

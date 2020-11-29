@@ -63,9 +63,10 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 #use Chj::TEST;
 use FP::PureArray;
 use FP::Combinators qw(flip);
+use FP::Carp;
 
 sub right_associate_ {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($op, $noop) = @_;
     sub {
         @_
@@ -78,7 +79,7 @@ sub right_associate_ {
 }
 
 sub left_associate_ {
-    @_ == 2 or die "wrong number of arguments";
+    @_ == 2 or fp_croak_nargs 2;
     my ($op, $noop) = @_;
     my $op2 = flip $op;
     sub {
