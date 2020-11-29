@@ -87,7 +87,7 @@ sub chunks_change_tail {
                 my $reserve  = $windowsize - $minsize;
                 if ($lenfirst <= $reserve) {
                     cons($first,
-                        &$next(rest $start, $rest, $windowsize - $lenfirst))
+                        &$next(rest($start), $rest, $windowsize - $lenfirst))
                 } else {
                     if (is_null $rest) {
                         &$fn($start, $windowsize)
@@ -118,8 +118,9 @@ TEST { test_with_size 1 }
 ['foo', 'bars', 3, 'baz'];
 
 TEST {
-    dumperequal test_with_size 2, test_with_size 1
-        and dumperequal test_with_size 3, test_with_size 1
+    dumperequal test_with_size(2), test_with_size(1)
+        and dumperequal test_with_size(3),
+        test_with_size(1)
 }
 1;
 

@@ -281,7 +281,7 @@ TEST {
 
 TEST {
     my $l = strictlist(7, 8, 9)->reverse;
-    [is_strictlist $l, $l->car, $l->length]
+    [is_strictlist($l), $l->car, $l->length]
 }
 [1, 9, 3];
 

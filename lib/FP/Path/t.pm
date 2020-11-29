@@ -201,7 +201,7 @@ sub t_str_clean {
 
 sub t_equals_clean ($$) {
     my ($a, $b) = @_;
-    equal(t_str_clean $a, t_str_clean $b);
+    equal(t_str_clean($a), t_str_clean($b));
 }
 
 TEST { t_equals_clean "/foo",        "/foo" } 1;
@@ -274,7 +274,7 @@ sub all_splits {
         sub { array_map the_method("string"), $_[0] },
 
         # stepping function
-        tupleify the_method("perhaps_resplit_next_segment"),
+        tupleify(the_method("perhaps_resplit_next_segment")),
 
         # seed value
         [$p0->perhaps_split_first_segment]

@@ -1202,7 +1202,7 @@ sub list_take ($ $) {
     my ($s, $n) = @_;
     if ($n > 0) {
         $s = force $s;
-        is_null($s) ? $s : cons(car $s, list_take(cdr $s, $n - 1));
+        is_null($s) ? $s : cons(car($s), list_take(cdr($s), $n - 1));
     } else {
         null
     }
@@ -1300,7 +1300,7 @@ TEST { list_to_string array_to_list_reverse [1, 2, 3] }
 sub list_reverse_with_tail ($$) {
     my ($l, $tail) = @_;
     while (!is_null $l) {
-        $tail = cons car $l, $tail;
+        $tail = cons car($l), $tail;
         $l    = cdr $l;
     }
     $tail
@@ -1355,8 +1355,8 @@ _WRITE_SEXPR: {
         $l = force($l, 1);
         if (is_pair $l) {
             xprint $fh, $already_in_a_list ? ' ' : '(';
-            _write_sexpr car $l, $fh, 0;
-            my $d = force(cdr $l, 1);
+            _write_sexpr car($l), $fh, 0;
+            my $d = force(cdr($l), 1);
             if (is_null $d) {
                 xprint $fh, ')';
             } elsif (is_pair $d) {
@@ -1416,7 +1416,7 @@ sub list_zip2 ($$) {
     my ($l, $m) = @_;
     (     is_null($l) ? $l
         : is_null($m) ? $m
-        :               cons([car $l, car $m], list_zip2(cdr $l, cdr $m)))
+        :               cons([car($l), car($m)], list_zip2(cdr($l), cdr($m))))
 }
 
 TEST { list_to_array list_zip2 list(qw(a b c)), list(2, 3) }
@@ -1617,7 +1617,7 @@ sub list_fold_right ($ $ $) {
     if (is_pair $l) {
         no warnings 'recursion';
         my $rest = list_fold_right($fn, $start, cdr $l);
-        &$fn(car $l, $rest)
+        &$fn(car($l), $rest)
     } elsif (is_null $l) {
         $start
     } else {
@@ -1850,7 +1850,7 @@ TEST {
 sub list_take_while_and_rest ($ $) {
     my ($pred, $l)    = @_;
     my ($rres, $rest) = list_rtake_while($pred, $l);
-    (list_reverse $rres, $rest)
+    (list_reverse($rres), $rest)
 }
 
 *FP::List::List::take_while_and_rest = flip \&list_take_while_and_rest;
@@ -2160,7 +2160,7 @@ LP: {
                 $tail
             } elsif (is_pair $v) {
                 no warnings 'recursion';
-                $tail = mixed_flatten(cdr $v, $tail, $maybe_delay);
+                $tail = mixed_flatten(cdr($v), $tail, $maybe_delay);
                 $v    = car $v;
                 redo LP;
             } elsif (ref $v eq "ARRAY") {

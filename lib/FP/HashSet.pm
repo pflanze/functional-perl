@@ -18,11 +18,11 @@ FP::HashSet - set operations for hash tables
 
     my $A = array_to_hashset ["a","b","c"];
     my $B = array_to_hashset ["a","c","d"];
-    is_equal hashset_to_array hashset_union($A,$B),
+    is_equal hashset_to_array(hashset_union($A,$B)),
              ["a","b","c","d"];
-    is_equal hashset_to_array hashset_intersection($A,$B),
+    is_equal hashset_to_array(hashset_intersection($A,$B)),
              ["a","c"];
-    is_equal hashset_to_array hashset_difference($A,$B),
+    is_equal hashset_to_array(hashset_difference($A,$B)),
              ["b"];
     ok not hashset_is_subset($B,$A);
     ok hashset_is_subset(+{b => 1},$A);

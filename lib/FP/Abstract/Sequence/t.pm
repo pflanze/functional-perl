@@ -125,7 +125,7 @@ TEST { stream(1, 44, 2)->join("-") }
 sub is_pair_purearray {
     @_ == 1 or die "wrong number of arguments";
     my ($v) = @_;
-    [is_pair $v, is_purearray $v ]
+    [is_pair($v), is_purearray($v)]
 }
 
 # consing onto a purearray just builds an improper list:

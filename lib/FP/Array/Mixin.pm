@@ -159,20 +159,20 @@ sub values {
 sub first_and_rest {
     @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
-    (array_first $a, ref($a)->new_from_array(array_rest($a)))
+    (array_first($a), ref($a)->new_from_array(array_rest($a)))
 }
 
 # XXX ah could have used blessing_snd ^ v
 sub maybe_first_and_rest {
     @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
-    @$a ? (array_first $a, ref($a)->new_from_array(array_rest($a))) : undef
+    @$a ? (array_first($a), ref($a)->new_from_array(array_rest($a))) : undef
 }
 
 sub perhaps_first_and_rest {
     @_ == 1 or fp_croak_nargs 1;
     my ($a) = @_;
-    @$a ? (array_first $a, ref($a)->new_from_array(array_rest($a))) : ()
+    @$a ? (array_first($a), ref($a)->new_from_array(array_rest($a))) : ()
 }
 *second          = \&array_second;
 *last            = \&array_last;

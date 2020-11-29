@@ -367,7 +367,7 @@ sub stream_append2 ($$) {
     weaken $_[1];
     lazy {
         $l1 = force $l1;
-        is_null($l1) ? $l2 : cons(car $l1, stream_append(cdr $l1, $l2))
+        is_null($l1) ? $l2 : cons(car($l1), stream_append(cdr($l1), $l2))
     }
 }
 
@@ -467,7 +467,7 @@ sub stream_map_with_tail ($ $ $) {
         $l = force $l;
         is_null($l)
             ? $tail
-            : cons(&$fn(car $l), stream_map_with_tail($fn, cdr $l, $tail))
+            : cons(&$fn(car $l), stream_map_with_tail($fn, cdr($l), $tail))
     }
 }
 
@@ -485,7 +485,7 @@ sub stream_zip2 ($$) {
         $m = force $m;
         (is_null $l or is_null $m)
             ? null
-            : cons([car $l, car $m], stream_zip2(cdr $l, cdr $m))
+            : cons([car($l), car($m)], stream_zip2(cdr($l), cdr($m)))
     }
 }
 
@@ -517,8 +517,8 @@ sub stream_zip_with {
     lazy {
         my $l1 = force $l1;
         my $l2 = force $l2;
-        (is_null $l1 or is_null $l2) ? null : cons &$f(car $l1, car $l2),
-            stream_zip_with($f, cdr $l1, cdr $l2)
+        (is_null $l1 or is_null $l2) ? null : cons &$f(car($l1), car($l2)),
+            stream_zip_with($f, cdr($l1), cdr($l2))
     }
 }
 
@@ -545,7 +545,7 @@ sub stream_foldr1 ($ $) {
     lazy {
         $l = force $l;
         if (is_pair $l) {
-            &$fn(car $l, stream_foldr1($fn, cdr $l))
+            &$fn(car($l), stream_foldr1($fn, cdr($l)))
         } elsif (is_null $l) {
             die "foldr1: reached end of list"
         } else {
@@ -564,7 +564,7 @@ sub stream_fold_right ($ $ $) {
     lazy {
         $l = force $l;
         if (is_pair $l) {
-            &$fn(car $l, stream_fold_right($fn, $start, cdr $l))
+            &$fn(car($l), stream_fold_right($fn, $start, cdr $l))
         } elsif (is_null $l) {
             $start
         } else {
@@ -721,7 +721,7 @@ sub stream_take ($ $) {
     lazy {
         if ($n > 0) {
             $s = force $s;
-            is_null($s) ? $s : cons(car $s, stream_take(cdr $s, $n - 1));
+            is_null($s) ? $s : cons(car($s), stream_take(cdr($s), $n - 1));
         } else {
             null
         }
@@ -1119,9 +1119,9 @@ sub stream_cartesian_product_2 {
             if (is_null $a) {
                 null
             } elsif (is_null $b) {
-                &$rec(cdr $a, $orig_b);
+                &$rec(cdr($a), $orig_b);
             } else {
-                cons(cons(car $a, car $b), &$rec($a, cdr $b))
+                cons(cons(car($a), car($b)), &$rec($a, cdr $b))
             }
         }
     };
@@ -1385,7 +1385,7 @@ TEST { my $s = stream_iota; stream_to_array stream_slice $s, $s }
 [];
 TEST { my $s = stream_iota; stream_to_array stream_slice $s, cdr $s }
 [0];
-TEST { my $s = stream_iota; stream_to_array stream_slice cdr $s, cdddr $s }
+TEST { my $s = stream_iota; stream_to_array stream_slice cdr($s), cdddr $s }
 [1, 2];
 
 # OO interface:

@@ -288,7 +288,7 @@ package FP::AST::Perl::App {
 
     use FP::Struct [
         [*FP::AST::Perl::is_expr, 'proc'],
-        [list_of * FP::AST::Perl::is_expr, 'argexprs'],
+        [list_of(*FP::AST::Perl::is_expr), 'argexprs'],
 
         # ^ yes, proc is also an expr, but only yielding one (usable)
         # value, as opposed to argexprs which may yield more used
@@ -421,7 +421,7 @@ package FP::AST::Perl::Let {
     use FP::Ops ":all";
 
     use FP::Struct [
-        [list_of * FP::AST::Perl::is_var, 'vars'],
+        [list_of(*FP::AST::Perl::is_var), 'vars'],
         [*FP::AST::Perl::is_nonnoop_expr, 'expr'],
         [*FP::AST::Perl::is_expr,         'body'],
     ] => "FP::AST::Perl::Expr";
