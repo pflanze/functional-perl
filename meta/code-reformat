@@ -3,6 +3,7 @@
 use strict;
 use warnings FATAL => 'uninitialized';
 use utf8;
+use experimental 'signatures';
 
 use Cwd 'abs_path';
 
@@ -18,6 +19,7 @@ use lib "$mydir/../lib";
 
 use Chj::xtmpfile;
 use Chj::xopen 'xopen_read';
+use Chj::TEST;
 
 (my $email = 'ch%christianjaeger,ch') =~ tr/%,/@./;
 
@@ -33,6 +35,8 @@ sub usage {
 use Getopt::Long;
 my $verbose = 0;
 my @opt_op;
+my $opt_test;
+my $opt_repl;
 
 #our $opt_dry;
 GetOptions(
@@ -42,11 +46,44 @@ GetOptions(
         my (undef, $val) = @_;
         push @opt_op, $val;
     },
+    "test" => \$opt_test,
+    "repl" => \$opt_repl,
 
     #"dry-run"=> \$opt_dry,
 ) or exit 1;
 
-@opt_op or usage "no op given, use the --op option";
+sub protos_to_arity ($str) {
+    my @p     = grep { length $_ } split /\s*/, $str;
+    my $s     = join('', @p);
+    my @parts = split /;/, $s;
+    my $l0    = length($parts[0]);
+    if (@parts == 1) {
+        [$l0]
+    } elsif (@parts == 2) {
+        my $l1 = length($parts[1]);
+        [$l0, $l0 + $l1]
+    } elsif (@parts == 0) {
+        [0]
+    } else {
+        die "invalid prototype decl: '$s'"
+    }
+}
+
+TEST { protos_to_arity '$' } [1];
+TEST { protos_to_arity ' $  $$' } [3];
+TEST { protos_to_arity '$$ ; $' } [2, 3];
+TEST { protos_to_arity '&$' } [2];
+TEST { protos_to_arity '@$' } [2];
+TEST { protos_to_arity '' } [0];
+
+sub checkcode_for_arity ($arity) {
+    my ($min, $maybe_max) = @$arity;
+    if (!defined $maybe_max) {
+        "\@_ == $min or fp_croak_nargs $min;\n"
+    } else {
+        "\@_ >= $min and \@_ <= $maybe_max or fp_croak_nargs \"$min-$maybe_max\";\n"
+    }
+}
 
 my %ops = (
 
@@ -104,37 +141,76 @@ my %ops = (
             $_
         }
     ],
+
+    excise_prototypes => [
+        1,
+        sub {
+            s{
+                (\bsub\b \ *(?:\w+)?) \ * \(([\@\$&; ]*)\) (\s* \{ \s*)
+                ( (?:[^\n]*\n){0,3})
+            }{
+                my ($pre, $protos, $post, $bodystart)=($1,$2,$3,$4);
+                # make sure bodystart doesn't slurp over a subsequent definition
+                die "accidentally slurping up subsequent definition"
+                    if $bodystart =~ /(\bsub\b \ *(?:\w+)?) \ * \(([@$&;]*)\) (\s* \{)/;
+
+                my $checkcode= do {
+                    if ($bodystart=~ /\@_ *(?:==|<=|>=|<|>) *\d+/) {
+                        ""
+                    } else {
+                        checkcode_for_arity(protos_to_arity($protos))
+                    }
+                };
+                "$pre$post$checkcode$bodystart"
+            }sgex;
+            $_
+        }
+    ],
 );
 
-my @op = map { $ops{$_} // die "unknown op '$_'" } @opt_op;
+sub run {
+    @opt_op or usage "no op given, use the --op option";
 
-my %needs_whole_file = map { $_->[0] ? (1 => undef) : (0 => undef) } @op;
+    my @op = map { $ops{$_} // die "unknown op '$_'" } @opt_op;
 
-(keys %needs_whole_file) == 1
-    or die
-    "can't satisfy ops of different needs_whole_file requirement at the same time";
+    my %needs_whole_file = map { $_->[0] ? (1 => undef) : (0 => undef) } @op;
 
-my ($needs_whole_file) = keys %needs_whole_file;
+    (keys %needs_whole_file) == 1
+        or die
+        "can't satisfy ops of different needs_whole_file requirement at the same time";
 
-for my $file (@ARGV) {
-    my $f     = xopen_read $file;
-    my @lines = do {
-        local $/ = $needs_whole_file ? undef : $/;
-        $f->xreadline;
-    };
-    $f->xclose;
+    my ($needs_whole_file) = keys %needs_whole_file;
 
-    my $t = xtmpfile $file;
-    $t->xprint(
-        map {
-            for my $op (@op) {
-                my (undef, $proc) = @$op;
-                $_ = &$proc($_);
-            }
-            $_
-        } @lines
-    );
-    $t->xclose;
-    $t->xputback;
+    for my $file (@ARGV) {
+        my $f     = xopen_read $file;
+        my @lines = do {
+            local $/ = $needs_whole_file ? undef : $/;
+            $f->xreadline;
+        };
+        $f->xclose;
+
+        my $t = xtmpfile $file;
+        $t->xprint(
+            map {
+                for my $op (@op) {
+                    my (undef, $proc) = @$op;
+                    $_ = &$proc($_);
+                }
+                $_
+            } @lines
+        );
+        $t->xclose;
+        $t->xputback;
+    }
+}
+
+if ($opt_test) {
+    Chj::TEST::run_tests(__PACKAGE__);
+} elsif ($opt_repl) {
+    require FP::Repl;
+    FP::Repl->import("repl");
+    repl();
+} else {
+    run
 }
 
