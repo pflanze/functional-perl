@@ -230,11 +230,7 @@ package FP::List::List {
         FP::StrictList::strictlist($s->values)
     }
 
-    sub purearray {
-        @_ == 1 or fp_croak_nargs 1;
-        my $s = shift;
-        FP::_::PureArray->new_from_array([$s->values])
-    }
+    # sub purearray: see below, *FP::List::List::purearray
 
     sub mutablearray {
         @_ == 1 or fp_croak_nargs 1;
@@ -1057,6 +1053,7 @@ sub list_to_array {
 *FP::List::List::array = \&list_to_array;
 
 sub list_to_purearray {
+    @_ == 1 or fp_croak_nargs 1;
     my ($l) = @_;
     my $a = list_to_array $l;
     require FP::PureArray;
