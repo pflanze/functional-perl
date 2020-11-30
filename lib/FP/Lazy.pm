@@ -222,7 +222,7 @@ sub die_not_a_Lazy_Promise {
 
 sub lazy_backtrace {    # not a method to avoid shadowing any
                         # 'contained' method
-    @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or fp_croak_nargs 1;
     my ($v) = @_;
     blessed($v) // die_not_a_Lazy_Promise($v);
 
