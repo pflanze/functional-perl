@@ -103,7 +103,7 @@ li.menu_last {
 
 sub svgpaths($dir) {
     xdirectory_paths($dir)->filter(regex_match $svgpath_re)
-        ->sort(on * svgpath_to_pageno, *number_cmp)
+        ->sort(on \&svgpath_to_pageno, \&number_cmp)
 }
 
 # ------------------------------------------------------------------
@@ -113,7 +113,7 @@ sub possibly_symlink ($old, $new) {
     symlink $old, $new or note "could not add symlink at '$new': $!";
 }
 
-# wrapper just because Perl's core ops can't be passed by *
+# wrapper just because Perl's core ops can't be passed by reference
 sub possibly_unlink($path) {
     unlink $path
 }
@@ -123,11 +123,11 @@ sub possibly_do_pdf2svg ($infile, $outdir) {
     my $outfiles = svgpaths($outdir);
     my $t_in     = sub { xstat($infile)->mtime };
     my $t_oldest = sub {
-        Keep($outfiles)->map(compose_scalar the_method("mtime"), *xstat)->min
+        Keep($outfiles)->map(compose_scalar the_method("mtime"), \&xstat)->min
     };
 
     if ($outfiles->is_null or &$t_in >= &$t_oldest) {
-        $outfiles->for_each(*xunlink);
+        $outfiles->for_each(\&xunlink);
         xxsystem_safe "pdf2svg", $infile, "$outdir/$svgfile_template", 'all';
         1
     } else {
@@ -413,16 +413,16 @@ sub _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
     };
 
     cons(
-        [*xputfile_utf8, "$outdir/$css_src", $css_code],
+        [\&xputfile_utf8, "$outdir/$css_src", $css_code],
 
         $opt_single
         ?
 
             # all PDF pages in a single HTML page
             list(
-            [*possibly_unlink, "$outdir/index.html"],
+            [\&possibly_unlink, "$outdir/index.html"],
             [
-                *puthtmlfile,
+                \&puthtmlfile,
                 "$outdir/index.html",
                 &$html(
                     $title, $svgpaths->map_with_islast($page_htmlfragment),
@@ -435,14 +435,14 @@ sub _svgpaths_to_html_actions ($svgpaths, $title, $outdir) {
             # one HTML page per PDF page
             cons(
             [
-                *possibly_symlink,
+                \&possibly_symlink,
                 basename(svgpath_to_htmlpath($svgpaths->first)),
                 "$outdir/index.html"
             ],
             $svgpaths->map_with_index(
                 sub ($i, $svgpath) {
                     [
-                        *puthtmlfile,
+                        \&puthtmlfile,
                         svgpath_to_htmlpath($svgpath),
                         &$html(
                             "$title - page " . svgpath_to_pageno($svgpath),

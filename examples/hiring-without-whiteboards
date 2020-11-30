@@ -478,14 +478,14 @@ sub FP::Abstract::Sequence::drop_over ($l, $pred) {
 }
 
 sub datalines () {
-    xfile_lines_chomp("$basedir/$mainfile", "UTF-8")->drop_over(*is_hr)
-        ->take_while(complement * is_AlsoSee)->filter(complement * is_empty)
+    xfile_lines_chomp("$basedir/$mainfile", "UTF-8")->drop_over(\&is_hr)
+        ->take_while(complement \&is_AlsoSee)->filter(complement \&is_empty)
 }
 
 sub companies () {
 
     # Simply ignore the grouping headings.
-    datalines->filter(complement * is_heading)->map (*parse_line)
+    datalines->filter(complement \&is_heading)->map (\&parse_line)
 }
 
 sub parse_heading($str) {
@@ -506,8 +506,9 @@ sub grouped_companies_from($datalines) {
         my ($heading, $r) = $datalines->first_and_rest;
         if (is_heading($heading)) {
             my ($groupitems, $r)
-                = $r->take_while_and_rest(complement * is_heading);
-            cons(Group(parse_heading($heading), $groupitems->map(*parse_line)),
+                = $r->take_while_and_rest(complement \&is_heading);
+            cons(
+                Group(parse_heading($heading), $groupitems->map(\&parse_line)),
                 grouped_companies_from $r)
         } else {
             die "expecting a header, got: '$heading'";
@@ -544,11 +545,11 @@ sub print_showln($v) {
 
 # XX see above, and move?
 sub FP::Abstract::Sequence::show_items($l) {
-    $l->for_each(*print_showln)
+    $l->for_each(\&print_showln)
 }
 
 sub FP::Abstract::Sequence::print($l) {
-    $l->for_each(*xprintln)
+    $l->for_each(\&xprintln)
 }
 
 sub FP::Abstract::Sequence::print_grouped ($l, $please_sort = 1) {

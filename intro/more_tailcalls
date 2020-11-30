@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -163,7 +163,7 @@ func tramp2_odd($n) {
     if ($n == 0) {
         0
     } else {
-        TC * tramp2_even, $n - 1
+        TC \&tramp2_even, $n - 1
     }
 }
 
@@ -171,7 +171,7 @@ func tramp2_even($n) {
     if ($n == 0) {
         1
     } else {
-        TC * tramp2_odd, $n - 1
+        TC \&tramp2_odd, $n - 1
     }
 }
 

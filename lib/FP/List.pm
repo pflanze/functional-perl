@@ -328,33 +328,33 @@ package FP::List::Pair {
     sub car {
         $_[0][0]
     }
-    *first = *car;
+    *first = \&car;
 
-    *maybe_first   = *first;
-    *perhaps_first = *first;
+    *maybe_first   = \&first;
+    *perhaps_first = \&first;
 
-    *first_set    = *FP::List::first_set;
-    *first_update = *FP::List::first_update;
+    *first_set    = \&FP::List::first_set;
+    *first_update = \&FP::List::first_update;
 
     sub cdr {
         $_[0][1]
     }
-    *rest         = *cdr;
-    *maybe_rest   = *rest;
-    *perhaps_rest = *rest;
+    *rest         = \&cdr;
+    *maybe_rest   = \&rest;
+    *perhaps_rest = \&rest;
 
     sub car_and_cdr {
         @{ $_[0] }
     }
-    *first_and_rest         = *car_and_cdr;
-    *perhaps_first_and_rest = *car_and_cdr;
+    *first_and_rest         = \&car_and_cdr;
+    *perhaps_first_and_rest = \&car_and_cdr;
 
     sub cddr   { $_[0]->cdr->cdr }
     sub cdddr  { $_[0]->cdr->cdr->cdr }
     sub cddddr { $_[0]->cdr->cdr->cdr->cdr }
 
     sub cadr { $_[0]->cdr->car }
-    *second = *cadr;
+    *second = \&cadr;
     sub caddr   { $_[0]->cdr->cdr->car }
     sub cadddr  { $_[0]->cdr->cdr->cdr->car }
     sub caddddr { $_[0]->cdr->cdr->cdr->cdr->car }
@@ -580,7 +580,7 @@ sub null_or_pair_of {
 TEST {
     require FP::Array;
     FP::Array::array_map(
-        null_or_pair_of(*is_null, *is_pair),
+        null_or_pair_of(\&is_null, \&is_pair),
         [
             null,
             cons(1,    2),
@@ -642,7 +642,7 @@ sub car {
 }
 
 sub first;
-*first = *car;
+*first = \&car;
 
 # XX add maybe_first and perhaps_first wrappers here? Shouldn't this
 # be more structured/automatic, finally.
@@ -688,7 +688,7 @@ TEST_EXCEPTION { car "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
 TEST_EXCEPTION { cdr "FP::List::Pair" } "not a pair: 'FP::List::Pair'";
 
 sub rest;
-*rest = *cdr;
+*rest = \&cdr;
 
 sub cddr {
     @_ == 1 or fp_croak_nargs 1;
@@ -738,7 +738,7 @@ sub c_r {
     $s
 }
 
-*FP::List::List::c_r = *c_r;
+*FP::List::List::c_r = \&c_r;
 
 TEST { list(1, list(4, 7, 9), 5)->c_r("addad") }
 9;
@@ -758,7 +758,7 @@ sub car_and_cdr {
 }
 
 sub first_and_rest;
-*first_and_rest = *car_and_cdr;
+*first_and_rest = \&car_and_cdr;
 
 sub perhaps_first_and_rest {
     @_ == 1 or fp_croak_nargs 1;
@@ -796,7 +796,7 @@ sub list_perhaps_one {
     }
 }
 
-*FP::List::List::perhaps_one = *list_perhaps_one;
+*FP::List::List::perhaps_one = \&list_perhaps_one;
 
 TEST { [list(8)->perhaps_one] } [8];
 TEST { [list(8, 9)->perhaps_one] } [];
@@ -818,7 +818,7 @@ sub list_xone {
     }
 }
 
-*FP::List::List::xone = *list_xone;
+*FP::List::List::xone = \&list_xone;
 
 TEST { [list(8)->xone] } [8];
 TEST_EXCEPTION { [list(8, 9)->xone] } "expected 1 value, got more";
@@ -860,7 +860,7 @@ sub make_ref {
 
 sub list_ref;
 *list_ref            = make_ref(0);
-*FP::List::List::ref = *list_ref;
+*FP::List::List::ref = \&list_ref;
 
 sub list {
     my $res = null;
@@ -1006,7 +1006,7 @@ sub make_length {
 sub list_length;
 *list_length = make_length(0);
 
-*FP::List::Pair::length = *list_length;
+*FP::List::Pair::length = \&list_length;
 
 # method on Pair not List, since we defined a length method for Null
 # explicitely
@@ -1033,7 +1033,7 @@ sub list_to_string {
     $res
 }
 
-*FP::List::List::string = *list_to_string;
+*FP::List::List::string = \&list_to_string;
 
 TEST { null->string } "";
 TEST { cons("a", null)->string } "a";
@@ -1054,7 +1054,7 @@ sub list_to_array {
     $res
 }
 
-*FP::List::List::array = *list_to_array;
+*FP::List::List::array = \&list_to_array;
 
 sub list_to_purearray {
     my ($l) = @_;
@@ -1063,7 +1063,7 @@ sub list_to_purearray {
     FP::PureArray::array_to_purearray($a)
 }
 
-*FP::List::List::purearray = *list_to_purearray;
+*FP::List::List::purearray = \&list_to_purearray;
 
 TEST {
     list(1, 3, 4)->purearray->map (sub { $_[0]**2 })
@@ -1076,7 +1076,7 @@ sub list_sort {
     list_to_purearray($l)->sort ($maybe_cmp)
 }
 
-*FP::List::List::sort = *list_sort;
+*FP::List::List::sort = \&list_sort;
 
 sub list_sortCompare {
     @_ == 1 or fp_croak_nargs 1;
@@ -1084,7 +1084,7 @@ sub list_sortCompare {
     list_to_purearray($l)->sortCompare
 }
 
-*FP::List::List::sortCompare = *list_sortCompare;
+*FP::List::List::sortCompare = \&list_sortCompare;
 
 TEST {
     require FP::Ops;
@@ -1119,7 +1119,7 @@ sub rlist_to_array {
     $res
 }
 
-*FP::List::List::reverse_array = *rlist_to_array;
+*FP::List::List::reverse_array = \&rlist_to_array;
 
 sub list_to_values {
     @_ == 1 or fp_croak_nargs 1;
@@ -1127,7 +1127,7 @@ sub list_to_values {
     @{ list_to_array($l) }
 }
 
-*FP::List::List::values = *list_to_values;
+*FP::List::List::values = \&list_to_values;
 
 # XX naming inconsistency versus docs/design.md ? Same with
 # rlist_to_array.
@@ -1137,7 +1137,7 @@ sub rlist_to_values {
     @{ rlist_to_array($l) }
 }
 
-*FP::List::List::reverse_values = *rlist_to_values;
+*FP::List::List::reverse_values = \&rlist_to_values;
 
 TEST { [list(3, 4, 5)->reverse_values] }
 [5, 4, 3];
@@ -1175,7 +1175,7 @@ sub list_for_each;
 *FP::List::List::for_each = flip \&list_for_each;
 
 TEST_STDOUT {
-    list(1, 3)->for_each(*xprintln)
+    list(1, 3)->for_each(\&xprintln)
 }
 "1\n3\n";
 
@@ -1194,7 +1194,7 @@ sub list_drop {
     $s
 }
 
-*FP::List::List::drop = *list_drop;
+*FP::List::List::drop = \&list_drop;
 
 sub list_take {
     @_ == 2 or fp_croak_nargs 2;
@@ -1207,7 +1207,7 @@ sub list_take {
     }
 }
 
-*FP::List::List::take = *list_take;
+*FP::List::List::take = \&list_take;
 
 sub list_slice {
     @_ == 2 or fp_croak_nargs 2;
@@ -1232,7 +1232,7 @@ sub list_slice {
     goto &{ Weakened $rec};
 }
 
-*FP::List::List::slice = *list_slice;
+*FP::List::List::slice = \&list_slice;
 
 # maybe call it `cut_at` instead?
 
@@ -1315,8 +1315,8 @@ sub list_reverse {
     list_reverse_with_tail($l, $l->null)
 }
 
-*FP::List::List::reverse_with_tail = *list_reverse_with_tail;
-*FP::List::List::reverse           = *list_reverse;
+*FP::List::List::reverse_with_tail = \&list_reverse_with_tail;
+*FP::List::List::reverse           = \&list_reverse;
 
 TEST { list_to_string list_reverse string_to_list "Hello" }
 'olleH';
@@ -1330,7 +1330,7 @@ sub list_strings_join {
     FP::Array::array_strings_join(list_to_array($l), $val);
 }
 
-*FP::List::List::strings_join = *list_strings_join;
+*FP::List::List::strings_join = \&list_strings_join;
 
 TEST { list(1, 2, 3)->strings_join("-") }
 "1-2-3";
@@ -1344,7 +1344,7 @@ sub list_strings_join_reverse {
     FP::Array::array_strings_join(rlist_to_array($l), $val);
 }
 
-*FP::List::List::strings_join_reverse = *list_strings_join_reverse;
+*FP::List::List::strings_join_reverse = \&list_strings_join_reverse;
 
 TEST { list(1, 2, 3)->strings_join_reverse("-") }
 "3-2-1";
@@ -1409,7 +1409,7 @@ TEST_STDOUT { write_sexpr(cons 1, 2) }
 TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null)) }
 '("1" ("2"))';
 
-*FP::List::List::write_sexpr = *write_sexpr;
+*FP::List::List::write_sexpr = \&write_sexpr;
 
 sub list_zip2 {
     @_ == 2 or fp_croak_nargs 2;
@@ -1425,7 +1425,7 @@ TEST { list_to_array list_zip2 list(qw(a b c)), list(2, 3) }
 TEST { list_to_array list_zip2 list(qw(a b)), list(2, 3, 4) }
 [[a => 2], [b => 3]];
 
-*FP::List::List::zip = *list_zip2;    # XX make n-ary
+*FP::List::List::zip = \&list_zip2;    # XX make n-ary
 
 sub list_to_alist {
     @_ == 1 or fp_croak_nargs 1;
@@ -1436,7 +1436,7 @@ sub list_to_alist {
         cons(cons($k, $v), list_to_alist($l3))
     }
 }
-*FP::List::List::alist = *list_to_alist;
+*FP::List::List::alist = \&list_to_alist;
 
 TEST_STDOUT { list(a => 10, b => 20)->alist->write_sexpr }
 '(("a" . "10") ("b" . "20"))';
@@ -1490,7 +1490,7 @@ sub make_filter_with_tail {
 
 sub list_filter_with_tail;
 *list_filter_with_tail            = make_filter_with_tail(0);
-*FP::List::List::filter_with_tail = flip2of3 * list_filter_with_tail;
+*FP::List::List::filter_with_tail = flip2of3 \&list_filter_with_tail;
 
 sub list_map {
     @_ == 2 or fp_croak_nargs 2;
@@ -1660,9 +1660,9 @@ sub list_pair_fold_right {
     }
 }
 
-*FP::List::List::pair_fold_right = rot3left * list_pair_fold_right;
+*FP::List::List::pair_fold_right = rot3left \&list_pair_fold_right;
 
-TEST_STDOUT { list(5, 6, 9)->pair_fold_right(*cons, null)->write_sexpr }
+TEST_STDOUT { list(5, 6, 9)->pair_fold_right(\&cons, null)->write_sexpr }
 '(("5" "6" "9") ("6" "9") ("9"))';
 
 # no list_ prefix? It doesn't consume lists. Although, still FP::List
@@ -1690,8 +1690,8 @@ sub unfold {
         : cons(&$f($seed), unfold($p, $f, $g, &$g($seed), $maybe_tail_gen));
 }
 
-TEST { unfold(*is_zero, *inc, *dec, 5)->array } [6, 5, 4, 3, 2];
-TEST { unfold(*is_zero, *inc, *dec, 5, *list)->array } [6, 5, 4, 3, 2, 0];
+TEST { unfold(\&is_zero, \&inc, \&dec, 5)->array } [6, 5, 4, 3, 2];
+TEST { unfold(\&is_zero, \&inc, \&dec, 5, \&list)->array } [6, 5, 4, 3, 2, 0];
 
 # unfold-right p f g seed [tail] -> list
 
@@ -1709,8 +1709,8 @@ LP: {
     }
 }
 
-TEST { unfold_right(*is_zero, *inc, *dec, 5)->array } [2, 3, 4, 5, 6];
-TEST { unfold_right(*is_zero, *inc, *dec, 5, list 99)->array }
+TEST { unfold_right(\&is_zero, \&inc, \&dec, 5)->array } [2, 3, 4, 5, 6];
+TEST { unfold_right(\&is_zero, \&inc, \&dec, 5, list 99)->array }
 [2, 3, 4, 5, 6, 99];
 
 sub list_append {
@@ -1734,7 +1734,7 @@ TEST {
 }
 ['a', 'b', 1, 2];
 
-*FP::List::List::append = *list_append;
+*FP::List::List::append = \&list_append;
 
 TEST { array_to_list(["a", "b"])->append(array_to_list([1, 2]))->array }
 ['a', 'b', 1, 2];
@@ -1763,7 +1763,7 @@ TEST { list_to_perlstring string_to_list "Hello" }
 TEST { list_to_perlstring string_to_list "Hello's" }
 q{'Hello\'s'};
 
-*FP::List::List::perlstring = *list_to_perlstring;
+*FP::List::List::perlstring = \&list_to_perlstring;
 
 sub list_butlast {
     @_ == 1 or fp_croak_nargs 1;
@@ -1778,7 +1778,7 @@ sub list_butlast {
     }
 }
 
-*FP::List::List::butlast = *list_butlast;
+*FP::List::List::butlast = \&list_butlast;
 
 TEST { list(3, 4, 5)->butlast->array }
 [3, 4];
@@ -1929,7 +1929,7 @@ LP: {
 # XXX do we want this alias? Or do we just want to rename every to
 # all?
 sub list_all;
-*list_all = *list_every;
+*list_all = \&list_every;
 
 *FP::List::List::all = flip \&list_every;
 
@@ -2031,10 +2031,10 @@ LP: {
 *FP::List::List::perhaps_find_tail = flip \&list_perhaps_find_tail;
 
 TEST {
-    list(3, 1, 37, -8, -5, 0, 0)->perhaps_find_tail(*is_even)->array
+    list(3, 1, 37, -8, -5, 0, 0)->perhaps_find_tail(\&is_even)->array
 }
 [-8, -5, 0, 0];
-TEST { [list(3, 1, 37, -5)->perhaps_find_tail(*is_even)] }
+TEST { [list(3, 1, 37, -5)->perhaps_find_tail(\&is_even)] }
 [];
 
 sub list_perhaps_find {
@@ -2049,7 +2049,7 @@ sub list_perhaps_find {
 
 *FP::List::List::perhaps_find = flip \&list_perhaps_find;
 
-TEST { list(3, 1, 4, 1, 5, 9)->perhaps_find(*is_even) }
+TEST { list(3, 1, 4, 1, 5, 9)->perhaps_find(\&is_even) }
 4;
 
 # And then still also add the SRFI-1 counterparts, without `maybe` in
@@ -2063,11 +2063,11 @@ sub list_find;
 *list_find            = perhaps_to_maybe(\&list_perhaps_find);
 *FP::List::List::find = flip \&list_find;
 
-TEST { list(3, 1, 4, 1, 5, 9)->find(*is_even) }
+TEST { list(3, 1, 4, 1, 5, 9)->find(\&is_even) }
 4;
-TEST { list(3, 1, 37, -8, -5, 0, 0)->find_tail(*is_even)->array }
+TEST { list(3, 1, 37, -8, -5, 0, 0)->find_tail(\&is_even)->array }
 [-8, -5, 0, 0];
-TEST { [list(3, 1, 37, -5)->find_tail(*is_even)] }
+TEST { [list(3, 1, 37, -5)->find_tail(\&is_even)] }
 [undef];
 
 # Grouping
@@ -2128,7 +2128,7 @@ sub FP::List::List::group {
 }
 
 TEST {
-    list(3, 4, 4, 5, 6, 8, 5, 5)->group(*FP::Ops::number_eq)
+    list(3, 4, 4, 5, 6, 8, 5, 5)->group(\&FP::Ops::number_eq)
 }
 list(list(3), list(4, 4), list(5), list(6), list(8), list(5, 5));
 
@@ -2272,7 +2272,7 @@ sub is_charlist {
     list_every \&is_char, $l
 }
 
-*FP::List::List::is_charlist = *is_charlist;
+*FP::List::List::is_charlist = \&is_charlist;
 
 # XX update to use fp_croak ?
 sub ldie {

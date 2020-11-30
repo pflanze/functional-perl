@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -56,7 +56,7 @@ sub fib {
 sub fibs {
     my $fibs;
     $fibs = cons bigint(1), cons bigint(1),
-        lazy { stream_zip_with * add, $fibs, rest $fibs };
+        lazy { stream_zip_with \&add, $fibs, rest $fibs };
     $fibs
 }
 
@@ -70,14 +70,14 @@ sub fibs {
 sub fibs2 {
     cons bigint(1), cons bigint(1), lazy {
         my $fibs = fibs2();
-        stream_zip_with * add, $fibs, rest $fibs
+        stream_zip_with \&add, $fibs, rest $fibs
     }
 }
 
 # But it's less efficient: it recalculates parts multiple times, as
 # can be seen with CPU timings, or with the number of times that it
-# calls *add; you can check for the latter by replacing *add with
-# *counting_add and look at $addcount before and after the
+# calls \&add; you can check for the latter by replacing \&add with
+# \&counting_add and look at $addcount before and after the
 # calculation:
 
 my $addcount = 0;
@@ -89,14 +89,14 @@ sub counting_add {
 
 TEST {
     $addcount = 0;
-    local *add = *counting_add;
+    local *add = \&counting_add;
     [fibs->ref(80), $addcount]
 }
 [bigint('37889062373143906'), 79];
 
 TEST {
     $addcount = 0;
-    local *add = *counting_add;
+    local *add = \&counting_add;
     [fibs2->ref(80), $addcount]
 }
 [bigint('37889062373143906'), 3160];    # 3160 == 79*80/2

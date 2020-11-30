@@ -28,10 +28,10 @@ use Chj::Backtrace;
     use FP::Predicates;
 
     BEGIN {
-        *is_age = both * is_natural0, sub { $_[0] < 130 }
+        *is_age = both \&is_natural0, sub { $_[0] < 130 }
     }
 
-    use FP::Struct [[*is_string, "name"], [*is_age, "age"]];
+    use FP::Struct [[\&is_string, "name"], [\&is_age, "age"]];
     _END_
 }
 
@@ -40,8 +40,8 @@ use Chj::Backtrace;
     package Bar;
     use FP::Predicates;
 
-    use FP::Struct [[*is_string, "name"],
-        [both(*is_natural0, less_than 130), "age"]];
+    use FP::Struct [[\&is_string, "name"],
+        [both(\&is_natural0, less_than 130), "age"]];
     _END_
 }
 

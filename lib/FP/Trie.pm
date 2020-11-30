@@ -138,10 +138,10 @@ package FP::Trie::BareLevel {
             ()
         }
     }
-    *maybe_ref = perhaps_to_maybe * perhaps_ref;
-    *ref_or    = perhaps_to_or * perhaps_ref;
-    *ref       = perhaps_to_x * perhaps_ref, $key_not_found_exception;
-    *exists    = perhaps_to_exists * perhaps_ref;
+    *maybe_ref = perhaps_to_maybe \&perhaps_ref;
+    *ref_or    = perhaps_to_or \&perhaps_ref;
+    *ref       = perhaps_to_x \&perhaps_ref, $key_not_found_exception;
+    *exists    = perhaps_to_exists \&perhaps_ref;
 
     # returns ($ending_level, $maybe_keyremainder,
     # $maybe_lastvaluelevel, $maybe_keyremainder_lvl)
