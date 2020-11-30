@@ -46,7 +46,7 @@ Tags can be expanded via:
     my ($modules, $unused_tags, $nontags) = expand_import_tags(qw(:dev :most not_a_tag));
     is $$modules{"FP::Failure"}, 2; # number of times used.
     is_deeply $unused_tags,
-              [':all', ':ast', ':csv', ':dbi', ':fix', ':git', ':io', ':path', ':pxml', ':rare', ':trampoline', ':transparentlazy'];
+              [':all', ':ast', ':csv', ':dbi', ':fix', ':git', ':io', ':paths', ':pxml', ':rare', ':trampoline', ':transparentlazy'];
     is_deeply $nontags, ['not_a_tag'];
 
 =head1 SEE ALSO
@@ -75,11 +75,11 @@ C<:doc> -> L<FP::Docstring>
 
 C<:equal> -> L<FP::Equal>
 
-C<:failure> -> L<FP::Failure>
+C<:failures> -> L<FP::Failure>
 
 C<:fix> -> L<FP::fix>
 
-C<:functions> -> C<:equal>, C<:failure>, C<:show>, L<FP::Combinators>, L<FP::Combinators2>, L<FP::Currying>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>
+C<:functions> -> C<:equal>, C<:failures>, C<:show>, L<FP::Combinators>, L<FP::Combinators2>, L<FP::Currying>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>
 
 C<:git> -> L<FP::Git::Repository>
 
@@ -89,15 +89,15 @@ C<:lazy> -> C<:streams>, L<FP::Lazy>, L<FP::Weak>
 
 C<:maps> -> L<FP::Hash>, L<FP::PureHash>
 
-C<:most> -> C<:autobox>, C<:datastructures>, C<:debug>, C<:doc>, C<:equal>, C<:failure>, C<:functions>, C<:lazy>, C<:show>
+C<:most> -> C<:autobox>, C<:datastructures>, C<:debug>, C<:doc>, C<:equal>, C<:failures>, C<:functions>, C<:lazy>, C<:show>
 
 C<:numbers> -> L<FP::BigInt>
 
-C<:path> -> L<FP::Path>
+C<:paths> -> L<FP::Path>
 
 C<:pxml> -> L<PXML::Serialize>, L<PXML::Util>, L<PXML::XHTML>
 
-C<:rare> -> C<:csv>, C<:dbi>, C<:fix>, C<:git>, C<:path>, C<:trampoline>
+C<:rare> -> C<:csv>, C<:dbi>, C<:fix>, C<:git>, C<:paths>, C<:trampoline>
 
 C<:repl> -> L<FP::Repl>, L<FP::Repl::AutoTrap>
 
@@ -151,7 +151,7 @@ our $export_desc = +{
     ":streams"         => [qw(FP::Stream FP::IOStream FP::Weak)],
     ":lazy"            => [qw(FP::Lazy :streams FP::Weak)],
     ":transparentlazy" => [qw(FP::TransparentLazy :streams FP::Weak)],
-    ":failure"         => [qw(FP::Failure)],
+    ":failures"        => [qw(FP::Failure)],
 
     ":doc"   => [qw(FP::Docstring)],
     ":show"  => [qw(FP::Show)],
@@ -168,7 +168,7 @@ our $export_desc = +{
             FP::Optional FP::Values
             FP::Memoizing FP::Currying
             FP::Untainted
-            :show :equal :failure)
+            :show :equal :failures)
     ],
     ":git"  => [qw(FP::Git::Repository)],
     ":pxml" => [qw(PXML::Util PXML::XHTML PXML::Serialize)],
@@ -198,13 +198,13 @@ our $export_desc = +{
 
     ":fix"        => [qw(FP::fix)],
     ":trampoline" => [qw(FP::Trampoline)],
-    ":path"       => [qw(FP::Path)],
+    ":paths"      => [qw(FP::Path)],
 
     ":most" => [
-        qw(:lazy :datastructures :equal :show :functions :failure :debug
+        qw(:lazy :datastructures :equal :show :functions :failures :debug
             :autobox :doc)
     ],
-    ":rare" => [qw(:csv :path :git :dbi  :trampoline :fix)],
+    ":rare" => [qw(:csv :paths :git :dbi  :trampoline :fix)],
     ":all"  => [qw(:most :rare :io :dev)],
 };
 
