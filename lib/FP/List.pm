@@ -1841,7 +1841,7 @@ TEST {
 sub list_take_while_and_rest {
     @_ == 2 or fp_croak_nargs 2;
     my ($pred, $l)    = @_;
-    my ($rres, $rest) = list_rtake_while($pred, $l);
+    my ($rres, $rest) = list_rtake_while_and_rest($pred, $l);
     (list_reverse($rres), $rest)
 }
 
