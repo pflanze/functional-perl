@@ -85,7 +85,7 @@ C<:git> -> L<FP::Git::Repository>
 
 C<:io> -> L<Chj::tempdir>, L<Chj::xIO>, L<Chj::xhome>, L<Chj::xopen>, L<Chj::xopendir>, L<Chj::xoutpipe>, L<Chj::xperlfunc>, L<Chj::xpipe>, L<Chj::xtmpfile>, L<FP::IOStream>
 
-C<:lazy> -> C<:stream>, L<FP::Lazy>, L<FP::Weak>
+C<:lazy> -> C<:streams>, L<FP::Lazy>, L<FP::Weak>
 
 C<:maps> -> L<FP::Hash>, L<FP::PureHash>
 
@@ -101,19 +101,19 @@ C<:rare> -> C<:csv>, C<:dbi>, C<:fix>, C<:git>, C<:path>, C<:trampoline>
 
 C<:repl> -> L<FP::Repl>, L<FP::Repl::AutoTrap>
 
-C<:sequences> -> C<:stream>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>, L<FP::StrictList>
+C<:sequences> -> C<:streams>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>, L<FP::StrictList>
 
 C<:sets> -> L<FP::HashSet>, L<FP::OrderedCollection>
 
 C<:show> -> L<FP::Show>
 
-C<:stream> -> L<FP::IOStream>, L<FP::Stream>, L<FP::Weak>
+C<:streams> -> L<FP::IOStream>, L<FP::Stream>, L<FP::Weak>
 
 C<:test> -> L<Chj::TEST>
 
 C<:trampoline> -> L<FP::Trampoline>
 
-C<:transparentlazy> -> C<:stream>, L<FP::TransparentLazy>, L<FP::Weak>
+C<:transparentlazy> -> C<:streams>, L<FP::TransparentLazy>, L<FP::Weak>
 
 C<:tries> -> L<FP::Trie>
 
@@ -148,9 +148,9 @@ our $VERSION = "0.72.39";
 our $export_desc = +{
     ":autobox" => [qw(FP::autobox=)],
 
-    ":stream"          => [qw(FP::Stream FP::IOStream FP::Weak)],
-    ":lazy"            => [qw(FP::Lazy :stream FP::Weak)],
-    ":transparentlazy" => [qw(FP::TransparentLazy :stream FP::Weak)],
+    ":streams"         => [qw(FP::Stream FP::IOStream FP::Weak)],
+    ":lazy"            => [qw(FP::Lazy :streams FP::Weak)],
+    ":transparentlazy" => [qw(FP::TransparentLazy :streams FP::Weak)],
     ":failure"         => [qw(FP::Failure)],
 
     ":doc"   => [qw(FP::Docstring)],
@@ -180,7 +180,7 @@ our $export_desc = +{
         qw(FP::List FP::StrictList FP::MutableArray
             FP::Array FP::Array_sort
             FP::PureArray
-            :stream)
+            :streams)
     ],
     ":maps"           => [qw(FP::Hash FP::PureHash)],
     ":sets"           => [qw(FP::HashSet FP::OrderedCollection)],
