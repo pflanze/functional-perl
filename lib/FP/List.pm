@@ -1814,9 +1814,9 @@ sub list_rtake_while_and_rest {
     my ($pred, $l) = @_;
     my $res = $l->null;
     my $c;
-    while (!is_null $l and &$pred($c = car $l)) {
+    while (!is_null $l and &$pred($c = $l->car)) {
         $res = cons $c, $res;
-        $l   = cdr $l;
+        $l   = $l->cdr;
     }
     ($res, $l)
 }
