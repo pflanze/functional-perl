@@ -1,5 +1,16 @@
 Revision history for FunctionalPerl
 
+0.72.39 2020-11-30
+    - some remaining "EXPORT" style fixes
+    - don't use subroutine prototypes anymore except in rare cases
+      (complete)
+    - don't use globs for referencing subs anymore (partial)
+    - don't use wantarray in list_rtake_while and list_take_while
+    - add FP::Carp, use it consistently (mostly complete)
+    - meta/pre-commit: some fixes, but it's still broken for partial
+      commits
+    - pointer_eq: safely handle non-pointer values
+
 0.72.38 2020-11-16
     - fix some newly introduced brokenness (dependency in a test,
       broken `successes` and `failures` change, missed updates in pod
