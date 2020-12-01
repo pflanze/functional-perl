@@ -14,14 +14,19 @@ FP::Carp - report to immediate caller
 =head1 SYNOPSIS
 
     use FP::Carp;
+
+    # Like `croak` but don't skip any parent call frames:
     sub foo {
         @_ == 1 or fp_croak "I need 1 argument";
     }
-    # Easier:
+
+    # Easier if you just want to report an error about the number of
+    # arguments passed to the current subroutine:
     sub bar {
         @_ == 2 or fp_croak_nargs 2;
     }
-    sub tst {
+
+    sub test {
         foo(@_);
         bar(@_);
     }
@@ -31,9 +36,11 @@ FP::Carp - report to immediate caller
         $e=~ s/\n.*//s;
         $e
     }
-    is try { tst(10) }, 'bar: needs 2 arguments (got 1) at lib/FP/Carp.pm line 26';
-    is try { tst(10,11) }, 'I need 1 argument at lib/FP/Carp.pm line 25';
+    is try { test(10) }, 'bar: needs 2 arguments (got 1) at lib/FP/Carp.pm line 31';
+    is try { test(10,11) }, 'I need 1 argument at lib/FP/Carp.pm line 30';
 
+    # there is currently no equivalent to `carp`, or `confess` (use
+    # Devel::Confess instead?)
 
 =head1 DESCRIPTION
 
