@@ -210,7 +210,7 @@ sub make_open_stream {
         my $fh = &$open($path);
         if ($maybe_encoding) {
             binmode($fh, ":encoding($maybe_encoding)")
-                or die "binmode for :encoding($maybe_encoding): $!";
+                or croak "binmode for :encoding($maybe_encoding): $!";
         }
         fh_to_stream($fh, $read, $close)
     }
@@ -283,7 +283,7 @@ sub xstream_print {
     weaken $_[0];
     $s->for_each(
         sub {
-            print $fh $_[0] or die "xstream_print: writing to $fh: $!";
+            print $fh $_[0] or croak "xstream_print: writing to $fh: $!";
         }
     );
 }
