@@ -447,13 +447,13 @@ sub parse_line($line) {
 
     my @p = split /\s*\|\s*/, $rest;
     @p == 2 or @p == 3 or die "rest does not contain 2 or 3 parts: '$rest'";
-    my (undef, $locations, $process) = @p;
+    my (undef, $locations, $maybe_process) = @p;
     Company(
         $name, $url,
 
         # /, ; and & used inconsistently:
         list(map { parse_location $_ } split m%\s*[/;&]\s*%, $locations),
-        $process
+        $maybe_process
     )
 }
 
