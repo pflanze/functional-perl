@@ -101,6 +101,8 @@ sub with_output_to_file {
     my @res;
     open my $out, ">", $file
         or fp_croak "with_output_to_file: open '$file': $!";
+    binmode $out, ":encoding(UTF-8)"
+        or fp_croak "with_output_to_file: binmode '$file': $!";
     {
         local *STDOUT = $out;
         if (defined $wantarray) {
