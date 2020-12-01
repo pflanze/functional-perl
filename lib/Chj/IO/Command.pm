@@ -108,7 +108,7 @@ sub new_combinedsender_with_stdin {
 
 sub assume_with_maybe_stdin_stdout_stderr {
     my $class = shift;
-    @_ > 4 or fp_croak_nargs "> 4";
+    @_ > 4 or fp_croak_arity "> 4";
     my $self = shift;
     my $in   = shift;
     my $out  = shift;

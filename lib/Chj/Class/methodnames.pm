@@ -138,7 +138,7 @@ sub methods_of_class {
 }
 
 sub methodnames {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($obj_or_class) = @_;
     my $class = ref($obj_or_class) || $obj_or_class;
     methods_of_class $class;

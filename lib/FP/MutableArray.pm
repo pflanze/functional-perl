@@ -68,7 +68,7 @@ use Scalar::Util 'blessed';
 use FP::Carp;
 
 sub is_mutablearray {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     my $r = blessed($v) // return;
     ($r eq "FP::_::MutableArray" or $v->isa("FP::_::MutableArray"))
@@ -79,7 +79,7 @@ sub mutablearray {
 }
 
 sub array_to_purearray {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     FP::_::MutableArray->new_from_array($_[0])
 }
 
@@ -91,19 +91,19 @@ package FP::_::MutableArray {
     use Chj::NamespaceCleanAbove;
 
     sub new_from_array {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($class, $a) = @_;
         bless $a, $class
     }
 
     sub mutablearray {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my $s = shift;
         $s
     }
 
     sub purearray {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my $s = shift;
         FP::_::PureArray->new_from_array($s)
     }
@@ -121,7 +121,7 @@ package FP::_::MutableArray {
     }
 
     sub pure {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
 
         # same as `array_to_purearray`
         require FP::PureArray;    # cost?
@@ -131,7 +131,7 @@ package FP::_::MutableArray {
     our $unsafe_mutable_warned = 0;
 
     sub unsafe_mutable {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my $a = shift;
         carp "is already mutable" unless $unsafe_mutable_warned++;
         $a

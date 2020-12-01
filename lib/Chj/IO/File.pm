@@ -426,7 +426,7 @@ sub xread {
 
 sub xreadchunk {
     my $self = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my $buf;
     my $rv = CORE::read $self->fh, $buf, $_[0];
     defined $rv or croak "xreadchunk " . $self->quotedname . ": $!";
@@ -435,7 +435,7 @@ sub xreadchunk {
 
 sub xxreadchunk {
     my $self = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my $buf;
     my $rv = CORE::read $self->fh, $buf, $_[0];
     defined $rv or croak "xreadchunk " . $self->quotedname . ": $!";
@@ -992,7 +992,7 @@ sub seek {
 
 sub xtell {
     my $self = shift;
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
     my $res = tell $self->fh;
     if ($res == -1) {
         croak "xtell on " . ($self->quotedname) . ": $!";
@@ -1003,7 +1003,7 @@ sub xtell {
 
 sub tell {
     my $self = shift;
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
     my $res = tell $self->fh;
     if ($res == -1) {
         undef

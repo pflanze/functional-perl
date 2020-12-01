@@ -112,13 +112,13 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use FP::Carp;
 
 sub curry {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my ($a) = @_;
         sub {
-            @_ == 1 or fp_croak_nargs 1;
+            @_ == 1 or fp_croak_arity 1;
             @_ = ($a, @_);
             goto \&$f
         }
@@ -152,10 +152,10 @@ sub partial {
 # Macros would be useful here.
 
 sub uncurry_1_1 {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($a, $b) = @_;
         $f->($a)->($b)
     }
@@ -165,40 +165,40 @@ sub uncurry;
 *uncurry = *uncurry_1_1;
 
 sub uncurry_2_1 {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
-        @_ == 3 or fp_croak_nargs 3;
+        @_ == 3 or fp_croak_arity 3;
         my ($a, $b, $c) = @_;
         $f->($a, $b)->($c)
     }
 }
 
 sub uncurry_1_2 {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
-        @_ == 3 or fp_croak_nargs 3;
+        @_ == 3 or fp_croak_arity 3;
         my ($a, $b, $c) = @_;
         $f->($a)->($b, $c)
     }
 }
 
 sub uncurry_2_2 {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
-        @_ == 4 or fp_croak_nargs 4;
+        @_ == 4 or fp_croak_arity 4;
         my ($a, $b, $c, $d) = @_;
         $f->($a, $b)->($c, $d)
     }
 }
 
 sub uncurry_1_1_1 {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
-        @_ == 3 or fp_croak_nargs 3;
+        @_ == 3 or fp_croak_arity 3;
         my ($a, $b, $c) = @_;
         $f->($a)->($b)->($c)
     }

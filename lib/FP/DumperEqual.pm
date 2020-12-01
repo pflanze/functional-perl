@@ -71,7 +71,7 @@ sub dumperequal {
 }
 
 sub dumperequal_utf8 {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     local $Data::Dumper::Sortkeys = 1;
 
     # compare ignoring utf8 flags on strings

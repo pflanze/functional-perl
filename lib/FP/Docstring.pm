@@ -76,7 +76,7 @@ my %endquote = ('[' => ']', '(' => ')', '{' => '}');
 my $warned;
 
 sub docstring {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($fn_or_glob) = @_;
     my $fn
         = UNIVERSAL::isa($fn_or_glob,  "CODE") ? $fn_or_glob

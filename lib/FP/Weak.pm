@@ -104,7 +104,7 @@ use FP::Carp;
 our $weaken = \&Scalar::Util::weaken;
 
 sub weaken {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     goto &$weaken
 }
 
@@ -114,7 +114,7 @@ sub weaken {
 # protect a variable from being pruned by callees that prune their
 # arguments
 sub Keep {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     $v
 }
@@ -122,20 +122,20 @@ sub Keep {
 # weaken a variable, but also provide a non-weakened reference to its
 # value as result
 sub Weakened {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($ref) = @_;
     weaken $_[0];
     $ref
 }
 
 sub noweaken {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
 
     # noop
 }
 
 sub noWeakened {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     $_[0]
 }
 
@@ -144,13 +144,13 @@ sub with_noweaken (&) { local $weaken = \&noweaken; &{ $_[0] }() }
 use Carp;
 
 sub warnweaken {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     carp "weaken ($_[0])";
     Scalar::Util::weaken($_[0]);
 }
 
 sub warnWeakened {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     carp "weaken ($_[0])";
     Weakened($_[0]);
 }
@@ -161,13 +161,13 @@ use Carp 'cluck';
 use FP::Carp;
 
 sub cluckweaken {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     cluck "weaken ($_[0])";
     Scalar::Util::weaken($_[0]);
 }
 
 sub cluckWeakened {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     cluck "weaken ($_[0])";
     Weakened($_[0]);
 }
@@ -175,7 +175,7 @@ sub cluckWeakened {
 sub with_cluckweaken (&) { local $weaken = \&cluckweaken; &{ $_[0] }() }
 
 sub do_weaken {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     my $w = $v
         ? (

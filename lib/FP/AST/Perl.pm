@@ -167,7 +167,7 @@ package FP::AST::Perl::Var {
 
 # XX move to FP::Predicates? Or FP::Parser::Perl ?
 sub is_lexvar_string {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($str) = @_;
     $str =~ /^\w+\z/
 }

@@ -56,13 +56,13 @@ use Chj::TEST;
 use FP::Carp;
 
 sub untainted {
-    @_ == 1          or fp_croak_nargs 1;
+    @_ == 1          or fp_croak_arity 1;
     $_[0] =~ /(.*)/s or die "??";
     $1
 }
 
 sub untainted_with {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($v, $re) = @_;
     $v =~ /($re)/ or die "untainted_with: does not match regex $re: '$v'";
     $1
@@ -81,7 +81,7 @@ TEST_EXCEPTION { untainted_with "Foo ", '^\w+$' }    # /s missing.
 use Scalar::Util 'tainted';
 
 sub is_untainted {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     not tainted $_[0]
 }
 

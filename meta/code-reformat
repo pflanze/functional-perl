@@ -79,9 +79,9 @@ TEST { protos_to_arity '' } [0];
 sub checkcode_for_arity ($arity) {
     my ($min, $maybe_max) = @$arity;
     if (!defined $maybe_max) {
-        "\@_ == $min or fp_croak_nargs $min;\n"
+        "\@_ == $min or fp_croak_arity $min;\n"
     } else {
-        "\@_ >= $min and \@_ <= $maybe_max or fp_croak_nargs \"$min-$maybe_max\";\n"
+        "\@_ >= $min and \@_ <= $maybe_max or fp_croak_arity \"$min-$maybe_max\";\n"
     }
 }
 
@@ -248,7 +248,7 @@ my %ops = (
                 unless ($range =~ /^\d+$/s) {
                     $range = "\"$range\"";
                 }
-                "$pre$compare or fp_croak_nargs $range;"
+                "$pre$compare or fp_croak_arity $range;"
             }sgex;
             if ($replacements) {
                 unless (/use FP::Carp/) {

@@ -84,7 +84,7 @@ sub with_maxlen ($&) {
 # Perl style:
 
 sub singlequote {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($str, $alternative) = @_;
     if (defined $str) {
         if (defined $maybe_maxlen and length($str) > $maybe_maxlen) {
@@ -125,7 +125,7 @@ sub many {
 # Shell (Bash) style:
 
 sub singlequote_sh {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($str, $alternative) = @_;
     if (defined $str) {
         $str =~ s/\'/'\\\''/sg;
@@ -139,7 +139,7 @@ sub singlequote_sh {
 # don't quote bare words or simply formatted paths that don't need to
 # be quoted
 sub possibly_singlequote_sh {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($str) = @_;
     if ($str =~ m{^[\w/.-]+\z}) {
         $str
@@ -153,7 +153,7 @@ sub singlequote_sh_many {
 }
 
 sub quote_javascript {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($str) = @_;
 
     #require JSON::MaybeXS;
@@ -174,7 +174,7 @@ sub quote_javascript {
 }
 
 sub _quote_C {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($str) = @_;
     $str =~ s{(.)}{
         my $c = $1;
@@ -193,7 +193,7 @@ sub _quote_C {
 }
 
 sub quote_C {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($str) = @_;
     '"' . _quote_C($str) . '"'
 }

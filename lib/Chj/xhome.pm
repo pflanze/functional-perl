@@ -84,7 +84,7 @@ sub xcheck_home {
 }
 
 sub xHOME {
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
     defined(my $home = $ENV{HOME})
         or die "environment variable HOME is not set";
     xcheck_home $home;
@@ -93,7 +93,7 @@ sub xHOME {
 
 sub xeffectiveuserhome {
 
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
 
 # (Don't bother about caching, premature opt & dangerous.)
     my $uid = $>;
@@ -107,7 +107,7 @@ sub xeffectiveuserhome {
 }
 
 sub xsafehome {
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
     if ($^O eq 'MSWin32') {
 
         # XX or how to look it up on Windows again? If implemented, update pod.
@@ -126,7 +126,7 @@ sub xsafehome {
 our $warned = 0;
 
 sub xchecked_home {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($home, $what) = @_;
     xcheck_home $home;
     if (-d $home) {
@@ -156,7 +156,7 @@ sub maybe_globhome {
 }
 
 sub xhome {
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
     maybe_HOME() // maybe_globhome() // xeffectiveuserhome()
 }
 

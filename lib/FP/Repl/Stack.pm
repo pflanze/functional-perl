@@ -230,7 +230,7 @@ sub get {
 
 sub frame {
     my $s = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($i) = @_;
     $s->frames->[$i]
 }

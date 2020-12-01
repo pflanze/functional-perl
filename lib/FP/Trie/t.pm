@@ -154,14 +154,14 @@ TEST {
     my $hash = {};
 
     my $set_both = sub {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($k, $i) = @_;
         $trie = $trie->set(string_to_list($k), $i);
         $$hash{$k} = $i;
     };
 
     my $delete_both = sub {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my ($k) = @_;
         $trie = $trie->delete(string_to_list $k);
         delete $$hash{$k};

@@ -222,7 +222,7 @@ sub die_not_a_Lazy_Promise {
 
 sub lazy_backtrace {    # not a method to avoid shadowing any
                         # 'contained' method
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     blessed($v) // die_not_a_Lazy_Promise($v);
 
@@ -261,7 +261,7 @@ sub lazyLight (&) {
 }
 
 sub is_promise {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     blessed($_[0]) // return;
     $_[0]->isa("FP::Lazy::AnyPromise")
 }
@@ -272,7 +272,7 @@ sub delayLight (&);
 *delayLight = \&lazyLight;
 
 sub force {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($perhaps_promise, $nocache) = @_;
 LP: {
         if (defined blessed($perhaps_promise)) {
@@ -303,7 +303,7 @@ LP: {
 
 # just remove promise wrapper, don't actually force its evaluation
 sub force_noeval {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
     if (defined blessed($s)) {
         if ($s->isa("FP::Lazy::Promise")) {

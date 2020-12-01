@@ -45,7 +45,7 @@ use FP::Carp;
 # for tests, see FP::Predicates
 
 sub is_filehandle {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
 
     # NOTE: never returns true for strings, even though plain strings

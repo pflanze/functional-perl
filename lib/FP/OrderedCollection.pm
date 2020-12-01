@@ -64,7 +64,7 @@ use FP::Struct [[\&is_array, "array"], [\&is_hash, "hash"]],
 # constructing the OrderedCollection
 sub unsafe_new_from_array {
     my $cl = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($a) = @_;
     my %h;
     for my $i (0 .. $#$a) {
@@ -75,7 +75,7 @@ sub unsafe_new_from_array {
 
 sub new_from_array {
     my $cl = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($a) = @_;
     $cl->unsafe_new_from_array([@$a])
 }
@@ -87,13 +87,13 @@ sub new_from_values {
 
 sub contains {
     my $s = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     exists $$s{hash}{ $_[0] }
 }
 
 sub maybe_position {
     my $s = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     $$s{hash}{ $_[0] }
 }
 

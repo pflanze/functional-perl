@@ -53,7 +53,7 @@ use FP::Carp;
 # explicitely.
 
 sub pxml_deferred_map {
-    @_ >= 2 and @_ <= 4 or fp_croak_nargs "2-4";
+    @_ >= 2 and @_ <= 4 or fp_croak_arity "2-4";
 
     # Elementfn receives (element, up-list, inferior-map), where
     # up-list is a linked list to the parents and inferior-map is a
@@ -90,7 +90,7 @@ sub pxml_deferred_map {
 # receives an element.
 
 sub pxml_eager_map {
-    @_ >= 2 and @_ <= 4 or fp_croak_nargs "2-4";
+    @_ >= 2 and @_ <= 4 or fp_croak_arity "2-4";
 
     # The functions receive (value, up-list), where up-list is a
     # linked list to the parents
@@ -184,7 +184,7 @@ TEST {
 '<p>[][p]foo.<b>[p][b|p]bar.5678</b></p>';
 
 sub pxml_map_elements {
-    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
+    @_ >= 2 and @_ <= 3 or fp_croak_arity "2-3";
     my ($v, $name_to_mapper, $maybe_otherfn) = @_;
     pxml_eager_map(
         $v,
@@ -208,7 +208,7 @@ sub pxml_map_elements {
 
 # (do you have a better name?)
 sub pxml_map_elements_exhaustively {
-    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
+    @_ >= 2 and @_ <= 3 or fp_croak_arity "2-3";
     my ($v, $name_to_mapper, $maybe_otherfn) = @_;
     pxml_eager_map(
         $v,

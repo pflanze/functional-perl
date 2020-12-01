@@ -459,7 +459,7 @@ sub is_seq {
 }
 
 sub maybe {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($pred) = @_;
 
     sub {
@@ -485,7 +485,7 @@ sub is_true {
 # (this would also be a candidate as 'not' with a different name for
 # FP::Ops)
 sub is_false {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     !$_[0] or fail "is_false", $_[0]
 }
 
@@ -498,7 +498,7 @@ sub false {
 }
 
 sub complement {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
         my $r = &$f(@_);
@@ -556,7 +556,7 @@ sub all_of {
 }
 
 sub both {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     all_of(@_)
 }
 

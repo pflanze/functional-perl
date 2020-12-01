@@ -60,14 +60,14 @@ sub stringify {
 }
 
 sub _Addslash {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($str) = @_;
     $str =~ m|/$|s ? $str : $str . "/"
 }
 
 sub xtmpdir {
     my $class = shift;
-    @_ <= 2 or fp_croak_nargs "<= 2";
+    @_ <= 2 or fp_croak_arity "<= 2";
     my ($opt_basepath, $opt_mask) = @_;
     my $basepath
         = (defined($opt_basepath) ? $opt_basepath : $ENV{CHJ_TEMPDIR_BASEPATH}

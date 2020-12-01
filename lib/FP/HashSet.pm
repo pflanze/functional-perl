@@ -86,41 +86,41 @@ use Chj::TEST;
 use FP::Carp;
 
 sub array_to_hashset {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     +{ map { $_ => $_ } @{ $_[0] } }
 }
 
 sub array_to_lchashset {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     +{ map { lc($_) => $_ } @{ $_[0] } }
 }
 
 sub hashset_to_array {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     [sort values %{ $_[0] }]
 }
 
 sub hashset_to_predicate {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
     sub {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         exists $$s{ $_[0] }
     }
 }
 
 sub hashset_keys_unsorted {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     keys %{ $_[0] }
 }
 
 sub hashset_keys {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     sort keys %{ $_[0] }
 }
 
 sub hashset_add_hashset_d {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($r, $s) = @_;
     for (keys %$s) {
         $$r{$_} = $$s{$_} unless exists $$r{$_};
@@ -136,7 +136,7 @@ sub hashset_union {
 # same as hashset_union but check definedness, not existence
 
 sub hashset_add_hashset_defined_d {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($r, $s) = @_;
     for (keys %$s) {
         $$r{$_} = $$s{$_} unless defined $$r{$_};
@@ -152,7 +152,7 @@ sub hashset_union_defined {
 # /same
 
 sub hashset_intersection {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($a, $b) = @_;
     my %r;
     for (keys %$a) {
@@ -162,7 +162,7 @@ sub hashset_intersection {
 }
 
 sub hashset_difference {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($a, $b) = @_;
     my %r;
     for (keys %$a) {
@@ -172,7 +172,7 @@ sub hashset_difference {
 }
 
 sub hashset_is_subset {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($subset, $set) = @_;
     my %r;
     for (keys %$subset) {
@@ -182,17 +182,17 @@ sub hashset_is_subset {
 }
 
 sub hashset_size {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     scalar keys %{ $_[0] }
 }
 
 sub hashset_empty {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     not keys %{ $_[0] }
 }
 
 sub hashset_diff {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($a, $b) = @_;
     my %r;
     for (keys %$a) {

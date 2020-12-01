@@ -194,26 +194,26 @@ sub all_fields {
 }
 
 sub field_maybe_predicate {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
     (ref $s) ? $$s[0] : undef
 }
 
 sub field_name {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
     (ref $s) ? $$s[1] : $s
 }
 
 # returns nothing at all if a predicate was given but is undef
 sub field_maybe_predicate_and_name {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
     (ref $s) ? (defined($$s[0]) ? @$s : ()) : (undef, $s)
 }
 
 sub field_has_predicate {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
     ref $s
 }

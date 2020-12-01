@@ -80,7 +80,7 @@ use FP::Carp;
 # }
 
 sub xncanonicalfreeze {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     local $Storable::canonical = 1;
     nfreeze($_[0])
 }
@@ -103,7 +103,7 @@ our $freeze_args = \&xncanonicalfreeze;
 # please
 
 our $digest = sub {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my $ctx = Digest->new("SHA-256");
     $ctx->add($_[0]);
     my $d = $ctx->b64digest;
@@ -124,7 +124,7 @@ our $digest_args = sub {
 # 2. OS errors versus format errors? No go, right?
 
 sub fh_xnstore {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
 
     # fh, arrayref
     nstore_fd($_[1], $_[0])
@@ -138,14 +138,14 @@ sub fh_xnstore {
 }
 
 sub fh_xdeserialize {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     fd_retrieve($_[0]) // die "SOME retrieval error";
 }
 
 # ----------------------------------------------------------------
 
 sub memoizing_ {
-    @_ == 3 or fp_croak_nargs 3;
+    @_ == 3 or fp_croak_arity 3;
     my ($fn, $cache, $getcache) = @_;
     sub {
         my @args      = @_;
@@ -166,7 +166,7 @@ sub memoizing_ {
 }
 
 sub memoizing {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($fn) = @_;
     memoizing_ $fn, +{}, \&hash_cache
 }
@@ -179,7 +179,7 @@ use Chj::xtmpfile;
 # use with hashed keys or so!
 
 sub file_cache {
-    @_ == 3 or fp_croak_nargs 3;
+    @_ == 3 or fp_croak_arity 3;
     my ($basepath, $k, $generate) = @_;
 
     my $path = $basepath . $k;
@@ -199,14 +199,14 @@ sub file_cache {
 }
 
 sub memoizing_to_dir {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($dirpath, $f) = @_;
     $dirpath .= "/" unless $dirpath =~ /\/$/s;
     memoizing_ $f, $dirpath, \&file_cache
 }
 
 sub tests_for {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($memoizing) = @_;
 
     my ($t_count, $f);

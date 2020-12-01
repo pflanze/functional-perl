@@ -84,7 +84,7 @@ use FP::Carp;
     };
 
     sub {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my ($f) = @_;
         &$fix0($fix0, $f)
     }
@@ -136,7 +136,7 @@ TEST {
 
 # indirectly self-referencing through package variable
 *rec = sub {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
         #@_ = (fix ($f), @_); goto &$f;
@@ -151,7 +151,7 @@ use Scalar::Util 'weaken';
 use FP::Carp;
 
 *weakcycle = sub {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     my $f2;
     $f2 = sub {

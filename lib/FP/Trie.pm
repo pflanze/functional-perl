@@ -121,7 +121,7 @@ package FP::Trie::BareLevel {
     sub perhaps_value { () }
 
     sub perhaps_skip {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($t,  $l)        = @_;
         my ($t2, $maybe_l2) = $t->skip($l);
         defined $maybe_l2 ? () : ($t2)
@@ -130,7 +130,7 @@ package FP::Trie::BareLevel {
     our $key_not_found_exception = new FP::Trie::KeyNotFoundException;
 
     sub perhaps_ref {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($t, $l) = @_;
         if (my ($t2) = $t->perhaps_skip($l)) {
             $t2->perhaps_value
@@ -173,7 +173,7 @@ package FP::Trie::BareLevel {
     }
 
     sub update {
-        @_ == 3 or fp_croak_nargs 3;
+        @_ == 3 or fp_croak_arity 3;
         my ($t, $l, $fn) = @_;
         if ($l->is_null) {
             FP::Trie::ValueLevel->new($$t{sublevels}, &$fn($t->perhaps_value))
@@ -197,7 +197,7 @@ package FP::Trie::BareLevel {
     }
 
     sub xdelete {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($t, $l) = @_;
         if ($l->is_null) {
             if ((defined blessed $t) && $t->isa("FP::Trie::ValueLevel")) {
@@ -234,7 +234,7 @@ package FP::Trie::BareLevel {
     }
 
     sub delete {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($t, $l) = @_;
 
         # This is really calling for call/cc (parametrize the end case
@@ -262,13 +262,13 @@ package FP::Trie::BareLevel {
     }
 
     sub set {
-        @_ == 3 or fp_croak_nargs 3;
+        @_ == 3 or fp_croak_arity 3;
         my ($t, $l, $v) = @_;
         $t->update($l, sub {$v})
     }
 
     sub sublevels_length {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my ($t) = @_;
         hash_length $t->sublevels
     }
@@ -301,7 +301,7 @@ package FP::Trie::BareLevel {
     }
 
     sub keys {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my ($t) = @_;
         $t->alist->stream_map(sub { $_[0][0] })
     }
@@ -310,7 +310,7 @@ package FP::Trie::BareLevel {
     # else should this be named? `valuestream`? And the above
     # `keystream`?
     sub values {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my ($t) = @_;
         $t->alist->stream_map(sub { $_[0][1] })
     }

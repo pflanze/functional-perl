@@ -14,7 +14,7 @@ use Scalar::Util "weaken";
 use FP::Carp;
 
 sub rss {
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
     (BSD::Resource::getrusage(BSD::Resource::RUSAGE_SELF()))[2]
 }
 

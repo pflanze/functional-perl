@@ -94,7 +94,7 @@ sub TC {
 }
 
 sub trampoline {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     @_ = ();    # so that calling a continuation does not need () (possible
                 # speedup)

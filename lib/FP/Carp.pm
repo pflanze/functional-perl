@@ -23,7 +23,7 @@ FP::Carp - report to immediate caller
     # Easier if you just want to report an error about the number of
     # arguments passed to the current subroutine:
     sub bar {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
     }
 
     sub test {
@@ -82,7 +82,7 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
-our @EXPORT      = qw(fp_croak fp_croak_nargs);
+our @EXPORT      = qw(fp_croak fp_croak_arity);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
@@ -94,8 +94,8 @@ sub fp_croak {
     die "$msg at $reportloc\n"
 }
 
-sub fp_croak_nargs {
-    @_ <= 1 or warn "fp_croak_nargs: wrong number of arguments";
+sub fp_croak_arity {
+    @_ <= 1 or warn "fp_croak_arity: wrong number of arguments";
     my ($maybe_n) = @_;
 
     # maybe_n can be a range, or really any string.

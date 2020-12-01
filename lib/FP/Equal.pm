@@ -183,7 +183,7 @@ our $primitive_equals = +{
 };
 
 sub pointer_eq {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my $a = refaddr($_[0]) // return;
     my $b = refaddr($_[1]) // return;
     $a == $b
@@ -193,7 +193,7 @@ sub make_equal {
     my ($relaxed) = @_;
     my $equal;
     $equal = sub {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
     EQUAL: {
             my ($a, $b) = @_;
             if (!defined $a) {
@@ -340,7 +340,7 @@ sub equaln {
 }
 
 sub is_equal {
-    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
+    @_ >= 2 and @_ <= 3 or fp_croak_arity "2-3";
     my ($a, $b, $maybe_name) = @_;
     require Test::More;
     my $tb = Test::More->builder;

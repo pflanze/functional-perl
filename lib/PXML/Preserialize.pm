@@ -197,7 +197,7 @@ use FP::Div qw(max);
 # passes $fn $nargs arguments that it will use during serialization to
 # cut apart the serialized representation.
 sub _pxmlpre {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($nargs, $fn) = @_;
 
     my @items;
@@ -259,7 +259,7 @@ sub build {
 }
 
 sub pxmlpre {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($nargs, $fn) = @_;
     build($nargs, _pxmlpre($nargs, $fn))
 }

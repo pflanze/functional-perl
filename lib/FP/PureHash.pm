@@ -99,7 +99,7 @@ sub purehash {
 }
 
 sub is_purehash {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     my $r = blessed($v) // return;
     $v->isa("FP::_::PureHash")
@@ -141,19 +141,19 @@ package FP::_::PureHash {
 
     # XX  why not get, again? set and get? If ref, then what for set?
     sub ref {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($s, $key) = @_;
         $$s{$key}
     }
 
     sub perhaps_ref {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my ($s, $key) = @_;
         exists $$s{$key} ? $$s{$key} : ()
     }
 
     sub set {
-        @_ == 3 or fp_croak_nargs 3;
+        @_ == 3 or fp_croak_arity 3;
         my ($s, $key, $val) = @_;
 
         # XX the inefficient approach...  to be replaced with new impl.

@@ -196,7 +196,7 @@ use FP::Carp;
 # Functions to change the kind of optionals API:
 
 sub perhaps_to_maybe {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
         if (my ($v) = &$f(@_)) {
@@ -208,7 +208,7 @@ sub perhaps_to_maybe {
 }
 
 sub perhaps_to_x {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($f, $exception) = @_;
     sub {
         if (my ($v) = &$f(@_)) {
@@ -220,10 +220,10 @@ sub perhaps_to_x {
 }
 
 sub perhaps_to_or {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
-        @_ == 3 or fp_croak_nargs 3;
+        @_ == 3 or fp_croak_arity 3;
         my ($t, $k, $other) = @_;
         if (my ($v) = &$f($t, $k)) {
             $v
@@ -234,7 +234,7 @@ sub perhaps_to_or {
 }
 
 sub perhaps_to_exists {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
         if (my ($_v) = &$f(@_)) {
@@ -250,7 +250,7 @@ sub perhaps_to_exists {
 # build functions that short-cut the 'nothing' case:
 
 sub optionally {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($f, $maybe_pos) = @_;
     my $pos = $maybe_pos // 0;
     sub {
@@ -266,7 +266,7 @@ sub optionally {
 
 # perhaps-based optionally: (XX better name? perhapsionally??)
 sub poptionally {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
         if (@_) {

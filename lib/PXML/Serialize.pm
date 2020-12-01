@@ -81,7 +81,7 @@ use Scalar::Util qw(blessed refaddr);
 use FP::Carp;
 
 sub is_somearray {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my $r = ref($_[0]);
 
     # XX mess, make this a proper dependency
@@ -89,7 +89,7 @@ sub is_somearray {
 }
 
 sub is_empty_string {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     defined $_[0] and !length ref $_[0] and $_[0] eq ""
 }
 
@@ -117,7 +117,7 @@ sub content_escape {
 sub pxmlforce;
 
 sub pxmlforce {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     if (my $r = ref $v) {
         if ($r eq "CODE") {
@@ -131,7 +131,7 @@ sub pxmlforce {
 }
 
 sub object_force_escape {
-    @_ == 4 or fp_croak_nargs 4;
+    @_ == 4 or fp_croak_arity 4;
     my ($v, $string_method_for_context, $escape, $fh) = @_;
 
     # $v is certain to be a reference (XX ehr, not even that?!), but
@@ -185,7 +185,7 @@ sub _attribute_val_to_string {
 }
 
 sub _pxml_print_fragment_fast {
-    @_ == 4 or fp_croak_nargs 4;
+    @_ == 4 or fp_croak_arity 4;
     my ($v, $fh, $html5compat, $void_element_h) = @_;
     weaken $_[0]
 
@@ -387,7 +387,7 @@ LP: {
 }
 
 sub pxml_print_fragment_fast {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($v, $fh) = @_;
     weaken $_[0] if ref $_[0];    # ref check perhaps unnecessary here
     my $no_element = sub {
@@ -422,7 +422,7 @@ sub pxml_print_fragment_fast {
 }
 
 sub pxml_xhtml_print_fast {
-    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
+    @_ >= 2 and @_ <= 3 or fp_croak_arity "2-3";
     my ($v, $fh, $maybe_lang) = @_;
     weaken $_[0] if ref $_[0];    # ref check perhaps unnecessary here
     if (not ref $v or (defined(blessed $v) and not $v->isa("PXML::Element"))) {
@@ -460,7 +460,7 @@ sub pxml_xhtml_print;
 use Chj::xopen "xopen_write";
 
 sub pxml_print {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($v, $fh) = @_;
     weaken $_[0] if ref $_[0];    # ref check perhaps unnecessary here
     xprintln($fh, q{<?xml version="1.0"?>});
@@ -468,7 +468,7 @@ sub pxml_print {
 }
 
 sub putxmlfile {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($path, $xml) = @_;
     weaken $_[1] if ref $_[0];    # ref check perhaps unnecessary here
     my $f = xopen_write $path;
@@ -487,7 +487,7 @@ sub PXML::Element::xmlfile {
 }
 
 sub puthtmlfile {
-    @_ >= 2 and @_ <= 3 or fp_croak_nargs "2-3";
+    @_ >= 2 and @_ <= 3 or fp_croak_arity "2-3";
     my ($path, $v, $maybe_lang) = @_;
     weaken $_[1] if ref $_[0];    # ref check perhaps unnecessary here
                                   #xmkdir_p dirname $path;

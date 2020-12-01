@@ -101,13 +101,13 @@ package FP::StrictList::List {
     use Chj::NamespaceCleanAbove;
 
     sub strictlist {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my $s = shift;
         $s
     }
 
     sub list {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my $s = shift;
 
         # Should it *really* convert to a non-strict list? This is
@@ -121,7 +121,7 @@ package FP::StrictList::List {
     }
 
     sub stream {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my ($l) = @_;
 
         # XX isn't this stupid? Same as above. The current load test
@@ -140,7 +140,7 @@ package FP::StrictList::Null {
     *null = \&FP::StrictList::strictnull;
 
     sub cons {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my $s = shift;
 
         # different than FP::List::Null::cons in that it needs to set
@@ -170,7 +170,7 @@ package FP::StrictList::Pair {
     # represented as blessed [ v, pair-or-null, length]
 
     sub cons {
-        @_ == 2 or fp_croak_nargs 2;
+        @_ == 2 or fp_croak_arity 2;
         my $s = shift;
         bless [$_[0], $s, $$s[2] + 1], ref $s
     }
@@ -195,7 +195,7 @@ my $null = bless [], "FP::StrictList::Null";
 
 sub strictnull () {
 
-    # @_ == 0 or fp_croak_nargs 0;
+    # @_ == 0 or fp_croak_arity 0;
     # no, is also called as a method
     $null
 }
@@ -230,7 +230,7 @@ TEST {
 cons(5, cons(6, strictnull));
 
 sub is_strictlist {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     my $r = blessed($v) // return;
     (
@@ -310,7 +310,7 @@ sub make_reverse__map_with_length_with_tail {
     my ($cons) = @_;
 
     sub {
-        @_ == 3 or fp_croak_nargs 3;
+        @_ == 3 or fp_croak_arity 3;
         my ($fn, $l, $tail) = @_;
         my $a;
         while (!$l->is_null) {
@@ -337,7 +337,7 @@ TEST {
 ['', [[c => 1], [b => 2], [a => 3]]];
 
 sub strictlist_reverse__map_with_length {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($fn, $l) = @_;
     strictlist_reverse__map_with_length_with_tail($fn, $l, strictnull)
 }
@@ -352,7 +352,7 @@ TEST {
 [1, [[c => 1], [b => 2], [a => 3]]];
 
 sub strictlist_array__reverse__map_with_length {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($fn, $l) = @_;
     my $i = $l->length;
     make_reverse__map_with_length_with_tail(
@@ -375,7 +375,7 @@ TEST {
 [[c => 1], [b => 2], [a => 3]];
 
 sub strictlist_array__map_with_length {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($fn, $l) = @_;
     my $i   = 0;
     my $len = $l->length;

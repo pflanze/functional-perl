@@ -175,7 +175,7 @@ TEST_EXCEPTION { FP::Path->new(list("/foo"), 1, 1)->string }
 # equal:
 
 sub t_equal {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($a, $b) = @_;
     equal(path($a), path($b))
 }
@@ -196,13 +196,13 @@ TEST {
 1;
 
 sub t_str_clean {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($a) = @_;
     path($a)->clean_dot->xclean_dotdot;
 }
 
 sub t_equals_clean {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($a, $b) = @_;
     equal(t_str_clean($a), t_str_clean($b));
 }
@@ -257,10 +257,10 @@ use FP::Array qw(array_is_null array_map);
 use FP::Ops qw(the_method);
 
 sub tupleify {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($f) = @_;
     sub {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         [&$f(@{ $_[0] })]
     }
 }

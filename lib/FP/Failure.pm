@@ -247,7 +247,7 @@ package FP::Failure::Failure {
 our $trace_failures = 0;    # bool
 
 sub failure {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($value, $maybe_parents) = @_;
     my $v = FP::Failure::Failure->new(
         $value,
@@ -270,14 +270,14 @@ sub failure {
 }
 
 sub is_failure {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     force($_[0])->$_isa("FP::Failure::Failure")
 }
 
 our $use_failure = 0;    # bool
 
 sub fails {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     $use_failure            ? &failure(@_)
         : defined wantarray ? 0
         :                     die "fails called in void context";
@@ -296,7 +296,7 @@ package FP::Failure::Message {
         'FP::Failure::Abstract::Message';
 
     sub message {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my $s    = shift;
         my $args = $s->arguments;
         my $msg  = $s->messagestring;
@@ -318,7 +318,7 @@ package FP::Failure::MessageFmt {
         'FP::Failure::Abstract::Message';
 
     sub message {
-        @_ == 1 or fp_croak_nargs 1;
+        @_ == 1 or fp_croak_arity 1;
         my $s = shift;
         sprintf($s->formatstring, map { show $_ } @{ $s->arguments })
     }

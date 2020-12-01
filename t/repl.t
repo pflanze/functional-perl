@@ -23,7 +23,7 @@ use FP::Carp;
 my $HOME = xeffectiveuserhome;
 
 sub clean {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
 
     $s =~ s/^\s*//s;

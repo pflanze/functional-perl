@@ -170,7 +170,7 @@ sub telldir {
 
 sub seekdir {
     my $self = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($pos) = @_;
     $! = undef;
     CORE::seekdir $self, $pos
@@ -178,7 +178,7 @@ sub seekdir {
 
 sub xseekdir {
     my $self = shift;
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($pos) = @_;
     $! = undef;
     CORE::seekdir $self, $pos or croak "xseekdir (UNTESTED): $!";    ##

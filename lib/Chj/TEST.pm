@@ -175,7 +175,7 @@ our $num_by_package   = {};
 our $dropped_tests = 0;
 
 sub no_tests {
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
     exists $ENV{TEST} and !$ENV{TEST}
 }
 
@@ -259,7 +259,7 @@ use FP::Equal qw(relaxedequal);
 use FP::Show;
 
 sub eval_test {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($t, $stat) = @_;
     my ($proc, $res, $num, $package, $filename, $line) = @$t;
     style_switch {

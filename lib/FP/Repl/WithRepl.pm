@@ -68,7 +68,7 @@ sub WithRepl_eval (&;$) {
 
     # my ($arg, $maybe_package) = @_;
     if (ref $_[0]) {
-        @_ == 1 or fp_croak_nargs(1);
+        @_ == 1 or fp_croak_arity(1);
         my ($arg) = @_;
         eval { &$arg() }
     } else {
@@ -82,7 +82,7 @@ sub WithRepl_eval (&;$) {
 }
 
 sub WithRepl_eval_e {
-    @_ >= 1 and @_ <= 3 or fp_croak_nargs("1-3");
+    @_ >= 1 and @_ <= 3 or fp_croak_arity("1-3");
 
     # my ($arg, $maybe_package, $wantarray) = @_;
     if (ref $_[0]) {
@@ -142,7 +142,7 @@ TEST {
 # solution in XS.
 
 sub current_user_frame {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($skip) = @_;
     if ($skip) { $skip >= 0 or die "expecting maybe(natural0), got '$skip'"; }
     my @v;
@@ -171,7 +171,7 @@ sub current_user_frame {
 our $debug = 0;
 
 sub have_eval_since_frame {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($startframe) = @_;
 
     my @v;
@@ -219,7 +219,7 @@ SKIP: {
 }
 
 sub handler_for {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($startframe, $orig_handler) = @_;
     bless sub {
         my ($e) = @_;
@@ -258,7 +258,7 @@ sub handler_for {
 }
 
 sub handler {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($skip) = @_;
     handler_for(current_user_frame($skip), $SIG{__DIE__})
 }
@@ -280,14 +280,14 @@ TEST {
 our @stack;
 
 sub push_withrepl {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($skip) = @_;
     push @stack, $SIG{__DIE__};
     $SIG{__DIE__} = handler($skip);
 }
 
 sub pop_withrepl {
-    @_ == 0 or fp_croak_nargs 0;
+    @_ == 0 or fp_croak_arity 0;
     $SIG{__DIE__} = pop @stack;
 }
 

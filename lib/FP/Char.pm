@@ -41,7 +41,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use FP::Carp;
 
 sub is_char {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     defined $v and not(ref $v) and length($v) == 1
 }

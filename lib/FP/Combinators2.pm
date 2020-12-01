@@ -66,7 +66,7 @@ use FP::Combinators qw(flip);
 use FP::Carp;
 
 sub right_associate_ {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($op, $noop) = @_;
     sub {
         @_
@@ -79,7 +79,7 @@ sub right_associate_ {
 }
 
 sub left_associate_ {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($op, $noop) = @_;
     my $op2 = flip $op;
     sub {

@@ -102,7 +102,7 @@ sub maybeIO_to_stream {
 }
 
 sub _perhaps_opendir_stream {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($path) = @_;
     if (my ($d) = perhaps_opendir $path) {
         my $next;
@@ -124,7 +124,7 @@ sub _perhaps_opendir_stream {
 }
 
 sub _perhaps_opendir_stream_sorted {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($path, $cmp) = @_;
     if (my ($d) = perhaps_opendir $path) {
         my $items = array_sort [$d->xnread], $cmp;
@@ -136,7 +136,7 @@ sub _perhaps_opendir_stream_sorted {
 }
 
 sub perhaps_directory_items {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($path, $maybe_cmp) = @_;
     if ($maybe_cmp) {
         _perhaps_opendir_stream_sorted $path, $maybe_cmp;
@@ -146,7 +146,7 @@ sub perhaps_directory_items {
 }
 
 sub perhaps_directory_paths {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($base, $maybe_cmp) = @_;
     $base .= "/" unless $base =~ /\/\z/;
     if (my ($s) = perhaps_directory_items $base, $maybe_cmp) {
@@ -162,7 +162,7 @@ sub perhaps_directory_paths {
 }
 
 sub xdirectory_items {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($path, $maybe_cmp) = @_;
     if (my ($s) = perhaps_directory_items($path, $maybe_cmp)) {
         $s
@@ -172,7 +172,7 @@ sub xdirectory_items {
 }
 
 sub xdirectory_paths {
-    @_ >= 1 and @_ <= 2 or fp_croak_nargs "1-2";
+    @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($path, $maybe_cmp) = @_;
     if (my ($s) = perhaps_directory_paths($path, $maybe_cmp)) {
         $s
@@ -182,7 +182,7 @@ sub xdirectory_paths {
 }
 
 sub fh_to_stream {
-    @_ == 3 or fp_croak_nargs 3;
+    @_ == 3 or fp_croak_arity 3;
     my ($fh, $read, $close) = @_;
     my $next;
     $next = sub {
@@ -233,7 +233,7 @@ sub xfile_lines_chomp;
 # Clojure calls this line-seq
 #  (http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/line-seq)
 sub fh_to_lines {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($fh) = @_;
     fh_to_stream(possibly_fh_to_fh($fh), the_method("xreadline"),
         the_method("xclose"))
@@ -245,7 +245,7 @@ sub fh_to_lines {
 # but would die on mid-chunk EOF)
 
 sub fh_to_chunks {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($fh, $bufsiz) = @_;
     fh_to_stream(
         possibly_fh_to_fh($fh),
@@ -263,7 +263,7 @@ sub fh_to_chunks {
 # (floating point) to sleep before returning the next element.
 
 sub timestream {
-    @_ >= 0 and @_ <= 1 or fp_croak_nargs "0-1";
+    @_ >= 0 and @_ <= 1 or fp_croak_arity "0-1";
     my ($maybe_sleep) = @_;
     require Time::HiRes;
     my $lp;
@@ -302,7 +302,7 @@ sub xstream_to_file {
 # given function; written to temp file that's renamed into place upon
 # successful completion.
 sub xfile_replace_lines {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($path, $fn) = @_;
     xstream_to_file &$fn(xfile_lines $path), $path;
 }

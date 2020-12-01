@@ -98,7 +98,7 @@ TEST_EXCEPTION { $$empty_hash{a} = 1 }
 'Attempt to access disallowed key \'a\' in a restricted hash';
 
 sub hash_set {
-    @_ == 3 or fp_croak_nargs 3;
+    @_ == 3 or fp_croak_arity 3;
     my ($h, $k, $v) = @_;
     my $h2 = +{%$h};
     $$h2{$k} = $v;
@@ -112,7 +112,7 @@ TEST {$h}
 +{ 'a' => 1, 'b' => 2 };
 
 sub hash_delete {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($h, $k) = @_;
     my $h2 = +{%$h};
     delete $$h2{$k};
@@ -120,7 +120,7 @@ sub hash_delete {
 }
 
 sub hash_update {
-    @_ == 3 or fp_croak_nargs 3;
+    @_ == 3 or fp_croak_arity 3;
     my ($h, $k, $fn) = @_;
     my $h2 = +{%$h};
     if (my ($v) = &$fn(exists $$h{$k} ? $$h{$k} : ())) {
@@ -145,7 +145,7 @@ TEST {
 +{ b => 2 };
 
 sub hash_length {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($h) = @_;
     scalar keys %$h
 }
@@ -154,7 +154,7 @@ TEST { hash_length +{} } 0;
 TEST { hash_length +{ a => 4, b => 5 } } 2;
 
 sub hash_perhaps_ref {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -166,7 +166,7 @@ sub hash_perhaps_ref {
 # difference of the following to just $$h{$k} is that it won't die on
 # locked hashes
 sub hash_maybe_ref {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -176,7 +176,7 @@ sub hash_maybe_ref {
 }
 
 sub hash_xref {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($h, $k) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -187,7 +187,7 @@ sub hash_xref {
 }
 
 sub hash_ref_or {
-    @_ == 3 or fp_croak_nargs 3;
+    @_ == 3 or fp_croak_arity 3;
     my ($h, $k, $other) = @_;
     if (exists $$h{$k}) {
         $$h{$k}
@@ -198,7 +198,7 @@ sub hash_ref_or {
 
 sub hash_cache {
 
-    @_ == 3 or fp_croak_nargs 3;
+    @_ == 3 or fp_croak_arity 3;
 
 # only allowing for scalar context
     my ($h, $k, $generate) = @_;
@@ -212,7 +212,7 @@ sub hash_cache {
 # looking for definedness, not exists. Ok? Also, only handles strings
 # as values.
 sub hash_diff {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($h1, $h2) = @_;
     my $changes = {};
     for my $key (keys %$h2) {
@@ -263,7 +263,7 @@ sub hashes_keys {
 
 # set leafs in 2-level hash structure:
 sub hash2_set {
-    @_ == 4 or fp_croak_nargs 4;
+    @_ == 4 or fp_croak_arity 4;
     my ($h, $k0, $k1, $v) = @_;
     hash_update $h, $k0, sub { my ($h1) = @_; hash_set $h1, $k1, $v }
 }

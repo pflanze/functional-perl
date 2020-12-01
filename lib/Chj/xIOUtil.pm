@@ -45,7 +45,7 @@ use FP::Carp;
 # print, not write, i.e. flatten nested structures out, but don't
 # print parens for lists etc., just print the contained basic types.
 sub xprint_object {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($fh, $v) = @_;
     if (ref $v) {
         if (ref($v) eq "ARRAY") {
@@ -64,7 +64,7 @@ sub xprint_object {
 }
 
 sub xputfile_utf8 {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($path, $str) = @_;
     my $out = xopen_write($path);
     binmode $out, ":encoding(UTF-8)" or die "binmode";
@@ -73,13 +73,13 @@ sub xputfile_utf8 {
 }
 
 sub xcopyfile_utf8 {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($src, $dest) = @_;
     xputfile_utf8($dest, xgetfile_utf8($src));
 }
 
 sub xcopyfile {
-    @_ == 2 or fp_croak_nargs 2;
+    @_ == 2 or fp_croak_arity 2;
     my ($src, $dest) = @_;
 
     # yes, giving up here. XX write something else or just use

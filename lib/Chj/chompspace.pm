@@ -36,7 +36,7 @@ our @EXPORT = qw(chompspace);
 use FP::Carp;
 
 sub chompspace {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($str) = @_;
     $str =~ s/^\s+//s;
     $str =~ s/\s+\z//s;

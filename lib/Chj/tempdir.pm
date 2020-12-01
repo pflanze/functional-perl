@@ -33,7 +33,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use FP::Carp;
 
 sub tempdir {
-    @_ == 1 or fp_croak_nargs 1;
+    @_ == 1 or fp_croak_arity 1;
     my ($base)     = @_;
     my $tries      = 0;
     my $perhapsrnd = "";
