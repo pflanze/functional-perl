@@ -20,3 +20,6 @@ website/.ModulePODUrl-cache/
 
 # Backup files from perltidy
 *.bak
+
+# t/pod_snippets.t outputs:
+.xIO-test-out
