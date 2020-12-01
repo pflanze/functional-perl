@@ -1,5 +1,10 @@
 Revision history for FunctionalPerl
 
+0.72.40 2020-12-1
+    - FP::Carp: improve docs, rename fp_croak_nargs to fp_croak_arity,
+      and report number of arguments actually passed
+    - FunctionalPerl: consistent tag naming
+
 0.72.39 2020-11-30
     - some remaining "EXPORT" style fixes
     - don't use subroutine prototypes anymore except in rare cases
