@@ -27,7 +27,7 @@ use List::Util 'pairkeys';
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
     my $ops = join("", map {"    $_\n"} pairkeys ops());
-    print "Usage: $myname --op opname file(s)
+    print "Usage: $myname --op opname [--op opname ...] file...
 
   opname can be any of:
 $ops
