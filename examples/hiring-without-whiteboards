@@ -42,6 +42,7 @@ use Chj::xperlfunc ":all";
 use FP::PureArray ":all";
 use Chj::TEST ":all";
 use FP::Carp;
+use Chj::xIO qw(with_output_to_file);
 
 sub usage {
     print "usage: $myname path/to/hiring-without-whiteboards/README.md
@@ -63,6 +64,10 @@ sub usage {
   You can use tab completion to learn about the available methods on a
   variable (don't use \`my\` for making variables, or they won't persist
   to your next entry). Also see the docs on \`functional-perl.org\`.
+
+  To redirect printing to a file, use
+
+     with_output_to_file \$filename, sub { ... }
 
   See https://news.ycombinator.com/item?id=19290044 for a
   discussion.
