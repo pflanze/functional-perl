@@ -233,7 +233,7 @@ sub ops () {
             }
         ],
 
-        move_to_fp_croak_nargs => [
+        move_to_fp_croak_arity => [
             1,
             sub {
                 my $replacements = s{
