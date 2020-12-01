@@ -1143,7 +1143,7 @@ sub xreadlink {
 }
 
 sub xmkdir_with_paragon {
-    @_ == 2 or @_ == 3 or croak "xmvmkdir: wrong number of arguments";
+    @_ == 2 or @_ == 3 or fp_croak_arity "2 or 3";
     warn "UNTESTED!";
     my ($owner, $group, $mode) = (xstat $_[1])[4, 5, 2];
     xmkdir $_[0], 0;
@@ -1166,9 +1166,7 @@ sub xmkdir_with_paragon {
 }
 
 sub xtmpdir_with_paragon {
-    @_ == 1
-        or @_ == 2
-        or croak "xtmpdir_with_paragon: wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     my ($paragon, $strict) = @_;
     my ($owner, $group, $mode) = (xstat $paragon)[4, 5, 2];
     my $newname;
@@ -1196,7 +1194,7 @@ TRY: for (0 .. 2) {
 }
 
 sub xmvmkdir {
-    @_ == 2 or @_ == 3 or croak "xmvmkdir: wrong number of arguments";
+    @_ == 2 or @_ == 3 or fp_croak_arity "2 or 3";
     xrename $_[0], $_[1];
     my ($owner, $group, $mode) = (xstat $_[1])[4, 5, 2];
     xmkdir $_[0], 0;

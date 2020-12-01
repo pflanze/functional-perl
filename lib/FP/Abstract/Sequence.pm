@@ -175,7 +175,7 @@ sub FP_Interface__method_names {
 # manually) without fixing perl?
 
 sub flatten {
-    @_ == 1 or @_ == 2 or die "wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     my ($self, $perhaps_tail) = @_;
     $self->fold_right(
         sub {
@@ -230,19 +230,19 @@ sub extreme {
 }
 
 sub min {
-    @_ == 1 or @_ == 2 or die "wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     my ($self, $maybe_extract) = @_;
     $self->extreme(on_maybe $maybe_extract, sub { $_[0] < $_[1] })
 }
 
 sub max {
-    @_ == 1 or @_ == 2 or die "wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     my ($self, $maybe_extract) = @_;
     $self->extreme(on_maybe $maybe_extract, sub { $_[0] > $_[1] })
 }
 
 sub minmax {
-    @_ == 1 or @_ == 2 or die "wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     my ($self, $maybe_extract) = @_;
 
     # XXX same comment as in `extreme`

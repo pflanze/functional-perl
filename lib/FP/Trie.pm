@@ -146,7 +146,7 @@ package FP::Trie::BareLevel {
     # returns ($ending_level, $maybe_keyremainder,
     # $maybe_lastvaluelevel, $maybe_keyremainder_lvl)
     sub skip {
-        @_ == 2 or @_ == 4 or die "wrong number of arguments";
+        @_ == 2 or @_ == 4 or fp_croak_arity "2 or 4";
         my ($t, $l, $maybe_lastvaluelevel, $maybe_keyremainder_lvl) = @_;
         my ($maybe_lvl, $maybe_r_lvl)
             = (defined blessed $t)

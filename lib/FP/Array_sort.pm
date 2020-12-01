@@ -74,7 +74,7 @@ use Chj::TEST;
 use FP::Carp;
 
 sub array_sort {
-    @_ == 1 or @_ == 2 or die "wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     my ($in, $maybe_cmp) = @_;
     if (defined $maybe_cmp) {
         [sort { &$maybe_cmp($a, $b) } @$in]

@@ -979,14 +979,14 @@ sub xrewind {
 
 sub xseek {
     my $self = shift;
-    @_ == 1 or @_ == 2 or croak "xseek: wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     seek $self->fh, $_[0], defined $_[1] ? $_[1] : SEEK_SET
         or croak "xseek on " . ($self->quotedname) . ": $!";
 }
 
 sub seek {
     my $self = shift;
-    @_ == 1 or @_ == 2 or croak "seek: wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     seek $self->fh, $_[0], defined $_[1] ? $_[1] : SEEK_SET;
 }
 

@@ -277,7 +277,7 @@ sub timestream {
 }
 
 sub xstream_print {
-    @_ == 2 or @_ == 1 or die "wrong number of arguments";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
     my ($s, $maybe_fh) = @_;
     my $fh = $maybe_fh // glob_to_fh(*STDOUT);
     weaken $_[0];
@@ -289,7 +289,7 @@ sub xstream_print {
 }
 
 sub xstream_to_file {
-    @_ == 2 or @_ == 3 or die "wrong number of arguments";
+    @_ == 2 or @_ == 3 or fp_croak_arity "2 or 3";
     my ($s, $path, $maybe_mode) = @_;
     my $out = xtmpfile $path;
     weaken $_[0];
