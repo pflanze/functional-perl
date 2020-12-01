@@ -31,7 +31,7 @@ FP::Carp - report to immediate caller
         $e=~ s/\n.*//s;
         $e
     }
-    is try { tst(10) }, 'bar: needs 2 arguments at lib/FP/Carp.pm line 26';
+    is try { tst(10) }, 'bar: needs 2 arguments (got 1) at lib/FP/Carp.pm line 26';
     is try { tst(10,11) }, 'I need 1 argument at lib/FP/Carp.pm line 25';
 
 
@@ -101,11 +101,18 @@ sub fp_croak_nargs {
             "wrong number of arguments"
         }
     };
-    my @f1      = caller(1);
+    my @f1;
+    my $nargs1;
+    {
+
+        package DB;
+        @f1     = caller(1);
+        $nargs1 = @DB::args;
+    }
     my $subname = $f1[3];
     $subname =~ s/^.*:://s;
     my $reportloc = "$f1[1] line $f1[2]";
-    die "$subname: $msg at $reportloc\n"
+    die "$subname: $msg (got $nargs1) at $reportloc\n"
 }
 
 1
