@@ -20,13 +20,18 @@ use lib "$mydir/../lib";
 use Chj::xtmpfile;
 use Chj::xopen 'xopen_read';
 use Chj::TEST;
+use FP::PureArray;
 
 (my $email = 'ch%christianjaeger,ch') =~ tr/%,/@./;
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
-    print "$myname --op opname file(s)
+    my $ops = purearray(ops())->chunks_of(2)->map (sub ($v) {"    $$v[0]\n"})
+        ->join("");
+    print "Usage: $myname --op opname file(s)
 
+  opname can be any of:
+$ops
   (Christian Jaeger <$email>)
 ";
     exit(@_ ? 1 : 0);
@@ -129,16 +134,17 @@ TEST_EXCEPTION { compare_range qw(== 5 or > 6) }
 
 our $current_file;
 
-my %ops = (
+sub ops () {
+    (
 
-    # [ needs_whole_file, proc ]
-    opspaces => [
-        0,
-        sub {
-            if (/http|href/) {
-                $_
-            } else {
-                s{ ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) }{
+        # [ needs_whole_file, proc ]
+        opspaces => [
+            0,
+            sub {
+                if (/http|href/) {
+                    $_
+                } else {
+                    s{ ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) }{
             my ($a,$b,$c)=($1,$2,$3);
             my $all = "$a$b$c";
             my $pre= substr($_, 0, pos($_)+1);
@@ -157,15 +163,15 @@ my %ops = (
                 $all
             }
         }sgex and s/[ \t]*$//;
-                $_
+                    $_
+                }
             }
-        }
-    ],
+        ],
 
-    functionparameters2signatures => [
-        1,
-        sub {
-            s{
+        functionparameters2signatures => [
+            1,
+            sub {
+                s{
          \b(method|fun)(\s+\w+)
          (?:
              (\s*\(\s*)
@@ -182,17 +188,17 @@ my %ops = (
               : "$a$b$c")
            . $end
     }sgex;
-            $_
-        }
-    ],
+                $_
+            }
+        ],
 
-    excise_prototypes => [
-        1,
-        sub {
-            return $_
-                if /use +experimental [^\n;]*signatures[^\n;]*;/
-                ;    # since `()` is ambiguous
-            s{
+        excise_prototypes => [
+            1,
+            sub {
+                return $_
+                    if /use +experimental [^\n;]*signatures[^\n;]*;/
+                    ;    # since `()` is ambiguous
+                s{
                  ( \bsub\b \ *)(\w+)?( \ * )
                  \( ([\@\$; ]*) \)  # do *not* include & here, as those are needed
                  ( \s* \{ \s* )
@@ -224,14 +230,14 @@ my %ops = (
                     "$pre$post_and_checkcode    $bodystart"
                 }
             }sgex;
-            $_
-        }
-    ],
+                $_
+            }
+        ],
 
-    move_to_fp_croak_nargs => [
-        1,
-        sub {
-            my $replacements = s{
+        move_to_fp_croak_nargs => [
+            1,
+            sub {
+                my $replacements = s{
                  ( ; | \{ \s* )
                  ( \(? \s* \@_ \s* ($compare_re) \s* (\d+) \s*
                      (?: ( and | && | or | \|\| ) \s* \@_ ($compare_re) (\d+) )? \s* \)?  \s* )
@@ -250,25 +256,28 @@ my %ops = (
                 }
                 "$pre$compare or fp_croak_arity $range;"
             }sgex;
-            if ($replacements) {
-                unless (/use FP::Carp/) {
-                    do {
-                        if (/[\@\%]EXPORT/) {
+                if ($replacements) {
+                    unless (/use FP::Carp/) {
+                        do {
+                            if (/[\@\%]EXPORT/) {
 
-                            # force it after 'EXPORT'
-                            s{(.*[\@\%]EXPORT.*\nuse [A-Z][^;\n]+;[^\n]*\n)}{${1}use FP::Carp;\n}s
-                        } else {
-                            s{(.*\nuse [A-Z][^;\n]+;[^\n]*\n)}{${1}use FP::Carp;\n}s
-                        }
-                        }
-                        or
-                        warn "could not insert FP::Carp into $current_file\n";
+                                # force it after 'EXPORT'
+                                s{(.*[\@\%]EXPORT.*\nuse [A-Z][^;\n]+;[^\n]*\n)}{${1}use FP::Carp;\n}s
+                            } else {
+                                s{(.*\nuse [A-Z][^;\n]+;[^\n]*\n)}{${1}use FP::Carp;\n}s
+                            }
+                            }
+                            or warn
+                            "could not insert FP::Carp into $current_file\n";
+                    }
                 }
+                $_
             }
-            $_
-        }
-    ],
-);
+        ],
+    )
+}
+
+my %ops = ops;
 
 sub run {
     @opt_op or usage "no op given, use the --op option";
