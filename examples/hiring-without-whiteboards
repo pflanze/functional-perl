@@ -83,9 +83,9 @@ sub triples {
     my @out;
     while (@_) {
         my $k = shift;
-        @_ or die "wrong number of inputs";
+        @_ or fp_croak_arity "n*3";
         my $v = shift;
-        @_ or die "wrong number of inputs";
+        @_ or fp_croak_arity "n*3";
         my $v2 = shift;
         push @out, [$k, $v, $v2]
     }
