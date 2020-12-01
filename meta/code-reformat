@@ -239,7 +239,7 @@ sub ops () {
                 my $replacements = s{
                  ( ; | \{ \s* )
                  ( \(? \s* \@_ \s* ($compare_re) \s* (\d+) \s*
-                     (?: ( and | && | or | \|\| ) \s* \@_ ($compare_re) (\d+) )? \s* \)?  \s* )
+                     (?: ( and | && | or | \|\| ) \s* \@_ \s* ($compare_re) \s* (\d+) )? \s* \)?  \s* )
                  ( or \s+ (?:die|(?:\w+::)*croak) \s*
                      (?: "[^"]*wrong\ number\ of\ arguments[^"]*" |
                          "[^"]*(?:expecting|expects|needs?) \s+ \d+
