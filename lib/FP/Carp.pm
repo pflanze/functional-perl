@@ -31,7 +31,7 @@ FP::Carp - report to immediate caller
         $e=~ s/\n.*//s;
         $e
     }
-    is try { tst(10) }, 'bar: need 2 arguments at lib/FP/Carp.pm line 26';
+    is try { tst(10) }, 'bar: needs 2 arguments at lib/FP/Carp.pm line 26';
     is try { tst(10,11) }, 'I need 1 argument at lib/FP/Carp.pm line 25';
 
 
@@ -96,7 +96,7 @@ sub fp_croak_nargs {
     my $msg = do {
         if (defined $maybe_n) {
             my $argumentS = $maybe_n eq "1" ? "argument" : "arguments";
-            "need $maybe_n $argumentS"
+            "needs $maybe_n $argumentS"
         } else {
             "wrong number of arguments"
         }
