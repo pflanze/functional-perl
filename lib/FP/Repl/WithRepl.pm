@@ -73,7 +73,7 @@ sub WithRepl_eval (&;$) {
         eval { &$arg() }
     } else {
         eval do {
-            @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
+            @_ == 1 or @_ == 2 or fp_croak_arity("1 or 2");
             my ($arg, $maybe_package) = @_;
             my $package = $maybe_package // caller;
             "package $package; $arg"
@@ -89,7 +89,7 @@ sub WithRepl_eval_e {
         die "WithRepl_eval_e only supports string eval";
     } else {
         my $success = eval do {
-            (@_ >= 1 and @_ <= 3) or fp_croak_arity "1-3";
+            (@_ >= 1 and @_ <= 3) or fp_croak_arity("1-3");
             my ($arg, $maybe_package, $wantarray) = @_;
             my $package = $maybe_package // caller;
             my $scalar  = $wantarray ? "" : "scalar";
