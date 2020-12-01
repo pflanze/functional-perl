@@ -43,14 +43,12 @@ use FP::PureArray ":all";
 use Chj::TEST ":all";
 use FP::Carp;
 
-my $mainfile = "README.md";
-
 sub usage {
-    print "usage: $myname path/to/hiring-without-whiteboards/
+    print "usage: $myname path/to/hiring-without-whiteboards/README.md
 
   Starts an \`FP::Repl\` with access to a \`cs\` function which returns a
   stream (\`FP::Stream\`) of \`Company\` objects representing the contents
-  of the $mainfile file of a check-out of
+  of the given file from a check-out of
   https://github.com/poteto/hiring-without-whiteboards
 
   You can then enter 'queries' like:
@@ -76,7 +74,7 @@ sub usage {
 our $verbose = 0;
 GetOptions("verbose" => \$verbose, "help" => sub {usage},) or exit 1;
 
-my ($basedir) = @ARGV;
+my ($file) = @ARGV;
 
 # XX lib
 sub triples {
@@ -478,7 +476,7 @@ sub FP::Abstract::Sequence::drop_over ($l, $pred) {
 }
 
 sub datalines () {
-    xfile_lines_chomp("$basedir/$mainfile", "UTF-8")->drop_over(\&is_hr)
+    xfile_lines_chomp("$file", "UTF-8")->drop_over(\&is_hr)
         ->take_while(complement \&is_AlsoSee)->filter(complement \&is_empty)
 }
 
