@@ -37,6 +37,12 @@ This is an unsorted collection of items to work on.
 See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 "todo" markers in text (website / .md) files. Also, the [[names]] page.
 
+### Features
+
+* add a `pairkeys` method to `FP::Abstract::Sequence` (doing the
+  equivalent of `->chunks_of(2)->map(the_method "first")` or
+  `List::Util` 1.29's function of the same name)
+
 ### Work on the code
 
 * In bin/perlrepl and bin/fperl, use the proper perl version in the
