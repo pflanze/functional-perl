@@ -144,24 +144,24 @@ sub ops () {
                     $_
                 } else {
                     s{ ([^/>=~<!|+*-]) (=|=>|==|=~|/=|//=|>=|<=|<<|>>|!=|\|\||\|\|=|\+=|-=|\*=) ([^/>=~<!|]) }{
-            my ($a,$b,$c)=($1,$2,$3);
-            my $all = "$a$b$c";
-            my $pre= substr($_, 0, pos($_)+1);
-            my $is_perl = 0;
-            if ($b eq "=>") {
-                $is_perl = 1
-            } elsif (not substr($pre, length($pre)-1, 1)=~ /\w/) {
-                $is_perl = 1
-            } elsif (my ($sigil) = $pre =~ /([^\w])[A-Za-z_]\w*\s*$/) {
-                $is_perl= $sigil =~ /[\$*&@%]/
-            }
-            #use FP::Repl;repl;
-            if ($is_perl) {
-                ($a eq " " ? $a : "$a ").$b.($c eq " " ? $c : " $c")
-            } else {
-                $all
-            }
-        }sgex and s/[ \t]*$//;
+                        my ($a,$b,$c)=($1,$2,$3);
+                        my $all = "$a$b$c";
+                        my $pre= substr($_, 0, pos($_)+1);
+                        my $is_perl = 0;
+                        if ($b eq "=>") {
+                            $is_perl = 1
+                        } elsif (not substr($pre, length($pre)-1, 1)=~ /\w/) {
+                            $is_perl = 1
+                        } elsif (my ($sigil) = $pre =~ /([^\w])[A-Za-z_]\w*\s*$/) {
+                            $is_perl= $sigil =~ /[\$*&@%]/
+                        }
+                        #use FP::Repl;repl;
+                        if ($is_perl) {
+                            ($a eq " " ? $a : "$a ").$b.($c eq " " ? $c : " $c")
+                        } else {
+                            $all
+                        }
+                    }sgex and s/[ \t]*$//;
                     $_
                 }
             }
@@ -171,22 +171,22 @@ sub ops () {
             1,
             sub {
                 s{
-         \b(method|fun)(\s+\w+)
-         (?:
-             (\s*\(\s*)
-             ([^()]*?)
-             (\s*\))
-         )?
-         (\s*\{)
-    }{
-         my ($which,$name,$a,$b,$c,$end)=($1,$2,$3,$4,$5,$6);
-         "sub$name"
-           . ($which eq "method" ? 
-              (defined($b) ? $a.(length($b) ? q{$self, }.$b : q{$self}).$c
-               : q{($self)})
-              : "$a$b$c")
-           . $end
-    }sgex;
+                     \b(method|fun)(\s+\w+)
+                     (?:
+                         (\s*\(\s*)
+                         ([^()]*?)
+                         (\s*\))
+                     )?
+                     (\s*\{)
+                }{
+                    my ($which,$name,$a,$b,$c,$end)=($1,$2,$3,$4,$5,$6);
+                    "sub$name"
+                      . ($which eq "method" ? 
+                         (defined($b) ? $a.(length($b) ? q{$self, }.$b : q{$self}).$c
+                          : q{($self)})
+                         : "$a$b$c")
+                      . $end
+                }sgex;
                 $_
             }
         ],
@@ -198,37 +198,37 @@ sub ops () {
                     if /use +experimental [^\n;]*signatures[^\n;]*;/
                     ;    # since `()` is ambiguous
                 s{
-                 ( \bsub\b \ *)(\w+)?( \ * )
-                 \( ([\@\$; ]*) \)  # do *not* include & here, as those are needed
-                 ( \s* \{ \s* )
-                 ( (?:[^\n]*\n){0,2} )
-            }{
-                my ($_pre, $maybe_name, $_post, $protos, $post, $bodystart)
-                   = ($1,$2,$3,$4,$5,$6);
-                my $pre = $_pre . ($maybe_name // "") . $_post;
+                     ( \bsub\b \ *)(\w+)?( \ * )
+                     \( ([\@\$; ]*) \)  # do *not* include & here, as those are needed
+                     ( \s* \{ \s* )
+                     ( (?:[^\n]*\n){0,2} )
+                }{
+                    my ($_pre, $maybe_name, $_post, $protos, $post, $bodystart)
+                      = ($1,$2,$3,$4,$5,$6);
+                    my $pre = $_pre . ($maybe_name // "") . $_post;
 
-                if (defined $maybe_name and $maybe_name =~ /^[A-Z0-9_]+\z/
-                    and $protos =~ /^\s*\z/ and $bodystart =~ /^\s*\d+\}/) {
-                    # constant, leave as is
-                    "$pre($protos)$post$bodystart"
-                } else {
-                    # make sure bodystart doesn't slurp over a subsequent definition
-                    die "accidentally slurping up subsequent definition"
-                        if $bodystart =~ /(\bsub\b \ *(?:\w+)?) \ * (?:\([@$&;]*\))? (\s* \{)/;
+                    if (defined $maybe_name and $maybe_name =~ /^[A-Z0-9_]+\z/
+                        and $protos =~ /^\s*\z/ and $bodystart =~ /^\s*\d+\}/) {
+                        # constant, leave as is
+                        "$pre($protos)$post$bodystart"
+                    } else {
+                        # make sure bodystart doesn't slurp over a subsequent definition
+                        die "accidentally slurping up subsequent definition"
+                          if $bodystart =~ /(\bsub\b \ *(?:\w+)?) \ * (?:\([@$&;]*\))? (\s* \{)/;
 
-                    my $checkcode = do {
-                        if ($bodystart =~ /\@_ *(?:==|<=|>=|<|>) *\d+/) {
-                            ""
-                        } else {
-                            checkcode_for_arity(protos_to_arity($protos))
-                        }
-                    };
-                    # Make sure there's no empty line before the checkcode
-                    my $post_and_checkcode = "$post$checkcode";
-                    $post_and_checkcode =~ s/^(\s*\{)[ \t]*\n\s*/$1\n    /s;
-                    "$pre$post_and_checkcode    $bodystart"
-                }
-            }sgex;
+                        my $checkcode = do {
+                            if ($bodystart =~ /\@_ *(?:==|<=|>=|<|>) *\d+/) {
+                                ""
+                            } else {
+                                checkcode_for_arity(protos_to_arity($protos))
+                            }
+                        };
+                        # Make sure there's no empty line before the checkcode
+                        my $post_and_checkcode = "$post$checkcode";
+                        $post_and_checkcode =~ s/^(\s*\{)[ \t]*\n\s*/$1\n    /s;
+                        "$pre$post_and_checkcode    $bodystart"
+                    }
+                }sgex;
                 $_
             }
         ],
@@ -246,15 +246,15 @@ sub ops () {
                             (?: \ * (?:-|to) \ * \d+)? \s+ (?:parameter|argument)s?[^"]*" |
                          "[^"]*not\ enough\ arguments[^"]*"
                      ) \s* ;)
-            }{
-                my ($pre, $compare, $compare1, $n1, $maybe_andor, $maybe_compare2, $maybe_n2, $or_part)
-                  = ($1,$2,$3,$4,$5,$6,$7,$8);
-                my $range = compare_range($compare1, $n1, $maybe_andor, $maybe_compare2, $maybe_n2);
-                unless ($range =~ /^\d+$/s) {
-                    $range = "\"$range\"";
-                }
-                "$pre$compare or fp_croak_arity $range;"
-            }sgex;
+                }{
+                    my ($pre, $compare, $compare1, $n1, $maybe_andor, $maybe_compare2, $maybe_n2, $or_part)
+                      = ($1,$2,$3,$4,$5,$6,$7,$8);
+                    my $range = compare_range($compare1, $n1, $maybe_andor, $maybe_compare2, $maybe_n2);
+                    unless ($range =~ /^\d+$/s) {
+                        $range = "\"$range\"";
+                    }
+                    "$pre$compare or fp_croak_arity $range;"
+                }sgex;
                 if ($replacements) {
                     unless (/use FP::Carp/) {
                         do {
