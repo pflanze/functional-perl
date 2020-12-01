@@ -20,14 +20,13 @@ use lib "$mydir/../lib";
 use Chj::xtmpfile;
 use Chj::xopen 'xopen_read';
 use Chj::TEST;
-use FP::PureArray;
+use List::Util 'pairkeys';
 
 (my $email = 'ch%christianjaeger,ch') =~ tr/%,/@./;
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
-    my $ops = purearray(ops())->chunks_of(2)->map (sub ($v) {"    $$v[0]\n"})
-        ->join("");
+    my $ops = join("", map {"    $_\n"} pairkeys ops());
     print "Usage: $myname --op opname file(s)
 
   opname can be any of:
