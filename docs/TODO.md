@@ -225,6 +225,10 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * `Test::Needs` has been recommended over `Test::Requires` "for reasons specified in its documentation", look into it.
 
+* Performance: look into inlining for speed sensitive code? Have a
+  look at `Class::XSAccessor`, or mst mentioned some underdocumented
+  crazy way.
+
 ### Get rid of unnecessary home-grown code
 
 These may better be replaced by more widely used code, roughly in the
