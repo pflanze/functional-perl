@@ -41,6 +41,12 @@ FP::HashSet - set operations for hash tables
     my $f = hashset_to_predicate ($A);
     ok $f->("a");
 
+    # counting the number of recurrences of keys:
+    my $C= array_to_countedhashset ["a", "c", "x", "c", "c", "a"];
+    is $C->{a}, 2;
+    is $C->{c}, 3;
+    is $C->{x}, 1;
+
 
 =head1 DESCRIPTION
 
@@ -65,6 +71,7 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT = qw(array_to_hashset
+    array_to_countedhashset
     array_to_lchashset
     hashset_to_array
     hashset_to_predicate
@@ -88,6 +95,15 @@ use FP::Carp;
 sub array_to_hashset {
     @_ == 1 or fp_croak_arity 1;
     +{ map { $_ => $_ } @{ $_[0] } }
+}
+
+sub array_to_countedhashset {
+    @_ == 1 or fp_croak_arity 1;
+    my %r;
+    for (@{ $_[0] }) {
+        $r{$_}++
+    }
+    \%r
 }
 
 sub array_to_lchashset {
