@@ -141,7 +141,7 @@ sub singlequote_sh {
 sub possibly_singlequote_sh {
     @_ == 1 or fp_croak_arity 1;
     my ($str) = @_;
-    if ($str =~ m{^[\w/.-]+\z}) {
+    if ($str =~ m{^[=\w/.-]+\z}) {
         $str
     } else {
         singlequote_sh $str
