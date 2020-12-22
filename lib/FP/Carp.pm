@@ -34,6 +34,7 @@ FP::Carp - report to immediate caller
         eval { &{$_[0]}; 1 } && return;
         my $e= $@;
         $e=~ s/\n.*//s;
+        $e=~ s{\\}{/}sg; # convert windows to unix paths
         $e
     }
     is try { test(10) }, 'bar: needs 2 arguments (got 1) at lib/FP/Carp.pm line 31';
