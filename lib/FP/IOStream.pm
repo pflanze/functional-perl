@@ -206,6 +206,7 @@ sub make_open_stream {
     my ($open, $read, $maybe_close) = @_;
     my $close = $maybe_close // the_method("xclose");
     sub {
+        @_ == 1 or @_ == 2 or fp_croak_arity("1 or 2");
         my ($path, $maybe_encoding) = @_;
         my $fh = &$open($path);
         if ($maybe_encoding) {
