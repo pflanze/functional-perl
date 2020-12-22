@@ -51,6 +51,7 @@ our @EXPORT_OK = qw(maybeIO_to_stream
     xdirectory_items
     xdirectory_paths
     xfile_lines xfile_lines0 xfile_lines0chop xfile_lines_chomp
+    xfile_chars
     fh_to_lines
     fh_to_chunks
     timestream
@@ -230,6 +231,11 @@ sub xfile_lines0chop;
 sub xfile_lines_chomp;
 *xfile_lines_chomp
     = make_open_stream(\&xopen_read, the_method("xreadline_chomp"));
+
+sub xfile_chars;
+*xfile_chars
+    = make_open_stream(\&xopen_read, the_method("xreadchar"));
+
 
 # Clojure calls this line-seq
 #  (http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/line-seq)
