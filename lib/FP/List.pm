@@ -1476,7 +1476,7 @@ sub make_filter_with_tail {
             $l = force $l;
             is_null($l) ? $tail : do {
                 my $a = car $l;
-                my $r = &$filter_with_tail($fn, cdr $l, $tail);
+                my $r = &$filter_with_tail($fn, cdr($l), $tail);
                 &$fn($a) ? cons($a, $r) : $r
             }
         }
