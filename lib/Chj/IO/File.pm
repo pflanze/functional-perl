@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2020 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -57,11 +57,11 @@ Creates new filehandle and calls builtin open, croaks on errors.
 
 Calls builtin, without/with error checking.
 
-=item xreadline
+=item xreadline ()
 
 Same as builtin readline, but checks $! for errors. (Not sure that really works.)
 
-=item xreadline_chomp
+=item xreadline_chomp ()
 
 Does xreadline and chomp's the result(s) (unless undefined).
 
@@ -79,6 +79,11 @@ end of file.
 =item xxreadchunk ( length )
 
 # Yeah try it. Only string exception so far
+
+=item xreadchar ()
+
+Read one character (can be more than one byte from the source
+filehandle if an encoding is set on the filehandle).
 
 =item xsysreadcompletely( buf, length [,offset]) -> bool
 
@@ -440,6 +445,11 @@ sub xxreadchunk {
     my $rv = CORE::read $self->fh, $buf, $_[0];
     defined $rv or croak "xreadchunk " . $self->quotedname . ": $!";
     $rv ? $buf : die "EOF\n";
+}
+
+sub xreadchar {
+    my $self = shift;
+    $self->xreadchunk(1)
 }
 
 sub sysread {
