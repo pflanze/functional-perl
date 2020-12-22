@@ -1,5 +1,14 @@
 Revision history for FunctionalPerl
 
+0.72.41 2020-12-22
+    - fixes in meta/code-reformat, apply more FP:Carp bits
+    - work on examples/hiring-without-whiteboards and
+      examples/sendprepare
+    - xIO: add `with_output_to_file`, HashSet: add
+      `array_to_countedhashset`, IO/File: add `xreadchar` method,
+      IOStream: add `xfile_chars`
+    - some fixes
+
 0.72.40 2020-12-1
     - FP::Carp: improve docs, rename fp_croak_nargs to fp_croak_arity,
       and report number of arguments actually passed
