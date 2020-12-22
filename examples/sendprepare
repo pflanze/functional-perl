@@ -36,7 +36,7 @@ our $verbose = 0;
 GetOptions("verbose" => \$verbose, "help" => sub {usage}) or exit 1;
 
 use FP::List;
-use FP::IOStream qw(xfile_replace_lines);
+use FP::IOStream qw(xfile_replace_lines xfile_chars);
 use FP::Ops qw(regex_match);
 use FP::Predicates qw(complement either);
 use Chj::chompspace;
@@ -61,8 +61,14 @@ sub head_get ($head, $name) {
 
 # Get one of the headers
 
+sub head_perhaps_get_one ($head, $name) {
+
+    # XX: what if there are multiple?
+    head_get($head, $name)->perhaps_one
+}
+
 sub head_xgetone ($head, $name) {
-    my ($header) = head_get($head, $name)->perhaps_one
+    my ($header) = head_perhaps_get_one($head, $name)
         or die "missing header '$name'";
     $header
 }
@@ -98,9 +104,19 @@ sub fixlines($lines) {
         or die "missing from address in '$from'";
     my ($fromwhole)  = $from     =~ m@.?: *([^\n]*)@s or die "?";
     my ($fromdomain) = $fromaddr =~ m{\@(.*)}s        or die "?";
-    my $messageid = head_xgetone $head, "Message-ID";
-    my ($messageid_uuid) = header_value($messageid) =~ m{([^<>@]+)\@}s
-        or die "no match in messageid '$messageid'";
+    my $messageid_uuid = do {
+        if (my ($messageid) = head_perhaps_get_one($head, "Message-ID")) {
+            my ($str) = header_value($messageid) =~ m{([^<>@]+)\@}s
+                or die "no match in messageid '$messageid'";
+            $str
+        } else {
+            xfile_chars("/dev/urandom")->take(16)->map (
+                sub ($c) {
+                    sprintf '%02x', ord $c
+                }
+                )->string
+        }
+    };
     my $bcc_values = cons $fromwhole,
         head_get($head, "BCC")->map(*header_value);
 
