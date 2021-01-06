@@ -16,7 +16,7 @@ FP::Ops -- function wrappers around Perl ops
     use FP::List; use FP::Stream; use FP::Lazy; use FP::Equal 'is_equal';
     use FP::Ops qw(add subt applying);
 
-    # Lazy fibonacci sequence using \&add which can also be used as \&add
+    # Lazy fibonacci sequence using \&add
     our $fibs; $fibs =
       cons 1, cons 1, lazy { stream_zip_with \&add, Keep($fibs), rest $fibs };
     is_equal $fibs->take(10),

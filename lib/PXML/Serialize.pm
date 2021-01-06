@@ -318,7 +318,8 @@ LP: {
 
                         # Fallback for references, XX copy-paste
                         print $fh object_force_escape($v,
-                            "pxml_serialized_body_string", *content_escape, $fh)
+                            "pxml_serialized_body_string", \&content_escape,
+                            $fh)
                             or die $!;
                     }
                 }
@@ -364,7 +365,7 @@ LP: {
 
                     # Fallback for references, XX copy-paste
                     print $fh object_force_escape($v,
-                        "pxml_serialized_body_string", *content_escape, $fh)
+                        "pxml_serialized_body_string", \&content_escape, $fh)
                         or die $!;
                 }
             }

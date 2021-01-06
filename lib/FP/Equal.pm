@@ -78,7 +78,7 @@ they will give "no such method" exceptions; C<relaxedequal> falls back
 to using L<FP::DumperEqual> (which uses L<Data::Dumper>) in such
 cases.
 
-This does *name based\&type comparison: structurally equivalent
+This does *name based* type comparison: structurally equivalent
 objects do not count as equal if they do not have the same class (or
 more general, reference name); the `FP_Equal_equal` method is not even
 called in this case, and the functions return undef. This might be

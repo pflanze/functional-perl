@@ -126,7 +126,7 @@ TEST {
 1;
 
 TEST {
-    (purearray ["a", 1], ["b", 2], ["a", 4])->hash_group_by(*array_first)
+    (purearray ["a", 1], ["b", 2], ["a", 4])->hash_group_by(\&array_first)
 }
 { 'a' => [['a', 1], ['a', 4]], 'b' => [['b', 2]] };
 

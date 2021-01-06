@@ -18,7 +18,7 @@ FP::Predicates
     is is_string("Hi"), 1;
     is is_string(["Hi"]), 0;
     use FP::List; use FP::Equal 'is_equal';
-    is_equal list(1, 2, 3, 0, -1, "hi", [1])->map(*is_natural0),
+    is_equal list(1, 2, 3, 0, -1, "hi", [1])->map(\&is_natural0),
              list(1, 1, 1, 1, 0, 0, 0);
 
     package Foo {
@@ -31,7 +31,7 @@ FP::Predicates
         #   $is_age), of course; or use an inline expression (second
         #   line below)
 
-        use FP::Struct [[\&is_string, "name"], [*is_age, "age"]];
+        use FP::Struct [[\&is_string, "name"], [\&is_age, "age"]];
 
         # use FP::Struct [[\&is_string, "name"],
         #                 [both (\&is_natural0, less_than 130), "age"]];
@@ -357,8 +357,8 @@ sub is_procedure {
 
     TEST { is_procedure [] } 0;
 TEST { is_procedure \&is_procedure } 1;
-TEST { is_procedure \&is_procedure } 1;
-TEST { is_procedure \&fifu } 0;
+TEST { is_procedure *is_procedure } 1;
+TEST { is_procedure *fifu } 0;
 
 my $classpart_re = qr/\w+/;
 

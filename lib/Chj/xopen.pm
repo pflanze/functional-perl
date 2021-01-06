@@ -54,7 +54,7 @@ used with read or readdir. That's true for perl 5.005x - 5.6.1 on linux.)
 
 =item xopen_update EXPR
 
-Those *optionally exported\&functions check the one given input
+Those *optionally exported* functions check the one given input
 parameter for <>+ chars at the beginning, and either croak if they
 don't match the purpose of the function, or prepend the right chars if
 missing.
@@ -63,7 +63,7 @@ missing.
 
 =head1 BUGS
 
-Stuff like >&1 not yet really supported by the above xopen_\&functions.
+Stuff like >&1 not yet really supported by the above xopen_* functions.
 
 =head1 SEE ALSO
 

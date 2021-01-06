@@ -66,7 +66,7 @@ sub _path0_to_title_mod($str) {
 
 # ------------------------------------------------------------------
 
-use FP::Struct [[\&is_procedure, "is_indexpath0"], [*is_boolean, "downcaps"],];
+use FP::Struct [[\&is_procedure, "is_indexpath0"], [\&is_boolean, "downcaps"],];
 
 sub is_md ($self, $path) {
     $path =~ /\.md$/s

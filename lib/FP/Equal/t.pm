@@ -146,13 +146,13 @@ TEST {
 undef;
 
 # globs
-TEST { tequals \&foo::bar, "*foo::bar" } undef;
+TEST { tequals *foo::bar, "*foo::bar" } undef;
 TEST { tequals((*foo::bar) . "", "*foo::bar") } 1;
-TEST { tequals \&foo, *FP::Equal::t::foo } 1;
+TEST { tequals *foo, *FP::Equal::t::foo } 1;
 TEST { tequals \*foo, \*FP::Equal::t::foo } 1;
 TEST { tequals \(*foo::bar), \("*foo::bar") } undef;
 TEST { tequals \(*foo::bar), \(*foo::baz) } '';
-TEST { tequals \&foo, *bar } '';
+TEST { tequals *foo, *bar } '';
 
 # filehandles
 TEST {
