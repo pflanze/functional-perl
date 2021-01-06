@@ -133,6 +133,165 @@ TEST { compare_range qw(== 5 or == 6) } '5 or 6';
 TEST_EXCEPTION { compare_range qw(== 5 or > 6) }
 'don\'t know how to handle \'== and >\'';
 
+my $identifier_re = qr/[_a-zA-Z]\w*(?:::[_a-zA-Z]\w*)*/;
+my $globref_re    = qr/\{[A-Z]+\}/;
+
+my %pre_identifiers_that_need_glob = map { $_ => 1 } (
+    'local', 'undef',
+
+    # '=item * Use of member names that are also used as subroutine names, perl'
+    # (ugly since should check for the '='?...)
+    'item'
+);
+
+sub glob2functionref ($str, $is_comment) {
+    my $perhapsspace = $is_comment ? "" : qr/ ?/;
+    $str =~ s{(
+        ([\(\[\{=>#,]|$identifier_re) # pre
+        (\s*) # spacing
+        \* $perhapsspace ($identifier_re) )}{
+        my ($all, $pre, $spacing, $identifier)= ($1, $2, $3, $4);
+        my $post = substr($str, pos($str)+length($all), 10);
+        my $prepre = substr($str, 0, pos($str)); # XX performance?
+        # use FP::Repl;repl;
+        if ($identifier =~ m{^STD}
+            #or $post =~ m{^\*}
+            # including ' # possibly *map contents* of inline code or code sections':
+            or $post =~ m{^(?:[^*]{0,20}\w)?\*}
+            # *Foo{CODE} and such:
+            or $post =~ m{^$globref_re}
+            # 'local (*F);' etc.:
+            or $pre_identifiers_that_need_glob{$pre}
+            or ($prepre =~ /\b($identifier_re)\s*\z/s
+                and $pre_identifiers_that_need_glob{$1})
+            # 'our @EXPORT_OK = qw(*trace_failures ..)':
+            or $prepre =~ /\@EXPORT\w*\s*=.{0,70}\z/s
+            # 'use FP::Failure qw(*use_failure *fails);':
+            or $prepre =~ /\bqw\s*(?:[<\(\"\'\[](?:\s*[*&$@]$identifier_re)*\s*)?\z/s
+            # 'tequals *foo, *FP::Equal::t::foo':
+            or $prepre =~ /\btequals\b.{0,70}\z/s
+            # '$code =~ s/\buse\s*Sub::Call::Tail\b.*?;//s;':
+            or $prepre =~ /=~\s*.{0,70}\z/s
+            # 'our $get = $db->prepare("select * from, *examples/csv_to_xml-example.csv");':
+            or $prepre =~ /[^\\]\"[^\"]{0,70}\z/s
+            # '$n * fact($n - 1)'
+            or $prepre =~ /[\$]\z/s
+            # 'our @EXPORT* variables yet. Drop me a note if you would like to have that.)'
+            # and
+            # '|($PACKAGE)\s*->\s*new)' (regex rule)
+            or $prepre =~ /[\@\$\*\\]\s*\z/s
+            # 'to prevent redefinitions of subroutines *which are NOT in the namespace'
+            or ($pre =~ /^$identifier_re\z/
+                and $prepre =~ /^\s*(?:\s*\w+,?)*\s*\z/s)
+        ) {
+            $all
+        } else {
+            "$pre$spacing\\\&$identifier"
+        }
+    }sgex;
+    $str
+}
+
+TEST {
+    glob2functionref
+        "; *bar = *foo1; # * foo2 is fine, *bar is fine, *not* unexpected.", 0
+}
+'; *bar = \\&foo1; # \\&foo2 is fine, \&bar is fine, *not* unexpected.';
+TEST {
+    glob2functionref
+        "*bar = *foo; # * foo is fine, *bar is fine, *not* unexpected.", 1
+}
+'*bar = \\&foo; # * foo is fine, \&bar is fine, *not* unexpected.';
+TEST {
+    glob2functionref 'local (*F);', 0
+}
+'local (*F);';
+TEST { glob2functionref 'BEGIN { undef(*array) }', 0 }
+'BEGIN { undef(*array) }';
+TEST { glob2functionref 'BEGIN { undef *array }', 0 }
+'BEGIN { undef *array }';
+TEST { glob2functionref ' *fm = memoizing *f; # memoize in process memory', 0 }
+' *fm = memoizing \&f; # memoize in process memory';
+TEST {
+    glob2functionref
+        'our @EXPORT_OK = qw(*trace_failures *use_failure *fails);', 0
+}
+'our @EXPORT_OK = qw(*trace_failures *use_failure *fails);';
+TEST { glob2functionref 'use FP::Failure qw(*use_failure *fails);', 0 }
+'use FP::Failure qw(*use_failure *fails);';
+TEST {
+    glob2functionref 'TEST { tequals((*foo::bar) . "", "*foo::bar") } 1;
+TEST { tequals *foo, *FP::Equal::t::foo } 1;', 0
+}
+'TEST { tequals((*foo::bar) . "", "*foo::bar") } 1;
+TEST { tequals *foo, *FP::Equal::t::foo } 1;';
+
+sub deglob ($line) {
+
+    # In comments, only convert globs if they appear without space
+    # after the star (with a space, it's probably a bullet point).
+    if (my ($pre, $post) = $line =~ /^([^#]*)#(.*)/s) {
+        glob2functionref($pre, 0) . "#" . glob2functionref($post, 1)
+    } else {
+        glob2functionref($line, 0)
+    }
+}
+
+TEST { deglob 'cmp => on(*string_lc, *string_cmp),' }
+'cmp => on(\&string_lc, \&string_cmp),';
+
+TEST {
+    deglob
+        '$self->if_suffix_md_to_html($path, $for_title, *identity, *identity)'
+}
+'$self->if_suffix_md_to_html($path, $for_title, \&identity, \&identity)';
+
+TEST { deglob '$code =~ s/\buse\s*Sub::Call::Tail\b.*?;//s;' }
+'$code =~ s/\buse\s*Sub::Call::Tail\b.*?;//s;';
+TEST {
+    deglob
+        'our $get = $db->prepare("select * from, *examples/csv_to_xml-example.csv");'
+}
+'our $get = $db->prepare("select * from, *examples/csv_to_xml-example.csv");';
+
+TEST { deglob 'local *add = \&counting_add;' } 'local *add = \&counting_add;';
+TEST { deglob '*is_AlsoSee = is_heading_of(sub($s) { $s =~ /also *see/i });' }
+'*is_AlsoSee = is_heading_of(sub($s) { $s =~ /also *see/i });';
+TEST { deglob ' # possibly *map contents* of inline code or code sections' }
+' # possibly *map contents* of inline code or code sections';
+TEST { deglob '$perl++ if $str =~ /(?:^|\n)\s*use\s+\w+/;' }
+'$perl++ if $str =~ /(?:^|\n)\s*use\s+\w+/;';
+
+# yes I know, it's a complete hack, this *is to get things done*.
+TEST { deglob '$perl += 1 if $str =~ /(?:^|\n|;)\s*push\s+\@\w+\s*,\s*/;' }
+'$perl += 1 if $str =~ /(?:^|\n|;)\s*push\s+\@\w+\s*,\s*/;';
+TEST { deglob '$n * fact($n - 1)' }
+'$n * fact($n - 1)';
+TEST {
+    deglob
+        'our @EXPORT* variables yet. Drop me a note if you would like to have that.)'
+}
+'our @EXPORT* variables yet. Drop me a note if you would like to have that.)';
+TEST {
+    deglob
+        '=item * Use of member names that are also used as subroutine names, perl'
+}
+'=item * Use of member names that are also used as subroutine names, perl';
+TEST {
+    deglob
+        'to prevent redefinitions of subroutines *which are NOT in the namespace'
+}
+'to prevent redefinitions of subroutines *which are NOT in the namespace';
+TEST { deglob '|($PACKAGE)\s*->\s*new)' } '|($PACKAGE)\s*->\s*new)';
+TEST {
+    deglob
+        '        [*is_procedure,                                            "nav_bar"],'
+}
+'        [\&is_procedure,                                            "nav_bar"],';
+
+# Ah this is not converted in real case since it's in bench/globs!
+TEST { deglob 'time_this { t *inc } " *";' } 'time_this { t \&inc } " *";';
+
 our $current_file;
 
 sub ops () {
@@ -275,6 +434,21 @@ sub ops () {
                 $_
             }
         ],
+        deglob => [
+            0,
+            sub {
+                return $_
+                    if (
+                    # this file uses globs for function passing on
+                    # purpose:
+                    $current_file eq 'bench/globs' or
+
+                    # leave tests etc. alone:
+                    $current_file eq 'meta/code-reformat'
+                    );
+                deglob $_
+            }
+        ]
     )
 }
 
@@ -318,7 +492,8 @@ sub run {
 }
 
 if ($opt_test) {
-    Chj::TEST::run_tests(__PACKAGE__);
+    my $failures = Chj::TEST::run_tests(__PACKAGE__)->{failures};
+    exit($failures ? 1 : 0)
 } elsif ($opt_repl) {
     require FP::Repl;
     FP::Repl->import("repl");
@@ -326,7 +501,7 @@ if ($opt_test) {
 } elsif (defined $opt_run) {
     require FP::Show;
     my $res;
-    eval "\$res= do { $opt_run }; 1" || die $@;
+    eval "\$res= do { $opt_run }; 1" or die $@;
     print FP::Show::show($res), "\n" or die $!;
 } else {
     run
