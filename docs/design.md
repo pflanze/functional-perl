@@ -52,7 +52,7 @@ For example, both
 
 and
 
-    list (1,3,4)->map (*inc)
+    list (1,3,4)->map (\&inc)
 
 result in the same choice of algorithm. The shorter method name is
 possible thanks to the dispatch on the type of the object. Compare to:
@@ -61,7 +61,7 @@ possible thanks to the dispatch on the type of the object. Compare to:
 
 or the corresponding
 
-    array_to_stream ([1,3,4])->map (*inc)
+    array_to_stream ([1,3,4])->map (\&inc)
 
 which shows that there's no need to specify the kind of sequence
 when using method syntax.
@@ -92,13 +92,13 @@ the list; afterwards, the code stays in either `list_map` or
 `stream_map`(*). This means that prepending a value to a stream makes
 the non-lazy map implementation be used:
 
-    cons (0, array_to_stream [1,3,4])->map (*inc)
+    cons (0, array_to_stream [1,3,4])->map (\&inc)
 
 returns an eagerly evaluated list, not a stream. If that's not
 what you want, you can still prefix the method name with `stream_`
 yourself to force the lazy variant:
 
-    cons (0, array_to_stream [1,3,4])->stream_map (*inc)
+    cons (0, array_to_stream [1,3,4])->stream_map (\&inc)
 
 returns a stream.
 

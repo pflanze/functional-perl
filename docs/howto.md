@@ -209,7 +209,7 @@ But this means that the above becomes:
 
 or
 
-    my $results = array_map *square, $inputs;
+    my $results = array_map \&square, $inputs;
 
 or
 
@@ -219,7 +219,7 @@ or
 
 or then still
 
-    my $results = array_map *square, \@inputs;
+    my $results = array_map \&square, \@inputs;
 
 
 (Pick your favorite? Should this project give a recommendation?)

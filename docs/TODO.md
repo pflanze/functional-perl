@@ -89,7 +89,7 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
 
 * Immutable and mutable blessed strings?
 
-* Currently `purearray(3,4)->cons(2)->map(*inc)` is broken. Figure out
+* Currently `purearray(3,4)->cons(2)->map(\&inc)` is broken. Figure out
   which way to go, perhaps implement `FP::Vec` first? How does Clojure
   handle it again?
 

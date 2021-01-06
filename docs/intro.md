@@ -190,7 +190,7 @@ simpler to type and looks better, in the author's opinion, and when
 the subroutine is redefined the glob will call the new definition,
 which is usually what you want, also setting and retrieving function
 values becomes symmetric (like in `*is_string_list = list_of
-*is_string;`). Thus this intro is going to use this style from now
+\&is_string;`). Thus this intro is going to use this style from now
 on. **NOTE: some of the nice folks on the `#perl` IRC channel on
 freenode have voiced strong concern about this, given globs are an
 otherwise rarely and also rather unsafe feature of Perl (it's not
@@ -202,7 +202,7 @@ be an approach agreed upon by the community, it's not, and its use may
 be deprecated here in the future! The author still hopes for a nicer
 syntax though.**
 
-    fperl> list(2,3,4)->fold(*add, 0)
+    fperl> list(2,3,4)->fold(\&add, 0)
     $VAR1 = 9;
 
 What if you would use `cons` instead of `+`? 
@@ -213,7 +213,7 @@ What if you would use `cons` instead of `+`?
 The anonymous subroutine wrapper here is truly unnecessary, of course,
 the following is getting rid of it:
 
-    fperl> list(2,3,4)->fold(*cons, null)
+    fperl> list(2,3,4)->fold(\&cons, null)
     $VAR1 = list(4, 3, 2);
 
 As you can see, this prepended the value 2 to the empty list, then
@@ -226,7 +226,7 @@ ordering is preserved there's also `fold_right`, which reverses the
 order of the call chain (it begins at the right of the list,
 i.e. calling `cons(4, null)` first):
 
-    fperl> list(2,3,4)->fold_right(*cons, null)
+    fperl> list(2,3,4)->fold_right(\&cons, null)
     $VAR1 = list(2, 3, 4);
 
 i.e. this simply copies the list, which is actually pointless: lists
@@ -237,9 +237,9 @@ identical copy of them.
 Of course there are other operations where the ordering is relevant,
 for example division (`/` is wrapped as `div` by `FP::Ops`):
 
-    fperl> list(10,20)->fold(*div, 1)
+    fperl> list(10,20)->fold(\&div, 1)
     $VAR1 = '2';
-    fperl> list(10,20)->fold_right(*div, 1)
+    fperl> list(10,20)->fold_right(\&div, 1)
     $VAR1 = '0.5';
 
 (For another easy to try example, experiment with the `array` function
@@ -593,7 +593,7 @@ Let's switch back to the `:s` view mode:
 It shows evaluated promises as their value directly. This is useful
 when dealing with bigger, lazily evaluated data structures.
 
-    fperl> our $l = list(3,2,1,0,-1)->map(*inverse)
+    fperl> our $l = list(3,2,1,0,-1)->map(\&inverse)
     $VAR1 = list(lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" }, lazy { "DUMMY" });
 
 There's a function `F` which returns a deep copy of its argument with
@@ -1139,7 +1139,7 @@ Let's adapt the example from "Writing a list-generating function":
               : cons &$inverse($i), &$ourlist($i-1)
         };
 
-        &$ourlist($start)->for_each(*xprintln);
+        &$ourlist($start)->for_each(\&xprintln);
     }
 
 Note that this first declares `$ourlist`, then assigns it; this is so
@@ -1155,7 +1155,7 @@ solution is to add
 
 to the imports and change the last line of `hello` into:
 
-        Weakened($ourlist)->($start)->for_each(*xprintln);
+        Weakened($ourlist)->($start)->for_each(\&xprintln);
 
 Another solution, and the one preferred by the author of this text, is
 to use `fix`, the fixpoint combinator, which is a function that takes
@@ -1173,7 +1173,7 @@ argument. That was a mouthful, let's see how it looks:
               : cons &$inverse($i), &$self($i-1)
         };
 
-        &$ourlist($start)->for_each(*xprintln);
+        &$ourlist($start)->for_each(\&xprintln);
     }
 
 When `$ourlist` is called, it calls the nameless function that is the
@@ -1193,7 +1193,7 @@ such as this one--the result from fix can be called immediately:
             $i < $end ? null
               : cons &$inverse($i), &$self($i-1)
         })
-          ->($start)->for_each(*xprintln);
+          ->($start)->for_each(\&xprintln);
 
 Another idea for a syntactical improvement implemented via a module
 would be a recursive variant of `my`, i.e. one where the expression to
@@ -1229,7 +1229,7 @@ higher-order:
 
     fperl> sub inverse ($x) { lazy { 1 / $x } }
     fperl> sub ourlist ($f, $from, $to) { $from >= $to ? cons &$f($from), ourlist($f, $from - 1, $to) : null }
-    fperl> F ourlist (*inverse, 4, 1)
+    fperl> F ourlist (\&inverse, 4, 1)
     $VAR1 = list('0.25', '0.333333333333333', '0.5', '1');
 
 It would now better be renamed, perhaps to something like
@@ -1238,7 +1238,7 @@ downwards_iota and map parts if we're using lazy evaluation, then we
 could use those separately. In fact both are already available in
 functional-perl:
 
-    fperl> F stream_step_range(-1, 4, 1)->map(*inverse)
+    fperl> F stream_step_range(-1, 4, 1)->map(\&inverse)
     $VAR1 = list('0.25', '0.333333333333333', '0.5', '1');
 
 (The naming of these more exotic functions like `stream_step_range` is
@@ -1263,7 +1263,7 @@ each original function in turn (from the right to left) on the
 original arguments, or the result(s) from the previous call). See how
 flip behaves:
 
-    fperl> *div = fun($x,$y) { $x / $y }; *rdiv = flip *div
+    fperl> *div = fun($x,$y) { $x / $y }; *rdiv = flip \&div
     Subroutine fperl::div redefined at (eval 136) line 1.
     $VAR1 = *fperl::rdiv;
     fperl> div 1,2
@@ -1277,14 +1277,14 @@ wrappers around Perl operators, so that they can be easily passed as
 arguments to other functions like `flip` or the `map` methods.
 
     fperl> sub inverse ($x) { lazy { 1 / $x } }
-    fperl> *add_then_invert = compose *inverse, *add
+    fperl> *add_then_invert = compose \&inverse, \&add
     $VAR1 = *fperl::add_then_invert;
     fperl> add_then_invert 1,2
     $VAR1 = lazy { "DUMMY" };
     fperl> F $VAR1
     $VAR1 = '0.333333333333333';
 
-i.e. `compose *inverse, *add` is equivalent to:
+i.e. `compose \&inverse, \&add` is equivalent to:
 
     fun ($x,$y) { inverse (add $x, $y) }
 
@@ -1416,7 +1416,7 @@ the given value directly. Those methods are generated automatically by
 FP::Struct.
 
 The `the_method` function "turns" a method call into a function call:
-just like we would say `*area` if it were an imported function, we say
+just like we would say `\&area` if it were an imported function, we say
 `the_method "area"` to indicate that this method name should be called
 on the value that is passed by map as the (first and only) argument.
 
