@@ -185,26 +185,6 @@ Thus we can write the following, equivalent to what we had above:
     fperl> list(2,3,4)->fold(\&add, 0)
     $VAR1 = 9;
 
-Or we can pass the glob entry instead of taking a reference--this is
-simpler to type and looks better, in the author's opinion, and when
-the subroutine is redefined the glob will call the new definition,
-which is usually what you want, also setting and retrieving function
-values becomes symmetric (like in `*is_string_list = list_of
-\&is_string;`). Thus this intro is going to use this style from now
-on. **NOTE: some of the nice folks on the `#perl` IRC channel on
-freenode have voiced strong concern about this, given globs are an
-otherwise rarely and also rather unsafe feature of Perl (it's not
-checked by `use strict`, globs combine multiple types of values, and
-passing a glob allows the receiver to change its contents thus mutate
-its meaning at a distance) that's also not well documented and
-normally (maybe even here) best not used! So, don't understand this to
-be an approach agreed upon by the community, it's not, and its use may
-be deprecated here in the future! The author still hopes for a nicer
-syntax though.**
-
-    fperl> list(2,3,4)->fold(\&add, 0)
-    $VAR1 = 9;
-
 What if you would use `cons` instead of `+`? 
 
     fperl> list(2,3,4)->fold(sub { cons $_[0], $_[1] }, null)

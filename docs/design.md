@@ -157,8 +157,9 @@ The glob (`*foo`):
 
  - can be serialized easily (as it's just a *name*)
 
- - nicer for debugging, as one can directly see the subroutine package
-   and name, not just an anonymous code ref
+ - nicer for debugging when not using `show` from `FP::Show` or other
+   ways using introspection, as one can directly see the subroutine
+   package and name, not just an anonymous code ref,
 
  - this code fails: `my $f = *foo; goto $f`. But this still works:
    `my $f = *foo; goto &$f`. (`Sub::Call::Tail`'s `tail` is fine.)
@@ -170,19 +171,18 @@ The glob (`*foo`):
    point out the error.
 
 Quick benchmarking of subroutine calls of the two variants did not
-detect a performance difference. For its benefits, this project has
-decided to prefer the glob both in documentation and in cases where
-the value is only handled by code maintained by the project. In cases
-where it returns subroutines to users, at this time it prefers code
-refs to avoid potential confusion and breakage. In any case, all code
-provided by this project is able to handle globs where subroutines (or
-any kind of callables, including overloaded objects) are expected.
+detect a performance difference.
 
 `FP::Predicate`'s `is_procedure` accepts globs if they contain a value
 in the CODE slot, i.e. it adapts its meaning to "*can* represent a
 subroutine". (But Todo: should it return true for any other callable
 (overloaded object) as well? (How can the latter be implemented, by
 way of checking for a '(&' method?))
+
+Earlier versions of FunctionalPerl suggested to use globs. Due to
+globs being a usually rarely used feature in Perl, and the possibility
+for its mutation on a distance, it does not recommend it any longer,
+and all code and examples have been changed to use `\&` instead.
 
 
 ### Naming conventions
