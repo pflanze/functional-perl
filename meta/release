@@ -113,7 +113,13 @@ xxsystem "git", "commit", "-a", "-m", "Release $version";
 xxsystem "perl",        "Makefile.PL";
 xxsystem "make",        "test";
 xxsystem "website/gen", "--trap";
-xxsystem "make",        "dist";
+{
+    my $outpath = "FunctionalPerl-$version.tar.gz";
+    if (-e $outpath) {
+        system "mvnumber", $outpath
+    }
+}
+xxsystem "make", "dist";
 
 print "OK, ready to go.\n";
 
