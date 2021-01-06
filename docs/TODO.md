@@ -43,6 +43,15 @@ See also [[ideas]], [[htmlgen/TODO]], [[functional_XML/TODO]] and the
   equivalent of `->chunks_of(2)->map(the_method "first")` or
   `List::Util` 1.29's function of the same name)
 
+* <Grinnz>: you may find https://metacpan.org/pod/Sub::Identify useful,
+  and https://perldoc.perl.org/Sub::Util#set_subname lets you set a sub
+  name for anonymous subs that is helpful for such debugging, especially
+  when installing anonymous subs in non-anonymous places.
+  
+  `FP::Show` is already using `Sub::Util`, have a look if there's
+  anything to improve. Provide an easy way to tag closures with names?
+
+
 ### Work on the code
 
 * In bin/perlrepl and bin/fperl, use the proper perl version in the
