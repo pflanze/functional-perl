@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.42 2021-1-6
+    - a test fix for Windows
+    - big move from globs to \& for passing function references
+
 0.72.41 2020-12-22
     - fixes in meta/code-reformat, apply more FP:Carp bits
     - work on examples/hiring-without-whiteboards and
