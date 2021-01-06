@@ -41,6 +41,7 @@ my $verbose = 0;
 my @opt_op;
 my $opt_test;
 my $opt_repl;
+my $opt_run;
 
 #our $opt_dry;
 GetOptions(
@@ -50,8 +51,9 @@ GetOptions(
         my (undef, $val) = @_;
         push @opt_op, $val;
     },
-    "test" => \$opt_test,
-    "repl" => \$opt_repl,
+    "test"  => \$opt_test,
+    "repl"  => \$opt_repl,
+    "run=s" => \$opt_run,
 
     #"dry-run"=> \$opt_dry,
 ) or exit 1;
@@ -321,6 +323,11 @@ if ($opt_test) {
     require FP::Repl;
     FP::Repl->import("repl");
     repl();
+} elsif (defined $opt_run) {
+    require FP::Show;
+    my $res;
+    eval "\$res= do { $opt_run }; 1" || die $@;
+    print FP::Show::show($res), "\n" or die $!;
 } else {
     run
 }
