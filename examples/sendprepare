@@ -162,7 +162,7 @@ All good?
 ';
 
 sub sendprepare($path) {
-    xfile_replace_lines $path, *fixlines;
+    xfile_replace_lines $path, \&fixlines;
 }
 
 $ENV{DEBUG}

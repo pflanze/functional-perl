@@ -100,7 +100,7 @@ sub critique($path) {
     } || PFLANZE::ERR->new($path, "$@");
 }
 
-our $critiques = array_to_stream(modulepathlist)->map(*critique);
+our $critiques = array_to_stream(modulepathlist)->map(\&critique);
 
 if ($opt_repl) {
     repl;

@@ -49,7 +49,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST ();
 
-*import = *Chj::TEST::import;
+*import = \&Chj::TEST::import;
 
 sub TEST (&$) { () }
 

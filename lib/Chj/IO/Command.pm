@@ -77,9 +77,9 @@ sub new_out {
     bless $self, $class;
     $self->xlaunch($r, 0, @_)
 }
-*new_writer   = *new_out;
-*new_write    = *new_out;
-*new_receiver = *new_out;
+*new_writer   = \&new_out;
+*new_write    = \&new_out;
+*new_receiver = \&new_out;
 
 sub new_in {
     my $class = shift;
@@ -87,9 +87,9 @@ sub new_in {
     bless $self, $class;
     $self->xlaunch($w, 1, @_)
 }
-*new_reader = *new_in;
-*new_read   = *new_in;
-*new_sender = *new_in;
+*new_reader = \&new_in;
+*new_read   = \&new_in;
+*new_sender = \&new_in;
 
 sub new_combinedsender {
     my $class = shift;

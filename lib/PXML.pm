@@ -64,7 +64,7 @@ sub is_pxml_element;
     package PXML::Body;
 
     # hacky?.
-    *string = *PXML::Element::string;
+    *string = \&PXML::Element::string;
 }
 
 sub pxmlbody {

@@ -147,11 +147,11 @@ package FP::AST::Perl::Var {
     use FP::Predicates ":all";
 
     use FP::Struct [
-        [*is_string, 'name'],
+        [\&is_string, 'name'],
 
         # ^ XX is_package_name ? But isn't everything allowed? But
         # then todo proper printing.
-        #FUTURE: [*is_bool, 'is_lexical'] ?
+        #FUTURE: [\&is_bool, 'is_lexical'] ?
     ] => "FP::AST::_::Perl";
 
     sub string($self) {
@@ -229,7 +229,7 @@ package FP::AST::Perl::Expr {
 package FP::AST::Perl::Get {
     use FP::Predicates ":all";
 
-    use FP::Struct [[*FP::AST::Perl::is_var, 'var'],] => "FP::AST::Perl::Expr";
+    use FP::Struct [[\&FP::AST::Perl::is_var, 'var'],] => "FP::AST::Perl::Expr";
 
     # XX problem is, for CODE vars, Get is only valid in App proc
     # context! Otherwise, Ref must be used! How to type check?
@@ -258,7 +258,7 @@ package FP::AST::Perl::Get {
 package FP::AST::Perl::Ref {
     use FP::Predicates ":all";
 
-    use FP::Struct [[*FP::AST::Perl::is_var, 'var'],] => "FP::AST::Perl::Expr";
+    use FP::Struct [[\&FP::AST::Perl::is_var, 'var'],] => "FP::AST::Perl::Expr";
 
     sub string($self) {
         "\\" . $self->var->string
@@ -288,8 +288,8 @@ package FP::AST::Perl::App {
     use FP::Ops ":all";
 
     use FP::Struct [
-        [*FP::AST::Perl::is_expr, 'proc'],
-        [list_of(*FP::AST::Perl::is_expr), 'argexprs'],
+        [\&FP::AST::Perl::is_expr, 'proc'],
+        [list_of(\&FP::AST::Perl::is_expr), 'argexprs'],
 
         # ^ yes, proc is also an expr, but only yielding one (usable)
         # value, as opposed to argexprs which may yield more used
@@ -343,7 +343,7 @@ package FP::AST::Perl::Number {
     use FP::Predicates ":all";
     use Scalar::Util qw(looks_like_number);
 
-    use FP::Struct [[*looks_like_number, 'perlvalue'],] =>
+    use FP::Struct [[\&looks_like_number, 'perlvalue'],] =>
         "FP::AST::Perl::Value";
 
     sub string($self) {
@@ -371,7 +371,7 @@ package FP::AST::Perl::Literal {
     use FP::List ":all";
     use FP::Ops ":all";
 
-    use FP::Struct [[*FP::AST::Perl::is_value, 'value'],] =>
+    use FP::Struct [[\&FP::AST::Perl::is_value, 'value'],] =>
         "FP::AST::Perl::Expr";
 
     sub string($self) {
@@ -382,8 +382,8 @@ package FP::AST::Perl::Literal {
 }
 
 package FP::AST::Perl::Semicolon {
-    use FP::Struct [[*FP::AST::Perl::is_expr, 'a'],
-        [*FP::AST::Perl::is_expr, 'b'],] => "FP::AST::Perl::Expr";
+    use FP::Struct [[\&FP::AST::Perl::is_expr, 'a'],
+        [\&FP::AST::Perl::is_expr, 'b'],] => "FP::AST::Perl::Expr";
 
     sub string($self) {
         $self->a->string . "; " . $self->b->string
@@ -393,8 +393,8 @@ package FP::AST::Perl::Semicolon {
 
 # mostly-copy-paste of above
 package FP::AST::Perl::Comma {
-    use FP::Struct [[*FP::AST::Perl::is_expr, 'a'],
-        [*FP::AST::Perl::is_expr, 'b'],] => "FP::AST::Perl::Expr";
+    use FP::Struct [[\&FP::AST::Perl::is_expr, 'a'],
+        [\&FP::AST::Perl::is_expr, 'b'],] => "FP::AST::Perl::Expr";
 
     sub string($self) {
         $self->a->string . ", " . $self->b->string
@@ -422,9 +422,9 @@ package FP::AST::Perl::Let {
     use FP::Ops ":all";
 
     use FP::Struct [
-        [list_of(*FP::AST::Perl::is_var), 'vars'],
-        [*FP::AST::Perl::is_nonnoop_expr, 'expr'],
-        [*FP::AST::Perl::is_expr,         'body'],
+        [list_of(\&FP::AST::Perl::is_var), 'vars'],
+        [\&FP::AST::Perl::is_nonnoop_expr, 'expr'],
+        [\&FP::AST::Perl::is_expr,         'body'],
     ] => "FP::AST::Perl::Expr";
 
     sub string($self) {

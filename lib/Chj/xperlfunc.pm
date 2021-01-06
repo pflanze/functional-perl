@@ -60,7 +60,7 @@ These are exported by default.
 
 =item Xlstat(path)
 
-These are wrappers around stat; the x* functions die, the X* ones
+These are wrappers around stat; the x\&functions die, the X\&ones
 return undef on ENOENT errors (and still croak on other errors like
 permission problems).  When successful, they return objects (based on
 array with the stat return values) with accessor methods.
@@ -890,7 +890,7 @@ sub fstype_for_device {
         splice @_, 1, 0, 2;
         goto &checkaccess_for_submask_by_uid_gids;
     }
-    *writable_by_uid_gids = *writeable_by_uid_gids;
+    *writable_by_uid_gids = \&writeable_by_uid_gids;
 
     sub executable_by_uid_gids {
         splice @_, 1, 0, 1;

@@ -90,7 +90,7 @@ sub stream_sum_TRAMPOLINE {
 
 # choose variant:
 
-*stream_sum = *stream_sum_LEAK;
+*stream_sum = \&stream_sum_LEAK;
 
 my $res;
 for (1 .. $m) {

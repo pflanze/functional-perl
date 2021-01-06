@@ -49,7 +49,7 @@ TEST {
     };
     my $a  = purearray(1, 4, 5);
     my $a2 = $a->set(2, 7)->set(0, -1);
-    my $a3 = $a2->update(2, *inc);
+    my $a3 = $a2->update(2, \&inc);
     my $a4 = $a3->push(9, 99)->unshift(77);
     my ($p, $a5) = $a4->pop;
     my ($s, undef) = $a4->shift;
@@ -88,7 +88,7 @@ TEST {
 [[1, 4], [4, 5], [5, 7], 'to out of range: 5', 'from out of range: -1', []];
 
 TEST {
-    purearray(1, 4, 5)->map (*inc)->sum
+    purearray(1, 4, 5)->map (\&inc)->sum
 }
 13;
 

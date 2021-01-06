@@ -65,7 +65,7 @@ my $paths     = stream(qw< /tmp /var/tmp >);
 my $filename  = 'temp123';
 my $ext       = list(qw<pod pm pl>);
 my $all_paths = $paths->cartesian_product(list("/$filename."), $ext)
-    ->map(*list_to_string);
+    ->map(\&list_to_string);
 my $existing_files = $all_paths->filter(unary_operator "-e");
 
 use FP::Repl::Trap;

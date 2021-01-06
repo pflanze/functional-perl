@@ -71,16 +71,16 @@ lazily:
 
     use FP::Div 'inc'; use FP::List 'list';
 
-    is ref( list(30, 60)->map(*inc) ),
+    is ref( list(30, 60)->map(\&inc) ),
        'FP::List::Pair';
-    is ref( list(30, 60)->stream_map(*inc) ),
+    is ref( list(30, 60)->stream_map(\&inc) ),
        'FP::Lazy::Promise';
-    is ref( stream(30, 60)->map(*inc) ),
+    is ref( stream(30, 60)->map(\&inc) ),
        'FP::Lazy::Promise';
-    is ref( stream(30, 60)->stream_map(*inc) ),
+    is ref( stream(30, 60)->stream_map(\&inc) ),
        'FP::Lazy::Promise';
 
-    is ref(force( stream(30, 60)->map(*inc) )),
+    is ref(force( stream(30, 60)->map(\&inc) )),
        'FP::List::Pair';
 
 All of the examples evaluate to the same values--the result isn't
@@ -92,10 +92,10 @@ evaluation of promises it encounters.
 
     use FP::Equal 'equal';
 
-    ok equal(list(30, 60)->map(*inc), list(31, 61));
-    ok equal(list(30, 60)->stream_map(*inc), list(31, 61));
-    ok equal(stream(30, 60)->map(*inc), list(31, 61));
-    ok equal(stream(30, 60)->stream_map(*inc), list(31, 61));
+    ok equal(list(30, 60)->map(\&inc), list(31, 61));
+    ok equal(list(30, 60)->stream_map(\&inc), list(31, 61));
+    ok equal(stream(30, 60)->map(\&inc), list(31, 61));
+    ok equal(stream(30, 60)->stream_map(\&inc), list(31, 61));
 
 =head1 SEE ALSO
 
@@ -278,7 +278,7 @@ TEST { stream_step_range(-1, 3, 1)->array }
 sub stream_length;
 *stream_length = FP::List::make_length(1);
 
-*FP::List::List::stream_length = *stream_length;
+*FP::List::List::stream_length = \&stream_length;
 
 TEST {
     my $s = stream_iota->take(10);
@@ -350,7 +350,7 @@ sub stream_sum {
 }
 
 # XXX sum is in FP::Abstract::Sequence now, although not weakening.. soo ?
-*FP::List::List::stream_sum = *stream_sum;
+*FP::List::List::stream_sum = \&stream_sum;
 
 TEST {
     stream_iota->map(sub { $_[0] * $_[0] })->take(5)->sum
@@ -397,7 +397,7 @@ sub stream_append {
     }
 }
 
-*FP::List::List::stream_append = *stream_append;
+*FP::List::List::stream_append = \&stream_append;
 
 TEST {
     stream_to_string(stream_append string_to_stream("Hello"),
@@ -487,7 +487,7 @@ sub stream_zip2 {
     }
 }
 
-*FP::List::List::stream_zip2 = *stream_zip2;
+*FP::List::List::stream_zip2 = \&stream_zip2;
 
 # n-ary version of stream_zip2
 sub stream_zip {
@@ -505,8 +505,8 @@ sub stream_zip {
     }
 }
 
-*FP::List::List::stream_zip = *stream_zip;    # XX fall back on zip2
-                                              # for 2 arguments?
+*FP::List::List::stream_zip = \&stream_zip;    # XX fall back on zip2
+                                               # for 2 arguments?
 
 sub stream_zip_with {
     my ($f, $l1, $l2) = @_;
@@ -571,7 +571,7 @@ sub stream_fold_right {
 
 *FP::List::List::stream_fold_right = rot3left \&stream_fold_right;
 
-*FP::List::List::stream_preferred_fold = *FP::List::List::stream_fold_right;
+*FP::List::List::stream_preferred_fold = \&FP::List::List::stream_fold_right;
 
 sub make_stream__fold_right {
     my ($length, $ref, $start, $d, $whileP) = @_;
@@ -633,7 +633,7 @@ sub stream__subarray_fold_right_reverse {
 sub array_to_stream {
     @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($a, $maybe_tail) = @_;
-    stream__array_fold_right(*cons, $maybe_tail // null, $a)
+    stream__array_fold_right(\&cons, $maybe_tail // null, $a)
 }
 
 sub stream {
@@ -643,21 +643,21 @@ sub stream {
 sub subarray_to_stream {
     @_ >= 2 and @_ <= 4 or fp_croak_arity "2-4";
     my ($a, $start, $maybe_end, $maybe_tail) = @_;
-    stream__subarray_fold_right(*cons, $maybe_tail // null,
+    stream__subarray_fold_right(\&cons, $maybe_tail // null,
         $a, $start, $maybe_end)
 }
 
 sub subarray_to_stream_reverse {
     @_ >= 2 and @_ <= 4 or fp_croak_arity "2-4";
     my ($a, $start, $maybe_end, $maybe_tail) = @_;
-    stream__subarray_fold_right_reverse(*cons, $maybe_tail // null,
+    stream__subarray_fold_right_reverse(\&cons, $maybe_tail // null,
         $a, $start, $maybe_end)
 }
 
 sub string_to_stream {
     @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($str, $maybe_tail) = @_;
-    stream__string_fold_right(*cons, $maybe_tail // null, $str)
+    stream__string_fold_right(\&cons, $maybe_tail // null, $str)
 }
 
 sub stream_to_string {
@@ -672,7 +672,7 @@ sub stream_to_string {
     $str
 }
 
-*FP::List::List::stream_string = *stream_to_string;
+*FP::List::List::stream_string = \&stream_to_string;
 
 TEST { stream("Ha", "ll", "o")->string } "Hallo";
 
@@ -689,7 +689,7 @@ sub stream_strings_join {
     FP::Array::array_strings_join(stream_to_array($l), $val);
 }
 
-*FP::List::List::stream_strings_join = *stream_strings_join;
+*FP::List::List::stream_strings_join = \&stream_strings_join;
 
 TEST { stream(1, 2, 3)->strings_join("-") }
 "1-2-3";
@@ -712,7 +712,7 @@ sub stream_drop {
     $s
 }
 
-*FP::List::List::stream_drop = *stream_drop;
+*FP::List::List::stream_drop = \&stream_drop;
 
 sub stream_take {
     @_ == 2 or fp_croak_arity 2;
@@ -728,7 +728,7 @@ sub stream_take {
     }
 }
 
-*FP::List::List::stream_take = *stream_take;
+*FP::List::List::stream_take = \&stream_take;
 
 sub stream_take_while {
     @_ == 2 or fp_croak_arity 2;
@@ -779,7 +779,7 @@ sub stream_slice {
     goto &{ Weakened $rec};
 }
 
-*FP::List::List::stream_slice = *stream_slice;
+*FP::List::List::stream_slice = \&stream_slice;
 
 # maybe call it `cut_at` instead?
 
@@ -804,7 +804,7 @@ sub stream_drop_while {
 
 sub stream_ref;
 *stream_ref                 = FP::List::make_ref(1);
-*FP::List::List::stream_ref = *stream_ref;
+*FP::List::List::stream_ref = \&stream_ref;
 
 sub exn (&) {
     @_ == 1 or fp_croak_arity 1;
@@ -833,7 +833,7 @@ sub t_ref {
     ];
 }
 
-t_ref *list, *cons, "list";
+t_ref *list, \&cons, "list";
 t_ref *stream, sub {
     my ($a, $r) = @_;
     lazy { cons $a, $r }
@@ -886,7 +886,7 @@ sub stream_to_array {
     $res
 }
 
-*FP::List::List::stream_array = *stream_to_array;
+*FP::List::List::stream_array = \&stream_to_array;
 
 sub stream_to_purearray {
     my ($l) = @_;
@@ -896,7 +896,7 @@ sub stream_to_purearray {
     FP::PureArray::array_to_purearray($a)
 }
 
-*FP::List::List::stream_purearray = *stream_to_purearray;
+*FP::List::List::stream_purearray = \&stream_to_purearray;
 
 TEST {
     stream(1, 3, 4)->purearray->map (sub { $_[0]**2 })
@@ -910,7 +910,7 @@ sub stream_to_list {
     array_to_list stream_to_array $l
 }
 
-*FP::List::List::stream_list = *stream_to_list;
+*FP::List::List::stream_list = \&stream_to_list;
 
 sub stream_sort {
     @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
@@ -918,18 +918,18 @@ sub stream_sort {
     stream_to_purearray($l)->sort ($maybe_cmp)
 }
 
-*FP::List::List::stream_sort = *stream_sort;
+*FP::List::List::stream_sort = \&stream_sort;
 
 TEST {
     require FP::Ops;
-    stream(5, 3, 8, 4)->sort (*FP::Ops::number_cmp)->array
+    stream(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->array
 }
 [3, 4, 5, 8];
 
-TEST { ref(stream(5, 3, 8, 4)->sort (*FP::Ops::number_cmp)) }
+TEST { ref(stream(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)) }
 'FP::_::PureArray';    # XX ok? Need to `->stream` if a stream is needed
 
-TEST { stream(5, 3, 10, 8, 4)->sort (*FP::Ops::number_cmp)->stream->car }
+TEST { stream(5, 3, 10, 8, 4)->sort (\&FP::Ops::number_cmp)->stream->car }
 3;
 
 # but then PureArray has `first`, too, if that's all you need.
@@ -957,7 +957,7 @@ sub stream_mixed_flatten {
     mixed_flatten($v, $maybe_tail // null, $maybe_delay || \&lazyLight)
 }
 
-*FP::List::List::stream_mixed_flatten = *stream_mixed_flatten;
+*FP::List::List::stream_mixed_flatten = \&stream_mixed_flatten;
 
 sub stream_any {
     @_ == 2 or fp_croak_arity 2;
@@ -985,7 +985,7 @@ sub stream_show {
     join("", map {"  '$_'\n"} @{ stream_to_array $s })
 }
 
-*FP::List::List::stream_show = *stream_show;
+*FP::List::List::stream_show = \&stream_show;
 
 # A stateful fold: collect state while going to the end (starting from
 # the left). Then it's basically a fold_right.
@@ -1126,7 +1126,7 @@ sub stream_cartesian_product_2 {
     Weakened($rec)->($a, $orig_b)
 }
 
-*FP::List::List::stream_cartesian_product_2 = *stream_cartesian_product_2;
+*FP::List::List::stream_cartesian_product_2 = \&stream_cartesian_product_2;
 
 TEST { F stream_cartesian_product_2 list("A", "B"), list(list(1), list(2)) }
 list(list('A', 1), list('A', 2), list('B', 1), list('B', 2));
@@ -1160,7 +1160,7 @@ sub stream_cartesian_product {
     }
 }
 
-*FP::List::List::stream_cartesian_product = *stream_cartesian_product;
+*FP::List::List::stream_cartesian_product = \&stream_cartesian_product;
 
 TEST_STDOUT {
     write_sexpr stream_cartesian_product list("A", "B"), list("C", "D"),

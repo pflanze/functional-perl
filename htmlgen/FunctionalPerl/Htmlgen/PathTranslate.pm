@@ -66,7 +66,7 @@ sub _path0_to_title_mod($str) {
 
 # ------------------------------------------------------------------
 
-use FP::Struct [[*is_procedure, "is_indexpath0"], [*is_boolean, "downcaps"],];
+use FP::Struct [[\&is_procedure, "is_indexpath0"], [*is_boolean, "downcaps"],];
 
 sub is_md ($self, $path) {
     $path =~ /\.md$/s
@@ -97,11 +97,11 @@ TEST { t_if_suffix_md_to_html "Foo/READMe.md" }['then', 'Foo/index.xhtml'];
 TEST { t_if_suffix_md_to_html "Foo/MY.css" }['otherwise', 'Foo/MY.css'];
 
 sub possibly_suffix_md_to_html ($self, $path, $for_title = 0) {
-    $self->if_suffix_md_to_html($path, $for_title, *identity, *identity)
+    $self->if_suffix_md_to_html($path, $for_title, \&identity, \&identity)
 }
 
 sub xsuffix_md_to_html ($self, $path0, $for_title) {
-    $self->if_suffix_md_to_html($path0, $for_title, *identity,
+    $self->if_suffix_md_to_html($path0, $for_title, \&identity,
         sub { die "file does not end in .md: " . show($path0) })
 }
 
@@ -127,7 +127,7 @@ TEST { $t->path0_to_title("bugs/wishlist/listserv/README.md") } 'Listserv';
 TEST { $t->path0_to_title("bugs/wishlist/listserv/other.md") } 'Other';
 
 TEST {
-    $t->is_indexpath0_set(*false)
+    $t->is_indexpath0_set(\&false)
         ->path0_to_title("bugs/wishlist/listserv/README.md")
 }
 'Readme';

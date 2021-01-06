@@ -408,7 +408,7 @@ sub pxml_print_fragment_fast {
             @_ = ($v);
             goto &$with_first_element;
         } else {
-            my $s = force(stream_mixed_flatten($v)->filter(*is_pxml_element));
+            my $s = force(stream_mixed_flatten($v)->filter(\&is_pxml_element));
             if (is_null $s) {
                 goto &$no_element
             } else {
@@ -455,7 +455,7 @@ sub pxml_xhtml_print_fast {
 
 # for now,
 sub pxml_xhtml_print;
-*pxml_xhtml_print = *pxml_xhtml_print_fast;
+*pxml_xhtml_print = \&pxml_xhtml_print_fast;
 
 use Chj::xopen "xopen_write";
 

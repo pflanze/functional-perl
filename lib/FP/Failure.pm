@@ -29,7 +29,7 @@ FP::Failure - failure values
              undef)
     };
 
-    is_equal $vals->map(*is_failure),
+    is_equal $vals->map(\&is_failure),
              list(1, 1, 1, undef, undef, undef);
 
     is_equal $vals->map(sub { my ($v) = @_; $v ? "t" : "f" }),
@@ -41,7 +41,7 @@ FP::Failure - failure values
        'FP::Failure::Failure');
 
     # get the wrapped value
-    is_equal $vals->filter(*is_failure)->map(the_method "value"),
+    is_equal $vals->filter(\&is_failure)->map(the_method "value"),
              list("not good", 666, undef);
 
     # get a nice message

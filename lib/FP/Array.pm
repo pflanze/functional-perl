@@ -16,9 +16,9 @@ FP::Array - pure functions to work with native Perl arrays
     use FP::List; use FP::Equal 'is_equal'; use FP::Div 'inc';
     use FP::Array ':all';
 
-    is_equal array_map(*inc, [3, 4, 6]),
+    is_equal array_map(\&inc, [3, 4, 6]),
              [4, 5, 7];
-    is_equal list([], [3,4], [9])->map(*array_length),
+    is_equal list([], [3,4], [9])->map(\&array_length),
              list(0, 2, 1);
 
 

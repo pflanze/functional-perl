@@ -21,7 +21,7 @@ FP::autobox
     is ref($arr), "ARRAY";
 
     use FP::Div ":all"; use FP::Ops ":all";
-    is $arr->map(*inc)->reduce(*add), 67;
+    is $arr->map(\&inc)->reduce(\&add), 67;
 
     # Calling methods on arrays 'consumes' the arrays, i.e. makes them
     # blessed and immutable (TODO: offer a FP::autobox::mutable or

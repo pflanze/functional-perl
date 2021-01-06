@@ -757,7 +757,7 @@ sub dump_publica {
     )
 }
 
-*dump = *dump_publica
+*dump = \&dump_publica
     ; # as long as we don't have a better dump method; note that I'm almost always using publica fields now, so that's just fine for me most of the time..
 
 1;

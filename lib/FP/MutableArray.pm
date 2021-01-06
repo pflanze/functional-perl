@@ -16,7 +16,7 @@ FP::MutableArray
     use FP::MutableArray;
     use FP::Div 'inc';
 
-    my $a = mutablearray(1,4,5)->map(*inc);
+    my $a = mutablearray(1,4,5)->map(\&inc);
     is $a->sum, 13;
     $a->[0]++;
     is $a->sum, 14;

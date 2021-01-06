@@ -17,7 +17,7 @@ FP::Equal - generic equality comparison
     use FP::List;
     use FP::Div qw(inc);
 
-    ok equal [1, list(2, 3)], [1, list(1, 2)->map(*inc)];
+    ok equal [1, list(2, 3)], [1, list(1, 2)->map(\&inc)];
     is equal( [1, list(2, 3)], [1, list(1, 2)] ),
        ''; # false but defined since same type
     is equal( [1, list(2, 3)], [1, list([], 3)] ),
@@ -78,7 +78,7 @@ they will give "no such method" exceptions; C<relaxedequal> falls back
 to using L<FP::DumperEqual> (which uses L<Data::Dumper>) in such
 cases.
 
-This does *name based* type comparison: structurally equivalent
+This does *name based\&type comparison: structurally equivalent
 objects do not count as equal if they do not have the same class (or
 more general, reference name); the `FP_Equal_equal` method is not even
 called in this case, and the functions return undef. This might be

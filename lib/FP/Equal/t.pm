@@ -56,7 +56,7 @@ sub tequals {
 # from the synopsis
 use FP::List;
 use FP::Div qw(inc);
-TEST { equal [1, list(2, 3)], [1, list(1,  2)->map(*inc)] } 1;
+TEST { equal [1, list(2, 3)], [1, list(1,  2)->map(\&inc)] } 1;
 TEST { equal [1, list(2, 3)], [1, list(1,  2)] } '';
 TEST { equal [1, list(2, 3)], [1, list([], 3)] } undef;
 
@@ -146,13 +146,13 @@ TEST {
 undef;
 
 # globs
-TEST { tequals *foo::bar, "*foo::bar" } undef;
+TEST { tequals \&foo::bar, "*foo::bar" } undef;
 TEST { tequals((*foo::bar) . "", "*foo::bar") } 1;
-TEST { tequals *foo, *FP::Equal::t::foo } 1;
+TEST { tequals \&foo, *FP::Equal::t::foo } 1;
 TEST { tequals \*foo, \*FP::Equal::t::foo } 1;
 TEST { tequals \(*foo::bar), \("*foo::bar") } undef;
 TEST { tequals \(*foo::bar), \(*foo::baz) } '';
-TEST { tequals *foo, *bar } '';
+TEST { tequals \&foo, *bar } '';
 
 # filehandles
 TEST {

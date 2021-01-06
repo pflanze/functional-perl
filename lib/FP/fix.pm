@@ -167,7 +167,7 @@ use FP::Carp;
 
 sub fix;
 
-*fix = *weakcycle;
+*fix = \&weakcycle;
 
 # n-ary version:
 

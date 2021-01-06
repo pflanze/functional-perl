@@ -68,7 +68,7 @@ import definitionlists::Link::constructors;
 import definitionlists::Match::constructors;
 import definitionlists::NonMatch::constructors;
 
-sub parselinks ($str, $processmatch = *Link, $processnonmatch = *NonMatch) {
+sub parselinks ($str, $processmatch = \&Link, $processnonmatch = \&NonMatch) {
     my $pos = 0;
     my @res;
     while ($str =~ /\[([^\[\]]+)\]\(([^()]+)\)/sgc) {
@@ -131,7 +131,7 @@ sub translate_paragraphs($str) {
 }
 
 # XX move this somewhere
-*is_empty_string = *PXML::Serialize::is_empty_string;
+*is_empty_string = \&PXML::Serialize::is_empty_string;
 
 sub pxml_body_is_empty($e) {
     my $l = mixed_flatten($e->body);
@@ -164,7 +164,7 @@ sub de_paragraphy($v) {
     } elsif (my ($v0) = $v->perhaps_one) {
         de_paragraphy($v0)
     } else {
-        $v->map(*de_paragraphy)
+        $v->map(\&de_paragraphy)
     }
 }
 
@@ -180,7 +180,7 @@ sub translate_links($str) {
             translate_paragraphs($str)
         }
     );
-    $l->map(*de_paragraphy)
+    $l->map(\&de_paragraphy)
 }
 
 sub translate_listitem($str) {
@@ -214,7 +214,7 @@ sub translate($str) {
         *definitionlists::Match::c::Match,
         *definitionlists::NonMatch::c::NonMatch
     );
-    my $grouped = $parsed->list->group(*type_eq)->map(the_method "reverse");
+    my $grouped = $parsed->list->group(\&type_eq)->map(the_method "reverse");
     my $body    = $grouped->map(
         fun($l)
         {

@@ -31,7 +31,7 @@ FP::Abstract::Sequence - functional sequence protocol
                   cons(3, 4), 
                   array(3, 4),  # Should we change this given `FP::autobox`?
                   3,
-                  {3 => 4})->map(*is_sequence),
+                  {3 => 4})->map(\&is_sequence),
              list(1, 1, 1, 1, 1, undef, undef, undef);
 
     is is_sequence(cons 3, 4), 1;
@@ -317,7 +317,7 @@ sub reduce_right;
 
 sub sum {
     @_ == 1 or fp_croak_arity 1;
-    $_[0]->reduce(*add)
+    $_[0]->reduce(\&add)
 }
 
 sub mean {
@@ -343,7 +343,7 @@ sub median {
 
 sub product {
     @_ == 1 or fp_croak_arity 1;
-    $_[0]->reduce(*mult)
+    $_[0]->reduce(\&mult)
 }
 
 sub none {

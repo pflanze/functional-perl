@@ -62,13 +62,13 @@ sub t_fn {
     $t_vals->map($fn)->array
 }
 
-TEST { t_fn *is_sequence }
+TEST { t_fn \&is_sequence }
 [1, 1, 1, 1, 1, 1, 1, 1, 1, undef, undef, undef, undef, undef];
 
-TEST { t_fn *is_proper_sequence }
+TEST { t_fn \&is_proper_sequence }
 [1, 1, 1, 1, 1, 1, 1, 1, 0, undef, undef, undef, undef, undef];
 
-TEST { t_fn *is_seq }
+TEST { t_fn \&is_seq }
 [1, 1, 1, 1, 0, 0, 0, 0, 1, undef, undef, undef, undef, undef];
 
 my $t_seqs = $t_vals->filter(\&is_proper_sequence);

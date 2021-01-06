@@ -32,8 +32,8 @@ FP::DBI - DBI with results as lazy lists
 
     use PXML::XHTML;
     TABLE
-      (TH($s->first->map (*TD)),
-       $s->rest->take (10)->map (sub {TR($_[0]->map (*TD))}))
+      (TH($s->first->map (\&TD)),
+       $s->rest->take (10)->map (sub {TR($_[0]->map (\&TD))}))
 
 =head1 DESCRIPTION
 

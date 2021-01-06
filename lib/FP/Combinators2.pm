@@ -16,14 +16,14 @@ FP::Combinators2 - more function combinators
     use FP::Combinators2 ":all";
     use FP::Array qw(array); use FP::Equal ":all";
 
-    my $ra = right_associate_(*array, 0);
+    my $ra = right_associate_(\&array, 0);
     is_equal $ra->(qw(a b c d)),
              ['a', ['b', ['c', 'd']]];
     is_equal $ra->(qw(a b)), ['a', 'b'];
     is_equal $ra->(qw(a)), 'a';
     is_equal $ra->(), 0;
 
-    my $la = left_associate_(*array, 0);
+    my $la = left_associate_(\&array, 0);
     is_equal $la->(qw(a b c d)),
              [[['a', 'b'], 'c'], 'd'];
     is_equal $la->(qw(a b)), ['a', 'b'];

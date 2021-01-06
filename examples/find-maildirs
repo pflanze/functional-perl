@@ -127,6 +127,6 @@ sub find_below ($path, $pred) {
 #use FP::Repl::Trap; # or Chj::Backtrace
 #use FP::Repl;repl;
 
-my $s = find_below($rootdir, *is_maildir);
+my $s = find_below($rootdir, \&is_maildir);
 $s->for_each(the_method "xprintln");
 

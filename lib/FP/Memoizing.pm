@@ -20,8 +20,8 @@ FP::Memoizing - a functional memoize
     my $count = 0;
     sub f { $count++; $_[0] * 5 }
 
-    *fm = memoizing *f; # memoize in process memory
-    *fm2 = memoizing_to_dir $tmp, *f; # memoize to files in ".foo/"
+    *fm = memoizing \&f; # memoize in process memory
+    *fm2 = memoizing_to_dir $tmp, \&f; # memoize to files in ".foo/"
 
     is fm(3), 15;
     is $count, 1;

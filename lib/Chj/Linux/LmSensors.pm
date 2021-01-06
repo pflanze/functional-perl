@@ -51,7 +51,7 @@ use Chj::TEST;
     package Chj::Linux::LmSensors::Selector;
     use FP::Predicates qw(is_string);
 
-    use FP::Struct [[*is_string, 'groupname'], [*is_string, 'sensorname'],],
+    use FP::Struct [[\&is_string, 'groupname'], [\&is_string, 'sensorname'],],
         'FP::Struct::Show', 'FP::Abstract::Pure';
     _END_
 }

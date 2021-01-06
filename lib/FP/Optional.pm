@@ -24,13 +24,13 @@ FP::Optional - dealing with optional values
     if (my ($r) = perhaps_div 10, 2) {
         is $r, 5;
     }
-    *maybe_div = perhaps_to_maybe *perhaps_div;
+    *maybe_div = perhaps_to_maybe \&perhaps_div;
     is maybe_div(10, 2), 5;
     is maybe_div(10, 0), undef;
 
     use FP::Div qw(square);
     # short-cutting evaluation for undef:
-    *optionally_square = optionally(*square);
+    *optionally_square = optionally(\&square);
     is optionally_square(2), 4;
     is optionally_square(undef), undef;
 
@@ -141,14 +141,14 @@ It also offers functions to build chains that propagate failures:
 
 =over 4
 
-=item optionally (*f [, $pos])
+=item optionally (\&f [, $pos])
 
 Returns a function that when receiving undef as its first argument, or
 $_[$pos] if $pos given, directly returns undef without calling f;
 otherwise calls f with the original arguments (with tail-call
 optimization).
 
-=item poptionally (*f)
+=item poptionally (\&f)
 
 Returns a function that when not receiving any argument, directly
 returns (). Otherwise calls it with the original arguments (tail-call

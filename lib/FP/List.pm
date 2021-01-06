@@ -230,7 +230,7 @@ package FP::List::List {
         FP::StrictList::strictlist($s->values)
     }
 
-    # sub purearray: see below, *FP::List::List::purearray
+    # sub purearray: see below, \&FP::List::List::purearray
 
     sub mutablearray {
         @_ == 1 or fp_croak_arity 1;

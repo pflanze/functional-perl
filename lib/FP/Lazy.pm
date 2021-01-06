@@ -366,7 +366,7 @@ sub overloads {
 
 package FP::Lazy::AnyPromise {
 
-    *force = *FP::Lazy::force;
+    *force = \&FP::Lazy::force;
 
     sub FORCE {
         $_[0] = force($_[0]);

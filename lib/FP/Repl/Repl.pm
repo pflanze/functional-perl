@@ -74,7 +74,7 @@ Read the help text that is displayed by entering ":h", ",h", ":?" or
 Completion:
 
  - $ does not filter out scalars only, since perl is not able to do so
- - % and * make completion stop working unless you put a space after
+ - % and \&make completion stop working unless you put a space after
    those sigils. (@ and & work as they should)
  - keep the last 10 or so completion lists, and use those in the ->
    case if the var's type could not be determined.

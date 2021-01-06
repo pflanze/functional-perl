@@ -86,7 +86,7 @@ TEST {
         'tar -xzf foo.tgz',
         'fun inverse ($x) { 1 / $x }',
         'sub inverse ($x) { 1 / $x }'
-    )->map(*sourcelang)
+    )->map(\&sourcelang)
 }
 purearray(
     "Perl",  "shell", "Perl", "shell", "Perl", "Perl",

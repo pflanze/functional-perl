@@ -54,7 +54,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
     package Chj::_::Destructor;
     use FP::Predicates ":all";
-    use FP::Struct [[*is_procedure, "thunk"]], 'FP::Struct::Show',
+    use FP::Struct [[\&is_procedure, "thunk"]], 'FP::Struct::Show',
         'FP::Abstract::Pure';
 
     sub DESTROY {

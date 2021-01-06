@@ -89,7 +89,7 @@ sub FP_Show_show {
     $s->constructor_name . "(" . join(", ", @{ array_map($show, $s) }) . ")"
 }
 
-*FP_Equal_equal = *array_equal;
+*FP_Equal_equal = \&array_equal;
 
 sub is_proper_sequence {1}
 
@@ -177,7 +177,7 @@ sub perhaps_first_and_rest {
 *second          = \&array_second;
 *last            = \&array_last;
 *ref             = \&array_ref;
-*FP_Sequence_ref = *ref;
+*FP_Sequence_ref = \&ref;
 *length          = \&array_length;
 
 sub FP_Sequence_length {
@@ -210,7 +210,7 @@ sub FP_Sequence_length {
 *zip                 = blessing \&array_zip;
 *fold                = rot3left \&array_fold;
 *fold_right          = rot3left \&array_fold_right;
-*preferred_fold      = *fold;                                        # ?
+*preferred_fold      = \&fold;                                       # ?
 *intersperse         = blessing \&array_intersperse;
 *strings_join        = \&array_strings_join;
 *every               = flip \&array_every;

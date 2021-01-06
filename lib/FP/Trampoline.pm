@@ -19,7 +19,7 @@ FP::Trampoline -- tail call optimization without reliance on goto
         my ($n,$tot) = @_;
         $n > 1 ? T{ iterative_fact ($n-1, $tot*$n) } : $tot
         # or
-        # $n > 1 ? TC *iterative_fact, $n-1, $tot*$n : $tot
+        # $n > 1 ? TC \&iterative_fact, $n-1, $tot*$n : $tot
     }
     sub fact {
         my ($n) = @_;

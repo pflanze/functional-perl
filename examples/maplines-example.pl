@@ -20,5 +20,5 @@ my $m = +{
             die "unknown address: '$addr'";
         }
     },
-    cmp => on(*string_lc, *string_cmp),
+    cmp => on(\&string_lc, \&string_cmp),
     }

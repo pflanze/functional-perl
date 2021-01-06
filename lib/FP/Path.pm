@@ -109,13 +109,13 @@ sub typed {
 }
 
 use FP::Struct [
-    typed(list_of(*is_segment), 'rsegments'),     # reversed list
-    typed(*is_boolean,          'has_endslash')
+    typed(list_of(\&is_segment), 'rsegments'),     # reversed list
+    typed(\&is_boolean,          'has_endslash')
     ,    # whether the path is forcibly specifying a
          # dir by using a slash at the end (forcing a
          # dir by ending in "." isn't setting this
          # flag)
-    typed(*is_boolean, 'is_absolute'),    # bool
+    typed(\&is_boolean, 'is_absolute'),    # bool
     ],
     'FP::Struct::Show',
     'FP::Abstract::Equal',
@@ -160,7 +160,7 @@ sub string {
     # constructors directly; adding a type check to the segments field
     # would solve this, but is less efficient as it would have to walk
     # the list on every change instead of only stringification):
-    $rs->for_each(*check_segment);
+    $rs->for_each(\&check_segment);
 
     # force "." for empty relative paths:
     my $rs1 = is_null($rs) && not($s->is_absolute) ? list(".") : $rs;
@@ -270,7 +270,7 @@ sub add {
 sub dirname {
     my $s = shift;
     is_null $$s{rsegments} and die "can't take dirname of empty path";
-    $s->rsegments_update(*rest)->has_endslash_set(1);
+    $s->rsegments_update(\&rest)->has_endslash_set(1);
 }
 
 sub to_relative {

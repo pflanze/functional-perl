@@ -16,7 +16,7 @@ FP::PureArray
     use FP::PureArray;
     use FP::Div 'inc';
 
-    my $a = purearray(1,4,5)->map(*inc);
+    my $a = purearray(1,4,5)->map(\&inc);
     is $a->sum, 13;
 
     # can't mutate it:

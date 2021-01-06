@@ -17,7 +17,7 @@ FP::Array_sort - 'sensible' sorting setup
 
     use FP::Ops 'number_cmp'; use FP::Array ':all'; use FP::Equal 'is_equal';
     is_equal array_sort([[10, 'a'], [15, 'b'], [-3, 'c']],
-                        on *array_first, *number_cmp),
+                        on *array_first, \&number_cmp),
              [[-3, 'c'], [10, 'a'], [15, 'b']];
 
 

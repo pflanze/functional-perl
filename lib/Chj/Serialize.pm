@@ -54,10 +54,10 @@ use Chj::TEST;
     our $deparse = B::Deparse->new("-p", "-l", "-q");
 
     use FP::Struct [
-        [*is_hash,     "_closure_generator_code_to_id"],
-        [*is_hash,     "_id_to_closure_generator_code"],
-        [*is_hash,     "_id_to_closure_generator"],
-        [*is_natural0, "current_id"]
+        [\&is_hash,     "_closure_generator_code_to_id"],
+        [\&is_hash,     "_id_to_closure_generator_code"],
+        [\&is_hash,     "_id_to_closure_generator"],
+        [\&is_natural0, "current_id"]
         ],
         'FP::Struct::Show';
 

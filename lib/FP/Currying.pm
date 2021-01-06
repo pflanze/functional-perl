@@ -29,14 +29,14 @@ two separately passed arguments.
 
     use FP::Array 'array';
 
-    is_deeply curry(*array)->(10)->(20),
+    is_deeply curry(\&array)->(10)->(20),
               [ 10, 20 ];
 
 =item curry_(f, args..)->(args1..)->(args2..)
 
 Same as curry but accepts multiple arguments in each step.
 
-    is_deeply curry_(*array, 1)->(10, 11)->(20, 21, 23),
+    is_deeply curry_(\&array, 1)->(10, 11)->(20, 21, 23),
               [ 1, 10, 11, 20, 21, 23 ];
 
 =item partial(f, args...)->(args1..)
@@ -47,7 +47,7 @@ called, the returned function calls f with args + additional args.
 
 (Same as curry_ but with only one step.)
 
-    is_deeply partial(*array, "hi", 1)->(3, 9),
+    is_deeply partial(\&array, "hi", 1)->(3, 9),
               [ "hi", 1, 3, 9 ];
 
 =item uncurry, uncurry_1_1, uncurry_2_1, uncurry_1_2, uncurry_2_2, uncurry_1_1_1
@@ -162,7 +162,7 @@ sub uncurry_1_1 {
 }
 
 sub uncurry;
-*uncurry = *uncurry_1_1;
+*uncurry = \&uncurry_1_1;
 
 sub uncurry_2_1 {
     @_ == 1 or fp_croak_arity 1;

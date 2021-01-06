@@ -89,14 +89,14 @@ sub counting_add {
 
 TEST {
     $addcount = 0;
-    local *add = *counting_add;
+    local *add = \&counting_add;
     [fibs->ref(80), $addcount]
 }
 [bigint('37889062373143906'), 79];
 
 TEST {
     $addcount = 0;
-    local *add = *counting_add;
+    local *add = \&counting_add;
     [fibs2->ref(80), $addcount]
 }
 [bigint('37889062373143906'), 3160];    # 3160 == 79*80/2
@@ -107,7 +107,7 @@ TEST {
 # sequence, etc. We want to calculate the same sequence only once,
 # which `fibs` achieves.
 
-TEST { Keep($fibs)->take(10)->map(*stringify)->array }
+TEST { Keep($fibs)->take(10)->map(\&stringify)->array }
 [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
 
 TEST { fib 30 }

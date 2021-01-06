@@ -24,17 +24,17 @@ FP::Predicates
     package Foo {
         use FP::Predicates;
 
-        *is_age = both *is_natural0, sub { $_[0] < 130 };
+        *is_age = both \&is_natural0, sub { $_[0] < 130 };
         # ^ if you do not want this to show up as a method,
         #   wrap it in BEGIN { } to get deleted in FP::Struct's
         #   namespace cleaning step; or assign to a scalar instead (my
         #   $is_age), of course; or use an inline expression (second
         #   line below)
 
-        use FP::Struct [[*is_string, "name"], [*is_age, "age"]];
+        use FP::Struct [[\&is_string, "name"], [*is_age, "age"]];
 
-        # use FP::Struct [[*is_string, "name"],
-        #                 [both (*is_natural0, less_than 130), "age"]];
+        # use FP::Struct [[\&is_string, "name"],
+        #                 [both (\&is_natural0, less_than 130), "age"]];
 
         _END_
     }
@@ -357,8 +357,8 @@ sub is_procedure {
 
     TEST { is_procedure [] } 0;
 TEST { is_procedure \&is_procedure } 1;
-TEST { is_procedure *is_procedure } 1;
-TEST { is_procedure *fifu } 0;
+TEST { is_procedure \&is_procedure } 1;
+TEST { is_procedure \&fifu } 0;
 
 my $classpart_re = qr/\w+/;
 

@@ -65,7 +65,7 @@ package FunctionalPerl::Htmlgen::Toc::TocNodeBase {
     use FP::List;
     use PXML::XHTML ":all";
 
-    use FP::Struct [[*is_strictlist, "subnodes"]];
+    use FP::Struct [[\&is_strictlist, "subnodes"]];
 
     sub subnodes_length($self) {
         $self->subnodes->length
@@ -156,9 +156,9 @@ package FunctionalPerl::Htmlgen::Toc::TocNode {
     use FP::List;
 
     use FP::Struct [
-        [*is_string,       "name"],    # as used in the <a name="">
-                                       # already in the document
-        [*is_pxml_element, "header"]
+        [\&is_string,       "name"],    # as used in the <a name="">
+                                        # already in the document
+        [\&is_pxml_element, "header"]
         ],
         "FunctionalPerl::Htmlgen::Toc::TocNodeBase";
 

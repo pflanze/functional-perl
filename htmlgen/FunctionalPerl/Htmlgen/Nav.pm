@@ -130,7 +130,7 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
         array_to_hashset);
 
     use FP::Struct [
-        [*is_procedure,                                            "nav_bar"],
+        [\&is_procedure,                                           "nav_bar"],
         [maybe(instance_of "FunctionalPerl::Htmlgen::Nav::Index"), "index"]
         ],
         "FunctionalPerl::Htmlgen::Nav::Entry";
@@ -176,7 +176,7 @@ package FunctionalPerl::Htmlgen::Nav::TopEntry {
     }
 
     sub path0_navigation_cmp($self) {
-        on $self->path0_to_sortkey, *string_cmp
+        on $self->path0_to_sortkey, \&string_cmp
     }
 
     sub nav_bar_level0 ($self, $items, $item_selected, $viewed_at_item) {
@@ -194,7 +194,7 @@ package FunctionalPerl::Htmlgen::Nav::RealEntry {
     use FP::Ops qw(the_method);
     use FP::Equal qw(equal);
 
-    use FP::Struct [[*is_string, "path0"]],
+    use FP::Struct [[\&is_string, "path0"]],
         "FunctionalPerl::Htmlgen::Nav::Entry", "FP::Abstract::Equal";
 
     sub FP_Show_show ($self, $show) {
