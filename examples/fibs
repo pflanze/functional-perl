@@ -89,14 +89,19 @@ sub counting_add {
 
 TEST {
     $addcount = 0;
-    local *add = \&counting_add;
+
+    # local *add = \&counting_add;
+
+    # to avoid redefinition warnings, use the glob (alternatively
+    # disable the warning):
+    local *add = *counting_add;
     [fibs->ref(80), $addcount]
 }
 [bigint('37889062373143906'), 79];
 
 TEST {
     $addcount = 0;
-    local *add = \&counting_add;
+    local *add = *counting_add;
     [fibs2->ref(80), $addcount]
 }
 [bigint('37889062373143906'), 3160];    # 3160 == 79*80/2

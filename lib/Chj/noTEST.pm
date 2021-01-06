@@ -49,7 +49,10 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST ();
 
-*import = \&Chj::TEST::import;
+#*import = \&Chj::TEST::import;
+
+# to avoid the redefinition warning, use the glob:
+*import = *Chj::TEST::import;
 
 sub TEST (&$) { () }
 
