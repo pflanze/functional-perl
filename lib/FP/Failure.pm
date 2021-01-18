@@ -175,7 +175,7 @@ package FP::Failure::Failure {
     use FP::Struct [
         "value",
         [
-            *maybe_array, "maybe_parents"
+            \&maybe_array, "maybe_parents"
 
                 # Array of failures that are the reason for this
                 # failure. Values other than FP::Failure::Failure are

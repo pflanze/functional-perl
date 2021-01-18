@@ -833,8 +833,8 @@ sub t_ref {
     ];
 }
 
-t_ref *list, \&cons, "list";
-t_ref *stream, sub {
+t_ref \&list, \&cons, "list";
+t_ref \&stream, sub {
     my ($a, $r) = @_;
     lazy { cons $a, $r }
 }, "stream";
@@ -1153,7 +1153,7 @@ sub stream_cartesian_product {
     if (!@v) {
         die "stream_cartesian_product: need at least 1 argument"
     } elsif (@v == 1) {
-        stream_map *list, $v[0]
+        stream_map \&list, $v[0]
     } else {
         my $first = shift @v;
         stream_cartesian_product_2($first, stream_cartesian_product(@v))

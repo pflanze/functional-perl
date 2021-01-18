@@ -211,8 +211,8 @@ sub type_eq ($a, $b) {
 sub translate($str) {
     my $parsed = parse(
         $str,
-        *definitionlists::Match::c::Match,
-        *definitionlists::NonMatch::c::NonMatch
+        \&definitionlists::Match::c::Match,
+        \&definitionlists::NonMatch::c::NonMatch
     );
     my $grouped = $parsed->list->group(\&type_eq)->map(the_method "reverse");
     my $body    = $grouped->map(

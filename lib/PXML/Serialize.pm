@@ -175,7 +175,7 @@ sub _attribute_val_to_string {
         } else {
             object_force_escape(pxmlforce($v),
                 "pxml_serialized_attribute_string",
-                *attribute_escape, $fh)
+                \&attribute_escape, $fh)
         }
     } else {
 
