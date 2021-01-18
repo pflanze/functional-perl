@@ -99,6 +99,13 @@ Note: most of these links are from 2015 and 2016. Please submit new ones if you'
   for
   Testability](https://blog.nelhage.com/2016/03/design-for-testability/)
 
+* See how well
+  [Test::RandomCheck](https://metacpan.org/pod/Test::RandomCheck)
+  works. Look for inspirations from
+  [Hypothesis](https://hypothesis.readthedocs.io/en/latest/), a Python
+  testing framework for property based testing.
+
+
 ## Experiments
 
 * [The list monad in Perl and
