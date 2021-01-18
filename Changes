@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.43 2021-1-18
+    - missed cases in glob conversion, and update docs
+    - add links to testing frameworks
+
 0.72.42 2021-1-6
     - a test fix for Windows
     - big move from globs to \& for passing function references
