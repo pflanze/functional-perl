@@ -30,20 +30,21 @@ WriteMakefile(
     LICENSE => "perl_5",    # including HTTP::Daemon which has the same
     EXE_FILES => [qw(bin/perlrepl bin/fperl)],
     PREREQ_PM => {
-        "Getopt::Long" => 0,
-        "base"         => 0,
-        "NEXT"         => 0,
-        "Symbol"       => 0,
-        "utf8"         => 0,
-        "overload"     => 0,
-        "Digest"       => 0,
-        "warnings"     => 0,
-        "Test::More"   => "0.96",    # for ~proper subtest support
-        "Scalar::Util" => 0,
-        "Import::Into" => 0,
-        "Math::BigInt" => 0,
-        "File::Path"   => 0,
-        "Safe::Isa"    => 0,
+        "Getopt::Long"        => 0,
+        "base"                => 0,
+        "NEXT"                => 0,
+        "Symbol"              => 0,
+        "utf8"                => 0,
+        "overload"            => 0,
+        "Digest"              => 0,
+        "warnings"            => 0,
+        "Test::More"          => "0.96",    # for ~proper subtest support
+        "Scalar::Util"        => 0,
+        "Import::Into"        => 0,
+        "Math::BigInt"        => 0,
+        "File::Path"          => 0,
+        "Safe::Isa"           => 0,
+        "PerlIO::utf8_strict" => 0,
 
         # could be optional (tests should skip if not available):
         "autobox" => 0,

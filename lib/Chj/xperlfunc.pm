@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -1494,10 +1494,19 @@ sub xprintln {
 sub xgetfile_utf8 {
     @_ == 1 or fp_croak_arity 1;
     my ($path) = @_;
-    open my $in, "<", $path or die "xgetfile_utf8($path): open: $!";
-    binmode $in, ":encoding(UTF-8)" or die "binmode";
+
+    # using PerlIO::utf8_strict
+    open my $in, '<:utf8_strict', $path or die "xgetfile_utf8($path): open: $!";
     local $/;
-    my $cnt = <$in> // die "xgetfile_utf8($path): read: $!";
+    my $cnt;
+    eval {
+        $cnt = <$in> // die "read: $!";
+        1
+    } || do {
+        my $e = $@;
+        close $in;
+        die "xgetfile_utf8($path): $e"
+    };
     close $in or die "xgetfile_utf8($path): close: $!";
     $cnt
 }
