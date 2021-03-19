@@ -106,10 +106,11 @@ sub print_tree ($dirpath) {
     binmode STDOUT, ":encoding(UTF-8)" or die "binmode: $!";
     xprintln "{";
 
-    tree_to_records($base, null)->for_each(
-        sub ($record) {
+    tree_to_records($base, null)->for_each_with_islast(
+        sub ($record, $islast) {
             my ($path, $s_ary) = @$record;
-            xprintln " ", encode_json($path), ": ", encode_json($s_ary), ",";
+            xprintln " ", encode_json($path), ": ", encode_json($s_ary),
+                ($islast ? () : ",");
         }
     );
 
