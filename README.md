@@ -331,6 +331,8 @@ in London, Berlin or Switzerland to get an introduction in person.
   `website/gen` to build the website), see
   [Htmlgen](htmlgen/README.md) for details.
 
+* some examples also use: `JSON::PP`
+
 (Todo: should all of the above be listed in PREREQ_PM in Makefile.PL?)
 
 You can run `meta/install-development-dependencies-on-debian` to get
