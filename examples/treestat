@@ -90,11 +90,7 @@ use FP::Show;
 use FP::Repl;
 
 sub tree_to_records ($dirpath, $tail) {
-
-    # can't use xdirectory_paths($dirpath)->fold_right or it will turn
-    # to eager evaluation. XX TODO examine. *And*, sigh, it *does*
-    # leak memory.
-    stream_fold_right(
+    xdirectory_paths($dirpath, \&string_cmp)->fold_right(
         sub ($path, $tail) {
             my $s = xlstat $path;
             cons(
@@ -104,8 +100,7 @@ sub tree_to_records ($dirpath, $tail) {
                 }
             )
         },
-        $tail,
-        xdirectory_paths($dirpath, \&string_cmp)
+        $tail
     )
 }
 
