@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -79,6 +79,7 @@ our @EXPORT_OK = qw(array
     array_hashing_uniq
     array_zip2
     array_for_each
+    array_for_each_with_islast
     array_map
     array_map_with_index
     array_map_with_islast
@@ -372,6 +373,14 @@ sub array_for_each {
     @_ == 2 or fp_croak_arity 2;
     my ($fn, $v) = @_;
     for my $a (@$v) { &$fn($a) }
+}
+
+sub array_for_each_with_islast {
+    @_ == 2 or fp_croak_arity 2;
+    my ($fn, $v) = @_;
+    my $len = @$v;
+    my $n   = 0;
+    for my $a (@$v) { &$fn($a, (++$n == $len)) }
 }
 
 sub array_map {

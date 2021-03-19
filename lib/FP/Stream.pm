@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -695,7 +695,9 @@ TEST { stream(1, 2, 3)->strings_join("-") }
 "1-2-3";
 
 sub stream_for_each;
-*stream_for_each = FP::List::make_for_each(1);
+*stream_for_each = FP::List::make_for_each(1, 0);
+sub stream_for_each_with_islast;
+*stream_for_each_with_islast = FP::List::make_for_each(1, 1);
 
 *FP::List::List::stream_for_each = flip \&stream_for_each;
 

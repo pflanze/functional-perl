@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -1140,7 +1140,8 @@ TEST { [list(3, 4, 5)->reverse_values] }
 [5, 4, 3];
 
 sub make_for_each {
-    my ($is_stream) = @_;
+    @_ == 2 or fp_croak_arity 2;
+    my ($is_stream, $with_islast) = @_;
     my $liststream = $is_stream ? "stream" : "list";
 
     sub {
@@ -1150,8 +1151,9 @@ sub make_for_each {
     LP: {
             $s = force $s;
             if (is_pair $s) {
-                &$proc(car $s);
-                $s = cdr $s;
+                my $s2 = cdr $s;
+                &$proc(scalar car($s), $with_islast ? scalar is_null($s2) : ());
+                $s = $s2;
                 redo LP;
             } elsif (is_null $s) {
 
@@ -1167,9 +1169,12 @@ sub make_for_each {
 }
 
 sub list_for_each;
-*list_for_each = make_for_each(1);
-
+*list_for_each            = make_for_each(1, 0);
 *FP::List::List::for_each = flip \&list_for_each;
+
+sub list_for_each_with_islast;
+*list_for_each_with_islast            = make_for_each(1, 1);
+*FP::List::List::for_each_with_islast = flip \&list_for_each_with_islast;
 
 TEST_STDOUT {
     list(1, 3)->for_each(\&xprintln)
