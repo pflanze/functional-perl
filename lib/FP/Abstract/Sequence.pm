@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -136,6 +136,7 @@ sub FP_Interface__method_names {
             perhaps_one
             zip
             for_each
+            for_each_with_islast
             strings_join
             length
             second
