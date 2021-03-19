@@ -44,6 +44,7 @@ examples/primes
 examples/sendprepare
 examples/skip
 examples/template
+examples/treestat
 functional_XML/README.md
 functional_XML/TODO.md
 functional_XML/t/div
