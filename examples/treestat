@@ -92,13 +92,11 @@ use FP::Repl;
 sub tree_to_records ($dirpath, $tail) {
     xdirectory_paths($dirpath, \&string_cmp)->fold_right(
         sub ($path, $tail) {
-            my $s = xlstat $path;
-            cons(
-                [$path, [@$s]],
-                lazy {
-                    $s->is_dir ? tree_to_records($path, $tail) : $tail
-                }
-            )
+            lazy {
+                my $s = xlstat $path;
+                cons([$path, [@$s]],
+                    $s->is_dir ? tree_to_records($path, $tail) : $tail)
+            }
         },
         $tail
     )
