@@ -9,18 +9,6 @@ use strict;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
-# keep up here to avoid eval capturing lexical context!
-sub unsafe_load_eval ($path) {
-
-    # TOTALLY FREAKING EVILLY UNSAFE, EVALUATES EVERYTHING.
-    my $sub
-        = eval "sub { \n#line 1 "
-        . show($path) . "\n"
-        . xgetfile_utf8($path) . "\n}"
-        or die "file contains errors: '$path', $@";
-    $sub->()
-}
-
 my ($email_full) = $copyright =~ / by ([^\n]*)/s;
 
 my ($mydir, $myname);
@@ -88,6 +76,7 @@ use FP::Stream ":all";
 use Chj::singlequote qw(singlequote);
 use FP::Show;
 use FP::Repl;
+use JSON::PP qw(encode_json decode_json);
 
 sub tree_to_records ($dirpath, $tail) {
     lazy {
@@ -113,25 +102,26 @@ sub print_tree ($dirpath) {
         $base = ".";
     }
 
-    # File paths are bytes anyway, thus bytes would work just as
-    # well. But, be modern. File paths must normally be doubly utf-8
-    # encoded in the file now.
+    # Stream out JSON (should make a module for this!):
     binmode STDOUT, ":encoding(UTF-8)" or die "binmode: $!";
-    xprintln "use utf8;";
     xprintln "{";
 
     tree_to_records($base, null)->for_each(
         sub ($record) {
             my ($path, $s_ary) = @$record;
-            xprintln " ", singlequote($path), " => ", show($s_ary), ",";
+            xprintln " ", encode_json($path), ": ", encode_json($s_ary), ",";
         }
     );
 
     xprintln "}";
 }
 
+sub load_json ($path) {
+    decode_json xgetfile_utf8($path)
+}
+
 sub parse_treestat ($path) {
-    my $hash = unsafe_load_eval($path);
+    my $hash = load_json($path);
 
     # turn values back into stat objects
     for (values %$hash) {
