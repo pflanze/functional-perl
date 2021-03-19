@@ -81,6 +81,7 @@ usage unless @ARGV >= 1;
 use lib '/opt/functional-perl/lib';    # new stuff, or when fperl_noinstall
 use Chj::xperlfunc qw(xlstat xprintln xprint xgetfile_utf8 xchdir);
 use FP::IOStream qw(xdirectory_paths);
+use FP::Ops qw(string_cmp);
 use FP::List qw(cons null);
 use FP::Lazy;
 use FP::Stream ":all";
@@ -104,7 +105,7 @@ sub tree_to_records ($dirpath, $tail) {
             )
         },
         $tail,
-        xdirectory_paths($dirpath)
+        xdirectory_paths($dirpath, \&string_cmp)
     )
 }
 
