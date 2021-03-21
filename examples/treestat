@@ -76,7 +76,14 @@ use FP::Stream ":all";
 use Chj::singlequote qw(singlequote);
 use FP::Show;
 use FP::Repl;
-use JSON::PP qw(encode_json decode_json);
+use JSON::PP qw(decode_json);
+
+# JSON::PP < v4 do not allow non-references by default, thus:
+my $json = JSON::PP->new->allow_nonref;
+
+sub encode_json ($val) {
+    $json->encode($val)
+}
 
 sub tree_to_records ($dirpath, $tail) {
     lazy {
