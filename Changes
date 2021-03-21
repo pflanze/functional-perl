@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.45 2021-3-21
+    - make examples/treestat work with older JSON::PP releases
+
 0.72.44 2021-3-19
     - Abstract/Sequence: add for_each_with_islast
     - xgetfile_utf8: check encoding strictly
