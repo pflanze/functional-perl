@@ -56,19 +56,38 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
-our @EXPORT      = qw(lazy lazyLight force FORCE is_promise);
-our @EXPORT_OK   = qw(delay);
+our @EXPORT      = qw(lazy lazy_if lazyLight force FORCE is_promise);
+our @EXPORT_OK   = qw(delay lazy_backtrace);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use FP::Lazy qw(force FORCE is_promise);    # for re-export
+use FP::Lazy qw(force FORCE is_promise lazy_backtrace);    # for re-export
+
+our $eager = ($ENV{DEBUG_FP_LAZY} and $ENV{DEBUG_FP_LAZY} =~ /^eager$/i);
+our $debug = $ENV{DEBUG_FP_LAZY} ? (not $eager) : '';
 
 sub lazy (&) {
-    bless [$_[0], undef], "FP::TransparentLazy::Promise"
+    $eager
+        ? goto $_[0]
+        : bless [$_[0], undef, $debug && FP::Repl::Stack->get(1)->backtrace],
+        "FP::TransparentLazy::Promise"
+}
+
+sub lazy_if (&$) {
+    (
+        ($_[1] and not $eager)
+        ? bless([$_[0], undef, $debug && FP::Repl::Stack->get(1)->backtrace],
+            "FP::TransparentLazy::Promise")
+        : do {
+            my ($thunk) = @_;
+            @_ = ();
+            goto $thunk;
+        }
+    )
 }
 
 # not providing for caching (1-time-only evaluation)
 sub lazyLight (&) {
-    bless $_[0], "FP::TransparentLazy::PromiseLight"
+    $eager ? goto $_[0] : bless $_[0], "FP::TransparentLazy::PromiseLight"
 }
 
 sub delay (&);

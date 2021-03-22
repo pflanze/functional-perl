@@ -227,7 +227,7 @@ sub lazy_backtrace {    # not a method to avoid shadowing any
     blessed($v) // die_not_a_Lazy_Promise($v);
 
     # Consciously not working for Light ones!
-    if ($v->isa("FP::Lazy::Promise")) {
+    if ($v->isa("FP::Lazy::AnyPromise")) {
         $$v[2]          # really assume such an access works, no fallback to a
                         # method like in FP::List
     } else {
