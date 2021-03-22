@@ -78,6 +78,7 @@ use FP::Show;
 use FP::Repl;
 use JSON qw(decode_json);
 use FP::Div qw(min);
+use Digest;
 
 # JSON::PP < v4 do not allow non-references by default, thus:
 my $json = JSON->new->allow_nonref;
@@ -86,12 +87,19 @@ sub encode_json ($val) {
     $json->encode($val)
 }
 
+sub sha256sum ($path) {
+    my $ctx = Digest->new("SHA-256");
+    $ctx->addfile($path);
+    $ctx->b64digest
+}
+
 sub tree_to_records ($dirpath, $tail) {
     lazy {
         xdirectory_paths($dirpath, \&string_cmp)->fold_right(
             sub ($path, $tail) {
-                my $s = xlstat $path;
-                cons([$path, [@$s]],
+                my $s          = xlstat $path;
+                my $maybe_hash = ($s->is_file and sha256sum($path));
+                cons([$path, [@$s, $maybe_hash]],
                     $s->is_dir ? tree_to_records($path, $tail) : $tail)
             },
             $tail
@@ -129,14 +137,26 @@ sub load_json ($path) {
     decode_json xgetfile_utf8($path)
 }
 
+my $StatWithHash_numfields = 13 + 1;    # 13 from Chj::xperlfunc::xstat
+
+package PFLANZE::StatWithHash {
+    use base 'Chj::xperlfunc::xstat';
+
+    sub hash ($self) {
+        $$self[13]
+    }
+}
+
 sub parse_treestat ($path) {
     my $hash = load_json($path);
 
     # turn values back into stat objects
     for (values %$hash) {
-        @$_ == 13
-            or die "invalid array with other than 13 elements: " . show($_);
-        bless $_, 'Chj::xperlfunc::xstat';
+        @$_ == $StatWithHash_numfields
+            or die
+            "invalid array with other than $StatWithHash_numfields elements: "
+            . show($_);
+        bless $_, 'PFLANZE::StatWithHash';
     }
     $hash
 }
@@ -154,16 +174,24 @@ sub mtime_fixes ($A, $B) {
 
                 # no change to be done
             } else {
-                if ($a->filetype == $b->filetype and $a->size == $b->size) {
+                if ($a->filetype == $b->filetype) {
 
-                    # *Assume* the content is the same (and mtime
-                    # differs *because* of the sync without
-                    # -times). The older mtime should be the correct
-                    # one.
-
-                    # Do not try to update symlinks
-                    unless ($a->is_link) {
+                    # The older mtime should be the correct
+                    # one. Assuming the items have the same content if
+                    # they are regular files.
+                    my $act = sub {
                         $mtime{$k} = min($a->mtime, $b->mtime);
+                    };
+                    if ($a->is_file) {
+                        if ($a->size == $b->size and $a->hash eq $b->hash) {
+                            &$act
+                        }
+                    } else {
+
+                        # Do not try to update symlinks
+                        unless ($a->is_link) {
+                            &$act
+                        }
                     }
                 } else {
 
