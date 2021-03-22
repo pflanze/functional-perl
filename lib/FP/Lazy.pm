@@ -77,7 +77,7 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
         lazy_if { 1 / 0 } $cond
     }
 
-    is is_promise(condprom 1), 1;
+    ok is_promise(condprom 1);
 
     eval {
         # immediate division by zero exception (still pays
