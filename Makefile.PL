@@ -91,7 +91,7 @@ WriteMakefile(
                     #"Function::Parameters" => 0, not used anymore
 
                     # examples/:
-                    "JSON::PP" => 0,
+                    "JSON" => 0,
 
                     # for running htmlgen
                     "Encode"         => 0,

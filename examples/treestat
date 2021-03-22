@@ -76,10 +76,10 @@ use FP::Stream ":all";
 use Chj::singlequote qw(singlequote);
 use FP::Show;
 use FP::Repl;
-use JSON::PP qw(decode_json);
+use JSON qw(decode_json);
 
 # JSON::PP < v4 do not allow non-references by default, thus:
-my $json = JSON::PP->new->allow_nonref;
+my $json = JSON->new->allow_nonref;
 
 sub encode_json ($val) {
     $json->encode($val)
