@@ -77,6 +77,7 @@ use Chj::singlequote qw(singlequote);
 use FP::Show;
 use FP::Repl;
 use JSON qw(decode_json);
+use FP::Div qw(min);
 
 # JSON::PP < v4 do not allow non-references by default, thus:
 my $json = JSON->new->allow_nonref;
@@ -138,6 +139,42 @@ sub parse_treestat ($path) {
         bless $_, 'Chj::xperlfunc::xstat';
     }
     $hash
+}
+
+# This is to be applied after Unison synchronized the contents, and
+# was doing that without the -times flag, hence left the mtime at the
+# target location newer than the source location. Back-dating the
+# files to the older time fixes the synchronisation.
+sub mtime_fixes ($A, $B) {
+    my %mtime;
+    for my $k (keys %$A) {
+        if (defined(my $b = $$B{$k})) {
+            my $a = $$A{$k};
+            if ($a->mtime == $b->mtime) {
+
+                # no change to be done
+            } else {
+                if ($a->filetype == $b->filetype and $a->size == $b->size) {
+
+                    # *Assume* the content is the same (and mtime
+                    # differs *because* of the sync without
+                    # -times). The older mtime should be the correct
+                    # one.
+
+                    # Do not try to update symlinks
+                    unless ($a->is_link) {
+                        $mtime{$k} = min($a->mtime, $b->mtime);
+                    }
+                } else {
+
+                    # uh, different contents, can't know what to do
+                    # (shouldn't happen once synchronisation was run,
+                    # but may be if both sides had changes)
+                }
+            }
+        }
+    }
+    \%mtime
 }
 
 sub trees_repl {
