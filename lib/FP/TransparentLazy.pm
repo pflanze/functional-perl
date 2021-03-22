@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -15,14 +15,84 @@ FP::TransparentLazy - lazy evaluation with transparent evaluation
 
     use FP::TransparentLazy;
 
+    # This is the same SYNOPSIS as in FP::Lazy but with most `force`
+    # calls removed, and slightly differing behaviour in places
+    # (e.g. `$a + 2` will evaluate the thunk here and thus give
+    # division by zero):
+
     my $a = lazy { 1 / 0 };
-    like((eval {
+    eval {
         # $a's evaluation is forced here
         print $a
-    } || $@), qr/division by zero/);
+    };
+    like $@, qr/^Illegal division by zero/;
 
-    # etc., see SYNOPSIS in FP::Lazy but remove the `force` and `FORCE`
-    # calls
+    eval {
+        $a + 2
+    };
+    like $@, qr/^Illegal division by zero/;
+
+    my $count = 0;
+    my $b = lazy { $count++; 1 / 2 };
+    is is_promise($b), 1;
+    is $count, 0;
+    is $b, 1/2; # increments $count
+    is $count, 1;
+    # $b is still a promise at this point (although an evaluated one):
+    is is_promise($b), 1;
+    is $b, 1/2; # does not increment $count anymore
+    is $count, 1;
+
+    # The following stores result of `force $b` back into $b
+    FORCE $b;
+    is is_promise($b), undef;
+    is $b, 1/2;
+    is $count, 1;
+
+    # Note that lazy evaluation and mutation usually doesn't mix well -
+    # lazy programs better be purely functional. Here $tot depends not
+    # just on the inputs, but also on how many elements were evaluated:
+    use FP::Stream qw(stream_map); # uses `lazy` internally
+    use FP::List;
+    my $tot = 0;
+    my $l = stream_map sub {
+        my ($x) = @_;
+        $tot += $x;
+        $x*$x
+    }, list (5,7,8);
+    is $tot, 0;
+    is $l->first, 25;
+    is $tot, 5;
+    is $l->length, 3;
+    is $tot, 20;
+
+    # Also note that `local` does mutation (even if in a somewhat
+    # controlled way):
+    our $foo = "";
+    sub moo {
+        my ($bar) = @_;
+        local $foo = "Hello";
+        lazy { "$foo $bar" }
+    }
+    is moo("you")->force, " you";
+    is moo("you"), " you";
+
+    # runtime conditional lazyness:
+
+    sub condprom {
+        my ($cond) = @_;
+        lazy_if { 1 / 0 } $cond
+    }
+
+    ok is_promise(condprom 1);
+
+    eval {
+        # immediate division by zero exception (still pays
+        # the overhead of two subroutine calls, though)
+        condprom 0
+    };
+    like $@, qr/^Illegal division by zero/;
+
 
 =head1 DESCRIPTION
 
