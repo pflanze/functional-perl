@@ -312,7 +312,17 @@ package FP::List::Pair {
         my $s = shift;
         @_ == 1 or fp_croak_arity 1;
         my @p = ($_[0], $s);
-        bless \@p, ref($s);
+
+        # Now it gets ~ugly: for lazy code, $s can (now, since
+        # AUTOLOAD on them doesn't necessarily force them anymore) now
+        # be a promise with field 2 set.
+        my $immediate_class = ref($s);
+        bless \@p,
+            UNIVERSAL::isa($immediate_class, "FP::Lazy::AnyPromise")
+            ? $$s[2]
+            : $immediate_class;
+
+        # /ugly.
         if ($immutable) {
             Internals::SvREADONLY $p[0], 1;
             Internals::SvREADONLY $p[1], 1;
