@@ -194,7 +194,7 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
-our @EXPORT      = qw(lazy lazy_if lazyLight force FORCE is_promise);
+our @EXPORT      = qw(lazy lazyT lazy_if lazyLight force FORCE is_promise);
 our @EXPORT_OK   = qw(delay force_noeval lazy_backtrace);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
@@ -215,7 +215,8 @@ sub die_not_a_Lazy_Promise {
 # A promise is an array with two fields:
 # index 0: thunk when unevaluated, undef once evaluated
 # index 1: value once evaluated
-# index 2: backtrace if $debug is true
+# index 2: maybe expected value of ref(force($promise))
+# index 3: backtrace if $debug is true
 
 sub lazy_backtrace {    # not a method to avoid shadowing any
                         # 'contained' method
@@ -225,7 +226,7 @@ sub lazy_backtrace {    # not a method to avoid shadowing any
 
     # Consciously not working for Light ones!
     if ($v->isa("FP::Lazy::AnyPromise")) {
-        $$v[2]          # really assume such an access works, no fallback to a
+        $$v[3]          # really assume such an access works, no fallback to a
                         # method like in FP::List
     } else {
         die_not_a_Lazy_Promise($v);
@@ -233,17 +234,30 @@ sub lazy_backtrace {    # not a method to avoid shadowing any
 }
 
 sub lazy (&) {
-    $eager
-        ? goto $_[0]
-        : bless [$_[0], undef, $debug && FP::Repl::Stack->get(1)->backtrace],
+    $eager ? goto $_[0]
+        : $debug
+        ? bless([$_[0], undef, undef, FP::Repl::Stack->get(1)->backtrace],
+        "FP::Lazy::Promise")
+        : bless([$_[0], undef], "FP::Lazy::Promise")
+}
+
+sub lazyT (&$) {
+    $eager ? goto $_[0] : bless [
+        $_[0], undef,
+        $_[1], $debug ? FP::Repl::Stack->get(1)->backtrace : ()
+        ],
         "FP::Lazy::Promise"
 }
 
 sub lazy_if (&$) {
     (
         ($_[1] and not $eager)
-        ? bless([$_[0], undef, $debug && FP::Repl::Stack->get(1)->backtrace],
-            "FP::Lazy::Promise")
+        ? (
+            $debug
+            ? bless([$_[0], undef, undef, FP::Repl::Stack->get(1)->backtrace],
+                "FP::Lazy::Promise")
+            : bless([$_[0], undef], "FP::Lazy::Promise")
+            )
         : do {
             my ($thunk) = @_;
             @_ = ();
@@ -279,6 +293,21 @@ LP: {
             } elsif ($perhaps_promise->isa("FP::Lazy::Promise")) {
                 if (my $thunk = $$perhaps_promise[0]) {
                     my $v = &$thunk();
+                    if ($$perhaps_promise[2]) {
+
+                        # XX *should* this use the can stuff? Or
+                        # really require the exact class to be given?
+                        # Performance invites the latter of
+                        # course. Also, is it nice to be able to
+                        # specify the 'type' "ARRAY" or "HASH" or ""?
+                        ref($v) eq $$perhaps_promise[2] or do {
+                            my $got      = ref $v;
+                            my $expected = $$perhaps_promise[2];
+                            die "promise expected to evaluate to a ref "
+                                . "'$expected' but got a '$got': "
+                                . show($v)
+                        }
+                    }
                     unless ($nocache) {
                         $$perhaps_promise[1] = $v;
                         $$perhaps_promise[0] = undef;
@@ -298,7 +327,8 @@ LP: {
     }
 }
 
-# just remove promise wrapper, don't actually force its evaluation
+# just remove promise wrapper, don't actually force its evaluation. XX
+# does this need updating for the new type feature?
 sub force_noeval {
     @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
@@ -377,33 +407,50 @@ package FP::Lazy::AnyPromise {
     our $AUTOLOAD;    # needs to be declared even though magical
 
     sub AUTOLOAD {
-        my $methodname = $AUTOLOAD;
-        my $v          = force($_[0]);
+        my $methodname         = $AUTOLOAD;
+        my $maybe_expected_ref = $_[0][2];
+        my ($v, $ref);
+        if (defined $maybe_expected_ref) {
+            $ref = $maybe_expected_ref;
+        } else {
+            $v   = force($_[0]);
+            $ref = ref $v;
+        }
         $methodname =~ s/.*:://;
 
         # To be able to select special implementations for lazy
         # inputs, select a method with `stream_` prefix if present.
 
-        # $v can be either a class name or object; it's guaranteed to
-        # be either of those, thus we can use ->can
+        # This will give "Can't call method "can" without a package or
+        # object reference" exception for the empty string given as
+        # type, which is happening in a weird place but actually is
+        # appropriate enough, right? Leaving at that is cheaper than
+        # special-casing it.
 
         my $method
             = ($methodname =~ /^stream_/
-            ? $v->can($methodname)
-            : $v->can("stream_$methodname") // $v->can($methodname)
+            ? $ref->can($methodname)
+            : $ref->can("stream_$methodname") // $ref->can($methodname)
                 // "FP::Mixin::Utils"->can($methodname));
         if ($method) {
 
-            # can't change @_ or it would break 'env clearing' ability
+            # If we forced evaluation, pass on the evaluated value.
+            # Can't rebuild @_ or it would break 'env clearing' ability
             # of the method. Thus assign to $_[0], which will effect
-            # our env, too, but so what? XX still somewhat bad.
-            $_[0] = $v;
+            # our env, too, but so what? XX still somewhat bad. (Is
+            # like `FORCE`.)
+            $_[0] = $v unless defined $maybe_expected_ref;
             goto &$method;
         } else {
 
             # XX imitate perl's ~exact error message?
-            Carp::croak "no method '$methodname' found for object: "
-                . FP::Lazy::strshow($v);
+            if (defined $maybe_expected_ref) {
+                Carp::croak "no method '$methodname' found for expected ref: "
+                    . FP::Lazy::strshow($maybe_expected_ref);
+            } else {
+                Carp::croak "no method '$methodname' found for object: "
+                    . FP::Lazy::strshow($v);
+            }
         }
     }
 
