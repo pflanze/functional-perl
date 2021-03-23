@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -150,9 +150,6 @@ be of real concern in some situations.
 Provide safe promises for these situations? (But that would mean that
 they need to be implemented in C as Perl does not offer the features
 to implement them safely, correct?)
-
-FP_Show_show: instead of "DUMMY", show file/line of the thunk's
-definition?
 
 =head1 DEBUGGING
 
