@@ -316,13 +316,18 @@ package FP::List::Pair {
         # Now it gets ~ugly: for lazy code, $s can (now, since
         # AUTOLOAD on them doesn't necessarily force them anymore) now
         # be a promise with field 2 set.
-        my $immediate_class = ref($s);
-        bless \@p,
-            UNIVERSAL::isa($immediate_class, "FP::Lazy::AnyPromise")
-            ? $$s[2]
-            : $immediate_class;
-
+        # my $immediate_class = ref($s);
+        # bless \@p,
+        #     UNIVERSAL::isa($immediate_class, "FP::Lazy::AnyPromise")
+        #     ? $$s[2]
+        #     : $immediate_class;
         # /ugly.
+
+        # OR, simply (since the above would void any chance of simply
+        # using `lazyT` in stream libraries since one couldn't know
+        # the type of cons cells statically)!:
+        bless \@p, "FP::List::Pair";
+
         if ($immutable) {
             Internals::SvREADONLY $p[0], 1;
             Internals::SvREADONLY $p[1], 1;
