@@ -47,6 +47,12 @@ sub usage {
        By default, treestat uses chdir in print-tree then use '.' as
        the base folder name. This option turns that off.
 
+    --no-sort
+
+       By default, directory entries are sorted alphabetically. This
+       option will disable the sorting and list them in the order as
+       delivered by the OS.
+
   ($email_full)
 ";
     exit(@_ ? 1 : 0);
@@ -54,13 +60,14 @@ sub usage {
 
 use Getopt::Long;
 our $verbose = 0;
-my $opt_no_chdir;
+my ($opt_no_chdir, $opt_no_sort);
 
 #our $opt_dry;
 GetOptions(
     "verbose"  => \$verbose,
     "help"     => sub {usage},
     "no-chdir" => \$opt_no_chdir,
+    "no-sort"  => \$opt_no_sort,
 
     #"dry-run"=> \$opt_dry,
 ) or exit 1;
@@ -95,7 +102,8 @@ sub sha256sum ($path) {
 
 sub tree_to_records ($dirpath, $tail) {
     lazy {
-        xdirectory_paths($dirpath, \&string_cmp)->fold_right(
+        xdirectory_paths($dirpath, $opt_no_sort ? () : \&string_cmp)
+            ->fold_right(
             sub ($path, $tail) {
                 my $s          = xlstat $path;
                 my $maybe_hash = ($s->is_file and sha256sum($path));
@@ -103,7 +111,7 @@ sub tree_to_records ($dirpath, $tail) {
                     $s->is_dir ? tree_to_records($path, $tail) : $tail)
             },
             $tail
-        )
+            )
     }
 }
 
