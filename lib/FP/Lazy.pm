@@ -48,17 +48,19 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
     # just on the inputs, but also on how many elements were evaluated:
     use FP::Stream qw(stream_map); # uses `lazy` internally
     use FP::List;
-    my $tot = 0;
-    my $l = stream_map sub {
-        my ($x) = @_;
-        $tot += $x;
-        $x*$x
-    }, list (5,7,8);
-    is $tot, 0;
-    is $l->first, 25;
-    is $tot, 5;
-    is $l->length, 3;
-    is $tot, 20;
+    {
+        my $tot = 0;
+        my $l = stream_map sub {
+            my ($x) = @_;
+            $tot += $x;
+            $x*$x
+        }, list (5,7,8);
+        is $tot, 0;
+        is $l->first, 25;
+        is $tot, 5;
+        is $l->length, 3;
+        is $tot, 20;
+    }
 
     # Also note that `local` does mutation (even if in a somewhat
     # controlled way):
@@ -85,6 +87,31 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
         condprom 0
     };
     like $@, qr/^Illegal division by zero/;
+
+    # Calling methods on promises will automatically force them, which
+    # is normally necessary since there's no way to know the class of
+    # the object otherwise:
+    use FP::Lazy qw(is_forced);
+    {
+        my $l = lazy { cons(1, null) };
+        ok !is_forced($l);
+        my $l2 = $l->cons(10);
+        # $l was forced even though the only reason is to know which
+        # class to call `cons` on:
+        ok is_forced($l);
+    }
+
+    # There's `lazyT` which specifies the class of the object (the
+    # value of calling `ref` on it) statically, hence there's no need
+    # to evaluate a promise just to call a method. In this case the
+    # called method receives the unevaluated promise as its argument!
+    {
+        my $l = lazyT { cons(1, null) } "FP::List::Pair";
+        ok !is_forced($l);
+        my $l2 = $l->cons(10);
+        # $l has *not* been forced now.
+        ok !is_forced($l);
+    }
 
 
 =head1 DESCRIPTION
@@ -195,7 +222,7 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT      = qw(lazy lazyT lazy_if lazyLight force FORCE is_promise);
-our @EXPORT_OK   = qw(delay force_noeval lazy_backtrace);
+our @EXPORT_OK   = qw(delay force_noeval lazy_backtrace is_forced);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Carp;
@@ -217,6 +244,17 @@ sub die_not_a_Lazy_Promise {
 # index 1: value once evaluated
 # index 2: maybe expected value of ref(force($promise))
 # index 3: backtrace if $debug is true
+
+sub is_forced {
+    @_ == 1 or fp_croak_arity 1;
+    my ($v) = @_;
+
+    # Note that $v might not even be a promise (anymore), given FORCE
+    # and AUTOLOAD.
+
+    my $m;
+    blessed($v) ? (($m = $v->can("FP_Lazy_is_forced")) ? &$m($v) : 1) : 1
+}
 
 sub lazy_backtrace {    # not a method to avoid shadowing any
                         # 'contained' method
@@ -417,6 +455,10 @@ package FP::Lazy::Promise {
 
     use overload FP::Lazy::overloads(1);
 
+    sub FP_Lazy_is_forced {
+        not defined $_[0][0]
+    }
+
     sub FP_Show_show {
         my ($s, $show) = @_;
 
@@ -495,6 +537,10 @@ package FP::Lazy::PromiseLight {
     our @ISA = qw(FP::Lazy::AnyPromise);
 
     use overload FP::Lazy::overloads(0);
+
+    sub FP_Lazy_is_forced {
+        0
+    }
 
     sub FP_Show_show {
         my ($s, $show) = @_;
