@@ -448,7 +448,8 @@ package FP::Lazy::AnyPromise {
 
 use FP::Show qw(subprefix_to_show_coderef);
 
-my $lazy_thunk_show = subprefix_to_show_coderef("lazy ");
+my $lazy_thunk_show  = subprefix_to_show_coderef("lazy ");
+my $lazyT_thunk_show = subprefix_to_show_coderef("lazyT ");
 
 package FP::Lazy::Promise {
     our @ISA = 'FP::Lazy::AnyPromise';
@@ -463,8 +464,12 @@ package FP::Lazy::Promise {
         my ($s, $show) = @_;
 
         # do not force unforced promises
-        if ($$s[0]) {
-            &$lazy_thunk_show($$s[0])
+        if (defined $$s[0]) {
+            if (defined(my $cl = $$s[2])) {
+                &$lazyT_thunk_show($$s[0]) . " " . &$show($cl)
+            } else {
+                &$lazy_thunk_show($$s[0])
+            }
         } else {
             &$show($$s[1])
         }
