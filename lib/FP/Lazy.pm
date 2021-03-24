@@ -396,12 +396,36 @@ package FP::Lazy::AnyPromise {
     *force = \&FP::Lazy::force;
 
     sub FORCE {
-        $_[0] = force($_[0]);
+        $_[0] = FP::Lazy::force($_[0]);
     }
 
     sub DESTROY {
 
         # nothing, catch this to prevent it from entering AUTOLOAD
+    }
+
+    # XXX TODO: provide a `can` method, right?
+
+}
+
+use FP::Show qw(subprefix_to_show_coderef);
+
+my $lazy_thunk_show = subprefix_to_show_coderef("lazy ");
+
+package FP::Lazy::Promise {
+    our @ISA = 'FP::Lazy::AnyPromise';
+
+    use overload FP::Lazy::overloads(1);
+
+    sub FP_Show_show {
+        my ($s, $show) = @_;
+
+        # do not force unforced promises
+        if ($$s[0]) {
+            &$lazy_thunk_show($$s[0])
+        } else {
+            &$show($$s[1])
+        }
     }
 
     our $AUTOLOAD;    # needs to be declared even though magical
@@ -413,7 +437,7 @@ package FP::Lazy::AnyPromise {
         if (defined $maybe_expected_ref) {
             $ref = $maybe_expected_ref;
         } else {
-            $v   = force($_[0]);
+            $v   = FP::Lazy::force($_[0]);
             $ref = ref $v;
         }
         $methodname =~ s/.*:://;
@@ -454,8 +478,6 @@ package FP::Lazy::AnyPromise {
         }
     }
 
-    # XXX TODO: provide a `can` method, right?
-
     # should really have a maybe_ prefix, but since it's for debugging
     # purposes only (and in that case also likely always returns a
     # value) and we like short names for that, leave it at this, ok?
@@ -464,28 +486,6 @@ package FP::Lazy::AnyPromise {
     sub bt {
         my $s = shift;
         $$s[2]
-    }
-
-}
-
-use FP::Show qw(subprefix_to_show_coderef);
-
-my $lazy_thunk_show = subprefix_to_show_coderef("lazy ");
-
-package FP::Lazy::Promise {
-    our @ISA = 'FP::Lazy::AnyPromise';
-
-    use overload FP::Lazy::overloads(1);
-
-    sub FP_Show_show {
-        my ($s, $show) = @_;
-
-        # do not force unforced promises
-        if ($$s[0]) {
-            &$lazy_thunk_show($$s[0])
-        } else {
-            &$show($$s[1])
-        }
     }
 }
 
