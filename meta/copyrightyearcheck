@@ -1,0 +1,78 @@
+#!/usr/bin/perl -w
+
+my $copyright = <<'COPYRIGHT';
+# Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
+# Published under the same terms as perl itself
+COPYRIGHT
+
+use strict;
+use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
+
+my ($email_full) = $copyright =~ / by ([^\n]*)/s;
+
+my ($mydir, $myname);
+
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+
+sub usage {
+    print STDERR map {"$_\n"} @_ if @_;
+    print "$myname
+
+  Print list of paths from checked-in files that have a Copyright
+  statement with the last year number older than the year of the
+  author time of the last commit with that file.
+
+  ($email_full)
+";
+    exit(@_ ? 1 : 0);
+}
+
+use Getopt::Long;
+our $verbose = 0;
+
+#our $opt_dry;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+
+    #"dry-run"=> \$opt_dry,
+) or exit 1;
+usage if @ARGV;
+
+use lib "/opt/functional-perl/lib";    #
+use Chj::xperlfunc qw(xgetfile_utf8 xprintln);
+use Chj::IO::Command;
+
+sub git_last_mod_year ($path) {
+    local $/ = "\n";
+    my $in = Chj::IO::Command->new_sender(
+        qw(git log --no-merges --pretty=format:%ai --), $path);
+    my $dateline = <$in>;
+    $in->xfinish;
+    $dateline =~ /^(\d{4})-/ or die "no match: '$dateline'";
+    $1
+}
+
+my $in = Chj::IO::Command->new_sender(qw(git grep -l -z Copyright));
+
+local $/ = "\0";
+
+for my $path (<$in>) {
+    chomp $path;
+    if (xgetfile_utf8($path) =~ m/Copyright.*\b(\d{4})\b/m) {
+        my $year_stated = $1;
+        my $year_should = git_last_mod_year($path);
+        if ($year_stated < $year_should) {
+            xprintln $path;
+        }
+    }
+}
+
+#use FP::Repl; repl;
+#use Chj::ruse;
+#use Chj::Backtrace;
+
