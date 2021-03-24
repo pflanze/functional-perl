@@ -502,6 +502,46 @@ package FP::Lazy::PromiseLight {
         # do not force unforced promises
         &$lazyLight_thunk_show($s)
     }
+
+    our $AUTOLOAD;    # needs to be declared even though magical
+
+    sub AUTOLOAD {
+        my $methodname = $AUTOLOAD;
+
+        my $v = $_[0]->();
+        $methodname =~ s/.*:://;
+
+        # To be able to select special implementations for lazy
+        # inputs, select a method with `stream_` prefix if present.
+
+        my $method
+            = ($methodname =~ /^stream_/
+            ? $v->can($methodname)
+            : $v->can("stream_$methodname") // $v->can($methodname)
+                // "FP::Mixin::Utils"->can($methodname));
+        if ($method) {
+
+            # Can't rebuild @_ or it would break 'env clearing' ability
+            # of the method. Thus assign to $_[0], which will effect
+            # our env, too, but so what? XX still somewhat bad. (Is
+            # like `FORCE`.)
+            $_[0] = $v;
+            goto &$method;
+        } else {
+
+            # XX imitate perl's ~exact error message?
+            Carp::croak "no method '$methodname' found for object: "
+                . FP::Lazy::strshow($v);
+        }
+    }
+
+    sub bt {
+        my $s = shift;
+        Carp::croak "lazyLight cannot store a backtrace"
+
+            # except if using a different implementation when $debug
+            # is on
+    }
 }
 
 1
