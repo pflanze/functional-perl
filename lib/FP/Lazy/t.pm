@@ -53,7 +53,7 @@ TEST {
 'lazyT { "DUMMY" } \'Fun\'';
 
 TEST {
-    my $v = lazyT { cons(1, 2) } "FP::List::Pair";
+    my $v = lazyT { cons(1, 2) } "FP::List::List";
     force $v;
     [is_promise($v), show($v)]
 }
