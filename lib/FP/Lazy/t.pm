@@ -59,4 +59,21 @@ TEST {
 }
 [1, 'improper_list(1, 2)'];
 
+# method dispatch logic:
+
+TEST {
+    (lazyT { list("a") } "FP::List::List")->rest
+}
+null;
+
+TEST {
+    (lazyT { list("a") } "FP::List::Pair")->rest
+}
+null;
+
+TEST_EXCEPTION {
+    (lazyT { 1 / 0 } "FP::List::Null")->rest
+}
+'can\'t take the rest of the empty list';
+
 1
