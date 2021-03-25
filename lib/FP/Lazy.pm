@@ -337,7 +337,7 @@ LP: {
                 redo LP;
             } elsif ($perhaps_promise->isa("FP::Lazy::Promise")) {
                 if (my $thunk = $$perhaps_promise[0]) {
-                    my $v = &$thunk();
+                    my $v = force(&$thunk(), $nocache);
                     if ($$perhaps_promise[2]) {
 
                         if (defined(my $got = blessed($v))) {
@@ -354,11 +354,9 @@ LP: {
                         $$perhaps_promise[1] = $v;
                         $$perhaps_promise[0] = undef;
                     }
-                    $perhaps_promise = $v;
-                    redo LP;
+                    $v
                 } else {
-                    $perhaps_promise = $$perhaps_promise[1];
-                    redo LP;
+                    $$perhaps_promise[1]
                 }
             } else {
                 $perhaps_promise
