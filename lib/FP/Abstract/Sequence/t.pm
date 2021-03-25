@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -218,24 +218,29 @@ use FP::Show;
 use FP::PureArray;
 use FP::MutableArray;
 use FP::StrictList;
+use Chj::TEST;
 
-for my $orig (@sequencetypes) {
-    my $constructor = eval '\&' . $orig;
-    die $@ if $@;
-    for my $target (@sequencetypes) {
-        next if $orig eq $target;    #XX TODO: make it always valid
-        next if ($orig eq "mutablearray" and $target eq "purearray");    #XXX
-        my $d1 = $constructor->(qw(a b c d e));
-        my $d2 = Keep($d1)->$target;
-        my $d3 = $d2->$orig;
-        equal $d1, $d3
+TEST {
+    for my $orig (@sequencetypes) {
+        my $constructor = eval '\&' . $orig;
+        die $@ if $@;
+        for my $target (@sequencetypes) {
+            next if $orig eq $target;    #XX TODO: make it always valid
+            next if ($orig eq "mutablearray" and $target eq "purearray");   #XXX
+            my $d1 = $constructor->(qw(a b c d e));
+            my $d2 = Keep($d1)->$target;
+            my $d3 = $d2->$orig;
+            equal $d1, $d3
 
-            # XX what is the recommended way to make/format
-            # exceptions?
-            or die("not equal (from $orig to $target and back): "
-                . show($d1) . " vs. "
-                . show($d3));
+                # XX what is the recommended way to make/format
+                # exceptions?
+                or die("not equal (from $orig to $target and back): "
+                    . show($d1) . " vs. "
+                    . show($d3));
+        }
     }
+    1
 }
+1;
 
 1
