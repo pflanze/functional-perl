@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -88,7 +88,7 @@ sub maybeIO_to_stream {
     my $next;
     $next = sub {
         my $next = $next;
-        lazy {
+        lazyT {
             if (defined(my $v = &$maybeIO())) {
                 cons($v, &$next)
             } else {
@@ -98,6 +98,7 @@ sub maybeIO_to_stream {
                 null
             }
         }
+        "FP::List::List"
     };
     &{ Weakened $next}
 }
@@ -109,7 +110,7 @@ sub _perhaps_opendir_stream {
         my $next;
         $next = sub {
             my $next = $next;
-            lazy {
+            lazyT {
                 if (defined(my $item = $d->xnread)) {
                     cons $item, &$next
                 } else {
@@ -117,6 +118,7 @@ sub _perhaps_opendir_stream {
                     null
                 }
             }
+            "FP::List::List"
         };
         &{ Weakened $next}
     } else {
@@ -188,7 +190,7 @@ sub fh_to_stream {
     my $next;
     $next = sub {
         my $next = $next;
-        lazy {
+        lazyT {
             if (defined(my $item = &$read($fh))) {
                 cons $item, &$next
             } else {
@@ -196,6 +198,7 @@ sub fh_to_stream {
                 null
             }
         }
+        "FP::List::List"
     };
     &{ Weakened $next}
 }
@@ -233,9 +236,7 @@ sub xfile_lines_chomp;
     = make_open_stream(\&xopen_read, the_method("xreadline_chomp"));
 
 sub xfile_chars;
-*xfile_chars
-    = make_open_stream(\&xopen_read, the_method("xreadchar"));
-
+*xfile_chars = make_open_stream(\&xopen_read, the_method("xreadchar"));
 
 # Clojure calls this line-seq
 #  (http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/line-seq)
@@ -275,10 +276,11 @@ sub timestream {
     require Time::HiRes;
     my $lp;
     $lp = sub {
-        lazy {
+        lazyT {
             Time::HiRes::sleep($maybe_sleep) if $maybe_sleep;
             cons(Time::HiRes::time(), &$lp())
         }
+        "FP::List::Pair"
     };
     Weakened($lp)->();
 }

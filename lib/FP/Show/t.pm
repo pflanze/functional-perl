@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -60,13 +60,13 @@ TEST {
     $s = stream_iota->take(10);
     show $s
 }
-'lazy { "DUMMY" }';
+'lazyT { "DUMMY" } \'FP::List::List\'';
 
 TEST {
     $s->rest->rest;
     show $s
 }
-'improper_list(0, 1, lazy { "DUMMY" })';
+'improper_list(0, 1, lazyT { "DUMMY" } \'FP::List::List\')';
 
 TEST {
     show * STDERR {IO}
