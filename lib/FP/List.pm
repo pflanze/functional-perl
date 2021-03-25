@@ -348,7 +348,10 @@ package FP::List::Pair {
     *first_update = \&FP::List::first_update;
 
     sub cdr {
-        $_[0][1]
+
+        # $_[0][1]
+        # nope, since lazyT, the argument can be a promise:
+        ref($_[0]) eq __PACKAGE__ ? $_[0][1] : goto \&FP::List::cdr
     }
     *rest         = \&cdr;
     *maybe_rest   = \&rest;
