@@ -101,10 +101,10 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
         ok is_forced($l);
     }
 
-    # There's `lazyT` which specifies the class of the object (the
-    # value of calling `ref` on it) statically, hence there's no need
-    # to evaluate a promise just to call a method. In this case the
-    # called method receives the unevaluated promise as its argument!
+    # There's `lazyT` which specifies the (or a base) class of the
+    # object statically, hence there's no need to evaluate a promise
+    # just to call a method. In this case the called method receives
+    # the unevaluated promise as its argument!
     {
         my $l = lazyT { cons(1, null) } "FP::List::Pair";
         ok !is_forced($l);
@@ -242,7 +242,7 @@ sub die_not_a_Lazy_Promise {
 # A promise is an array with two fields:
 # index 0: thunk when unevaluated, undef once evaluated
 # index 1: value once evaluated
-# index 2: maybe expected value of ref(force($promise))
+# index 2: maybe blessed(force($promise))
 # index 3: backtrace if $debug is true
 
 sub is_forced {
@@ -320,6 +320,13 @@ sub delay (&);
 sub delayLight (&);
 *delayLight = \&lazyLight;
 
+sub die_type_error {
+    my ($expected, $gotstr, $v) = @_;
+    die "promise expected to evaluate to an object "
+        . "of class '$expected' but got $gotstr: "
+        . show($v)
+}
+
 sub force {
     @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
     my ($perhaps_promise, $nocache) = @_;
@@ -333,17 +340,14 @@ LP: {
                     my $v = &$thunk();
                     if ($$perhaps_promise[2]) {
 
-                        # XX *should* this use the can stuff? Or
-                        # really require the exact class to be given?
-                        # Performance invites the latter of
-                        # course. Also, is it nice to be able to
-                        # specify the 'type' "ARRAY" or "HASH" or ""?
-                        ref($v) eq $$perhaps_promise[2] or do {
-                            my $got      = ref $v;
-                            my $expected = $$perhaps_promise[2];
-                            die "promise expected to evaluate to a ref "
-                                . "'$expected' but got a '$got': "
-                                . show($v)
+                        if (defined(my $got = blessed($v))) {
+
+                            $v->isa($$perhaps_promise[2])
+                                or die_type_error($$perhaps_promise[2],
+                                "a '$got'", $v);
+                        } else {
+                            die_type_error($$perhaps_promise[2],
+                                "a non-object", $v);
                         }
                     }
                     unless ($nocache) {
