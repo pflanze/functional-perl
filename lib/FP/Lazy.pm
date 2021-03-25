@@ -482,7 +482,8 @@ package FP::Lazy::Promise {
     our $AUTOLOAD;    # needs to be declared even though magical
 
     sub AUTOLOAD {
-        my $methodname         = $AUTOLOAD;
+        my $methodname = $AUTOLOAD;
+        $methodname =~ s/.*:://;
         my $maybe_expected_ref = $_[0][2];
         my ($v, $ref);
         if (defined $maybe_expected_ref) {
@@ -491,7 +492,6 @@ package FP::Lazy::Promise {
             $v   = FP::Lazy::force($_[0]);
             $ref = ref $v;
         }
-        $methodname =~ s/.*:://;
 
         # To be able to select special implementations for lazy
         # inputs, select a method with `stream_` prefix if present.
@@ -518,14 +518,41 @@ package FP::Lazy::Promise {
             goto &$method;
         } else {
 
-            # XX imitate perl's ~exact error message?
             if (defined $maybe_expected_ref) {
-                Carp::croak "no method '$methodname' found for expected ref: "
-                    . FP::Lazy::strshow($maybe_expected_ref);
-            } else {
-                Carp::croak "no method '$methodname' found for object: "
-                    . FP::Lazy::strshow($v);
+
+                # If the library is declaring a base class as the type
+                # of the lazyT (in the case of basically a sum type),
+                # then if the user calls a method on the promise that
+                # does not exist in that base class, then still force
+                # it: this is also correct since in that case, the
+                # method will surely *need* the forced value, since,
+                # if it doesn't, it would be independent of the
+                # subclass hence be in the base class. Thus: force
+                # (equivalent to downgrading the lazyT to a lazy), and
+                # try again.
+
+                # $v   = FP::Lazy::force($_[0]);
+                # $ref = ref $v;
+                # $maybe_expected_ref = undef; # so that the logic works
+                # redo ...
+
+                # or simply adapted copy-paste:
+
+                $v = FP::Lazy::force($_[0]);
+                my $method
+                    = ($methodname =~ /^stream_/
+                    ? $v->can($methodname)
+                    : $v->can("stream_$methodname") // $v->can($methodname)
+                        // "FP::Mixin::Utils"->can($methodname));
+                if ($method) {
+                    $_[0] = $v;
+                    goto &$method;
+                }
             }
+
+            # XX imitate perl's ~exact error message?
+            Carp::croak "no method '$methodname' found for object: "
+                . FP::Lazy::strshow($v);
         }
     }
 
