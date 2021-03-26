@@ -42,6 +42,11 @@ sub usage {
     --auto-integers  strings that look like numbers and only have
                      zeroes after the dot are treated as integers;
                      currently implies --auto-numbers
+    --repl           open a repl instead of carrying out the identity
+                     conversion
+    --conversion 'code'  code is Perl that must evaluate to a function
+                         that receives the inputs and translate to the
+                         outputs
 
   ($email_full)
 ";
@@ -50,11 +55,13 @@ exit (@_ ? 1 : 0);
 
 
 my $verbose=0;
-my ($opt_auto_numbers, $opt_auto_integers);
+my ($opt_auto_numbers, $opt_auto_integers, $opt_repl, $opt_conversion);
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
            "auto-numbers"=> \$opt_auto_numbers,
            "auto-integers"=> \$opt_auto_integers,
+           "repl"=> \$opt_repl,
+           "conversion=s"=> \$opt_conversion,
 	   ) or exit 1;
 usage unless @ARGV == 2;
 
@@ -100,11 +107,24 @@ TEST { value_to_mint "foo bar" } "\"foo bar\"";
 #run_tests __PACKAGE__
 
 
-sub row_to_mint($titles, $row) {
+# XX move to FunctionalPerl
+sub hashmap($titles, $row) {
+    +{
+      # array_zip($titles, $row)->map(sub($tr) { @$tr })
+        array_zip($titles, $row)->fold(
+            sub($kv, $rest) {
+                my ($k,$v)= @$kv;
+                cons($k,cons($v,$rest))
+            },
+            null)->values
+     }
+}
+
+sub hashmap_to_mint($hashmap) {
     "{\n".
-    array_zip($titles, $row)->map(
-        sub ($title_and_value) {
-            my ($title, $value)= @$title_and_value;
+    [keys %$hashmap]->map(
+        sub ($title) {
+            my $value= $hashmap->{$title};
             fieldname_to_mint($title) . " = " . value_to_mint($value)
         })->strings_join(",\n") ."\n}"
 }
@@ -120,28 +140,44 @@ sub stdout() {
     $fh
 }
 
-my $csvinput = $file_csv eq "-" ? stdin : $file_csv;
-my $rows= csv(in=> $csvinput );
 
-my $titles= $rows->first;
+sub convertfile ($fn) {
+    my $csvinput = $file_csv eq "-" ? stdin : $file_csv;
+    my $rows= csv(in=> $csvinput );
 
-my $body= $rows->rest;
-my $body2= $body->map(sub ($row) { row_to_mint $titles, $row });
-my $mint= "[\n" . $body2->strings_join(",\n") . "\n]\n";
+    my $titles= $rows->first;
 
-my $out;
-if ($file_mint eq "-") {
-    $out = stdout;
-} else {
-    open $out, ">:encoding(UTF-8)", $file_mint
-        or die "can't open file for writing: '$file_mint'";
+    my $body= $rows->rest;
+    my $body_hms= $body->map(sub ($row) { hashmap $titles, $row });
+    my $body_hms2= $fn->($body_hms);
+
+    my $mint= "[\n" . $body_hms2->map(\&hashmap_to_mint)->strings_join(",\n") . "\n]\n";
+
+    my $out;
+    if ($file_mint eq "-") {
+        $out = stdout;
+    } else {
+        open $out, ">:encoding(UTF-8)", $file_mint
+            or die "can't open file for writing: '$file_mint'";
+    }
+    print $out $mint
+        or die "print: $!";
+    close $out
+        or die "close($file_mint): $!";
 }
-print $out $mint
-    or die "print: $!";
-close $out
-    or die "close($file_mint): $!";
 
-#use FP::Repl; repl;
+if ($opt_repl) {
+    repl;
+} elsif ($opt_conversion) {
+    my $function= eval $opt_conversion;
+    die $@ if $@;
+    ref ($function) eq "CODE"
+      or die "expecting --conversion's argument to evaluate to a function, but got: $function";
+    convertfile($function);
+} else {
+    convertfile(\&identity);
+}
+
 #use Chj::ruse;
 #use Chj::Backtrace; 
 
