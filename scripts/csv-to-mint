@@ -40,7 +40,8 @@ sub usage {
   Options:
     --auto-numbers   recognize strings that look like numbers
     --auto-integers  strings that look like numbers and only have
-                     zeroes after the dot are treated as integers
+                     zeroes after the dot are treated as integers;
+                     currently implies --auto-numbers
 
   ($email_full)
 ";
@@ -56,6 +57,10 @@ GetOptions("verbose"=> \$verbose,
            "auto-integers"=> \$opt_auto_integers,
 	   ) or exit 1;
 usage unless @ARGV == 2;
+
+# Not sure this is ideal but people will be confused if giving
+# --auto-integers and it doesn't do anything.
+$opt_auto_numbers = 1 if $opt_auto_integers;
 
 my ($file_csv, $file_mint)= @ARGV;
 
