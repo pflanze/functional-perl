@@ -1,0 +1,111 @@
+#!/usr/bin/perl -w
+
+my $copyright= <<'COPYRIGHT';
+# Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
+# Published under the same terms as perl itself
+COPYRIGHT
+
+use strict; 
+use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
+
+my ($email_full)= $copyright=~ / by ([^\n]*)/s;
+
+my ($mydir, $myname);
+BEGIN {
+    $0=~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname)=($1,$2);
+}
+
+use lib "$mydir/functional-perl/lib";
+
+use Text::CSV qw( csv );
+use JSON;
+use Scalar::Util qw(looks_like_number);
+use Getopt::Long;
+use FunctionalPerl ":all";
+#use FP::Text::CSV qw(csv_file_to_rows);
+
+sub usage {
+    print STDERR map{"$_\n"} @_ if @_;
+    print "$myname file.csv file.mint
+
+  ($email_full)
+";
+exit (@_ ? 1 : 0);
+}
+
+
+our $verbose=0;
+#our $opt_dry;
+GetOptions("verbose"=> \$verbose,
+	   "help"=> sub{usage},
+	   #"dry-run"=> \$opt_dry,
+	   ) or exit 1;
+usage unless @ARGV == 2;
+
+my ($file_csv, $file_mint)= @ARGV;
+
+#my $rows= csv_file_to_rows $file_csv;
+
+sub fieldname_to_mint($str) {
+    my $s = lcfirst($str);
+    $s=~ s/^\s+//;
+    $s=~ s/\s+\z//;
+    $s=~ s/[^\w\d_]/_/sg; # XX would mint support e.g. "-" ?
+    if ($s=~ m/^\d/) {
+        $s = "_$s"; # prepend an underscore if fieldname starts with a
+                    # digit; XX needed?
+    }
+    $s
+}
+
+TEST { fieldname_to_mint "Quadrat 'o'Hara" } 'quadrat__o_Hara';
+
+my $json = JSON->new->allow_nonref;
+
+sub value_to_mint($val) {
+    if (looks_like_number $val) {
+        # XX *assumes* that mint has the same number syntax as Perl
+        $val
+    } else {
+        # XX mint may *not* use all of the same syntax as JSON. For
+        # now assume it does:
+        $json->encode($val)
+    }
+}
+
+TEST { value_to_mint "152.00" } "152.00";
+TEST { value_to_mint "foo bar" } "\"foo bar\"";
+
+#run_tests __PACKAGE__
+
+
+sub row_to_mint($titles, $row) {
+    "{\n".
+    array_zip($titles, $row)->map(
+        sub ($title_and_value) {
+            my ($title, $value)= @$title_and_value;
+            fieldname_to_mint($title) . " = " . value_to_mint($value)
+        })->strings_join(",\n") ."\n}"
+}
+
+my $rows= csv(in=> $file_csv );
+
+my $titles= $rows->first;
+
+my $body= $rows->rest;
+my $body2= $body->map(sub ($row) { row_to_mint $titles, $row });
+my $mint= "[\n" . $body2->strings_join(",\n") . "\n]\n";
+
+open my $out, ">:encoding(UTF-8)", $file_mint
+    or die "can't open file for writing: '$file_mint'";
+print $out $mint
+    or die "print: $!";
+close $out
+    or die "close($file_mint): $!";
+
+#use FP::Repl; repl;
+#use Chj::ruse;
+#use Chj::Backtrace; 
+
