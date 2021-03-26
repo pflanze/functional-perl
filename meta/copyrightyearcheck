@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 my $copyright = <<'COPYRIGHT';
 # Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
@@ -6,6 +6,7 @@ my $copyright = <<'COPYRIGHT';
 COPYRIGHT
 
 use strict;
+use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
