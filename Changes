@@ -1,5 +1,16 @@
 Revision history for FunctionalPerl
 
+0.72.46 2021-3-26
+    - examples/treestat: depend on JSON instead of JSON::PP, add begin
+      of merging functionality, add contents hash
+    - update FP::TransparentLazy to follow FP::Lazy developments
+    - Lazy: add `lazyT`; properly implement lazyLight; add
+      `is_forced`; handle nested promises correctly
+    - Updates for lazyT:
+        - FP::List: make final, stop using shortcut for `cdr`
+        - Stream,IOStream: use `lazyT`
+    - StrictList: make `is_proper_sequence` O(1)
+
 0.72.45 2021-3-21
     - make examples/treestat work with older JSON::PP releases
 
