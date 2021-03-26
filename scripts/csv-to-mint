@@ -30,6 +30,13 @@ sub usage {
     print STDERR map{"$_\n"} @_ if @_;
     print "$myname file.csv file.mint
 
+  Convert CSV to Mint record literal syntax. It expects the input file
+  to have a title row, and uses the fields in that as the field names
+  (with Mint compatible mangling).
+
+  file.csv or file.mint can also be '-' for stdin or stdout,
+  respectively
+
   ($email_full)
 ";
 exit (@_ ? 1 : 0);
@@ -90,7 +97,19 @@ sub row_to_mint($titles, $row) {
         })->strings_join(",\n") ."\n}"
 }
 
-my $rows= csv(in=> $file_csv );
+sub stdin() {
+    my $fh= *STDIN{IO};
+    binmode $fh, ":encoding(UTF-8)" or die $!;
+    $fh
+}
+sub stdout() {
+    my $fh= *STDOUT{IO};
+    binmode $fh, ":encoding(UTF-8)" or die $!;
+    $fh
+}
+
+my $csvinput = $file_csv eq "-" ? stdin : $file_csv;
+my $rows= csv(in=> $csvinput );
 
 my $titles= $rows->first;
 
@@ -98,8 +117,13 @@ my $body= $rows->rest;
 my $body2= $body->map(sub ($row) { row_to_mint $titles, $row });
 my $mint= "[\n" . $body2->strings_join(",\n") . "\n]\n";
 
-open my $out, ">:encoding(UTF-8)", $file_mint
-    or die "can't open file for writing: '$file_mint'";
+my $out;
+if ($file_mint eq "-") {
+    $out = stdout;
+} else {
+    open $out, ">:encoding(UTF-8)", $file_mint
+        or die "can't open file for writing: '$file_mint'";
+}
 print $out $mint
     or die "print: $!";
 close $out
