@@ -214,6 +214,7 @@ meta/_critic.out
 meta/bisect-modules
 meta/check-hardcoded-perl
 meta/code-reformat
+meta/copyrightyearcheck
 meta/critic
 meta/dependencycheck
 meta/find-perl.pl
