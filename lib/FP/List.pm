@@ -685,7 +685,7 @@ sub cdr {
     @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     my $r = blessed($v) // die_not_a_pair($v);
-    if ($r eq "FP::List::Pair") {
+    if ($r->isa("FP::List::Pair")) {
         $v->[1]
     } elsif (is_promise $v) {
         @_ = force $v;
