@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -99,6 +99,10 @@ use FP::Carp;
 package FP::StrictList::List {
     use FP::Carp;
     use Chj::NamespaceCleanAbove;
+
+    sub is_proper_sequence {
+        1
+    }
 
     sub strictlist {
         @_ == 1 or fp_croak_arity 1;
