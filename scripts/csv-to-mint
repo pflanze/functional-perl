@@ -37,17 +37,23 @@ sub usage {
   file.csv or file.mint can also be '-' for stdin or stdout,
   respectively
 
+  Options:
+    --auto-numbers   recognize strings that look like numbers
+    --auto-integers  strings that look like numbers and only have
+                     zeroes after the dot are treated as integers
+
   ($email_full)
 ";
 exit (@_ ? 1 : 0);
 }
 
 
-our $verbose=0;
-#our $opt_dry;
+my $verbose=0;
+my ($opt_auto_numbers, $opt_auto_integers);
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
-	   #"dry-run"=> \$opt_dry,
+           "auto-numbers"=> \$opt_auto_numbers,
+           "auto-integers"=> \$opt_auto_integers,
 	   ) or exit 1;
 usage unless @ARGV == 2;
 
@@ -72,8 +78,9 @@ TEST { fieldname_to_mint "Quadrat 'o'Hara" } 'quadrat__o_Hara';
 my $json = JSON->new->allow_nonref;
 
 sub value_to_mint($val) {
-    if (looks_like_number $val) {
+    if ($opt_auto_numbers and looks_like_number $val) {
         # XX *assumes* that mint has the same number syntax as Perl
+        $val=~ s/\.0*\z// if $opt_auto_integers;
         $val
     } else {
         # XX mint may *not* use all of the same syntax as JSON. For
