@@ -119,6 +119,11 @@ sub hashmap($titles, $row) {
             null)->values
      }
 }
+sub hashkey($key) {
+    sub ($h) {
+        $h->{$key}
+    }
+}
 
 sub hashmap_to_mint($hashmap) {
     "{\n".
@@ -127,6 +132,23 @@ sub hashmap_to_mint($hashmap) {
             my $value= $hashmap->{$title};
             fieldname_to_mint($title) . " = " . value_to_mint($value)
         })->strings_join(",\n") ."\n}"
+}
+
+sub list_to_mint($l) {
+    "[\n".
+        $l->map(\&to_mint)->strings_join(",\n"). "\n]"
+}
+
+sub to_mint($value) {
+    if (UNIVERSAL::isa($value, "FP::List::List")) {
+        list_to_mint($value)
+    } elsif(ref($value) eq "ARRAY") {
+        list_to_mint($value->list)
+    } elsif(ref($value) eq "HASH") {
+        hashmap_to_mint($value)
+    } else {
+        die "don't know how to map this to Mint: ".show($value)
+    }
 }
 
 sub stdin() {
@@ -151,7 +173,7 @@ sub convertfile ($fn) {
     my $body_hms= $body->map(sub ($row) { hashmap $titles, $row });
     my $body_hms2= $fn->($body_hms);
 
-    my $mint= "[\n" . $body_hms2->map(\&hashmap_to_mint)->strings_join(",\n") . "\n]\n";
+    my $mint= "[\n" . $body_hms2->map(\&to_mint)->strings_join(",\n") . "\n]\n";
 
     my $out;
     if ($file_mint eq "-") {
@@ -164,6 +186,13 @@ sub convertfile ($fn) {
         or die "print: $!";
     close $out
         or die "close($file_mint): $!";
+}
+
+sub groupByNumber($records, $key) {
+    # XX provide group for purearray!
+    my $cmp= on(hashkey($key), \&number_cmp);
+    my $equal= on(hashkey($key), \&number_eq);
+    $records->list->sort($cmp)->list->group($equal)
 }
 
 if ($opt_repl) {
