@@ -52,6 +52,9 @@ sub usage {
             receives the inputs and translate to the outputs.
             Example code:
             'sub(\$records) { groupByNumber(\$records, \"Quadrat\")}'
+            or
+            'sub(\$records) { groupByNumber(\$records, \"Quadrat\")->map(sub (\$group){ \$group->sort(on(hashkey(\"Frequency\"), \\&number_cmp))})}'
+
 
   ($email_full)
 ";
@@ -147,6 +150,8 @@ sub list_to_mint($l) {
 sub to_mint($value) {
     if (UNIVERSAL::isa($value, "FP::List::List")) {
         list_to_mint($value)
+    } elsif (UNIVERSAL::isa($value, "FP::_::PureArray")) {
+        list_to_mint($value->list)
     } elsif(ref($value) eq "ARRAY") {
         list_to_mint($value->list)
     } elsif(ref($value) eq "HASH") {
