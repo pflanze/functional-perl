@@ -1,11 +1,12 @@
-#!/usr/bin/env -S perl
+#!/usr/bin/env perl
 
 my $copyright= <<'COPYRIGHT';
 # Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
 # Published under the same terms as perl itself
 COPYRIGHT
 
-use strict; 
+use strict;
+use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
