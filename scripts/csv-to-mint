@@ -122,7 +122,7 @@ sub hashmap($titles, $row) {
 
 sub hashmap_to_mint($hashmap) {
     "{\n".
-    [keys %$hashmap]->map(
+    [sort keys %$hashmap]->map(
         sub ($title) {
             my $value= $hashmap->{$title};
             fieldname_to_mint($title) . " = " . value_to_mint($value)
