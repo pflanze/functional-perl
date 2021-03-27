@@ -38,15 +38,20 @@ sub usage {
   respectively
 
   Options:
-    --auto-numbers   recognize strings that look like numbers
-    --auto-integers  strings that look like numbers and only have
-                     zeroes after the dot are treated as integers;
-                     currently implies --auto-numbers
-    --repl           open a repl instead of carrying out the identity
-                     conversion
-    --conversion 'code'  code is Perl that must evaluate to a function
-                         that receives the inputs and translate to the
-                         outputs
+    --auto-numbers
+            recognize strings that look like numbers
+    --auto-integers
+            strings that look like numbers and only have zeroes after
+            the dot are treated as integers; currently implies
+            --auto-numbers
+    --repl
+            open a repl instead of carrying out the identity
+            conversion
+    --conversion 'code'
+            code is Perl that must evaluate to a function that
+            receives the inputs and translate to the outputs.
+            Example code:
+            'sub(\$records) { groupByNumber(\$records, \"Quadrat\")}'
 
   ($email_full)
 ";
