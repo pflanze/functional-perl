@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env -S perl
 
 my $copyright= <<'COPYRIGHT';
 # Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
@@ -206,7 +206,7 @@ sub groupByNumber($records, $key) {
 }
 
 if ($opt_repl) {
-    repl;
+#    repl;
 } elsif ($opt_conversion) {
     my $function= eval $opt_conversion;
     die $@ if $@;
