@@ -140,7 +140,7 @@ sub hashmap_to_mint($hashmap) {
     [sort keys %$hashmap]->map(
         sub ($title) {
             my $value= $hashmap->{$title};
-            fieldname_to_mint($title) . " = " . scalar_to_mint($value)
+            fieldname_to_mint($title) . " = " . to_mint($value)
         })->strings_join(",\n") ."\n}"
 }
 
