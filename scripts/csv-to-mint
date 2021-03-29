@@ -149,9 +149,7 @@ sub list_to_mint($l) {
 }
 
 sub to_mint($value) {
-    if (UNIVERSAL::isa($value, "FP::List::List")) {
-        list_to_mint($value)
-    } elsif (UNIVERSAL::isa($value, "FP::_::PureArray")) {
+    if (UNIVERSAL::isa($value, "FP::Abstract::Sequence")) {
         list_to_mint($value->list)
     } elsif(ref($value) eq "ARRAY") {
         list_to_mint($value->list)
