@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -38,6 +38,13 @@ FP::Hash
     is_equal subhash({a => 10, b => 11, c => 12}, "a", "c"),
              +{a => 10, c => 12};
 
+    # Curried hash lookup:
+    is_equal hashkey("foo")->({foo=> 10, bar=> 20}), 10;
+    use FP::Array_sort qw(array_sort on);
+    use FP::Ops qw(number_cmp);
+    is_equal array_sort([ {a=> 3, b=> "a"}, {a=> 2, b=> "b"} ],
+                        on hashkey("a"), \&number_cmp),
+             [ {a=> 2, b=> "b"}, {a=> 3, b=> "a"} ];
 
 =head1 DESCRIPTION
 
@@ -61,14 +68,9 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
-our @EXPORT
-    = qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref hash_ref_or hash_cache
-    hash_delete hash_update hash_diff
-    hash_length
-    subhash
-    hashes_keys $empty_hash
-    hash2_set
-);
+our @EXPORT = qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref
+    hash_ref_or hashkey hash_cache hash_delete hash_update hash_diff
+    hash_length subhash hashes_keys $empty_hash hash2_set );
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
@@ -193,6 +195,17 @@ sub hash_ref_or {
         $$h{$k}
     } else {
         $other
+    }
+}
+
+# Curried hash lookup
+sub hashkey {
+    @_ == 1 or fp_croak_arity 1;
+    my ($key) = @_;
+    sub {
+        @_ == 1 or fp_croak_arity 1;
+        my ($h) = @_;
+        $h->{$key}
     }
 }
 
