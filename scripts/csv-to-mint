@@ -26,6 +26,7 @@ use Scalar::Util qw(looks_like_number);
 use Getopt::Long;
 use FunctionalPerl ":all";
 use Scalar::Util qw(blessed);
+use Chj::xIOUtil qw(stdout_utf8 stdin_utf8);
 #use FP::Text::CSV qw(csv_file_to_rows);
 
 sub usage {
@@ -148,20 +149,9 @@ sub to_mint($value) {
     die "don't know how to map this to Mint: ".show($value)
 }
 
-sub stdin() {
-    my $fh= *STDIN{IO};
-    binmode $fh, ":encoding(UTF-8)" or die $!;
-    $fh
-}
-sub stdout() {
-    my $fh= *STDOUT{IO};
-    binmode $fh, ":encoding(UTF-8)" or die $!;
-    $fh
-}
-
 
 sub convertfile ($fn) {
-    my $csvinput = $file_csv eq "-" ? stdin : $file_csv;
+    my $csvinput = $file_csv eq "-" ? stdin_utf8 : $file_csv;
     my $rows= csv(in=> $csvinput );
 
     my $titles= $rows->first;
@@ -174,7 +164,7 @@ sub convertfile ($fn) {
 
     my $out;
     if ($file_mint eq "-") {
-        $out = stdout;
+        $out = stdout_utf8;
     } else {
         open $out, ">:encoding(UTF-8)", $file_mint
             or die "can't open file for writing: '$file_mint'";
