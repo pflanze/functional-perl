@@ -117,13 +117,6 @@ TEST { scalar_to_mint "foo bar" } "\"foo bar\"";
 #run_tests __PACKAGE__
 
 
-# XX move to FunctionalPerl
-sub ziphash($keys, $values) {
-    +{
-        map { $keys->[$_] => $values->[$_] } 0..$#$keys
-     }
-}
-
 sub hashmap_to_mint($hashmap) {
     "{\n".
     [sort keys %$hashmap]->map(
