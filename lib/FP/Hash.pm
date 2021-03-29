@@ -46,6 +46,12 @@ FP::Hash
                         on hashkey("a"), \&number_cmp),
              [ {a=> 2, b=> "b"}, {a=> 3, b=> "a"} ];
 
+    # NOTE: `mesh` might be added to List::Util, too
+    is_equal +{ mesh [qw(a b c)], [2,3,4] },
+            { a=> 2, b=> 3, c=> 4 };
+    is_equal ziphash([qw(a b c)], [2,3,4]),
+            { a=> 2, b=> 3, c=> 4 };
+
 =head1 DESCRIPTION
 
 Provides pure functions on hash tables. Note though that hash table
@@ -69,8 +75,9 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT = qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref
-    hash_ref_or hashkey hash_cache hash_delete hash_update hash_diff
-    hash_length subhash hashes_keys $empty_hash hash2_set );
+    hash_ref_or hashkey mesh ziphash hash_cache hash_delete
+    hash_update hash_diff hash_length subhash hashes_keys $empty_hash
+    hash2_set );
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
@@ -207,6 +214,18 @@ sub hashkey {
         my ($h) = @_;
         $h->{$key}
     }
+}
+
+sub mesh {
+    @_ == 2 or fp_croak_arity 2;
+    my ($keys, $values) = @_;
+    map { $keys->[$_] => $values->[$_] } 0 .. $#$keys
+}
+
+sub ziphash {
+    @_ == 2 or fp_croak_arity 2;
+    my ($keys, $values) = @_;
+    +{ map { $keys->[$_] => $values->[$_] } 0 .. $#$keys }
 }
 
 sub hash_cache {
