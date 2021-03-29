@@ -208,8 +208,6 @@ our @sequencetypes = qw(
     strictlist
 );
 
-# XX also test array with FP::autobox ?
-
 use FP::Equal;
 use FP::Show;
 
@@ -242,5 +240,18 @@ TEST {
     1
 }
 1;
+
+use FP::autobox;
+
+TEST { []->group(\&number_eq) } purearray();
+TEST { [1]->group(\&number_eq) } purearray(purearray(1));
+TEST { [1, 3]->group(\&number_eq) } purearray(purearray(1), purearray(3));
+TEST { [1, 1, 3]->group(\&number_eq) } purearray(purearray(1, 1), purearray(3));
+TEST { [1, 1, 3, 3]->group(\&number_eq) }
+purearray(purearray(1, 1), purearray(3, 3));
+TEST { [1, 1, 3, 3, 4]->group(\&number_eq) }
+purearray(purearray(1, 1), purearray(3, 3), purearray(4));
+TEST { [[3, "a"], [3, "b"], [4, "c"]]->group(on(\&array_first, \&number_eq)) }
+purearray(purearray([3, 'a'], [3, 'b']), purearray([4, 'c']));
 
 1

@@ -42,15 +42,16 @@ our %dependencies = (
 
     # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
 
-    'Chj::Serialize'          => ['FP::Repl::Dependencies', 'B::Deparse'],
-    'FP::Docstring'           => ['B::Deparse'],
-    'FP::BigInt'              => ['Math::BigInt'],
-    'FP::autobox'             => ['autobox'],
-    'FP::Failure'             => ['Path::Tiny'],
-    'FP::Text::CSV'           => ['Text::CSV'],
-    'FP::url_'                => ['URI'],
-    'Chj::CPAN::ModulePODUrl' => ['LWP::UserAgent'],
-    'FP::DBI'                 => ['DBI'],
+    'FP::Abstract::Sequence::t' => ['FP::autobox'],
+    'Chj::Serialize'            => ['FP::Repl::Dependencies', 'B::Deparse'],
+    'FP::Docstring'             => ['B::Deparse'],
+    'FP::BigInt'                => ['Math::BigInt'],
+    'FP::autobox'               => ['autobox'],
+    'FP::Failure'               => ['Path::Tiny'],
+    'FP::Text::CSV'             => ['Text::CSV'],
+    'FP::url_'                  => ['URI'],
+    'Chj::CPAN::ModulePODUrl'   => ['LWP::UserAgent'],
+    'FP::DBI'                   => ['DBI'],
     'FunctionalPerl::Htmlgen::UriUtil'  => ['5.020', 'URI'],
     'FunctionalPerl::Htmlgen::PathUtil' => ['5.020', 'File::Spec',],
     'FunctionalPerl::Htmlgen::PathTranslate' =>
