@@ -201,9 +201,8 @@ sub convertfile ($fn) {
 
 sub groupByNumber($records, $key) {
     # XX provide group for purearray!
-    my $cmp= on(hashkey($key), \&number_cmp);
-    my $equal= on(hashkey($key), \&number_eq);
-    $records->list->sort($cmp)->list->group($equal)
+    $records->list->sort(on(hashkey($key), \&number_cmp))
+            ->list->group(on(hashkey($key), \&number_eq))
 }
 
 if ($opt_repl) {
