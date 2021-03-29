@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -30,8 +30,9 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT    = qw();
-our @EXPORT_OK = qw(xgetfile_utf8 xputfile_utf8 xcopyfile_utf8 xprint_object
-    xcopyfile);
+our @EXPORT_OK = qw(
+    stdin_utf8 stdout_utf8 stderr_utf8 xgetfile_utf8 xputfile_utf8
+    xcopyfile_utf8 xprint_object xcopyfile);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::xopen ":all";
@@ -41,6 +42,24 @@ use FP::Lazy;
 use FP::List;
 use Chj::xperlfunc qw(xxsystem_safe xprint xgetfile_utf8);
 use FP::Carp;
+
+sub stdin_utf8() {
+    my $fh = *STDIN{IO};
+    binmode $fh, ":encoding(UTF-8)" or die $!;
+    $fh
+}
+
+sub stdout_utf8() {
+    my $fh = *STDOUT{IO};
+    binmode $fh, ":encoding(UTF-8)" or die $!;
+    $fh
+}
+
+sub stderr_utf8() {
+    my $fh = *STDERR{IO};
+    binmode $fh, ":encoding(UTF-8)" or die $!;
+    $fh
+}
 
 # print, not write, i.e. flatten nested structures out, but don't
 # print parens for lists etc., just print the contained basic types.
