@@ -207,7 +207,7 @@ sub groupByNumber($records, $key) {
 }
 
 if ($opt_repl) {
-#    repl;
+    repl;
 } elsif ($opt_conversion) {
     my $function= eval $opt_conversion;
     die $@ if $@;
