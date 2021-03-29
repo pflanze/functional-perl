@@ -253,5 +253,12 @@ TEST { [1, 1, 3, 3, 4]->group(\&number_eq) }
 purearray(purearray(1, 1), purearray(3, 3), purearray(4));
 TEST { [[3, "a"], [3, "b"], [4, "c"]]->group(on(\&array_first, \&number_eq)) }
 purearray(purearray([3, 'a'], [3, 'b']), purearray([4, 'c']));
+TEST {
+    [[3, "a"], [3, "b"], [4, "c"]]->list->group(on(\&array_first, \&number_eq))
+}
+list(list([3, 'b'], [3, 'a']), list([4, 'c']));
+
+# ^ XXX should give same order as in purearray case. Really implement
+# rlist?
 
 1
