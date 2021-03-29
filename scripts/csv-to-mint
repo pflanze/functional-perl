@@ -118,15 +118,9 @@ TEST { scalar_to_mint "foo bar" } "\"foo bar\"";
 
 
 # XX move to FunctionalPerl
-sub hashmap($titles, $row) {
+sub ziphash($keys, $values) {
     +{
-      # array_zip($titles, $row)->map(sub($tr) { @$tr })
-        array_zip($titles, $row)->fold(
-            sub($kv, $rest) {
-                my ($k,$v)= @$kv;
-                cons($k,cons($v,$rest))
-            },
-            null)->values
+        map { $keys->[$_] => $values->[$_] } 0..$#$keys
      }
 }
 
@@ -180,7 +174,7 @@ sub convertfile ($fn) {
     my $titles= $rows->first;
 
     my $body= $rows->rest;
-    my $body_hms= $body->map(sub ($row) { hashmap $titles, $row });
+    my $body_hms= $body->map(sub ($row) { ziphash $titles, $row });
     my $body_hms2= $fn->($body_hms);
 
     my $mint= "[\n" . $body_hms2->map(\&to_mint)->strings_join(",\n") . "\n]\n";
