@@ -146,6 +146,7 @@ sub FP_Interface__method_names {
             stream
             sort
             sortCompare
+            group
             string
             values
             ),
