@@ -25,6 +25,7 @@ use JSON;
 use Scalar::Util qw(looks_like_number);
 use Getopt::Long;
 use FunctionalPerl ":all";
+use Scalar::Util qw(blessed);
 #use FP::Text::CSV qw(csv_file_to_rows);
 
 sub usage {
@@ -98,7 +99,7 @@ TEST { fieldname_to_mint "Quadrat 'o'Hara" } 'quadrat__o_Hara';
 
 my $json = JSON->new->allow_nonref;
 
-sub value_to_mint($val) {
+sub scalar_to_mint($val) {
     if ($opt_auto_numbers and looks_like_number $val) {
         # XX *assumes* that mint has the same number syntax as Perl
         $val=~ s/\.0*\z// if $opt_auto_integers;
@@ -110,8 +111,8 @@ sub value_to_mint($val) {
     }
 }
 
-TEST { value_to_mint "152.00" } "152.00";
-TEST { value_to_mint "foo bar" } "\"foo bar\"";
+TEST { scalar_to_mint "152.00" } "152.00";
+TEST { scalar_to_mint "foo bar" } "\"foo bar\"";
 
 #run_tests __PACKAGE__
 
@@ -139,25 +140,30 @@ sub hashmap_to_mint($hashmap) {
     [sort keys %$hashmap]->map(
         sub ($title) {
             my $value= $hashmap->{$title};
-            fieldname_to_mint($title) . " = " . value_to_mint($value)
+            fieldname_to_mint($title) . " = " . scalar_to_mint($value)
         })->strings_join(",\n") ."\n}"
 }
 
-sub list_to_mint($l) {
+sub sequence_to_mint($l) {
     "[\n".
         $l->map(\&to_mint)->strings_join(",\n"). "\n]"
 }
 
 sub to_mint($value) {
-    if (UNIVERSAL::isa($value, "FP::Abstract::Sequence")) {
-        list_to_mint($value->list)
-    } elsif(ref($value) eq "ARRAY") {
-        list_to_mint($value->list)
-    } elsif(ref($value) eq "HASH") {
-        hashmap_to_mint($value)
+    if (defined (my $class = blessed $value)) {
+        if ($value->isa("FP::Abstract::Sequence")) {
+            return sequence_to_mint($value->purearray)
+        }
+    } elsif(my $r= ref($value)) {
+        if ($r eq "ARRAY") {
+            return sequence_to_mint($value->purearray)
+        } elsif($r eq "HASH") {
+            return hashmap_to_mint($value)
+        }
     } else {
-        die "don't know how to map this to Mint: ".show($value)
+        return scalar_to_mint($value)
     }
+    die "don't know how to map this to Mint: ".show($value)
 }
 
 sub stdin() {
