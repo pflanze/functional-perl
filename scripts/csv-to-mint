@@ -129,11 +129,6 @@ sub hashmap($titles, $row) {
             null)->values
      }
 }
-sub hashkey($key) {
-    sub ($h) {
-        $h->{$key}
-    }
-}
 
 sub hashmap_to_mint($hashmap) {
     "{\n".
