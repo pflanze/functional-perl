@@ -66,7 +66,7 @@ exit (@_ ? 1 : 0);
 
 
 my $verbose=0;
-my ($opt_auto_numbers, $opt_auto_integers, $opt_repl, $opt_conversion);
+our ($opt_auto_numbers, $opt_auto_integers, $opt_repl, $opt_conversion);
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
            "auto-numbers"=> \$opt_auto_numbers,
@@ -112,7 +112,12 @@ sub scalar_to_mint($val) {
     }
 }
 
-TEST { scalar_to_mint "152.00" } "152.00";
+TEST { local ($opt_auto_numbers, $opt_auto_integers)= (0, 0);
+       scalar_to_mint "152.00" } "\"152.00\"";
+TEST { local ($opt_auto_numbers, $opt_auto_integers)= (1, 0);
+       scalar_to_mint "152.00" } "152.00";
+TEST { local ($opt_auto_numbers, $opt_auto_integers)= (1, 1);
+       scalar_to_mint "152.00" } "152";
 TEST { scalar_to_mint "foo bar" } "\"foo bar\"";
 
 #run_tests __PACKAGE__
