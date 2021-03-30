@@ -1,5 +1,10 @@
 Revision history for FunctionalPerl
 
+0.72.47 2021-3-30
+    - add `group` to the Sequence interface
+    - add `hashkey`, `mesh` and `ziphash` to FP::Hash
+    - add add stdin_utf8, stdout_utf8, stderr_utf8 to Chj::xIOUtil
+
 0.72.46 2021-3-26
     - examples/treestat: depend on JSON instead of JSON::PP, add begin
       of merging functionality, add contents hash
