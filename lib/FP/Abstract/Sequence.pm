@@ -155,6 +155,8 @@ sub FP_Interface__method_names {
     )
 }
 
+# XX why sortCompare and not an optional argument to sort ?
+
 #XXX different protocol for random access ones:
 #hmm add ref here too?  vs. efficient_ref  etc. *?*  or  slow_ref  or somthing?
 #  InefficientSequence
