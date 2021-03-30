@@ -33,14 +33,16 @@ sub usage {
     print STDERR map{"$_\n"} @_ if @_;
     print "$myname file.csv file.mint
 
-  Convert CSV to Mint record literal syntax. It expects the input file
-  to have a title row, and uses the fields in that as the field names
-  (with Mint compatible mangling).
+  Convert CSV to JSON or Mint record literal syntax. It expects the
+  input file to have a title row, and uses the fields in that as the
+  field names (with Mint compatible mangling).
 
   file.csv or file.mint can also be '-' for stdin or stdout,
   respectively
 
   Options:
+    --json  output JSON (default)
+    --mint  output Mint record literal syntax
     --auto-numbers
             recognize strings that look like numbers
     --auto-integers
@@ -66,15 +68,26 @@ exit (@_ ? 1 : 0);
 
 
 my $verbose=0;
-our ($opt_auto_numbers, $opt_auto_integers, $opt_repl, $opt_conversion);
+our ($opt_json, $opt_mint, $opt_auto_numbers, $opt_auto_integers,
+     $opt_repl, $opt_conversion);
 GetOptions("verbose"=> \$verbose,
 	   "help"=> sub{usage},
+           "json"=> \$opt_json,
+           "mint"=> \$opt_mint,
            "auto-numbers"=> \$opt_auto_numbers,
            "auto-integers"=> \$opt_auto_integers,
            "repl"=> \$opt_repl,
            "conversion=s"=> \$opt_conversion,
 	   ) or exit 1;
 usage unless @ARGV == 2;
+
+our $mode= $opt_json ?
+    ($opt_mint ? usage "both --json and --mint given" : "JSON")
+    : ($opt_mint ? "Mint" : "JSON");
+
+sub hashmap_pair_op() {
+    $mode eq "JSON" ? ": " : " = "
+}
 
 # Not sure this is ideal but people will be confused if giving
 # --auto-integers and it doesn't do anything.
@@ -128,7 +141,7 @@ sub hashmap_to_mint($hashmap) {
     [sort keys %$hashmap]->map(
         sub ($title) {
             my $value= $hashmap->{$title};
-            fieldname_to_mint($title) . " = " . to_mint($value)
+            fieldname_to_mint($title) . hashmap_pair_op . to_mint($value)
         })->strings_join(",\n") ."\n}"
 }
 
