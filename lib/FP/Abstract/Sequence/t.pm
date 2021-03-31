@@ -43,7 +43,7 @@ use FP::StrictList;
 use FP::List;
 use FP::Stream;
 use FP::Array 'array';
-use FP::Ops qw(the_method);
+use FP::Ops qw(the_method string_cmp);
 use Chj::TEST;
 
 my $t_vals = list(
@@ -260,5 +260,8 @@ list(list([3, 'b'], [3, 'a']), list([4, 'c']));
 
 # ^ XXX should give same order as in purearray case. Really implement
 # rlist?
+
+TEST { ["b", "a", "x", "c"]->max(\&string_cmp) } 'x';
+TEST { ["b", "a", "x", "c"]->min(\&string_cmp) } 'a';
 
 1

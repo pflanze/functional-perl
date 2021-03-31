@@ -68,7 +68,7 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 
 require FP::List;    # "use"ing it would create a circular dependency
-use FP::Array_sort qw(on_maybe);
+use FP::Array_sort qw(on_maybe cmp_complement);
 use FP::Lazy;
 use FP::Ops qw(add mult number_cmp);
 use FP::Predicates qw(complement is_even);
@@ -227,7 +227,8 @@ sub extreme {
     $self->rest->fold(
         sub {
             my ($v, $res) = @_;
-            &$cmp($v, $res) ? $v : $res
+            my $c = &$cmp($v, $res);
+            $c < 0 ? $v : $res
         },
         $self->first
     );
@@ -235,14 +236,17 @@ sub extreme {
 
 sub min {
     @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
-    my ($self, $maybe_extract) = @_;
-    $self->extreme(on_maybe $maybe_extract, sub { $_[0] < $_[1] })
+    my ($self, $maybe_cmp) = @_;
+    $self->extreme($maybe_cmp // sub { $_[0] <=> $_[1] })
 }
 
 sub max {
     @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
-    my ($self, $maybe_extract) = @_;
-    $self->extreme(on_maybe $maybe_extract, sub { $_[0] > $_[1] })
+    my ($self, $maybe_cmp) = @_;
+    $self->extreme(
+        defined($maybe_cmp)
+        ? cmp_complement($maybe_cmp)
+        : sub { -($_[0] <=> $_[1]) })
 }
 
 sub minmax {
