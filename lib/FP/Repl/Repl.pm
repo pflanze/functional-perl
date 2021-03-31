@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -935,10 +935,14 @@ sub run {
             # saved one:
             $clear_history->($term);
             if (open my $hist, "<", $$self[Maybe_historypath]) {
-                @history = <$hist>;
+                @history = do {
+                    local $/ = "\n";
+                    my @h = <$hist>;
+                    chomp @h;
+                    @h
+                };
                 close $hist;
                 for (@history) {
-                    chomp;
                     $term->addhistory($_);
                 }
             }
