@@ -118,27 +118,9 @@ sub fullmatching ($fn) {
     }
 }
 
-# main> all_matches1 "foo barO", qr/(o)/i
-# $VAR1 = [
-#           'o',
-#           'o',
-#           'O'
-#         ];
-# main> all_matches_whole "foo barO", qr/o/i
-# $VAR1 = [
-#           'o',
-#           'o',
-#           'O'
-#         ];
-# main> all_continuous_matches_whole "oOo barO", qr/o/i
-# $VAR1 = [
-#           'o',
-#           'O',
-#           'o'
-#         ];
-# $VAR2 = 3;
-# main> all_continuous_matches_whole "BoOo barO", qr/o/i
-# $VAR1 = [];
-# $VAR2 = 0;
+TEST { all_matches1 "foo barO",      qr/(o)/i } ['o', 'o', 'O'];
+TEST { all_matches_whole "foo barO", qr/o/i } ['o', 'o', 'O'];
+TEST { [all_continuous_matches_whole "oOo barO", qr/o/i] } [['o', 'O', 'o'], 3];
+TEST { [all_continuous_matches_whole "BoOo barO", qr/o/i] } [[], 0];
 
 1
