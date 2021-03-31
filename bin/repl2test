@@ -33,115 +33,12 @@ sub usage {
 
 use lib "$mydir/../lib/";
 
+use FP::RegexMatch
+    qw(all_continuous_matches_whole all_continuous_matches1 fullmatching);
 use FP::autobox;
 use FP::Ops qw(the_method);
 use Chj::xperlfunc qw(xprint);
-use FP::Show;
 use Chj::TEST;
-
-# XX move
-
-# up to 9 captures in $re, bundled in arrays
-sub all_matches ($str, $re) {
-    my @res;
-    while ($str =~ m{$re}gc) {
-        my @c;
-        push @c, $1 if defined $1;
-        push @c, $2 if defined $2;
-        push @c, $3 if defined $3;
-        push @c, $4 if defined $4;
-        push @c, $5 if defined $5;
-        push @c, $6 if defined $6;
-        push @c, $7 if defined $7;
-        push @c, $8 if defined $8;
-        push @c, $9 if defined $9;
-        die "can't handle more than 9 captures" if defined $10;
-        push @res, \@c;
-    }
-    \@res
-}
-
-# only 1 capture in $re
-sub all_matches1 ($str, $re) {
-    my @res;
-    while ($str =~ m{$re}gc) {
-        die "no capture" unless defined $1;
-        push @res, $1;
-        die "got more than 1 capture" if defined $2;
-    }
-    \@res
-}
-
-# captures the whole string of all matches of $re
-sub all_matches_whole ($str, $re) {
-    my @res;
-    while ($str =~ m{($re)}gc) {
-        push @res, $1;
-    }
-    \@res
-}
-
-# The list of (the single capture all matches of $re), requiring them
-# to follow each other continuously from the current pos. Returns the
-# pos of the remainder after.
-sub all_continuous_matches1 ($str, $re) {
-    my @res;
-    my $pos = pos($str) // 0;    # is it correct that undef pos means 0 ?
-    while ($str =~ m{\G$re}gc) {
-        $pos = pos($str);
-        die "no capture" unless defined $1;
-        push @res, $1;
-        die "got more than 1 capture" if defined $2;
-    }
-    wantarray ? (\@res, $pos) : \@res
-}
-
-# captures the whole string of all matches of $re, requiring them to
-# follow each other continuously from the current pos. Returns the pos
-# of the remainder after.
-sub all_continuous_matches_whole ($str, $re) {
-    my @res;
-    my $pos = pos($str) // 0;    # is it correct that undef pos means 0 ?
-    while ($str =~ m{\G($re)}gc) {
-        $pos = pos($str);
-        push @res, $1;
-    }
-    wantarray ? (\@res, $pos) : \@res
-}
-
-# ^ XX ach  pos 0  auto since  str is COPIED MAN  KRST
-
-sub fullmatching ($fn) {
-    sub ($str, $re) {
-        my ($results, $restpos) = $fn->($str, $re);
-        my $rem = substr($str, $restpos);
-        $rem =~ /^\s*\z/ or die "non-matching remainder: " . show($rem);
-        $results
-    }
-}
-
-# main> all_matches1 "foo barO", qr/(o)/i
-# $VAR1 = [
-#           'o',
-#           'o',
-#           'O'
-#         ];
-# main> all_matches_whole "foo barO", qr/o/i
-# $VAR1 = [
-#           'o',
-#           'o',
-#           'O'
-#         ];
-# main> all_continuous_matches_whole "oOo barO", qr/o/i
-# $VAR1 = [
-#           'o',
-#           'O',
-#           'o'
-#         ];
-# $VAR2 = 3;
-# main> all_continuous_matches_whole "BoOo barO", qr/o/i
-# $VAR1 = [];
-# $VAR2 = 0;
 
 use Getopt::Long;
 our ($debug, $opt_repl);
