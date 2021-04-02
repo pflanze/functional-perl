@@ -104,7 +104,11 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
     # There's `lazyT` which specifies the (or a base) class of the
     # object statically, hence there's no need to evaluate a promise
     # just to call a method. In this case the called method receives
-    # the unevaluated promise as its argument!
+    # the unevaluated promise as its argument! (This might change in
+    # that either some flag in the the interface definition, or simply
+    # the stream_ prefix of a method could be required, otherwise it
+    # would still be forced. That would make it safe(r) but *maybe*
+    # (given a good test suite) it's not necessary?)
     {
         my $l = lazyT { cons(1, null) } "FP::List::Pair";
         ok !is_forced($l);
@@ -499,6 +503,12 @@ package FP::Lazy::Promise {
         # type, which is happening in a weird place but actually is
         # appropriate enough, right? Leaving at that is cheaper than
         # special-casing it.
+
+        # XX: a possibility would be to force the value even if it's a
+        # lazyT, if the method isn't a lazy one. How to know if it's a
+        # lazy one? stream_ prefix could double up for that,
+        # possibly. Will have to provide cons as stream_cons alias,
+        # then, though, for example.
 
         my $method
             = ($methodname =~ /^stream_/
