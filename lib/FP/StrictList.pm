@@ -104,6 +104,10 @@ package FP::StrictList::List {
         1
     }
 
+    sub is_list {
+        1
+    }
+
     sub strictlist {
         @_ == 1 or fp_croak_arity 1;
         my $s = shift;
