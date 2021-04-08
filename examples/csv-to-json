@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-my $copyright= <<'COPYRIGHT';
+my $copyright = <<'COPYRIGHT';
 # Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
 # Published under the same terms as perl itself
 COPYRIGHT
@@ -10,15 +10,15 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
-my ($email_full)= $copyright=~ / by ([^\n]*)/s;
+my ($email_full) = $copyright =~ / by ([^\n]*)/s;
 
 my ($mydir, $myname);
-BEGIN {
-    $0=~ /(.*?)([^\/]+)\z/s or die "?";
-    ($mydir, $myname)=($1,$2);
-}
 
-use lib "$mydir/functional-perl/lib";
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+use lib "$mydir/../lib";
 
 use Text::CSV qw( csv );
 use JSON;
@@ -27,10 +27,11 @@ use Getopt::Long;
 use FunctionalPerl ":all";
 use Scalar::Util qw(blessed);
 use Chj::xIOUtil qw(stdout_utf8 stdin_utf8);
+
 #use FP::Text::CSV qw(csv_file_to_rows);
 
 sub usage {
-    print STDERR map{"$_\n"} @_ if @_;
+    print STDERR map {"$_\n"} @_ if @_;
     print "$myname file.csv file.mint
 
   Convert CSV to JSON or Mint record literal syntax. It expects the
@@ -63,27 +64,28 @@ sub usage {
 
   ($email_full)
 ";
-exit (@_ ? 1 : 0);
+    exit(@_ ? 1 : 0);
 }
 
-
-my $verbose=0;
-our ($opt_json, $opt_mint, $opt_auto_numbers, $opt_auto_integers,
-     $opt_repl, $opt_conversion);
-GetOptions("verbose"=> \$verbose,
-	   "help"=> sub{usage},
-           "json"=> \$opt_json,
-           "mint"=> \$opt_mint,
-           "auto-numbers"=> \$opt_auto_numbers,
-           "auto-integers"=> \$opt_auto_integers,
-           "repl"=> \$opt_repl,
-           "conversion=s"=> \$opt_conversion,
-	   ) or exit 1;
+my $verbose = 0;
+our ($opt_json, $opt_mint, $opt_auto_numbers, $opt_auto_integers, $opt_repl,
+    $opt_conversion);
+GetOptions(
+    "verbose"       => \$verbose,
+    "help"          => sub {usage},
+    "json"          => \$opt_json,
+    "mint"          => \$opt_mint,
+    "auto-numbers"  => \$opt_auto_numbers,
+    "auto-integers" => \$opt_auto_integers,
+    "repl"          => \$opt_repl,
+    "conversion=s"  => \$opt_conversion,
+) or exit 1;
 usage unless @ARGV == 2;
 
-our $mode= $opt_json ?
-    ($opt_mint ? usage "both --json and --mint given" : "JSON")
-    : ($opt_mint ? "Mint" : "JSON");
+our $mode
+    = $opt_json
+    ? ($opt_mint ? usage "both --json and --mint given" : "JSON")
+    : ($opt_mint ? "Mint"                               : "JSON");
 
 sub hashmap_pair_op() {
     $mode eq "JSON" ? ": " : " = "
@@ -93,18 +95,18 @@ sub hashmap_pair_op() {
 # --auto-integers and it doesn't do anything.
 $opt_auto_numbers = 1 if $opt_auto_integers;
 
-my ($file_csv, $file_mint)= @ARGV;
+my ($file_csv, $file_mint) = @ARGV;
 
 #my $rows= csv_file_to_rows $file_csv;
 
 sub fieldname_to_mint($str) {
     my $s = lcfirst($str);
-    $s=~ s/^\s+//;
-    $s=~ s/\s+\z//;
-    $s=~ s/[^\w\d_]/_/sg; # XX would mint support e.g. "-" ?
-    if ($s=~ m/^\d/) {
-        $s = "_$s"; # prepend an underscore if fieldname starts with a
-                    # digit; XX needed?
+    $s =~ s/^\s+//;
+    $s =~ s/\s+\z//;
+    $s =~ s/[^\w\d_]/_/sg;    # XX would mint support e.g. "-" ?
+    if ($s =~ m/^\d/) {
+        $s = "_$s";           # prepend an underscore if fieldname starts with a
+                              # digit; XX needed?
     }
     $s
 }
@@ -115,70 +117,80 @@ my $json = JSON->new->allow_nonref;
 
 sub scalar_to_mint($val) {
     if ($opt_auto_numbers and looks_like_number $val) {
+
         # XX *assumes* that mint has the same number syntax as Perl
-        $val=~ s/\.0*\z// if $opt_auto_integers;
+        $val =~ s/\.0*\z// if $opt_auto_integers;
         $val
     } else {
+
         # XX mint may *not* use all of the same syntax as JSON. For
         # now assume it does:
         $json->encode($val)
     }
 }
 
-TEST { local ($opt_auto_numbers, $opt_auto_integers)= (0, 0);
-       scalar_to_mint "152.00" } "\"152.00\"";
-TEST { local ($opt_auto_numbers, $opt_auto_integers)= (1, 0);
-       scalar_to_mint "152.00" } "152.00";
-TEST { local ($opt_auto_numbers, $opt_auto_integers)= (1, 1);
-       scalar_to_mint "152.00" } "152";
+TEST {
+    local ($opt_auto_numbers, $opt_auto_integers) = (0, 0);
+    scalar_to_mint "152.00"
+}
+"\"152.00\"";
+TEST {
+    local ($opt_auto_numbers, $opt_auto_integers) = (1, 0);
+    scalar_to_mint "152.00"
+}
+"152.00";
+TEST {
+    local ($opt_auto_numbers, $opt_auto_integers) = (1, 1);
+    scalar_to_mint "152.00"
+}
+"152";
 TEST { scalar_to_mint "foo bar" } "\"foo bar\"";
 
 #run_tests __PACKAGE__
 
-
 sub hashmap_to_mint($hashmap) {
-    "{\n".
-    [sort keys %$hashmap]->map(
+    "{\n" . [sort keys %$hashmap]->map(
         sub ($title) {
-            my $value= $hashmap->{$title};
+            my $value = $hashmap->{$title};
             fieldname_to_mint($title) . hashmap_pair_op . to_mint($value)
-        })->strings_join(",\n") ."\n}"
+        }
+    )->strings_join(",\n")
+        . "\n}"
 }
 
 sub sequence_to_mint($l) {
-    "[\n".
-        $l->map(\&to_mint)->strings_join(",\n"). "\n]"
+    "[\n" . $l->map(\&to_mint)->strings_join(",\n") . "\n]"
 }
 
 sub to_mint($value) {
-    if (defined (my $class = blessed $value)) {
+    if (defined(my $class = blessed $value)) {
         if ($value->isa("FP::Abstract::Sequence")) {
             return sequence_to_mint($value->purearray)
         }
-    } elsif(my $r= ref($value)) {
+    } elsif (my $r = ref($value)) {
         if ($r eq "ARRAY") {
             return sequence_to_mint($value->purearray)
-        } elsif($r eq "HASH") {
+        } elsif ($r eq "HASH") {
             return hashmap_to_mint($value)
         }
     } else {
         return scalar_to_mint($value)
     }
-    die "don't know how to map this to Mint: ".show($value)
+    die "don't know how to map this to Mint: " . show($value)
 }
-
 
 sub convertfile ($fn) {
     my $csvinput = $file_csv eq "-" ? stdin_utf8 : $file_csv;
-    my $rows= csv(in=> $csvinput );
+    my $rows     = csv(in => $csvinput);
 
-    my $titles= $rows->first;
+    my $titles = $rows->first;
 
-    my $body= $rows->rest;
-    my $body_hms= $body->map(sub ($row) { ziphash $titles, $row });
-    my $body_hms2= $fn->($body_hms);
+    my $body      = $rows->rest;
+    my $body_hms  = $body->map(sub ($row) { ziphash $titles, $row });
+    my $body_hms2 = $fn->($body_hms);
 
-    my $mint= "[\n" . $body_hms2->map(\&to_mint)->strings_join(",\n") . "\n]\n";
+    my $mint
+        = "[\n" . $body_hms2->map(\&to_mint)->strings_join(",\n") . "\n]\n";
 
     my $out;
     if ($file_mint eq "-") {
@@ -187,29 +199,28 @@ sub convertfile ($fn) {
         open $out, ">:encoding(UTF-8)", $file_mint
             or die "can't open file for writing: '$file_mint'";
     }
-    print $out $mint
-        or die "print: $!";
-    close $out
-        or die "close($file_mint): $!";
+    print $out $mint or die "print: $!";
+    close $out       or die "close($file_mint): $!";
 }
 
-sub groupByNumber($records, $key) {
+sub groupByNumber ($records, $key) {
     $records->sort(on(hashkey($key), \&number_cmp))
-            ->group(on(hashkey($key), \&number_eq))
+        ->group(on(hashkey($key), \&number_eq))
 }
 
 if ($opt_repl) {
     repl;
 } elsif ($opt_conversion) {
-    my $function= eval $opt_conversion;
+    my $function = eval $opt_conversion;
     die $@ if $@;
-    ref ($function) eq "CODE"
-      or die "expecting --conversion's argument to evaluate to a function, but got: $function";
+    ref($function) eq "CODE"
+        or die
+        "expecting --conversion's argument to evaluate to a function, but got: $function";
     convertfile($function);
 } else {
     convertfile(\&identity);
 }
 
 #use Chj::ruse;
-#use Chj::Backtrace; 
+#use Chj::Backtrace;
 
