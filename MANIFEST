@@ -8,6 +8,7 @@ bench/globs
 bin/expand-tail
 bin/fperl
 bin/perlrepl
+bin/repl2test
 docs/HACKING.md
 docs/TODO.md
 docs/contact.md
@@ -166,6 +167,7 @@ lib/FP/Predicates.pm
 lib/FP/PureArray.pm
 lib/FP/PureArray/t.pm
 lib/FP/PureHash.pm
+lib/FP/RegexMatch.pm
 lib/FP/Repl.pm
 lib/FP/Repl/AutoTrap.pm
 lib/FP/Repl/Dependencies.pm
