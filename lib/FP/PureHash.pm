@@ -68,7 +68,7 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT      = qw(purehash);
-our @EXPORT_OK   = qw();
+our @EXPORT_OK   = qw(hash_clone_to_purehash hash_to_purehash);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Docstring;
@@ -97,6 +97,16 @@ sub purehash {
     # XX ^ this also changes the behaviour accessing a non-existing key, yeah;
     # why not just   overload? oh  that was said to be slow or was it Tie  ?
     $res
+}
+
+sub hash_clone_to_purehash {
+    @_ == 1 or fp_croak_arity 1;
+    FP::_::PureHash->new_from_hash({ %{ $_[0] } })
+}
+
+sub hash_to_purehash {
+    @_ == 1 or fp_croak_arity 1;
+    FP::_::PureHash->new_from_hash($_[0])
 }
 
 sub is_purehash {
