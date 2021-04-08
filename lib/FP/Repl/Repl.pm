@@ -116,7 +116,7 @@ sub WithRepl_eval (&;$) {
 use Chj::Class::methodnames;
 use Chj::xoutpipe();
 use Chj::xtmpfile;
-use Chj::xperlfunc qw(xexec);
+use Chj::xperlfunc qw(xexec xstat);
 use Chj::xopen qw(fh_to_fh perhaps_xopen_read);
 use POSIX;
 use Chj::xhome qw(xhome);
@@ -128,6 +128,7 @@ use FP::Lazy;
 use FP::Show;
 use Scalar::Util qw(blessed);
 use FP::Carp;
+use FP::Array qw(array_take array_last_upto);
 
 sub maybe_tty {
     my $path = "/dev/tty";
@@ -378,6 +379,8 @@ Other features:
                      that *leaves* the currently selected frame
 };
 }
+
+our $history_z = 0;    # for history file numbering
 
 sub formatter {
     my $self    = shift;
@@ -931,20 +934,86 @@ sub run {
         # in the $term object
         if (defined $$self[Maybe_historypath]) {
 
-            # clean history of C based object before we re-add the
+            # clean history of readline object before we re-add the
             # saved one:
             $clear_history->($term);
-            if (open my $hist, "<", $$self[Maybe_historypath]) {
+            my $copyhist = sub {
+                for (@history) {
+                    $term->addhistory($_);
+                }
+            };
+            if (opendir my $dir, $$self[Maybe_historypath]) {
+
+                # new style history dirs (each entry its own file)
+                my @items = readdir $dir;
+                closedir $dir
+                    or die "reading dir '$$self[Maybe_historypath]': $!";
+                my @fstats
+                    = sort { $a->[2] <=> $b->[2] or $a->[0] cmp $b->[0] } map {
+                    if ($_ eq "." or $_ eq "..") {
+                        ()
+                    } else {
+                        my $file = "$$self[Maybe_historypath]/$_";
+                        [$_, $file, xstat($file)->mtime]
+                    }
+                    } @items;
+                my @files = map { $_->[1] } @fstats;
+
+                my @h;
+                for my $file (@{ array_last_upto \@files, $$self[MaxHistLen] })
+                {
+                    if (open my $in, "<", $file) {
+                        local $/;
+                        my $cnt = <$in>;
+                        close $in or die "reading '$file': $!";
+                        push @h, $cnt;
+                    } else {
+                        warn "can't open file '$file' for reading: $!";
+                    }
+                }
+                @history = @h;
+                $copyhist->();
+
+                # and clean up stale entries
+                if (@files > $$self[MaxHistLen]) {
+                    for my $file (
+                        @{ array_take \@files, @files - $$self[MaxHistLen] })
+                    {
+                        unlink $file
+                    }
+                }
+            } elsif (open my $hist, "<", $$self[Maybe_historypath]) {
+
+                # old style history files
                 @history = do {
                     local $/ = "\n";
                     my @h = <$hist>;
                     chomp @h;
-                    @h
+                    @{ array_last_upto(\@h, $$self[MaxHistLen]) }
                 };
-                close $hist;
-                for (@history) {
-                    $term->addhistory($_);
+                close $hist or die "reading '$$self[Maybe_historypath]': $!";
+                $copyhist->();
+
+                # and convert it to files
+                unlink $$self[Maybe_historypath];
+                mkdir $$self[Maybe_historypath], 0700
+                    or die "can't mkdir($$self[Maybe_historypath]): $!";
+                my $z = 0;
+                for my $entry (@history) {
+
+                    # c- for converted, also, 'c' < 'n'
+                    my $name = sprintf 'c-%06i-%06i', $$, $z++;
+                    my $path = "$$self[Maybe_historypath]/$name";
+
+                    # No need to be careful here with overwrites as
+                    # conversion happens only once, OK?
+                    open my $out, ">", $path
+                        or die "can't write to '$path': $!";
+                    print $out $entry or die "can't write to '$path': $!";
+                    close $out        or die "can't write to '$path': $!";
                 }
+            } elsif (-e $$self[Maybe_historypath]) {
+                warn "can't load history from '$$self[Maybe_historypath]': $!";
             }
         }
 
@@ -1006,10 +1075,37 @@ sub run {
                 my $input = &$myreadline // last;
 
                 if (length $input) {
+
                     my ($cmd, $rest)
                         = $input =~ /^ *[:,] *([?+-]|[a-zA-Z]+|\d+)(.*)/s
                         ? ($1, $2)
                         : (undef, $input);
+
+                    if (defined $$self[Maybe_historypath]
+                        and not(defined $cmd and $cmd eq 'q'))
+                    {
+                        eval {
+                            TRY: {
+                                # n- for new, also 'n' > 'c'
+                                my $name = sprintf 'n-%06i-%06i', $$,
+                                    $history_z++;
+                                my $path = "$$self[Maybe_historypath]/$name";
+                                if (-e $path) {
+                                    $history_z++;
+                                    redo TRY;
+                                }
+                                my $f = xtmpfile $path;
+                                $f->xprint($input);
+                                $f->xclose;
+                                $f->xputback(0600);
+                            }
+
+                            # cleaning of old entries happens on reading
+                        };
+                        if (ref $@ or $@) {
+                            warn "could not write history file: " . show($@)
+                        }
+                    }
 
                     if (defined $cmd) {
 
@@ -1356,17 +1452,6 @@ sub run {
             }
         }
         print $OUTPUT "\n";
-        if (defined $$self[Maybe_historypath]) {
-            eval {
-                my $f = xtmpfile $$self[Maybe_historypath];
-                $f->xprint("$_\n") for @history;
-                $f->xclose;
-                $f->xputback(0600);
-            };
-            if (ref $@ or $@) {
-                warn "could not write history file: " . show($@)
-            }
-        }
         $SIG{INT} = defined($oldsigint) ? $oldsigint : "DEFAULT";
 
         # (Is there no other return path from sub run? should I use
