@@ -932,6 +932,9 @@ sub run {
 
         # ^ this is what nested repl's will use to restore the history
         # in the $term object
+
+        # ^ TODO?: this is, now that history items are written to disk
+        # immediately, inconsistent!
         if (defined $$self[Maybe_historypath]) {
 
             # clean history of readline object before we re-add the
@@ -1440,6 +1443,9 @@ sub run {
                 if (length $input
                     and ((!defined $history[-1]) or $history[-1] ne $input))
                 {
+                    # XX this is, now that entries are written to disk
+                    # immediately, only used for nested repls (see
+                    # todo above)
                     push @history, $input;
                     chomp $input;
                     $term->addhistory($input);
