@@ -1084,8 +1084,9 @@ sub run {
                         ? ($1, $2)
                         : (undef, $input);
 
-                    if (defined $$self[Maybe_historypath]
-                        and not(defined $cmd and $cmd eq 'q'))
+                    if (    defined $$self[Maybe_historypath]
+                        and not(defined $cmd and $cmd eq 'q')
+                        and not(@history and $input eq $history[-1]))
                     {
                         eval {
                             TRY: {
