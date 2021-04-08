@@ -132,11 +132,39 @@ package FP::Hash::Mixin {
     _END_
 }
 
+package FP::PureHash::autobox {
+    our $AUTOLOAD;
+
+    sub AUTOLOAD {
+        my $methodname = $AUTOLOAD;
+        $methodname =~ s/.*:://;
+        my $v = FP::_::PureHash->new_from_hash($_[0]);
+        if (my $m = $v->can($methodname)) {
+            goto $m
+        } else {
+            die "no method '$methodname' found for object: $v";
+        }
+    }
+}
+
 package FP::_::PureHash {
     use base "FP::Hash::Mixin";
     use FP::Interfaces;
     use FP::Carp;
     use Chj::NamespaceCleanAbove;
+
+    sub new_from_hash {
+        @_ == 2 or fp_croak_arity 2;
+        my ($class, $out) = @_;
+        if ($FP::PureHash::immutable) {
+            for my $k (keys %$out) {
+                Internals::SvREADONLY $out->{$k}, 1
+            }
+        }
+        my $res = bless $out, "FP::_::PureHash";
+        Internals::SvREADONLY %$out, 1 if $FP::PureHash::immutable;
+        $res
+    }
 
     sub constructor_name {"purehash"}
 
