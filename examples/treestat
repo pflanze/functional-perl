@@ -101,18 +101,16 @@ sub sha256sum ($path) {
 }
 
 sub tree_to_records ($dirpath, $tail) {
-    lazy {
-        xdirectory_paths($dirpath, $opt_no_sort ? () : \&string_cmp)
-            ->fold_right(
-            sub ($path, $tail) {
-                my $s          = xlstat $path;
-                my $maybe_hash = ($s->is_file and sha256sum($path));
-                cons([$path, [@$s, $maybe_hash]],
-                    $s->is_dir ? tree_to_records($path, $tail) : $tail)
-            },
-            $tail
-            )
-    }
+    xdirectory_paths($dirpath, $opt_no_sort ? () : \&string_cmp)
+        ->stream->fold_right(
+        sub ($path, $tail) {
+            my $s          = xlstat $path;
+            my $maybe_hash = ($s->is_file and sha256sum($path));
+            cons([$path, [@$s, $maybe_hash]],
+                $s->is_dir ? tree_to_records($path, $tail) : $tail)
+        },
+        $tail
+        )
 }
 
 sub print_tree ($dirpath) {
