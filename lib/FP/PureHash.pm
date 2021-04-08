@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -51,7 +51,8 @@ keys yields an exception.
 
 =head1 SEE ALSO
 
-Implements: L<FP::Abstract::Map>.
+Implements: L<FP::Abstract::Pure>, L<FP::Abstract::Map>,
+L<FP::Abstract::Equal>, L<FP::Abstract::Show>
 
 =head1 NOTE
 
