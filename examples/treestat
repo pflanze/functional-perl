@@ -9,6 +9,22 @@ use strict;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
+use Getopt::Long;
+use lib '/opt/functional-perl/lib';    # new stuff, or when fperl_noinstall
+use Chj::xperlfunc qw(xlstat xprintln xprint xgetfile_utf8 xchdir);
+use FP::IOStream qw(xdirectory_paths);
+use FP::Ops qw(string_cmp);
+use FP::List qw(cons null);
+use FP::Lazy;
+use FP::Stream ":all";
+use Chj::singlequote qw(singlequote);
+use FP::Show;
+use FP::Repl;
+use JSON qw(decode_json);
+use FP::Div qw(min);
+use Digest;
+use FP::Docstring;
+
 my ($email_full) = $copyright =~ / by ([^\n]*)/s;
 
 my ($mydir, $myname);
@@ -58,7 +74,6 @@ sub usage {
     exit(@_ ? 1 : 0);
 }
 
-use Getopt::Long;
 our $verbose = 0;
 my ($opt_no_chdir, $opt_no_sort);
 
@@ -73,20 +88,6 @@ GetOptions(
 ) or exit 1;
 usage unless @ARGV >= 1;
 
-use lib '/opt/functional-perl/lib';    # new stuff, or when fperl_noinstall
-use Chj::xperlfunc qw(xlstat xprintln xprint xgetfile_utf8 xchdir);
-use FP::IOStream qw(xdirectory_paths);
-use FP::Ops qw(string_cmp);
-use FP::List qw(cons null);
-use FP::Lazy;
-use FP::Stream ":all";
-use Chj::singlequote qw(singlequote);
-use FP::Show;
-use FP::Repl;
-use JSON qw(decode_json);
-use FP::Div qw(min);
-use Digest;
-
 # JSON::PP < v4 do not allow non-references by default, thus:
 my $json = JSON->new->allow_nonref;
 
@@ -100,14 +101,16 @@ sub sha256sum ($path) {
     $ctx->b64digest
 }
 
-sub tree_to_records ($dirpath, $tail) {
+sub directory_records ($dirpath, $tail) {
+    __ "Stream of [path, [statvalues, maybe_hash]] for dirpath,
+    depth-first.";
     xdirectory_paths($dirpath, $opt_no_sort ? () : \&string_cmp)
         ->stream->fold_right(
         sub ($path, $tail) {
             my $s          = xlstat $path;
             my $maybe_hash = ($s->is_file and sha256sum($path));
             cons([$path, [@$s, $maybe_hash]],
-                $s->is_dir ? tree_to_records($path, $tail) : $tail)
+                $s->is_dir ? directory_records($path, $tail) : $tail)
         },
         $tail
         )
@@ -128,7 +131,7 @@ sub print_tree ($dirpath) {
     binmode STDOUT, ":encoding(UTF-8)" or die "binmode: $!";
     xprintln "{";
 
-    tree_to_records($base, null)->for_each_with_islast(
+    directory_records($base, null)->for_each_with_islast(
         sub ($record, $islast) {
             my ($path, $s_ary) = @$record;
             xprintln " ", encode_json($path), ": ", encode_json($s_ary),
