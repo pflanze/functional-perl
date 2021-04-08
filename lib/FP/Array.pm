@@ -68,6 +68,8 @@ our @EXPORT_OK = qw(array
     array_unshift
     array_sub
     array_take
+    array_take_upto
+    array_last_upto
     array_take_while
     array_take_while_and_rest
     array_drop
@@ -262,6 +264,26 @@ sub array_take {
     @_ == 2 or fp_croak_arity 2;
     my ($a, $n) = @_;
     array_sub $a, 0, $n
+}
+
+sub array_take_upto {
+    @_ == 2 or fp_croak_arity 2;
+    my ($a, $n) = @_;
+    my $len    = @$a;
+    my $newlen = min($n, $len);
+    array_take($a, $newlen)
+}
+
+sub array_last_upto {
+
+    # last n items but if n is larger than the length, just the whole
+    # array. todo: don't copy it in that case.
+    my ($a, $n) = @_;
+    my $len    = @$a;
+    my $newlen = min($n, $len);
+    array_sub $a, $len - $newlen, $len
+
+        # [@$a[$len - $newlen .. $len - 1]]
 }
 
 sub array_drop {
