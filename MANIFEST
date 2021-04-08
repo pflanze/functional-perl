@@ -20,6 +20,7 @@ docs/links.md
 docs/mailing_list.md
 docs/names.md
 examples/README.md
+examples/csv-to-json
 examples/csv_to_xml
 examples/csv_to_xml-example.csv
 examples/csv_to_xml_short
