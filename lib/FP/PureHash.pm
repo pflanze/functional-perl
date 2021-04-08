@@ -208,6 +208,41 @@ package FP::_::PureHash {
         $res
     }
 
+    sub key_value_pairs {
+        @_ == 1 or fp_croak_arity 1;
+        my ($h) = @_;
+        map { [$_, $h->{$_}] } sort keys %$h
+    }
+
+    sub array {
+        @_ == 1 or fp_croak_arity 1;
+        my ($h) = @_;
+        [$h->key_value_pairs]
+    }
+
+    sub purearray {
+        @_ == 1 or fp_croak_arity 1;
+        my ($h) = @_;
+
+        # XX load FP::PureArray or not, here or always?
+        FP::_::PureArray->new_from_array($h->array)
+    }
+
+    sub list {
+        @_ == 1 or fp_croak_arity 1;
+        my ($h) = @_;
+
+        # XX load FP::List or not, here or always?
+        FP::List::array_to_list($h->array)
+    }
+
+    # Should we add this? Auto-choose the best sequence for the task?
+    sub sequence {
+        @_ == 1 or fp_croak_arity 1;
+        my ($h) = @_;
+        $h->purearray
+    }
+
     FP::Interfaces::implemented qw(
         FP::Abstract::Pure
         FP::Abstract::Map
