@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.49 2021-4-8
+    - Array: small fix
+    - support autoboxing for hashes
+    - PureHash: add key_value_pairs, array, purearray, list, sequence
+    - add `examples/csv-to-json`
+
 0.72.48 2021-4-8
     - Abstract/Sequence: change min, max to use a comparison function
     - Array: add array_take_upto, array_last_upto
