@@ -1,5 +1,12 @@
 Revision history for FunctionalPerl
 
+0.72.48 2021-4-8
+    - Abstract/Sequence: change min, max to use a comparison function
+    - Array: add array_take_upto, array_last_upto
+    - Repl: fix history reading when $/ is localized
+    - Repl: change to save history as individual files, immediately
+    - add `repl2test` script; add `FP::RegexMatch`
+
 0.72.47 2021-3-30
     - add `group` to the Sequence interface
     - add `hashkey`, `mesh` and `ziphash` to FP::Hash
