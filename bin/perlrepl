@@ -101,8 +101,9 @@ for (my $i = 0; $i <= $#ARGV; $i++) {
     }
 }
 
-my $HISTFILE   = xsafehome . "/.${myname}_history";
-my $MAXHISTLEN = 100;
+my $HISTFILE = xsafehome . "/.${myname}_history";
+
+#my $MAXHISTLEN = 500;
 
 eval { require Chj::BinHexOctDec; };
 warn $@ if $@;
@@ -149,8 +150,9 @@ if (@files) {
     require FP::Repl;
     FP::Repl::repl(
         maybe_historypath => ($opt_H ? undef : $HISTFILE),
-        maxhistlen        => $MAXHISTLEN,
-        maybe_package     => $myname
+
+        #maxhistlen        => $MAXHISTLEN,
+        maybe_package => $myname
     );
 }
 
