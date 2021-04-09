@@ -1098,6 +1098,7 @@ sub run {
                                     $history_z++;
                                     redo TRY;
                                 }
+                                mkdir $$self[Maybe_historypath], 0700;
                                 my $f = xtmpfile $path;
                                 $f->xprint($input);
                                 $f->xclose;
