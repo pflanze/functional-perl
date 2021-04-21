@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.51 2021-4-21
+    - make test not fail in the absence of JSON.pm
+
 0.72.50 2021-4-21
     - Fix "Repl: change to save history as individual files,
       immediately"
