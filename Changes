@@ -1,5 +1,12 @@
 Revision history for FunctionalPerl
 
+0.72.50 2021-4-21
+    - Fix "Repl: change to save history as individual files,
+      immediately"
+    - Repl: increase default histlen to 500
+    - Add test for examples/csv-to-json
+    - Create FP::JSON by moving part of csv-to-json
+
 0.72.49 2021-4-8
     - Array: small fix
     - support autoboxing for hashes
