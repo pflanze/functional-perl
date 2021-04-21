@@ -42,6 +42,7 @@ our %dependencies = (
 
     # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
 
+    'FP::JSON'                  => ['JSON'],
     'FP::Abstract::Sequence::t' => ['FP::autobox'],
     'Chj::Serialize'            => ['FP::Repl::Dependencies', 'B::Deparse'],
     'FP::Docstring'             => ['B::Deparse'],
