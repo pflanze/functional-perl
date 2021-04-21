@@ -21,7 +21,7 @@ BEGIN {
 use lib "$mydir/../lib";
 
 use Text::CSV qw( csv );
-use JSON;
+use JSON ();
 use Scalar::Util qw(looks_like_number);
 use Getopt::Long;
 use FunctionalPerl ":all";
@@ -99,7 +99,7 @@ my ($file_csv, $file_mint) = @ARGV;
 
 #my $rows= csv_file_to_rows $file_csv;
 
-sub fieldname_to_mint($str) {
+sub fieldname_to_json($str) {
     my $s = lcfirst($str);
     $s =~ s/^\s+//;
     $s =~ s/\s+\z//;
@@ -111,11 +111,11 @@ sub fieldname_to_mint($str) {
     $s
 }
 
-TEST { fieldname_to_mint "Quadrat 'o'Hara" } 'quadrat__o_Hara';
+TEST { fieldname_to_json "Quadrat 'o'Hara" } 'quadrat__o_Hara';
 
 my $json = JSON->new->allow_nonref;
 
-sub scalar_to_mint($val) {
+sub scalar_to_json($val) {
     if ($opt_auto_numbers and looks_like_number $val) {
 
         # XX *assumes* that mint has the same number syntax as Perl
@@ -131,50 +131,50 @@ sub scalar_to_mint($val) {
 
 TEST {
     local ($opt_auto_numbers, $opt_auto_integers) = (0, 0);
-    scalar_to_mint "152.00"
+    scalar_to_json "152.00"
 }
 "\"152.00\"";
 TEST {
     local ($opt_auto_numbers, $opt_auto_integers) = (1, 0);
-    scalar_to_mint "152.00"
+    scalar_to_json "152.00"
 }
 "152.00";
 TEST {
     local ($opt_auto_numbers, $opt_auto_integers) = (1, 1);
-    scalar_to_mint "152.00"
+    scalar_to_json "152.00"
 }
 "152";
-TEST { scalar_to_mint "foo bar" } "\"foo bar\"";
+TEST { scalar_to_json "foo bar" } "\"foo bar\"";
 
 #run_tests __PACKAGE__
 
-sub hashmap_to_mint($hashmap) {
+sub hashmap_to_json($hashmap) {
     "{\n" . [sort keys %$hashmap]->map(
         sub ($title) {
             my $value = $hashmap->{$title};
-            fieldname_to_mint($title) . hashmap_pair_op . to_mint($value)
+            fieldname_to_json($title) . hashmap_pair_op . to_json($value)
         }
     )->strings_join(",\n")
         . "\n}"
 }
 
-sub sequence_to_mint($l) {
-    "[\n" . $l->map(\&to_mint)->strings_join(",\n") . "\n]"
+sub sequence_to_json($l) {
+    "[\n" . $l->map(\&to_json)->strings_join(",\n") . "\n]"
 }
 
-sub to_mint($value) {
+sub to_json($value) {
     if (defined(my $class = blessed $value)) {
         if ($value->isa("FP::Abstract::Sequence")) {
-            return sequence_to_mint($value->purearray)
+            return sequence_to_json($value->purearray)
         }
     } elsif (my $r = ref($value)) {
         if ($r eq "ARRAY") {
-            return sequence_to_mint($value->purearray)
+            return sequence_to_json($value->purearray)
         } elsif ($r eq "HASH") {
-            return hashmap_to_mint($value)
+            return hashmap_to_json($value)
         }
     } else {
-        return scalar_to_mint($value)
+        return scalar_to_json($value)
     }
     die "don't know how to map this to Mint: " . show($value)
 }
@@ -190,7 +190,7 @@ sub convertfile ($fn) {
     my $body_hms2 = $fn->($body_hms);
 
     my $mint
-        = "[\n" . $body_hms2->map(\&to_mint)->strings_join(",\n") . "\n]\n";
+        = "[\n" . $body_hms2->map(\&to_json)->strings_join(",\n") . "\n]\n";
 
     my $out;
     if ($file_mint eq "-") {
