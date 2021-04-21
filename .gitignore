@@ -3,6 +3,7 @@ t/testlazy-out
 out.xhtml
 t/test-a.csv
 t/test-a.xml
+t/examples-csv-to-json.data/
 .expansion-*
 /website/www/
 MYMETA.yml
