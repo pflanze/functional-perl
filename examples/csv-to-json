@@ -21,11 +21,9 @@ BEGIN {
 use lib "$mydir/../lib";
 
 use Text::CSV qw( csv );
-use JSON ();
-use Scalar::Util qw(looks_like_number);
+use FP::JSON qw(to_json);
 use Getopt::Long;
 use FunctionalPerl ":all";
-use Scalar::Util qw(blessed);
 use Chj::xIOUtil qw(stdout_utf8 stdin_utf8);
 
 #use FP::Text::CSV qw(csv_file_to_rows);
@@ -82,102 +80,24 @@ GetOptions(
 ) or exit 1;
 usage unless @ARGV == 2;
 
-our $mode
+our $output_format
     = $opt_json
     ? ($opt_mint ? usage "both --json and --mint given" : "JSON")
     : ($opt_mint ? "Mint"                               : "JSON");
-
-sub hashmap_pair_op() {
-    $mode eq "JSON" ? ": " : " = "
-}
 
 # Not sure this is ideal but people will be confused if giving
 # --auto-integers and it doesn't do anything.
 $opt_auto_numbers = 1 if $opt_auto_integers;
 
+my $settings = {
+    output_format => $output_format,
+    auto_numbers  => $opt_auto_numbers,
+    auto_integers => $opt_auto_integers,
+};
+
 my ($file_csv, $file_mint) = @ARGV;
 
 #my $rows= csv_file_to_rows $file_csv;
-
-sub fieldname_to_json($str) {
-    my $s = lcfirst($str);
-    $s =~ s/^\s+//;
-    $s =~ s/\s+\z//;
-    $s =~ s/[^\w\d_]/_/sg;    # XX would mint support e.g. "-" ?
-    if ($s =~ m/^\d/) {
-        $s = "_$s";           # prepend an underscore if fieldname starts with a
-                              # digit; XX needed?
-    }
-    $s
-}
-
-TEST { fieldname_to_json "Quadrat 'o'Hara" } 'quadrat__o_Hara';
-
-my $json = JSON->new->allow_nonref;
-
-sub scalar_to_json($val) {
-    if ($opt_auto_numbers and looks_like_number $val) {
-
-        # XX *assumes* that mint has the same number syntax as Perl
-        $val =~ s/\.0*\z// if $opt_auto_integers;
-        $val
-    } else {
-
-        # XX mint may *not* use all of the same syntax as JSON. For
-        # now assume it does:
-        $json->encode($val)
-    }
-}
-
-TEST {
-    local ($opt_auto_numbers, $opt_auto_integers) = (0, 0);
-    scalar_to_json "152.00"
-}
-"\"152.00\"";
-TEST {
-    local ($opt_auto_numbers, $opt_auto_integers) = (1, 0);
-    scalar_to_json "152.00"
-}
-"152.00";
-TEST {
-    local ($opt_auto_numbers, $opt_auto_integers) = (1, 1);
-    scalar_to_json "152.00"
-}
-"152";
-TEST { scalar_to_json "foo bar" } "\"foo bar\"";
-
-#run_tests __PACKAGE__
-
-sub hashmap_to_json($hashmap) {
-    "{\n" . [sort keys %$hashmap]->map(
-        sub ($title) {
-            my $value = $hashmap->{$title};
-            fieldname_to_json($title) . hashmap_pair_op . to_json($value)
-        }
-    )->strings_join(",\n")
-        . "\n}"
-}
-
-sub sequence_to_json($l) {
-    "[\n" . $l->map(\&to_json)->strings_join(",\n") . "\n]"
-}
-
-sub to_json($value) {
-    if (defined(my $class = blessed $value)) {
-        if ($value->isa("FP::Abstract::Sequence")) {
-            return sequence_to_json($value->purearray)
-        }
-    } elsif (my $r = ref($value)) {
-        if ($r eq "ARRAY") {
-            return sequence_to_json($value->purearray)
-        } elsif ($r eq "HASH") {
-            return hashmap_to_json($value)
-        }
-    } else {
-        return scalar_to_json($value)
-    }
-    die "don't know how to map this to Mint: " . show($value)
-}
 
 sub convertfile ($fn) {
     my $csvinput = $file_csv eq "-" ? stdin_utf8 : $file_csv;
@@ -189,8 +109,12 @@ sub convertfile ($fn) {
     my $body_hms  = $body->map(sub ($row) { ziphash $titles, $row });
     my $body_hms2 = $fn->($body_hms);
 
-    my $mint
-        = "[\n" . $body_hms2->map(\&to_json)->strings_join(",\n") . "\n]\n";
+    my $mint = "[\n" . $body_hms2->map(
+        sub ($v) {
+            to_json $v, $settings
+        }
+    )->strings_join(",\n")
+        . "\n]\n";
 
     my $out;
     if ($file_mint eq "-") {
