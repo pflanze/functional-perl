@@ -176,12 +176,19 @@ sub parse_treestat ($path) {
 # files to the older time fixes the synchronisation.
 sub mtime_fixes ($A, $B) {
     my %mtime;
+    my $ignore_same_mtime  = 0;
+    my $ignore_diffcontent = 0;
+    my $ignore_difftype    = 0;
+    my $act_file           = 0;
+    my $act_dir            = 0;
+    my $act_other          = 0;
     for my $k (keys %$A) {
         if (defined(my $b = $$B{$k})) {
             my $a = $$A{$k};
             if ($a->mtime == $b->mtime) {
 
                 # no change to be done
+                $ignore_same_mtime++;
             } else {
                 if ($a->filetype == $b->filetype) {
 
@@ -193,25 +200,45 @@ sub mtime_fixes ($A, $B) {
                     };
                     if ($a->is_file) {
                         if ($a->size == $b->size and $a->hash eq $b->hash) {
+                            $act_file++;
                             &$act
+                        } else {
+
+                            # uh, different contents, can't know what
+                            # to do (shouldn't happen once
+                            # synchronisation was run, but may be if
+                            # both sides had changes)
+                            $ignore_diffcontent++;
                         }
                     } else {
 
                         # Do not try to update symlinks
                         unless ($a->is_link) {
+                            if ($a->is_dir) {
+                                $act_dir++;
+                            } else {
+
+                                # repl;
+                                $act_other++;
+                            }
                             &$act
                         }
                     }
                 } else {
-
-                    # uh, different contents, can't know what to do
-                    # (shouldn't happen once synchronisation was run,
-                    # but may be if both sides had changes)
+                    $ignore_difftype++;
                 }
             }
         }
     }
-    \%mtime
+    {
+        mtimes             => \%mtime,
+        ignore_same_mtime  => $ignore_same_mtime,
+        ignore_difftype    => $ignore_difftype,
+        ignore_diffcontent => $ignore_diffcontent,
+        act_file           => $act_file,
+        act_dir            => $act_dir,
+        act_other          => $act_other,
+    }
 }
 
 sub trees_repl {
