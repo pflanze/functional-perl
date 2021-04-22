@@ -12,14 +12,14 @@ use experimental 'signatures';
 use lib "./lib";
 use Test::Requires qw(JSON Text::CSV);
 use Test::More;
-use Chj::xperlfunc qw(xxsystem xsystem);
+use Chj::xperlfunc qw(xxsystem xsystem xxsystem_safe);
 
 sub t ($direct_mode, $result_file, @options) {
     local $ENV{GIT_PAGER} = "";    # disable git calling a pager
     my $inpath      = "t/examples-csv-to-json.data/a.csv";
     my $result_path = "t/examples-csv-to-json.data/$result_file";
     my $outpath     = $direct_mode ? $result_path : "$result_path-out";
-    xxsystem "examples/csv-to-json", $inpath, @options, $outpath;
+    xxsystem_safe $^X, "examples/csv-to-json", $inpath, @options, $outpath;
     my @cmd
         = $direct_mode
         ? (qw(git diff --exit-code), $result_path)
