@@ -1,0 +1,91 @@
+#!/usr/bin/env perl
+
+my $copyright = <<'COPYRIGHT';
+# Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
+# Published under the same terms as perl itself
+COPYRIGHT
+
+use strict;
+use utf8;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
+
+use Getopt::Long;
+use Chj::xperlfunc qw(xslurp);
+
+my ($email_full) = $copyright =~ / by ([^\n]*)/s;
+
+my ($mydir, $myname);
+
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+
+my $pathpattern = "t/*.t";
+
+sub usage {
+    print STDERR map {"$_\n"} @_ if @_;
+    print "$myname [ files ]
+
+  Check the files or $pathpattern for some issues, like not calling the right
+  Perl.
+
+  ($email_full)
+";
+    exit(@_ ? 1 : 0);
+}
+
+our $verbose = 0;
+
+#our $opt_dry;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+
+    #"dry-run"=> \$opt_dry,
+) or exit 1;
+
+my $issues = 0;
+
+sub issue ($path, $line, $msg) {
+    $issues++;
+    warn "$myname: $msg in $path line $line\n";
+}
+
+sub match_line { scalar split /\n/, substr $_[0], 0, pos($_[0]) }
+
+# use FP::Repl::Trap;
+
+sub tcheck ($path) {
+    my $str = xslurp $path;
+    while ($str =~ /xsystem\b/g) {
+        issue $path, match_line($str),
+            "uses x?xsystem instead of _safe variant";
+    }
+    while ($str =~ /system_safe\b/g) {
+        my $rest   = substr $str, pos($str);
+        my $before = substr $str, 0, pos($str) - length("system_safe");
+        my @lbefore = split /\n/, $before;
+        my $l       = $lbefore[-1];
+        next if $l =~ /use Chj::xperlfunc/;
+
+        $rest =~ s/\s+//;
+        $rest =~ s/\(//;
+        $rest =~ s/\s+//;
+        next if $rest =~ /^\$\^X\b/;
+        next if $rest =~ /^\@cmd/;     # not Perl, right?
+        issue $path, scalar @lbefore, 'must use $^X to call Perl scripts';
+
+        # use FP::Repl; repl;
+    }
+}
+
+if (@ARGV) {
+    tcheck $_ for @ARGV;
+} else {
+    tcheck $_ for glob $pathpattern;
+}
+
+exit($issues ? 1 : 0);
