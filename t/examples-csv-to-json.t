@@ -12,7 +12,7 @@ use experimental 'signatures';
 use lib "./lib";
 use Test::Requires qw(JSON Text::CSV);
 use Test::More;
-use Chj::xperlfunc qw(xxsystem xsystem xxsystem_safe);
+use Chj::xperlfunc qw(xxsystem_safe xsystem_safe);
 
 sub t ($direct_mode, $result_file, @options) {
     local $ENV{GIT_PAGER} = "";    # disable git calling a pager
@@ -24,7 +24,7 @@ sub t ($direct_mode, $result_file, @options) {
         = $direct_mode
         ? (qw(git diff --exit-code), $result_path)
         : (qw(diff -u), $result_path, $outpath);
-    0 == xsystem @cmd
+    0 == xsystem_safe @cmd
 }
 
 sub tests_in_gitmode ($direct_mode) {
