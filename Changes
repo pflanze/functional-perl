@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.53 2021-4-22
+    - examples/treestat: add print-mtime-fixes
+    - fix yet more dependency declaration failures
+    - fix calling the right Perl from tests once more
+    - add checks for t/*t to release checkups
+
 0.72.52 2021-4-21
     - more "make test not fail in the absence of JSON.pm"
 
