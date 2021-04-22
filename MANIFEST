@@ -225,6 +225,7 @@ meta/find-perl.pl
 meta/install-development-dependencies-on-debian
 meta/pre-commit
 meta/readin.pl
+meta/t-check
 meta/tail-expand
 meta/test-modules
 meta/test.pl
