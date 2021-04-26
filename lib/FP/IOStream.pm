@@ -229,7 +229,7 @@ sub xfile_lines0;
 
 sub xfile_lines0chop;
 *xfile_lines0chop
-    = make_open_stream(\&xopen_read, the_method("xreadline0chop"));
+    = make_open_stream(\&xopen_read, the_method("xreadline0_chop"));
 
 sub xfile_lines_chomp;
 *xfile_lines_chomp
