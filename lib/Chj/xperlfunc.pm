@@ -1497,9 +1497,9 @@ sub xgetfile_utf8 {
 
     # using PerlIO::utf8_strict
     open my $in, '<:utf8_strict', $path or die "xgetfile_utf8($path): open: $!";
-    local $/;
     my $cnt;
     eval {
+        local $/;
         $cnt = <$in> // die "read: $!";
         1
     } || do {
