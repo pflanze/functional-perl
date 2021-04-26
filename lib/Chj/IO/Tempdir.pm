@@ -1,4 +1,3 @@
-# Mon Jul 14 07:58:53 2003  Christian Jaeger, christian.jaeger@ethlife.ethz.ch
 #
 # Copyright 2003-2021 by Christian Jaeger
 # Published under the same terms as perl itself.
