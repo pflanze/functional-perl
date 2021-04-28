@@ -10,6 +10,7 @@ use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
 use lib "./lib";
+use Test::Requires "5.020";
 use Test::Requires qw(JSON Text::CSV);
 use Test::More;
 use Chj::xperlfunc qw(xxsystem_safe xsystem_safe);
