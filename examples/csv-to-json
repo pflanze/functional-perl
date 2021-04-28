@@ -23,7 +23,9 @@ use lib "$mydir/../lib";
 use Text::CSV qw( csv );
 use FP::JSON qw(to_json);
 use Getopt::Long;
-use FunctionalPerl ":all";
+use FP::autobox;
+use FP::Hash qw(ziphash);
+use FP::Div qw(identity);
 use Chj::xIOUtil qw(stdout_utf8 stdin_utf8);
 
 #use FP::Text::CSV qw(csv_file_to_rows);
@@ -133,7 +135,8 @@ sub groupByNumber ($records, $key) {
 }
 
 if ($opt_repl) {
-    repl;
+    require FP::Repl;
+    FP::Repl::repl();
 } elsif ($opt_conversion) {
     my $function = eval $opt_conversion;
     die $@ if $@;
