@@ -117,7 +117,7 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT      = qw(equal);
-our @EXPORT_OK   = qw(equaln is_equal relaxedequal pointer_eq);
+our @EXPORT_OK   = qw(equaln is_equal relaxedequal pointer_eq boolean_equal);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Scalar::Util qw(refaddr blessed);
@@ -352,6 +352,14 @@ sub is_equal {
         $tb->is_eq(FP::Show::show($a), FP::Show::show($b),
             $maybe_name ? $maybe_name : ())
     }
+}
+
+# Currently, doesn't really fit here, but where else to put? A
+# FP::Boolean module?
+sub boolean_equal {
+    @_ == 2 or fp_croak_arity 2;
+    my ($a, $b) = @_;
+    (($a and $b) or (!$a and !$b))
 }
 
 1
