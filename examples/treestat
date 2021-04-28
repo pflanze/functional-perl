@@ -19,7 +19,6 @@ use FP::Lazy;
 use FP::Stream ":all";
 use Chj::singlequote qw(singlequote);
 use FP::Show;
-use FP::Repl;
 use JSON qw(decode_json);
 use FP::Div qw(min);
 use Digest;
@@ -274,7 +273,8 @@ sub apply_mtime_fixes ($dir, $file) {
 
 sub trees_repl {
     my @ts = map { parse_treestat $_ } @_;
-    repl;
+    require FP::Repl;
+    FP::Repl::repl();
 }
 
 my $command = shift @ARGV;
