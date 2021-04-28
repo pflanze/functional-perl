@@ -20,15 +20,12 @@ BEGIN {
 }
 use lib "$mydir/../lib";
 
-use Text::CSV qw( csv );
+use FP::Text::CSV qw(csv_file_to_rows);
 use FP::JSON qw(to_json);
 use Getopt::Long;
-use FP::autobox;
 use FP::Hash qw(ziphash);
 use FP::Div qw(identity);
 use Chj::xIOUtil qw(stdout_utf8 stdin_utf8);
-
-#use FP::Text::CSV qw(csv_file_to_rows);
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
@@ -103,7 +100,7 @@ my ($file_csv, $file_mint) = @ARGV;
 
 sub convertfile ($fn) {
     my $csvinput = $file_csv eq "-" ? stdin_utf8 : $file_csv;
-    my $rows     = csv(in => $csvinput);
+    my $rows = csv_file_to_rows($csvinput, { sep_char => ",", eol => "\n" });
 
     my $titles = $rows->first;
 
