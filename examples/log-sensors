@@ -94,7 +94,7 @@ sub input {
 
 sub do_log {
     my $rows = input;
-    rows_to_csv_fh($rows, *STDOUT);
+    rows_to_csv_fh($rows, *STDOUT, undef);
 
     # do *not* use glob_to_fh on *STDOUT here, it breaks Text::CSV
     # extremely oddly (because of some other/combined bug? "Use of
