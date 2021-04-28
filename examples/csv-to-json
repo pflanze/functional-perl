@@ -45,7 +45,7 @@ sub usage {
     --json  output JSON (default)
     --mint  output Mint record literal syntax
     --auto-numbers
-            recognize strings that look like numbers
+            treat strings that look like numbers as numbers
     --auto-integers
             strings that look like numbers and only have zeroes after
             the dot are treated as integers; currently implies
