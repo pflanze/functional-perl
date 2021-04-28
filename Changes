@@ -1,5 +1,13 @@
 Revision history for FunctionalPerl
 
+0.72.54 2021-4-28
+    - various small fixes
+    - FP::Text::CSV: require params argument even if undef, to remind
+      of its existence
+    - change examples/{treestat,csv-to-json} to require fewer
+      dependencies
+    - fix various test requirements
+
 0.72.53 2021-4-22
     - examples/treestat: add print-mtime-fixes
     - fix yet more dependency declaration failures
