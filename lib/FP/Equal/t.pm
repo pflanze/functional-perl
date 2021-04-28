@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -103,7 +103,7 @@ sub positive_inf {
 }
 
 sub negative_inf {
-    my $inf = -positive_inf;
+    my $inf = -&positive_inf();
     $inf =~ /^-inf$/i or warn "negative_inf: got '$inf'";
     $inf
 }
