@@ -63,6 +63,10 @@ computed linked lists).
 
 =head1 NOTE
 
+L<Text::CSV> added a 'csv' export somewhat recently. Together with
+L<FP::autobox> that can make for a nice solution (although not lazy),
+too.
+
 This is alpha software! Read the status section in the package README
 or on the L<website|http://functional-perl.org/>.
 
