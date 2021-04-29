@@ -24,7 +24,7 @@ sub t ($direct_mode, $result_file, @options) {
     my @cmd
         = $direct_mode
         ? (qw(git diff --exit-code), $result_path)
-        : (qw(diff -u), $result_path, $outpath);
+        : (qw(diff --strip-trailing-cr -u), $result_path, $outpath);
     0 == xsystem_safe @cmd
 }
 
