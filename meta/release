@@ -33,11 +33,12 @@ use Chj::TEST;
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
-    print "$myname point | minor | major | [v]X.Y.Z | repl | test
+    print "$myname [ point | minor | major | [v]X.Y.Z | repl | test ]
 
   Prepare a new functional-perl release, setting the version number to
-  the given version, or incrementing to the next given level. 'repl'
-  will give a repl.
+  the given version, or incrementing to the next given level (which is
+  'point' by default). 'repl' will give a repl, test runs the test
+  suite.
 
 ";
     exit(@_ ? 1 : 0);
@@ -50,7 +51,7 @@ GetOptions(
 
     #"dry-run" => \$opt_dry,
 ) or exit 1;
-usage unless @ARGV == 1;
+usage unless @ARGV <= 1;
 
 sub parse_version_level ($str) {
     +{ major => 0, minor => 1, point => 2 }->{$str}
@@ -142,7 +143,7 @@ sub release ($maybe_version, $maybe_parsed_level) {
     print "OK, ready to go.\n";
 }
 
-my ($arg) = @ARGV;
+my ($arg) = @ARGV ? @ARGV : ("point");
 
 if ($arg =~ /\./) {
     release $arg, undef;
