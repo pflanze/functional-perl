@@ -137,7 +137,7 @@ our @EXPORT      = ();
 our @EXPORT_OK   = qw(expand_import_tags);
 our %EXPORT_TAGS = ();
 
-our $VERSION = "0.72.55";
+our $VERSION = "0.72.56";
 
 # Export tag to modules and/or other tags; each module will be
 # imported with ":all" by default. Where a module name contains " = ",

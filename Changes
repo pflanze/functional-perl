@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.56 2021-4-29
+    - more test failure fixing?
+    - some todo list entries
+    - meta/release: remove wrong `dev` mode again (leave other new
+      features in)
+
 0.72.55 2021-4-29
     - Equal: add `boolean_equal`
     - some more test failure fixes?
