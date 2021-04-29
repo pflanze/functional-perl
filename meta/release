@@ -33,7 +33,7 @@ use Chj::TEST;
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
-    print "$myname dev | point | minor | major | [v]X.Y.Z[_D] | repl | test
+    print "$myname point | minor | major | [v]X.Y.Z | repl | test
 
   Prepare a new functional-perl release, setting the version number to
   the given version, or incrementing to the next given level. 'repl'
@@ -53,18 +53,23 @@ GetOptions(
 usage unless @ARGV == 1;
 
 sub parse_version_level ($str) {
-    +{ major => 0, minor => 1, point => 2, dev => 3, }->{$str}
+    +{ major => 0, minor => 1, point => 2 }->{$str}
 }
 
 sub parse_version($str) {
-    my @r = $str =~ m/^v?(\d+)\.(\d+)\.(\d+)(?:_(\d+))?\z/s
+    my @r = $str =~ m/^v?(\d+)\.(\d+)\.(\d+)\z/s
         or die "invalid version number: '$str'";
-    [grep { defined $_ } @r]
+    \@r
 }
 
 sub version_inc ($str, $parsed_level) {
     my $v = parse_version $str;
     $v->[$parsed_level]++;
+
+    # This was written for more generic use (only one dot or none, or
+    # an additional underscore but I'm told that's not how dev
+    # releases are handled anymore, so that functionality was removed,
+    # see Git history):
     my @newv = @$v[0 .. $parsed_level];
     push @newv, 0 while @newv < 3;
     my ($a, $b, $c, @r) = @newv;
@@ -72,12 +77,9 @@ sub version_inc ($str, $parsed_level) {
     @r ? "${s}_@r" : $s
 }
 
-TEST { version_inc "1.2.4",   parse_version_level "major" } '2.0.0';
-TEST { version_inc "1.2.4",   parse_version_level "minor" } '1.3.0';
-TEST { version_inc "1.2.4",   parse_version_level "point" } '1.2.5';
-TEST { version_inc "1.2.4",   parse_version_level "dev" } '1.2.4_1';
-TEST { version_inc "1.2.4_9", parse_version_level "dev" } '1.2.4_10';
-TEST { version_inc "1.2.4_2", parse_version_level "point" } '1.2.5';
+TEST { version_inc "1.2.4", parse_version_level "major" } '2.0.0';
+TEST { version_inc "1.2.4", parse_version_level "minor" } '1.3.0';
+TEST { version_inc "1.2.4", parse_version_level "point" } '1.2.5';
 
 sub release ($maybe_version, $maybe_parsed_level) {
     xxsystem "meta/check-hardcoded-perl";
