@@ -5,8 +5,10 @@
 # with this file.
 
 use strict;
+use utf8;
 use warnings;
 use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
 
 # find modules from functional-perl working directory (not installed)
 use Cwd 'abs_path';
@@ -19,17 +21,28 @@ BEGIN {
 }
 use lib "$mydir/../lib";
 
+use Getopt::Long;
+use Chj::xopen qw(xopen_read);
+use Chj::xtmpfile;
+use Chj::xperlfunc;
+use FP::IOStream qw(xfile_replace_lines);
+use FP::Weak 'Keep';
+use FP::List;
+use Chj::xperlfunc 'xlocaltime';
+use Chj::TEST;
+
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
-    print "$myname [[v]X.Y.Z]
+    print "$myname dev | point | minor | major | [v]X.Y.Z[_D] | repl | test
 
-  Prepare a new functional-perl release, setting the version number to the given
+  Prepare a new functional-perl release, setting the version number to
+  the given version, or incrementing to the next given level. 'repl'
+  will give a repl.
 
 ";
     exit(@_ ? 1 : 0);
 }
 
-use Getopt::Long;
 our $verbose = 0;
 GetOptions(
     "verbose" => \$verbose,
@@ -37,64 +50,67 @@ GetOptions(
 
     #"dry-run" => \$opt_dry,
 ) or exit 1;
-usage unless @ARGV <= 1;
+usage unless @ARGV == 1;
 
-use Chj::xopen qw(xopen_read);
-use Chj::xtmpfile;
-use Chj::xperlfunc;
+sub parse_version_level ($str) {
+    +{ major => 0, minor => 1, point => 2, dev => 3, }->{$str}
+}
 
-my ($maybe_version_argument) = @ARGV;
+sub parse_version($str) {
+    my @r = $str =~ m/^v?(\d+)\.(\d+)\.(\d+)(?:_(\d+))?\z/s
+        or die "invalid version number: '$str'";
+    [grep { defined $_ } @r]
+}
 
-my ($maybe_version) = $maybe_version_argument
-    ? do {
-    my @r = $maybe_version_argument =~ m/^v?(\d+\.\d+\.\d+)\z/s
-        or die "invalid version number";
-    @r
+sub version_inc ($str, $parsed_level) {
+    my $v = parse_version $str;
+    $v->[$parsed_level]++;
+    my @newv = @$v[0 .. $parsed_level];
+    push @newv, 0 while @newv < 3;
+    my ($a, $b, $c, @r) = @newv;
+    my $s = "$a.$b.$c";
+    @r ? "${s}_@r" : $s
+}
+
+TEST { version_inc "1.2.4",   parse_version_level "major" } '2.0.0';
+TEST { version_inc "1.2.4",   parse_version_level "minor" } '1.3.0';
+TEST { version_inc "1.2.4",   parse_version_level "point" } '1.2.5';
+TEST { version_inc "1.2.4",   parse_version_level "dev" } '1.2.4_1';
+TEST { version_inc "1.2.4_9", parse_version_level "dev" } '1.2.4_10';
+TEST { version_inc "1.2.4_2", parse_version_level "point" } '1.2.5';
+
+sub release ($maybe_version, $maybe_parsed_level) {
+    xxsystem "meta/check-hardcoded-perl";
+
+    xxsystem "meta/t-check";
+
+    xxsystem "meta/update-manifest";
+
+    xsystem "git", "commit", "-m", "Update MANIFEST", "MANIFEST";
+
+    xxsystem "meta/update-pod";
+
+    xxsystem "cj-git-status-is-clean";
+
+    my $version;
+    {
+        my $path = "lib/FunctionalPerl.pm";
+
+        my $cnt = xopen_read($path)->xcontent;
+
+        $cnt =~ s{(\$VERSION\s* = \s*)"([^"]+)"}{
+        $1 . '"' . ($version = ($maybe_version //
+                                version_inc($2, $maybe_parsed_level))) . '"'
+        }sxe
+            or die "could not replace \$VERSION in $path";
+
+        my $f = xtmpfile $path;
+        $f->xprint($cnt);
+        $f->xclose;
+        $f->xputback;
     }
-    : ();
 
-sub version_inc {
-    my ($v) = @_;
-    my @v = split /\./, $v;
-    $v[-1] = $v[-1] + 1;
-    join '.', @v
-}
-
-xxsystem "meta/check-hardcoded-perl";
-
-xxsystem "meta/t-check";
-
-xxsystem "meta/update-manifest";
-
-xsystem "git", "commit", "-m", "Update MANIFEST", "MANIFEST";
-
-xxsystem "meta/update-pod";
-
-xxsystem "cj-git-status-is-clean";
-
-my $version;
-{
-    my $path = "lib/FunctionalPerl.pm";
-
-    my $cnt = xopen_read($path)->xcontent;
-
-    $cnt =~ s|(\$VERSION\s* = \s*)"([^"]+)"|
-      $1 . '"' . ($version = ($maybe_version // version_inc($2))) . '"'|sxe
-        or die "could not replace \$VERSION in $path";
-
-    my $f = xtmpfile $path;
-    $f->xprint($cnt);
-    $f->xclose;
-    $f->xputback;
-}
-
-print "Releasing version $version...";
-
-{
-    use FP::IOStream qw(xfile_replace_lines);
-    use FP::Weak 'Keep';
-    use FP::List;
-    use Chj::xperlfunc 'xlocaltime';
+    print "Releasing version $version...";
 
     xfile_replace_lines "Changes", sub {
         my ($lines) = @_;
@@ -104,24 +120,37 @@ print "Releasing version $version...";
             ->append(cons "$version $date\n    - \n\n", Keep($lines)->drop(2))
     };
 
-}
+    xxsystem "e", "Changes";
 
-xxsystem "e", "Changes";
+    xxsystem "git", "commit", "-a", "-m", "Release $version";
 
-xxsystem "git", "commit", "-a", "-m", "Release $version";
+    #xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
 
-#xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
-
-xxsystem "perl",        "Makefile.PL";
-xxsystem "make",        "test";
-xxsystem "website/gen", "--trap";
-{
-    my $outpath = "FunctionalPerl-$version.tar.gz";
-    if (-e $outpath) {
-        system "mvnumber", $outpath
+    xxsystem "perl",        "Makefile.PL";
+    xxsystem "make",        "test";
+    xxsystem "website/gen", "--trap";
+    {
+        my $outpath = "FunctionalPerl-$version.tar.gz";
+        if (-e $outpath) {
+            system "mvnumber", $outpath
+        }
     }
+    xxsystem "make", "dist";
+
+    print "OK, ready to go.\n";
 }
-xxsystem "make", "dist";
 
-print "OK, ready to go.\n";
+my ($arg) = @ARGV;
 
+if ($arg =~ /\./) {
+    release $arg, undef;
+} elsif (defined(my $level = parse_version_level $arg)) {
+    release undef, $level;
+} elsif ($arg eq "repl") {
+    require FP::Repl;
+    FP::Repl::repl();
+} elsif ($arg eq "test") {
+    Chj::TEST::run_tests __PACKAGE__;
+} else {
+    usage "invalid argument"
+}
