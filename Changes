@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.55 2021-4-29
+    - Equal: add `boolean_equal`
+    - some more test failure fixes?
+    - meta/release: add flexible versioning, incl. wrongly(?)
+      understood underscore based ones
+
 0.72.54 2021-4-28
     - various small fixes
     - FP::Text::CSV: require params argument even if undef, to remind
