@@ -30,6 +30,17 @@ like to scan through all possible work (or like to lose yourself), see
 * Videos (screen recordings), articles, talks.
 
 
+## Consistency
+
+* `pointer_eq` vs. `boolean_equal` is probably inconsistent ("equal is
+  always about the content, eq is about pointer identity", fine, but,
+  `eq` is taken, and if you make it long, just use the same naming
+  approach?)
+  
+* `boolean_equal` should be in a `FP::Boolean` library. Speaking of
+  which: what about a real boolean type, so that `equal` will know how
+  to work with them? That would probably go there.
+
 ## Items
 
 This is an unsorted collection of items to work on.
