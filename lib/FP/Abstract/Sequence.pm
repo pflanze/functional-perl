@@ -70,7 +70,7 @@ use warnings FATAL => 'uninitialized';
 require FP::List;    # "use"ing it would create a circular dependency
 use FP::Array_sort qw(on_maybe cmp_complement);
 use FP::Lazy;
-use FP::Ops qw(add mult number_cmp);
+use FP::Ops qw(add mult real_cmp);
 use FP::Predicates qw(complement is_even);
 use FP::Div qw(average);
 
@@ -339,7 +339,7 @@ sub mean {
 sub median {
     @_ == 1 or fp_croak_arity 1;
     my ($s)    = @_;
-    my $sorted = $s->sort(\&number_cmp);
+    my $sorted = $s->sort(\&real_cmp);
     my $len    = $s->length;
     my $mid    = int($len / 2);
     if (is_even $len) {

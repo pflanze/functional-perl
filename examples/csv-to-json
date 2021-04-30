@@ -56,7 +56,7 @@ sub usage {
             Example code:
             'sub(\$records) { groupByNumber(\$records, \"Quadrat\")}'
             or
-            'sub(\$records) { groupByNumber(\$records, \"Quadrat\")->map(sub (\$group){ \$group->sort(on(hashkey(\"Frequency\"), \\&number_cmp))})}'
+            'sub(\$records) { groupByNumber(\$records, \"Quadrat\")->map(sub (\$group){ \$group->sort(on(hashkey(\"Frequency\"), \\&real_cmp))})}'
 
 
   ($email_full)
@@ -127,7 +127,7 @@ sub convertfile ($fn) {
 }
 
 sub groupByNumber ($records, $key) {
-    $records->sort(on(hashkey($key), \&number_cmp))
+    $records->sort(on(hashkey($key), \&real_cmp))
         ->group(on(hashkey($key), \&number_eq))
 }
 

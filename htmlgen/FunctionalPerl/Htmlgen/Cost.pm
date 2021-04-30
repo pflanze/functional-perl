@@ -66,7 +66,7 @@ package FunctionalPerl::Htmlgen::Cost::_::Totalcost {
         @$purchaseable or die "no purchaseable costs";    #
         local our $all
             = array_sort($purchaseable, on the_method("cost", $index),
-            \&number_cmp);
+            \&real_cmp);
         (     @$all == 1
             ? $$all[0]->cost($index)
             : $$all[0]->cost($index) . ".." . $$all[-1]->cost($index))

@@ -267,7 +267,7 @@ if ($ENV{RUN_SLOW_TESTS}) {
 
     my $sorted;
     TEST {
-        $sorted = array_sort $results, on \&matrix_numrelations, \&number_cmp;
+        $sorted = array_sort $results, on \&matrix_numrelations, \&real_cmp;
         [matrix_numrelations($$sorted[0]), matrix_numrelations($$sorted[-1])]
     }
     [7, 8];

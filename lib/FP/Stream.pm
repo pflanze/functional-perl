@@ -935,14 +935,14 @@ sub stream_sort {
 
 TEST {
     require FP::Ops;
-    stream(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->array
+    stream(5, 3, 8, 4)->sort (\&FP::Ops::real_cmp)->array
 }
 [3, 4, 5, 8];
 
-TEST { ref(stream(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)) }
+TEST { ref(stream(5, 3, 8, 4)->sort (\&FP::Ops::real_cmp)) }
 'FP::_::PureArray';    # XX ok? Need to `->stream` if a stream is needed
 
-TEST { stream(5, 3, 10, 8, 4)->sort (\&FP::Ops::number_cmp)->stream->car }
+TEST { stream(5, 3, 10, 8, 4)->sort (\&FP::Ops::real_cmp)->stream->car }
 3;
 
 # but then PureArray has `first`, too, if that's all you need.

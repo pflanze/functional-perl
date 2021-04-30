@@ -41,9 +41,9 @@ FP::Hash
     # Curried hash lookup:
     is_equal hashkey("foo")->({foo=> 10, bar=> 20}), 10;
     use FP::Array_sort qw(array_sort on);
-    use FP::Ops qw(number_cmp);
+    use FP::Ops qw(real_cmp);
     is_equal array_sort([ {a=> 3, b=> "a"}, {a=> 2, b=> "b"} ],
-                        on hashkey("a"), \&number_cmp),
+                        on hashkey("a"), \&real_cmp),
              [ {a=> 2, b=> "b"}, {a=> 3, b=> "a"} ];
 
     # NOTE: `mesh` might be added to List::Util, too

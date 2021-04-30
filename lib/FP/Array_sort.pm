@@ -15,9 +15,9 @@ FP::Array_sort - 'sensible' sorting setup
 
     use FP::Array_sort; # for `array_sort`, `on`, and `cmp_complement`
 
-    use FP::Ops 'number_cmp'; use FP::Array ':all'; use FP::Equal 'is_equal';
+    use FP::Ops 'real_cmp'; use FP::Array ':all'; use FP::Equal 'is_equal';
     is_equal array_sort([[10, 'a'], [15, 'b'], [-3, 'c']],
-                        on *array_first, \&number_cmp),
+                        on *array_first, \&real_cmp),
              [[-3, 'c'], [10, 'a'], [15, 'b']];
 
 
@@ -34,17 +34,17 @@ Abstracting the repetition of the accessor as a function (`on`) and
 wrapping sort as a higher-order function makes it more
 straight-forward:
 
-    array_sort $ary, on ($foo, \&number_cmp)
+    array_sort $ary, on ($foo, \&real_cmp)
 
 In method interfaces the need becomes more obvious: if $ary is one of
 the FP sequences (FP::PureArray, FP::List, FP::StrictList, FP::Stream)
 that supports `sort` (TODO) then:
 
-    $s->sort (on $foo, \&number_cmp)
+    $s->sort (on $foo, \&real_cmp)
 
 or if the comparison function already exists:
 
-    $numbers->sort (\&number_cmp)
+    $numbers->sort (\&real_cmp)
 
 =head1 SEE ALSO
 
@@ -69,7 +69,7 @@ our @EXPORT      = qw(array_sort array_sortCompare on on_maybe cmp_complement);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use FP::Ops qw(string_cmp number_cmp binary_operator);
+use FP::Ops qw(string_cmp real_cmp binary_operator);
 use Chj::TEST;
 use FP::Carp;
 

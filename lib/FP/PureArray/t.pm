@@ -144,7 +144,7 @@ TEST_STDOUT {
 
 TEST {
     require FP::Ops;
-    purearray(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->array
+    purearray(5, 3, 8, 4)->sort (\&FP::Ops::real_cmp)->array
 }
 [3, 4, 5, 8];
 

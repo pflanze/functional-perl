@@ -85,7 +85,7 @@ our @EXPORT_OK = (
         string_uc
         string_lcfirst
         string_ucfirst
-        number_cmp
+        real_cmp
         number_eq
         number_ne
         number_lt
@@ -231,7 +231,7 @@ sub string_ucfirst {
     ucfirst $_[0]
 }
 
-sub number_cmp {
+sub real_cmp {
     @_ == 2 or fp_croak_arity 2;
     $_[0] <=> $_[1]
 }

@@ -1103,21 +1103,21 @@ sub list_sortCompare {
 
 TEST {
     require FP::Ops;
-    list(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->array
+    list(5, 3, 8, 4)->sort (\&FP::Ops::real_cmp)->array
 }
 [3, 4, 5, 8];
 
-TEST { ref(list(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)) }
+TEST { ref(list(5, 3, 8, 4)->sort (\&FP::Ops::real_cmp)) }
 'FP::_::PureArray';    # XX ok? Need to `->list` if a list is needed
 
-TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->list->car }
+TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::real_cmp)->list->car }
 3;    # but then PureArray has `first`, too, if that's all you need.
 
-TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->first }
+TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::real_cmp)->first }
 3;
 
 #(just for completeness)
-TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::number_cmp)->stream->car }
+TEST { list(5, 3, 8, 4)->sort (\&FP::Ops::real_cmp)->stream->car }
 3;
 
 sub rlist_to_array {

@@ -50,7 +50,7 @@ use FP::List qw(list cons);
 use FP::Stream qw(Keep);
 use Chj::xperlfunc qw(xstat xxsystem_safe xunlink basename dirname);
 use FP::Combinators qw(compose_scalar);
-use FP::Ops qw(the_method number_cmp regex_match regex_xsubstitute);
+use FP::Ops qw(the_method real_cmp regex_match regex_xsubstitute);
 use PXML::XHTML ':all';
 use PXML::Serialize qw(puthtmlfile);
 use FP::Array_sort qw(on);
@@ -103,7 +103,7 @@ li.menu_last {
 
 sub svgpaths($dir) {
     xdirectory_paths($dir)->filter(regex_match $svgpath_re)
-        ->sort(on \&svgpath_to_pageno, \&number_cmp)
+        ->sort(on \&svgpath_to_pageno, \&real_cmp)
 }
 
 # ------------------------------------------------------------------

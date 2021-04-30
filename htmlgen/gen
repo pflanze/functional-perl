@@ -40,7 +40,7 @@ use PXML::Serialize 'puthtmlfile';
 use FP::Array ":all";
 use File::Spec;
 use FP::Array_sort;
-use FP::Ops qw(string_cmp number_cmp the_method cut_method);
+use FP::Ops qw(string_cmp real_cmp the_method cut_method);
 use FP::Equal qw(equal);
 use FP::autobox;
 use Chj::TEST ":all";
