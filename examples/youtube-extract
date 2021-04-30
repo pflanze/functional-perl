@@ -1,0 +1,189 @@
+#!/usr/bin/env perl
+
+my $copyright = <<'COPYRIGHT';
+# Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
+# Published under the same terms as perl itself
+COPYRIGHT
+
+use strict;
+use utf8;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
+
+my ($email_full) = $copyright =~ / by ([^\n]*)/s;
+
+my ($mydir, $myname);
+
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+
+use lib "$mydir/../lib";
+
+use Getopt::Long;
+use URI;
+use Chj::xperlfunc qw(xslurp xprintln);
+use FP::Repl::Trap;
+use FP::Combinators qw(compose);
+use FP::Ops qw(the_method real_cmp string_cmp);
+use FP::Array_sort qw(on);
+use FP::PureArray;
+
+# ^ XX on and *_cmp should be somewhere else!
+use Chj::TEST;
+
+sub usage {
+    print STDERR map {"$_\n"} @_ if @_;
+    print "$myname [files..]
+
+  Extract all (non-playlist) Youtube URLs
+
+  --test   run test suite
+
+  ($email_full)
+";
+    exit(@_ ? 1 : 0);
+}
+
+our $verbose = 0;
+our $opt_test;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+    "test"    => \$opt_test,
+) or exit 1;
+
+sub is_youtube_id ($str) {
+    $str =~ m{^[\w-]{11}\z}
+}
+TEST {
+    purearray(qw(7DP6hRt9xvw a_sAH2QGotE I26lP56-UeA I26lP56-UeAa I26lP56/UeA))
+        ->map(\&is_youtube_id)
+}
+purearray(1, 1, 1, '', '');
+
+package YoutubeURL {
+    use URI;
+    *is_youtube_id = *main::is_youtube_id;
+    use FP::Struct ["url"];
+
+    sub length ($self) {
+        length $self->url
+    }
+
+    sub uri ($self) {
+        $self->{_uri} //= URI->new($self->url)
+    }
+
+    sub is_youtube ($self) {
+        $self->uri->host =~ /yout/
+    }
+
+    sub maybe_id ($self) {
+        my $u = $self->uri;
+        my $q = { $u->query_form };
+
+        my $case1 = sub ($fail) {
+            if (my $id = $q->{v}) {
+                is_youtube_id($id) or die "invalid v param in: '$u'";
+                $id
+            } else {
+                $fail->()
+            }
+        };
+        my $case2 = sub ($fail) {
+            if ((not %$q or defined $q->{t}) and (my $p = $u->path)) {
+                $p =~ s{^/}{} or die "?";
+                is_youtube_id($p) ? $p : $fail->()
+            } else {
+                $fail->()
+            }
+        };
+        my $case3 = sub ($fail) {
+            if ($q->{list}) {
+                undef
+            } else {
+                $fail->()
+            }
+        };
+        $case1->(
+            sub {
+                $case2->(
+                    sub {
+                        $case3->(
+                            sub {
+
+                                warn "missing id or list in: '$u'"
+                                    unless $u->path =~ m{^/c/};
+                                undef
+                            }
+                        )
+                    }
+                )
+            }
+        )
+    }
+
+    sub maybe_list ($self) {
+        my $u = $self->uri;
+        my $q = { $u->query_form };
+        $q->{list}
+    }
+
+    _END_
+}
+YoutubeURL::constructors->import;
+
+TEST {
+    YoutubeURL('https://youtu.be/lOCMRk8Nex4?t=272')->maybe_id
+}
+"lOCMRk8Nex4";
+
+use FP::PureArray qw(array_to_purearray);
+
+sub multicollection_on ($get_key) {
+    sub {
+        my %mc;
+        for (@_) {
+            if (defined(my $key = $get_key->($_))) {
+                push @{ $mc{$key} }, $_
+            }
+        }
+        array_to_purearray $_ for values %mc;
+        \%mc
+    }
+}
+
+sub multicollection_max_to_collection ($cmp) {
+
+    sub ($mc) {
+        my %c;
+        for my $key (keys %$mc) {
+            $c{$key} = $mc->{$key}->max($cmp);
+        }
+        \%c
+    }
+}
+
+sub extract ($file) {
+    my $s        = xslurp $file;
+    my $links_mc = multicollection_on(the_method "maybe_id")->(
+        grep { $_->is_youtube } map {
+            s/&amp;/&/sg;    # Hack
+            YoutubeURL($_)
+        } $s =~ m{(https?://[^\s"'<>]*)}g
+    );
+    my $links_c
+        = multicollection_max_to_collection(on the_method("length"), \&real_cmp)
+        ->($links_mc);
+    purearray(values %$links_c)->sort(on the_method("maybe_id"), \&string_cmp)
+}
+
+if ($opt_test) {
+    Chj::TEST::run_tests "main"
+} else {
+    extract($_)->for_each(compose \&xprintln, the_method "url") for @ARGV;
+}
+
