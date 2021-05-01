@@ -2,6 +2,7 @@
 COPYING.md
 Changes
 MANIFEST
+MANIFEST.SKIP
 Makefile.PL
 README.md
 bench/globs
@@ -216,6 +217,7 @@ meta/FunctionalPerl/Dependencies.pm
 meta/FunctionalPerl/ModuleList.pm
 meta/FunctionalPerl/TailExpand.pm
 meta/_critic.out
+meta/bin/gpg
 meta/bisect-modules
 meta/check-hardcoded-perl
 meta/code-reformat
