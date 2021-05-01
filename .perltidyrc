@@ -1,3 +1,5 @@
+# NOTE: I'm using perltidy v20200110. Also see docs/HACKING.md
+
 -pbp     # Start with Perl Best Practices
 -iob     # Ignore old breakpoints
 -l=80    # characters per line
