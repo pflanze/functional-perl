@@ -32,6 +32,9 @@ sub usage {
    MANIFEST file. Also ignores entries in bugs/, and if
    present, those listed in '$excludepath'.)
 
+  --add file
+           add file to the MANIFEST even if not in Git
+
   (Christian Jaeger <$email>)
 ";
     exit(@_ ? 1 : 0);
@@ -39,11 +42,16 @@ sub usage {
 
 use Getopt::Long;
 our $verbose = 0;
+our @add;
 
 #our $opt_dry;
 GetOptions(
     "verbose" => \$verbose,
     "help"    => sub {usage},
+    "add=s"   => sub {
+        my ($k, $v) = @_;
+        push @add, $v
+    },
 
     #"dry-run" => \$opt_dry,
 ) or exit 1;
@@ -117,8 +125,9 @@ sub tree2array {
 
 #use FP::Repl; repl;
 {
-    my $m = xopen_write "MANIFEST";
-    for (sort @{ tree2array $tree}) {
+    my $m       = xopen_write "MANIFEST";
+    my %entries = map { $_ => 1 } @add, @{ tree2array $tree};
+    for (sort keys %entries) {
         next if $$excludes{$_};
         $m->xprintln($_);
     }
