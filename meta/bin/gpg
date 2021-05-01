@@ -1,0 +1,67 @@
+#!/usr/bin/env perl
+
+my $copyright = <<'COPYRIGHT';
+# Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
+# Published under the same terms as perl itself
+COPYRIGHT
+
+use strict;
+use utf8;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
+
+my ($email_full) = $copyright =~ / by ([^\n]*)/s;
+
+my ($mydir, $myname);
+
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+
+use lib "$mydir/../../lib";
+use FP::Equal;
+use Chj::xperlfunc qw(xexec xprint xprintln);    #  xgetfile_utf8
+use Chj::xIOUtil qw(xputfile_bytes);             # XX move to ^ ?
+use FP::Repl;
+use Chj::singlequote qw(singlequote_many);
+use POSIX 'getcwd';
+
+my $orig_gpg = "/usr/bin/gpg";
+
+my $siginput_path  = "/opt/functional-perl/SIGNATURE-input";
+my $sigoutput_path = getcwd . "/SIGNATURE.tmp";
+
+if (   equal(\@ARGV, ["--version"])
+    or equal(\@ARGV, ['--batch', '--verify', 'SIGNATURE']))
+{
+    xexec $orig_gpg, @ARGV;
+} elsif (@ARGV and $ARGV[0] eq "--clearsign") {
+    my $in = do {
+        local $/;
+        <STDIN>
+    };
+    close STDIN or die "stdin: $!";
+    xputfile_bytes $siginput_path, $in;
+    open STDOUT, ">", "/dev/tty" or die $!;
+    xprintln "our call was:" . singlequote_many(@ARGV);
+    xprintln "please run:";
+    xprintln " gpg @ARGV < $siginput_path > $sigoutput_path";
+    xprintln "then ctl-d here.";
+    repl;
+    unlink $siginput_path;
+
+    # xprint xgetfile_utf8 $sigoutput_path;
+    # unlink $sigoutput_path;
+    # ^ not working somehow, huh. Thus use the output path that
+    #   Module::Signature uses and write to it directly above.
+} else {
+    open STDERR, ">", "/dev/tty" or die $!;
+    open STDOUT, ">", "/dev/tty" or die $!;
+    open STDIN,  "<", "/dev/tty" or die $!;
+
+    xprintln "unknown call to $0, please examine...";
+    repl;
+}
+
