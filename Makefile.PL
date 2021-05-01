@@ -120,4 +120,5 @@ WriteMakefile(
             )
         : ()
     ),
+    SIGN => 1,
 );
