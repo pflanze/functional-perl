@@ -16,6 +16,7 @@ pm_to_blib
 *.tar.gz.[1-9]
 *.tar.gz.[1-9][0-9]
 website/.ModulePODUrl-cache/
+/SIGNATURE
 
 # expansions from meta/tail-expand
 .*/
