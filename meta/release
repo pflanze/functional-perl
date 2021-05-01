@@ -138,7 +138,11 @@ sub release ($maybe_version, $maybe_parsed_level) {
             system "mvnumber", $outpath
         }
     }
-    xxsystem "make", "dist";
+    {
+        # hook into call to gpg
+        local $ENV{PATH}= "$mydir/bin:$ENV{PATH}";
+        xxsystem "make", "dist";
+    }
 
     print "OK, ready to go.\n";
 }
