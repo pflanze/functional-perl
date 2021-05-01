@@ -32,7 +32,7 @@ use Exporter "import";
 our @EXPORT    = qw();
 our @EXPORT_OK = qw(
     stdin_utf8 stdout_utf8 stderr_utf8 xgetfile_utf8 xputfile_utf8
-    xcopyfile_utf8 xprint_object xcopyfile);
+    xputfile_bytes xcopyfile_utf8 xprint_object xcopyfile);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::xopen ":all";
@@ -87,6 +87,15 @@ sub xputfile_utf8 {
     my ($path, $str) = @_;
     my $out = xopen_write($path);
     binmode $out, ":encoding(UTF-8)" or die "binmode";
+    xprint_object($out, $str);
+    $out->xclose;
+}
+
+sub xputfile_bytes {
+    @_ == 2 or fp_croak_arity 2;
+    my ($path, $str) = @_;
+    my $out = xopen_write($path);
+    binmode $out or die "binmode";
     xprint_object($out, $str);
     $out->xclose;
 }
