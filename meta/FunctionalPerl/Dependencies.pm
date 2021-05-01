@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -42,6 +42,7 @@ our %dependencies = (
 
     # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
 
+    'FP::RegexMatch'            => ["5.020"],
     'FP::JSON'                  => ['JSON', "5.020"],
     'FP::Abstract::Sequence::t' => ['FP::autobox'],
     'Chj::Serialize'            => ['FP::Repl::Dependencies', 'B::Deparse'],
