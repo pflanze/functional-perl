@@ -73,6 +73,9 @@ sub tcheck ($path) {
 
         $rest =~ s/\s+//;
         $rest =~ s/\(//;
+        if (my ($cmd) = $rest =~ /^qw\(([^()]+)\)/s) {
+            next if $cmd =~ /^(git|diff)/;
+        }
         $rest =~ s/\s+//;
         next if $rest =~ /^\$\^X\b/;
         next if $rest =~ /^\@cmd/;     # not Perl, right?
