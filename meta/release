@@ -30,6 +30,7 @@ use FP::Weak 'Keep';
 use FP::List;
 use Chj::xperlfunc 'xlocaltime';
 use Chj::TEST;
+use Cwd qw(abs_path);
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
@@ -140,7 +141,8 @@ sub release ($maybe_version, $maybe_parsed_level) {
     }
     {
         # hook into call to gpg
-        local $ENV{PATH}= "$mydir/bin:$ENV{PATH}";
+        my $dir = abs_path "$mydir/bin" or die "'$mydir/bin': $!";
+        local $ENV{PATH} = "$dir:$ENV{PATH}";
         xxsystem "make", "dist";
     }
 
