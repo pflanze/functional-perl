@@ -25,14 +25,14 @@ use lib "$mydir/../lib";
 use Getopt::Long;
 use URI;
 use Chj::xperlfunc qw(xslurp xprintln);
-use FP::Repl::Trap;
 use FP::Combinators qw(compose);
 use FP::Ops qw(the_method real_cmp string_cmp);
 use FP::Array_sort qw(on);
 use FP::PureArray;
+use Chj::TEST;
 
 # ^ XX on and *_cmp should be somewhere else!
-use Chj::TEST;
+#use FP::Repl::Trap;
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
