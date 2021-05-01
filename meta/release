@@ -146,6 +146,10 @@ sub release ($maybe_version, $maybe_parsed_level) {
         xxsystem "make", "dist";
     }
 
+    # To make sure gitk doesn't show unclean status, and also as
+    # a check everything went fine. XX same as cj-git-status-is-clean
+    xxsystem qw"git status --porcelain";
+
     print "OK, ready to go.\n";
 }
 
