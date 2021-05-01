@@ -30,7 +30,7 @@ use POSIX 'getcwd';
 
 my $orig_gpg = "/usr/bin/gpg";
 
-my $siginput_path  = "/opt/functional-perl/SIGNATURE-input";
+my $siginput_path  = "$mydir/../../SIGNATURE-input";
 my $sigoutput_path = getcwd . "/SIGNATURE.tmp";
 
 if (   equal(\@ARGV, ["--version"])
