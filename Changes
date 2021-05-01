@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.58 2021-5-1
+    - try to fix Windows test failure
+    - add CPAN signature
+
 0.72.57 2021-5-1
     - more test failure fixing?
     - rename `number_cmp` to `real_cmp`
