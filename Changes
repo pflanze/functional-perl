@@ -1,5 +1,10 @@
 Revision history for FunctionalPerl
 
+0.72.57 2021-5-1
+    - more test failure fixing?
+    - rename `number_cmp` to `real_cmp`
+    - create examples/youtube-extract
+
 0.72.56 2021-4-29
     - more test failure fixing?
     - some todo list entries
