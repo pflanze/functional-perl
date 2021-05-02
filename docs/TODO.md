@@ -310,6 +310,14 @@ usefully listed first).
 
 ### Other people's code
 
+- change dependency on `Math::BigInt` into a recommendation?
+
+- remove recommendation of `Method::Signatures`, experimental
+  signatures are enough?
+
+- should FunctionalPerl feature tags only import those whose
+  dependencies are satisfied? Probably, to make `fperl` work.
+
 - replace `FP::Lazy` with `Data::Thunk`? This would be cool from a
   transparency stand point, except that separate code by way of
   dynamic dispatch (method calls) *can't* be used anymore then, and
