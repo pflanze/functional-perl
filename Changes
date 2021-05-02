@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.59 2021-5-2
+    - Repl: avoid taint check failures (if easily possible)
+    - Documentation
+
 0.72.58 2021-5-1
     - try to fix Windows test failure
     - add CPAN signature
