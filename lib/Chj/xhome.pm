@@ -24,10 +24,14 @@ Get the user's home directory in a safe manner.
 Just the $HOME env var, dieing if not set, and also checked against a
 couple assertments.
 
+In taint mode, is tainted.
+
 =item xeffectiveuserhome ()
 
 Just the getpwuid setting. Throws unimplemented exception on Windows
 (Raspberry, not Cygwin Perl).
+
+Is not tainted.
 
 =item xsafehome ()
 
@@ -35,10 +39,14 @@ Always take xeffectiveuserhome (unless on Windows, in which case this
 is currently the same as xhome), but is asserting that HOME is the
 same if set.
 
+Is untainted except on Windows where it's tainted.
+
 =item xhome ()
 
 Tries $ENV{HOME} then glob "~" if exists (with assertments), otherwise
 xeffectiveuserhome.
+
+In taint mode, can be (and usually is) tainted.
 
 =back
 
@@ -62,6 +70,7 @@ our @EXPORT_OK = qw(xHOME
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Carp;
+use FP::Docstring;
 
 # use File::HomeDir qw(home);
 
@@ -94,6 +103,7 @@ sub xHOME {
 sub xeffectiveuserhome {
 
     @_ == 0 or fp_croak_arity 0;
+    __ "is untainted";
 
 # (Don't bother about caching, premature opt & dangerous.)
     my $uid = $>;
@@ -108,6 +118,7 @@ sub xeffectiveuserhome {
 
 sub xsafehome {
     @_ == 0 or fp_croak_arity 0;
+    __ "is untainted except on Windows where it's tainted";
     if ($^O eq 'MSWin32') {
 
         # XX or how to look it up on Windows again? If implemented, update pod.
@@ -139,6 +150,7 @@ sub xchecked_home {
 }
 
 sub maybe_HOME {
+    __ "is tainted";
     if (my $home = $ENV{HOME}) {
         xchecked_home $home, '$ENV{HOME}'
     } else {
@@ -147,6 +159,7 @@ sub maybe_HOME {
 }
 
 sub maybe_globhome {
+    __ "is tainted";
     my ($home) = glob "~";
     if (defined $home) {
         xchecked_home $home, "glob '~'";
