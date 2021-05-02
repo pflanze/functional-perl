@@ -119,7 +119,7 @@ use Chj::xtmpfile;
 use Chj::xperlfunc qw(xexec xstat);
 use Chj::xopen qw(fh_to_fh perhaps_xopen_read);
 use POSIX;
-use Chj::xhome qw(xhome);
+use Chj::xhome qw(xsafehome);
 use Chj::singlequote 'singlequote';
 use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
@@ -147,7 +147,7 @@ sub xone_nonwhitespace {
     $1
 }
 
-my $HOME = xhome;
+my $HOME = xsafehome;
 our $maybe_historypath        = "$HOME/.fp-repl_history";
 our $maybe_settingspath       = "$HOME/.fp-repl_settings";
 our $maxHistLen               = 500;
