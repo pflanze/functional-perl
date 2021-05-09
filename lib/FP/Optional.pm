@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -188,10 +188,11 @@ use Exporter "import";
 our @EXPORT = qw();
 our @EXPORT_OK
     = qw(perhaps_to_maybe perhaps_to_x perhaps_to_or perhaps_to_exists
-    optionally poptionally);
+    optionally poptionally have);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::Carp;
+use FP::Docstring;
 
 # Functions to change the kind of optionals API:
 
@@ -277,6 +278,14 @@ sub poptionally {
             ()
         }
     }
+}
+
+sub have {
+    __ 'Turn a "perhaps" (one or more values in list context meaning
+        there is a result, none meaning a failure) into a boolean. In
+        other words, `have` returns true if receiving at least one
+        argument.';
+    @_ ? 1 : ''
 }
 
 1
