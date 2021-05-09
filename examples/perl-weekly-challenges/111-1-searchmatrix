@@ -1,0 +1,105 @@
+#!/usr/bin/env perl
+
+my $copyright = <<'COPYRIGHT';
+# Copyright (c) 2021 by Christian Jaeger <copying@christianjaeger.ch>
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+COPYRIGHT
+
+=pod
+
+L<The Weekly Challenge - 111|https://perlweeklychallenge.org/blog/perl-weekly-challenge-111/>,
+TASK #1: Search Matrix
+
+=cut
+
+use strict;
+use utf8;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use v5.32.1;    # for `<=` chaining
+use experimental 'signatures';
+
+use lib "../../lib";
+use FP::autobox;
+use FP::Array_sort qw(on);
+use FP::Ops qw(the_method real_cmp);
+use FP::Optional qw(have);
+use FP::Docstring;
+use Chj::TEST ":all";
+
+# `on(the_method("first"), \&real_cmp)` would work for sorting but
+# doesn't for search, as the array that is given as a search key has
+# to compare as equal if the search key is within it. (And we don't
+# necessarily know which of the arguments is the key, although
+# `perhaps_binsearch` might define that.) Thus introduce:
+
+sub overlap_cmp ($a, $b) {
+    __ 'Compare two arrays of real numbers. Report equality if the
+        arrays overlap.';
+    if (   ($a->first <= $b->first <= $a->last)
+        or ($b->first <= $a->first <= $b->last))
+    {
+        0
+    } else {
+        $a->first <=> $b->first
+    }
+}
+
+TEST { overlap_cmp [9, 11, 15], [9] } 0;
+TEST { overlap_cmp [9, 11, 15], [11] } 0;
+TEST { overlap_cmp [9, 11, 15], [15] } 0;
+TEST { overlap_cmp [9, 11, 15], [7] } 1;
+TEST { overlap_cmp [9, 11, 15], [16] } -1;
+TEST { overlap_cmp [9, 11, 15], [14, 15] } 0;
+TEST { overlap_cmp [9, 11, 15], [14] } 0;
+TEST { overlap_cmp [9, 11, 15], [15, 16] } 0;
+TEST { overlap_cmp [15, 16], [9, 11, 15] } 0;
+
+sub as_sorted ($matrix) {
+    __ 'Take an array of arrays and mark the inner as sorted numbers
+        and the outer as sorted by the first item of the subarrays';
+    $matrix->map(sub ($v) { $v->as_sorted_by(\&real_cmp) })
+        ->as_sorted_by(\&overlap_cmp)
+}
+
+sub matrix_contains ($matrix, $n) {
+    my $m = as_sorted $matrix;
+    if (my ($inner) = $m->perhaps_binsearch([$n])) {
+        have($inner->perhaps_binsearch($n))
+    } else {
+        ''
+    }
+}
+
+my $Matrix = [
+    [1,  2,  3,  5,  7],
+    [9,  11, 15, 19, 20],
+    [23, 24, 25, 29, 31],
+    [32, 33, 39, 40, 42],
+    [45, 47, 48, 49, 50]
+];
+
+# Perl's canonical false value is '', not 0; leave it at that.
+TEST { matrix_contains $Matrix, 35 } '';
+TEST { matrix_contains $Matrix, 39 } 1;
+
+sub help {
+    print "Usage: $0 --repl | --test\n";
+    exit 1
+}
+
+&{
+    @ARGV
+    ? {
+        "--repl" => sub {
+            require FP::Repl::Trap;
+            FP::Repl::repl();
+        },
+        "--test" => sub {
+            run_tests __PACKAGE__;
+        }
+        }->{ $ARGV[0] } // \&help
+    : \&help
+};
+
