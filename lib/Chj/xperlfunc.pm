@@ -1378,23 +1378,20 @@ sub dirname {
 sub xmkdir_p;
 
 sub xmkdir_p {
-    @_ == 1 or fp_croak_arity 1;
-    my ($path) = @_;
+    @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
+    my ($path, $maybe_mask) = @_;
+    my $mask = $maybe_mask // 0777;
 
     # (XX: see commit d1abd3c2 in megacopy for possible improvement)
     if (-d $path) {
-
-        #done
         ()
     } else {
-        if (mkdir $path) {
-
-            #done
+        if (mkdir $path, $mask) {
             ()
         } else {
             if ($! == ENOENT) {
-                xmkdir_p(dirname $path);
-                mkdir $path or die "could not mkdir('$path'): $!";
+                xmkdir_p(dirname($path), $mask);
+                mkdir $path, $mask or die "could not mkdir('$path'): $!";
             } else {
                 die "could not mkdir('$path'): $!";
             }
