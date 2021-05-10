@@ -19,7 +19,8 @@ FP::Repl::Repl - read-eval-print loop
  $repl->set_historypath("somefile"); # default is ~/.fp-repl_history
  $repl->set_env_PATH ($safe_PATH); # default in taint mode is
    # '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-   # $ENV{PATH} otherwise.
+   # $ENV{PATH} otherwise. Is only used for running tooling for the
+   # repl itself, like the pager.
  $repl->run;
  # or $repl->run($skip)  to skip $skip levels
 
@@ -160,6 +161,10 @@ our $mode_formatter           = 'd';
 our $mode_viewer              = 'a';
 our $mode_lexical_persistence = 'X';
 our $maybe_env_path
+
+    # only used for running tooling for the repl itself, like the
+    # pager, and only if taint mode is on (see commit
+    # 890020b5ac502fe3fd11bf400c4cba70be5c1ac4)
     = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
 
 use Chj::Class::Array -fields => -publica => (
