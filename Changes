@@ -1,5 +1,15 @@
 Revision history for FunctionalPerl
 
+0.72.60 2021-5-16
+    - Create FP::SortedPureArray, add `as_sorted_by` method to
+      PureArray
+    - Optional: add `have`
+    - Create examples/perl-weekly-challenges/111-1-searchmatrix
+    - Create FP::Id / FP::Abstract::Id
+    - Create FP::Collection
+    - xperlfunc: `xmkdir_p`: take optional mask argument
+    - doc tweak
+
 0.72.59 2021-5-2
     - Repl: avoid taint check failures (if easily possible)
     - Documentation
