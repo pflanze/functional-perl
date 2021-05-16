@@ -42,6 +42,7 @@ examples/logwatch_exampleconfig.pl
 examples/maplines
 examples/maplines-example.pl
 examples/pdf-to-html
+examples/perl-weekly-challenges/111-1-searchmatrix
 examples/predicates
 examples/primes
 examples/sendprepare
@@ -127,6 +128,7 @@ lib/Chj/xtmpfile.pm
 lib/FP/AST/Perl.pm
 lib/FP/Abstract/Compare.pm
 lib/FP/Abstract/Equal.pm
+lib/FP/Abstract/Id.pm
 lib/FP/Abstract/Interface.pm
 lib/FP/Abstract/Map.pm
 lib/FP/Abstract/Pure.pm
@@ -139,6 +141,7 @@ lib/FP/Array_sort.pm
 lib/FP/BigInt.pm
 lib/FP/Carp.pm
 lib/FP/Char.pm
+lib/FP/Collection.pm
 lib/FP/Combinators.pm
 lib/FP/Combinators2.pm
 lib/FP/Currying.pm
@@ -153,6 +156,7 @@ lib/FP/Git/Repository.pm
 lib/FP/Hash.pm
 lib/FP/HashSet.pm
 lib/FP/IOStream.pm
+lib/FP/Id.pm
 lib/FP/Interface.pm
 lib/FP/Interfaces.pm
 lib/FP/JSON.pm
@@ -183,6 +187,7 @@ lib/FP/Repl/WithRepl.pm
 lib/FP/Repl/corefuncs.pm
 lib/FP/Show.pm
 lib/FP/Show/t.pm
+lib/FP/SortedPureArray.pm
 lib/FP/Stream.pm
 lib/FP/StrictList.pm
 lib/FP/Struct.pm
@@ -251,6 +256,7 @@ t/examples-fibs.t
 t/examples-functional-classes.t
 t/examples-hiring-without-whiteboards.t
 t/examples-logic.t
+t/examples-perlweekly-111-1.t
 t/examples-primes.t
 t/examples-sendprepare
 t/functional_XML-t-div.t
