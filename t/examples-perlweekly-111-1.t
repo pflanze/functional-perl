@@ -16,4 +16,4 @@ use Test::More;
 use Chj::xperlfunc qw(xexec_safe);
 
 $ENV{RUN_TESTS} = 1;
-xexec_safe $^X, "examples/perl-weekly-challenges/111-1-searchmatrix", "--test";
+xexec_safe $^X, "examples/perl-weekly-challenges/111-1-search_matrix", "--test";
