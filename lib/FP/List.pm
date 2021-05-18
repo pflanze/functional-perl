@@ -161,6 +161,7 @@ our @EXPORT_OK = qw(
     list_every list_all list_any list_none
     list_perhaps_find_tail list_perhaps_find
     list_find_tail list_find
+    list_insertion_variants
     is_charlist ldie
     cddr
     cdddr
@@ -2295,6 +2296,35 @@ TEST_STDOUT {
     write_sexpr(mixed_flatten [1, 2, lazyLight { [3, 9] }], undef, \&lazyLight)
 }
 '("1" "2" "3" "9")';
+
+sub list_insertion_variants ($l, $v, $variants_tail = null) {
+    if ($l->is_null) {
+        cons(list($v), $variants_tail)
+    } else {
+        my ($a, $r) = $l->first_and_rest;
+        list_insertion_variants($r, $v)->map_with_tail(
+            sub ($r2) {
+                cons $a, $r2
+            },
+            $variants_tail
+        )->cons(cons($v, $l))
+    }
+}
+
+*FP::List::List::insertion_variants = \&list_insertion_variants;
+
+TEST {
+    list_insertion_variants list(qw(a b c)), 0
+}
+list(
+    list(0,   'a', 'b', 'c'),
+    list('a', 0,   'b', 'c'),
+    list('a', 'b', 0,   'c'),
+    list('a', 'b', 'c', 0)
+);
+TEST { list_insertion_variants list(qw(a)), 0, list "END" }
+list(list(0, 'a'), list('a', 0), 'END');
+TEST { list_insertion_variants list(), 0, list "END" } list(list(0), 'END');
 
 use FP::Char 'is_char';
 
