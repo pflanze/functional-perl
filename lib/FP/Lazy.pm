@@ -88,9 +88,9 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
     };
     like $@, qr/^Illegal division by zero/;
 
-    # Calling methods on promises will automatically force them, which
-    # is normally necessary since there's no way to know the class of
-    # the object otherwise:
+    # Calling methods on those promises will automatically force them,
+    # which is normally necessary since there's no way to know the
+    # class of the object otherwise:
     use FP::Lazy qw(is_forced);
     {
         my $l = lazy { cons(1, null) };
@@ -116,6 +116,19 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
         # $l has *not* been forced now.
         ok !is_forced($l);
     }
+
+    # And `lazyT_if` which is the conditional variant:
+    sub typed_condprom {
+        my ($cond) = @_;
+        lazyT_if { list(1 / 0) } "FP::List::List", $cond
+    }
+    ok is_promise(typed_condprom 1);
+    eval {
+        # immediate division by zero exception (still pays
+        # the overhead of two subroutine calls, though)
+        typed_condprom 0
+    };
+    like $@, qr/^Illegal division by zero/;
 
 
 =head1 DESCRIPTION
@@ -210,7 +223,9 @@ Alternative Scalar::Defer?
 
 L<FP::TransparentLazy>
 
-L<FP::Mixin::Utils> -- Lazy implements this as a fallback (lower priority than forcing the promise and finding the method on the result)
+L<FP::Mixin::Utils> -- Lazy implements this as a fallback (lower
+priority than forcing the promise and finding the method on the
+result)
 
 =head1 NOTE
 
@@ -225,7 +240,7 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
-our @EXPORT      = qw(lazy lazyT lazy_if lazyLight force FORCE is_promise);
+our @EXPORT = qw(lazy lazyT lazy_if lazyT_if lazyLight force FORCE is_promise);
 our @EXPORT_OK   = qw(delay force_noeval lazy_backtrace is_forced);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
@@ -234,6 +249,7 @@ use FP::Carp;
 use FP::Mixin::Utils;
 use FP::Show;
 use Scalar::Util 'blessed';
+use FP::Docstring;
 
 our $eager = ($ENV{DEBUG_FP_LAZY} and $ENV{DEBUG_FP_LAZY} =~ /^eager$/i);
 our $debug = $ENV{DEBUG_FP_LAZY} ? (not $eager) : '';
@@ -276,6 +292,7 @@ sub lazy_backtrace {    # not a method to avoid shadowing any
 }
 
 sub lazy (&) {
+    __ '`lazy { expr }`: evaluate expr only when forced via `force`';
     $eager ? goto $_[0]
         : $debug
         ? bless([$_[0], undef, undef, FP::Repl::Stack->get(1)->backtrace],
@@ -284,6 +301,8 @@ sub lazy (&) {
 }
 
 sub lazyT (&$) {
+    __ '`lazyT { expr } $classname`: expr must return an object that
+        satisfies ->isa($classname)';
     $eager ? goto $_[0] : bless [
         $_[0], undef,
         $_[1], $debug ? FP::Repl::Stack->get(1)->backtrace : ()
@@ -292,6 +311,8 @@ sub lazyT (&$) {
 }
 
 sub lazy_if (&$) {
+    __ '`lazy_if { expr } $boolean`: evaluate expr immediately if
+       $boolean is false, lazily otherwise';
     (
         ($_[1] and not $eager)
         ? (
@@ -305,6 +326,23 @@ sub lazy_if (&$) {
             @_ = ();
             goto $thunk;
         }
+    )
+}
+
+sub lazyT_if (&$$) {
+    __ '`lazyT_if { expr } $classname, $boolean`: expr must return an
+        object that satisfies ->isa($classname); eager unless $boolean
+        is true.';
+    (
+        ($_[2] and not $eager)
+        ? (
+            bless [
+                $_[0], undef,
+                $_[1], $debug ? FP::Repl::Stack->get(1)->backtrace : ()
+            ],
+            "FP::Lazy::Promise"
+            )
+        : goto $_[0]
     )
 }
 
