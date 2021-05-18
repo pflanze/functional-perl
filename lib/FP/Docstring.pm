@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -63,7 +63,6 @@ our @EXPORT      = qw(__ docstring);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use Chj::TEST;
 use FP::Carp;
 
 # Exception: use prototype here? Really DSL. Point it out early.
@@ -111,38 +110,5 @@ sub docstring {
         undef
     }
 }
-
-# try to trick the parser:
-TEST {
-    docstring(sub { __ "hi\');"; $_[0] + 1 })
-}
-'hi\');';
-TEST {
-    docstring(sub { __ "hi\");"; $_[0] + 1 })
-}
-'hi");';
-
-# get the quoting right:
-TEST {
-    docstring(sub { __ '($foo) -> hash'; $_[0] + 1 })
-}
-'($foo) -> hash';
-TEST {
-    docstring(sub { __ '("$foo")'; $_[0] + 1 })
-}
-'("$foo")';
-TEST {
-    docstring(sub { __ '(\'$foo\')'; $_[0] + 1 })
-}
-'(\'$foo\')';
-TEST {
-    docstring sub {
-        __ '($str, $token, {tokenargument => $value,..})-> $str
-        re-insert hidden parts';
-        1
-    }
-}
-'($str, $token, {tokenargument => $value,..})-> $str
-        re-insert hidden parts';
 
 1
