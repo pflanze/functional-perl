@@ -1431,6 +1431,18 @@ TEST_STDOUT { write_sexpr cons(1, cons(cons(2, null), null)) }
 
 *FP::List::List::write_sexpr = \&write_sexpr;
 
+# adapted copy of stream_map_with_tail, as usual...
+sub list_map_with_tail {
+    @_ == 3 or fp_croak_arity 3;
+    my ($fn, $l, $tail) = @_;
+    FORCE $l;    # be careful as usual, right?
+    is_null($l)
+        ? $tail
+        : cons(&$fn(car $l), list_map_with_tail($fn, cdr($l), $tail))
+}
+
+*FP::List::List::map_with_tail = flip2of3 \&list_map_with_tail;
+
 sub list_zip2 {
     @_ == 2 or fp_croak_arity 2;
     my ($l, $m) = @_;
