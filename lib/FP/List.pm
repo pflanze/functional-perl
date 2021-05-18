@@ -329,7 +329,7 @@ package FP::List::Pair {
 
         # $_[0][0]
         # nope, since lazyT, the argument can be a promise:
-        ref($_[0]) eq __PACKAGE__ ? $_[0][0] : goto \&FP::List::car
+        (ref($_[0]) eq __PACKAGE__ ? $_[0] : FP::List::force $_[0])->[0]
     }
     *first = \&car;
 
@@ -343,7 +343,7 @@ package FP::List::Pair {
 
         # $_[0][1]
         # nope, since lazyT, the argument can be a promise:
-        ref($_[0]) eq __PACKAGE__ ? $_[0][1] : goto \&FP::List::cdr
+        (ref($_[0]) eq __PACKAGE__ ? $_[0] : FP::List::force $_[0])->[1]
     }
     *rest         = \&cdr;
     *maybe_rest   = \&rest;
