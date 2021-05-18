@@ -2297,13 +2297,19 @@ TEST_STDOUT {
 }
 '("1" "2" "3" "9")';
 
-sub list_insertion_variants ($l, $v, $variants_tail = null) {
+sub list_insertion_variants {
+    @_ == 2 or @_ == 3 or fp_croak_arity "2 or 3";
+    my ($l, $v, $variants_tail) = @_;
+    if (@_ == 2) {
+        $variants_tail = null
+    }
     if ($l->is_null) {
         cons(list($v), $variants_tail)
     } else {
         my ($a, $r) = $l->first_and_rest;
         list_insertion_variants($r, $v)->map_with_tail(
-            sub ($r2) {
+            sub {
+                my ($r2) = @_;
                 cons $a, $r2
             },
             $variants_tail
