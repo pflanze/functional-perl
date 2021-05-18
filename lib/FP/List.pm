@@ -2307,7 +2307,7 @@ sub list_insertion_variants {
         cons(list($v), $variants_tail)
     } else {
         my ($a, $r) = $l->first_and_rest;
-        list_insertion_variants($r, $v)->map_with_tail(
+        $r->insertion_variants($v)->map_with_tail(
             sub {
                 my ($r2) = @_;
                 cons $a, $r2
