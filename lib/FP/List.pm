@@ -213,6 +213,37 @@ package FP::List::List {
 
     *null = \&FP::List::null;
 
+    sub pair_namespace {"FP::List::Pair"}
+
+    sub cons {
+        my $s = shift;
+        @_ == 1 or fp_croak_arity 1;
+        my @p = ($_[0], $s);
+
+        # Now it gets ~ugly: for lazy code, $s can (now, since
+        # AUTOLOAD on them doesn't necessarily force them anymore) now
+        # be a promise with field 2 set.
+        # my $immediate_class = ref($s);
+        # bless \@p,
+        #     UNIVERSAL::isa($immediate_class, "FP::Lazy::AnyPromise")
+        #     ? $$s[2]
+        #     : $immediate_class;
+        # /ugly.
+
+        # OR, simply (since the above would void any chance of simply
+        # using `lazyT` in stream libraries since one couldn't know
+        # the type of cons cells statically)!:
+
+        bless \@p, $s->pair_namespace;
+
+        if ($immutable) {
+            Internals::SvREADONLY $p[0], 1;
+            Internals::SvREADONLY $p[1], 1;
+        }
+        Internals::SvREADONLY @p, 1;
+        \@p
+    }
+
     # return this sequence as a list, i.e. identity
     sub list {
         @_ == 1 or fp_croak_arity 1;
@@ -251,22 +282,7 @@ package FP::List::Null {
     use FP::Carp;
     our @ISA = qw(FP::List::List);
 
-    sub pair_namespace {"FP::List::Pair"}
-
     sub is_null {1}
-
-    sub cons {
-        my $s = shift;
-        @_ == 1 or fp_croak_arity 1;
-        my @p = ($_[0], $s);
-        bless \@p, $s->pair_namespace;
-        if ($immutable) {
-            Internals::SvREADONLY $p[0], 1;
-            Internals::SvREADONLY $p[1], 1;
-        }
-        Internals::SvREADONLY @p, 1;
-        \@p
-    }
 
     sub length {
         0
@@ -308,34 +324,6 @@ package FP::List::Pair {
     our @ISA = qw(FP::List::List);
 
     sub is_null {''}
-
-    sub cons {
-        my $s = shift;
-        @_ == 1 or fp_croak_arity 1;
-        my @p = ($_[0], $s);
-
-        # Now it gets ~ugly: for lazy code, $s can (now, since
-        # AUTOLOAD on them doesn't necessarily force them anymore) now
-        # be a promise with field 2 set.
-        # my $immediate_class = ref($s);
-        # bless \@p,
-        #     UNIVERSAL::isa($immediate_class, "FP::Lazy::AnyPromise")
-        #     ? $$s[2]
-        #     : $immediate_class;
-        # /ugly.
-
-        # OR, simply (since the above would void any chance of simply
-        # using `lazyT` in stream libraries since one couldn't know
-        # the type of cons cells statically)!:
-        bless \@p, "FP::List::Pair";
-
-        if ($immutable) {
-            Internals::SvREADONLY $p[0], 1;
-            Internals::SvREADONLY $p[1], 1;
-        }
-        Internals::SvREADONLY @p, 1;
-        \@p
-    }
 
     sub car {
         $_[0][0]
