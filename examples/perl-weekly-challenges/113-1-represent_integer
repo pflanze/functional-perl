@@ -1,0 +1,105 @@
+#!/usr/bin/env perl
+
+my $copyright = <<'COPYRIGHT';
+# Copyright (c) 2021 by Christian Jaeger <copying@christianjaeger.ch>
+# This is free software. See the file COPYING.md that came bundled
+# with this file.
+COPYRIGHT
+
+=pod
+
+L<The Weekly Challenge - 113|https://perlweeklychallenge.org/blog/perl-weekly-challenge-113/>,
+TASK #1: Represent Integer
+
+You are given a positive integer $N and a digit $D.
+
+Write a script to check if $N can be represented as a sum of positive
+integers [all] having $D at least once [in their decimal
+representation]. If check passes print 1 otherwise 0.
+
+=cut
+
+use strict;
+use utf8;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
+
+use lib "../../lib";
+use FP::Docstring;
+use FP::Show;
+use FP::fix;
+use FP::List;
+use Chj::TEST ":all";
+
+our $verbose = $ENV{VERBOSE};
+
+# NOTE: this solution is pretty brute force. Next efficiency
+# improvement would be to do a binary search for each added number.
+sub maybe_choose ($N, $ns) {
+    __ 'Choose a combination of numbers from $ns (repetitions allowed)
+        that added together equal $N; undef if not possible.';
+    fix(
+        sub ($check, $chosen) {
+            warn "check: " . show($chosen) if $verbose;
+            my $sum = $chosen->sum;
+            if ($sum == $N) {
+                $chosen
+            } elsif ($sum > $N) {
+                undef
+            } else {
+                $ns->any(
+                    sub ($n) {
+                        $check->(cons($n, $chosen))
+                    }
+                    )
+                    || undef    # `any` returns 0, not undef
+            }
+        }
+    )->(null)
+}
+
+sub maybe_representable ($N, $D, $prefer_large = 1) {
+    __ 'Returns the numbers containing $D that sum up to $N, or undef.
+        If $prefer_large is true, tries to use large numbers,
+        otherwise small.';
+    my $ns = list grep {/$D/} (1 .. $N);
+    maybe_choose $N, $prefer_large ? $ns->reverse : $ns
+}
+
+TEST { maybe_representable 25, 7 } undef;
+TEST { maybe_representable 24, 7 } list(7, 17);
+
+TEST { maybe_representable 200, 9 } list(9, 191);
+TEST { maybe_representable 200, 9, 0 }
+list(29, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9);
+
+TEST { maybe_representable 200, 8 } list(8, 8, 184);
+TEST { maybe_representable 200, 8, 0 }
+list(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8);
+
+TEST { maybe_representable 200, 7 } list(7, 7, 7, 179);
+
+TEST { maybe_representable 200, 6 } list(6, 6, 6, 6, 176);
+
+# ----------------------------------------------------------------------
+
+sub help {
+    print "Usage: $0 --repl | --test\n";
+    exit 1
+}
+
+&{
+    @ARGV
+    ? {
+        "--repl" => sub {
+            require FP::Repl::Trap;
+            FP::Repl::repl();
+        },
+        "--test" => sub {
+            run_tests __PACKAGE__;
+        }
+        }->{ $ARGV[0] } // \&help
+    : \&help
+};
+
