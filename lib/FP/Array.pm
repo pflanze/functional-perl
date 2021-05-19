@@ -610,7 +610,8 @@ sub array_any {
     @_ == 2 or fp_croak_arity 2;
     my ($fn, $ary) = @_;
     for (@$ary) {
-        return 1 if &$fn($_);
+        my $v = &$fn($_);
+        return $v if $v;
     }
     0
 }
