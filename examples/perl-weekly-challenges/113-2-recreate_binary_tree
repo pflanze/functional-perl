@@ -29,8 +29,14 @@ use Chj::TEST ":all";
 use FP::Equal;
 
 package PFLANZE::Node {
-    use FP::Struct ["left", "value", "right"] =>
-        ("FP::Struct::Show", "FP::Struct::Equal");
+    use FP::Predicates qw(is_string maybe instance_of);
+    *is_maybe_Node = maybe instance_of("PFLANZE::Node");
+
+    use FP::Struct [
+        [\&is_maybe_Node, "left"],
+        [\&is_string,     "value"],
+        [\&is_maybe_Node, "right"]
+    ] => ("FP::Struct::Show", "FP::Struct::Equal");
 
     sub map ($self, $fn) {
         my $l  = $self->left;
