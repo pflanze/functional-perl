@@ -16,6 +16,10 @@ FP::Repl - read-eval-print loop
     use FP::Repl;
     repl;
 
+    # To change the default place for both the history and settings
+    # files, set this env var to an absolute path to an existing dir:
+    #   $ENV{FP_REPL_HOME}= "/foo/bar";
+
     # pass parameters (any fields of the FP::Repl::Repl class):
     repl (skip => 3, # skip 3 caller frames (when the repl call is nested
                     # within something you dont't want the user to see)

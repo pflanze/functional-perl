@@ -148,7 +148,27 @@ sub xone_nonwhitespace {
     $1
 }
 
-my $HOME = xsafehome;
+sub maybe_fp_repl_home {
+    if (my $e = $ENV{FP_REPL_HOME}) {
+
+        # XX todo: properly deal with paths on Windows
+        if (my ($esafe) = $e =~ m{^(/.*)\z}s) {
+            if (-d $esafe) {
+                $esafe
+            } else {
+                warn "Note: ignoring FP_REPL_HOME (dir does not exist)";
+                undef
+            }
+        } else {
+            warn "Note: ignoring FP_REPL_HOME (is non-absolute path)";
+            undef
+        }
+    } else {
+        undef
+    }
+}
+
+my $HOME = maybe_fp_repl_home() // xsafehome;
 our $maybe_historypath        = "$HOME/.fp-repl_history";
 our $maybe_settingspath       = "$HOME/.fp-repl_settings";
 our $maxHistLen               = 500;
