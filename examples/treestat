@@ -9,8 +9,17 @@ use strict;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
+my ($email_full) = $copyright =~ / by ([^\n]*)/s;
+
+my ($mydir, $myname);
+
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+use lib "$mydir/../lib";
+
 use Getopt::Long;
-use lib '/opt/functional-perl/lib';    # new stuff, or when fperl_noinstall
 use Chj::xperlfunc qw(xlstat xprintln xprint xgetfile_utf8 xchdir xutime);
 use FP::IOStream qw(xdirectory_paths);
 use FP::Ops qw(string_cmp);
@@ -23,15 +32,6 @@ use JSON qw(decode_json);
 use FP::Div qw(min);
 use Digest;
 use FP::Docstring;
-
-my ($email_full) = $copyright =~ / by ([^\n]*)/s;
-
-my ($mydir, $myname);
-
-BEGIN {
-    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
-    ($mydir, $myname) = ($1, $2);
-}
 
 sub usage {
     print STDERR map {"$_\n"} @_ if @_;
