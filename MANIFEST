@@ -42,7 +42,9 @@ examples/logwatch_exampleconfig.pl
 examples/maplines
 examples/maplines-example.pl
 examples/pdf-to-html
-examples/perl-weekly-challenges/111-1-searchmatrix
+examples/perl-weekly-challenges/111-1-search_matrix
+examples/perl-weekly-challenges/113-1-represent_integer
+examples/perl-weekly-challenges/113-2-recreate_binary_tree
 examples/predicates
 examples/primes
 examples/sendprepare
@@ -148,6 +150,7 @@ lib/FP/Currying.pm
 lib/FP/DBI.pm
 lib/FP/Div.pm
 lib/FP/Docstring.pm
+lib/FP/Docstring/t.pm
 lib/FP/DumperEqual.pm
 lib/FP/Equal.pm
 lib/FP/Equal/t.pm
@@ -257,6 +260,8 @@ t/examples-functional-classes.t
 t/examples-hiring-without-whiteboards.t
 t/examples-logic.t
 t/examples-perlweekly-111-1.t
+t/examples-perlweekly-113-1.t
+t/examples-perlweekly-113-2.t
 t/examples-primes.t
 t/examples-sendprepare
 t/functional_XML-t-div.t
