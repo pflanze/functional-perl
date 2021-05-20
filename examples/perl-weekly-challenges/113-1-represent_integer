@@ -98,7 +98,6 @@ sub maybe_choose_optim ($N, $ns) {
             }
         }
     )->(null)
-
 }
 
 # ^ I'm sure there are yet smarter ways to solve this.
