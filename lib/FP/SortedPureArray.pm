@@ -36,11 +36,20 @@ use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 use Exporter "import";
 
-our @EXPORT      = qw();
+our @EXPORT      = qw(sortedpurearray_by);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use FP::PureArray;
+use FP::Carp;
+
+sub sortedpurearray_by {
+    @_ == 1 or fp_croak_arity 1;
+    my ($cmp) = @_;
+    sub {
+        purearray(@_)->as_sorted_by($cmp)
+    }
+}
 
 package FP::_::SortedPureArray {
     our @ISA = qw(FP::_::PureArray);
