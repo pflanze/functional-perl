@@ -12,7 +12,8 @@ use experimental 'signatures';
 
 use lib "./lib";
 
-use Test::Requires { experimental => '"signatures"' };
+use Test::Requires { experimental => '"signatures"',
+    feature => '"current_sub"' };
 use Test::More;
 use Chj::xperlfunc qw(xexec_safe);
 

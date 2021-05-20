@@ -24,6 +24,7 @@ use utf8;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
+use feature 'current_sub';
 
 my ($mydir, $myname);
 
@@ -35,7 +36,6 @@ use lib "$mydir/../../lib";
 
 use FP::Docstring;
 use FP::Show;
-use FP::fix;
 use FP::List;
 use FP::PureArray;
 use Chj::TEST ":all";
@@ -48,24 +48,25 @@ sub maybe_choose_brute ($N, $ns) {
         solution is brute force in that it is picking additional
         numbers from the left end of $ns, one after another,
         depth-first.';
-    fix(
-        sub ($check, $chosen) {
-            warn "check (brute): " . show($chosen) if $verbose;
-            my $sum = $chosen->sum;
-            if ($sum == $N) {
-                $chosen
-            } elsif ($sum > $N) {
-                undef
-            } else {
-                $ns->any(
-                    sub ($n) {
-                        $check->(cons($n, $chosen))
-                    }
-                    )
-                    || undef    # `any` returns 0, not undef
-            }
+
+    sub ($chosen) {
+        my $check = __SUB__;
+        warn "check (brute): " . show($chosen) if $verbose;
+        my $sum = $chosen->sum;
+        if ($sum == $N) {
+            $chosen
+        } elsif ($sum > $N) {
+            undef
+        } else {
+            $ns->any(
+                sub ($n) {
+                    $check->(cons($n, $chosen))
+                }
+                )
+                || undef    # `any` returns 0, not undef
         }
-    )->(null)
+        }
+        ->(null)
 }
 
 sub maybe_choose_optim ($N, $ns) {
@@ -75,29 +76,30 @@ sub maybe_choose_optim ($N, $ns) {
         i.e. it tries to minimize the number of numbers taken from
         $ns.';
     my %ns = map { $_ => 1 } $ns->values;
-    fix(
-        sub ($check, $chosen) {
-            warn "check (hashtable): " . show($chosen) if $verbose;
-            my $sum     = $chosen->sum;
-            my $missing = $N - $sum;
-            if (not $missing) {
-                $chosen
-            } elsif ($missing < 0) {
-                undef
+
+    sub ($chosen) {
+        my $check = __SUB__;
+        warn "check (hashtable): " . show($chosen) if $verbose;
+        my $sum     = $chosen->sum;
+        my $missing = $N - $sum;
+        if (not $missing) {
+            $chosen
+        } elsif ($missing < 0) {
+            undef
+        } else {
+            if (exists $ns{$missing}) {
+                cons $missing, $chosen
             } else {
-                if (exists $ns{$missing}) {
-                    cons $missing, $chosen
-                } else {
-                    $ns->any(
-                        sub ($n) {
-                            $check->(cons($n, $chosen))
-                        }
-                        )
-                        || undef    # `any` returns 0, not undef
-                }
+                $ns->any(
+                    sub ($n) {
+                        $check->(cons($n, $chosen))
+                    }
+                    )
+                    || undef    # `any` returns 0, not undef
             }
         }
-    )->(null)
+        }
+        ->(null)
 }
 
 # ^ I'm sure there are yet smarter ways to solve this.
