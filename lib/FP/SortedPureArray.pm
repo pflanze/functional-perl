@@ -57,6 +57,7 @@ package FP::_::SortedPureArray {
     use List::BinarySearch qw(binsearch);
     use FP::Carp;
     use FP::Array qw(array_map);
+    use FP::Docstring;
 
     # Implement the additional field via external hashtable, so that
     # array accesses and super class methods all work without
@@ -90,6 +91,8 @@ package FP::_::SortedPureArray {
 
     sub perhaps_binsearch {
         @_ == 2 or fp_croak_arity 2;
+        __ '$self->perhaps_binsearch($element): searches using the
+            comparator stored with $self';
         my ($self, $element) = @_;
 
         if (
