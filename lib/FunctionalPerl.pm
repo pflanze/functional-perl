@@ -180,6 +180,7 @@ our $export_desc = +{
         qw(FP::List FP::StrictList FP::MutableArray
             FP::Array FP::Array_sort
             FP::PureArray
+            FP::SortedPureArray
             :streams)
     ],
     ":maps"           => [qw(FP::Hash FP::PureHash)],
