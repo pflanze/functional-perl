@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.62 2021-5-20
+    - fix a multitude of newly introduced test and dependency bugs
+
 0.72.61 2021-5-20
     - List: add map_with_tail, insertion_variants, fix `car` and
       `car_and_cdr` for lazyT, fix cons method
