@@ -42,6 +42,7 @@ our %dependencies = (
 
     # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
 
+    'FP::SortedPureArray'       => ["5.020", "List::BinarySearch"],
     'FP::RegexMatch'            => ["5.020"],
     'FP::JSON'                  => ['JSON', "5.020"],
     'FP::Abstract::Sequence::t' => ['FP::autobox'],
