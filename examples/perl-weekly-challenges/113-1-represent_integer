@@ -30,18 +30,34 @@ use FP::Docstring;
 use FP::Show;
 use FP::fix;
 use FP::List;
+use FP::PureArray;
+use FP::Ops qw(real_cmp);
 use Chj::TEST ":all";
+
+# This script contains two separate solutions (algorithms): if the
+# BINSEARCH env var is true, it uses a more efficient binary search
+# for fitting numbers, but if `maybe_representable`'s $prefer_large
+# argument is explicitly set to 0 (see some tests below), it will fall
+# back to the slower approach anyway so that one can see the selection
+# of smaller numbers as wished. This wasn't asked by the task
+# description, thus with regards to the task, the efficient version
+# should always be preferred, but then that has an additional
+# dependency, thus load it lazily:
+if ($ENV{BINSEARCH}) {
+    require FP::SortedPureArray;
+}
 
 our $verbose = $ENV{VERBOSE};
 
-# NOTE: this solution is pretty brute force. Next efficiency
-# improvement would be to do a binary search for each added number.
-sub maybe_choose ($N, $ns) {
+sub maybe_choose_brute ($N, $ns) {
     __ 'Choose a combination of numbers from $ns (repetitions allowed)
-        that added together equal $N; undef if not possible.';
+        that added together equal $N; undef if not possible. This
+        solution is brute force in that it is picking additional
+        numbers from the left end of $ns, one after another,
+        depth-first.';
     fix(
         sub ($check, $chosen) {
-            warn "check: " . show($chosen) if $verbose;
+            warn "check (brute): " . show($chosen) if $verbose;
             my $sum = $chosen->sum;
             if ($sum == $N) {
                 $chosen
@@ -59,12 +75,49 @@ sub maybe_choose ($N, $ns) {
     )->(null)
 }
 
+sub maybe_choose_binsearch ($N, $ns) {
+    __ 'Choose a combination of numbers from $ns (repetitions allowed)
+        that added together equal $N; undef if not possible. This
+        solution uses a binary search for each additional number;
+        i.e. it tries to minimize the number of numbers taken from
+        $ns.';
+    $ns->as_sorted_by(\&real_cmp);
+    fix(
+        sub ($check, $chosen) {
+            warn "check (binsearch): " . show($chosen) if $verbose;
+            my $sum     = $chosen->sum;
+            my $missing = $N - $sum;
+            if (not $missing) {
+                $chosen
+            } elsif ($missing < 0) {
+                undef
+            } else {
+                if (my ($found) = $ns->perhaps_binsearch($missing)) {
+                    cons $found, $chosen
+                } else {
+                    $ns->any(
+                        sub ($n) {
+                            $check->(cons($n, $chosen))
+                        }
+                        )
+                        || undef    # `any` returns 0, not undef
+                }
+            }
+        }
+    )->(null)
+
+}
+
 sub maybe_representable ($N, $D, $prefer_large = 1) {
     __ 'Returns the numbers containing $D that sum up to $N, or undef.
         If $prefer_large is true, tries to use large numbers,
         otherwise small.';
-    my $ns = list grep {/$D/} (1 .. $N);
-    maybe_choose $N, $prefer_large ? $ns->reverse : $ns
+    my $ns = purearray grep {/$D/} (1 .. $N);
+    my $maybe_choose
+        = ($prefer_large and $ENV{BINSEARCH})
+        ? \&maybe_choose_binsearch
+        : \&maybe_choose_brute;
+    $maybe_choose->($N, $prefer_large ? $ns->reverse : $ns)
 }
 
 TEST { maybe_representable 25, 7 } undef;
