@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 use warnings FATAL => 'uninitialized';
-use Test::Requires "5.020";
+use Test::Requires { experimental => '"signatures"' };
 use experimental 'signatures';
 
 use lib "./lib";
