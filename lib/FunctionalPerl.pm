@@ -101,7 +101,7 @@ C<:rare> -> C<:csv>, C<:dbi>, C<:fix>, C<:git>, C<:paths>, C<:trampolines>
 
 C<:repl> -> L<FP::Repl>, L<FP::Repl::AutoTrap>
 
-C<:sequences> -> C<:streams>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>, L<FP::StrictList>
+C<:sequences> -> C<:streams>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>, L<FP::SortedPureArray>, L<FP::StrictList>
 
 C<:sets> -> L<FP::HashSet>, L<FP::OrderedCollection>
 
