@@ -11,7 +11,7 @@ use Test::Requires "5.020";
 use experimental 'signatures';
 
 use lib "./lib";
-use Test::Requires qw(FP::autobox);
+use Test::Requires qw(FP::autobox v5.32.1);
 use Test::More;
 use Chj::xperlfunc qw(xexec_safe);
 

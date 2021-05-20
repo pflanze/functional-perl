@@ -41,7 +41,14 @@ use warnings FATAL => 'uninitialized';
 use v5.32.1;    # for `<=` chaining
 use experimental 'signatures';
 
-use lib "../../lib";
+my ($mydir, $myname);
+
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+use lib "$mydir/../../lib";
+
 use FP::autobox;
 use FP::Array_sort qw(on);
 use FP::Ops qw(the_method real_cmp);

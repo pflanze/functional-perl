@@ -12,7 +12,7 @@ use experimental 'signatures';
 
 use lib "./lib";
 
-#use Test::Requires qw();
+use Test::Requires { experimental => '"signatures"' };
 use Test::More;
 use Chj::xperlfunc qw(xexec_safe);
 

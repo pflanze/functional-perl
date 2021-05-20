@@ -25,7 +25,14 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
 
-use lib "../../lib";
+my ($mydir, $myname);
+
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+use lib "$mydir/../../lib";
+
 use FP::Docstring;
 use FP::Show;
 use FP::fix;
