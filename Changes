@@ -1,5 +1,16 @@
 Revision history for FunctionalPerl
 
+0.72.61 2021-5-20
+    - List: add map_with_tail, insertion_variants, fix `car` and
+      `car_and_cdr` for lazyT, fix cons method
+    - Lazy: add `lazyT_if`, add docstrings
+    - Array: change `any` to return the found true value, like List's
+      `any`
+    - SortedPureArray: 'finish' by adding `sortedpurearray_by`
+      function (and docstring); add it to FunctionalPerl's :sequences
+      tag
+    - Add this week's Perl Weekly Challenges
+
 0.72.60 2021-5-16
     - Create FP::SortedPureArray, add `as_sorted_by` method to
       PureArray
