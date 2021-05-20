@@ -108,11 +108,15 @@ sub maybe_choose_binsearch ($N, $ns) {
 
 }
 
+sub representable_numbers ($N, $D) {
+    purearray grep {/$D/} (1 .. $N)
+}
+
 sub maybe_representable ($N, $D, $prefer_large = 1) {
     __ 'Returns the numbers containing $D that sum up to $N, or undef.
         If $prefer_large is true, tries to use large numbers,
         otherwise small.';
-    my $ns = purearray grep {/$D/} (1 .. $N);
+    my $ns = representable_numbers($N, $D);
     my $maybe_choose
         = ($prefer_large and $ENV{BINSEARCH})
         ? \&maybe_choose_binsearch
