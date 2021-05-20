@@ -1,0 +1,51 @@
+#!/usr/bin/env perl
+
+my $copyright = <<'COPYRIGHT';
+# Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
+# Published under the same terms as perl itself
+COPYRIGHT
+
+use strict;
+use utf8;
+use warnings;
+use warnings FATAL => 'uninitialized';
+use experimental 'signatures';
+use feature 'current_sub';    # __SUB__
+
+my ($mydir, $myname);
+
+BEGIN {
+    $0 =~ /(.*?)([^\/]+)\z/s or die "?";
+    ($mydir, $myname) = ($1, $2);
+}
+
+# Just some random stupid curried and partially self-recursive
+# function:
+sub foo($x) {
+
+    sub ($y) {
+
+        # warn "f called";
+        my $f = __SUB__;
+
+        sub ($z) {
+            $z < 1000 ? $f->($x * $y)->($z + $y) : $z
+        }
+    }
+}
+
+# Now show that this doesn't leak:
+sub t ($n) {
+    my $res;
+    for (1 .. $n) {
+        $res = foo(50)->(30)->(30);
+    }
+    $res
+}
+
+warn
+    "Please verify manually from outside (e.g. `top`) that this process, pid $$, doesn't increase memory usage over time";
+
+my $res = t 10000000;
+
+# use FP::Repl; repl;
