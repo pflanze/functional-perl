@@ -24,7 +24,7 @@ use utf8;
 use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental 'signatures';
-use feature 'current_sub';
+use feature 'current_sub';    # __SUB__
 
 my ($mydir, $myname);
 
