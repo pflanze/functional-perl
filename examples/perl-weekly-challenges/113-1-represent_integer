@@ -38,6 +38,9 @@ use FP::Docstring;
 use FP::Show;
 use FP::List;
 use FP::PureArray;
+use FP::Lazy;
+use FP::Either;
+use FP::Predicates qw(is_defined);
 use Chj::TEST ":all";
 use Chj::time_this;
 
@@ -69,17 +72,17 @@ sub maybe_choose_brute ($N, $ns) {
         ->(null)
 }
 
-sub maybe_choose_optim ($N, $ns) {
+sub maybe_choose_optim_1 ($N, $ns) {
     __ 'Choose a combination of numbers from $ns (repetitions allowed)
         that added together equal $N; undef if not possible. This
         solution uses a hashtable to check for each additional number;
         i.e. it tries to minimize the number of numbers taken from
-        $ns.';
+        $ns (it is still searching depth-first).';
     my %ns = map { $_ => 1 } $ns->values;
 
     sub ($chosen) {
         my $check = __SUB__;
-        warn "check (hashtable): " . show($chosen) if $verbose;
+        warn "check (optim 1): " . show($chosen) if $verbose;
         my $sum     = $chosen->sum;
         my $missing = $N - $sum;
         if (not $missing) {
@@ -101,7 +104,81 @@ sub maybe_choose_optim ($N, $ns) {
         ->(null)
 }
 
-# ^ I'm sure there are yet smarter ways to solve this.
+sub maybe_choose_optim_2 ($N, $_ns) {
+    __ 'Choose a combination of numbers (repetitions allowed) from $ns
+        which must be sorted in decrementing order that added together
+        equal $N; undef if not possible. This solution does a
+        breadth-first search (and uses the hashtable check to see if
+        there will be a match with the next level like
+        maybe_choose_optim_1)';
+
+    # We want to use lazy evaluation to allow for the descriptive
+    # solution below, thus turn the purearray to a lazy list:
+    my $ns = $_ns->stream;
+
+    my %ns = map { $_ => 1 } $_ns->values;
+
+    sub ($chosen) {
+        my $check = __SUB__;
+        warn "check (optim 2): " . show($chosen) if $verbose;
+
+        # Add a new number of any of those in $ns to $chosen, and
+        # check each of those number sets whether they either lead to
+        # an immediate success on the next level (via hashtable
+        # check), or if they will need recursion, or are a dead end.
+        # Using FP::Either's `Right` to indicate an immediate
+        # solution, and `Left` to indicate a case that needs recursion
+        # (and only potentially yields a result).  Since $ns is a
+        # stream (a lazily computed list), the `map` and `take_while`
+        # steps are lazy, too; the function given to map will never be
+        # evaluated for $n's that are smaller (coming further along in
+        # the reverse-ordered $ns) than the $n that leads to a
+        # solution.
+        my $decisions = $ns->map(
+            sub ($n) {
+                warn "optim: checking $n on top of " . show($chosen)
+                    if $verbose;
+                my $chosen  = cons $n, $chosen;
+                my $sum     = $chosen->sum;
+                my $missing = $N - $sum;
+                if (not $missing) {
+                    Right $chosen
+                } elsif ($missing < 0) {
+
+                    # Since $ns are sorted in decrementing order, any
+                    # subsequent number will fail, too, so we can stop
+                    # further checks; signalize this to `take_while`:
+                    undef
+                } else {
+                    if (exists $ns{$missing}) {
+                        Right cons($missing, $chosen)
+                    } else {
+                        Left lazy {
+                            $check->($chosen)
+                        }
+                    }
+                }
+            }
+        )->take_while(\&is_defined);
+
+        # Check for immediate solutions (solutions on our level)
+        # first, if that fails, get and evaluate the promises to
+        # recurse (go deeper):
+        my $solutions = $decisions->filter(\&is_Right);
+        unless ($solutions->is_null) {
+            $solutions->first->value
+        } else {
+            $decisions->filter(\&is_Left)->any(
+                sub ($left) {
+                    $left->value->force
+                }
+            )
+        }
+        }
+        ->(null)
+}
+
+# (But there may be smarter algorithms.)
 
 sub representable_numbers ($N, $D) {
     purearray grep {/$D/} (1 .. $N)
@@ -114,7 +191,7 @@ sub maybe_representable ($N, $D, $prefer_large = 1) {
     my $ns = representable_numbers($N, $D);
     my $maybe_choose
         = ($prefer_large and not $ENV{NO_OPTIM})
-        ? \&maybe_choose_optim
+        ? \&maybe_choose_optim_2
         : \&maybe_choose_brute;
     $maybe_choose->($N, $prefer_large ? $ns->reverse : $ns)
 }
@@ -126,27 +203,30 @@ TEST { maybe_representable 200, 9 } list(9, 191);
 TEST { maybe_representable 200, 9, 0 }
 list(29, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9);
 
-TEST { maybe_representable 200, 8 } list(8, 8, 184);
+# The comments to the right in the following show the results that
+# maybe_choose_optim_1 gave:
+
+TEST { maybe_representable 200, 8 } list(18, 182);    # list(8, 8, 184);
 TEST { maybe_representable 200, 8, 0 }
 list(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8);
 
-TEST { maybe_representable 200, 7 } list(7, 7, 7, 179);
+TEST { maybe_representable 200, 7 } list(27, 173);    # list(7, 7, 7, 179);
 
-TEST { maybe_representable 200, 6 } list(6, 6, 6, 6, 176);
+TEST { maybe_representable 200, 6 } list(36, 164);    # list(6, 6, 6, 6, 176);
 
-if ($ENV{EXPENSIVE_TESTS}) {
+unless ($ENV{NO_EXPENSIVE_TESTS}) {
     TEST {
         time_this { maybe_representable 20000, 8 }
     }
-    list(8, 8, 19984);
+    list(18, 19982);                                  # list(8, 8, 19984);
     TEST {
         time_this { maybe_representable 40000, 8 }
     }
-    list(8, 8, 39984);
+    list(18, 39982);                                  # list(8, 8, 39984);
     TEST {
         time_this { maybe_representable 40000, 6 }
     }
-    list(6, 6, 6, 6, 39976);
+    list(36, 39964);                                  # list(6, 6, 6, 6, 39976);
 }
 
 # ----------------------------------------------------------------------
