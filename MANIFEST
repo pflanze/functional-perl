@@ -273,6 +273,7 @@ t/maintainer/perhaps
 t/perl-goto-leak.t
 t/perl-weaken-coderef-correctness.t
 t/perl-weaken-coderef.t
+t/perl/__SUB__-gc
 t/perl/goto-leak
 t/perl/weaken-coderef
 t/perl/weaken-coderef-alternative
