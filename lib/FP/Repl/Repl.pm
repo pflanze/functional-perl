@@ -125,7 +125,7 @@ use Chj::singlequote 'singlequote';
 use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
 use FP::Repl::StackPlus;
-use FP::TransparentLazy;
+use FP::Lazy;
 use FP::Show;
 use Scalar::Util qw(blessed);
 use FP::Carp;
@@ -169,11 +169,12 @@ sub maybe_fp_repl_home {
 }
 
 # Mis-using lazyLight for impure code here; could be simply a thunk
-# (procedure with no arguments), but the transparent evaluation comes
-# in handy here.
+# (procedure with no arguments). *Not* using TransparentLazy since we
+# better control explicitly where the exposition to side effects
+# should happen!
 my $HOME = lazyLight { maybe_fp_repl_home() // xsafehome };
-our $maybe_historypath  = lazyLight {"$HOME/.fp-repl_history"};
-our $maybe_settingspath = lazyLight {"$HOME/.fp-repl_settings"};
+our $maybe_historypath  = lazyLight { force($HOME) . "/.fp-repl_history" };
+our $maybe_settingspath = lazyLight { force($HOME) . "/.fp-repl_settings" };
 our $maxHistLen         = 500;
 our $doCatchINT         = 1;
 our $doRepeatWhenEmpty  = 1;
@@ -208,18 +209,18 @@ use Chj::Class::Array -fields => -publica => (
 sub new {
     my $class = shift;
     my $self  = $class->SUPER::new;
-    $$self[Maybe_historypath]        = $maybe_historypath;
-    $$self[Maybe_settingspath]       = $maybe_settingspath;
-    $$self[MaxHistLen]               = $maxHistLen;
-    $$self[DoCatchINT]               = $doCatchINT;
-    $$self[DoRepeatWhenEmpty]        = $doRepeatWhenEmpty;
-    $$self[DoKeepResultsInVARX]      = $doKeepResultsInVARX;
-    $$self[Pager]                    = $pager;
-    $$self[Mode_context]             = $mode_context;
-    $$self[Mode_formatter]           = $mode_formatter;
-    $$self[Mode_viewer]              = $mode_viewer;
-    $$self[Mode_lexical_persistence] = $mode_lexical_persistence;
-    $$self[Maybe_env_PATH]           = $maybe_env_path if ${^TAINT};
+    $$self[Maybe_historypath]        = force $maybe_historypath;
+    $$self[Maybe_settingspath]       = force $maybe_settingspath;
+    $$self[MaxHistLen]               = force $maxHistLen;
+    $$self[DoCatchINT]               = force $doCatchINT;
+    $$self[DoRepeatWhenEmpty]        = force $doRepeatWhenEmpty;
+    $$self[DoKeepResultsInVARX]      = force $doKeepResultsInVARX;
+    $$self[Pager]                    = force $pager;
+    $$self[Mode_context]             = force $mode_context;
+    $$self[Mode_formatter]           = force $mode_formatter;
+    $$self[Mode_viewer]              = force $mode_viewer;
+    $$self[Mode_lexical_persistence] = force $mode_lexical_persistence;
+    $$self[Maybe_env_PATH]           = force($maybe_env_path) if ${^TAINT};
     $self
 }
 
