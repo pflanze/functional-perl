@@ -105,12 +105,35 @@ FP::TransparentLazy - lazy evaluation with transparent evaluation
     is $v, 12;
     is $z, 4;
 
+    # There are 3 possible motivations for lazyLight: (1) lower
+    # allocation cost (save the wrapper data structure); (2) no risk
+    # for circular references (due to storing the result back into the
+    # wrapper (mutation) that can be used recursively); (3) to get
+    # fresh re-evaluation on every access and thus picking up any
+    # potential side effect.
+
+    # Arguably (3) is against the functional programming idea, and is
+    # a bit of a mis-use of lazyLight. For now, FP::TransparentLazy
+    # still helps this case by not using `FORCE` automatically. (TODO:
+    # provide another type that provides this with a guarantee?)
+
+    # Note that manual use of `FORCE` still stops the re-evalution:
+
+    ok ref $v;
+    is FORCE($v), 12;
+    is $z, 5;
+    is $v, 12;
+    is $z, 5; # you can see that re-evaluation has stopped
+    ok not ref $v;
+
 =head1 DESCRIPTION
 
 This implements a variant of FP::Lazy that forces promises
 automatically upon access (and writes their result back to the place
-they are forced from, like FP::Lazy's `FORCE` does). Otherwise the two
-are fully interchangeable.
+they are forced from, like FP::Lazy's `FORCE` does, except in the
+lazyLight case where `FORCE` is consciously not used automatically to
+keep more consistent re-evaluation behaviour). Otherwise the two are
+fully interchangeable.
 
 NOTE: this is EXPERIMENTAL. Also, should this be merged with
 Data::Thunk ?
@@ -176,23 +199,37 @@ sub delay (&);
 sub delayLight (&);
 *delayLight = \&lazyLight;
 
-package FP::TransparentLazy::Overloads {
-    use overload(
-        (map { $_ => "FORCE" } split / +/, '"" 0+ bool qr &{} ${} %{} *{}'),
+# XX to make it truly transparent, should always overload '&{}'; but
+# then how to force it without getting into an infinite loop? No way
+# to turn off the overload (except reblessing)?
 
-        # XX hm, can't overload '@{}', why?
-        fallback => 1
-    );
+# XX hm, can't overload '@{}', why?
+sub overloads {
+    my ($with_application_overload) = @_;
+    ($with_application_overload ? ('&{}') : ()), qw'"" 0+ bool qr ${} %{} *{}';
 }
 
 package FP::TransparentLazy::Promise {
-    our @ISA = qw(FP::TransparentLazy::Overloads
-        FP::Lazy::Promise);
+    our @ISA = qw(FP::Lazy::Promise);
+    use overload((map { $_ => "FORCE" } FP::TransparentLazy::overloads(1)),
+        fallback => 1);
+}
+
+# Do *not* call "FORCE" method for PromiseLight if the aim is to
+# re-evaluate it every time.
+sub forceLight {
+    &{ $_[0] }
 }
 
 package FP::TransparentLazy::PromiseLight {
-    our @ISA = qw(FP::TransparentLazy::Overloads
-        FP::Lazy::PromiseLight);
+    our @ISA = qw(FP::Lazy::PromiseLightBase);
+    use overload(
+        (
+            map { $_ => \&FP::TransparentLazy::forceLight }
+                FP::TransparentLazy::overloads(0)
+        ),
+        fallback => 1
+    );
 }
 
 use Chj::TEST;
