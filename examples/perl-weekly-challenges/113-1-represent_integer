@@ -39,6 +39,7 @@ use FP::Show;
 use FP::List;
 use FP::PureArray;
 use Chj::TEST ":all";
+use Chj::time_this;
 
 our $verbose = $ENV{VERBOSE};
 
@@ -134,6 +135,21 @@ list(8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8);
 TEST { maybe_representable 200, 7 } list(7, 7, 7, 179);
 
 TEST { maybe_representable 200, 6 } list(6, 6, 6, 6, 176);
+
+if ($ENV{EXPENSIVE_TESTS}) {
+    TEST {
+        time_this { maybe_representable 20000, 8 }
+    }
+    list(8, 8, 19984);
+    TEST {
+        time_this { maybe_representable 40000, 8 }
+    }
+    list(8, 8, 39984);
+    TEST {
+        time_this { maybe_representable 40000, 6 }
+    }
+    list(6, 6, 6, 6, 39976);
+}
 
 # ----------------------------------------------------------------------
 
