@@ -126,6 +126,12 @@ FP::TransparentLazy - lazy evaluation with transparent evaluation
     is $z, 5; # you can see that re-evaluation has stopped
     ok not ref $v;
 
+    # WARNING: such impure lazyLight promises from TransparentLazy are
+    # dangerous in that if you never explicitly `force` them and use
+    # the result (or `FORCE` them) then the exposure to side effects
+    # will remain active. Use FP::Lazy's lazyLight instead, which
+    # requires forcing thus requires this boundary to be explicit.
+
 =head1 DESCRIPTION
 
 This implements a variant of FP::Lazy that forces promises
