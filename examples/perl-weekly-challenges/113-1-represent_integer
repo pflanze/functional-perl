@@ -142,8 +142,7 @@ sub maybe_choose_optim_2 ($N, $_ns) {
         my $decide = sub ($n) {
             warn "decide: checking $n on top of " . show($chosen) if $verbose;
             my $chosen  = cons $n, $chosen;
-            my $sum     = $chosen->sum;
-            my $missing = $N - $sum;
+            my $missing = $N - ($chosen->sum);
             if (not $missing) {
                 Right $chosen
             } elsif ($missing < 0) {

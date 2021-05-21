@@ -30,8 +30,7 @@ chooseOptim2 n ns =
       check chosen =
         let decide n =
               let chosen' = n:chosen
-                  total = sum chosen'
-                  missing = n - total
+                  missing = n - (sum chosen')
               in
                 if missing == 0 then
                   Just (Right chosen')
