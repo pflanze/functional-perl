@@ -374,7 +374,7 @@ sub force {
     my ($perhaps_promise, $nocache) = @_;
 LP: {
         if (defined blessed($perhaps_promise)) {
-            if ($perhaps_promise->isa("FP::Lazy::PromiseLight")) {
+            if ($perhaps_promise->isa("FP::Lazy::PromiseLightBase")) {
                 $perhaps_promise = &$perhaps_promise;
                 redo LP;
             } elsif ($perhaps_promise->isa("FP::Lazy::Promise")) {
@@ -615,10 +615,11 @@ package FP::Lazy::Promise {
 
 my $lazyLight_thunk_show = subprefix_to_show_coderef("lazyLight ");
 
-package FP::Lazy::PromiseLight {
-    our @ISA = qw(FP::Lazy::AnyPromise);
+package FP::Lazy::PromiseLightBase {
 
-    use overload FP::Lazy::overloads(0);
+    # Things shared with FP::TransparentLazy::PromiseLight
+
+    our @ISA = qw(FP::Lazy::AnyPromise);
 
     sub FP_Lazy_is_forced {
         0
@@ -670,6 +671,11 @@ package FP::Lazy::PromiseLight {
             # except if using a different implementation when $debug
             # is on
     }
+}
+
+package FP::Lazy::PromiseLight {
+    our @ISA = qw(FP::Lazy::PromiseLightBase);
+    use overload FP::Lazy::overloads(0);
 }
 
 1
