@@ -136,7 +136,8 @@ keep more consistent re-evaluation behaviour). Otherwise the two are
 fully interchangeable.
 
 NOTE: this is EXPERIMENTAL. Also, should this be merged with
-Data::Thunk ?
+L<Data::Thunk>? OTOH, should remain interchangeable with L<FP::Lazy>,
+and maybe merged with that one.
 
 The drawback of transparency might be more confusion, as it's not
 directly visible anymore (neither in the debugger nor the source code)
