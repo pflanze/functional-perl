@@ -130,6 +130,34 @@ FP::Lazy - lazy evaluation (delayed evaluation, promises)
     };
     like $@, qr/^Illegal division by zero/;
 
+    # A `lazyLight` promise is re-evaluated on every access:
+    my $z = 0;
+    my $v = lazyLight { $z++; 3*4 };
+    is force($v), 12;
+    is $z, 1;
+    is force($v), 12;
+    is $z, 2;
+
+    # There are 3 possible motivations for lazyLight: (1) lower
+    # allocation cost (save the wrapper data structure); (2) no risk
+    # for circular references (due to storing the result back into the
+    # wrapper (mutation) that can be used recursively); (3) to get
+    # fresh re-evaluation on every access and thus picking up any
+    # potential side effect.
+
+    # Arguably (3) is against the functional programming idea, and is
+    # a bit of a mis-use of lazyLight. For now, FP::TransparentLazy
+    # still helps this case by not using `FORCE` automatically. (TODO:
+    # provide another type that provides this with a guarantee?)
+
+    # Note that manual use of `FORCE` still stops the re-evalution:
+
+    ok ref $v;
+    is FORCE($v), 12;
+    is $z, 3;
+    is force($v), 12;
+    is $z, 3; # you can see that re-evaluation has stopped
+    ok not ref $v;
 
 =head1 DESCRIPTION
 
