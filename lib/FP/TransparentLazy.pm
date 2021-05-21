@@ -93,6 +93,17 @@ FP::TransparentLazy - lazy evaluation with transparent evaluation
     };
     like $@, qr/^Illegal division by zero/;
 
+    # A `lazyLight` promise is re-evaluated on every access:
+    my $z = 0;
+    my $v = lazyLight { $z++; 3*4 };
+    is $v, 12;
+    is $z, 1;
+    is $v, 12;
+    is $z, 2;
+    is force($v), 12;
+    is $z, 3;
+    is $v, 12;
+    is $z, 4;
 
 =head1 DESCRIPTION
 
