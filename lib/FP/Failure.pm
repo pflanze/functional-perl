@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -136,6 +136,8 @@ Instead of using `FP::Failure::Failure` as base class, create a
 failure protocol (FP::Abstract::Failure) instead?
 
 =head1 SEE ALSO
+
+L<FP::Either> (which wraps both cases in a shared parent type).
 
 Implements: L<FP::Abstract::Pure>, L<FP::Struct::Show>
 
