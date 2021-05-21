@@ -113,9 +113,11 @@ FP::TransparentLazy - lazy evaluation with transparent evaluation
     # potential side effect.
 
     # Arguably (3) is against the functional programming idea, and is
-    # a bit of a mis-use of lazyLight. For now, FP::TransparentLazy
-    # still helps this case by not using `FORCE` automatically. (TODO:
-    # provide another type that provides this with a guarantee?)
+    # a bit of a mis-use of lazyLight. But, at least for now,
+    # FP::TransparentLazy helps this case by not using `FORCE`
+    # transparently; it shouldn't since that would break automatic
+    # stream_ detection on subsequent calls (to things like `->map`
+    # instead of `->stream_map`).
 
     # Note that manual use of `FORCE` still stops the re-evalution:
 
@@ -216,10 +218,52 @@ sub overloads {
     ($with_application_overload ? ('&{}') : ()), qw'"" 0+ bool qr ${} %{} *{}';
 }
 
+# Only for the overload, you shouldn't use this manually (for one,
+# because it doesn't check the number of arguments, which is because
+# overload passes 3 of them, and then because this can't be used for
+# other promises and that will be dangerous):
+sub forceTransparentLazy {
+    my ($perhaps_promise) = @_;
+    my $nocache = 0;
+
+    # COPY-PASTE from part of FP::Lazy::force:
+    if (defined(my $thunk = $$perhaps_promise[0])) {
+        my $v = force(&$thunk(), $nocache);
+        if ($$perhaps_promise[2]) {
+
+            if (defined(my $got = blessed($v))) {
+
+                $v->isa($$perhaps_promise[2])
+                    or die_type_error($$perhaps_promise[2], "a '$got'", $v);
+            } else {
+                die_type_error($$perhaps_promise[2], "a non-object", $v);
+            }
+        }
+        unless ($nocache) {
+            $$perhaps_promise[1] = $v;
+            $$perhaps_promise[0] = undef;
+        }
+        $v
+    } else {
+        $$perhaps_promise[1]
+    }
+}
+
 package FP::TransparentLazy::Promise {
     our @ISA = qw(FP::Lazy::Promise);
-    use overload((map { $_ => "FORCE" } FP::TransparentLazy::overloads(1)),
-        fallback => 1);
+
+    # Use of the FORCE method would be bad since it will make stream_
+    # detection fail on subsequent calls! (OK, would need to use
+    # `Keep` anyway usually, but apparently not always?) Also, can't
+    # use "force" method as that expects 1-2 arguments, overload
+    # passes 3 (different ones)!
+    use overload(
+        (
+            map { $_ => \&FP::TransparentLazy::forceTransparentLazy }
+                FP::TransparentLazy::overloads(1)
+        ),
+        fallback => 1
+    );
 }
 
 # Do *not* call "FORCE" method for PromiseLight if the aim is to
@@ -252,6 +296,6 @@ TEST {
 TEST { &$c() }
 "foo";
 TEST { ref $c }
-"CODE";
+"FP::TransparentLazy::Promise";    # was CODE before removing transparent FORCE
 
 1
