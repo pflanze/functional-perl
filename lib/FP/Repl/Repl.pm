@@ -168,6 +168,25 @@ sub maybe_fp_repl_home {
     }
 }
 
+my $HOME = maybe_fp_repl_home() // xsafehome;
+our $maybe_historypath        = "$HOME/.fp-repl_history";
+our $maybe_settingspath       = "$HOME/.fp-repl_settings";
+our $maxHistLen               = 500;
+our $doCatchINT               = 1;
+our $doRepeatWhenEmpty        = 1;
+our $doKeepResultsInVARX      = 1;
+our $pager                    = $ENV{PAGER} || "less";
+our $mode_context             = 'l';
+our $mode_formatter           = 'd';
+our $mode_viewer              = 'a';
+our $mode_lexical_persistence = 'X';
+our $maybe_env_path
+
+    # only used for running tooling for the repl itself, like the
+    # pager, and only if taint mode is on (see commit
+    # 890020b5ac502fe3fd11bf400c4cba70be5c1ac4)
+    = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
+
 use Chj::Class::Array -fields => -publica => (
     'Maybe_historypath',     # undef=none, but a default is set
     'Maybe_settingspath',    # undef=none, but a default is set
@@ -185,28 +204,7 @@ use Chj::Class::Array -fields => -publica => (
 
 sub new {
     my $class = shift;
-
-    # Defaults:
-    my $HOME                     = maybe_fp_repl_home() // xsafehome;
-    my $maybe_historypath        = "$HOME/.fp-repl_history";
-    my $maybe_settingspath       = "$HOME/.fp-repl_settings";
-    my $maxHistLen               = 500;
-    my $doCatchINT               = 1;
-    my $doRepeatWhenEmpty        = 1;
-    my $doKeepResultsInVARX      = 1;
-    my $pager                    = $ENV{PAGER} || "less";
-    my $mode_context             = 'l';
-    my $mode_formatter           = 'd';
-    my $mode_viewer              = 'a';
-    my $mode_lexical_persistence = 'X';
-    my $maybe_env_path
-
-        # only used for running tooling for the repl itself, like the
-        # pager, and only if taint mode is on (see commit
-        # 890020b5ac502fe3fd11bf400c4cba70be5c1ac4)
-        = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
-
-    my $self = $class->SUPER::new;
+    my $self  = $class->SUPER::new;
     $$self[Maybe_historypath]        = $maybe_historypath;
     $$self[Maybe_settingspath]       = $maybe_settingspath;
     $$self[MaxHistLen]               = $maxHistLen;
