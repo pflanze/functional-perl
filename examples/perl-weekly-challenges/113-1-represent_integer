@@ -63,8 +63,7 @@ sub maybe_choose_brute ($N, $ns) {
                 sub ($n) {
                     $check->(cons($n, $chosen))
                 }
-                )
-                || undef    # `any` returns 0, not undef
+            )
         }
         }
         ->(null)
@@ -95,8 +94,7 @@ sub maybe_choose_optim ($N, $ns) {
                     sub ($n) {
                         $check->(cons($n, $chosen))
                     }
-                    )
-                    || undef    # `any` returns 0, not undef
+                )
             }
         }
         }
