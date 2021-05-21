@@ -44,6 +44,7 @@ use FP::List;
 use FP::Stream;
 use FP::Array 'array';
 use FP::Ops qw(the_method string_cmp);
+use FP::Div qw(identity);
 use Chj::TEST;
 
 my $t_vals = list(
@@ -263,5 +264,72 @@ list(list([3, 'b'], [3, 'a']), list([4, 'c']));
 
 TEST { ["b", "a", "x", "c"]->max(\&string_cmp) } 'x';
 TEST { ["b", "a", "x", "c"]->min(\&string_cmp) } 'a';
+
+# The false-returning behaviour of `any`: (TODO: try this
+# *automatically* with all sequence types instead of this lame
+# copy-paste)
+
+TEST { list(1, 3, 5)->any(\&is_even) } 0;
+TEST {
+    list(1, 3, 5)->any(sub { my ($v) = @_; defined $v })
+}
+1;
+TEST {
+    list(1, 3, 5)->any(sub { my ($v) = @_; not defined $v })
+}
+'';
+TEST {
+    list()->any(sub { my ($v) = @_; defined $v })
+}
+undef;
+TEST {
+    list(undef)->any(sub { my ($v) = @_; defined $v })
+}
+'';
+TEST { list(undef)->any(\&identity) } undef;
+TEST { list('', undef)->any(\&identity) } undef;
+TEST { list('')->any(\&identity) } '';
+
+TEST { purearray(1, 3, 5)->any(\&is_even) } 0;
+TEST {
+    purearray(1, 3, 5)->any(sub { my ($v) = @_; defined $v })
+}
+1;
+TEST {
+    purearray(1, 3, 5)->any(sub { my ($v) = @_; not defined $v })
+}
+'';
+TEST {
+    purearray()->any(sub { my ($v) = @_; defined $v })
+}
+undef;
+TEST {
+    purearray(undef)->any(sub { my ($v) = @_; defined $v })
+}
+'';
+TEST { purearray(undef)->any(\&identity) } undef;
+TEST { purearray('', undef)->any(\&identity) } undef;
+TEST { purearray('')->any(\&identity) } '';
+
+TEST { stream(1, 3, 5)->any(\&is_even) } 0;
+TEST {
+    stream(1, 3, 5)->any(sub { my ($v) = @_; defined $v })
+}
+1;
+TEST {
+    stream(1, 3, 5)->any(sub { my ($v) = @_; not defined $v })
+}
+'';
+TEST {
+    stream()->any(sub { my ($v) = @_; defined $v })
+}
+undef;
+TEST {
+    stream(undef)->any(sub { my ($v) = @_; defined $v })
+}
+'';
+TEST { stream(undef)->any(\&identity) } undef;
+TEST { stream('', undef)->any(\&identity) } undef;
+TEST { stream('')->any(\&identity) } '';
 
 1

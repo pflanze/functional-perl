@@ -1998,14 +1998,15 @@ TEST {
 sub list_any {
     @_ == 2 or fp_croak_arity 2;
     my ($pred, $l) = @_;
+    my $v;
 LP: {
         if (is_pair $l) {
-            (&$pred(car $l)) or do {
+            ($v = &$pred(car $l)) or do {
                 $l = cdr $l;
                 redo LP;
             }
         } elsif (is_null $l) {
-            0
+            $v
         } else {
             die "improper list"
         }
@@ -2021,7 +2022,7 @@ TEST {
 TEST {
     list_any sub { $_[0] % 2 }, array_to_list []
 }
-0;
+undef;
 TEST {
     list_any sub { $_[0] % 2 }, array_to_list [2, 5, 8]
 }

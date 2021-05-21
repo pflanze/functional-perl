@@ -609,11 +609,12 @@ TEST {
 sub array_any {
     @_ == 2 or fp_croak_arity 2;
     my ($fn, $ary) = @_;
+    my $v;
     for (@$ary) {
-        my $v = &$fn($_);
+        $v = &$fn($_);
         return $v if $v;
     }
-    0
+    $v
 }
 
 TEST {
@@ -623,7 +624,7 @@ TEST {
 TEST {
     array_any sub { $_[0] % 2 }, []
 }
-0;
+undef;
 TEST {
     array_any sub { $_[0] % 2 }, [2, 5, 8]
 }

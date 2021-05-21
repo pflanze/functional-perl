@@ -973,17 +973,18 @@ sub stream_mixed_flatten {
 *FP::List::List::stream_mixed_flatten = \&stream_mixed_flatten;
 
 sub stream_any {
-    @_ == 2 or fp_croak_arity 2;
-    my ($pred, $l) = @_;
+    @_ == 2 or @_ == 3 or fp_croak_arity "2 or 3";
+    my ($pred, $l, $prev_false) = @_;
     weaken $_[1];
     $l = force $l;
     if (is_pair $l) {
-        (&$pred(car $l)) or do {
+        my $v = $pred->(car $l);
+        $v or do {
             my $r = cdr $l;
-            stream_any($pred, $r)
+            stream_any($pred, $r, $v)
         }
     } elsif (is_null $l) {
-        0
+        $prev_false
     } else {
         die "improper list: $l"
     }
@@ -1273,7 +1274,7 @@ TEST {
 TEST {
     stream_any sub { $_[0] % 2 }, array_to_stream []
 }
-0;
+undef;
 TEST {
     stream_any sub { $_[0] % 2 }, array_to_stream [2, 5, 8]
 }

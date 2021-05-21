@@ -109,7 +109,7 @@ TEST { (path "/.")->string }
 "/.";
 
 TEST { (path "/.")->contains_dotdot }
-"0";
+'';
 TEST { (path "foo/bar/../baz")->contains_dotdot }
 "1";
 TEST { (path "../baz")->contains_dotdot }
