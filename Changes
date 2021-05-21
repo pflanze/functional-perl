@@ -1,5 +1,14 @@
 Revision history for FunctionalPerl
 
+0.72.63 2021-5-21
+    - Repl: use FP_REPL_HOME env var if present
+    - t/repl.t: stop spamming the real repl history (and settings?)
+    - TransparentLazy: fix lazyLight
+    - Lazy,TransparentLazy: document behaviour of `lazyLight` in the
+      face of side effects
+    - Perl Weekly Challenges 113-1-represent_integer: use __SUB__
+      instead of FP::fix
+
 0.72.62 2021-5-20
     - fix a multitude of newly introduced test and dependency bugs
 
