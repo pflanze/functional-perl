@@ -1519,7 +1519,13 @@ sub list_filter_with_tail;
 sub list_map {
     @_ == 2 or fp_croak_arity 2;
     my ($fn, $l) = @_;
-    is_null($l) ? $l : cons(scalar &$fn(car $l), list_map($fn, cdr $l))
+    is_null($l) ? $l : cons(
+        scalar &$fn(car $l),
+        do {
+            no warnings 'recursion';
+            list_map($fn, cdr $l)
+        }
+    )
 }
 
 TEST {
