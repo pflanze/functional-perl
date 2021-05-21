@@ -125,7 +125,7 @@ use Chj::singlequote 'singlequote';
 use FP::HashSet qw(hashset_union);
 use FP::Hash qw(hash_xref);
 use FP::Repl::StackPlus;
-use FP::Lazy;
+use FP::TransparentLazy;
 use FP::Show;
 use Scalar::Util qw(blessed);
 use FP::Carp;
@@ -168,14 +168,17 @@ sub maybe_fp_repl_home {
     }
 }
 
-my $HOME = maybe_fp_repl_home() // xsafehome;
-our $maybe_historypath        = "$HOME/.fp-repl_history";
-our $maybe_settingspath       = "$HOME/.fp-repl_settings";
-our $maxHistLen               = 500;
-our $doCatchINT               = 1;
-our $doRepeatWhenEmpty        = 1;
+# Mis-using lazyLight for impure code here; could be simply a thunk
+# (procedure with no arguments), but the transparent evaluation comes
+# in handy here.
+my $HOME = lazyLight { maybe_fp_repl_home() // xsafehome };
+our $maybe_historypath  = lazyLight {"$HOME/.fp-repl_history"};
+our $maybe_settingspath = lazyLight {"$HOME/.fp-repl_settings"};
+our $maxHistLen         = 500;
+our $doCatchINT         = 1;
+our $doRepeatWhenEmpty  = 1;
 our $doKeepResultsInVARX      = 1;
-our $pager                    = $ENV{PAGER} || "less";
+our $pager                    = lazyLight { $ENV{PAGER} || "less" };
 our $mode_context             = 'l';
 our $mode_formatter           = 'd';
 our $mode_viewer              = 'a';
