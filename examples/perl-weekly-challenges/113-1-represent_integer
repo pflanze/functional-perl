@@ -122,48 +122,60 @@ sub maybe_choose_optim_2 ($N, $_ns) {
         my $check = __SUB__;
         warn "check (optim 2): " . show($chosen) if $verbose;
 
-        # Add a new number of any of those in $ns to $chosen, and
-        # check each of those number sets whether they either lead to
-        # an immediate success on the next level (via hashtable
-        # check), or if they will need recursion, or are a dead end.
-        # Using FP::Either's `Right` to indicate an immediate
-        # solution, and `Left` to indicate a case that needs recursion
-        # (and only potentially yields a result).  Since $ns is a
-        # stream (a lazily computed list), the `map` and `take_while`
-        # steps are lazy, too; the function given to map will never be
-        # evaluated for $n's that are smaller (coming further along in
-        # the reverse-ordered $ns) than the $n that leads to a
-        # solution.
-        my $decisions = $ns->map(
-            sub ($n) {
-                warn "optim: checking $n on top of " . show($chosen)
-                    if $verbose;
-                my $chosen  = cons $n, $chosen;
-                my $sum     = $chosen->sum;
-                my $missing = $N - $sum;
-                if (not $missing) {
-                    Right $chosen
-                } elsif ($missing < 0) {
+        # Given an additional choice of a number $n (out of $ns) on
+        # top of $chosen, decide whether there's a solution either
+        # with the given numbers or when adding one more missing
+        # number by looking at %ns; or whether the chosen numbers are
+        # adding up to too much already (in which case undef is
+        # returned), or the search needs to resume via recursively
+        # calling $check. The latter case is not carried out
+        # immediately, but returned as a lazy term (a promise), to
+        # allow to delay diving deeper into the next recursion level
+        # to *after* checking all numbers in the current level
+        # (breadth-first search).
 
-                    # Since $ns are sorted in decrementing order, any
-                    # subsequent number will fail, too, so we can stop
-                    # further checks; signalize this to `take_while`:
-                    undef
+        # Using FP::Either's `Right` to indicate an immediate
+        # solution, `Left` to indicate a case that needs recursion
+        # (and only potentially yields a result), undef to signify a
+        # dead end.
+
+        my $decide = sub ($n) {
+            warn "decide: checking $n on top of " . show($chosen) if $verbose;
+            my $chosen  = cons $n, $chosen;
+            my $sum     = $chosen->sum;
+            my $missing = $N - $sum;
+            if (not $missing) {
+                Right $chosen
+            } elsif ($missing < 0) {
+                undef
+            } else {
+                if (exists $ns{$missing}) {
+                    Right cons($missing, $chosen)
                 } else {
-                    if (exists $ns{$missing}) {
-                        Right cons($missing, $chosen)
-                    } else {
-                        Left lazy {
-                            $check->($chosen)
-                        }
+                    Left lazy {
+                        $check->($chosen)
                     }
                 }
             }
-        )->take_while(\&is_defined);
+        };
+
+        # Since $ns are sorted in decrementing order, if $decide
+        # returns undef, any subsequent number will fail, too, so we
+        # can stop further checks; `take_while` will only take the
+        # results up to that point.
+
+        # Since $ns is a stream (a lazily computed list), the
+        # following `map` and `take_while` steps are lazy, too;
+        # $decide will never be evaluated for $n's that are smaller
+        # (coming further along in the reverse-ordered $ns) than any
+        # $n that can lead to a solution.
+
+        my $decisions = $ns->map($decide)->take_while(\&is_defined);
 
         # Check for immediate solutions (solutions on our level)
         # first, if that fails, get and evaluate the promises to
         # recurse (go deeper):
+
         my $solutions = $decisions->filter(\&is_Right);
         unless ($solutions->is_null) {
             $solutions->first->value
