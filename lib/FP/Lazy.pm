@@ -406,7 +406,7 @@ LP: {
                 $perhaps_promise = &$perhaps_promise;
                 redo LP;
             } elsif ($perhaps_promise->isa("FP::Lazy::Promise")) {
-                if (my $thunk = $$perhaps_promise[0]) {
+                if (defined(my $thunk = $$perhaps_promise[0])) {
                     my $v = force(&$thunk(), $nocache);
                     if ($$perhaps_promise[2]) {
 
