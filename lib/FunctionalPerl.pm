@@ -75,7 +75,7 @@ C<:doc> -> L<FP::Docstring>
 
 C<:equal> -> L<FP::Equal>
 
-C<:failures> -> L<FP::Failure>
+C<:failures> -> L<FP::Either>, L<FP::Failure>
 
 C<:fix> -> L<FP::fix>
 
