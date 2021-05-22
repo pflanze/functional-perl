@@ -218,6 +218,14 @@ sub overloads {
     ($with_application_overload ? ('&{}') : ()), qw'"" 0+ bool qr ${} %{} *{}';
 }
 
+# COPY-PASTE from FP::Lazy
+sub die_type_error {
+    my ($expected, $gotstr, $v) = @_;
+    die "promise expected to evaluate to an object "
+        . "of class '$expected' but got $gotstr: "
+        . show($v)
+}
+
 # Only for the overload, you shouldn't use this manually (for one,
 # because it doesn't check the number of arguments, which is because
 # overload passes 3 of them, and then because this can't be used for

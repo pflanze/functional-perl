@@ -390,6 +390,7 @@ sub delay (&);
 sub delayLight (&);
 *delayLight = \&lazyLight;
 
+# (NOTE: there is a COPY-PASTE of this in TransparentLazy)
 sub die_type_error {
     my ($expected, $gotstr, $v) = @_;
     die "promise expected to evaluate to an object "
