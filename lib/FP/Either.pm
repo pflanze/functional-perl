@@ -24,6 +24,13 @@ FP::Either - keep two kinds of values in one kind of place
     is $a->value, 1;
     is $b->value, 1;
 
+    use FP::List;
+    use FP::Equal;
+    use FP::Either ":all";
+    my $l = list Left(9), Left(-8), Right(5);
+    ok equal rights($l), list 5;
+    ok equal lefts($l), list 9, -8;
+
 =head1 DESCRIPTION
 
 These are used to mark (wrap) two different kinds of data for proper
@@ -61,9 +68,10 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT      = qw(Left Right is_Left is_Right);
-our @EXPORT_OK   = qw();
+our @EXPORT_OK   = qw(lefts rights);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Carp;
 use FP::Predicates qw(instance_of);
 
 package FP::_::Either {
@@ -87,5 +95,21 @@ package FP::Either::Right {
 FP::Either::Right::constructors->import;
 
 *is_Right = instance_of "FP::Either::Right";
+
+sub make_lefts_rights {
+    my ($is) = @_;
+    sub {
+        @_ == 1 or fp_croak_arity 1;
+
+        # XX could use filter_map as optimization here, too! Even
+        # better a map_filter.
+        # XX evil to use the value method directly? This saves one
+        # additional sub call.
+        $_[0]->filter($is)->map(\&FP::_::Either::value)
+    }
+}
+
+*lefts  = make_lefts_rights \&is_Left;
+*rights = make_lefts_rights \&is_Right;
 
 1
