@@ -151,7 +151,7 @@ our $export_desc = +{
     ":streams"         => [qw(FP::Stream FP::IOStream FP::Weak)],
     ":lazy"            => [qw(FP::Lazy :streams FP::Weak)],
     ":transparentlazy" => [qw(FP::TransparentLazy :streams FP::Weak)],
-    ":failures"        => [qw(FP::Failure)],
+    ":failures"        => [qw(FP::Failure FP::Either)],
 
     ":doc"   => [qw(FP::Docstring)],
     ":show"  => [qw(FP::Show)],
