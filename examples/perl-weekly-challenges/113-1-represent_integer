@@ -17,6 +17,11 @@ Write a script to check if $N can be represented as a sum of positive
 integers [all] having $D at least once [in their decimal
 representation]. If check passes print 1 otherwise 0.
 
+=head1 NOTE
+
+There is a Haskell version of this script in the file
+L<113-1-represent_integer.hs>.
+
 =cut
 
 use strict;
