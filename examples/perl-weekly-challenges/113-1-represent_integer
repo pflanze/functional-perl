@@ -180,11 +180,12 @@ sub maybe_choose_optim_2 ($N, $_ns) {
         # first, if that fails, get and evaluate the promises to
         # recurse (go deeper):
 
-        my $solutions = rights $decisions;
+        my $solutions  = rights $decisions;
+        my $recursions = lefts $decisions;
         unless ($solutions->is_null) {
             $solutions->first
         } else {
-            lefts($decisions)->any(\&force)
+            $recursions->any(\&force)
         }
         }
         ->(null)
