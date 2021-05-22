@@ -44,6 +44,7 @@ examples/maplines-example.pl
 examples/pdf-to-html
 examples/perl-weekly-challenges/111-1-search_matrix
 examples/perl-weekly-challenges/113-1-represent_integer
+examples/perl-weekly-challenges/113-1-represent_integer.hs
 examples/perl-weekly-challenges/113-2-recreate_binary_tree
 examples/predicates
 examples/primes
@@ -152,6 +153,7 @@ lib/FP/Div.pm
 lib/FP/Docstring.pm
 lib/FP/Docstring/t.pm
 lib/FP/DumperEqual.pm
+lib/FP/Either.pm
 lib/FP/Equal.pm
 lib/FP/Equal/t.pm
 lib/FP/Failure.pm
