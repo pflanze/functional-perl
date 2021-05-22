@@ -1,4 +1,5 @@
 .gitignore
+examples/perl-weekly-challenges/.gitignore
 .update-manifest.exclude
 website/sync
 meta/release
