@@ -20,7 +20,7 @@ representation]. If check passes print 1 otherwise 0.
 =head1 NOTE
 
 There is a Haskell version of this script in the file
-L<113-1-represent_integer.hs>.
+L<113-1-represent_integer_haskell.hs>.
 
 =cut
 
