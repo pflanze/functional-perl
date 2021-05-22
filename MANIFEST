@@ -44,8 +44,9 @@ examples/maplines-example.pl
 examples/pdf-to-html
 examples/perl-weekly-challenges/111-1-search_matrix
 examples/perl-weekly-challenges/113-1-represent_integer
-examples/perl-weekly-challenges/113-1-represent_integer.hs
+examples/perl-weekly-challenges/113-1-represent_integer_haskell.hs
 examples/perl-weekly-challenges/113-2-recreate_binary_tree
+examples/perl-weekly-challenges/Makefile
 examples/predicates
 examples/primes
 examples/sendprepare
