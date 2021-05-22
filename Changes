@@ -1,5 +1,13 @@
 Revision history for FunctionalPerl
 
+0.72.64 2021-5-22
+    - sequences: change `any` to return the last false value
+    - List: silence recursion warning in list_map
+    - TransparentLazy: never use `FORCE` transparently
+    - Create FP::Either
+    - 113-1-represent_integer: improvements, add more performant
+      algorithm, and a (currently non-working) Haskell version
+
 0.72.63 2021-5-21
     - Repl: use FP_REPL_HOME env var if present
     - t/repl.t: stop spamming the real repl history (and settings?)
