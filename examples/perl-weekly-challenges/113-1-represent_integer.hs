@@ -26,13 +26,13 @@ import Test.HUnit
 (|>) a b = b a
 
 chooseOptim2 :: forall n. (Num n, Ord n) => n -> [n] -> Maybe [n]
-chooseOptim2 n ns =
+chooseOptim2 ntop ns =
   let nsSet = Set.fromList ns
       check :: [n] -> Maybe [n]
       check chosen =
         let decide n =
               let chosen' = n:chosen
-                  missing = n - (sum chosen')
+                  missing = ntop - (sum chosen')
               in
                 if missing == 0 then
                   Just (Right chosen')
