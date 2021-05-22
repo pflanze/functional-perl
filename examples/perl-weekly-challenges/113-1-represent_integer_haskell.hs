@@ -14,7 +14,9 @@ import qualified Data.Set as Set
 import Data.Maybe
 import Data.Either
 import Test.HUnit
-
+import qualified System.Environment as Environment
+import qualified System.Exit as Exit
+import qualified Text.Read as Read
 
 -- I'm using parens instead of $ and `let` instead of `where` to make
 -- the code look closer to the Perl version / more familiar to Perl
@@ -93,8 +95,32 @@ tests = map (\(n,d,r) -> TestCase(
 runTests :: IO Counts
 runTests = runTestTT (TestList tests)
 
+usage :: String -> IO ()
+usage prog  = putStrLn ("Usage: " ++ prog ++ " --test | N D")
+
+usageMsg :: String -> String -> IO ()
+usageMsg prog msg = do
+  putStrLn ("Error: " ++ msg)
+  usage prog
+
+exit, die :: IO ()
+exit    = Exit.exitWith Exit.ExitSuccess
+die     = Exit.exitWith (Exit.ExitFailure 1)
+
+main_ :: String -> [String] -> IO ()
+main_ prog ["-h"]      = usage prog >> exit
+main_ prog ["--help"]  = usage prog >> exit
+main_ _pro ["--test"]  = runTests >> return ()
+main_ prog [nstr, [d]] = do
+  case Read.readEither nstr of
+    Right n -> putStr $ show $ representable n d
+    Left msg -> usageMsg prog msg
+main_ prog _           = usage prog >> die
+
 main :: IO ()
 main = do
-  _ <- runTests
+  args <- Environment.getArgs
+  p <- Environment.getProgName
+  main_ p args
   return ()
 
