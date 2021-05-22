@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.65 2021-5-22
+    - 113-1-represent_integer: fix and improve the Haskell version
+
 0.72.64 2021-5-22
     - sequences: change `any` to return the last false value
     - List: silence recursion warning in list_map
