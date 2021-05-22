@@ -26,7 +26,7 @@ import qualified Text.Read as Read
 -- Haskell) piping operator to make the code look similar to OO code
 -- using method calls.
 (|>) :: t1 -> (t1 -> t2) -> t2
-(|>) a b = b a
+a |> b = b a
 
 chooseOptim2 :: forall n. (Num n, Ord n) => n -> [n] -> Maybe [n]
 chooseOptim2 ntop ns =
