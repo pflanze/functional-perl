@@ -23,6 +23,7 @@ import Test.HUnit
 -- Also, using this now pretty wide-spread (but not sure about
 -- Haskell) piping operator to make the code look similar to OO code
 -- using method calls.
+(|>) :: t1 -> (t1 -> t2) -> t2
 (|>) a b = b a
 
 chooseOptim2 :: forall n. (Num n, Ord n) => n -> [n] -> Maybe [n]
@@ -72,6 +73,7 @@ representable n d =
 
 ----------------------------------------------------------------------
 
+tests :: [Test]
 tests = map (\(n,d,r) -> TestCase(
                 assertEqual
                 ("> representable " ++ (show n) ++ " '" ++ [d, '\''])
@@ -88,6 +90,7 @@ tests = map (\(n,d,r) -> TestCase(
   , (40000, '6', Just [36, 39964])
   ]
 
+runTests :: IO Counts
 runTests = runTestTT (TestList tests)
 
 main :: IO ()
