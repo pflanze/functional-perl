@@ -13,6 +13,8 @@ module RepresentInteger where
 import qualified Data.Set as Set
 import Data.Maybe
 import Data.Either
+import Test.HUnit
+
 
 -- I'm using parens instead of $ and `let` instead of `where` to make
 -- the code look closer to the Perl version / more familiar to Perl
@@ -66,4 +68,25 @@ representable n d =
   let ns = representableNumbers n d
   in
     chooseOptim2 n (reverse ns)
+
+
+----------------------------------------------------------------------
+
+tests = map (\(n,d,r) -> TestCase(
+                assertEqual
+                ("> representable " ++ (show n) ++ " '" ++ [d, '\''])
+                r
+                (representable n d)))
+  [ (25, '7', Nothing)
+  , (25, '7', Just [7, 17])
+  , (200, '9', Just [9, 191])
+  , (200, '8', Just [18, 182])
+  , (200, '7', Just [27, 173])
+  , (200, '6', Just [36, 164])
+  , (20000, '8', Just [18, 19982])
+  , (40000, '8', Just [18, 39982])
+  , (40000, '6', Just [36, 39964])
+  ]
+
+runTests = runTestTT (TestList tests)
 
