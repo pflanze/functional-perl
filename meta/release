@@ -94,6 +94,11 @@ sub release ($maybe_version, $maybe_parsed_level) {
 
     xxsystem "meta/update-pod";
 
+    if (xsystem "cj-git-status-is-clean") {
+        xxsystem "git", "commit", "-m", "FunctionalPerl: auto-updated docs",
+            "lib/FunctionalPerl.pm";
+    }
+
     xxsystem "cj-git-status-is-clean";
 
     my $version;
