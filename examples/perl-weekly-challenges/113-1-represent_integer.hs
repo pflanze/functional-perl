@@ -78,7 +78,7 @@ tests = map (\(n,d,r) -> TestCase(
                 r
                 (representable n d)))
   [ (25, '7', Nothing)
-  , (25, '7', Just [7, 17])
+  , (24, '7', Just [7, 17])
   , (200, '9', Just [9, 191])
   , (200, '8', Just [18, 182])
   , (200, '7', Just [27, 173])
