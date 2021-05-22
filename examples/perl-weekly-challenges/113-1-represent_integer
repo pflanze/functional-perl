@@ -39,7 +39,7 @@ use FP::Show;
 use FP::List;
 use FP::PureArray;
 use FP::Lazy;
-use FP::Either;
+use FP::Either ":all";
 use FP::Predicates qw(is_defined);
 use Chj::TEST ":all";
 use Chj::time_this;
@@ -175,15 +175,11 @@ sub maybe_choose_optim_2 ($N, $_ns) {
         # first, if that fails, get and evaluate the promises to
         # recurse (go deeper):
 
-        my $solutions = $decisions->filter(\&is_Right);
+        my $solutions = rights $decisions;
         unless ($solutions->is_null) {
-            $solutions->first->value
+            $solutions->first
         } else {
-            $decisions->filter(\&is_Left)->any(
-                sub ($left) {
-                    $left->value->force
-                }
-            )
+            lefts($decisions)->any(\&force)
         }
         }
         ->(null)
