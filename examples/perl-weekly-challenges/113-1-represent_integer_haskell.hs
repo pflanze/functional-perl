@@ -28,6 +28,9 @@ import qualified Text.Read as Read
 (|>) :: t1 -> (t1 -> t2) -> t2
 a |> b = b a
 
+-- Unlike in the Perl version, I'm only implementing the algorithm
+-- used in `maybe_choose_optim_2` here:
+
 chooseOptim2 :: forall n. (Num n, Ord n) => n -> [n] -> Maybe [n]
 chooseOptim2 ntop ns =
   let nsSet = Set.fromList ns
