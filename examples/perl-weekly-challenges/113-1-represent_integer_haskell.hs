@@ -9,7 +9,7 @@
 -- positive integers [all] having `d` at least once [in their decimal
 -- representation]. If check passes print 1 otherwise 0.
 
-module RepresentInteger where
+module Main where
 import qualified Data.Set as Set
 import Data.Maybe
 import Data.Either
@@ -89,4 +89,9 @@ tests = map (\(n,d,r) -> TestCase(
   ]
 
 runTests = runTestTT (TestList tests)
+
+main :: IO ()
+main = do
+  _ <- runTests
+  return ()
 
