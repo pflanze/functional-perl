@@ -197,13 +197,13 @@ sub valid_numbers ($N, $D) {
     purearray grep {/$D/} (1 .. $N)
 }
 
-sub maybe_representable ($N, $D, $prefer_large = 1) {
+sub maybe_representable ($N, $D, $prefer_large = 1, $maybe_choose = undef) {
     __ 'Returns the numbers containing $D that sum up to $N, or undef.
         If $prefer_large is true, tries to use large numbers,
         otherwise small (which is (much) less efficient).';
     my $ns = valid_numbers($N, $D);
-    my $maybe_choose
-        = ($prefer_large and not $ENV{NO_OPTIM})
+    $maybe_choose
+        //= ($prefer_large and not $ENV{NO_OPTIM})
         ? \&maybe_choose_optim_2
         : \&maybe_choose_brute;
     $maybe_choose->($N, $prefer_large ? $ns->reverse : $ns)
