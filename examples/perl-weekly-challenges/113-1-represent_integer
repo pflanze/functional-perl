@@ -197,7 +197,25 @@ sub valid_numbers ($N, $D) {
     purearray grep {/$D/} (1 .. $N)
 }
 
-sub maybe_representable ($N, $D, $prefer_large = 1, $maybe_choose = undef) {
+# You can explicitely choose the algorithm it via setting
+# `MAYBE_CHOOSE` env var to its name, or by passing its reference as
+# the 4th argument to maybe_representable.
+my $MAYBE_CHOOSE = do {
+    if (my $str = $ENV{MAYBE_CHOOSE}) {
+        +{
+            maybe_choose_brute   => \&maybe_choose_brute,
+            maybe_choose_optim_1 => \&maybe_choose_optim_1,
+            maybe_choose_optim_2 => \&maybe_choose_optim_2
+        }->{$str}
+            or die "invalid MAYBE_CHOOSE value"
+    } else {
+        undef
+    }
+};
+
+sub maybe_representable ($N, $D, $prefer_large = 1,
+    $maybe_choose = $MAYBE_CHOOSE)
+{
     __ 'Returns the numbers containing $D that sum up to $N, or undef.
         If $prefer_large is true, tries to use large numbers,
         otherwise small (which is (much) less efficient).';
