@@ -12,6 +12,8 @@ bin/perlrepl
 bin/repl2test
 docs/HACKING.md
 docs/TODO.md
+docs/blog/index.md
+docs/blog/perl-weekly-challenges-113.md
 docs/contact.md
 docs/design.md
 docs/howto.md
