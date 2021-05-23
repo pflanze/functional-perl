@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.66 2021-5-23
+    - website: add blog, with post about perl weekly challenge
+    - 113-1*: improvements
+
 0.72.65 2021-5-22
     - 113-1-represent_integer: fix and improve the Haskell version
 
