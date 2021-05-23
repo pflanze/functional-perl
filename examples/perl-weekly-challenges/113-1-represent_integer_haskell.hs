@@ -65,13 +65,13 @@ chooseOptim2 ntop ns =
   in
     check []
 
-representableNumbers :: Integer -> Char -> [ Integer ]
-representableNumbers n d =
+validNumbers :: Integer -> Char -> [ Integer ]
+validNumbers n d =
   filter (\i -> elem d (show i)) [1..n]
 
 representable :: Integer -> Char -> Maybe [Integer]
 representable n d =
-  let ns = representableNumbers n d
+  let ns = validNumbers n d
   in
     chooseOptim2 n (reverse ns)
 
