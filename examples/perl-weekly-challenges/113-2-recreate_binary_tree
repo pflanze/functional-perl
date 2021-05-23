@@ -15,6 +15,10 @@ You are given a Binary Tree.
 
 Write a script to replace each node of the tree with the sum of all the remaining nodes.
 
+=head1 NOTE
+
+There is a L<blog post about this|http://functional-perl/docs/blog/perl-weekly-challenges-113.xhtml>.
+
 =cut
 
 use strict;

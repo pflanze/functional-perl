@@ -22,6 +22,8 @@ representation]. If check passes print 1 otherwise 0.
 There is a Haskell version of this script in the file
 L<113-1-represent_integer_haskell.hs>.
 
+There is a L<blog post about this|http://functional-perl/docs/blog/perl-weekly-challenges-113.xhtml>.
+
 =cut
 
 use strict;

@@ -9,6 +9,9 @@
 -- positive integers [all] having `d` at least once [in their decimal
 -- representation]. If check passes print 1 otherwise 0.
 
+-- Note: there is a [blog post about this](http://functional-perl/docs/blog/perl-weekly-challenges-113.xhtml).
+
+
 module Main where
 import qualified Data.Set as Set
 import Data.Maybe
