@@ -39,6 +39,7 @@ BEGIN {
 }
 use lib "$mydir/../../lib";
 
+use FunctionalPerl v0.72.65;
 use FP::Docstring;
 use FP::Show;
 use FP::List;
