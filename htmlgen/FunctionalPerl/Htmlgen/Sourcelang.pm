@@ -75,6 +75,7 @@ sub sourcelang {
         if $str =~ /\bnot \$/;    # shell doesn't have "not"; except if custom
     $perl += 1 if $str =~ /\}\s*elsif\s*\{/;
     $perl += 1 if $str =~ /\bexists\s*\$\w+\s*\{/;
+    $perl += 1 if $str =~ /\bcons\s*\$/;
 
     $sh += 2
         if $str =~ m{(?:^|\n)\s*(?:[#\$]\s*)?(?:git |gpg |ls |chmod |cd |\./)};
