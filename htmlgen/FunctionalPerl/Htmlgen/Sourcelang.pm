@@ -109,7 +109,17 @@ TEST {
 null;
 
 TEST {
-    test "shell", list('Foo;', 'my $a', 'tar -xzf foo.tgz',)
+    test "shell", list(
+        'Foo;', 'my $a', 'tar -xzf foo.tgz', q{
+$ ./113-1-represent_integer --repl
+main> docstring \&maybe_representable 
+$VAR1 = 'Returns the numbers containing $D that sum up to $N, or undef.
+        If $prefer_large is true, tries to use large numbers,
+        otherwise small (which is (much) less efficient).';
+main> 
+                       },
+
+    )
 }
 null;
 
