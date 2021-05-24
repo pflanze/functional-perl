@@ -47,14 +47,15 @@ full context open this link.
 Trees and functional progamming are a good match if the trees don't
 have circular links. In this case, the nodes can be immutable data
 structures, for changes new node instances can be allocated which
-share the unmodified children, thus only little data has to be copied
-while leaving the old version of the tree accessible unmodifed, which
-is what functional programming requires. Often trees in the imperative
+share the unmodified children with the previous instance, thus only
+little data needs to be copied, while still leaving the old version
+of the tree around unmodifed, which is what functional
+programming requires. Often trees in the imperative
 world have links back to the parents, though, i.e. cycles, which
 aren't a problem in Perl if weakening or destructors are used
 correctly, but which violate the purely functional approach—how would
 you re-use the child nodes if you create a new modified parent, but
-the children are still pointing to the unmodified parent? But
+the children are still pointing to the previous version of the parent? But
 algorithms that need access to the parent nodes can instead maintain
 linked lists to the parents while diving down the tree (separate from
 the tree), thus parent links don't actually need to be stored in the
