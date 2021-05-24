@@ -252,7 +252,7 @@ explicitly "not a result", and I'm following a convention of prefixing
 the names of functions that return either some value or nothing with
 `maybe_`. This convention should make it visually clear to other
 programmers that they are not necessarily getting a result
-back. Functional languages generally use a `Maybe` or `Optional` type
+back. <a name="Maybe">Functional languages generally use</a> a `Maybe` or `Optional` type
 for representing this pattern, with e.g. a `Just` wrapper for values
 and the `Nothing` in absence of a value, which is safer in that the
 programmer explicitly has to deal with the potential non-existence of
@@ -841,8 +841,8 @@ are:
     variable related to the old name (like derivatives in math).
     
   * Haskell doesn't have `undef`, instead I'm using the `Maybe`
-    type—remember, I mentioned that above, here you can see it in
-    action. It means that e.g.
+    type—remember, I mentioned that <a href="#Maybe">above</>, here
+    you can see it in action. It means that e.g.
 
         Right $chosen
 
