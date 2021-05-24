@@ -71,7 +71,12 @@ sub sourcelang {
     $perl += 1 if $str =~ /\$VAR\d+\b/;
     $perl += 1 if $str =~ /(?:perlrepl|fperl)(?: *\d+)?>.*\bF\b/;
     $perl += 1 if $str =~ /\blazy\s*\{/;
-    $sh   += 2
+    $perl += 1
+        if $str =~ /\bnot \$/;    # shell doesn't have "not"; except if custom
+    $perl += 1 if $str =~ /\}\s*elsif\s*\{/;
+    $perl += 1 if $str =~ /\bexists\s*\$\w+\s*\{/;
+
+    $sh += 2
         if $str =~ m{(?:^|\n)\s*(?:[#\$]\s*)?(?:git |gpg |ls |chmod |cd |\./)};
 
     # Want repl sessions to be non highlighted? Do I ?
