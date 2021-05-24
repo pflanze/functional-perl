@@ -273,6 +273,9 @@ convention will never go away):
         ...
     }
 
+(Note that the prefer_large logic and efficiency claim is wrong here,
+see footnote <a href="#fn1">[1]</a>.)
+
 You may wonder what the `__` bit is there. It comes from
 `FP::Docstring`. It's my (hacky, without requiring core interpreter
 changes) way to attach documentation to subroutines in a way that it
@@ -315,7 +318,7 @@ corresponding results in the tests (like the `list(29, 9, 9, 9, 9, 9,
 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9)` case I mentioned in the
 beginning). The optimized variants require $ns to be sorted in
 descending order, which is why `maybe_representable` reverses it in
-that case.
+that case. <a href="#fn1">[1]</a>, <a href="#fn2">[2]</a>
 
 On to my quest to find a good algorithm:
 
@@ -675,11 +678,13 @@ the previous level has finished checking all other cases—in other
 words, to achieve the breadth-first search approach.
 
 The code already has explanations, hopefully they make it clear
-already:
+already (note the footnote <a href="#fn2">[2]</a> which I've also inserted into the code
+here—this is a bug, I've left it in as it is in the submitted
+version):
 
     sub maybe_choose_optim_2 ($N, $_ns) {
         __ 'Choose a combination of numbers (repetitions allowed) from $ns
-            which must be sorted in decrementing order that added together
+            which must be sorted in decrementing order[2] that added together
             equal $N; undef if not possible. This solution does a
             breadth-first search (and uses the hashtable check to see if
             there will be a match with the next level like
@@ -731,7 +736,7 @@ already:
                 }
             };
 
-            # Since $ns are sorted in decrementing order, if $decide
+            # Since $ns are sorted in decrementing order[2], if $decide
             # returns undef, any subsequent number will fail, too, so we
             # can stop further checks; `take_while` will only take the
             # results up to that point.
@@ -739,7 +744,7 @@ already:
             # Since $ns is a stream (a lazily computed list), the
             # following `map` and `take_while` steps are lazy, too;
             # $decide will never be evaluated for $n's that are smaller
-            # (coming further along in the reverse-ordered $ns) than any
+            # (coming further along in the reverse-ordered[2] $ns) than any
             # $n that can lead to a solution.
 
             my $decisions = $ns->map($decide)->take_while(\&is_defined);
@@ -899,6 +904,19 @@ shorter by using the cartesian product or similar, I may look into
 it. Also, someone on IRC posted me
 [this](https://paste.tomsmeding.com/krsnrC8I) solution which is much
 shorter, although it runs about half as fast as mine.
+
+## Footnotes
+
+<a name="fn1">[1]</a> While writing this blog post, I realized that
+the second algorithm actually runs faster with the non-reversed
+list. Also see <a href="#fn2">[2]</a>. I'm leaving the code now as submitted.
+
+<a name="fn2">[2]</a> Also while writing this blog post, I realized
+that the third algorithm is actually written to expect the list in
+*non*-reversed order for the short-cutting to work. D'oh. It may not
+really matter, though, it happens to be fast anyway in all cases that
+I tried. One could search for cases for which that is not the case,
+though.
 
 </with_toc>
 
