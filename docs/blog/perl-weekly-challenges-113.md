@@ -260,7 +260,9 @@ will have to suffice (and given existing Perl code there will always
 be a need to deal with such cases, which is why the need for that
 convention will never go away):
 
-    sub maybe_representable ($N, $D, $prefer_large = 1) {
+    sub maybe_representable ($N, $D, $prefer_large = 1,
+        $maybe_choose = $MAYBE_CHOOSE)
+    {
         __ 'Returns the numbers containing $D that sum up to $N, or undef.
             If $prefer_large is true, tries to use large numbers,
             otherwise small (which is (much) less efficient).';
@@ -283,7 +285,7 @@ convenience while coding. Example:
 Or simply have the repl show what the code ref represents:
 
     main> \&maybe_representable 
-    $VAR1 = sub { 'DUMMY: main::maybe_representable at "./113-1-represent_integer" line 200'; __ 'Returns the numbers containing $D that sum up to $N, or undef.
+    $VAR1 = sub { 'DUMMY: main::maybe_representable at "./113-1-represent_integer" line 221'; __ 'Returns the numbers containing $D that sum up to $N, or undef.
             If $prefer_large is true, tries to use large numbers,
             otherwise small (which is (much) less efficient).' };
     main> 
@@ -291,8 +293,8 @@ Or simply have the repl show what the code ref represents:
 The code at `...` above is:
 
         my $ns = valid_numbers($N, $D);
-        my $maybe_choose
-            = ($prefer_large and not $ENV{NO_OPTIM})
+        $maybe_choose
+            //= ($prefer_large and not $ENV{NO_OPTIM})
             ? \&maybe_choose_optim_2
             : \&maybe_choose_brute;
         $maybe_choose->($N, $prefer_large ? $ns->reverse : $ns)
