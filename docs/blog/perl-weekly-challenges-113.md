@@ -899,7 +899,7 @@ replacing it with `Int` makes it about 1.5x faster, and is just about
 as safe as Perl's ints are (propagation to float would break things,
 too, if it weren't academic on a 64-bit machine).
 
-Like mentioned in the previous section, the could probably be written
+Like mentioned in the previous section, the code could probably be written
 shorter by using the cartesian product or similar, I may look into
 it. Also, someone on IRC posted me
 [this](https://paste.tomsmeding.com/krsnrC8I) solution which is much
