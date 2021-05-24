@@ -74,29 +74,38 @@ sub sourcelang {
 
 use Chj::TEST;
 use FP::List;
+use FP::Either ":all";
+
+sub test ($lang, $l) {
+    lefts $l->map(
+        sub ($c) {
+            my $l = sourcelang $c;
+            $l eq $lang ? Right undef : Left [$c, $l]
+        }
+    )
+}
 
 TEST {
-    list(
-        'Foo::bar;',
-        'use Foo;',
-        'my $a;',
-        'my $abc = 2+ 2;',
-        'fun inverse ($x) { 1 / $x }',
-        'sub inverse ($x) { 1 / $x }'
-    )->filter(
-        sub ($c) {
-            sourcelang($c) ne "Perl"
-        }
+    test "Perl", list(
+        'Foo::bar;', 'use Foo;', 'my $a;', 'my $abc = 2+ 2;',
+        'fun inverse ($x) { 1 / $x }',          'sub inverse ($x) { 1 / $x }',
+        'PFLANZE::Node::constructors->import;', q{
+    sub maybe_representable ($N, $D, $prefer_large = 1,
+        $maybe_choose = $MAYBE_CHOOSE)
+    {
+        __ 'Returns the numbers containing $D that sum up to $N, or undef.
+            If $prefer_large is true, tries to use large numbers,
+            otherwise small (which is (much) less efficient).';
+        ...
+    }
+        },
+
     )
 }
 null;
 
 TEST {
-    list('Foo;', 'my $a', 'tar -xzf foo.tgz',)->filter(
-        sub($c) {
-            sourcelang($c) ne "shell"
-        }
-    )
+    test "shell", list('Foo;', 'my $a', 'tar -xzf foo.tgz',)
 }
 null;
 
