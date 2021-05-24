@@ -118,7 +118,13 @@ $VAR1 = 'Returns the numbers containing $D that sum up to $N, or undef.
         If $prefer_large is true, tries to use large numbers,
         otherwise small (which is (much) less efficient).';
 main> 
-                       },
+                       }, q{
+main> \&maybe_representable 
+$VAR1 = sub { 'DUMMY: main::maybe_representable at "./113-1-represent_integer" line 221'; __ 'Returns the numbers containing $D that sum up to $N, or undef.
+        If $prefer_large is true, tries to use large numbers,
+        otherwise small (which is (much) less efficient).' };
+main> 
+        },
 
     )
 }
