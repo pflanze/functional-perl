@@ -62,6 +62,7 @@ the tree), thus parent links don't actually need to be stored in the
 tree even if you think you need them. Anyway, this is a digression,
 the given task is very simple, none of this parent business applies.
 
+    package PFLANZE::Node {
         use FP::Predicates qw(is_string maybe instance_of);
         *is_maybe_Node = maybe instance_of("PFLANZE::Node");
 
@@ -70,6 +71,8 @@ the given task is very simple, none of this parent business applies.
             [\&is_string,     "value"],
             [\&is_maybe_Node, "right"]
         ] => ("FP::Struct::Show", "FP::Struct::Equal");
+        
+        ...
 
 I'm using `FP::Struct` for class construction like I do for all of my
 current functional code—I'm still improving and gaining experience
@@ -78,9 +81,10 @@ the features I want into `Moose` or another class builder. I like its
 simplicity, but obviously I'm very biased. The `FP::Struct` importer
 simply takes an array of field definitions, each of which can either
 be a string (the field name), or an array of `[\&predicate,
-"fieldname"]`, where the predicate is a function that must return true
-for the value that is being stored in field `fieldname` (otherwise
-`FP::Struct`'s constructor and setters will throw an exception).
+"fieldname"]`, where the predicate is a function of one argument that
+must return true for any value that is to be stored in field
+`fieldname` (otherwise `FP::Struct`'s constructor and setters will
+throw an exception).
 
 After the field definitions come parent classes; `FP::Struct::Show`
 automatically implements the `show` function from `FP::Show`, which
@@ -108,6 +112,7 @@ general and string comparison is going to be suffering from the same
 issue as above.
 
         _END_
+    }
 
 This concludes the class (constructs any missing accessor methods
 etc.), and could potentially be made automatic, but as I said,
