@@ -74,6 +74,9 @@ sub sourcelang {
     $sh   += 2
         if $str =~ m{(?:^|\n)\s*(?:[#\$]\s*)?(?:git |gpg |ls |chmod |cd |\./)};
 
+    # Want repl sessions to be non highlighted? Do I ?
+    $sh += 10 if $str =~ m{(?:^|\n) *main> };
+
     ($perl >= 1 and $perl > $sh) ? "Perl" : "shell"
 }
 
