@@ -106,7 +106,14 @@ TEST {
             otherwise small (which is (much) less efficient).';
         ...
     }
-        },
+        }, '
+            if (not $missing) {
+                $chosen
+            } elsif ($missing < 0) {
+                undef
+            } else {
+                if (exists $ns{$missing}) {
+        ',
 
     )
 }
