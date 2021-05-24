@@ -814,7 +814,8 @@ are:
 
   * There are no commas between function arguments. Parens are used
     for grouping only; i.e. they would be written *around* function
-    calls including the function name, not after the function name.
+    calls including the function name, not after the function
+    name. `foo(bar($x), baz($y))` becomes `foo (bar x) (bar y)`.
     
   * `sub ($i) { ... }` becomes `\i -> ...`.
     
