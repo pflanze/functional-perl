@@ -896,8 +896,8 @@ very optimized in the Perl core, and probably somewhat less so
 (compared to other things) in Haskell. I'm also using `Integer` in the
 Haskell version which is safe against wraparounds, but more costly;
 replacing it with `Int` makes it about 1.5x faster, and is just about
-as safe as Perl's ints are (propagation to float would break things,
-too, if it weren't academic on a 64-bit machine).
+as safe as Perl's ints are (propagation to floating point numbers
+would break things, too, if it weren't academic on a 64-bit machine).
 
 Like mentioned in the previous section, the code could probably be written
 shorter by using the cartesian product or similar, I may look into
