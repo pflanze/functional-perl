@@ -255,7 +255,7 @@ the names of functions that return either some value or nothing with
 `maybe_`. This convention should make it visually clear to other
 programmers that they are not necessarily getting a result
 back. Functional languages generally use a `Maybe` or `Optional` type
-for representing this pattern, with e.g. a `Some` wrapper for values
+for representing this pattern, with e.g. a `Just` wrapper for values
 and the `Nothing` in absence of a value, which is safer in that the
 programmer explicitly has to deal with the potential non-existence of
 a value, and in that they are wrappers, meaning they can nest. I
@@ -759,8 +759,12 @@ already:
             ->(null)
     }
 
+`rights` and `lefts` are from `FP::Either`, and take a sequence
+containing `Either`, and return a sequence containing just the
+`Right`s, or `Left`s, correspondingly, but stripped of the wrapping.
+
 In a sense, thanks to doing breadth-first search, we're back at the
-approach using `stream_cartesian_product` I hinted at above: checking
+approach using `stream_cartesian_product` that I hinted at above: checking
 all the combinations of two lists first; then all the combinations
 with three lists, etc. Although `maybe_choose_optim_2` will be faster
 since it optimizes one of the combinations via `%ns`. That could also
@@ -768,6 +772,131 @@ be encoded in the search over the combinations, though, so I should
 probably see whether nicer code couldn't be written by using that
 approach. There's no time before submitting the solutions, though, so
 I'll have to see.
+
+### Haskell version
+
+After writing the last Perl [version
+above](#Doing_a_breadth-first_search,_and_stopping_early), I decided
+to rewrite it in a *"real"* functional programming language: Haskell.
+You can find it
+[here](../../examples/perl-weekly-challenges/113-1-represent_integer_haskell.hs). There's
+a [Makefile](../../examples/perl-weekly-challenges/Makefile) to build
+it, but you can also load it in GHCi. It has few dependencies, the
+only non-bundled one is probably HUnit, in Debian it's the
+`libghc-hunit-dev` package.
+
+I'm not a very fluent Haskell programmer, so don't take my code as
+good style. Also I've consciously kept the style close to the Perl
+version, so that it's easy to compare. If you're new to Haskell, the
+new things compared to the Perl version are:
+
+  * Static type signatures for functions: those are the lines with
+    `::` in them. Type names and constructors always have an uppercase
+    initial, normal function names and variables must start with a
+    lowercase initial.
+    
+    Fun bit: because I can't use variable names with uppercase
+    initials, I translated `$N` to `n` in the Haskell version. But I
+    also have `$n` in the Perl code, and translated that to `n` as
+    well. Of course now code that originally referred to `$N` started
+    to refer to what was `$n` in Perl. I stared and poked at the code
+    for quite a while until I figured out why what I translated "1:1"
+    didn't give me the same result. (One nice advice from IRC was that
+    I should have compiled my code with `-Wall`, which warns about
+    variable shadowing.)
+
+  * There are no commas between function arguments. Parens are used
+    for grouping only; i.e. they would be written *around* function
+    calls including the function name, not after the function name.
+    
+  * `sub ($i) { ... }` becomes `\i -> ...`.
+    
+  * `[a,b,c]` in Haskell creates a linked list, like `list($a,$b,$c)`
+    in FunctionalPerl, not an array as you're used to. The `cons`
+    function from FunctionalPerl corresponds to the `:` operator in
+    Haskell. The special `null` function from FunctionalPerl that
+    returns the empty linked list corresponds to the empty list `[]`
+    in Haskell.
+
+  * The `my` keyword becomes `let`. But there's a difference: whereas
+    `my $l = cons 1, $l; ...` in Perl means, introduce a new variable
+    `$l` which shadows the previous `$l` and prepends a `1`, `let l =
+    1:l in ...` in Haskell means, prepend a `1` to the same `l` that
+    we're introducing. This doesn't just sound like a cycle, but it
+    is: it creates the list that ends with its own beginning, looping
+    `1`s infinitely. But in simpler terms: `let` in Haskell is always
+    recursive, like the `my rec` that I kind-of suggested Perl could
+    maybe benefit from. But because there is no non-recursive `let` in
+    Haskell, if I really want to translate `my $l = cons 1, $l`, I
+    have to introduce a new variable name, like `let l' = 1:l`. The
+    apostroph can be part of variable names and is used to mean a new
+    variable related to the old name (like derivatives in math).
+    
+  * Haskell doesn't have `undef`, instead I'm using the `Maybe`
+    type—remember, I mentioned that above, here you can see it in
+    action. It means that e.g.
+
+        Right $chosen
+
+    becomes
+
+        Just (Right chosen')
+        
+    because we have to explicitly wrap the value to become a Maybe
+    type. `undef` becomes `Nothing`. The `catMaybes` function takes a
+    list of `Maybe`s, and returns the elements that are `Just`s
+    (i.e. dropping the `Nothing`s), but take the values out of the
+    wrappings again.
+
+  * pattern matching:
+  
+        unless ($solutions->is_null) {
+            my $solution = $solutions->first;
+            ...
+        }
+  
+    becomes
+    
+          case solutions of
+            (solution:_) -> ...
+
+  * I'm using `Data.Set` instead of a hash table, `Set.fromList` is
+    converting the list to a set, `Set.member` checks whether a value is
+    in the set.
+  
+  * Haskell is using lazy evaluation by default, everywhere. That's why
+  
+        Left lazy {
+            $check->($chosen)
+        }
+        
+    becomes
+
+        Left (check chosen')
+
+Given this list it should be straight-forward to see the equivalence
+of the implementation.
+
+Interestingly, the Haskell version, compiled with `-O2`, is only about
+twice as fast as the Perl implementation. But to be fair, my Perl
+version is using an array to hold `$ns`, wheras I use the linked list
+in Haskell, and a hash table in Perl, whereas `Data.Set` is a tree in
+Haskell. Also, since the algorithm finds most solutions with only very
+few iterations, what we're mostly benchmarking is the setting up of
+the initial data: the creation of `1..$N`, conversion to strings,
+filtering according to `$D`, conversion to the hashmap/Set. This is
+very optimized in the Perl core, and probably somewhat less so
+(compared to other things) in Haskell. I'm also using `Integer` in the
+Haskell version which is safe against wraparounds, but more costly;
+replacing it with `Int` makes it about 1.5x faster, and is just about
+as safe as Perl's ints are (propagation to float would break things,
+too, if it weren't academic on a 64-bit machine).
+
+Like mentioned in the previous section, the could probably be written
+shorter by using the cartesian product or similar, I may look into
+it. Also, someone on IRC posted me
+[this](https://paste.tomsmeding.com/krsnrC8I) solution which is much
+shorter, although it runs about half as fast as mine.
 
 </with_toc>
 
