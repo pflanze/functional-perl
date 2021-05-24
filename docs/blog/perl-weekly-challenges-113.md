@@ -647,19 +647,32 @@ from that function would just, well, return from that function. But by
 using lazy evaluation, if from the list that `map` generates we only
 use part, the remainder will never be generated. This is like an
 iterator, which is the imperative way to generate values on demand. In
-the functional world we can achieve both short-cutting approaches, the
-early return, and the iterator, with one feature, the lazy
-evaluation.
+pure functional programming we can achieve both short-cutting
+approaches, the early return, and the iterator, with just one feature,
+the lazy evaluation.
 
-`FunctionalPerl` offers lazy evaluation in two ways: via lazy
-sequences (called "streams"), which embed lazy evaluation inside their
-methods, and via using the `lazy` function directly. `lazy` takes a
-block of code which is not evaluated right away, but simply wrapped
-and returned as a code ref to be run only when the value is needed.
-I'm going to use both here. The first to stop walking `$ns` early, and
-the second to delay recursion (going deeper, to choose an additional
-number) until after the previous level has finished checking all other
-cases (i.e. to achieve the breadth-first search approach).
+And, correspondingly, `FunctionalPerl`, offers a single building block
+to build lazy evaluation on, the `lazy { ... }` syntax from
+`FP::Lazy`. It's actually just a subroutine with a `&` prototype, and
+simply wraps the code block in an object that can be forced to run
+later by passing it to the `force` subroutine, or by calling the
+`force` method on. This is then used as a building block in lazy
+sequences (called "streams"): they use `lazy` inside their methods
+(like `map`, `filter`, `reduce`, `take`, `take_while`). Depending on
+whether a sequence is lazy or not, those methods (and more) have
+different implementations. In general, a lazy sequence yields a lazy
+sequence, and non-lazy ones (like a `list` or `purearray`) yield a
+non-lazy one, unless explicitly meant to return a lazy sequence. For
+lists, prefixing the method with `stream_` will yield a lazy result;
+so, `list(10,20,30)->stream_map(\&expensive_code)` will return a lazy
+sequence and the expensive code is only called for elements which are
+actually used.
+
+I'm going to use both the lazy sequences and the `lazy` syntax
+here. The first to stop walking `$ns` early, and the second to delay
+the recursion to deeper (to choose an additional number) until after
+the previous level has finished checking all other cases—in other
+words, to achieve the breadth-first search approach.
 
 The code already has explanations, hopefully they make it clear
 already:
