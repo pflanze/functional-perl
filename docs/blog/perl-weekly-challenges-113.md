@@ -463,7 +463,7 @@ linked lists.
         ->(null)
 
 This calls our local sub and passes it the empty list: `null` is the
-equivalent of `[]` but for `FP::List`.
+equivalent of `[]` but for `FP::List` (`list()` is giving the same).
 
 Just to be clear, both `FP::List` and `FP::PureArray` are
 implementing sequences (the `FP::Abstract::Sequence` protocol), and
