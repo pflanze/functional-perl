@@ -74,6 +74,8 @@ package FunctionalPerl::Htmlgen::Linking::code {
 
     our $podurl_cache = ".ModulePODUrl-cache";
     mkdir $podurl_cache;
+
+    # NOTE: ignores are handled further down, see $ignore_module_name
     *xmaybe_module_pod_url = memoizing_to_dir $podurl_cache, sub {
         print STDERR "perhaps_module_pod_url(@_)..";
         my @res = perhaps_module_pod_url @_;
@@ -103,13 +105,14 @@ package FunctionalPerl::Htmlgen::Linking::code {
     # things that *do* exist as modules on CPAN but which we do not want
     # to link since those are a different thing. ("CPAN-exception")
     our $ignore_module_name = +{
-        map { $_ => 1 }
+        map { $_ => 1 } (
             qw(map tail grep fold car cdr first rest head join primes test
-            all list Square Point),
+                all any list lazy Square Point),
 
-        # these are not currently finding anything on CPAN, but let's
-        # add them for future safety:
-        qw(force length shift F strictlist cons inverse)
+            # these are not currently finding anything on CPAN, but
+            # let's add them for future safety:
+            qw(force length shift F strictlist cons inverse)
+        )
     };
 
     # XX most of those would simply go to local scripts and functions if
