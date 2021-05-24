@@ -56,6 +56,9 @@ sub sourcelang {
     $perl += 1
         if $str
         =~ /\b(?:func?|sub)\b\s*(?:\w+\s*)?\((?:(?:\s*\$\w+\s*,)*\s*\$\w+\s*)?\)\s*\{/s;
+    $perl += 1
+        if $str
+        =~ /sub maybe_/;   # hack, should properly fix the regex above for HEAD^
     $perl += 0.5 if $str =~ /\@\{\s*/;
     $perl += 0.5 if $str =~ /\bcompose\s*\(/;
     $perl += 0.5 if $str =~ /\\\&\w+/;
@@ -69,6 +72,7 @@ sub sourcelang {
     $perl += 1 if $str =~ /(?:perlrepl|fperl)(?: *\d+)?>.*\bF\b/;
     $perl += 1 if $str =~ /\blazy\s*\{/;
     $sh   += 2 if $str =~ /(?:^|\n)\s*(?:#\s*)?(?:git|gpg|ls|chmod|cd) /;
+
     ($perl >= 1 and $perl > $sh) ? "Perl" : "shell"
 }
 
