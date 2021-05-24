@@ -15,9 +15,7 @@ without FunctionalPerl will be just as good and I won't contest it,
 sometimes I won't see how it's going to be useful and I might end up
 just using the repl and some bits during developments but not in the
 final solutions, sometimes I might be using FunctionalPerl just
-because I can. I'll probably skip tasks if I don't find they could
-enlighten me or others in any way about how FunctionalPerl would fit
-or not fit, and of course sometimes I won't have time.
+because I can.
 
 Since I'm the author of `FunctionalPerl` and it's not widely used yet,
 my main task in this blog will have to be to explain the bits of the
@@ -226,11 +224,7 @@ Is there some kind of mathematical insight that can be used here? Not
 being a math geek, I don't know. So for me, at least for now, it's
 going to be some kind of brute force search of combinations, while
 potentially finding some smart decisions that can be taken to make it
-less costly. To get ahead: I found that a somewhat smartly executed
-brute force search is reasonably efficient, and larger numbers have an
-increasing chance of satisfying the representable tests, so it might
-be possible to simply return true if $N is larger than a particular
-cut off, thus the cost may be bounded. Anyway, let's brute force.
+less costly. 
 
 First let's get the valid numbers:
 
