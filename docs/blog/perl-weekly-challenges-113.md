@@ -785,10 +785,12 @@ it, but you can also load it in GHCi. It has few dependencies, the
 only non-bundled one is probably HUnit, in Debian it's the
 `libghc-hunit-dev` package.
 
-I'm not a very fluent Haskell programmer, so don't take my code as
+I'm not a very fluent Haskell programmer, so don't assume my code is
 good style. Also I've consciously kept the style close to the Perl
-version, so that it's easy to compare. If you're new to Haskell, the
-new things compared to the Perl version are:
+version, so that it's easy to compare.
+
+If you're new to Haskell, the new things compared to the Perl version
+are:
 
   * Static type signatures for functions: those are the lines with
     `::` in them. Type names and constructors always have an uppercase
