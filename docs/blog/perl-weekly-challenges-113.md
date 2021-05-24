@@ -907,6 +907,45 @@ it. Also, someone on IRC posted me
 [this](https://paste.tomsmeding.com/krsnrC8I) solution which is much
 shorter, although it runs about half as fast as mine.
 
+## Epilogue
+
+Aside of the assignments to `($mydir, $myname)`, which are needed to
+handle the compile time vs. run time phasing (which exactly does have
+a bit of the evil-ish taste of spaghetti execution flow of imperative
+programming), there is just one single variable mutation in either of
+the two Perl scripts. Can you spot it?
+
+Answer (rot13): Vg'f va `znlor_ercerfragnoyr` va gur ercerfrag_vagrtre
+fpevcg: gur `znlor_pubbfr` inevnoyr vf orvat birejevggra.
+
+There are zero data structure mutations, and the only I/O that the
+Perl scripts are doing are via the `repl` and `run_tests` calls.
+
+The advantage of that is that data consistently only ever travels in
+one direction, from function arguments to function results. This means
+that the movement of data is immediately evident from just the lexical
+structure of the program, there's no need to consider the dynamic
+behaviour of the program to understand it.
+
+But note that I'm saying that *data flow direction* is
+straight-forward; I don't say the same about *evaluation order*. Once
+lazy evaluation is used, evaluation order depends on the dynamic
+behaviour of the program.
+
+But while we don't necessarily understand the evaluation order easily,
+it doesn't matter for the correctness of the result. The correctness
+of the result only depends on data flow, not on evaluation order. If
+the program finishes, the result is more easily shown to be correct in
+a functional program. A functional programming approach does *not*
+help analyzing whether the program finishes or takes forever or runs
+out of memory (except by way of more easily knowing the program
+doesn't start dealing with bogus data, which can also be a source of
+erratic evaluation order). It shouldn't hurt, either, but I'm not
+going to make claims here. In any case, it's definitely different, and
+the tooling to debug evaluation order in programs with lots of lazy
+evaluation isn't there in Perl (I think), so I suggest to be careful
+and not go over board with that.
+
 ## Footnotes
 
 <a name="fn1">[1]</a> While writing this blog post, I realized that
