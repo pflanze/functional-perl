@@ -107,7 +107,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
     our $ignore_module_name = +{
         map { $_ => 1 } (
             qw(map tail grep fold car cdr first rest head join primes test
-                all any list lazy Square Point),
+                all any list lazy maybe Square Point),
 
             # these are not currently finding anything on CPAN, but
             # let's add them for future safety:
