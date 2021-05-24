@@ -119,10 +119,11 @@ To get back to this part: as described above, we need predicate
 functions, functions of one argument of any type that should return
 true iff that argument satisfies the right type or other properties.
 
-`FP::Predicates` has a set of such predicate functions. `is_string 1`
-returns true (since numbers and strings are interchangeable in Perl),
-`is_string [1]` returns false. `instance_of("PFLANZE::Node")` returns
-a function (a code ref in Perl speak) that returns true if and only if
+`FP::Predicates` offers a set of such predicate functions.
+`is_string 1` returns true (since numbers and strings are
+interchangeable in Perl), `is_string [1]` returns false
+<a href="#fn3">[3]</a>. `instance_of("PFLANZE::Node")` returns a
+function (a code ref in Perl speak) that returns true if and only if
 the argument is an object that satisfies
 `->isa("PFLANZE::Node")`. `maybe` takes a predicate function and
 returns a new predicate function that not only accepts what the
@@ -1010,6 +1011,19 @@ that the third algorithm is actually written to expect the list in
 really matter, though, it happens to be fast anyway in all cases that
 I tried. One could search for cases for which that is not the case,
 though.
+
+<a name="fn3">[3]</a> Perl is designed to allow to treat *anything*
+(except for the `undef` value if `use warnings FATAL =>
+'uninitialized'` is used) as a string (non-strings will automatically
+be coerced into one). So should `is_string` accept anything then, even
+the `[1]` in the example? On one hand, yes, or it will artificially
+restrict acceptance of values for which the program would work just
+fine. On the other hand, the purpose of restricting values is to
+detect usage errors, thus the answer is also "no, sort of". Perhaps
+one solution is to offer ways to configure the program/module so that
+a check using `is_string` will accept references, too, either with or
+without warning. Another could be to verify if references are objects
+that have a stringification overload, and deny them otherwise.
 
 </with_toc>
 
