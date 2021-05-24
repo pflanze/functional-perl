@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2019-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -73,24 +73,31 @@ sub sourcelang {
 }
 
 use Chj::TEST;
-use FP::PureArray;
+use FP::List;
 
 TEST {
-    purearray(
+    list(
         'Foo::bar;',
-        'Foo;',
         'use Foo;',
-        'my $a',
         'my $a;',
         'my $abc = 2+ 2;',
-        'tar -xzf foo.tgz',
         'fun inverse ($x) { 1 / $x }',
         'sub inverse ($x) { 1 / $x }'
-    )->map(\&sourcelang)
+    )->filter(
+        sub ($c) {
+            sourcelang($c) ne "Perl"
+        }
+    )
 }
-purearray(
-    "Perl",  "shell", "Perl", "shell", "Perl", "Perl",
-    "shell", "Perl",  "Perl"
-);
+null;
+
+TEST {
+    list('Foo;', 'my $a', 'tar -xzf foo.tgz',)->filter(
+        sub($c) {
+            sourcelang($c) ne "shell"
+        }
+    )
+}
+null;
 
 1
