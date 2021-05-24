@@ -118,8 +118,10 @@ TEST {
                 undef
             } else {
                 if (exists $ns{$missing}) {
+        ', '
+                    cons $missing, $chosen
+                } else {
         ',
-
     )
 }
 null;
