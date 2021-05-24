@@ -40,9 +40,10 @@ I solved this task first, so I'm also going to write about it
 first. The task description is
 [here](https://perlweeklychallenge.org/blog/perl-weekly-challenge-113/#TASK2),
 my solution is
-[here](../../examples/perl-weekly-challenges/113-2-recreate_binary_tree);
+[here (functional-perl repository)](../../examples/perl-weekly-challenges/113-2-recreate_binary_tree) and
+[here (perlweeklychallenge repository)](https://github.com/manwar/perlweeklychallenge-club/blob/master/challenge-113/christian-jaeger/perl/ch-2.pl).
 I'm going to copy the important pieces of the script only, for the
-full context open this link.
+full context open one of these links.
 
 Trees and functional progamming are a good match if the trees don't
 have circular links. In this case, the nodes can be immutable data
@@ -259,7 +260,8 @@ the task description, but I'm continuing to the other task.
 The task description is
 [here](https://perlweeklychallenge.org/blog/perl-weekly-challenge-113/#TASK1),
 my solution is
-[here](../../examples/perl-weekly-challenges/113-1-represent_integer).
+[here (functional-perl repository)](../../examples/perl-weekly-challenges/113-1-represent_integer) and
+[here (perlweeklychallenge repository)](https://github.com/manwar/perlweeklychallenge-club/blob/master/challenge-113/christian-jaeger/perl/ch-1.pl).
 
 > You are given a positive integer $N and a digit $D.
 
