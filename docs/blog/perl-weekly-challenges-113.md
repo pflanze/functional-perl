@@ -805,7 +805,7 @@ are:
     Fun bit: because I can't use variable names with uppercase
     initials, I translated `$N` to `n` in the Haskell version. But I
     also have `$n` in the Perl code, and translated that to `n` as
-    well. Of course now code that originally referred to `$N` started
+    well. Of course now some code that originally referred to `$N` started
     to refer to what was `$n` in Perl. I stared and poked at the code
     for quite a while until I figured out why what I translated "1:1"
     didn't give me the same result. (One nice advice from IRC was that
