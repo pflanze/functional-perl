@@ -842,7 +842,7 @@ are:
     variable related to the old name (like derivatives in math).
     
   * Haskell doesn't have `undef`, instead I'm using the `Maybe`
-    type—remember, I mentioned that <a href="#Maybe">above</>, here
+    type—remember, I mentioned that <a href="#Maybe">above</a>, here
     you can see it in action. It means that e.g.
 
         Right $chosen
