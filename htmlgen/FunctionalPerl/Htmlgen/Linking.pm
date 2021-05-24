@@ -111,7 +111,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
 
             # these are not currently finding anything on CPAN, but
             # let's add them for future safety:
-            qw(force length shift F strictlist cons inverse)
+            qw(force length shift F strictlist cons inverse repl)
         )
     };
 
