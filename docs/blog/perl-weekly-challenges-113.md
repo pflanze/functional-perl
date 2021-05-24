@@ -69,7 +69,7 @@ given task is very simple, none of this parent business applies.
             [\&is_maybe_Node, "right"]
         ] => ("FP::Struct::Show", "FP::Struct::Equal");
 
-I'm using `FP::Struct` for class constructoin like I do for all of my
+I'm using `FP::Struct` for class construction like I do for all of my
 current functional code—I'm still improving and gaining experience
 with it and it's too early for me to know whether or how to introduce
 the features I want into `Moose` or something similar. I like its
