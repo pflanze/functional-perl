@@ -56,9 +56,10 @@ correctly, but which violate the purely functional approach—how would
 you re-use the child nodes if you create a new modified parent, but
 the children are still pointing to the unmodified parent? But
 algorithms that need access to the parent nodes can instead maintain
-linked lists to the parents while diving down the tree, thus parent
-links aren't actually necessary. Anyway, this is a digression, the
-given task is very simple, none of this parent business applies.
+linked lists to the parents while diving down the tree (separate from
+the tree), thus parent links don't actually need to be stored in the
+tree even if you think you need them. Anyway, this is a digression,
+the given task is very simple, none of this parent business applies.
 
         use FP::Predicates qw(is_string maybe instance_of);
         *is_maybe_Node = maybe instance_of("PFLANZE::Node");
@@ -72,7 +73,7 @@ given task is very simple, none of this parent business applies.
 I'm using `FP::Struct` for class construction like I do for all of my
 current functional code—I'm still improving and gaining experience
 with it and it's too early for me to know whether or how to introduce
-the features I want into `Moose` or something similar. I like its
+the features I want into `Moose` or another class builder. I like its
 simplicity, but obviously I'm very biased. The `FP::Struct` importer
 simply takes an array of field definitions, each of which can either
 be a string (the field name), or an array of `[\&predicate,
@@ -878,12 +879,12 @@ are:
             $check->($chosen)
         }
         
-    becomes
+    becomes simply
 
         Left (check chosen')
 
-Given this list it should be straight-forward to see the equivalence
-of the implementation.
+It should now be straight-forward to see the equivalence of the
+implementations.
 
 Interestingly, the Haskell version, compiled with `-O2`, is only about
 twice as fast as the Perl implementation. But to be fair, my Perl
