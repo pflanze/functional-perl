@@ -111,6 +111,39 @@ string comparison to overload, and numeric comparison doesn't apply in
 general and string comparison is going to be suffering from the same
 issue as above.
 
+        use FP::Predicates qw(is_string maybe instance_of);
+        *is_maybe_Node = maybe instance_of("PFLANZE::Node");
+
+To get back to this part: as described above, we need predicate
+functions, functions of one argument of any type that should return
+true iff that argument satisfies the right type or other properties.
+
+`FP::Predicates` has a set of such predicate functions. `is_string 1`
+returns true (since numbers and strings are interchangeable in Perl),
+`is_string [1]` returns false. `instance_of("PFLANZE::Node")` returns
+a function (a code ref in Perl speak) that returns true if and only if
+the argument is an object that satisfies
+`->isa("PFLANZE::Node")`. `maybe` takes a predicate function and
+returns a new predicate function that not only accepts what the
+original function accepts, but also the `undef` value:
+
+    is_string(undef) #false
+    my $is_maybe_string = maybe \&is_string;
+    $is_maybe_string->("foo") # true
+    $is_maybe_string->([1]) # false
+    $is_maybe_string->(undef) # true
+
+So in the case of the script,
+
+        *is_maybe_Node = maybe instance_of("PFLANZE::Node");
+
+is creating a `is_maybe_Node` subroutine that accepts Node objects,
+but also `undef`; we will use `undef` to represent the "no further
+subtree" case.
+
+I'm going to explain more about the `maybe` terminology <a
+href="#undef">further down</a>.
+
         _END_
     }
 
@@ -121,17 +154,27 @@ etc.), and could potentially be made automatic, but as I said,
     PFLANZE::Node::constructors->import;
 
 This imports the `Node` and `Node_` functions, which are nicer to use
-and read constructors for the class (`Node` takes positional
-parameters, `Node_` keyword => value pairs). Functional languages
+and read constructors for the class: `Node($a, $b, $c)` is the same as
+`PFLANZE::Node->new($a, $b, $c)`, `Node_(value=> $b, right=> $c)` is
+the same as `PFLANZE::Node->new(undef, $b, $c)`. Functional languages
 generally follow a convention of using uppercase initials for
 constructors (and for type names), and lowercase initials for
 everything else, which makes it unambiguous which function calls are
 to constructors. Perl doesn't enforce that but I'm generally following
-the same. It's nice to have `Node` as a function instead of having to
-write `new Node` since the former can be passed as a reference easily,
-as in something like `->map(\&Node)` (as can be seen further down in
-the script, and yes, the `map` method here passes 3 arguments to the
-function, and should probably be named something else).
+the same pattern. In functional programming languages, constructors
+really only allocate the space for the instance and directly embed the
+arguments in it, and `FP::Struct` is no different. To do any other
+computation (than calling the predicate functions to verify the
+acceptability of the values) before constructing the instance, you
+write a function/procedure with a different name (with a lowercase
+initial), that does the computation and then calls the instance
+constructor at the end.
+
+One nice benefit of having constructors like `Node` as a function is
+that they can be passed as a reference easily, as in something like
+`->map(\&Node)` (as can be seen further down—BTW yes, the `map` method
+here passes 3 arguments to the function, which is unusual, and should
+probably have a different name).
 
 The algorithm is simple in that from each node's value, the sum of all
 the nodes' values has to be subtracted. Thus first walk over the tree
@@ -250,8 +293,9 @@ immutable. This gives me easy access to all the utility methods that
 come from `FP::PureArray` and sequences (`FP::Abstract::Sequence`) in
 general.
 
-To make development easier, I wanted to see what solution that my
-search finds. So instead of returning just a boolean (like `''` and `1`), it
+<a name="undef">To make development easier</a>, I wanted to see what
+solution that my search finds. So instead of returning just a boolean
+(like `''` and `1`), it
 returns either the chosen numbers that sum up to `$N`, or
 `undef`. This is still usable in a boolean context in Perl. I'm using
 `undef` over `''` or `0` for the false value as that is more
