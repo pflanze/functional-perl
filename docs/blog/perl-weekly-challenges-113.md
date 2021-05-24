@@ -19,9 +19,9 @@ because I can.
 
 Since I'm the author of `FunctionalPerl` and it's not widely used yet,
 my main task in this blog will have to be to explain the bits of the
-`FunctionalPerl` libraries that I'm using in my solutions, too.
+`FunctionalPerl` libraries that I'm using in my solutions.
 
-I actually already solved one task from [The Weekly Challenge -
+I already solved one task from [The Weekly Challenge -
 111](https://perlweeklychallenge.org/blog/perl-weekly-challenge-111/),
 [111-1-search_matrix](../../examples/perl-weekly-challenges/111-1-search_matrix),
 but didn't submit it. It led me to create a new module
@@ -36,28 +36,29 @@ On to [the new tasks](https://perlweeklychallenge.org/blog/perl-weekly-challenge
 
 ## Task #2: Recreate Binary Tree
 
-I solved this task first, so I'm going to write about it first,
-too. The task description is
+I solved this task first, so I'm also going to write about it
+first. The task description is
 [here](https://perlweeklychallenge.org/blog/perl-weekly-challenge-113/#TASK2),
 my solution is
-[here](../../examples/perl-weekly-challenges/113-2-recreate_binary_tree). I'll
-show the important pieces of the script below, but here you can see
-the full context.
+[here](../../examples/perl-weekly-challenges/113-2-recreate_binary_tree);
+I'm going to copy the important pieces of the script only, for the
+full context open this link.
 
-Trees and functional progamming are a good match, if the trees don't
-have circular links. In that case the nodes can be pure data
-structures, i.e. not allow mutation and instead return new nodes for
-changes, which leaves the remainder of the tree intact, which is what
-functional programming requires. Often trees in the imperative world
-have links back to the parents, i.e. cycles, which aren't a problem in
-Perl if weakening or destructors are used correctly, but which violate
-the purely functional approach—how would you re-use the child nodes
-if you create a new modified parent, but the children are still
-pointing to the unmodified parent? But algorithms that need access to
-the parent nodes can instead maintain linked lists to the parents
-while diving down the tree, thus parent links aren't actually
-necessary. Anyway, this task is very simple, none of this parent
-business applies.
+Trees and functional progamming are a good match if the trees don't
+have circular links. In this case, the nodes can be immutable data
+structures, for changes new node instances can be allocated which
+share the unmodified children, thus only little data has to be copied
+while leaving the old version of the tree accessible unmodifed, which
+is what functional programming requires. Often trees in the imperative
+world have links back to the parents, though, i.e. cycles, which
+aren't a problem in Perl if weakening or destructors are used
+correctly, but which violate the purely functional approach—how would
+you re-use the child nodes if you create a new modified parent, but
+the children are still pointing to the unmodified parent? But
+algorithms that need access to the parent nodes can instead maintain
+linked lists to the parents while diving down the tree, thus parent
+links aren't actually necessary. Anyway, this is a digression, the
+given task is very simple, none of this parent business applies.
 
         use FP::Predicates qw(is_string maybe instance_of);
         *is_maybe_Node = maybe instance_of("PFLANZE::Node");
@@ -68,34 +69,35 @@ business applies.
             [\&is_maybe_Node, "right"]
         ] => ("FP::Struct::Show", "FP::Struct::Equal");
 
-I'm using `FP::Struct` as for all of my current functional code—I'm
-still improving and gaining experience with it and it's too early for
-me to know whether or how to introduce the features I want into
-`Moose` or something similar. I like its simplicity, but obviously I'm
-very biased. It simply takes an array of field definitions, each of
-which can either be a string (the field name), or an array of
-`[\&predicate, "fieldname"]`, where the predicate is a function that
-must return true for the value that is being stored in field
-`fieldname` (otherwise `FP::Struct`'s constructor and setters will
-throw an exception). 
+I'm using `FP::Struct` for class constructoin like I do for all of my
+current functional code—I'm still improving and gaining experience
+with it and it's too early for me to know whether or how to introduce
+the features I want into `Moose` or something similar. I like its
+simplicity, but obviously I'm very biased. The `FP::Struct` importer
+simply takes an array of field definitions, each of which can either
+be a string (the field name), or an array of `[\&predicate,
+"fieldname"]`, where the predicate is a function that must return true
+for the value that is being stored in field `fieldname` (otherwise
+`FP::Struct`'s constructor and setters will throw an exception).
 
 After the field definitions come parent classes; `FP::Struct::Show`
 automatically implements the `show` function from `FP::Show`, which
-shows Perl code that creates the data in question, which is useful at
+shows Perl code that creates the data in question, which is useful in
 the repl (from `FP::Repl`) during development; `FP::Struct::Equal`
 implements the `equal` function from `FP::Equal`, which is used in the
 tests.
 
 You might be asking why I'm not using `overload` for these: for `show`
-my answer is that it is stringification for debugging, not for the
-general case. Say you've got a class `Path` representing a file system
-path, you construct it via `Path("/foo/bar")` (`Path` is a constructor
-function here, as I'm about to explain), and you want that path be
-stringified to `"/foo/bar"` so you can transparently use it in Perl's
-`open` or whatever. Now the repl wants to show you `Path("/foo/bar")`,
-as that is what constructs such an object, and not `"/foo/bar"`, as
-the latter would evaluate to a plain string and not be semantically
-correct.
+my answer is that it is stringification specifically for debugging,
+not for the general case. Say you've got a class `Path` representing a
+file system path, you construct it via `Path("/foo/bar")` (`Path` is a
+constructor function here, as I'm about to explain), and you want that
+path be stringified to `"/foo/bar"` so you can transparently use it in
+Perl's `open` or whatever. But the repl should show you
+`Path("/foo/bar")`, as that is what constructs such an object, and not
+`"/foo/bar"`, as the latter would evaluate to a plain string, and if
+you entered that back into the repl passing it to some function call
+it would likely behave differently.
 
 With regards to `equal`, one answer is that I'm gaining experience to
 see. Partial other answers could be that Perl has just numeric and
@@ -107,23 +109,25 @@ issue as above.
 
 This concludes the class (constructs any missing accessor methods
 etc.), and could potentially be made automatic, but as I said,
-`FP::Struct` is experimental anyway at this point, so I don't care.
+`FP::Struct` is experimental at this point, so I don't care.
 
     PFLANZE::Node::constructors->import;
 
 This imports the `Node` and `Node_` functions, which are nicer to use
-and read constructors for the class. Functional languages generally
-follow a convention of using uppercase initials for type names, and
-lowercase initials for everything else, which makes it unambiguous
-what constructs values. It's also nice to have `Node` as a function
-instead of having to write `new Node` since the former can be passed
-as a reference easily, as in something like `->map(\&Node)` (as can be
-seen further down in the script, and yes, the `map` here passes 3
-arguments to the function, and should probably be named something
-else).
+and read constructors for the class (`Node` takes positional
+parameters, `Node_` keyword => value pairs). Functional languages
+generally follow a convention of using uppercase initials for
+constructors (and for type names), and lowercase initials for
+everything else, which makes it unambiguous which function calls are
+to constructors. Perl doesn't enforce that but I'm generally following
+the same. It's nice to have `Node` as a function instead of having to
+write `new Node` since the former can be passed as a reference easily,
+as in something like `->map(\&Node)` (as can be seen further down in
+the script, and yes, the `map` method here passes 3 arguments to the
+function, and should probably be named something else).
 
 The algorithm is simple in that from each node's value, the sum of all
-nodes' values has to be subtracted. Thus first walk over the tree
+the nodes' values has to be subtracted. Thus first walk over the tree
 building the sum, then walk agan to create the nodes with the new
 values. I've added a method `map` to the `Node` class (really
 `PFLANZE::Node`, but I'm shortening it in my talking to the last
@@ -155,13 +159,13 @@ configurations that I could figure out.
 `TEST` is from `Chj::TEST`. The invention here is that I put tests
 into the same file as the implementation, and they will still only be
 run when running `run_tests` (and optionally aren't even kept in
-memory). It also imples a comparison, `TEST { $expr } $result` is
+memory). It also implies a comparison, `TEST { $expr } $result` is
 pretty much (except for reporting the values for $expr and $results if
 they don't match) the same as `ok equal($expr, $result)` put into a
 separate file with `Test::More` loaded.
 
 This particular test checks that the map method, when simply passed
-the constructor, recreates the identical tree.
+the constructor, recreates an equivalent tree.
 
 I've implemented the summing and recreating as functions instead of
 putting them into the `Node` class as methods, since they are pretty
@@ -179,8 +183,8 @@ into a generic binary tree library.
     TEST { tree_sum $in } 28;
 
 The Node `map` method passes `undef` for the `$l` and `$r` arguments
-if there's no node in the respective position, that's how I can use
-`// 0` to get the sum for empty subtrees.
+if there's no respective child node in the original node, that's how I
+can use `// 0` to get the sum for empty subtrees.
 
     sub tree_recreate($t) {
         my $sum = tree_sum($t);
@@ -197,7 +201,7 @@ if there's no node in the respective position, that's how I can use
 
 And there is the result as requested by the task. One could write a
 formatter method that would print the ASCII representation as used in
-the task description, but I'm off to other work.
+the task description, but I'm continuing to the other task.
 
 
 ## Task #1: Represent Integer
@@ -240,7 +244,7 @@ come from `FP::PureArray` and sequences (`FP::Abstract::Sequence`) in
 general.
 
 To make development easier, I wanted to see what solution that my
-search returns. So instead of just a boolean (like `''` and `1`), it
+search finds. So instead of returning just a boolean (like `''` and `1`), it
 returns either the chosen numbers that sum up to `$N`, or
 `undef`. This is still usable in a boolean context in Perl. I'm using
 `undef` over `''` or `0` for the false value as that is more
@@ -254,7 +258,7 @@ and the `Nothing` in absence of a value, which is safer in that the
 programmer explicitly has to deal with the potential non-existence of
 a value, and in that they are wrappers, meaning they can nest. I
 haven't been tempted enough to create such a type in `FunctionalPerl`
-yet, If I do it will probably be called `FP::Maybe`. For now, the
+yet, if I do it will probably be called `FP::Maybe`. For now, the
 [Hungarian notation](https://en.wikipedia.org/wiki/Hungarian_notation)
 will have to suffice (and given existing Perl code there will always
 be a need to deal with such cases, which is why the need for that
@@ -317,7 +321,7 @@ On to my quest to find a good algorithm:
 
 ### Dumb approach
 
-The dumb approach is to combine "any" valid numbers (numbers from
+The dumb approach is to combine any valid numbers (numbers from
 `$ns`) until we find a match (they sum up to $N). We don't know how
 many numbers we'll need, though, so I figured I couldn't use the cross
 product (cartesian product) of say two `$ns`. I've since realized that
@@ -333,7 +337,7 @@ that fails, three, etc., like:
     or check(stream_cartesian_product $ns, $ns, $ns, $ns)
     ...
 
-But instead, I just basically hand coded a cartesian product that
+Instead, I just basically hand coded a cartesian product that
 automatically extends itself to additional levels until that level is
 shown to be exhausted (finds no match):
 
@@ -363,10 +367,10 @@ shown to be exhausted (finds no match):
             ->(null)
     }
 
-(I don't know why `perltidy` chooses not to put the `}` on the
-third-last line 4 spaces further to the left, so that it would lign up
+<small>(I don't know why `perltidy` chooses not to put the `}` on the
+third-last line 4 spaces further to the left, so that it would line up
 with the `sub ($chosen) {` line. Anyone knows how to improve this?
-Please tell.)
+Please tell.)</small>
 
 #### `__SUB__`
 
@@ -767,7 +771,7 @@ since it optimizes one of the combinations via `%ns`. That could also
 be encoded in the search over the combinations, though, so I should
 probably see whether nicer code couldn't be written by using that
 approach. There's no time before submitting the solutions, though, so
-I'll have to see.
+I'll have to see later.
 
 ### Haskell version
 
