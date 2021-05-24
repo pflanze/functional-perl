@@ -154,7 +154,10 @@ wheras with large ones the interactions can become unwieldy.
 See the [examples](examples/README.md) page for more examples.
 
 If you'd like to see a practical step-by-step introduction, read the
-[[intro]].
+[[intro]]. Or check the [The Perl Weekly Challenges,
+\#113](docs/blog/perl-weekly-challenges-113.md) blog post, it
+introduces many features given concrete tasks, for which various
+standard Perl solutions have also been written.
 
 For an index into all modules, see the "see also" section in
 `FunctionalPerl`.
