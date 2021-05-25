@@ -20,7 +20,7 @@ final solutions, sometimes I might be using FunctionalPerl just
 because I can.
 
 Since I'm the author of `FunctionalPerl` and it's not widely used yet,
-my main task in this blog will have to be to explain the bits of the
+my main task here will have to be to explain the bits of the
 `FunctionalPerl` libraries that I'm using in my solutions.
 
 I already solved one task from [The Weekly Challenge -
