@@ -434,9 +434,9 @@ You may not be familiar with `__SUB__` from `use feature
 'current_sub'`—if you are, skip this section. 
 
 This is the best way for a local function to get access to itself, so
-that it can be self-recursive. Note that this wouldn't work as the sub
-is evaluated in the context before `$check` is introduced and thus
-wouldn't have access to it:
+that it can be self-recursive. Note that the following wouldn't work
+as the sub is evaluated in the context before `$check` is introduced
+and thus wouldn't have access to it:
 
     my $check= sub ($chosen) { ... sub { .. $check .. } .. };
     $check->(null)
@@ -458,7 +458,7 @@ thus `__SUB__` in *there* would be that other sub instead.
 
 (Maybe Perl should introduce something like this
 
-    my rec $check = sub ($chosen) { ... };
+    my rec $check = sub ($chosen) { ... sub { .. $check .. } .. };
     $check->(null)
 
 but I haven't thought about it deeply.)
