@@ -993,7 +993,7 @@ of the result only depends on data flow, not on evaluation order. If
 the program finishes, the result is more easily shown to be correct in
 a functional program. A functional programming approach does *not*
 help analyzing whether the program finishes or takes forever or runs
-out of memory (except somewhat by way or more easily finding data
+out of memory (except indirectly to some extent by more easily finding data
 correctness issues, since bogus data can also be a source of
 erratic evaluation order). It shouldn't hurt, either, but I'm not
 going to make claims here. In any case, it's definitely different, and
