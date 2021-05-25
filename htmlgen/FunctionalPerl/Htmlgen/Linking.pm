@@ -115,9 +115,12 @@ package FunctionalPerl::Htmlgen::Linking::code {
             )
     };
 
-    # XX most of those would simply go to local scripts and functions if
-    # these were checked for.
-    $$ignore_module_name{ "X" x 3 } = 1;  # avoid tripping search for to-do tags
+    # ^ most of those could simply go to local scripts and functions
+    # if these were checked for.
+
+    # To avoid tripping the search for to-do tags, this isn't part of
+    # the list above:
+    $$ignore_module_name{ "X" x 3 } = 1;
 
     sub ignore_module_name($name) {
         $$ignore_module_name{$name}
