@@ -106,7 +106,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
     # to link since those are a different thing. ("CPAN-exception")
     our $ignore_module_name = +{
         map { $_ => 1 } (
-            qw(map tail grep fold car cdr first rest head join primes test
+            qw(__ map tail grep fold car cdr first rest head join primes test
                 all any list lazy maybe Square Point),
 
             # these are not currently finding anything on CPAN, but
