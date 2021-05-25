@@ -5,6 +5,8 @@ properly formatted versions of these documents.
 
 # The Perl Weekly Challenges, #113
 
+### Solving The Perl Weekly Challenges with FunctionalPerl
+
 <small><i>[Christian J.](mailto:ch@christianjaeger.ch), 23 May 2021</i></small>
 
 I've started solving [The Perl Weekly
