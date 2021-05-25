@@ -131,7 +131,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
         # If $str contains an underscore but no "::" then it's much
         # more likely to be a function or method name than a class
         # name:
-        is_class_name($str) and ($str =~ /::/ or not $str =~ /_/)
+        is_valid_class_name($str) and ($str =~ /::/ or not $str =~ /_/)
     }
 
     use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";

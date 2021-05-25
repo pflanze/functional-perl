@@ -54,7 +54,7 @@ FP::Predicates
         is is_pure_class("FP:: Array")->message,
            "failure: is_pure_class\n".
            "  because:\n".
-           "  failure: is_class_name: 'FP:: Array'\n";
+           "  failure: is_valid_class_name: 'FP:: Array'\n";
     }
 
 =head1 DESCRIPTION
@@ -106,7 +106,7 @@ our @EXPORT = qw(
     is_hash
     is_array
     is_procedure
-    is_class_name
+    is_valid_class_name
     instance_of
     is_instance_of
     is_subclass_of
@@ -187,7 +187,7 @@ sub is_pure_object {
 }
 
 sub is_pure_class {
-    my $r = is_class_name($_[0]);
+    my $r = is_valid_class_name($_[0]);
     $r or return failwith [$r], "is_pure_class";
     $_[0]->isa("FP::Abstract::Pure") or fail "is_pure_class", $_[0]
 }
@@ -362,15 +362,15 @@ TEST { is_procedure *fifu } 0;
 
 my $classpart_re = qr/\w+/;
 
-sub is_class_name {
+sub is_valid_class_name {
     my ($v) = @_;
     !length ref($v) and $v =~ /^(?:${classpart_re}::)*$classpart_re\z/
-        or fail "is_class_name", $v
+        or fail "is_valid_class_name", $v
 }
 
 sub instance_of {
     my ($class) = @_;
-    is_class_name $class or die "need class name string, got: $class";
+    is_valid_class_name $class or die "need class name string, got: $class";
 
     sub {
         ((defined blessed $_[0]) ? $_[0]->isa($class) : '')
@@ -381,7 +381,7 @@ sub instance_of {
 sub is_instance_of {
     my ($v, $class) = @_;
 
-    # is_class_name $class or die "need class name string, got: $class";
+    # is_valid_class_name $class or die "need class name string, got: $class";
     ((defined blessed $v) ? $v->isa($class) : '')
         or fail "is_instance_of", $v, $class
 }
@@ -389,7 +389,7 @@ sub is_instance_of {
 sub is_subclass_of {
     my ($v, $class) = @_;
 
-    # is_class_name $class or die "need class name string, got: $class";
+    # is_valid_class_name $class or die "need class name string, got: $class";
     (!length ref $v and $v->isa($class)) or fail "is_subclass_of", $v, $class
 }
 
