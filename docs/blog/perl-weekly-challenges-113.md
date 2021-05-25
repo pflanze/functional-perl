@@ -979,8 +979,8 @@ Perl scripts are doing are via the `repl` and `run_tests` calls.
 The advantage of that is that data consistently only ever travels in
 one direction, from function arguments to function results. This means
 that the movement of data is immediately evident from just the lexical
-structure of the program, there's no need to consider the dynamic
-behaviour of the program to understand it.
+structure of the program—the dynamic behaviour of the program cannot
+change that.
 
 But note that I'm saying that *data flow direction* is
 straight-forward; I don't say the same about *evaluation order*. Once
