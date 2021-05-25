@@ -102,17 +102,17 @@ package FunctionalPerl::Htmlgen::Linking::code {
         $res
     }
 
-    # things that *do* exist as modules on CPAN but which we do not want
-    # to link since those are a different thing. ("CPAN-exception")
+    # things that we do not want to link even if they exist on CPAN
+    # (some do) since those are a different thing. ("CPAN-exception")
     our $ignore_module_name = +{
-        map { $_ => 1 } (
-            qw(__ map tail grep fold car cdr first rest head join primes test
-                all any list lazy maybe Square Point),
-
-            # these are not currently finding anything on CPAN, but
-            # let's add them for future safety:
-            qw(force length shift F strictlist cons inverse repl)
-        )
+        map { $_ => 1 }
+            qw(
+            __ map filter tail grep fold car cdr first rest head join
+            primes test all any list lazy maybe Square Point force
+            length shift F strictlist cons inverse repl Either rights
+            lefts Right Left Maybe Just Nothing Int Integer undef let
+            my our foo bar baz any every sub purearray return
+            )
     };
 
     # XX most of those would simply go to local scripts and functions if
