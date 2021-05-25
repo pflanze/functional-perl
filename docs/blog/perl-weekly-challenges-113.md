@@ -461,7 +461,8 @@ thus `__SUB__` in *there* would be that other sub instead.
     my rec $check = sub ($chosen) { ... sub { .. $check .. } .. };
     $check->(null)
 
-but I haven't thought about it deeply.)
+but I haven't thought about it deeply. Or perhaps make the `my sub`
+syntax self-recursive but work without the cycle?)
 
 #### The algorithm
 
