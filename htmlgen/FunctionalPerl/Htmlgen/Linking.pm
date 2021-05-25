@@ -107,7 +107,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
     our $ignore_module_name = +{
         map { $_ => 1 }
             qw(
-            __ map filter tail grep fold car cdr first rest head join
+            map filter tail grep fold car cdr first rest head join
             primes test all any list lazy maybe Square Point force
             length shift F strictlist cons inverse repl Either rights
             lefts Right Left Maybe Just Nothing Int Integer undef let
@@ -124,6 +124,14 @@ package FunctionalPerl::Htmlgen::Linking::code {
 
     sub ignore_module_name($name) {
         $$ignore_module_name{$name}
+    }
+
+    sub is_likely_class_name($str) {
+
+        # If $str contains an underscore but no "::" then it's much
+        # more likely to be a function or method name than a class
+        # name:
+        is_class_name($str) and ($str =~ /::/ or not $str =~ /_/)
     }
 
     use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
@@ -157,7 +165,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
             &$mapped_e()
         } else {
             my $t = $e->text;
-            if (is_class_name($t)) {
+            if (is_likely_class_name($t)) {
                 my $module_subpath = $t;
                 $module_subpath =~ s/::/\//sg;
                 $module_subpath .= ".pm";
