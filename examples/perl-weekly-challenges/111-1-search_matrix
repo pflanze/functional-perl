@@ -49,6 +49,7 @@ BEGIN {
 }
 use lib "$mydir/../../lib";
 
+use FunctionalPerl v0.72.60;
 use FP::autobox;
 use FP::Array_sort qw(on);
 use FP::Ops qw(the_method real_cmp);
