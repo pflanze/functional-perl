@@ -150,8 +150,7 @@ href="#undef">further down</a>.
     }
 
 This concludes the class (constructs any missing accessor methods
-etc.), and could potentially be made automatic, but as I said,
-`FP::Struct` is experimental at this point, so I don't care.
+etc.), and could potentially be made automatic.
 
     PFLANZE::Node::constructors->import;
 
