@@ -137,6 +137,17 @@ original function accepts, but also the `undef` value:
     $is_maybe_string->([1]) # false
     $is_maybe_string->(undef) # true
 
+Perl has multiple 'namespaces' according to types (I'm not talking
+about packages), code, scalar, array, hash, IO, as you're surely
+aware. Instead of setting a lexical scalar variable, we can set the
+package variable for code via sending the coderef to the package
+variable glob:
+
+    *is_maybe_string = maybe \&is_string;
+    is_maybe_string("foo") # true
+    is_maybe_string([1]) # false
+    is_maybe_string(undef) # true
+
 So in the case of the script,
 
         *is_maybe_Node = maybe instance_of("PFLANZE::Node");
