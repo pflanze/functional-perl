@@ -741,7 +741,7 @@ those) which are actually accessed.
 
 I'm going to use both the lazy sequences and the `lazy` syntax
 here. The first to stop walking `$ns` early, and the second to delay
-the recursion to deeper (to choose an additional number) until after
+the recursion to deeper levels (to choose an additional number) until after
 the previous level has finished checking all other cases—in other
 words, to achieve the breadth-first search approach.
 
