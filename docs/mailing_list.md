@@ -27,8 +27,8 @@ help, please [tell](//contact.md).
 ## IRC
 
 Christian (pflanze) is always logged onto `#functional-perl` on
-`irc.perl.org` (as well as `irc.freenode.net`); mention his nickname
+`irc.perl.org` as well as `irc.libera.chat`; mention his nickname
 and he will get a notification via email, although he is currently not
-seeing that immediately anymore. You may also find me on `#perl` on
-freenode.
+seeing that immediately anymore. You may also find him on `#perl` on
+either network.
 
