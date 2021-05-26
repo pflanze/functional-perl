@@ -27,3 +27,6 @@ website/.ModulePODUrl-cache/
 
 # t/pod_snippets.t outputs:
 .xIO-test-out
+
+# meta/perlfiles
+/.perlfiles
