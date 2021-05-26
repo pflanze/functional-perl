@@ -368,6 +368,14 @@ sub is_valid_class_name {
         or fail "is_valid_class_name", $v
 }
 
+TEST {
+    [
+        map { is_valid_class_name $_ } "foo ",
+        qw(foo foo_bar Foo::Bar Foo:Bar Foo123 123 Foo::123)
+    ]
+}
+[0, 1, 1, 1, 0, 1, 0, 0];
+
 sub instance_of {
     my ($class) = @_;
     is_valid_class_name $class or die "need class name string, got: $class";
