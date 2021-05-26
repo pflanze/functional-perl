@@ -101,6 +101,11 @@ sub release ($maybe_version, $maybe_parsed_level) {
             "lib/FunctionalPerl.pm";
     }
 
+    xxsystem "meta/perlfiles > /dev/null";
+    if (not 0 == xsystem "cj-git-status-is-clean") {
+        xxsystem "git", "commit", "-m", "Update .perlfiles", ".perlfiles";
+    }
+
     xxsystem "cj-git-status-is-clean";
 
     my $version;
