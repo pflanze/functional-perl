@@ -736,8 +736,8 @@ sequence, and non-lazy ones (like a `list` or `purearray`) yield a
 non-lazy one, unless explicitly meant to return a lazy sequence. For
 lists, prefixing the method with `stream_` will yield a lazy result;
 so, `list(10,20,30)->stream_map(\&expensive_code)` will return a lazy
-sequence and the expensive code is only called for elements which are
-actually used.
+sequence and the expensive code is only called for elements (up to
+those) which are actually accessed.
 
 I'm going to use both the lazy sequences and the `lazy` syntax
 here. The first to stop walking `$ns` early, and the second to delay
