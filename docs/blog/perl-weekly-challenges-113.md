@@ -172,7 +172,7 @@ This imports the `Node` and `Node_` functions, which are nicer to use
 and read constructors for the class: `Node($a, $b, $c)` is the same as
 `PFLANZE::Node->new($a, $b, $c)`, `Node_(value=> $b, right=> $c)` is
 the same as `PFLANZE::Node->new(undef, $b, $c)`. Functional languages
-generally follow a convention of using uppercase initials for
+are generally enforcing the use of uppercase initials for
 constructors (and for type names), and lowercase initials for
 everything else, which makes it unambiguous which function calls are
 to constructors. Perl doesn't enforce that but I'm generally following
