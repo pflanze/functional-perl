@@ -111,7 +111,8 @@ package FunctionalPerl::Htmlgen::Linking::code {
             primes test all any list lazy maybe Square Point force
             length shift F strictlist cons inverse repl Either rights
             lefts Right Left Maybe Just Nothing Int Integer undef let
-            my our foo bar baz any every sub purearray return
+            my our foo bar baz any every sub purearray return open
+            equal show value values
             )
     };
 
