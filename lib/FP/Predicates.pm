@@ -360,7 +360,7 @@ TEST { is_procedure \&is_procedure } 1;
 TEST { is_procedure *is_procedure } 1;
 TEST { is_procedure *fifu } 0;
 
-my $classpart_re = qr/\w+/;
+my $classpart_re = qr/[a-zA-Z_]\w*/;
 
 sub is_valid_class_name {
     my ($v) = @_;
