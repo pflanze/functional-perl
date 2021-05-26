@@ -163,7 +163,8 @@ href="#undef">further down</a>.
     }
 
 This concludes the class (constructs any missing accessor methods
-etc.), and could potentially be made automatic.
+etc.; the `_END_` could potentially be made optional by automatic
+action on the end of scope, I haven't investigated the details yet).
 
     PFLANZE::Node::constructors->import;
 
