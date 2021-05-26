@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Uses `printfield`, `gls`, `filter`, `is-perl`, and `skiplines` from
+# chj-bin.
+
+# The resulting file contains all Perl files in the Git repo, even
+# files which are not in MANIFEST!
+
+set -euo pipefail
+IFS=
+
+perlfilespath=.perlfiles
+
+newsum=$(sha1sum MANIFEST | printfield 1)
+
+oldsum=$(head -1 -- "$perlfilespath" || echo '')
+
+if [ "$newsum" = "$oldsum" ]; then
+    # echo "unchanged $perlfilespath" >&2
+    true
+else
+    tmp=$(mktemp -p "$(dirname -- "$perlfilespath")")
+    {
+        echo $newsum
+        gls | filter is-perl
+    } > "$tmp"
+    mv -- "$tmp" "$perlfilespath"
+    #echo "updated $perlfilespath" >&2
+fi
+
+skiplines 1 < "$perlfilespath"
