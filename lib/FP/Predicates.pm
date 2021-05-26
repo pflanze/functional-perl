@@ -136,6 +136,7 @@ our @EXPORT = qw(
 );
 our @EXPORT_OK = qw(
     is_coderef
+    $package_re
 );
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
@@ -362,9 +363,11 @@ TEST { is_procedure *fifu } 0;
 
 my $classpart_re = qr/[a-zA-Z_]\w*/;
 
+our $package_re = qr/(?:${classpart_re}::)*$classpart_re/;
+
 sub is_valid_class_name {
     my ($v) = @_;
-    !length ref($v) and $v =~ /^(?:${classpart_re}::)*$classpart_re\z/
+    !length ref($v) and $v =~ /^$package_re\z/
         or fail "is_valid_class_name", $v
 }
 
