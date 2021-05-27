@@ -107,6 +107,7 @@ lib/Chj/Linux/LmSensors.pm
 lib/Chj/NamespaceClean.pm
 lib/Chj/NamespaceCleanAbove.pm
 lib/Chj/Package/OfPath.pm
+lib/Chj/Packages.pm
 lib/Chj/Serialize.pm
 lib/Chj/TEST.pm
 lib/Chj/TerseDumper.pm
@@ -227,9 +228,9 @@ lib/PXML/Util.pm
 lib/PXML/XHTML.pm
 licenses/artistic_license_2.0.md
 meta/FunctionalPerl/Dependencies.pm
+meta/FunctionalPerl/Indexing.pm
 meta/FunctionalPerl/ModuleList.pm
 meta/FunctionalPerl/TailExpand.pm
-meta/_critic.out
 meta/bin/gpg
 meta/bisect-modules
 meta/check-hardcoded-perl
@@ -239,6 +240,7 @@ meta/critic
 meta/dependencycheck
 meta/find-perl.pl
 meta/install-development-dependencies-on-debian
+meta/perlfiles
 meta/pre-commit
 meta/readin.pl
 meta/t-check
