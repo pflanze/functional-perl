@@ -1,5 +1,13 @@
 Revision history for FunctionalPerl
 
+0.72.67 2021-5-27
+    - website: various blog post fixes, and other
+    - Predicates: rename is_class_name to is_valid_class_name
+    - Create Chj::Packages, probably pointless but let me see
+    - Create FunctionalPerl::Indexing, for indexing the code base
+    - Htmlgen/Linking: auto-exclude identifiers from CPAN linking that
+      are in the local code base
+
 0.72.66 2021-5-23
     - website: add blog, with post about perl weekly challenge
     - 113-1*: improvements
