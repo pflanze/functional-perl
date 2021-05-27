@@ -42,6 +42,9 @@ our %dependencies = (
 
     # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
 
+    # "5.020" for experimental 'signatures'
+    'FunctionalPerl::Indexing'  => ["5.020", "File::chdir"],
+    'Chj::Packages'             => ["5.020"],
     'FP::SortedPureArray'       => ["5.020", "List::BinarySearch"],
     'FP::RegexMatch'            => ["5.020"],
     'FP::JSON'                  => ['JSON', "5.020"],
