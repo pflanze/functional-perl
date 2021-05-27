@@ -156,10 +156,20 @@ our $pxml_mappers =
         normal("FunctionalPerl::Htmlgen::PerlTidy"),
         with_args(
             "FunctionalPerl::Htmlgen::Linking::code",
+
+            # For names that we never want to auto-link as modules to
+            # CPAN since they are something else ("CPAN-exceptions"):
+
+            # This directory is scanned for all sub definitions (not
+            # package names), including method names, and they are all
+            # excluded from being auto-linked to CPAN. (Note: this is
+            # relative to cwd which is set by website/gen to be inside
+            # website/; this is a hack, should be passed as an
+            # argument instead.)
             functional_perl_base_dir => "..",
 
-            # things that we do not want to link even if they exist on CPAN
-            # (some do) since those are a different thing. ("CPAN-exception")
+            # These names are also being ignored (things which do not
+            # exist as a subroutine but still shouldn't be linked):
             static_ignore_names => [
                 qw( map tail grep head join test shift inverse Maybe
                     Just Nothing Int Integer undef let my our foo bar
