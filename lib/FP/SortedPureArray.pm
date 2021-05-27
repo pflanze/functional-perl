@@ -13,6 +13,26 @@ FP::SortedPureArray
 
 =head1 SYNOPSIS
 
+    use FP::PureArray;
+    use FP::SortedPureArray;
+    use FP::Equal qw(is_equal);
+    use FP::Ops qw(real_cmp);
+
+    my $a1 = purearray(10, 40, 50, 50, 60);
+
+    # This re-blesses $a1, too, so it's not a functional operation,
+    # but then it shouldn't be damaging either, or so one hopes...
+    my $s1 = $a1->as_sorted_by(\&real_cmp);
+
+    is_equal [ $s1->perhaps_binsearch(40) ], [40];
+    is_equal [ $s1->perhaps_binsearch(41) ], [];
+
+    *real_sortedpurearray = sortedpurearray_by(\&real_cmp);
+    my $vs = real_sortedpurearray(10, 40, 50, 50, 60);
+
+    is_equal [ $vs->perhaps_binsearch(40) ], [40];
+    is_equal [ $vs->perhaps_binsearch(41) ], [];
+
 =head1 DESCRIPTION
 
 A sorted L<FP::PureArray>. Has all the methods of the latter, plus
@@ -20,6 +40,10 @@ currently just `perhaps_binsearch`.
 
 So, this is very much unfinished and deserves more methods and
 constructors, as well as possibly a protocol (FP::Abstract::*).
+
+=head1 SEE ALSO
+
+L<FP::PureArray>, that this inherits from.
 
 =head1 NOTE
 
