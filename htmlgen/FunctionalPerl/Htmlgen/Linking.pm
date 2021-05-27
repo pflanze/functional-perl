@@ -111,32 +111,22 @@ package FunctionalPerl::Htmlgen::Linking::code {
         is_valid_class_name($str) and ($str =~ /::/ or not $str =~ /_/)
     }
 
-    use FP::Struct ["functional_perl_base_dir"] =>
-        "FunctionalPerl::Htmlgen::PXMLMapper";
+    use FP::Struct [
+        [\&is_string, "functional_perl_base_dir"],
+        [\&is_array,  "static_ignore_names"]
+    ] => "FunctionalPerl::Htmlgen::PXMLMapper";
 
     sub _ignore_module_name($self) {
         $self->{_ignore_module_name} //= do {
+            my $ignore_module_name
+                = identifierInfos_by_name($self->functional_perl_base_dir,
+                instance_of("FunctionalPerl::Indexing::Subroutine"));
 
-            # things that we do not want to link even if they exist on CPAN
-            # (some do) since those are a different thing. ("CPAN-exception")
-            my $ignore_module_name = do {
-                if (0) {
-                    +{
-                        map { $_ => 1 }
-                            qw(
-                            map filter tail grep fold car cdr first rest head join
-                            primes test all any list lazy maybe Square Point force
-                            length shift F strictlist cons inverse repl Either rights
-                            lefts Right Left Maybe Just Nothing Int Integer undef let
-                            my our foo bar baz any every sub purearray return open
-                            equal show value values
-                            )
-                    }
-                } else {
-                    identifierInfos_by_name($self->functional_perl_base_dir,
-                        instance_of("FunctionalPerl::Indexing::Subroutine"))
-                }
-            };
+            for (@{ $self->static_ignore_names }) {
+                push @{ $ignore_module_name->{$_} },
+                    1;    # that is  not of the same type (Subroutine),
+                          # but we just need a boolean.
+            }
 
             # To avoid tripping the search for to-do tags, this isn't part of
             # the list above:
