@@ -161,14 +161,9 @@ our $pxml_mappers =
             # things that we do not want to link even if they exist on CPAN
             # (some do) since those are a different thing. ("CPAN-exception")
             static_ignore_names => [
-                qw(
-                    map filter tail grep fold car cdr first rest head join
-                    primes test all any list lazy maybe Square Point force
-                    length shift F strictlist cons inverse repl Either rights
-                    lefts Right Left Maybe Just Nothing Int Integer undef let
-                    my our foo bar baz any every sub purearray return open
-                    equal show value values
-                    )
+                qw( map tail grep head join test shift inverse Maybe
+                    Just Nothing Int Integer undef let my our foo bar
+                    baz sub return open all )
             ]
         )
     ],
