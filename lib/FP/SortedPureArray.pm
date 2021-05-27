@@ -20,18 +20,34 @@ FP::SortedPureArray
 
     my $a1 = purearray(10, 40, 50, 50, 60);
 
-    # This re-blesses $a1, too, so it's not a functional operation,
-    # but then it shouldn't be damaging either, or so one hopes...
+    # This re-blesses $a1, too ($a1 and $s1 are the same object), so
+    # it's not a functional operation, but then it shouldn't be
+    # damaging either, or so one hopes...:
     my $s1 = $a1->as_sorted_by(\&real_cmp);
 
     is_equal [ $s1->perhaps_binsearch(40) ], [40];
     is_equal [ $s1->perhaps_binsearch(41) ], [];
+    ok $s1->checks_ok;
 
     *real_sortedpurearray = sortedpurearray_by(\&real_cmp);
     my $vs = real_sortedpurearray(10, 40, 50, 50, 60);
 
     is_equal [ $vs->perhaps_binsearch(40) ], [40];
     is_equal [ $vs->perhaps_binsearch(41) ], [];
+    ok $vs->checks_ok;
+
+    # For performance reasons, the constructor does *not* sort the
+    # values or check whether the values are actually sorted.
+    my $bad = real_sortedpurearray(10, 50, 40, 60);
+
+    # But that check can be run explicitly:
+    ok not $bad->checks_ok;
+
+    ok real_sortedpurearray(10, 50, 50, 60)->checks_ok;
+
+    is sortedpurearray_by(\&real_cmp)->(10,10)->checks_ok, 1;
+    is sortedpurearray_by(\&real_cmp)->(20,10)->checks_ok, '';
+    is sortedpurearray_by(\&real_cmp)->(3,10)->checks_ok, 1;
 
 =head1 DESCRIPTION
 
@@ -99,6 +115,25 @@ package FP::_::SortedPureArray {
         Internals::SvREADONLY @$a, 1;
         $sorted_by_cmp{ $a +0 } = $sorted_by_cmp;
         $a
+    }
+
+    sub checks_ok {
+        @_ == 1 or fp_croak_arity 1;
+        __ 'Verifies if the array *is* sorted as it is claimed to be,
+            returns true iff it is.';
+        my ($self) = @_;
+        my $len = @$self;
+        return 1 if $len == 0;
+        my $cmp = $sorted_by_cmp{ $self +0 };
+        my $v   = $self->[0];
+
+        for (1 .. $len - 1) {
+            my $v2 = $self->[$_];
+            my $c  = $cmp->($v, $v2);
+            return '' unless $c <= 0;
+            $v = $v2;
+        }
+        1
     }
 
     sub DESTROY {
