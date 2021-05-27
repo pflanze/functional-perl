@@ -127,26 +127,47 @@ use FunctionalPerl::Htmlgen::Linking;
 use FunctionalPerl::Htmlgen::PerlTidy;
 
 # XX make configurable
+
+# (This is getting a bit too layered now. Still Ok?)
+
+# normal simply gives a keyword arg based constructor that creates it
+sub normal($classname) {
+    sub {
+        $classname->new_(@_)
+    }
+}
+
+# This one adds in the functional_perl_base_dir argument:
+sub with_functional_perl_base_dir($classname) {
+    sub {
+        $classname->new_(@_, functional_perl_base_dir => "..")
+    }
+}
+
 our $pxml_mappers =
 
     # These implement FunctionalPerl::Htmlgen::PXMLMapper; subarray
     # for those that match on the same tagname, in order of preference
     # (the chain exits once an element has been replaced).
     [
-    "FunctionalPerl::Htmlgen::Linking::Anchors",
-    "FunctionalPerl::Htmlgen::Toc",    # <with_toc>
+    normal("FunctionalPerl::Htmlgen::Linking::Anchors"),
+    normal("FunctionalPerl::Htmlgen::Toc"),    # <with_toc>
     [
-        "FunctionalPerl::Htmlgen::PerlTidy",
-        "FunctionalPerl::Htmlgen::Linking::code"
+        normal("FunctionalPerl::Htmlgen::PerlTidy"),
+        with_functional_perl_base_dir("FunctionalPerl::Htmlgen::Linking::code")
     ],
-    "FunctionalPerl::Htmlgen::Linking::a_href",
+    normal("FunctionalPerl::Htmlgen::Linking::a_href"),
     ];
 
 sub pxml_name_to_mapper(@PXMLMapper_args) {
     purehash(
         map {
-            if (ref $_) {    # subarray given (autobox coming into play)
-                my $ms      = $_->map(the_method "new_", @PXMLMapper_args);
+            my $ref = ref $_ or die "bug";
+            if (not $ref eq "CODE") {
+
+                # subarray given (autobox coming into play; can be
+                # "ARRAY" or purearray depending on time...)
+                my $ms = $_->map(sub ($constr) { $constr->(@PXMLMapper_args) });
                 my $elnames = $ms->first->match_element_names;
                 $ms->rest->every(
                     sub($v) {
@@ -173,7 +194,7 @@ sub pxml_name_to_mapper(@PXMLMapper_args) {
             } else {
 
                 # instantiate a mapper
-                my $m = $_->new_(@PXMLMapper_args);
+                my $m = $_->(@PXMLMapper_args);
 
                 # register it for all the element names it wants to see
                 map {

@@ -70,6 +70,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
     use PXML::XHTML ":all";
     use Chj::CPAN::ModulePODUrl 'perhaps_module_pod_url';
     use FP::Memoizing 'memoizing_to_dir';
+    use FunctionalPerl::Indexing qw(identifierInfos_by_name);
     use FP::Carp;
 
     our $podurl_cache = ".ModulePODUrl-cache";
@@ -102,31 +103,6 @@ package FunctionalPerl::Htmlgen::Linking::code {
         $res
     }
 
-    # things that we do not want to link even if they exist on CPAN
-    # (some do) since those are a different thing. ("CPAN-exception")
-    our $ignore_module_name = +{
-        map { $_ => 1 }
-            qw(
-            map filter tail grep fold car cdr first rest head join
-            primes test all any list lazy maybe Square Point force
-            length shift F strictlist cons inverse repl Either rights
-            lefts Right Left Maybe Just Nothing Int Integer undef let
-            my our foo bar baz any every sub purearray return open
-            equal show value values
-            )
-    };
-
-    # ^ most of those could simply go to local scripts and functions
-    # if these were checked for.
-
-    # To avoid tripping the search for to-do tags, this isn't part of
-    # the list above:
-    $$ignore_module_name{ "X" x 3 } = 1;
-
-    sub ignore_module_name($name) {
-        $$ignore_module_name{$name}
-    }
-
     sub is_likely_class_name($str) {
 
         # If $str contains an underscore but no "::" then it's much
@@ -135,7 +111,43 @@ package FunctionalPerl::Htmlgen::Linking::code {
         is_valid_class_name($str) and ($str =~ /::/ or not $str =~ /_/)
     }
 
-    use FP::Struct [] => "FunctionalPerl::Htmlgen::PXMLMapper";
+    use FP::Struct ["functional_perl_base_dir"] =>
+        "FunctionalPerl::Htmlgen::PXMLMapper";
+
+    sub _ignore_module_name($self) {
+        $self->{_ignore_module_name} //= do {
+
+            # things that we do not want to link even if they exist on CPAN
+            # (some do) since those are a different thing. ("CPAN-exception")
+            my $ignore_module_name = do {
+                if (0) {
+                    +{
+                        map { $_ => 1 }
+                            qw(
+                            map filter tail grep fold car cdr first rest head join
+                            primes test all any list lazy maybe Square Point force
+                            length shift F strictlist cons inverse repl Either rights
+                            lefts Right Left Maybe Just Nothing Int Integer undef let
+                            my our foo bar baz any every sub purearray return open
+                            equal show value values
+                            )
+                    }
+                } else {
+                    identifierInfos_by_name($self->functional_perl_base_dir);
+                }
+            };
+
+            # To avoid tripping the search for to-do tags, this isn't part of
+            # the list above:
+            $$ignore_module_name{ "X" x 3 } = 1;
+
+            $ignore_module_name
+        }
+    }
+
+    sub ignore_module_name ($self, $name) {
+        $self->_ignore_module_name->{$name}
+    }
 
     sub match_element_names($self) { ["code"] }
 
@@ -185,7 +197,9 @@ package FunctionalPerl::Htmlgen::Linking::code {
                 };
 
                 my $maybe_cpan_url
-                    = ignore_module_name($t) ? undef : maybe_module_pod_url($t);
+                    = $self->ignore_module_name($t)
+                    ? undef
+                    : maybe_module_pod_url($t);
 
                 if (defined $maybe_cpan_url) {
                     &$wrap_with_link($maybe_cpan_url)
