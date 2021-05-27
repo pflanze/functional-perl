@@ -102,12 +102,18 @@ use Cwd 'abs_path';
 use FP::Failure;    # worrying dependency
 
 sub fallible_require_package_by_path($path) {
-    my $path_abs = abs_path $path;
-    my $package  = path_to_package__cheap $path;   # XX hack, how to generalize?
+    __ 'require_package($path), but check that the returned path is
+        the same as $path, after taking abs_path of both; not finding
+        either path is an error. If the paths are not the same,
+        returns an FP::Failure';
+    my $path_abs = abs_path($path) // die "abs_path('$path'), given path: $!";
+    my $package = path_to_package__cheap $path;    # XX hack, how to generalize?
          # Can't load by path (at least not 'properly'), so, load and then
          # check:
     my $path2     = require_package $package;
-    my $path_abs2 = abs_path $path2;
+    my $path_abs2 = abs_path($path2)
+        // die "abs_path('$path2'), path retrieved after loading: $!";
+
     if ($path_abs eq $path_abs2) {
         1
     } else {
