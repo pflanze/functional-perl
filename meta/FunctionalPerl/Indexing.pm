@@ -17,7 +17,11 @@ FunctionalPerl::Indexing -- retrieve information about the code base
         identifierInfos_by_name Subroutine Package);
     use FP::Equal qw(is_equal);
 
-    my $by_name = identifierInfos_by_name "."; # functional_perl_base_dir
+    my $functional_perl_base_dir = ".";
+    my $by_name = identifierInfos_by_name(
+        $functional_perl_base_dir,
+        # accept all of them:
+        sub ($info) { 1 });
     is_equal($by_name->{first}->[0],
              Subroutine('first', 'lib/FP/Array/Mixin.pm', 153));
     is_equal($by_name->{"FP::List"}->[0],
@@ -163,12 +167,12 @@ sub file_IdentifierInfos ($path) {
     )->filter(\&is_defined)
 }
 
-sub files_IdentifierInfos_by_name($files) {
+sub files_IdentifierInfos_by_name ($files, $acceptableP) {
     __ 'Sequence of file paths -> +{name => [IdentifierInfo...]}';
     my %by_name;
     $files->map(\&file_IdentifierInfos)->for_each(
         sub ($infos) {
-            $infos->for_each(
+            $infos->filter($acceptableP)->for_each(
                 sub ($info) {
                     push @{ $by_name{ $info->name } }, $info;
                 }
@@ -186,18 +190,21 @@ sub perlfiles() {
     purearray @perlfiles
 }
 
-sub identifierInfos_by_name ($functional_perl_base_dir) {
-    __ 'Path to functional-perl base directory
-        -> +{name => [IdentifierInfo...]}';
+sub identifierInfos_by_name ($functional_perl_base_dir, $acceptableP) {
+    __ '(Path to functional-perl base directory, $acceptableP) ->
+        +{name => [IdentifierInfo...]}; $acceptableP is a predicate
+        returning true for those instances you want.';
     local $CWD = $functional_perl_base_dir;
 
     # Ignore files that can't be used for imports and aren't examples, OK?
     my $files = perlfiles->filter(sub ($_) { /\.pm$/ or /^examples\// });
-    files_IdentifierInfos_by_name $files
+    files_IdentifierInfos_by_name $files, $acceptableP
 }
 
 # for tests only:
-my $by_name = lazy { identifierInfos_by_name "." };
+my $by_name = lazy {
+    identifierInfos_by_name ".", sub($v) {1}
+};
 
 TEST { force($by_name)->{car} } [
     Subroutine('car', 'lib/FP/List.pm', 328),

@@ -133,7 +133,8 @@ package FunctionalPerl::Htmlgen::Linking::code {
                             )
                     }
                 } else {
-                    identifierInfos_by_name($self->functional_perl_base_dir);
+                    identifierInfos_by_name($self->functional_perl_base_dir,
+                        instance_of("FunctionalPerl::Indexing::Subroutine"))
                 }
             };
 
