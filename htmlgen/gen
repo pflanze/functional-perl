@@ -138,9 +138,9 @@ sub normal($classname) {
 }
 
 # This one adds in the functional_perl_base_dir argument:
-sub with_functional_perl_base_dir($classname) {
+sub with_args ($classname, @args) {
     sub {
-        $classname->new_(@_, functional_perl_base_dir => "..")
+        $classname->new_(@_, @args)
     }
 }
 
@@ -154,7 +154,10 @@ our $pxml_mappers =
     normal("FunctionalPerl::Htmlgen::Toc"),    # <with_toc>
     [
         normal("FunctionalPerl::Htmlgen::PerlTidy"),
-        with_functional_perl_base_dir("FunctionalPerl::Htmlgen::Linking::code")
+        with_args(
+            "FunctionalPerl::Htmlgen::Linking::code",
+            functional_perl_base_dir => ".."
+        )
     ],
     normal("FunctionalPerl::Htmlgen::Linking::a_href"),
     ];
