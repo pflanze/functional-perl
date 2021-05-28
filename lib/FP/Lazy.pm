@@ -522,10 +522,10 @@ package FP::Lazy::AnyPromise {
 
 }
 
-use FP::Show qw(subprefix_to_show_coderef);
+use FP::Show qw(parameterized_show_coderef);
 
-my $lazy_thunk_show  = subprefix_to_show_coderef("lazy ");
-my $lazyT_thunk_show = subprefix_to_show_coderef("lazyT ");
+my $lazy_thunk_show  = parameterized_show_coderef("lazy ");
+my $lazyT_thunk_show = parameterized_show_coderef("lazyT ");
 
 package FP::Lazy::Promise {
     our @ISA = 'FP::Lazy::AnyPromise';
@@ -645,7 +645,7 @@ package FP::Lazy::Promise {
     }
 }
 
-my $lazyLight_thunk_show = subprefix_to_show_coderef("lazyLight ");
+my $lazyLight_thunk_show = parameterized_show_coderef("lazyLight ");
 
 package FP::Lazy::PromiseLightBase {
 

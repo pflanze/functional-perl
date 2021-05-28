@@ -116,7 +116,7 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT      = qw(show);
-our @EXPORT_OK   = qw(show_many subprefix_to_show_coderef);
+our @EXPORT_OK   = qw(show_many parameterized_show_coderef);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TerseDumper qw(terseDumper);
@@ -144,7 +144,7 @@ sub keyshow {
 
 our $show_details = $ENV{RUN_TESTS} ? 0 : 1;
 
-sub subprefix_to_show_coderef {
+sub parameterized_show_coderef {
     my ($subprefix) = @_;
     sub {
         my ($v, $show) = @_;
@@ -218,7 +218,7 @@ our $primitive_show = +{
         my ($v, $show) = @_;
         (terseDumper($v), 1)
     },
-    CODE => subprefix_to_show_coderef("sub "),
+    CODE => parameterized_show_coderef("sub "),
 
     # Don't really have any sensible serialization for these either,
     # but at least prevent them from hitting Data::Dumper which issues
