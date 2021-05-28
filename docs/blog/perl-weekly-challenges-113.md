@@ -1013,7 +1013,9 @@ the tooling to debug evaluation order in programs with lots of lazy
 evaluation may be worse in Perl than in Haskell (although there is
 some <a href="#fn4">[4]</a>), so I suggest to be careful and not go
 over board with that. Use `lazy { }` and streams only where needed to
-enable a purely functional programming style.
+enable a purely functional programming style. Using `lazyT` instead of
+`lazy` to make sure you're getting the right types of data can also
+help.
 
 ## Footnotes
 
