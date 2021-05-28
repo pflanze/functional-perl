@@ -1,5 +1,14 @@
 Revision history for FunctionalPerl
 
+0.72.68 2021-5-28
+    - SortedPureArray: add `checks_ok`, docs/tests
+    - Lazy,Show: show now shows the backtrace information in promises
+      if present
+    - Create FP::noLazy
+    - some docs improvements
+    - Blog perl-weekly-challenges-113: go into lazy debugging
+    - fix test failure / add FunctionalPerl::Dependencies::ChjBin
+
 0.72.67 2021-5-27
     - website: various blog post fixes, and other
     - Predicates: rename is_class_name to is_valid_class_name
