@@ -1010,18 +1010,10 @@ data correctness issues, since bogus data can also be a source of
 erratic evaluation order). It shouldn't hurt, either, but I'm not
 going to make claims here. In any case, it's definitely different, and
 the tooling to debug evaluation order in programs with lots of lazy
-evaluation isn't there in Perl (I think), so I suggest to be careful
-and not go over board with that. Use `lazy { }` and streams only where
-needed to enable a purely functional programming style.
-
-<small>As a tool to help understanding what's going on if a program
-doesn't work as expected, you can disable laziness locally by using
-`lazy_if` (also from `FP::Lazy`) instead of `lazy`. <a
-href="#fn4">[4]</a> Also, by setting `$FP::Lazy::debug = 1` (or
-setting the `DEBUG_FP_LAZY` env var to `1`), promises store backtraces
-of the context in which they were created, which can help, too.  Tell
-me if you'd like me to demonstrate these approaches in a post or
-video.</small>
+evaluation may be worse in Perl than in Haskell (although there is
+some <a href="#fn4">[4]</a>), so I suggest to be careful and not go
+over board with that. Use `lazy { }` and streams only where needed to
+enable a purely functional programming style.
 
 ## Footnotes
 
@@ -1049,12 +1041,17 @@ a check using `is_string` will accept references, too, either with or
 without warning. Another could be to verify if references are objects
 that have a stringification overload, and deny them otherwise.
 
-<a name="fn4">[4]</a> It's also possible to disable laziness globally
-by setting `$FP::Lazy::eager = 1` or by setting the `DEBUG_FP_LAZY`
-env var to `eager`, but that turns lazy infinite list creation into
-creating infinite lists immediately, which will make the program
-increase memory use till it runs out of memory, instead of finishing
-your algorithm, so this only works if not using infinite lists.
+<a name="fn4">[4]</a> There is some tooling provided by `FP::Lazy` and
+`FP::noLazy`: for one, you can enable capture of backtraces in
+promises via `$FP::Lazy::debug = 1` (or setting the `DEBUG_FP_LAZY`
+env var to `1`), also, you can disable laziness temporarily while
+debugging (although you may have to be selective since that can make
+the program run out of memory): globally by setting `$FP::Lazy::eager
+= 1` or by setting the `DEBUG_FP_LAZY` env var to `eager`, in the
+local module via using `FP::noLazy` instead of `FP::Lazy`, or on each
+individual lazy expression by using `lazy_if` instead of `lazy`.  Tell
+me if you'd like me to demonstrate these approaches in a post or
+video.
 
 </with_toc>
 
