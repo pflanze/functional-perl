@@ -1,4 +1,4 @@
-3a66db833c047f3f05f4bc85311822e8df6357f4
+a2c60ff9cc7d3212bb54f616b6c2dca97773152f
 Makefile.PL
 bench/globs
 bin/expand-tail
@@ -201,6 +201,7 @@ lib/PXML/Tags.pm
 lib/PXML/Util.pm
 lib/PXML/XHTML.pm
 meta/FunctionalPerl/Dependencies.pm
+meta/FunctionalPerl/Dependencies/ChjBin.pm
 meta/FunctionalPerl/Indexing.pm
 meta/FunctionalPerl/ModuleList.pm
 meta/FunctionalPerl/TailExpand.pm
