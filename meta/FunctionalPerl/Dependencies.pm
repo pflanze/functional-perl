@@ -31,7 +31,7 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT      = qw();
-our @EXPORT_OK   = qw(have_module module_needs);
+our @EXPORT_OK   = qw(have_dependency module_needs);
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 # ------------------------------------------------------------------
@@ -43,7 +43,15 @@ our %dependencies = (
     # Don't specify Sub::Call::Tail (if meta/tail-expand can expand it)!
 
     # "5.020" for experimental 'signatures'
-    'FunctionalPerl::Indexing'  => ["5.020", "File::chdir"],
+    'FunctionalPerl::Indexing' => [
+        "5.020",
+        "File::chdir",
+        [
+            # The called "meta/perlfiles" script needs:
+            "FunctionalPerl::Dependencies::ChjBin" => qw( printfield gls filter
+                is-perl skiplines )
+        ]
+    ],
     'Chj::Packages'             => ["5.020"],
     'FP::SortedPureArray'       => ["5.020", "List::BinarySearch"],
     'FP::RegexMatch'            => ["5.020"],
@@ -64,12 +72,16 @@ our %dependencies = (
         ['5.020', 'FunctionalPerl::Htmlgen::PathUtil'],
     'FunctionalPerl::Htmlgen::Mediawiki'    => ['5.020', 'Encode', 'URI',],
     'FunctionalPerl::Htmlgen::MarkdownPlus' => [
-        '5.020',          'FunctionalPerl::Htmlgen::Htmlparse',
-        'Text::Markdown', 'FunctionalPerl::Htmlgen::Mediawiki'
+        '5.020',
+        'FunctionalPerl::Htmlgen::Htmlparse',
+        'Text::Markdown',
+        'FunctionalPerl::Htmlgen::Mediawiki'
     ],
     'FunctionalPerl::Htmlgen::Linking' => [
-        '5.020',                   'FunctionalPerl::Htmlgen::PathUtil',
-        'Chj::CPAN::ModulePODUrl', 'FunctionalPerl::Htmlgen::UriUtil',
+        '5.020',
+        'FunctionalPerl::Htmlgen::PathUtil',
+        'Chj::CPAN::ModulePODUrl',
+        'FunctionalPerl::Htmlgen::UriUtil',
     ],
     'FunctionalPerl::Htmlgen::Htmlparse' => ['5.020', 'HTML::TreeBuilder',],
     'Chj::HTTP::Daemon'                  => ['HTTP::Request',],
@@ -104,20 +116,42 @@ our %dependencies = (
 
 # ------------------------------------------------------------------
 
-my %have_module;
+use Chj::singlequote qw(singlequote_many);
 
-sub have_module {
-    my ($modulename) = @_;
-    return $have_module{$modulename} if exists $have_module{$modulename};
-    $have_module{$modulename} = do {
-        eval "require $modulename; 1" or 0
+sub modulename_or_array_to_code {
+    my ($modulename_or_array) = @_;
+    if (my $r = ref $modulename_or_array) {
+        $r eq "ARRAY" or die "invalid datum in dependenies data structure";
+        my ($modulename, @args) = @$modulename_or_array;
+        my $quotedargs = singlequote_many @args;
+        "use $modulename ($quotedargs)"
+    } else {
+        "use $modulename_or_array ()"
+    }
+}
+
+my %have_dependency;
+
+sub have_dependency {
+    my ($modulename_or_array) = @_;
+    my $code1 = modulename_or_array_to_code $modulename_or_array;
+    exists $have_dependency{$code1} ? $have_dependency{$code1} : do {
+        my $code = "package\nFunctionalPerl::Dependenies::TMP {
+        $code1;
+        1
+    }";
+        my $res = (eval $code or 0);
+        $have_dependency{$code1} = $res;
+        $res
     }
 }
 
 sub module_needs {
     my ($modulename) = @_;
     if (my $ds = $dependencies{$modulename}) {
-        grep { not have_module $_ } sort @$ds
+        map      { modulename_or_array_to_code $_ }
+            grep { not have_dependency $_ }
+            sort @$ds
     } else {
         ()
     }
