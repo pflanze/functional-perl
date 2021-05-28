@@ -230,10 +230,10 @@ code that evaluates a promise runs is not the same context in which
 the promise was captured. There are two approaches to make this
 easier:
 
-C<$ENV{DEBUG_FP_LAZY} = "1"> or C<local $FP::Lazy::debug=1> -- captures
-a backtrace in every promise (slow, of course!). Use the optionally
-exported C<lazy_backtrace> function to get the backtrace (or look at
-it via the repl's :d (Data::Dumper) mode).
+C<$ENV{DEBUG_FP_LAZY} = "1"> or C<local $FP::Lazy::debug=1> --
+captures a backtrace in every promise (slow, of course!). Use the
+optionally exported C<lazy_backtrace> function to get the backtrace
+(you can also see it in the C<FP::Repl>).
 
 C<$ENV{DEBUG_FP_LAZY} = "eager"> or C<local $FP::Lazy::eager=1> --
 completely turns of any lazyness (except for lazyLight, currently);
@@ -523,6 +523,14 @@ package FP::Lazy::AnyPromise {
 
 }
 
+sub dummy_modifier_for {
+    my ($s) = @_;
+    sub {
+        my ($dummystr) = @_;
+        $dummystr . "\nContext:\n" . $$s[3]
+    }
+}
+
 use FP::Show qw(parameterized_show_coderef);
 
 my $lazy_thunk_show  = parameterized_show_coderef("lazy ");
@@ -543,9 +551,19 @@ package FP::Lazy::Promise {
         # do not force unforced promises
         if (defined $$s[0]) {
             if (defined(my $cl = $$s[2])) {
-                &$lazyT_thunk_show($$s[0]) . " " . &$show($cl)
+                my $thunk_show
+                    = $$s[3]
+                    ? FP::Lazy::parameterized_show_coderef("lazyT ",
+                    FP::Lazy::dummy_modifier_for($s))
+                    : $lazyT_thunk_show;
+                $thunk_show->($$s[0]) . " " . $show->($cl)
             } else {
-                &$lazy_thunk_show($$s[0])
+                my $thunk_show
+                    = $$s[3]
+                    ? FP::Lazy::parameterized_show_coderef("lazy ",
+                    FP::Lazy::dummy_modifier_for($s))
+                    : $lazy_thunk_show;
+                $thunk_show->($$s[0])
             }
         } else {
             &$show($$s[1])

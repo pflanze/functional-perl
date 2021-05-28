@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -145,7 +145,7 @@ sub keyshow {
 our $show_details = $ENV{RUN_TESTS} ? 0 : 1;
 
 sub parameterized_show_coderef {
-    my ($subprefix) = @_;
+    my ($subprefix, $maybe_dummy_modifier) = @_;
     sub {
         my ($v, $show) = @_;
         if ($show_details) {
@@ -184,9 +184,16 @@ sub parameterized_show_coderef {
                 : "";
 
             my $dummystr = "DUMMY: $name $location";
+            if (defined($maybe_dummy_modifier)) {
+                $dummystr = $maybe_dummy_modifier->($dummystr);
+            }
             $subprefix . $prototypestr . "{ " . show($dummystr) . "$docstr }"
         } else {
-            $subprefix . '{ "DUMMY" }'
+            my $dummystr = "DUMMY";
+            if (defined($maybe_dummy_modifier)) {
+                $dummystr = $maybe_dummy_modifier->($dummystr);
+            }
+            $subprefix . "{ " . show($dummystr) . " }"
         }
     }
 }
