@@ -819,9 +819,9 @@ appears pretty chaotic and at least unexpected. Hence, in addition to
 the tips above:
 
 * Try to get the code working without lazyness first (don't use `lazy`
-  forms, use `FP::List` instead of `FP::Stream`). (TODO: write a
-  `FP::noLazy` that ignores `lazy` forms or lets them be turned on/off
-  at runtime?)
+  forms, use `FP::List` instead of `FP::Stream`). There's also
+  `FP::noLazy` that makes `lazy` a no-op in the current module. See
+  the documentation in this module.
 
 * If you're getting `undef` in some place (like a subtree in a `PXML`
   document missing (maybe triggering an undef warning in the
