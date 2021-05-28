@@ -238,8 +238,9 @@ it via the repl's :d (Data::Dumper) mode).
 C<$ENV{DEBUG_FP_LAZY} = "eager"> or C<local $FP::Lazy::eager=1> --
 completely turns of any lazyness (except for lazyLight, currently);
 easy stack traces and flow logic but of course the program behaves
-differently; beware of infinite lists!
-
+differently; beware of infinite lists, they will be created
+immediately now "in full length" and thus make the program use up all
+the memory instead of finishing!
 
 =head1 SEE ALSO
 
