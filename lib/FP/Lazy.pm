@@ -242,6 +242,10 @@ differently; beware of infinite lists, they will be created
 immediately now "in full length" and thus make the program use up all
 the memory instead of finishing!
 
+C<use>ing L<FP::noLazy> instead of L<FP::Lazy> turns off laziness for
+the current module, only. See the L<FP::noLazy> docs for more
+information.
+
 =head1 SEE ALSO
 
 https://en.wikipedia.org/wiki/Futures_and_promises
@@ -251,6 +255,8 @@ Alternative Data::Thunk, but see note in TODO file about problems.
 Alternative Scalar::Defer?
 
 L<FP::TransparentLazy>
+
+L<FP::noLazy>
 
 L<FP::Mixin::Utils> -- Lazy implements this as a fallback (lower
 priority than forcing the promise and finding the method on the
