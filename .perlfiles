@@ -1,4 +1,4 @@
-1ae4f398047e73995b454b2a5e4a62af21e070d9
+3a66db833c047f3f05f4bc85311822e8df6357f4
 Makefile.PL
 bench/globs
 bin/expand-tail
@@ -186,6 +186,7 @@ lib/FP/Weak.pm
 lib/FP/Weak/t.pm
 lib/FP/autobox.pm
 lib/FP/fix.pm
+lib/FP/noLazy.pm
 lib/FP/url_.pm
 lib/FunctionalPerl.pm
 lib/PXML.pm
