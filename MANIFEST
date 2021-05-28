@@ -214,6 +214,7 @@ lib/FP/Weak.pm
 lib/FP/Weak/t.pm
 lib/FP/autobox.pm
 lib/FP/fix.pm
+lib/FP/noLazy.pm
 lib/FP/url_.pm
 lib/FunctionalPerl.pm
 lib/PXML.pm
