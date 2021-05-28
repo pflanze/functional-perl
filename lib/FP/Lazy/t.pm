@@ -45,12 +45,12 @@ TEST {
 TEST {
     show(lazy { 1 / 0 })
 }
-'lazy { "DUMMY" }';
+"lazy { 'DUMMY' }";
 
 TEST {
     show(lazyT { 1 / 0 } "Fun")
 }
-'lazyT { "DUMMY" } \'Fun\'';
+"lazyT { 'DUMMY' } 'Fun'";
 
 TEST {
     my $v = lazyT { cons(1, 2) } "FP::List::List";

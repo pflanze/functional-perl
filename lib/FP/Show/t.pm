@@ -53,20 +53,20 @@ TEST {
     regex_substitute sub {s/line \d+/line .../g},
         show improper_list([1, 3], { foo => list("bar", sub {"f"}) })
 }
-'improper_list([1, 3], +{foo => list(\'bar\', sub { "DUMMY" })})';
+"improper_list([1, 3], +{foo => list('bar', sub { 'DUMMY' })})";
 
 my $s;
 TEST {
     $s = stream_iota->take(10);
     show $s
 }
-'lazyT { "DUMMY" } \'FP::List::List\'';
+"lazyT { 'DUMMY' } 'FP::List::List'";
 
 TEST {
     $s->rest->rest;
     show $s
 }
-'improper_list(0, 1, lazyT { "DUMMY" } \'FP::List::List\')';
+"improper_list(0, 1, lazyT { 'DUMMY' } 'FP::List::List')";
 
 TEST {
     show * STDERR {IO}
