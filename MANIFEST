@@ -230,6 +230,7 @@ lib/PXML/Util.pm
 lib/PXML/XHTML.pm
 licenses/artistic_license_2.0.md
 meta/FunctionalPerl/Dependencies.pm
+meta/FunctionalPerl/Dependencies/ChjBin.pm
 meta/FunctionalPerl/Indexing.pm
 meta/FunctionalPerl/ModuleList.pm
 meta/FunctionalPerl/TailExpand.pm
