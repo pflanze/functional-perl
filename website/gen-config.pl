@@ -95,7 +95,8 @@ my $email = "copying\@christianjaeger.ch";    # ? or ch@?
         entry("docs/contact.md", entry("docs/mailing_list.md")),
         entry(
             "docs/blog/index.md",
-            entry("docs/blog/perl-weekly-challenges-113.md")
+            entry("docs/blog/perl-weekly-challenges-113.md"),
+            entry("docs/blog/perl_weekly_challenges_114.md")
         )
     ),
     belownav => sub($path0) {
