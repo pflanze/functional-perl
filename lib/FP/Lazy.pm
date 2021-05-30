@@ -418,6 +418,8 @@ LP: {
                 # NOTE: there is a COPY-PASTE of this part in
                 # TransparentLazy!
                 if (defined(my $thunk = $$perhaps_promise[0])) {
+                    no warnings
+                        'recursion';    # XXX leave something for debugging?
                     my $v = force(&$thunk(), $nocache);
                     if ($$perhaps_promise[2]) {
 
