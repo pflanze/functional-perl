@@ -1,4 +1,4 @@
-a2c60ff9cc7d3212bb54f616b6c2dca97773152f
+3f4f00eea0600a11d5bda0a544f47e28462b8ad1
 Makefile.PL
 bench/globs
 bin/expand-tail
@@ -28,6 +28,7 @@ examples/pdf-to-html
 examples/perl-weekly-challenges/111-1-search_matrix
 examples/perl-weekly-challenges/113-1-represent_integer
 examples/perl-weekly-challenges/113-2-recreate_binary_tree
+examples/perl-weekly-challenges/114-1-Next_Palindrome_Number
 examples/predicates
 examples/primes
 examples/sendprepare
