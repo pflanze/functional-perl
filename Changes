@@ -1,5 +1,11 @@
 Revision history for FunctionalPerl
 
+0.72.69 2021-5-30
+    - Silence two recursion warnings, one of which is an indication of
+      a bug so will have to be investigated later.
+    - Create perl-weekly-challenges/114-1-Next_Palindrome_Number
+    - Website: add blog post on the new challenge
+
 0.72.68 2021-5-28
     - SortedPureArray: add `checks_ok`, docs/tests
     - Lazy,Show: show now shows the backtrace information in promises
