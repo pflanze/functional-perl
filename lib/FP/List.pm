@@ -1473,6 +1473,7 @@ sub make_filter {
         my ($fn, $l) = @_;
         weaken $_[1] if $is_stream;
         lazy_if {
+            no warnings 'recursion';    # XXX this should be tail calling???
             $l = force $l;
             is_null($l) ? $l : do {
                 my ($a, $r) = $l->first_and_rest;
