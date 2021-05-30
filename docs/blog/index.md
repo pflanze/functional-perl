@@ -18,3 +18,5 @@ but I won't post your mail address.
 
 * [The Perl Weekly Challenges, #113](perl-weekly-challenges-113.md) (2021/05/23)
 
+* [The Perl Weekly Challenges, #114](perl_weekly_challenges_114.md) (2021/05/30)
+
