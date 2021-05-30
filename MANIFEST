@@ -15,6 +15,7 @@ docs/HACKING.md
 docs/TODO.md
 docs/blog/index.md
 docs/blog/perl-weekly-challenges-113.md
+docs/blog/perl_weekly_challenges_114.md
 docs/contact.md
 docs/design.md
 docs/howto.md
@@ -49,6 +50,7 @@ examples/perl-weekly-challenges/111-1-search_matrix
 examples/perl-weekly-challenges/113-1-represent_integer
 examples/perl-weekly-challenges/113-1-represent_integer_haskell.hs
 examples/perl-weekly-challenges/113-2-recreate_binary_tree
+examples/perl-weekly-challenges/114-1-Next_Palindrome_Number
 examples/perl-weekly-challenges/Makefile
 examples/predicates
 examples/primes
