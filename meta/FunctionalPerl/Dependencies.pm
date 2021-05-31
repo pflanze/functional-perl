@@ -126,7 +126,9 @@ sub modulename_or_array_to_code {
         my $quotedargs = singlequote_many @args;
         "use $modulename ($quotedargs)"
     } else {
-        "use $modulename_or_array ()"
+
+        # "use $modulename_or_array ()" doesn't work for 5.020!
+        "require $modulename_or_array"
     }
 }
 
