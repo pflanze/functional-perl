@@ -72,11 +72,10 @@ sub simple_memoize {
 # Linux only?) anyway. (Should we return undef on non-Linux $^O? No,
 # nobody should be installing chj-bin if it doesn't work? Not sure.)
 
-our $paths = [grep { length $_ } split m{:}, $ENV{PATH} // ""];
-
 sub _maybe_which {
     my ($str)  = @_;
     my ($prog) = $str =~ /^([\w_.-]+)$/ or die "invalid progname '$str'";
+    my $paths  = [grep { length $_ } split m{:}, $ENV{PATH} // ""];
     for my $path (@$paths) {
         my $progpath = "$path/$prog";
         return $progpath if (-f $progpath and -x _);
