@@ -61,7 +61,10 @@ sub match_element_names($self) { [qw(code)] }
 
 sub map_element ($self, $e, $uplist) {
 
-#warn "hm: ".show($e->name). ", uplist= ".show($uplist->map(the_method "name"));
+    # warn "hm: "
+    #     . show($e->name)
+    #     . ", uplist= "
+    #     . show($uplist->map(the_method "name"));
     if (not $uplist->is_null and $uplist->first->lcname eq "pre") {
         my $txt = $e->text;
         if (sourcelang($txt) eq "Perl") {
