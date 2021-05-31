@@ -33,13 +33,10 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use experimental "signatures";
 
-use FP::Docstring;
 use FP::Show;
 use Perl::Tidy;
 use FunctionalPerl::Htmlgen::Htmlparse ":all";
 use FunctionalPerl::Htmlgen::Sourcelang;
-
-use FunctionalPerl ":all";    ##xx
 
 sub tidyhtml {
     my ($source) = @_;
