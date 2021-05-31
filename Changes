@@ -1,5 +1,10 @@
 Revision history for FunctionalPerl
 
+0.72.70 2021-5-31
+    - Fixes for testing and dependency issues, including removing
+      some unused imports.
+    - A fix in FunctionalPerl::Indexing
+
 0.72.69 2021-5-30
     - Silence two recursion warnings, one of which is an indication of
       a bug so will have to be investigated later.
