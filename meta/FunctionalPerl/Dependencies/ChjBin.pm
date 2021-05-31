@@ -65,21 +65,29 @@ sub simple_memoize {
     }
 }
 
+# Calling out to the `which` utility apparently spams the terminal
+# with messages even on some "GNU/Linux" distros. D'uh. So go full
+# Perl. Don't want to depend on https://metacpan.org/pod/File::Which,
+# and we don't need Windows support as chj-bin is Unix only (really
+# Linux only?) anyway. (Should we return undef on non-Linux $^O? No,
+# nobody should be installing chj-bin if it doesn't work? Not sure.)
+
+our $paths = [grep { length $_ } split m{:}, $ENV{PATH} // ""];
+
+sub _maybe_which {
+    my ($str)  = @_;
+    my ($prog) = $str =~ /^([\w_.-]+)$/ or die "invalid progname '$str'";
+    for my $path (@$paths) {
+        my $progpath = "$path/$prog";
+        return $progpath if (-f $progpath and -x _);
+    }
+    undef
+}
+
 my %which;
 
 sub maybe_which;
-*maybe_which = simple_memoize \%which, sub {
-    my ($progname) = @_;
-    exists $which{$progname} ? $which{$progname} : do {
-        my ($prog) = $progname =~ /^([\w-]+)$/
-            or die "invalid progname '$progname'";
-        my $found = `which $prog`;
-        chomp $found;
-        my $res = length $found ? $found : undef;
-        $which{$progname} = $res;
-        $res
-    }
-};
+*maybe_which = simple_memoize \%which, \&_maybe_which;
 
 use Chj::IO::Command;
 use Chj::xperlfunc ":all";
