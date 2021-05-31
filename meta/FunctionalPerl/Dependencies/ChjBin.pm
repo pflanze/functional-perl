@@ -74,7 +74,7 @@ sub simple_memoize {
 
 sub _maybe_which {
     my ($str)  = @_;
-    my ($prog) = $str =~ /^([\w_.-]+)$/ or die "invalid progname '$str'";
+    my ($prog) = $str =~ /^([\w_.-]+)\z/s or die "invalid progname '$str'";
     my $paths  = [grep { length $_ } split m{:}, $ENV{PATH} // ""];
     for my $path (@$paths) {
         my $progpath = "$path/$prog";
