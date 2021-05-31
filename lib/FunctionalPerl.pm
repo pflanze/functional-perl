@@ -20,7 +20,7 @@ FunctionalPerl - functional programming in Perl
     use FP::List;
 
     # But you can also import sets of modules from here, e.g.:
-    use FunctionalPerl qw(:sequences :repl);
+    #use FunctionalPerl qw(:sequences :repl);
 
 =head1 DESCRIPTION
 
