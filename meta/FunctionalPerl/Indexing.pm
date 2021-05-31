@@ -197,7 +197,8 @@ sub identifierInfos_by_name ($functional_perl_base_dir, $acceptableP) {
     local $CWD = $functional_perl_base_dir;
 
     # Ignore files that can't be used for imports and aren't examples, OK?
-    my $files = perlfiles->filter(sub ($_) { /\.pm$/ or /^examples\// });
+    my $files
+        = perlfiles->filter(sub ($v) { $v =~ /\.pm$/ or $v =~ /^examples\// });
     files_IdentifierInfos_by_name $files, $acceptableP
 }
 
