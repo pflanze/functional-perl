@@ -134,11 +134,14 @@ sub modulename_or_array_to_code {
 
 my %have_dependency;
 
+my $counter;    # ugly hack to avoid redefinitions
+
 sub have_dependency {
     my ($modulename_or_array) = @_;
     my $code1 = modulename_or_array_to_code $modulename_or_array;
     exists $have_dependency{$code1} ? $have_dependency{$code1} : do {
-        my $code = "package\nFunctionalPerl::Dependenies::TMP {
+        my $n    = $counter++;
+        my $code = "package\nFunctionalPerl::Dependenies::TMP$n {
         $code1;
         1
     }";
