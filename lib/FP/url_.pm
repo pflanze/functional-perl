@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -45,7 +45,7 @@ our @keys = qw(scheme path fragment);
 our %keys = map { $_ => $_ } @keys;
 
 sub url_ {
-    my $u = new URI;
+    my $u = URI->new;
     while (@_) {
         my $k = shift;
         @_ or die "url_: uneven number of arguments";

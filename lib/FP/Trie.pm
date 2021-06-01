@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -127,7 +127,7 @@ package FP::Trie::BareLevel {
         defined $maybe_l2 ? () : ($t2)
     }
 
-    our $key_not_found_exception = new FP::Trie::KeyNotFoundException;
+    our $key_not_found_exception = FP::Trie::KeyNotFoundException->new;
 
     sub perhaps_ref {
         @_ == 2 or fp_croak_arity 2;

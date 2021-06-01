@@ -904,7 +904,8 @@ sub run {
 
         # It seems this is the only way to make signal handlers work in
         # both perl 5.6 and 5.8:
-        sigaction SIGINT, new POSIX::SigAction __PACKAGE__ . '::__signalhandler'
+        sigaction SIGINT,
+            POSIX::SigAction->new(__PACKAGE__ . '::__signalhandler')
             or die "Error setting SIGINT handler: $!\n";
         1
     } || do {
@@ -924,7 +925,7 @@ sub run {
 
     # only start one readline instance, do not nest (doing otherwise
     # seems to lead to segfaults). okay?.
-    local our $term = $term || new Term::ReadLine 'Repl';
+    local our $term = $term || Term::ReadLine->new('Repl');
 
     # This means that the history from nested repls will also show up
     # in the history of the parent repl. Not saved, but within the

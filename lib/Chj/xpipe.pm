@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -53,8 +53,8 @@ sub xpipe {
     if (@_) {
         confess "form with arguments not yet supported";
     } else {
-        my $r = new Chj::IO::Pipe;
-        my $w = new Chj::IO::Pipe;
+        my $r = Chj::IO::Pipe->new;
+        my $w = Chj::IO::Pipe->new;
         pipe $r, $w or croak "xpipe: $!";
         ($r, $w)
     }
