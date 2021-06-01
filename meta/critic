@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -21,27 +21,7 @@ BEGIN {
 use lib "$mydir/../lib";
 use lib "$mydir/../meta";
 
-sub usage {
-    print "usage: $myname
-
-  Criticizes the functional-perl code base.
-
-  Options:
-    --repl
-";
-    exit 1;
-}
-
 use Getopt::Long;
-our $verbose = 0;
-our $opt_repl;
-GetOptions(
-    "verbose" => \$verbose,
-    "help"    => sub {usage},
-    "repl"    => \$opt_repl,
-) or exit 1;
-usage if @ARGV;
-
 use Perl::Critic;
 use FunctionalPerl::ModuleList;
 use Chj::Backtrace;
@@ -53,30 +33,57 @@ use FP::Ops "the_method";
 use Chj::ruse;
 use FP::Repl;
 
+sub usage {
+    print "usage: $myname
+
+  Criticizes the functional-perl code base.
+
+  Options:
+    --repl
+";
+    exit 1;
+}
+
+our $verbose = 0;
+our $opt_repl;
+GetOptions(
+    "verbose" => \$verbose,
+    "help"    => sub {usage},
+    "repl"    => \$opt_repl,
+) or exit 1;
+usage if @ARGV;
+
 {
 
-    package PFLANZE::Result;
-    use FP::Struct ["path"];
+    package PFLANZE::CriticResult;
+    use FP::Struct ["path"] => ("FP::Struct::Show");
 
     sub prefix($self) {
         $self->path . "\t"
     }
     _END_;
 }
+
 {
 
-    package PFLANZE::ERR;
-    use FP::Struct ["message"], "PFLANZE::Result";
+    package PFLANZE::CriticErr;
+    use FP::Struct ["message"] => "PFLANZE::CriticResult";
+
+    sub has_critique($self) {
+        1    # sort of? some errors
+    }
 
     sub string($self) {
         $self->prefix . $self->messsage
     }
     _END_;
 }
+PFLANZE::CriticErr::constructors->import;
+
 {
 
-    package PFLANZE::OK;
-    use FP::Struct ["critiques"], "PFLANZE::Result";
+    package PFLANZE::CriticOk;
+    use FP::Struct ["critiques"] => "PFLANZE::CriticResult";
 
     sub has_critique($self) {
         @{ $self->critiques } > 0
@@ -92,12 +99,14 @@ use FP::Repl;
     }
     _END_;
 }
+PFLANZE::CriticOk::constructors->import;
 
 sub critique($path) {
     eval {
-        my $critic = Perl::Critic->new();
-        PFLANZE::OK->new($path, purearray $critic->critique($path));
-    } || PFLANZE::ERR->new($path, "$@");
+        my $critic    = Perl::Critic->new();
+        my $critiques = purearray $critic->critique($path);
+        CriticOk($path, $critiques);
+    } || CriticErr($path, "$@");
 }
 
 our $critiques = array_to_stream(modulepathlist)->map(\&critique);
