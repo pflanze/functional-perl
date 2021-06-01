@@ -335,8 +335,8 @@ sub xspawn {
     pipe READ, WRITE or die "pipe: $!";
     if (my $pid = xfork) {
         close WRITE;
-        local $_;    #local $/; not really necessary
-        while (<READ>) {
+        local $_;
+        while (<READ>) {    ## no critic, $_ is localized
             close READ;
             croak "xspawn: can't exec \"$_[0]\": $_";
         }
@@ -723,7 +723,8 @@ sub fstype_for_device_init {
     open my $mounts, "<", "/proc/mounts" or die "/proc/mounts: $!";
     local $/ = "\n";
     my %t;
-    while (<$mounts>) {
+    local $_;
+    while (<$mounts>) {    ## no critic, $_ is localized
         my @f = split / /, $_;
         my ($_dev, $mountpoint, $fstype) = @f;
         if (

@@ -42,7 +42,7 @@ sub modulenameandpathlist {
         my $f = xopen_read "MANIFEST";
         my @m;
         local $_;
-        while (<$f>) {
+        while (<$f>) {         ## no critic, $_ is localized
             chomp;
             my $path = $_;
             next unless s/\.pm$//;
