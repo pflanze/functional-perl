@@ -591,7 +591,7 @@ sub eval_code {
         $lp->context($context);
         WithRepl_eval { $lp->eval($allcode) }
     } else {
-        my @v = sort keys %$maybe_lexicals if defined $maybe_lexicals;
+        my @v = sort keys %{ $maybe_lexicals // {} };
         my $allcode
             = $prelude
             . (@v ? 'my (' . join(", ", @v) . '); ' : '') . 'sub {'
