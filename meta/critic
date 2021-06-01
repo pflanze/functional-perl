@@ -33,10 +33,21 @@ use FP::Ops "the_method";
 use Chj::ruse;
 use FP::Repl;
 
+my %ignore_file = map { $_ => 1 } qw(
+    lib/Chj/HTTP/Daemon.pm
+    lib/Chj/Class/Array.pm
+);
+
+# Would you prefer to ignore =~ /Using \$a or \$b outside sort/ ?
+my %ignore_policy = map { $_ => 1 } qw(
+    Perl::Critic::Policy::Freenode::DollarAB
+);
+
 sub usage {
     print "usage: $myname
 
-  Criticizes the functional-perl code base.
+  Criticizes the functional-perl code base, while refraining from
+  critiques which are not appropriate.
 
   Configuration: .perlcriticrc
 
@@ -85,7 +96,17 @@ PFLANZE::CriticErr::constructors->import;
 {
 
     package PFLANZE::CriticOk;
-    use FP::Struct ["critiques"] => "PFLANZE::CriticResult";
+    use FP::Struct ["all_critiques"] => "PFLANZE::CriticResult";
+
+    sub critiques($self) {
+        $self->{_cache_critiques} //= do {
+            $self->all_critiques->filter(
+                sub ($c) {
+                    not $ignore_policy{ $c->{_policy} }
+                }
+            )
+        }
+    }
 
     sub has_critique($self) {
         @{ $self->critiques } > 0
@@ -109,9 +130,14 @@ sub critique($path) {
         // CriticErr($path, "$@")
 }
 
-my $critiques = array_to_stream(modulepathlist)->map(\&critique);
-my $relevant  = $critiques->filter(the_method "has_critique");
+my $files = array_to_stream(modulepathlist)->filter(
+    sub($file) {
+        not $ignore_file{$file}
+    }
+);
 
+my $critiques = $files->map(\&critique);
+my $relevant  = $critiques->filter(the_method "has_critique");
 if ($opt_repl) {
     repl;
 } else {
