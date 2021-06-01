@@ -1,3 +1,4 @@
+.perlcriticrc
 .perlfiles
 .perltidyrc
 COPYING.md
@@ -11,6 +12,7 @@ bin/expand-tail
 bin/fperl
 bin/perlrepl
 bin/repl2test
+critic-todo
 docs/HACKING.md
 docs/TODO.md
 docs/blog/index.md
