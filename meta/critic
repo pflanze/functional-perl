@@ -41,6 +41,7 @@ my %ignore_file = map { $_ => 1 } qw(
 # Would you prefer to ignore =~ /Using \$a or \$b outside sort/ ?
 my %ignore_policy = map { $_ => 1 } qw(
     Perl::Critic::Policy::Freenode::DollarAB
+    Perl::Critic::Policy::Subroutines::ProhibitAmpersandSigils
 );
 
 sub usage {
