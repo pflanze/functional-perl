@@ -529,7 +529,7 @@ TEST {
 
 TEST {
     require FP::List;
-    array_fold(\&FP::List::cons, &FP::List::null, array(1, 2))->array
+    array_fold(\&FP::List::cons, FP::List::null(), array(1, 2))->array
 }
 [2, 1];
 

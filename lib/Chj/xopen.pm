@@ -250,7 +250,7 @@ sub devnull {
     $devnull ||= do {
         require POSIX;
         import POSIX "O_RDWR";
-        Chj::IO::File->xsysopen("/dev/null", &O_RDWR)
+        Chj::IO::File->xsysopen("/dev/null", &O_RDWR)    ## no critic
     }
 }
 our $devzero;
@@ -259,7 +259,7 @@ sub devzero {
     $devzero ||= do {
         require POSIX;
         import POSIX "O_RDWR";
-        Chj::IO::File->xsysopen("/dev/zero", &O_RDWR)
+        Chj::IO::File->xsysopen("/dev/zero", &O_RDWR)    ## no critic
     }
 }
 

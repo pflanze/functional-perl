@@ -1125,7 +1125,7 @@ sub XLmtime {
 
     sub unixtime {
         my $s = shift;
-        &Time::Local::timelocal(@$s)
+        Time::Local::timelocal(@$s)
     }
 }
 

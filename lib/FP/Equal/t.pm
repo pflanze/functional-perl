@@ -103,7 +103,7 @@ sub positive_inf {
 }
 
 sub negative_inf {
-    my $inf = -&positive_inf();
+    my $inf = -&positive_inf();    ## no critic
     $inf =~ /^-inf$/i or warn "negative_inf: got '$inf'";
     $inf
 }
