@@ -578,8 +578,8 @@ LP: {
 
 sub xreadline {    # XX: test error case (difficult to do)
     my $self = shift;
-    undef $!;      # needed!
-    if (wantarray) {
+    undef $!;           # needed!
+    if (wantarray) {    ## no critic
         my $lines = [CORE::readline($self->fh)];
         if ($!) {
             croak "xreadline from " . ($self->quotedname) . ": $!";
@@ -596,7 +596,7 @@ sub xreadline {    # XX: test error case (difficult to do)
 
 sub xreadline_chomp {
     my $s = shift;
-    if (wantarray) {
+    if (wantarray) {                                         ## no critic
         map {
             chomp;
             $_
@@ -641,7 +641,7 @@ sub xreadline0_chop {
 
     # yes really *have* to check context. or it would give the number
     # of items
-    if (wantarray) {
+    if (wantarray) {    ## no critic
         map {
             chop;
             $_

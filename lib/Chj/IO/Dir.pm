@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2014 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -114,7 +114,7 @@ sub xread {
     # ^ Needed, CORE::readdir will not set it to 0. Thus maybe it will
     # not even set any error? Hm, well, at least on end of dir it sets
     # it to Bad file descriptor.
-    if (wantarray) {
+    if (wantarray) {    ## no critic
         my $res = [CORE::readdir $self];
 
         # we *hope* that [ ] will never copy until the end as opposed
@@ -138,7 +138,7 @@ sub xread {
 sub nread {    # ignore . and .. entries
     my $self = shift;
     $! = undef;
-    if (wantarray) {
+    if (wantarray) {    ## no critic
         grep { $_ ne '.' and $_ ne '..' } readdir $self
     } else {
         while (defined(my $item = readdir $self)) {
@@ -151,7 +151,7 @@ sub nread {    # ignore . and .. entries
 sub xnread {
     my $self = shift;
     $! = undef;
-    if (wantarray) {
+    if (wantarray) {    ## no critic
         my $res = [grep { $_ ne '.' and $_ ne '..' } readdir $self];
         @$res
     } else {

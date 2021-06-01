@@ -424,7 +424,7 @@ sub xwait {
     @_ == 0 or fp_croak_arity 0;
     my $kid = wait;
     defined $kid or die "xwait: $!";    # when can this happen? EINTR?
-    wantarray ? ($kid, $?) : $kid
+    wantarray ? ($kid, $?) : $kid       ## no critic
 }
 
 sub xxwait {
@@ -604,27 +604,34 @@ sub lstat_possiblyhires {
     }
 }
 
+# XX: should provide a newly named function to give the object,
+# instead of using wantarray. Have xstat behave like the Perl builtin
+# (and then possibly drop and replace by another solution from
+# core/CPAN).
 sub xstat {
     my @r;
     @_ <= 1 or croak "xstat: too many arguments";
     @r = stat_possiblyhires(@_ ? @_ : $_);
     @r or croak(@_ ? "xstat: '@_': $!" : "xstat: '$_': $!");
-    if (wantarray) {
+    my $wantarray = wantarray;    ## no critic
+    if ($wantarray) {
         @r
-    } elsif (defined wantarray) {
+    } elsif (defined $wantarray) {
         my $self = \@r;
         bless $self, 'Chj::xperlfunc::xstat'
     }
 }
 
+# XX ditto
 sub xlstat {
     my @r;
     @_ <= 1 or croak "xlstat: too many arguments";
     @r = lstat_possiblyhires(@_ ? @_ : $_);
     @r or croak(@_ ? "xlstat: '@_': $!" : "xlstat: '$_': $!");
-    if (wantarray) {
+    my $wantarray = wantarray;    ## no critic
+    if ($wantarray) {
         @r
-    } elsif (defined wantarray) {
+    } elsif (defined $wantarray) {
         my $self = \@r;
         bless $self, 'Chj::xperlfunc::xstat'
     }
@@ -632,6 +639,7 @@ sub xlstat {
 
 use Carp 'cluck';
 
+# XX ditto
 sub Xstat {
     my @r;
     @_ <= 1 or croak "Xstat: too many arguments";
@@ -643,16 +651,18 @@ sub Xstat {
             croak(@_ ? "Xstat: '@_': $!" : "Xstat: '$_': $!");
         }
     };
-    if (wantarray) {
+    my $wantarray = wantarray;    ## no critic
+    if ($wantarray) {
         cluck "Xstat call in array context doesn't make sense";
         @r
-    } elsif (defined wantarray) {
+    } elsif (defined $wantarray) {
         bless \@r, 'Chj::xperlfunc::xstat'
     } else {
         cluck "Xstat call in void context doesn't make sense";
     }
 }
 
+# XX ditto
 sub Xlstat {
     @_ <= 2 or croak "Xlstat: too many arguments";
     my ($path, $accept_errors) = @_;
@@ -665,10 +675,11 @@ sub Xlstat {
             croak("Xlstat: '$path': $!");
         }
     };
-    if (wantarray) {
+    my $wantarray = wantarray;    ## no critic
+    if ($wantarray) {
         cluck "Xlstat call in array context doesn't make sense";
         @r
-    } elsif (defined wantarray) {
+    } elsif (defined $wantarray) {
         bless \@r, 'Chj::xperlfunc::xstat'
     } else {
         cluck "Xlstat call in void context doesn't make sense";
@@ -689,7 +700,7 @@ sub mk_caching_getANYid {
                 $v = [&$function($id)];
                 $cache{$id} = $v;
             }
-            wantarray ? @$v : $$v[$scalarindex]
+            wantarray ? @$v : $$v[$scalarindex]    ## no critic
         } else {
             croak "$methodname: got undefined value";
         }
@@ -1242,8 +1253,9 @@ sub xchroot {
 sub xeval {    # meant for string eval only, of course.
     @_ == 1 or die "wrong number of arguments";
     ## hm ps should one localize $@ here?
-    if (defined wantarray) {
-        if (wantarray) {
+    my $wantarray = wantarray;    ## no critic
+    if (defined $wantarray) {
+        if ($wantarray) {
             my @res = eval $_[0];
             if (ref $@ or $@) {
                 die $@
@@ -1424,7 +1436,7 @@ sub xlink_p {
         my ($user) = @_;
         my $s      = bless [getpwnam($user)], $class;
         if (@$s) {
-            wantarray ? @$s : $s
+            wantarray ? @$s : $s    ## no critic
         } else {
             return
         }
@@ -1435,7 +1447,7 @@ sub xlink_p {
 sub xgetpwnam {
     @_ == 1 or fp_croak_arity 1;
     my ($user) = @_;
-    if (wantarray) {
+    if (wantarray) {                ## no critic
         my @f = Chj::xperlfunc::Getpwnam->perhaps_get($user);
         @f or croak "xgetpwnam: '$user' not in passwd file";
         @f
@@ -1455,7 +1467,7 @@ sub xgetpwnam {
         my ($user) = @_;
         my $s      = bless [getgrnam($user)], $class;
         if (@$s) {
-            wantarray ? @$s : $s
+            wantarray ? @$s : $s    ## no critic
         } else {
             return
         }
@@ -1466,7 +1478,7 @@ sub xgetpwnam {
 sub xgetgrnam {
     @_ == 1 or fp_croak_arity 1;
     my ($group) = @_;
-    if (wantarray) {
+    if (wantarray) {                ## no critic
         my @f = Chj::xperlfunc::Getgrnam->perhaps_get($group);
         @f or croak "xgetgrnam: '$group' not in group file";
         @f
