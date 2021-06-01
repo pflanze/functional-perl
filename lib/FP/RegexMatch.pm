@@ -91,7 +91,7 @@ sub all_continuous_matches1 ($str, $re) {
         push @res, $1;
         die "got more than 1 capture" if defined $2;
     }
-    wantarray ? (\@res, $pos) : \@res
+    wantarray ? (\@res, $pos) : \@res    ## no critic
 }
 
 # captures the whole string of all matches of $re, requiring them to
@@ -104,7 +104,7 @@ sub all_continuous_matches_whole ($str, $re) {
         $pos = pos($str);
         push @res, $1;
     }
-    wantarray ? (\@res, $pos) : \@res
+    wantarray ? (\@res, $pos) : \@res    ## no critic
 }
 
 # ^ XX ach  pos 0  auto since  str is COPIED MAN  KRST

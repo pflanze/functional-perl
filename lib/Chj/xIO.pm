@@ -97,7 +97,7 @@ sub capture_stderr (&) {
 sub with_output_to_file {
     @_ == 2 or fp_croak_arity 2;
     my ($file, $thunk) = @_;
-    my $wantarray = wantarray;
+    my $wantarray = wantarray;    ## no critic
     my @res;
     open my $out, ">", $file
         or fp_croak "with_output_to_file: open '$file': $!";

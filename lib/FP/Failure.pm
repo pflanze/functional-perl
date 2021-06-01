@@ -268,7 +268,7 @@ sub failure {
             }
         : undef
     );
-    defined wantarray ? $v : die $v
+    defined wantarray ? $v : die $v    ## no critic
 }
 
 sub is_failure {
@@ -276,13 +276,12 @@ sub is_failure {
     force($_[0])->$_isa("FP::Failure::Failure")
 }
 
-our $use_failure = 0;    # bool
+our $use_failure = 0;                  # bool
 
 sub fails {
     @_ >= 1 and @_ <= 2 or fp_croak_arity "1-2";
-    $use_failure            ? &failure(@_)
-        : defined wantarray ? 0
-        :                     die "fails called in void context";
+    $use_failure ? &failure(@_) : defined wantarray ? 0    ## no critic
+        :          die "fails called in void context";
 }
 
 package FP::Failure::Abstract::Message {

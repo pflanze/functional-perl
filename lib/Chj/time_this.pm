@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -60,7 +60,7 @@ my $fields = [qw(user system cuser csystem)];
 
 sub time_this (&;@) {
     my ($thunk, @args) = @_;
-    my $wantarray = wantarray;
+    my $wantarray = wantarray;    ## no critic
     my $args      = {};
     my $maybe_msg
         = @args == 1 ? $args[0] : do { $args = +{@args}; $$args{msg} };

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -149,8 +149,8 @@ sub memoizing_ {
     my ($fn, $cache, $getcache) = @_;
     sub {
         my @args      = @_;
-        my $wantarray = wantarray;
-        defined $wantarray or die "memoizing a function in void context";
+        my $wantarray = wantarray;    ## no critic
+        defined $wantarray or die "using a memoizing function in void context";
 
         # Can't reuse the result from an array context in a scalar
         # context, since we can't assume that $fn would return the

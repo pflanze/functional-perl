@@ -587,7 +587,7 @@ sub eval_code {
         if (defined $maybe_lexicals) {
             $lp->lexicals(hashset_union($lp->lexicals, $maybe_lexicals))
         }
-        my $context = wantarray ? "list" : "scalar";
+        my $context = wantarray ? "list" : "scalar";    ## no critic
         $lp->context($context);
         WithRepl_eval { $lp->eval($allcode) }
     } else {

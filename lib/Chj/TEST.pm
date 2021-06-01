@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -247,7 +247,7 @@ package Chj::TEST::Test::Builder {
     sub caller {
         my ($self, $height) = @_;
         if ($fake_caller) {
-            wantarray ? @$fake_caller : $$fake_caller[0]
+            wantarray ? @$fake_caller : $$fake_caller[0]    ## no critic
         } else {
             my $m = $self->can("SUPER::caller") or die "bug";
             goto $m

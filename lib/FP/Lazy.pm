@@ -474,7 +474,7 @@ sub FORCE {
     for (@_) {
         $_ = force $_
     }
-    wantarray ? @_ : $_[-1]
+    wantarray ? @_ : $_[-1]    ## no critic
 }
 
 # XX because show did lead to endless loop, (why?) sgh

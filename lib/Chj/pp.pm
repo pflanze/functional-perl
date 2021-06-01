@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -48,13 +48,13 @@ sub Dump {
 
 sub pp {
     print STDERR Dump(@_);
-    wantarray ? @_ : $_[-1]
+    wantarray ? @_ : $_[-1]    ## no critic
 }
 
 sub pp_ {
     my $msg = shift;
     print STDERR "$msg:", (@_ > 1 ? "\n" : " "), Dump(@_);
-    wantarray ? @_ : $_[-1]
+    wantarray ? @_ : $_[-1]    ## no critic
 }
 
 1

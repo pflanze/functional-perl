@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2021 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -81,7 +81,7 @@ package FunctionalPerl::Htmlgen::Linking::code {
         print STDERR "perhaps_module_pod_url(@_)..";
         my @res = perhaps_module_pod_url @_;
         print STDERR "@res\n";
-        wantarray ? @res : $res[-1]
+        wantarray ? @res : $res[-1] ## no critic
     };
 
     sub maybe_module_pod_url($v) {

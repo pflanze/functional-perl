@@ -74,7 +74,7 @@ sub blessing_snd {
     my ($m) = @_;
     sub {
         my $class = ref $_[0];
-        wantarray
+        wantarray    ## no critic
             ? do {
             my ($v, $a) = &$m(@_);
             ($v, $class->new_from_array($a))
