@@ -332,21 +332,21 @@ sub xexec_safe {
 sub xspawn {
     croak "xspawn: too few arguments" unless @_;
     local $^F = 0;
-    pipe READ, WRITE or die "pipe: $!";
+    pipe my $read, my $write or die "pipe: $!";
     if (my $pid = xfork) {
-        close WRITE;
+        close $write or die $!;
         local $_;
-        while (<READ>) {    ## no critic, $_ is localized
-            close READ;
+        while (<$read>) {    ## no critic, $_ is localized
+            close $read;
             croak "xspawn: can't exec \"$_[0]\": $_";
         }
-        close READ;
+        close $read or die $!;
         return $pid;
     } else {
         no warnings;
-        close READ;
+        close $read or die $!;
         exec @_;
-        select WRITE;
+        select $write or die $!;
         $| = 1;
         print $!;
         exit;
