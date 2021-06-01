@@ -38,6 +38,8 @@ sub usage {
 
   Criticizes the functional-perl code base.
 
+  Configuration: .perlcriticrc
+
   Options:
     --repl
 ";
@@ -74,7 +76,7 @@ usage if @ARGV;
     }
 
     sub string($self) {
-        $self->prefix . $self->messsage
+        $self->prefix . "Exception: " . $self->message
     }
     _END_;
 }
@@ -102,19 +104,19 @@ PFLANZE::CriticErr::constructors->import;
 PFLANZE::CriticOk::constructors->import;
 
 sub critique($path) {
-    eval {
-        my $critic    = Perl::Critic->new();
-        my $critiques = purearray $critic->critique($path);
-        CriticOk($path, $critiques);
-    } || CriticErr($path, "$@");
+    my $critic = Perl::Critic->new();
+    eval { CriticOk($path, purearray($critic->critique($path))) }
+        // CriticErr($path, "$@")
 }
 
-our $critiques = array_to_stream(modulepathlist)->map(\&critique);
+my $critiques = array_to_stream(modulepathlist)->map(\&critique);
+my $relevant  = $critiques->filter(the_method "has_critique");
 
 if ($opt_repl) {
     repl;
 } else {
-    $critiques->filter(the_method "has_critique")->for_each(
+    $|++;
+    $relevant->for_each(
         sub($c) {
             xprintln $c->string
         }
