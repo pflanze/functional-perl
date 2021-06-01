@@ -1,5 +1,10 @@
 Revision history for FunctionalPerl
 
+0.72.71 2021-6-1
+    - revive meta/critic (perlcritic), apply fixes, leave
+      `critic-todo` file for remaining issues to work on (and prevent
+      release on new (or fixed) issues without explicit update)
+
 0.72.70 2021-5-31
     - Fixes for testing and dependency issues, including removing
       some unused imports.
