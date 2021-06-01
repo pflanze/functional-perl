@@ -1090,13 +1090,14 @@ sub xdup {    # (return objects)
     #  which works like:     open($io, _open_mode_string($mode) . '&' . $fd)
     # XX HACK:
     my $new = ref($self)->new;
-    open $new, ">& = $fd" or die "xdup: error building perl fh from fd $fd";
+    open $new, ">& = $fd"    ## no critic
+        or die "xdup: error building perl fh from fd $fd";
     $new
 
         # XX hm IO::Handle::fdopen is checkint if it's a glob already
 }
 
-sub xdupfd {    # return integers
+sub xdupfd {                 # return integers
     my $s = shift;
     require POSIX;
     my $myfileno = CORE::fileno $s;
@@ -1118,7 +1119,7 @@ sub autoflush {
         select $old;
         $oldv
     } else {
-        defined wantarray
+        defined wantarray    ## no critic
             or croak
             "autoflush: used in void context without arguments (note that this is "
             . __PACKAGE__
