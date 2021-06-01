@@ -66,7 +66,7 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use FP::Carp;
 
 # Exception: use prototype here? Really DSL. Point it out early.
-sub __ ($) { }
+sub __ ($) { }    ## no critic
 
 # optimization would be to make it syntax...
 
