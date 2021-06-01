@@ -286,9 +286,9 @@ sub perhaps_open {
     my $rv;
     $! = undef;
     if (@_ == 1) {
-        $rv = open $self->fh, $_[0];
+        $rv = open $self->fh, $_[0];    ## no critic
     } elsif (@_ >= 2) {
-        $rv = open $self->fh, $_[0], @_[1 .. $#_];
+        $rv = open $self->fh, $_[0], @_[1 .. $#_];    ## no critic
     } else {
         croak "xopen @_: wrong number of arguments";
     }
