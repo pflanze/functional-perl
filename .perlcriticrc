@@ -1,0 +1,4 @@
+# https://metacpan.org/pod/Perl::Critic::Community
+# Or, 'freenode' in older version.
+theme = freenode
+severity = 1
