@@ -119,7 +119,7 @@ use Chj::xoutpipe();
 use Chj::xtmpfile;
 use Chj::xperlfunc qw(xexec xstat);
 use Chj::xopen qw(fh_to_fh perhaps_xopen_read);
-use POSIX;
+use POSIX qw(sigaction SIGINT);
 use Chj::xhome qw(xsafehome);
 use Chj::singlequote 'singlequote';
 use FP::HashSet qw(hashset_union);
