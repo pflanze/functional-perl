@@ -105,6 +105,7 @@ package FP::_::Collection {
             for (keys %$a) {
                 exists $b->{$_} and equal($a->{$_}, $b->{$_}) or return '';
             }
+            1
         }
     }
 
