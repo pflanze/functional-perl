@@ -35,9 +35,7 @@ WriteMakefile(
         "NEXT"                => 0,
         "Symbol"              => 0,
         "utf8"                => 0,
-        "overload"            => 0,
         "Digest"              => 0,
-        "warnings"            => 0,
         "Test::More"          => "0.96",    # for ~proper subtest support
         "Scalar::Util"        => 0,
         "Import::Into"        => 0,

@@ -105,12 +105,13 @@ package FP::_::Collection {
             for (keys %$a) {
                 exists $b->{$_} and equal($a->{$_}, $b->{$_}) or return '';
             }
+            1
         }
     }
 
     sub FP_Show_show {
         my ($s, $show) = @_;
-        "Collection" . join(", ", map { $show->($s->{$_}) } sort keys %$s)
+        "Collection(" . join(", ", map { $show->($s->{$_}) } sort keys %$s) . ")"
     }
 
     use FP::Interfaces;

@@ -97,14 +97,19 @@ use Text::CSV;
 use FP::HashSet 'hashset_union';
 use Chj::xopen 'xopen_read';
 use FP::Carp;
+use FP::Stream "stream_for_each";
+use Chj::xtmpfile;
+use FP::Docstring;
 
 sub new_csv_instance {
+    __ 'new_csv_instance($maybe_params) -> Text::CSV';
     @_ == 1 or fp_croak_arity "1";
     my ($maybe_params) = @_;
     Text::CSV->new($maybe_params)
 }
 
 sub csv_line_xparser {
+    __ 'csv_line_xparser($maybe_params) -> sub($line) -> fields';
     @_ == 1 or fp_croak_arity "1";
     my ($maybe_params) = @_;
     my $csv = new_csv_instance $maybe_params;
@@ -120,6 +125,7 @@ sub csv_line_xparser {
 }
 
 sub csv_fh_to_rows {
+    __ 'csv_fh_to_rows($in, $maybe_params) -> stream';
     @_ == 2 or fp_croak_arity "2";
     my ($in, $maybe_params) = @_;
     my $csv = new_csv_instance($maybe_params);
@@ -141,6 +147,7 @@ sub csv_fh_to_rows {
 }
 
 sub csv_file_to_rows {
+    __ 'csv_file_to_rows($path, $maybe_params) -> stream';
     @_ == 2 or fp_croak_arity "2";
     my ($path, $maybe_params) = @_;
     my $in = xopen_read $path;
@@ -151,6 +158,7 @@ sub csv_file_to_rows {
 # -- Output: ---
 
 sub csv_printer {
+    __ 'csv_printer($fh, $maybe_params) -> sub ($row) -> ()';
     @_ == 2 or fp_croak_arity "2";
     my ($fh, $maybe_params) = @_;
     my $csv = new_csv_instance($maybe_params);
@@ -163,18 +171,16 @@ sub csv_printer {
     }
 }
 
-use FP::Stream "stream_for_each";
-
 sub rows_to_csv_fh {
+    __ 'rows_to_csv_fh($s, $fh, $maybe_params) -> ()';
     @_ == 3 or fp_croak_arity "3";
     my ($s, $fh, $maybe_params) = @_;
     weaken $_[0];
     stream_for_each csv_printer($fh, $maybe_params), $s
 }
 
-use Chj::xtmpfile;
-
 sub rows_to_csv_file {
+    __ 'rows_to_csv_file($s, $path, $maybe_params) -> ()';
     @_ == 3 or fp_croak_arity "3";
     my ($s, $path, $maybe_params) = @_;
     weaken $_[0];
