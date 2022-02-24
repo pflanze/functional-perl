@@ -70,34 +70,39 @@ FP::Struct - classes for functional perl
       _END_ # generate accessors for methods of given name which don't
             # exist yet *in either Bar or any super class*. (Does that
             # make sense?)
+            # and export the constructors to the packages given here:
+         "main"; 
     }
 
-    my $bar = new FPStructExample::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
-    # same thing, but with sub instead of method call interface:
-    my $baz = FPStructExample::Bar2::c::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
-    # or:
-    import FPStructExample::Bar2::constructors;
-    my $baz = Bar2 ("Franz", ["Barney"], "some aa", 1,2);
+    package main {
+        my $bar = new FPStructExample::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
+        # same thing, but with sub instead of method call interface:
+        my $baz = FPStructExample::Bar2::c::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
+        # or:
+        #FPStructExample::Bar2::constructors->import;
+        # or in fact, we already exported them via _END_("main")
+        my $baz = Bar2 ("Franz", ["Barney"], "some aa", 1,2);
 
-    is $bar->div, 1/2;
+        is $bar->div, 1/2;
 
-    is(Bar2_(a => 1,b => 2)->div, 1/2);
-    is(FPStructExample::Bar2::c::Bar2_(a => 1, b => 2)->div, 1/2);
-    is(new__ FPStructExample::Bar2({a => 1,b => 2})->div, 1/2);
-    is(unsafe_new__ FPStructExample::Bar2({a => 1,b => 2})->div, 1/2);
-    # NOTE: unsafe_new__ returns the argument hash after checking and
-    # blessing it, it doesn't copy it! Be careful. `new__` does copy it.
+        is(Bar2_(a => 1,b => 2)->div, 1/2);
+        is(FPStructExample::Bar2::c::Bar2_(a => 1, b => 2)->div, 1/2);
+        is(new__ FPStructExample::Bar2({a => 1,b => 2})->div, 1/2);
+        is(unsafe_new__ FPStructExample::Bar2({a => 1,b => 2})->div, 1/2);
+        # NOTE: unsafe_new__ returns the argument hash after checking and
+        # blessing it, it doesn't copy it! Be careful. `new__` does copy it.
 
-    is $bar->b_set(3)->div, 1/3;
+        is $bar->b_set(3)->div, 1/3;
 
-    use FP::Div 'inc';
-    is $bar->b_update(\&inc)->div, 1/3;
+        use FP::Div 'inc';
+        is $bar->b_update(\&inc)->div, 1/3;
 
-    is $bar->hum, "Franz hums 1 over 2";
+        is $bar->hum, "Franz hums 1 over 2";
 
-    is Chj::TEST::run_tests("FPStructExample::Bar2")->successes, 1;
-    is (FPStructExample::Bar2->can("TEST"), undef);
-    # ^ it was removed by namespace cleaning
+        is Chj::TEST::run_tests("FPStructExample::Bar2")->successes, 1;
+        is (FPStructExample::Bar2->can("TEST"), undef);
+        # ^ it was removed by namespace cleaning
+    }
 
 =for test ignore
 
@@ -120,7 +125,7 @@ C<Foo::Bar::c::Bar_()> for named arguments for package Foo::Bar. These
 are also in C<Foo::Bar::constructors::> and can be imported using
 (without arguments, it imports both):
 
-    import Foo::Bar::constructors qw(Bar Bar_);
+    Foo::Bar::constructors->import(qw(Bar Bar_));
 
 C<_END_> does namespace cleaning: any sub that was defined before the C<use
 FP::Struct> call is removed by the C<_END_> call (those that are not the
@@ -131,7 +136,8 @@ definition of the methods, that the imported procedures can be used
 from within the defined methods, but are not around afterwards,
 i.e. they will not shadow super class methods. (Thanks to Matt S Trout
 for pointing out the idea.) To avoid the namespace cleaning, write
-C<_END__> instead of C<_END_>.
+C<_END__> instead of C<_END_>. Both of these optionally take any number
+of packages, to which they will export the constructors.
 
 See L<FP::Predicates> for some useful predicates (others are in the
 respective modules that define them, like C<is_pair> in L<FP::List>).
@@ -365,6 +371,7 @@ sub import {
     *{"${package}::constructors::EXPORT_TAGS"} = +{ all => $exports };
 
     my $end = sub {
+        my (@exportpackages) = @_;
 
         #warn "_END_ called for package '$package'";
         for my $_field (@$fields) {
@@ -440,6 +447,13 @@ sub import {
             );
         }
 
+        # Optionally export to packages:
+        for my $exportpackage (@exportpackages) {
+            # warn "exporting constructors from $package to $exportpackage";
+            *{"${exportpackage}::${package_lastpart}"}  = $constructor;
+            *{"${exportpackage}::${package_lastpart}_"} = $constructor_;
+        }
+
         # Check any interfaces:
         package_check_possible_interface($package, $_) for @isa;
 
@@ -450,7 +464,7 @@ sub import {
 
         #warn "_END_ called for package '$package'";
         package_delete $package, $nonmethods;
-        &$end;
+        goto $end;
     };
 
     unless ($is_expandedvariant) {
