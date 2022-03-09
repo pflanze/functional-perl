@@ -162,6 +162,8 @@ our @EXPORT_OK = qw(
     list_perhaps_find_tail list_perhaps_find
     list_find_tail list_find
     list_insertion_variants
+    cartesian_product_2
+    cartesian_product
     is_charlist ldie
     cddr
     cdddr
@@ -2330,6 +2332,65 @@ list(
 TEST { list_insertion_variants list(qw(a)), 0, list "END" }
 list(list(0, 'a'), list('a', 0), 'END');
 TEST { list_insertion_variants list(), 0, list "END" } list(list(0), 'END');
+
+# Adapted copy-paste from FP/Stream.pm
+
+sub cartesian_product_2 {
+    @_ == 2 or fp_croak_arity 2;
+    my ($a, $orig_b) = @_;
+    my $rec;
+    $rec = sub {
+        my ($a, $b) = @_;
+        my $rec = $rec;
+        {
+            if (is_null $a) {
+                null
+            } elsif (is_null $b) {
+                &$rec(cdr($a), $orig_b);
+            } else {
+                cons(cons(car($a), car($b)), &$rec($a, cdr $b))
+            }
+        }
+    };
+    Weakened($rec)->($a, $orig_b)
+}
+
+*FP::List::List::cartesian_product_2 = \&cartesian_product_2;
+
+TEST { cartesian_product_2 list("A", "B"), list(list(1), list(2)) }
+list(list('A', 1), list('A', 2), list('B', 1), list('B', 2));
+
+TEST {
+    cartesian_product_2 list("E", "F"), cartesian_product_2 list("C", "D"),
+        list(list("A"), list("B"))
+}
+list(
+    list("E", "C", "A"),
+    list("E", "C", "B"),
+    list("E", "D", "A"),
+    list("E", "D", "B"),
+    list("F", "C", "A"),
+    list("F", "C", "B"),
+    list("F", "D", "A"),
+    list("F", "D", "B")
+);
+
+sub cartesian_product {
+    my @v = @_;
+    if (!@v) {
+        die "cartesian_product: need at least 1 argument"
+    } elsif (@v == 1) {
+        list_map \&list, $v[0]
+    } else {
+        my $first = shift @v;
+        cartesian_product_2($first, cartesian_product(@v))
+    }
+}
+
+*FP::List::List::cartesian_product = \&cartesian_product;
+
+TEST { cartesian_product list("A", "B"), list(1, 2) }
+list(list('A', 1), list('A', 2), list('B', 1), list('B', 2));
 
 use FP::Char 'is_char';
 
