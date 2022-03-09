@@ -65,6 +65,9 @@ WriteMakefile(
         "Text::CSV"           => 0,
         "Test::Pod::Snippets" => 0,
         "URI"                 => 0,
+
+        # for meta/FunctionalPerl/Indexing.pm
+        "File::chdir"         => 0,
     },
     META_MERGE => {
         'meta-spec' => { version => '2', },
