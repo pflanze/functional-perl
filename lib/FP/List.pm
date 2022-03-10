@@ -132,7 +132,7 @@ use Exporter "import";
 
 our @EXPORT = qw(
     cons cons_ is_pair null is_null is_pair_of is_pair_or_null
-    list_of  is_null_or_pair_of null_or_pair_of is_list
+    list_of nonempty_list_of is_null_or_pair_of null_or_pair_of is_list
     car cdr first rest
     car_and_cdr first_and_rest perhaps_first_and_rest
     list);
@@ -983,6 +983,19 @@ TEST { list_of(\&is_natural)->(list 1,  2, 3) } 1;
 TEST { list_of(\&is_natural)->(list -1, 2, 3) } 0;
 TEST { list_of(\&is_natural)->(list 1,  2, " 3") } 0;
 TEST { list_of(\&is_natural)->(1) } 0;
+TEST { list_of(\&is_natural)->(list()) } 1;
+
+sub nonempty_list_of {
+    @_ == 1 or fp_croak_arity 1;
+    my ($p) = @_;
+    is_pair_of($p, delayed { list_of($p) })
+}
+
+TEST { nonempty_list_of(\&is_natural)->(list 1,  2, 3) } 1;
+TEST { nonempty_list_of(\&is_natural)->(list -1, 2, 3) } 0;
+TEST { nonempty_list_of(\&is_natural)->(list 1,  2, " 3") } 0;
+TEST { nonempty_list_of(\&is_natural)->(1) } undef;      # XX vs. above
+TEST { nonempty_list_of(\&is_natural)->(list()) } '';    # vs. 0 ?
 
 sub make_length {
     my ($is_stream) = @_;
