@@ -2182,6 +2182,81 @@ TEST {
 }
 list(list(3), list(4, 4), list(5), list(6), list(8), list(5, 5));
 
+# Split on items for which the predicate returns true:
+
+sub make_split {
+    my ($is_stream) = @_;
+    sub {
+        __
+            'split($self, $pred, $retain_item, $maybe_tail): split on items for which $pred returns true. If $retain_item is true, the item that matched will be included in the previous group.';
+        @_ >= 2 and @_ <= 4 or fp_croak_arity "2-4";
+
+        require FP::PureArray;
+
+        my ($s, $pred, $retain_item, $maybe_tail) = @_;
+        weaken $_[1] if $is_stream;
+        lazy_if {
+            FORCE $s;
+            if (is_null $s) {
+                $maybe_tail // null
+            } else {
+                my ($a, $r) = $s->first_and_rest;
+                my $rec;
+                $rec = sub {
+                    my ($s) = @_;
+                    lazy_if {
+                        my $s = $s;
+
+                        # ^ ? (Make a local variable for mutation? Not
+                        # really necessary, though, right?)
+                        my $group = [];
+                    LP: {
+                            FORCE $s;
+                            if (is_null $s) {
+                                if (@$group) {
+                                    cons(
+                                        FP::PureArray::array_to_purearray(
+                                            $group),
+                                        ($maybe_tail // null)
+                                    )
+                                } else {
+                                    ($maybe_tail // null)
+                                }
+                            } else {
+                                my ($a, $r) = $s->first_and_rest;
+                                if ($pred->($a)) {
+                                    if ($retain_item) {
+                                        push @$group, $a;
+                                    }
+                                    cons(
+                                        FP::PureArray::array_to_purearray(
+                                            $group),
+                                        $rec->($r)
+                                    )
+                                } else {
+                                    $s = $r;
+                                    push @$group, $a;
+                                    redo LP;
+                                }
+                            }
+                        }
+                    }
+                    $is_stream;
+                };
+                $rec->($r)
+            }
+        }
+        $is_stream
+    }
+}
+
+sub list_split;
+*list_split = make_split(0);
+
+*FP::List::List::split = \&list_split;
+
+# For split tests see FP::List::t.
+
 # Turn a mix of (nested) arrays and lists into a flat list.
 
 # If the third argument is given, it needs to be a reference to either

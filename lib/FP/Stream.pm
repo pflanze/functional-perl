@@ -965,6 +965,9 @@ sub FP::List::List::stream_group {
     stream_group($equal, $self, $maybe_tail)
 }
 
+sub stream_split;
+*stream_split = FP::List::make_split(1);
+
 sub stream_mixed_flatten {
     @_ >= 1 and @_ <= 3 or fp_croak_arity "1-3";
     my ($v, $maybe_tail, $maybe_delay) = @_;
