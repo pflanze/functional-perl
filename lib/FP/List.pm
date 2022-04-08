@@ -2121,7 +2121,7 @@ TEST { [list(3, 1, 37, -5)->find_tail(\&is_even)] }
 
 sub make_group {
     my ($is_stream) = @_;
-    my $group = sub {
+    sub {
         @_ >= 2 and @_ <= 3 or fp_croak_arity "2-3";
         my ($equal, $s, $maybe_tail) = @_;
         weaken $_[1] if $is_stream;
