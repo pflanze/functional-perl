@@ -201,6 +201,7 @@ use FP::Weak qw(Weakened);
 use FP::Interfaces;
 use Carp;
 use FP::Carp;
+use FP::Docstring;
 
 our $immutable = 1;    # whether pairs are to be made immutable
 
@@ -2169,6 +2170,8 @@ sub list_group;
 *list_group = make_group(0);
 
 sub FP::List::List::group {
+    __
+        'group($self, $equal, $maybe_tail): build groups of subsequent items that are $equal.';
     @_ >= 2 and @_ <= 3 or fp_croak_arity "2-3";
     my ($self, $equal, $maybe_tail) = @_;
     list_group($equal, $self, $maybe_tail)
