@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2003-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -776,9 +776,7 @@ sub fstype_for_device {
     $t
 }
 
-{
-
-    package Chj::xperlfunc::xstat;
+package Chj::xperlfunc::xstat {
 
     # (Alternative to arrays: hashes, so that slices like
     # ->{"dev","ino"} could be done? But so what.)
@@ -1030,9 +1028,8 @@ sub fstype_for_device {
 use FP::Div qw(min max);    # min just for the backwards-compatible
                             # re-export
 
-{
-
-    package Chj::xperlfunc::mtimed;
+package Chj::xperlfunc::mtimed {
+    
     sub path       { shift->[0] }
     sub mtime      { shift->[1] }
     sub lstat      { shift->[2] }
@@ -1102,9 +1099,8 @@ sub XLmtime {
     }
 }
 
-{
+package Chj::xperlfunc::xlocaltime {
 
-    package Chj::xperlfunc::xlocaltime;
     sub sec   { shift->[0] }
     sub min   { shift->[1] }
     sub hour  { shift->[2] }
@@ -1167,9 +1163,7 @@ sub xmkdir_with_paragon {
     xchmod $mode, $_[0];
 }
 
-{
-
-    package Chj::xperlfunc::tmpdir;
+package Chj::xperlfunc::tmpdir {
 
     sub DESTROY {
         my $self = shift;
@@ -1426,9 +1420,8 @@ sub xlink_p {
 #       or die "xuser_uid: '$user' not in passwd file";
 #     $uid
 # }
-{
+package Chj::xperlfunc::Getpwnam {
 
-    package Chj::xperlfunc::Getpwnam;
     use Chj::Class::Array -fields => -publica =>
         qw(name passwd uid gid quota comment gcos dir shell expire);
 
@@ -1458,9 +1451,8 @@ sub xgetpwnam {
     }
 }
 
-{
+package Chj::xperlfunc::Getgrnam {
 
-    package Chj::xperlfunc::Getgrnam;
     use Chj::Class::Array -fields => -publica => qw(name passwd gid members);
 
     sub perhaps_get {
