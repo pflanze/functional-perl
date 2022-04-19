@@ -1029,7 +1029,7 @@ use FP::Div qw(min max);    # min just for the backwards-compatible
                             # re-export
 
 package Chj::xperlfunc::mtimed {
-    
+
     sub path       { shift->[0] }
     sub mtime      { shift->[1] }
     sub lstat      { shift->[2] }
@@ -1134,6 +1134,31 @@ package Chj::xperlfunc::xlocaltime {
     sub unixtime {
         my $s = shift;
         Time::Local::timelocal(@$s)
+    }
+
+    sub iso_week_number {
+        my $s = shift;
+
+        # On which yday does week 01 start for `Year`?
+
+        my $wDay = $s->wDay;
+        my $yday = $s->yday;
+
+        my $weekstart_day = $yday - $wDay;
+
+        my ($offset, $weeks) = ($weekstart_day % 7, int($weekstart_day / 7));
+
+        my $week = ($offset >= 4) ? $weeks + 2 : $weeks + 1;
+        $yday < $offset ? "LASTYEAR" : $week
+
+            # XX needs to give the year, actually! Buggy.
+    }
+
+    sub Year_and_iso_week_number {
+        my $s = shift;
+        $s->Year . "-W" . $s->iso_week_number
+
+            # XX needs to give the year with the week, actually! Buggy.
     }
 }
 
