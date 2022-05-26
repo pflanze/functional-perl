@@ -177,11 +177,15 @@ our $export_desc = +{
     ":numbers"   => [qw(FP::BigInt)],
     ":chars"     => [qw(FP::Char)],
     ":sequences" => [
-        qw(FP::List FP::StrictList FP::MutableArray
-            FP::Array FP::Array_sort
-            FP::PureArray
-            FP::SortedPureArray
-            :streams)
+        qw(FP::List FP::MutableArray
+           FP::Array FP::Array_sort
+           FP::PureArray
+           :streams)
+    ],
+    ":all_sequences" => [
+        qw(:primary_sequences
+           FP::StrictList
+           FP::SortedPureArray)
     ],
     ":maps"           => [qw(FP::Hash FP::PureHash)],
     ":sets"           => [qw(FP::HashSet FP::OrderedCollection)],
