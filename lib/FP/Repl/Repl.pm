@@ -419,20 +419,17 @@ sub formatter {
     hash_xref(
         +{
             p => sub {
-                (join "", map { (defined $_ ? $_ : 'undef') . "\n" } @_)
+                join "", map { (defined $_ ? $_ : 'undef') . "\n" } @_
             },
             s => sub {
                 my $z = 1;
-                (
-                    join "",
-                    map {
-                        my $VARX
-                            = ($$self[DoKeepResultsInVARX] and not $terse)
-                            ? '$VAR' . $z++ . ' = '
-                            : '';
-                        $VARX . show($_) . ";\n"
+                join "", map {
+                    my $VARX
+                        = ($$self[DoKeepResultsInVARX] and not $terse)
+                        ? '$VAR' . $z++ . ' = '
+                        : '';
+                    $VARX . show($_) . ";\n"
                     } @_
-                )
             },
             d => sub {
                 my @v = @_;    # to survive into
