@@ -139,8 +139,11 @@ To see a list of all repl commands enter `:?`. You can also use the
 comma `,` instead of the colon if you prefer. The repl remembers these
 settings across repl runs (they are stored in ~/.fp-repl_settings).
 
+You may have noticed that there's also `:S`, which will usually give
+nicer to read output, but requires `Perl::Tidy` to be installed.
+
 So, yes, `cons 3, null` is equivalent to `cons 3, list()` which is
-equivalent to `list(3)`, and the :s representation shows perl code
+equivalent to `list(3)`, and the `:s` representation shows perl code
 that would construct the given result using existing constructor
 functions. (How the repl knows how to print data structures is via the
 `show` function in the `FP::Show` module.)
