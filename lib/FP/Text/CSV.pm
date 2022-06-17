@@ -21,7 +21,7 @@ FP::Text::CSV - functional interface to Text::CSV
 
     my $csvparams = +{sep_char => ";", eol => "\n"};
     # $csvparams and any of its entries are optional,
-    #  for the defaults see the Text::CSV docs.
+    #  defaults are taken from $FP::Text::CSV::defaults
 
     use Chj::xopen qw(xopen_read xopen_write);
     use FP::List; use FP::Stream; use FP::Equal 'is_equal';
@@ -101,11 +101,19 @@ use FP::Stream "stream_for_each";
 use Chj::xtmpfile;
 use FP::Docstring;
 
+our $defaults = +{ binary => 1, sep_char => "\t", eol => "\r\n", };
+
+sub params {
+    @_ == 1 or fp_croak_arity 1;
+    my ($maybe_params) = @_;
+    defined $maybe_params ? hashset_union($maybe_params, $defaults) : $defaults
+}
+
 sub new_csv_instance {
     __ 'new_csv_instance($maybe_params) -> Text::CSV';
     @_ == 1 or fp_croak_arity "1";
     my ($maybe_params) = @_;
-    Text::CSV->new($maybe_params)
+    Text::CSV->new(params $maybe_params)
         or die "could not create a Text::CSV instance";
 }
 
