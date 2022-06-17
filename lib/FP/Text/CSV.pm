@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -126,7 +126,7 @@ sub csv_line_xparser {
 
 sub csv_fh_to_rows {
     __ 'csv_fh_to_rows($in, $maybe_params) -> stream';
-    @_ == 2 or fp_croak_arity "2";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1-2";
     my ($in, $maybe_params) = @_;
     my $csv = new_csv_instance($maybe_params);
     my $next;
@@ -148,7 +148,7 @@ sub csv_fh_to_rows {
 
 sub csv_file_to_rows {
     __ 'csv_file_to_rows($path, $maybe_params) -> stream';
-    @_ == 2 or fp_croak_arity "2";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1-2";
     my ($path, $maybe_params) = @_;
     my $in = xopen_read $path;
     binmode($in, ":encoding(utf-8)") or die "binmode";
@@ -159,7 +159,7 @@ sub csv_file_to_rows {
 
 sub csv_printer {
     __ 'csv_printer($fh, $maybe_params) -> sub ($row) -> ()';
-    @_ == 2 or fp_croak_arity "2";
+    @_ == 1 or @_ == 2 or fp_croak_arity "1-2";
     my ($fh, $maybe_params) = @_;
     my $csv = new_csv_instance($maybe_params);
     sub {
@@ -173,7 +173,7 @@ sub csv_printer {
 
 sub rows_to_csv_fh {
     __ 'rows_to_csv_fh($s, $fh, $maybe_params) -> ()';
-    @_ == 3 or fp_croak_arity "3";
+    @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
     my ($s, $fh, $maybe_params) = @_;
     weaken $_[0];
     stream_for_each csv_printer($fh, $maybe_params), $s
@@ -181,7 +181,7 @@ sub rows_to_csv_fh {
 
 sub rows_to_csv_file {
     __ 'rows_to_csv_file($s, $path, $maybe_params) -> ()';
-    @_ == 3 or fp_croak_arity "3";
+    @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
     my ($s, $path, $maybe_params) = @_;
     weaken $_[0];
     my $out = xtmpfile $path;
