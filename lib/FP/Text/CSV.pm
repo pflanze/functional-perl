@@ -194,6 +194,7 @@ sub rows_to_csv_file {
     my ($s, $path, $maybe_params) = @_;
     weaken $_[0];
     my $out = xtmpfile $path;
+    binmode($out, ":encoding(utf-8)") or die "binmode";
     rows_to_csv_fh($s, $out, $maybe_params);
     $out->xclose;
     $out->xputback(0666 & ~umask);
