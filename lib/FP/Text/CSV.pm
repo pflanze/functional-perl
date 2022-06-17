@@ -101,7 +101,7 @@ use FP::Stream "stream_for_each";
 use Chj::xtmpfile;
 use FP::Docstring;
 
-our $defaults = +{ binary => 1, sep_char => "\t", eol => "\r\n", };
+our $defaults = +{ binary => 1, sep_char => ",", eol => "\r\n", };
 
 sub params {
     @_ == 1 or fp_croak_arity 1;
