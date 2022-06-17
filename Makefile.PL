@@ -67,7 +67,7 @@ WriteMakefile(
         "URI"                 => 0,
 
         # for meta/FunctionalPerl/Indexing.pm
-        "File::chdir"         => 0,
+        "File::chdir" => 0,
     },
     META_MERGE => {
         'meta-spec' => { version => '2', },

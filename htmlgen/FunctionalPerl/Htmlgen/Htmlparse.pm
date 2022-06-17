@@ -57,6 +57,10 @@ sub htmlparse_raw ($htmlstr, $whichtag) {
     $e->find_by_tag_name($whichtag)
 }
 
+my $attsubname_re = qr/\w[\w-]*/;    # XX OK?
+my $attname_re
+    = qr/$attsubname_re(?::$attsubname_re)?/;    # with namespace, optionally
+
 sub htmlmap($e) {
     __ '(HTML::Element) -> PXML::_::XHTML '
         . '-- convert output from HTML::TreeBuilder to PXML::XHTML (PXML::Element)';
@@ -64,7 +68,9 @@ sub htmlmap($e) {
     my $atts = {};
     for ($e->all_external_attr_names) {
         next if $_ eq "/";
-        die "att name '$_'" unless /^\w+\z/s;
+
+        # HACK: accept namespaces in attribute names
+        die "invalid attribute name string '$_'" unless /^$attname_re\z/s;
         $$atts{ lc $_ } = $e->attr($_);
     }
 
