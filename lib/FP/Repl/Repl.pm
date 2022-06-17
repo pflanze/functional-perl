@@ -447,6 +447,7 @@ sub formatter {
                 Perl::Tidy::perltidy(
                     source      => \$str,
                     destination => \$str2,
+                    argv        => ["--character-encoding=utf8"],
                 );
                 $str2
             },
