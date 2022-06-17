@@ -106,6 +106,7 @@ sub new_csv_instance {
     @_ == 1 or fp_croak_arity "1";
     my ($maybe_params) = @_;
     Text::CSV->new($maybe_params)
+        or die "could not create a Text::CSV instance";
 }
 
 sub csv_line_xparser {
