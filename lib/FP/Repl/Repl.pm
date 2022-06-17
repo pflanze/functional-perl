@@ -425,14 +425,20 @@ sub formatter {
     my $mode    = $self->mode_formatter;
     $mode = "d" if ($terse and $mode eq "p");
     my $s_formatter = sub {
-        my $z = 1;
-        join "", map {
+        my $z   = 1;
+        my $str = join "", map {
             my $VARX
                 = ($$self[DoKeepResultsInVARX] and not $terse)
                 ? '$VAR' . $z++ . ' = '
                 : '';
             $VARX . show($_) . ";\n"
-            } @_
+        } @_;
+
+        # HACK to avoid having to use Data::Dumper::AutoEncode
+        require Encode;
+        $str = Encode::decode('UTF-8', $str, Encode::FB_CROAK());
+        $str =~ s/(?<!\\)\\x\{(\w+)\}/chr hex $1/sge;
+        $str
     };
     hash_xref(
         +{
