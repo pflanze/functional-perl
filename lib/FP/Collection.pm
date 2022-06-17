@@ -111,7 +111,8 @@ package FP::_::Collection {
 
     sub FP_Show_show {
         my ($s, $show) = @_;
-        "Collection(" . join(", ", map { $show->($s->{$_}) } sort keys %$s) . ")"
+        "Collection("
+            . join(", ", map { $show->($s->{$_}) } sort keys %$s) . ")"
     }
 
     use FP::Interfaces;
