@@ -335,6 +335,8 @@ our $term;    # local'ized but old value is reused if present.
 
 our $current_history;    # local'ized; array(s).
 
+my @pagercmd_a = qw(less --quit-if-one-screen --no-init); # XX really hard code?
+
 sub print_help {
     my $self      = shift;
     my ($out)     = @_;
@@ -356,6 +358,7 @@ sub print_help {
     my $x = &$selection(lexical_persistence => 'x');
     my $X = &$selection(lexical_persistence => 'X');
     my $pagercmd_pager = join(" ", @{ $$self[Pager] });
+    my $pagercmd_a     = join(" ", @pagercmd_a);
     print $out qq{Repl help:
 If a command line starts with a ':' or ',', then the remainder of the
 line is interpreted as follows:
@@ -391,7 +394,7 @@ $d d  Data::Dumper (default)
   viewer:
 $V V  no pager
 $v v  pipe to pager ('$pagercmd_pager')
-$a a  pipe to 'less --quit-if-one-screen --no-init' (default)
+$a a  pipe to '$pagercmd_a' (default)
   lexical persistence:
    (Persisting lexicals means to carry over variables introduced with
    "my" into subsequent entries in the same repl. It prevents their
@@ -524,8 +527,7 @@ sub viewers {
                     print $OUTPUT $_[0] or die "print: $!";
                 },
                 v => &$pager_with_options(),
-                a => &$pager_with_options(
-                    qw(less --quit-if-one-screen --no-init)),
+                a => &$pager_with_options(@pagercmd_a),
             },
             $self->mode_viewer
         );
