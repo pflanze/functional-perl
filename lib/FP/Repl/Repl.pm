@@ -178,8 +178,10 @@ our $maybe_settingspath = lazyLight { force($HOME) . "/.fp-repl_settings" };
 our $maxHistLen         = 500;
 our $doCatchINT         = 1;
 our $doRepeatWhenEmpty  = 1;
-our $doKeepResultsInVARX      = 1;
-our $pager                    = lazyLight { $ENV{PAGER} || "less" };
+our $doKeepResultsInVARX = 1;
+our $pager               = lazyLight {
+    $ENV{PAGER} ? [split /\s+/, $ENV{PAGER}] : ["less"]
+};
 our $mode_context             = 'l';
 our $mode_formatter           = 'd';
 our $mode_viewer              = 'a';
@@ -353,6 +355,7 @@ sub print_help {
     my $M = &$selection(lexical_persistence => 'M');
     my $x = &$selection(lexical_persistence => 'x');
     my $X = &$selection(lexical_persistence => 'X');
+    my $pagercmd_pager = join(" ", @{ $$self[Pager] });
     print $out qq{Repl help:
 If a command line starts with a ':' or ',', then the remainder of the
 line is interpreted as follows:
@@ -387,7 +390,7 @@ $s s  show from FP::Show (experimental, does not show data sharing)
 $d d  Data::Dumper (default)
   viewer:
 $V V  no pager
-$v v  pipe to pager ($$self[Pager])
+$v v  pipe to pager ('$pagercmd_pager')
 $a a  pipe to 'less --quit-if-one-screen --no-init' (default)
   lexical persistence:
    (Persisting lexicals means to carry over variables introduced with
@@ -458,13 +461,14 @@ sub viewers {
     my $self = shift;
     my ($OUTPUT, $ERROR) = @_;
     my $port_pager_with_options = sub {
-        my ($maybe_pager, @options) = @_;
+        my (@perhaps_pagercmd) = @_;
         sub {
             my ($printto) = @_;
 
             local $SIG{PIPE} = "IGNORE";
 
-            my $pagercmd = $maybe_pager // $self->pager;
+            my @pagercmd
+                = @perhaps_pagercmd ? @perhaps_pagercmd : @{ $self->pager };
 
             eval {
                 # XX this now means that no options
@@ -481,7 +485,7 @@ sub viewers {
                         $out->xdup2(2);
                         $ENV{PATH} = $self->maybe_env_PATH
                             if defined $self->maybe_env_PATH;
-                        xexec $pagercmd, @options
+                        xexec @pagercmd
                     }
                 );
                 &$printto($o);
@@ -490,8 +494,9 @@ sub viewers {
             } || do {
                 my $estr = show($@);
                 unless ($estr =~ /broken pipe/i) {
-                    print $ERROR "error piping to pager "
-                        . "$pagercmd: $estr\n"
+                    print $ERROR "error piping to pager, "
+                        . join(" ", @pagercmd)
+                        . ": $estr\n"
                         or die $!;
                 }
             };
