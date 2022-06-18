@@ -507,6 +507,7 @@ sub viewers {
                         xexec @pagercmd
                     }
                 );
+                $o->xbinmode(":encoding(utf-8)");
                 &$print_value_to($o);
                 $o->xfinish;
                 1
