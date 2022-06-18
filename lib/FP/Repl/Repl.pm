@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2004-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2004-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -41,7 +41,7 @@ If the 'Maybe_keepResultIn' field is set to a string, the scalar with the
 given mae is set to either an array holding all the result values (in
 :l mode) or the result value (in :1 mode).
 
-By default, in the :d and :s modes the results of a calculation are
+By default, in the :d / :s / :S modes the results of a calculation are
 carried over to the next entry in $VAR1 etc. as shown by the display
 of the result. Those are lexical variables.
 
@@ -349,6 +349,7 @@ sub print_help {
     my $l = &$selection(context             => 'l');
     my $p = &$selection(formatter           => 'p');
     my $s = &$selection(formatter           => 's');
+    my $S = &$selection(formatter           => 'S');
     my $d = &$selection(formatter           => 'd');
     my $V = &$selection(viewer              => 'V');
     my $v = &$selection(viewer              => 'v');
@@ -390,6 +391,7 @@ $l l  use list context (default)
   formatter:
 $p P  print stringification
 $s s  show from FP::Show (experimental, does not show data sharing)
+$S S  show from FP::Show (ditto), but reformatted via Perl::Tidy
 $d d  Data::Dumper (default)
   viewer:
 $V V  no pager
@@ -422,20 +424,31 @@ sub formatter {
     my ($terse) = @_;                      # true for :e viewing
     my $mode    = $self->mode_formatter;
     $mode = "d" if ($terse and $mode eq "p");
+    my $s_formatter = sub {
+        my $z = 1;
+        join "", map {
+            my $VARX
+                = ($$self[DoKeepResultsInVARX] and not $terse)
+                ? '$VAR' . $z++ . ' = '
+                : '';
+            $VARX . show($_) . ";\n"
+            } @_
+    };
     hash_xref(
         +{
             p => sub {
                 join "", map { (defined $_ ? $_ : 'undef') . "\n" } @_
             },
-            s => sub {
-                my $z = 1;
-                join "", map {
-                    my $VARX
-                        = ($$self[DoKeepResultsInVARX] and not $terse)
-                        ? '$VAR' . $z++ . ' = '
-                        : '';
-                    $VARX . show($_) . ";\n"
-                    } @_
+            s => $s_formatter,
+            S => sub {
+                my $str = $s_formatter->(@_);
+                require Perl::Tidy;
+                my $str2;
+                Perl::Tidy::perltidy(
+                    source      => \$str,
+                    destination => \$str2,
+                );
+                $str2
             },
             d => sub {
                 my @v = @_;    # to survive into
@@ -1249,6 +1262,9 @@ sub run {
                                 ),
                                 s => saving(
                                     $self, sub { $$self[Mode_formatter] = "s" }
+                                ),
+                                S => saving(
+                                    $self, sub { $$self[Mode_formatter] = "S" }
                                 ),
                                 d => saving(
                                     $self, sub { $$self[Mode_formatter] = "d" }
