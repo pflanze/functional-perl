@@ -474,10 +474,6 @@ sub viewers {
                 = @perhaps_pagercmd ? @perhaps_pagercmd : @{ $self->pager };
 
             eval {
-                # XX this now means that no options
-                # can be passed in $ENV{PAGER} !
-                # (stupid Perl btw). Ok hard code
-                # 'less' instead perhaps!
                 my $o = Chj::xoutpipe(
                     sub {
 
