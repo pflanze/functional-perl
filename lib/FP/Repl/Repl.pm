@@ -466,7 +466,7 @@ sub viewers {
     my $port_pager_with_options = sub {
         my (@perhaps_pagercmd) = @_;
         sub {
-            my ($printto) = @_;
+            my ($print_value_to) = @_;
 
             local $SIG{PIPE} = "IGNORE";
 
@@ -487,7 +487,7 @@ sub viewers {
                         xexec @pagercmd
                     }
                 );
-                &$printto($o);
+                &$print_value_to($o);
                 $o->xfinish;
                 1
             } || do {
