@@ -463,7 +463,7 @@ sub formatter {
 sub viewers {
     my $self = shift;
     my ($OUTPUT, $ERROR) = @_;
-    my $port_pager_with_options = sub {
+    my $port_pager_with_perhaps_pagercmd = sub {
         my (@perhaps_pagercmd) = @_;
         sub {
             my ($print_value_to) = @_;
@@ -502,11 +502,11 @@ sub viewers {
         }
     };
 
-    my $string_pager_with_options = sub {
-        my $port_pager = &$port_pager_with_options(@_);
+    my $string_pager_with_perhaps_pagercmd = sub {
+        my $port_pager = $port_pager_with_perhaps_pagercmd->(@_);
         sub {
             my ($v) = @_;
-            &$port_pager(
+            $port_pager->(
                 sub {
                     my ($o) = @_;
                     $o->xprint($v);
@@ -516,28 +516,31 @@ sub viewers {
     };
 
     my $choosepager = sub {
-        my ($pager_with_options) = @_;
+        my ($pager_with_pagercmd) = @_;
         hash_xref(
             +{
                 V => sub {
                     print $OUTPUT $_[0] or die "print: $!";
                 },
-                v => &$pager_with_options(),
-                a => &$pager_with_options(@pagercmd_a),
+                v => $pager_with_pagercmd->(),
+                a => $pager_with_pagercmd->(@pagercmd_a),
             },
             $self->mode_viewer
         );
     };
 
     my $pager = sub {
-        my ($pager_with_options) = @_;
+        my ($pager_with_pagercmd) = @_;
         sub {
             my ($v) = @_;
-            &$choosepager($pager_with_options)->($v);
+            $choosepager->($pager_with_pagercmd)->($v);
         }
     };
 
-    (&$pager($port_pager_with_options), &$pager($string_pager_with_options))
+    (
+        &$pager($port_pager_with_perhaps_pagercmd),
+        &$pager($string_pager_with_perhaps_pagercmd)
+    )
 }
 
 our $use_warnings = q{use warnings; use warnings FATAL => 'uninitialized';};
