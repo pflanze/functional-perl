@@ -75,6 +75,8 @@ FP::Struct - classes for functional perl
     }
 
     package main {
+        use FP::Equal 'is_equal';
+
         my $bar = new FPStructExample::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
         # same thing, but with sub instead of method call interface:
         my $baz = FPStructExample::Bar2::c::Bar2 ("Franz", ["Barney"], "some aa", 1,2);
@@ -102,6 +104,13 @@ FP::Struct - classes for functional perl
         is Chj::TEST::run_tests("FPStructExample::Bar2")->successes, 1;
         is (FPStructExample::Bar2->can("TEST"), undef);
         # ^ it was removed by namespace cleaning
+
+        # Meta information: what was given in the field definitions,
+        # for the class and all FP::Struct based super classes:
+        my @fd = FP::Struct::all_fields(["FPStructExample::Bar2"]);
+        my @fieldnames = map { ref $_ ? $_->[1] : $_ } @fd;
+        is_equal \@fieldnames,
+                 [ 'name', 'animals', 'aa', 'a', 'b' ];
     }
 
 =for test ignore
@@ -449,6 +458,7 @@ sub import {
 
         # Optionally export to packages:
         for my $exportpackage (@exportpackages) {
+
             # warn "exporting constructors from $package to $exportpackage";
             *{"${exportpackage}::${package_lastpart}"}  = $constructor;
             *{"${exportpackage}::${package_lastpart}_"} = $constructor_;
