@@ -111,6 +111,9 @@ FP::Struct - classes for functional perl
         my @fieldnames = map { ref $_ ? $_->[1] : $_ } @fd;
         is_equal \@fieldnames,
                  [ 'name', 'animals', 'aa', 'a', 'b' ];
+        # Just the field names, directly:
+        is_equal [ FP::Struct::all_field_names(["FPStructExample::Bar2"]) ],
+                 [ 'name', 'animals', 'aa', 'a', 'b' ];
     }
 
 =for test ignore
@@ -206,6 +209,11 @@ sub all_fields {
             }
         } @$isa
     )
+}
+
+sub all_field_names {
+    my ($isa) = @_;
+    map { ref $_ ? $_->[1] : $_ } all_fields($isa)
 }
 
 sub field_maybe_predicate {
