@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2021-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -71,6 +71,7 @@ use Scalar::Util qw(looks_like_number);
 use Scalar::Util qw(blessed);
 use FP::PureArray qw(purearray array_to_purearray);
 use Chj::TEST;
+use FP::Show;
 
 our $output_formats = {
     JSON => { hashmap_pair_op => ": " },
@@ -159,7 +160,7 @@ sub to_json ($value, $settings) {
     } else {
         return scalar_to_json($value, $settings)
     }
-    die "don't know how to map this to Mint: " . show($value)
+    die "to_json: don't know how to map this: " . show($value)
 }
 
 1
