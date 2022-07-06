@@ -19,7 +19,8 @@ FP::JSON
         output_format => "JSON", # or "Mint"
         auto_numbers  => 1,
         auto_integers => 0,
-        # converter => sub ($obj) { ... convert to accepted data .. }
+        # converter => sub ($obj) { ... convert to accepted data .. },
+        # pretty => 1, # extra re-parsing step at the end
     };
 
     use FP::List;
@@ -34,6 +35,20 @@ FP::JSON
     _40: "foo",
     bar: 50
     }
+    ]';
+
+    $settings->{pretty} = 1;
+    is to_json([10, list(20,30), {40=> "foo", bar=> 50}], $settings),
+       '[
+      10,
+      [
+        20,
+        30
+       ],
+       {
+         "40": "foo",
+         "bar": 50
+       }
     ]';
 
 =head1 DESCRIPTION
@@ -142,7 +157,7 @@ sub hashmap_to_json ($hashmap, $settings) {
             my $value = $hashmap->{$title};
             $fieldname_convert->($title)
                 . $hashmap_pair_op
-                . to_json($value, $settings)
+                . _to_json($value, $settings)
         }
     )->strings_join(",\n")
         . "\n}"
@@ -150,17 +165,17 @@ sub hashmap_to_json ($hashmap, $settings) {
 
 sub sequence_to_json ($l, $settings) {
     "[\n"
-        . $l->map(sub($v) { to_json($v, $settings) })->strings_join(",\n")
+        . $l->map(sub($v) { _to_json($v, $settings) })->strings_join(",\n")
         . "\n]"
 }
 
-sub to_json ($value, $settings) {
+sub _to_json ($value, $settings) {
     if (defined(my $class = blessed $value)) {
         if ($value->isa("FP::Abstract::Sequence")) {
             return sequence_to_json($value->purearray, $settings)
         } else {
             if (defined(my $c = $settings->{converter})) {
-                return to_json($c->($value), $settings)    # XX tail
+                return _to_json($c->($value), $settings)    # XX tail
             } else {
                 die "to_json: don't know how to map this: " . show($value)
             }
@@ -175,6 +190,18 @@ sub to_json ($value, $settings) {
         return scalar_to_json($value, $settings)
     }
     die "bug"
+}
+
+sub to_json ($value, $settings) {
+    if ($settings->{pretty}) {
+
+        # Our non-pretty variant is sorted, thus enable canonical
+        # here, too.
+        my $json = JSON->new->allow_nonref->pretty->canonical;
+        $json->encode($json->decode(_to_json($value, $settings)))
+    } else {
+        _to_json($value, $settings)
+    }
 }
 
 1
