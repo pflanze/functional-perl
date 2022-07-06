@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2019 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -83,7 +83,10 @@ BEGIN {
                 # confusing, as there's no way to know references from
                 # (accidentally) stringified references
                 Chomp(TerseDumper($_))
-            } elsif ($mode eq "s") {
+            } elsif (
+                $mode eq "s" or $mode eq "S" # no point using perltidy here, OK?
+                )
+            {
                 show($_)
             } elsif ($mode eq "p") {
                 "$_"
