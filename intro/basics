@@ -569,8 +569,14 @@ bless(
 # values nicely:
 
 # main> ,s
+# main> :s  # same
 # main> cons(1, cons(2, cons(5, null)))
 # $VAR1 = list(1, 2, 5);
+
+# :s formats things in a single line; if you'd like it to be
+# pretty-printed into multiple lines, use :S, but that (currently)
+# requires Perl::Tidy to be installed, and can be a bit slow for large
+# data structures.
 
 # `list` is a function from `FP::List` that turns the arguments given
 # to it into a linked list. The code shown by the repl in "s" mode is
