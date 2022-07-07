@@ -662,8 +662,25 @@ sub square {
 
 # Or, remember, a plain old array:
 
-# main> :s stream_iota(0)->map(\&square)->take(10)->array
+# main> stream_iota(0)->map(\&square)->take(10)->array
 # $VAR1 = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81];
+
+# Or, a purearray, which is an array that's immutable and that is an
+# object, so, the same methods for sequences can called on it as on
+# list:
+
+# main> stream_iota(0)->map(\&square)->take(10)->purearray
+# $VAR1 = purearray(0, 1, 4, 9, 16, 25, 36, 49, 64, 81);
+# main> $VAR1->map(\&square)
+# $VAR1 = purearray(0, 1, 16, 81, 256, 625, 1296, 2401, 4096, 6561);
+# main> $VAR1->list
+# $VAR1 = list(0, 1, 16, 81, 256, 625, 1296, 2401, 4096, 6561);
+
+# In addition to sequence methods (those which are declared by
+# FP::Abstract::Sequence), purearray has efficient (constant time)
+# random position element access, whereas list has an efficient
+# (constant time) `rest` method, so which one to choose depends on the
+# task at hands.
 
 # ------------------------------------------------------------------
 
