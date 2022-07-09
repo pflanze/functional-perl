@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -137,7 +137,7 @@ our @EXPORT = qw(
     car_and_cdr first_and_rest perhaps_first_and_rest
     list);
 our @EXPORT_OK = qw(
-    pair improper_list
+    pair improper_list improper_map
     first_set first_update
     is_pair_noforce is_null_noforce
     unsafe_cons unsafe_car unsafe_cdr
@@ -1450,6 +1450,31 @@ sub list_map_with_tail {
 }
 
 *FP::List::List::map_with_tail = flip2of3 \&list_map_with_tail;
+
+sub improper_map {
+    @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
+    my ($fn, $l, $maybe_tail) = @_;
+    FORCE $l;    # be careful as usual, right?
+    if (is_null($l)) {
+        $maybe_tail // $l
+    } elsif (is_pair($l)) {
+        cons($fn->(car $l), improper_map($fn, cdr($l), $maybe_tail))
+    } else {
+        $fn->($l)
+    }
+}
+
+sub FP::List::List::improper_map {
+    @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
+    my ($l, $fn, $maybe_tail) = @_;
+    @_ = ($fn, $l, $maybe_tail);
+    goto \&improper_map
+}
+
+TEST_STDOUT {
+    write_sexpr cons(1, cons(2, 3))->improper_map(sub { $_[0] * 2 })
+}
+'("2" "4" . "6")';
 
 sub list_zip2 {
     @_ == 2 or fp_croak_arity 2;
