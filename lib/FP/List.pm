@@ -137,7 +137,7 @@ our @EXPORT = qw(
     car_and_cdr first_and_rest perhaps_first_and_rest
     list);
 our @EXPORT_OK = qw(
-    pair improper_list improper_map
+    pair improper_list improper_map improper_filtermap
     first_set first_update
     is_pair_noforce is_null_noforce
     unsafe_cons unsafe_car unsafe_cdr
@@ -1475,6 +1475,60 @@ TEST_STDOUT {
     write_sexpr cons(1, cons(2, 3))->improper_map(sub { $_[0] * 2 })
 }
 '("2" "4" . "6")';
+
+sub improper_filtermap {
+    @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
+    my ($fn, $l, $maybe_tail) = @_;
+    FORCE $l;    # be careful as usual, right?
+    if (is_null($l)) {
+        $maybe_tail // $l
+    } elsif (is_pair($l)) {
+        my $v = $fn->(car $l);
+        my $r = improper_filtermap($fn, cdr($l), $maybe_tail);
+        defined $v ? cons($v, $r) : $r
+    } else {
+        my $v = $fn->($l);
+
+        # Turning deletion into (possibly) a null; meaning,
+        # improper_filtermap on a single item turns the deletion into
+        # the empty list (from undef). I guess Common Lisp does have
+        # reasons to treat those two the same.
+        defined $v ? $v : ($maybe_tail // null)
+    }
+}
+
+sub FP::List::List::improper_filtermap {
+    @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
+    my ($l, $fn, $maybe_tail) = @_;
+    @_ = ($fn, $l, $maybe_tail);
+    goto \&improper_filtermap
+}
+
+TEST_STDOUT {
+    write_sexpr cons(1, cons(2, cons(3, 4)))
+        ->improper_filtermap(sub { $_[0] * 2 })
+}
+'("2" "4" "6" . "8")';
+
+TEST_STDOUT {
+    write_sexpr cons(1, cons(2, cons(3, 4)))->improper_filtermap(
+        sub {
+            my $v = $_[0] * 2;
+            $v == 6 ? undef : $v
+        }
+    )
+}
+'("2" "4" . "8")';
+
+TEST_STDOUT {
+    write_sexpr cons(1, cons(2, cons(3, 4)))->improper_filtermap(
+        sub {
+            my $v = $_[0] * 2;
+            $v == 8 ? undef : $v
+        }
+    )
+}
+'("2" "4" "6")';
 
 sub list_zip2 {
     @_ == 2 or fp_croak_arity 2;
