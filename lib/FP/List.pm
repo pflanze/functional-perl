@@ -1477,23 +1477,38 @@ TEST_STDOUT {
 '("2" "4" . "6")';
 
 sub improper_filtermap {
+    __ 'improper_filtermap($fn, $l, $maybe_tail):
+        If $fn returns (), the element is be discarded.
+        $fn cannot return multiple values, though.';
     @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
     my ($fn, $l, $maybe_tail) = @_;
     FORCE $l;    # be careful as usual, right?
     if (is_null($l)) {
         $maybe_tail // $l
     } elsif (is_pair($l)) {
-        my $v = $fn->(car $l);
+        my @v = $fn->(car $l);
         my $r = improper_filtermap($fn, cdr($l), $maybe_tail);
-        defined $v ? cons($v, $r) : $r
+        if (@v == 1) {
+            cons($v[0], $r)
+        } elsif (!@v) {
+            $r
+        } else {
+            die "not supporting multiple value returns from \$fn";
+        }
     } else {
-        my $v = $fn->($l);
+        my @v = $fn->($l);
+        if (@v == 1) {
+            $v[0]
+        } elsif (!@v) {
 
-        # Turning deletion into (possibly) a null; meaning,
-        # improper_filtermap on a single item turns the deletion into
-        # the empty list (from undef). I guess Common Lisp does have
-        # reasons to treat those two the same.
-        defined $v ? $v : ($maybe_tail // null)
+            # Converting a possibly single input item into an empty
+            # list. (Only if improper_filtermap were itself perhaps_*,
+            # we could handle this case otherwise. Perl list context
+            # is magic?)
+            $maybe_tail // null
+        } else {
+            die "not supporting multiple value returns from \$fn";
+        }
     }
 }
 
@@ -1514,7 +1529,7 @@ TEST_STDOUT {
     write_sexpr cons(1, cons(2, cons(3, 4)))->improper_filtermap(
         sub {
             my $v = $_[0] * 2;
-            $v == 6 ? undef : $v
+            $v == 6 ? () : $v
         }
     )
 }
@@ -1524,7 +1539,7 @@ TEST_STDOUT {
     write_sexpr cons(1, cons(2, cons(3, 4)))->improper_filtermap(
         sub {
             my $v = $_[0] * 2;
-            $v == 8 ? undef : $v
+            $v == 8 ? () : $v
         }
     )
 }
