@@ -147,7 +147,7 @@ our @EXPORT_OK = qw(
     write_sexpr
     array_to_list array_to_list_reverse mixed_flatten
     list_strings_join list_strings_join_reverse
-    list_filter list_map list_mapn list_map_with_islast
+    list_filter list_map list_filtermap list_mapn list_map_with_islast
     list_map_with_index_ list_map_with_index
     list_fold list_fold_right list_to_perlstring
     unfold unfold_right
@@ -1544,6 +1544,38 @@ TEST_STDOUT {
     )
 }
 '("2" "4" "6")';
+
+# mostly COPY-PASTE from improper_filtermap
+sub list_filtermap {
+    __ 'list_filtermap($fn, $l, $maybe_tail):
+        If $fn returns (), the element is be discarded.
+        $fn cannot return multiple values, though.';
+    @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
+    my ($fn, $l, $maybe_tail) = @_;
+    FORCE $l;    # be careful as usual, right?
+    if (is_null($l)) {
+        $maybe_tail // $l
+    } elsif (is_pair($l)) {
+        my @v = $fn->(car $l);
+        my $r = improper_filtermap($fn, cdr($l), $maybe_tail);
+        if (@v == 1) {
+            cons($v[0], $r)
+        } elsif (!@v) {
+            $r
+        } else {
+            die "not supporting multiple value returns from \$fn";
+        }
+    } else {
+        die "improper list"
+    }
+}
+
+sub FP::List::List::filtermap {
+    @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
+    my ($l, $fn, $maybe_tail) = @_;
+    @_ = ($fn, $l, $maybe_tail);
+    goto \&list_filtermap
+}
 
 sub list_zip2 {
     @_ == 2 or fp_croak_arity 2;
