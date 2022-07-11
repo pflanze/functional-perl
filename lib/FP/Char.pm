@@ -47,7 +47,9 @@ sub is_char {
 }
 
 sub char_is_whitespace {
-    $_[0] =~ /^[ \r\n\t]$/s
+
+    # not including non-breaking space, OK?
+    $_[0] =~ /^[ \r\n\t\f]$/s
 }
 
 sub char_is_alphanumeric {
