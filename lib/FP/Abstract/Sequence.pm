@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -400,6 +400,22 @@ sub join {
         or die "bug: missing strings_join method on: $s";
 
     goto $m
+}
+
+# corresponding to is_hashset in FP::HashSet :
+
+sub hashset {
+    @_ == 1 or fp_croak_arity 1;
+    my ($s) = @_;
+    +{ map { $_ => $_ } $s->values }
+}
+
+# corresponding to is_uhashset in FP::HashSet :
+
+sub uhashset {
+    @_ == 1 or fp_croak_arity 1;
+    my ($s) = @_;
+    +{ map { $_ => undef } $s->values }
 }
 
 _END_
