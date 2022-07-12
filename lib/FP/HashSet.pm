@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -70,7 +70,10 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
-our @EXPORT = qw(array_to_hashset
+our @EXPORT = qw(
+    is_hashset
+    is_uhashset
+    array_to_hashset
     array_to_countedhashset
     array_to_lchashset
     hashset_to_array
@@ -91,6 +94,36 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
 use FP::Carp;
+use FP::Docstring;
+
+sub is_hashset {
+    __ 'is_hashset($v):
+        true if $v is a hash, in which every key is the stringification
+        of the value.
+        Also see: is_uhashset.';
+    @_ == 1 or fp_croak_arity 1;
+    my ($v) = @_;
+    ref($v) eq "HASH" and do {
+        for my $k (keys %$v) {
+            $v->{$k} eq $k or return 0;
+        }
+        1
+    }
+}
+
+sub is_uhashset {
+    __ 'is_uhashset($v):
+        true if $v is a hash, in which every value is `undef`.
+        Also see: is_hashset.';
+    @_ == 1 or fp_croak_arity 1;
+    my ($v) = @_;
+    ref($v) eq "HASH" and do {
+        for my $k (keys %$v) {
+            (not defined $v->{$k}) or return 0;
+        }
+        1
+    }
+}
 
 sub array_to_hashset {
     @_ == 1 or fp_croak_arity 1;
