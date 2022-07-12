@@ -1,14 +1,14 @@
 [
 {
-amplitude: "Miami, Florida",
-omega: "41.00",
-puritas: "1",
-triangle: "Humble Bumble"
+"Amplitude": "Miami, Florida",
+"Omega": "41.00",
+"Puritas": "1",
+"Triangle": "Humble Bumble"
 },
 {
-amplitude: "New York, New York",
-omega: "40.09",
-puritas: "3",
-triangle: "Pretense Pusher"
+"Amplitude": "New York, New York",
+"Omega": "40.09",
+"Puritas": "3",
+"Triangle": "Pretense Pusher"
 }
 ]
