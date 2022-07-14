@@ -7,6 +7,8 @@
 # bundled with this file.
 #
 
+# Depends: () ; well it does depend on a pager, but which one? It's optional.
+
 =head1 NAME
 
 FP::Repl::Repl - read-eval-print loop

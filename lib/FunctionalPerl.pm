@@ -1,11 +1,13 @@
 #
-# Copyright (c) 2015-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
 # MIT License (Expat version). See the file COPYING.md that came
 # bundled with this file.
 #
+
+# Depends: ()
 
 =head1 NAME
 
@@ -178,14 +180,14 @@ our $export_desc = +{
     ":chars"     => [qw(FP::Char)],
     ":sequences" => [
         qw(FP::List FP::MutableArray
-           FP::Array FP::Array_sort
-           FP::PureArray
-           :streams)
+            FP::Array FP::Array_sort
+            FP::PureArray
+            :streams)
     ],
     ":all_sequences" => [
         qw(:primary_sequences
-           FP::StrictList
-           FP::SortedPureArray)
+            FP::StrictList
+            FP::SortedPureArray)
     ],
     ":maps"           => [qw(FP::Hash FP::PureHash)],
     ":sets"           => [qw(FP::HashSet FP::OrderedCollection)],

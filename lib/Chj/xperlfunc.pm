@@ -7,6 +7,8 @@
 # bundled with this file.
 #
 
+# Depends: () ; right? Haven't verified closely.
+
 =head1 NAME
 
 Chj::xperlfunc
