@@ -137,7 +137,7 @@ our @EXPORT = qw(
     car_and_cdr first_and_rest perhaps_first_and_rest
     list);
 our @EXPORT_OK = qw(
-    pair improper_list improper_map improper_filtermap
+    pair improper_list improper_map improper_filtermap improper_last
     first_set first_update
     is_pair_noforce is_null_noforce
     unsafe_cons unsafe_car unsafe_cdr
@@ -1450,6 +1450,17 @@ sub list_map_with_tail {
 }
 
 *FP::List::List::map_with_tail = flip2of3 \&list_map_with_tail;
+
+sub improper_last {
+    @_ == 1 or fp_croak_arity "1";
+    my ($l) = @_;
+    while (is_pair($l)) {
+        $l = cdr($l);
+    }
+    $l
+}
+
+*FP::List::List::improper_last = \&improper_last;
 
 sub improper_map {
     @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
