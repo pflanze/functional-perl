@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2020 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -96,6 +96,7 @@ our @EXPORT = qw(
     is_pure_class
     is_string
     is_path_string
+    is_path_segment_string
     is_nonnumeric_string
     is_nonnullstring
     is_natural0
@@ -207,6 +208,18 @@ sub is_path_string {
             and length $v and not $v =~ /\0/
         )
         or fail "is_path_string", $v
+}
+
+sub is_path_segment_string {
+    my ($v) = @_;
+    (
+        defined $v and not ref $v              # relax?
+            and length $v
+            and not $v =~ m{[\0/]}
+            and not $v eq ".."
+            and not $v eq "."
+        )
+        or fail "is_path_segment_string", $v
 }
 
 sub is_nonnumeric_string {
