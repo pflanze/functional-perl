@@ -95,6 +95,7 @@ our @EXPORT = qw(
     is_pure_object
     is_pure_class
     is_string
+    is_path_string
     is_nonnumeric_string
     is_nonnullstring
     is_natural0
@@ -199,10 +200,19 @@ sub is_string {
         or fail "is_string", $v
 }
 
+sub is_path_string {
+    my ($v) = @_;
+    (
+        defined $v and not ref $v              # relax?
+            and length $v and not $v =~ /\0/
+        )
+        or fail "is_path_string", $v
+}
+
 sub is_nonnumeric_string {
     my ($v) = @_;
     (
-        defined $v and not ref $v    # relax?
+        defined $v and not ref $v              # relax?
             and not looks_like_number($v)
         )
         or fail "is_string", $v
@@ -211,7 +221,7 @@ sub is_nonnumeric_string {
 sub is_nonnullstring {
     my ($v) = @_;
     (
-        defined $v and not ref $v    # relax?
+        defined $v and not ref $v              # relax?
             and length $v
         )
         or fail "is_nonnullstring", $v
@@ -220,7 +230,7 @@ sub is_nonnullstring {
 sub is_natural0 {
     my ($v) = @_;
     (
-        defined $v and not ref $v    # relax?
+        defined $v and not ref $v              # relax?
             and $v =~ /^\d+\z/
         )
         or fail "is_natural0", $v
@@ -229,7 +239,7 @@ sub is_natural0 {
 sub is_natural {
     my ($v) = @_;
     (
-        defined $v and not ref $v       # relax?
+        defined $v and not ref $v              # relax?
             and $v =~ /^\d+\z/ and $v
         )
         or fail "is_natural", $v
