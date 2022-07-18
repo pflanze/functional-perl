@@ -40,6 +40,7 @@ Chj::TEST
     my $result = run_tests(__PACKAGE__);
     is $result->failures, 0; # 0 failures
     is $result->successes > 0, 1;
+    is $result->exit_code, 0; # usable for passing to `exit`
 
     #run_tests;
     #  or
@@ -440,6 +441,14 @@ package Chj::TEST::Result {
     };
     *failures  = $accessor->("failures");
     *successes = $accessor->("successes");
+
+    sub exit_code {
+        my $self = shift;
+        my $n    = $self->failures;
+
+        # arbitrary use of exit codes up to 99, OK?
+        $n < 100 ? $n : 100
+    }
 }
 
 sub run_tests_ {
