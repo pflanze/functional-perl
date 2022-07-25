@@ -52,6 +52,24 @@ FP::Hash
                           $v > 10 ? () : (uc $k, $v*2)
                       }),
              {A=> 2, B=> 4, D=> 8};
+    is_equal hash_filter({a=> 1, b=> 2, c=> 33, d=> 4},
+                      sub {
+                          my ($k, $v)= @_;
+                          $v >= 2 and $k < 'd'
+                      }),
+             {b=> 2, c=> 33};
+    is_equal hash_key_filter({a=> 1, b=> 2, c=> 33, d=> 4},
+                      sub {
+                          my ($k)= @_;
+                          $k < 'b'
+                      }),
+             {a=> 1};
+    is_equal hash_value_filter({a=> 1, b=> 2, c=> 33, d=> 4},
+                      sub {
+                          my ($v)= @_;
+                          $v <= 4
+                      }),
+             {a=> 1, b=> 2};
 
     # NOTE: `mesh` might be added to List::Util, too
     is_equal +{ mesh [qw(a b c)], [2,3,4] },
@@ -84,11 +102,12 @@ use Exporter "import";
 our @EXPORT = qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref
     hash_ref_or hashkey mesh ziphash hash_cache hash_delete
     hash_update hash_diff hash_length subhash hashes_keys $empty_hash
-    hash_map
+    hash_map hash_filter hash_key_filter hash_value_filter
     hash2_set );
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
+use FP::Docstring;
 use Chj::TEST;
 use FP::Carp;
 
@@ -305,6 +324,31 @@ sub hash_map {
     @_ == 2 or fp_croak_arity 2;
     my ($h, $fn) = @_;
     +{ map { $fn->($_, $$h{$_}) } keys %$h }
+}
+
+sub hash_filter ($hash, $pred) {
+    __ 'only keep k=>v entries for which $pred->($k, $v) is true';
+    +{
+        map {
+            my $v = $hash->{$_};
+            $pred->($_, $v) ? ($_ => $v) : ()
+        } keys %$hash
+    }
+}
+
+sub hash_key_filter ($hash, $pred) {
+    __ 'only keep k=>v entries for which $pred->($k) is true';
+    +{ map { $pred->($_) ? ($_ => $hash->{$_}) : () } keys %$hash }
+}
+
+sub hash_value_filter ($hash, $pred) {
+    __ 'only keep k=>v entries for which $pred->($v) is true';
+    +{
+        map {
+            my $v = $hash->{$_};
+            $pred->($v) ? ($_ => $v) : ()
+        } keys %$hash
+    }
 }
 
 # set leafs in 2-level hash structure:
