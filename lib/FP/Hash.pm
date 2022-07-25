@@ -99,6 +99,7 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
+# XX should not export all of those by default?
 our @EXPORT = qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref
     hash_ref_or hashkey mesh ziphash hash_cache hash_delete
     hash_update hash_diff hash_length subhash hashes_keys $empty_hash
