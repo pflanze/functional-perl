@@ -326,8 +326,10 @@ sub hash_map {
     +{ map { $fn->($_, $$h{$_}) } keys %$h }
 }
 
-sub hash_filter ($hash, $pred) {
+sub hash_filter {
     __ 'only keep k=>v entries for which $pred->($k, $v) is true';
+    @_ == 2 or fp_croak_arity 2;
+    my ($hash, $pred) = @_;
     +{
         map {
             my $v = $hash->{$_};
@@ -336,13 +338,17 @@ sub hash_filter ($hash, $pred) {
     }
 }
 
-sub hash_key_filter ($hash, $pred) {
+sub hash_key_filter {
     __ 'only keep k=>v entries for which $pred->($k) is true';
+    @_ == 2 or fp_croak_arity 2;
+    my ($hash, $pred) = @_;
     +{ map { $pred->($_) ? ($_ => $hash->{$_}) : () } keys %$hash }
 }
 
-sub hash_value_filter ($hash, $pred) {
+sub hash_value_filter {
     __ 'only keep k=>v entries for which $pred->($v) is true';
+    @_ == 2 or fp_croak_arity 2;
+    my ($hash, $pred) = @_;
     +{
         map {
             my $v = $hash->{$_};
