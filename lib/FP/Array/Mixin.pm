@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2014-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -206,6 +206,7 @@ sub FP_Sequence_length {
 *for_each             = flip \&array_for_each;
 *for_each_with_islast = flip \&array_for_each_with_islast;
 *map                  = blessing flip \&array_map;
+*filtermap            = blessing flip \&array_filtermap;
 *map_with_index       = blessing flip \&array_map_with_index;
 *map_with_islast      = blessing flip \&array_map_with_islast;
 *filter               = blessing flip \&array_filter;

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2013-2022 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -83,6 +83,7 @@ our @EXPORT_OK = qw(array
     array_for_each
     array_for_each_with_islast
     array_map
+    array_filtermap
     array_map_with_index
     array_map_with_islast
     array_to_hash_map
@@ -108,6 +109,7 @@ use FP::Div qw(min);
 use FP::Ops 'add';
 use FP::Equal 'equal';
 use Scalar::Util qw(blessed);
+use FP::Docstring;
 
 sub array { [@_] }
 
@@ -430,6 +432,26 @@ TEST {
     array_map sub { $_[0] + $_[1] }, [1, 2, 20], [-1, 4]
 }
 [0, 6];
+
+sub array_filtermap {
+    __ 'array_filtermap($fn, $array0, ...) -> array:
+        For each given input array, $fn receives one value from each
+        as an argument each. If $fn returns a value, it is inserted into
+        the resulting array.
+        If $fn returns (), the position is discarded in the resulting
+        sequence. $fn cannot return multiple values, though.';
+    @_ > 1 or fp_croak_arity "> 1";
+    my $fn  = shift;
+    my $len = min(map { scalar @$_ } @_);
+    my @res;
+    for (my ($i, $j) = (0, 0); $i < $len; $i++) {
+        if (my ($v) = $fn->(map { $$_[$i] } @_)) {
+            $res[$j] = $v;
+            $j++;
+        }
+    }
+    \@res
+}
 
 # (should one use multi-arg stream_map with stream_iota instead?..)
 sub array_map_with_index {

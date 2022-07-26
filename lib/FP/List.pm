@@ -1489,8 +1489,8 @@ TEST_STDOUT {
 
 sub improper_filtermap {
     __ 'improper_filtermap($fn, $l, $maybe_tail):
-        If $fn returns (), the element is be discarded.
-        $fn cannot return multiple values, though.';
+        If $fn returns (), the position is discarded in the resulting
+        sequence. $fn cannot return multiple values, though.';
     @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
     my ($fn, $l, $maybe_tail) = @_;
     FORCE $l;    # be careful as usual, right?
@@ -1559,8 +1559,8 @@ TEST_STDOUT {
 # mostly COPY-PASTE from improper_filtermap
 sub list_filtermap {
     __ 'list_filtermap($fn, $l, $maybe_tail):
-        If $fn returns (), the element is be discarded.
-        $fn cannot return multiple values, though.';
+        If $fn returns (), the position is discarded in the resulting
+        sequence. $fn cannot return multiple values, though.';
     @_ == 2 or @_ == 3 or fp_croak_arity "2-3";
     my ($fn, $l, $maybe_tail) = @_;
     FORCE $l;    # be careful as usual, right?
