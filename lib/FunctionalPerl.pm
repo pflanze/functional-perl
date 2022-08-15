@@ -48,7 +48,7 @@ Tags can be expanded via:
     my ($modules, $unused_tags, $nontags) = expand_import_tags(qw(:dev :most not_a_tag));
     is $$modules{"FP::Failure"}, 2; # number of times used.
     is_deeply $unused_tags,
-              [':all', ':ast', ':csv', ':dbi', ':fix', ':git', ':io', ':paths', ':pxml', ':rare', ':trampolines', ':transparentlazy'];
+              [':all', ':all_sequences', ':ast', ':csv', ':dbi', ':fix', ':git', ':io', ':paths', ':pxml', ':rare', ':trampolines', ':transparentlazy'];
     is_deeply $nontags, ['not_a_tag'];
 
 =head1 SEE ALSO
