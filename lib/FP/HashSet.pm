@@ -81,6 +81,7 @@ our @EXPORT = qw(
     hashset_to_predicate
     hashset_keys
     hashset_keys_unsorted
+    hashset_values
     hashset_union
     hashset_union_defined
     hashset_intersection
@@ -177,6 +178,13 @@ sub hashset_keys_unsorted {
 sub hashset_keys {
     @_ == 1 or fp_croak_arity 1;
     sort keys %{ $_[0] }
+}
+
+sub hashset_values {
+    __ 'The values, sorted according to the keys (i.e. stringification).';
+    @_ == 1 or fp_croak_arity 1;
+    my ($s) = @_;
+    map { $s->{$_} } hashset_keys $s
 }
 
 sub hashset_add_hashset_d {
