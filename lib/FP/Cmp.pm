@@ -34,7 +34,7 @@ use warnings FATAL => 'uninitialized';
 #use experimental 'signatures';
 use Exporter "import";
 
-our @EXPORT      = qw(cmp_complement);
+our @EXPORT      = qw(cmp_complement cmp_then);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (default => \@EXPORT, all => [@EXPORT, @EXPORT_OK]);
 
@@ -65,5 +65,20 @@ TEST {
     ]
 }
 [1, -1, 0, 1, 0, -1];
+
+sub cmp_then {
+
+    # chain of cmp until one is non-0
+    my @cmp = @_;
+    sub {
+        my ($a, $b) = @_;
+        for my $cmp (@cmp) {
+            if (my $res = $cmp->($a, $b)) {
+                return $res
+            }
+        }
+        0
+    }
+}
 
 1
