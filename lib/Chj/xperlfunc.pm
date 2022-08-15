@@ -267,6 +267,7 @@ our @EXPORT_OK = qw(
     min max
     fstype_for_device
     xgetfile_utf8 xslurp
+    maybe_getfile_utf8
 );
 
 # would we really want to export these?:
@@ -1522,12 +1523,17 @@ sub xprintln {
     print $fh @_, "\n" or die "printing to $fh: $!"
 }
 
-sub xgetfile_utf8 {
-    @_ == 1 or fp_croak_arity 1;
-    my ($path) = @_;
+sub _getfile_utf8 {
+    my ($path, $do_throw, $myname) = @_;
 
     # using PerlIO::utf8_strict
-    open my $in, '<:utf8_strict', $path or die "xgetfile_utf8($path): open: $!";
+    open my $in, '<:utf8_strict', $path or do {
+        if ($do_throw or $! != ENOENT) {
+            die "$myname($path): open: $!";
+        } else {
+            return undef;
+        }
+    };
     my $cnt;
     eval {
         local $/;
@@ -1536,10 +1542,24 @@ sub xgetfile_utf8 {
     } || do {
         my $e = $@;
         close $in;
-        die "xgetfile_utf8($path): $e"
+        die "$myname($path): $e"
     };
-    close $in or die "xgetfile_utf8($path): close: $!";
+    close $in or die "$myname($path): close: $!";
     $cnt
+}
+
+sub xgetfile_utf8 {
+    @_ == 1 or fp_croak_arity 1;
+    my ($path) = @_;
+    _getfile_utf8($path, 1, "xgetfile_utf8")
+}
+
+# Return undef if the file does not exist, throw errors for other
+# issues.
+sub maybe_getfile_utf8 {
+    @_ == 1 or fp_croak_arity 1;
+    my ($path) = @_;
+    _getfile_utf8($path, 0, "maybe_getfile_utf8")
 }
 
 sub xslurp;
