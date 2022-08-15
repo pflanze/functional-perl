@@ -104,7 +104,9 @@ our @EXPORT = qw(hash_set hash_perhaps_ref hash_maybe_ref hash_xref
     hash_ref_or hashkey mesh ziphash hash_cache hash_delete
     hash_update hash_diff hash_length subhash hashes_keys $empty_hash
     hash_map hash_filter hash_key_filter hash_value_filter
-    hash2_set );
+    hash2_set
+    hash_to_maybefunction hash_to_perhapsfunction hash_to_function
+);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
@@ -363,6 +365,36 @@ sub hash2_set {
     @_ == 4 or fp_croak_arity 4;
     my ($h, $k0, $k1, $v) = @_;
     hash_update $h, $k0, sub { my ($h1) = @_; hash_set $h1, $k1, $v }
+}
+
+sub hash_to_maybefunction {
+    @_ == 1 or fp_croak_arity 1;
+    my ($h) = @_;
+    sub {
+        @_ == 1 or fp_croak_arity 1;
+        my ($k) = @_;
+        $h->{$k}
+    }
+}
+
+sub hash_to_perhapsfunction {
+    @_ == 1 or fp_croak_arity 1;
+    my ($h) = @_;
+    sub {
+        @_ == 1 or fp_croak_arity 1;
+        my ($k) = @_;
+        exists $h->{$k} ? $h->{$k} : ()
+    }
+}
+
+sub hash_to_function {
+    @_ == 1 or fp_croak_arity 1;
+    my ($h) = @_;
+    sub {
+        @_ == 1 or fp_croak_arity 1;
+        my ($k) = @_;
+        exists $h->{$k} ? $h->{$k} : die "unknown key"
+    }
 }
 
 1
