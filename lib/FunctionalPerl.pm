@@ -81,7 +81,7 @@ C<:failures> -> L<FP::Either>, L<FP::Failure>
 
 C<:fix> -> L<FP::fix>
 
-C<:functions> -> C<:equal>, C<:failures>, C<:show>, L<FP::Combinators>, L<FP::Combinators2>, L<FP::Currying>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>
+C<:functions> -> C<:equal>, C<:failures>, C<:show>, L<FP::Combinators>, L<FP::Cmp>, L<FP::Combinators2>, L<FP::Currying>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>
 
 C<:git> -> L<FP::Git::Repository>
 
@@ -165,6 +165,7 @@ our $export_desc = +{
 
     ":functions" => [
         qw(FP::Combinators FP::Combinators2
+            FP::Cmp
             FP::Ops FP::Div
             FP::Predicates
             FP::Optional FP::Values
