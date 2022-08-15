@@ -82,6 +82,8 @@ our @EXPORT = qw(
     hashset_keys
     hashset_keys_unsorted
     hashset_values
+    hashset_map
+    hashset_filter
     hashset_union
     hashset_union_defined
     hashset_intersection
@@ -185,6 +187,20 @@ sub hashset_values {
     @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
     map { $s->{$_} } hashset_keys $s
+}
+
+sub hashset_map {
+    __ 'hashset_map($s, $fn): $fn takes 1 argument, the value';
+    @_ == 2 or fp_croak_arity 2;
+    my ($s, $fn) = @_;
+    +{ map { my $v = $fn->($_); ("$v" => $v) } values %$s }
+}
+
+sub hashset_filter {
+    __ 'hashset_filter($s, $fn): $fn takes 1 argument, the value';
+    @_ == 2 or fp_croak_arity 2;
+    my ($s, $fn) = @_;
+    +{ map { my $v = $_; $fn->($v) ? ("$v" => $v) : () } values %$s }
 }
 
 sub hashset_add_hashset_d {
