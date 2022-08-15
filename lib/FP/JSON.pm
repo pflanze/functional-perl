@@ -32,24 +32,25 @@ FP::JSON
     30
     ],
     {
-    _40: "foo",
-    bar: 50
+    "40": "foo",
+    "bar": 50
     }
     ]';
 
     $settings->{pretty} = 1;
     is to_json([10, list(20,30), {40=> "foo", bar=> 50}], $settings),
        '[
-      10,
-      [
-        20,
-        30
+       10,
+       [
+          20,
+          30
        ],
        {
-         "40": "foo",
-         "bar": 50
+          "40" : "foo",
+          "bar" : 50
        }
-    ]';
+    ]
+    ';
 
 =head1 DESCRIPTION
 
