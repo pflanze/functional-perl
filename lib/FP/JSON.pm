@@ -103,6 +103,7 @@ sub fieldname_to_mint($str) {
         $s = "_$s";           # prepend an underscore if fieldname starts with a
                               # digit; XX needed?
     }
+    $s
 }
 
 TEST { fieldname_to_mint "Quadrat 'o'Hara" } 'quadrat__o_Hara';
