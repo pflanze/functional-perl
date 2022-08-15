@@ -16,23 +16,23 @@ FP::HashSet - set operations for hash tables
     use FP::Equal 'is_equal';
     use FP::HashSet; # ":all";
 
-    my $A = array_to_hashset ["a","b","c"];
-    my $B = array_to_hashset ["a","c","d"];
-    is_equal hashset_to_array(hashset_union($A,$B)),
-             ["a","b","c","d"];
-    is_equal hashset_to_array(hashset_intersection($A,$B)),
-             ["a","c"];
-    is_equal hashset_to_array(hashset_difference($A,$B)),
+    my $A = hashset "a", "b", "c";
+    my $B = array_to_hashset ["a", "c", "d"];
+    is_equal hashset_to_array(hashset_union($A, $B)), 
+             ["a", "b", "c", "d"];
+    is_equal hashset_to_array(hashset_intersection($A, $B)), 
+             ["a", "c"];
+    is_equal hashset_to_array(hashset_difference($A, $B)), 
              ["b"];
-    ok not hashset_is_subset($B,$A);
-    ok hashset_is_subset(+{b => 1},$A);
+    ok not hashset_is_subset($B, $A);
+    ok hashset_is_subset(+{b => 1}, $A);
     is hashset_size($A), 3;
     ok not hashset_empty($A);
     ok hashset_empty(+{});
-    #hashset_keys_unsorted($A) # ("a","b","c") or in another sort order;
+    #hashset_keys_unsorted($A) # ("a", "b", "c") or in another sort order;
                                # *keys* not values, hence always strings.
     is_equal [hashset_keys ($A)],
-             [("a","b","c")]; # (always sorted)
+             [("a", "b", "c")]; # (always sorted)
 
     # a la diff tool:
     is_equal hashset_diff($A,$B), +{ b => "-", d => "+" };
@@ -71,6 +71,7 @@ use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
 our @EXPORT = qw(
+    hashset
     is_hashset
     is_uhashset
     array_to_hashset
@@ -95,6 +96,16 @@ our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 use Chj::TEST;
 use FP::Carp;
 use FP::Docstring;
+
+sub hashset {
+    my %h;
+    for (@_) {
+
+        # detect duplicates?
+        $h{$_} = $_;
+    }
+    \%h
+}
 
 sub is_hashset {
     __ 'is_hashset($v):
