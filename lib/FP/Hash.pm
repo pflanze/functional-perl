@@ -55,13 +55,13 @@ FP::Hash
     is_equal hash_filter({a=> 1, b=> 2, c=> 33, d=> 4},
                       sub {
                           my ($k, $v)= @_;
-                          $v >= 2 and $k < 'd'
+                          $v >= 2 and $k lt 'd'
                       }),
              {b=> 2, c=> 33};
     is_equal hash_key_filter({a=> 1, b=> 2, c=> 33, d=> 4},
                       sub {
                           my ($k)= @_;
-                          $k < 'b'
+                          $k lt 'b'
                       }),
              {a=> 1};
     is_equal hash_value_filter({a=> 1, b=> 2, c=> 33, d=> 4},
@@ -69,7 +69,7 @@ FP::Hash
                           my ($v)= @_;
                           $v <= 4
                       }),
-             {a=> 1, b=> 2};
+             {a=> 1, b=> 2, d=> 4};
 
     # NOTE: `mesh` might be added to List::Util, too
     is_equal +{ mesh [qw(a b c)], [2,3,4] },
