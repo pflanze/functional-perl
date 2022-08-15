@@ -68,7 +68,8 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 
 require FP::List;    # "use"ing it would create a circular dependency
-use FP::Array_sort qw(on_maybe cmp_complement);
+use FP::Array_sort qw(on_maybe);
+use FP::Cmp qw(cmp_complement);
 use FP::Lazy;
 use FP::Ops qw(add mult real_cmp);
 use FP::Predicates qw(complement is_even);
