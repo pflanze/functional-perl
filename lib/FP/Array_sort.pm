@@ -13,7 +13,7 @@ FP::Array_sort - 'sensible' sorting setup
 
 =head1 SYNOPSIS
 
-    use FP::Array_sort; # for `array_sort`, `on`, and `cmp_complement`
+    use FP::Array_sort; # for `array_sort` and `on`
 
     use FP::Ops 'real_cmp'; use FP::Array ':all'; use FP::Equal 'is_equal';
     is_equal array_sort([[10, 'a'], [15, 'b'], [-3, 'c']],
@@ -57,7 +57,7 @@ or on the L<website|http://functional-perl.org/>.
 
 =cut
 
-# XX Should `on` (and `cmp_complement`?) be moved to `FP::Combinators`?
+# XX Should `on` be moved to `FP::Combinators`?
 
 package FP::Array_sort;
 use strict;
@@ -65,13 +65,13 @@ use warnings;
 use warnings FATAL => 'uninitialized';
 use Exporter "import";
 
-our @EXPORT      = qw(array_sort array_sortCompare on on_maybe cmp_complement);
+our @EXPORT      = qw(array_sort array_sortCompare on on_maybe);
 our @EXPORT_OK   = qw();
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-use FP::Ops qw(string_cmp real_cmp binary_operator);
-use Chj::TEST;
 use FP::Carp;
+use Chj::TEST;
+use FP::Ops qw(real_cmp);    # for pod snippets, only, right?
 
 sub array_sort {
     @_ == 1 or @_ == 2 or fp_croak_arity "1 or 2";
@@ -110,29 +110,5 @@ sub on_maybe {
     my ($maybe_select, $cmp) = @_;
     defined $maybe_select ? on($maybe_select, $cmp) : $cmp
 }
-
-# see also `complement` from FP::Predicates
-sub cmp_complement {
-    @_ == 1 or fp_croak_arity 1;
-    my ($cmp) = @_;
-    sub {
-        -&$cmp(@_)
-    }
-}
-
-TEST {
-    my $f = cmp_complement binary_operator "cmp";
-    [
-        map { &$f(@$_) } (
-            [2,     4],
-            [4,     2],
-            [3,     3],
-            ["abc", "bbc"],
-            ["ab",  "ab"],
-            ["bbc", "abc"]
-        )
-    ]
-}
-[1, -1, 0, 1, 0, -1];
 
 1
