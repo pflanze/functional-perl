@@ -208,22 +208,22 @@ my $by_name = lazy {
 };
 
 TEST { force($by_name)->{car} } [
-    Subroutine('car', 'lib/FP/List.pm', 328),
-    Subroutine('car', 'lib/FP/List.pm', 636)
+    Subroutine('car', 'lib/FP/List.pm', 331),
+    Subroutine('car', 'lib/FP/List.pm', 639)
 ];
 TEST { force($by_name)->{first} }
 [
     Subroutine('first', 'lib/FP/Array/Mixin.pm', 153),
-    Subroutine('first', 'lib/FP/List.pm',        295),
-    Subroutine('first', 'lib/FP/List.pm',        334),
-    Subroutine('first', 'lib/FP/List.pm',        650),
-    Subroutine('first', 'lib/FP/List.pm',        651)
+    Subroutine('first', 'lib/FP/List.pm',        298),
+    Subroutine('first', 'lib/FP/List.pm',        337),
+    Subroutine('first', 'lib/FP/List.pm',        653),
+    Subroutine('first', 'lib/FP/List.pm',        654)
 ];
 TEST { force($by_name)->{"FP::List"} }
 [Package('FP::List', 'lib/FP/List.pm', 127, '')];
 TEST { force($by_name)->{"FP::List::Pair"} } [
-    Package('FP::List::Pair', 'lib/FP/List.pm', 322,  1),
-    Package('FP::List::Pair', 'lib/FP/List.pm', 2371, 1)
+    Package('FP::List::Pair', 'lib/FP/List.pm', 325,  1),
+    Package('FP::List::Pair', 'lib/FP/List.pm', 2660, 1)
 ];
 
 # ------------------------------------------------------------------
@@ -248,7 +248,7 @@ TEST { force($by_name)->{FP_Interface__method_names} } [
     ),
     Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Map.pm',      36),
     Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Pure.pm',     48),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Sequence.pm', 80),
+    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Sequence.pm', 81),
     Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Show.pm',     75),
     Subroutine('FP_Interface__method_names', 'lib/FP/Interface.pm',         20),
     Subroutine('FP_Interface__method_names', 'lib/FP/Interface.pm',         28)
