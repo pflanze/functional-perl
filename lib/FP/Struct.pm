@@ -154,7 +154,9 @@ of packages, to which they will export the constructors.
 See L<FP::Predicates> for some useful predicates (others are in the
 respective modules that define them, like C<is_pair> in L<FP::List>).
 
-=head1 PURITY
+=head1 UTILITY BASE CLASSES
+
+=head2 PURITY
 
 It is recommended to use L<FP::Abstract::Pure> as a base class. This
 means objects from classes based on FP::Struct are automatically
@@ -163,6 +165,20 @@ treated as pure by C<is_pure> from L<FP::Predicates>.
 If C<$FP::Struct::immutable> is true (default), then if
 L<FP::Abstract::Pure> is inherited the objects are made immutable to
 ensure purity.
+
+=head2 FP::Struct specific
+
+To avoid having to implement some protocols manually, some base
+classes are provided to auto-derive those protocols automatically:
+<FP::Struct::Show>, <FP::Struct::Equal>. They use the knowledge that
+<FP::Struct> has about the fields in the class to make the protocol
+consider all the fields automatically.
+
+=head2 :defaults
+
+If ":defaults" is given as a base class, it is expanded to those base
+classes that should always work and should always be
+useful. Currently, these are <FP::Struct::Show>, <FP::Struct::Equal>.
 
 =head1 ALSO SEE
 
@@ -255,10 +271,17 @@ sub import {
         ($package, $fields, @perhaps_isa) = @_;
         $is_expandedvariant = 0;
     }
-    my @isa
+    my @_isa
         = (@perhaps_isa == 1 and ref($perhaps_isa[0]))
         ? $perhaps_isa[0]
         : @perhaps_isa;
+
+    my @isa = map {
+        (     $_ eq ":defaults" ? qw(FP::Struct::Show FP::Struct::Equal)
+            : $_ eq ":default" ? fp_croak
+                "base class ':default' is invalid, did you mean ':defaults'?"
+            : $_)
+    } @_isa;
 
     require_package $_ for @isa;
     no strict 'refs';
