@@ -144,6 +144,7 @@ our @EXPORT_OK = qw(
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 use Chj::TEST;
+use FP::Carp;
 use FP::Abstract::Pure;
 use Chj::BuiltinTypePredicates 'is_filehandle';
 
@@ -461,6 +462,7 @@ TEST {
 
 # should probably be in a filesystem lib instead?
 sub is_filename {
+    @_ == 1 or fp_croak_arity 1;
     my ($v) = @_;
     (is_nonnullstring($v) and !($v =~ m|/|) and !($v eq ".") and !($v eq ".."))
         or fail "is_filename", $v
@@ -469,15 +471,16 @@ sub is_filename {
 # can't be in `FP::Abstract::Sequence` since that package is for OO, well, what
 # to do about it?
 use FP::Lazy;    # sigh dependency, too.
-use FP::Carp;
 
 sub is_sequence {
+    @_ == 1 or fp_croak_arity 1;
     my $v = force $_[0];
     blessed($v) // return;
     $v->isa("FP::Abstract::Sequence") or fail "is_sequence", $v
 }
 
 sub is_proper_sequence {
+    @_ == 1 or fp_croak_arity 1;
     my $v = force $_[0];
     blessed($v) // return;
     ($v->isa("FP::Abstract::Sequence") and $v->is_proper_sequence)
@@ -503,6 +506,7 @@ sub sequence_of {
 # Like is_sequence but only returns true when the sequence isn't empty
 # (similar to Clojure's `(seq? (seq v))`)
 sub is_seq {
+    @_ == 1 or fp_croak_arity 1;
     my $v = force $_[0];
     blessed($v) // return;
     ($v->isa("FP::Abstract::Sequence") && (not $v->is_null))
@@ -526,10 +530,12 @@ sub maybe {
 
 # (this would also be a candidate for FP::Ops)
 sub is_defined {
+    @_ == 1 or fp_croak_arity 1;
     defined $_[0] or fail "is_defined", $_[0]
 }
 
 sub is_true {
+    @_ == 1 or fp_croak_arity 1;
     $_[0] or fail "is_true", $_[0]
 }
 
