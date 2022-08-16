@@ -117,6 +117,7 @@ our @EXPORT = qw(
 
     is_filename
     is_sequence
+    sequence_of
     is_proper_sequence
     is_seq
 
@@ -481,6 +482,22 @@ sub is_proper_sequence {
     blessed($v) // return;
     ($v->isa("FP::Abstract::Sequence") and $v->is_proper_sequence)
         or fail "is_sequence", $v
+}
+
+sub sequence_of {
+    @_ == 1 or fp_croak_arity 1;
+    my ($pred) = @_;
+    sub {
+        @_ == 1 or fp_croak_arity 1;
+        my $v = force $_[0];
+        blessed($v) // return;
+
+        # Since `list_every` dies on improper lists, we have to check
+        # for is_proper_sequence here, too:
+        ($v->isa("FP::Abstract::Sequence") and $v->is_proper_sequence)
+            or return fail "sequence_of", $v;
+        $v->every($pred)    # should return a fail itself, so, OK?
+    }
 }
 
 # Like is_sequence but only returns true when the sequence isn't empty
