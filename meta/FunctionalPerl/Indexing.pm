@@ -207,23 +207,32 @@ my $by_name = lazy {
     identifierInfos_by_name ".", sub($v) {1}
 };
 
-TEST { force($by_name)->{car} } [
-    Subroutine('car', 'lib/FP/List.pm', 331),
-    Subroutine('car', 'lib/FP/List.pm', 639)
+sub scrubline {
+    my ($ary) = @_;
+    [map { $_->lineno_set(123) } @$ary]
+}
+
+sub t {
+    scrubline force($by_name)->{ $_[0] }
+}
+
+TEST { t "car" } [
+    Subroutine('car', 'lib/FP/List.pm', 123),
+    Subroutine('car', 'lib/FP/List.pm', 123)
 ];
-TEST { force($by_name)->{first} }
+TEST { t "first" }
 [
-    Subroutine('first', 'lib/FP/Array/Mixin.pm', 153),
-    Subroutine('first', 'lib/FP/List.pm',        298),
-    Subroutine('first', 'lib/FP/List.pm',        337),
-    Subroutine('first', 'lib/FP/List.pm',        653),
-    Subroutine('first', 'lib/FP/List.pm',        654)
+    Subroutine('first', 'lib/FP/Array/Mixin.pm', 123),
+    Subroutine('first', 'lib/FP/List.pm',        123),
+    Subroutine('first', 'lib/FP/List.pm',        123),
+    Subroutine('first', 'lib/FP/List.pm',        123),
+    Subroutine('first', 'lib/FP/List.pm',        123)
 ];
-TEST { force($by_name)->{"FP::List"} }
-[Package('FP::List', 'lib/FP/List.pm', 127, '')];
-TEST { force($by_name)->{"FP::List::Pair"} } [
-    Package('FP::List::Pair', 'lib/FP/List.pm', 325,  1),
-    Package('FP::List::Pair', 'lib/FP/List.pm', 2663, 1)
+TEST { t "FP::List" }
+[Package('FP::List', 'lib/FP/List.pm', 123, '')];
+TEST { t "FP::List::Pair" } [
+    Package('FP::List::Pair', 'lib/FP/List.pm', 123, 1),
+    Package('FP::List::Pair', 'lib/FP/List.pm', 123, 1)
 ];
 
 # ------------------------------------------------------------------
@@ -239,19 +248,21 @@ TEST { force($by_name)->{"FP::List::Pair"} } [
 # }
 # no, better access from the index!:
 
-TEST { force($by_name)->{FP_Interface__method_names} } [
-    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Compare.pm', 62),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Equal.pm',   73),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Id.pm',      47),
+TEST { t "FP_Interface__method_names" } [
+    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Compare.pm', 123),
+    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Equal.pm',   123),
+    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Id.pm',      123),
     Subroutine(
-        'FP_Interface__method_names', 'lib/FP/Abstract/Interface.pm', 70
+        'FP_Interface__method_names', 'lib/FP/Abstract/Interface.pm', 123
     ),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Map.pm',      36),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Pure.pm',     48),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Sequence.pm', 81),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Show.pm',     75),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Interface.pm',         20),
-    Subroutine('FP_Interface__method_names', 'lib/FP/Interface.pm',         28)
+    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Map.pm',  123),
+    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Pure.pm', 123),
+    Subroutine(
+        'FP_Interface__method_names', 'lib/FP/Abstract/Sequence.pm', 123
+    ),
+    Subroutine('FP_Interface__method_names', 'lib/FP/Abstract/Show.pm', 123),
+    Subroutine('FP_Interface__method_names', 'lib/FP/Interface.pm',     123),
+    Subroutine('FP_Interface__method_names', 'lib/FP/Interface.pm',     123)
 ];
 
 1
