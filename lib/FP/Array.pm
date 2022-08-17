@@ -610,7 +610,8 @@ sub array_every {
     @_ == 2 or fp_croak_arity 2;
     my ($fn, $ary) = @_;
     for (@$ary) {
-        return 0 unless &$fn($_);
+        my $r = &$fn($_);
+        return $r unless $r;
     }
     1
 }
@@ -618,7 +619,7 @@ sub array_every {
 TEST {
     array_every sub { ($_[0] % 2) == 0 }, [1, 2, 3]
 }
-0;
+'';
 TEST {
     array_every sub { ($_[0] % 2) == 0 }, [2, 4, -6]
 }

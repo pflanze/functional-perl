@@ -119,7 +119,7 @@ TEST { purearray(1, 2, 3)->strings_join("-") }
 TEST {
     (purearray 1, 2, 3)->every(sub { ($_[0] % 2) == 0 })
 }
-0;
+'';
 TEST {
     (purearray 7)->any(sub { $_[0] % 2 })
 }
