@@ -811,6 +811,13 @@ interrupted, or purity will break.
   (TODO: implement a `Sub::Call::Tail` variant that ignores the tail
   call declarations or lets them be turned on/off at runtime?)
 
+* To get more detail on why predicates don't accept a value
+  (e.g. those used to restrict `FP::Struct` fields), run this son
+  startup (should we make this more convenient via a wrapper loader
+  module?):
+  
+        use FP::Failure; 
+        $FP::Failure::use_failure=1;
 
 ### Lazy code
 
