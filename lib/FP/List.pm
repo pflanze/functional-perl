@@ -2092,9 +2092,12 @@ sub list_every {
     my ($pred, $l) = @_;
 LP: {
         if (is_pair $l) {
-            (&$pred(car $l)) and do {
+            my $r = &$pred(car $l);
+            if ($r) {
                 $l = cdr $l;
                 redo LP;
+            } else {
+                $r
             }
         } elsif (is_null $l) {
             1
