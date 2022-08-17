@@ -312,10 +312,10 @@ sub xfork_(&) {
             &$thunk();
 
             # drop return value (transfer via pipe? 'No.')
-            exit 0;
+            exit 0;    # POSIX::_exit ? no? Anyway docs say otherwise.
         } || do {
             warn "uncaught exception in subprocess $$, exiting: $@";
-            exit 1;
+            exit 1;    # POSIX::_exit ? no?
         }
     }
 }
@@ -352,12 +352,14 @@ sub xspawn {
         select $write or die $!;
         $| = 1;
         print $!;
-        exit;
+        require POSIX;
+        POSIX::_exit(127);
     }
 }
 
 sub xlaunch
 { ## NA: todo: noch nicht fertig, insbesondere geht kommunikation exec failure nich bis zum parent.
+    require POSIX;
     my $pid = xfork;
     if ($pid) {
         waitpid $pid, 0;    # !
@@ -365,7 +367,7 @@ sub xlaunch
 
         # evtl. set session zeugs.
         xspawn @_;
-        exit;               # !
+        POSIX::_exit(0);    # !
     }
 }
 
