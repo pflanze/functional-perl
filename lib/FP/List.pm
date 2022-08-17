@@ -162,6 +162,7 @@ our @EXPORT_OK = qw(
     list_perhaps_find_tail list_perhaps_find
     list_find_tail list_find
     list_insertion_variants
+    list_merge
     cartesian_product_2
     cartesian_product
     is_charlist ldie
@@ -2563,6 +2564,35 @@ list(
 TEST { list_insertion_variants list(qw(a)), 0, list "END" }
 list(list(0, 'a'), list('a', 0), 'END');
 TEST { list_insertion_variants list(), 0, list "END" } list(list(0), 'END');
+
+sub list_merge {
+    @_ == 3 or fp_croak_arity 3;
+    my ($A, $B, $cmp) = @_;
+    if (is_null $A) {
+        $B
+    } elsif (is_null $B) {
+        $A
+    } else {
+        my ($a, $ar) = $A->first_and_rest;
+        my ($b, $br) = $B->first_and_rest;
+        my $dir = $cmp->($a, $b);
+        if ($dir < 0) {
+            cons($a, list_merge($ar, $B, $cmp))
+        } elsif ($dir == 0) {
+            cons($a, cons($b, list_merge($ar, $br, $cmp)))
+        } else {
+            cons($b, list_merge($A, $br, $cmp))
+        }
+    }
+}
+*FP::List::List::merge = \&list_merge;
+
+TEST {
+    require FP::Ops;
+    list_merge list(-3, 1, 1, 3, 4), list(-4, -3, 0, 1, 2, 5),
+        \&FP::Ops::real_cmp
+}
+list(-4, -3, -3, 0, 1, 1, 1, 2, 3, 4, 5);
 
 # Adapted copy-paste from FP/Stream.pm
 
