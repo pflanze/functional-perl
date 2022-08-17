@@ -338,13 +338,15 @@ sub xspawn {
     pipe my $read, my $write or die "pipe: $!";
     if (my $pid = xfork) {
         close $write or die $!;
-        local $_;
-        while (<$read>) {    ## no critic, $_ is localized
-            close $read;
-            croak "xspawn: can't exec \"$_[0]\": $_";
-        }
+        local $/;
+        my $errstr = <$read>;
+        chomp $errstr;
         close $read or die $!;
-        return $pid;
+        if (length $errstr) {
+            croak "xspawn: can't exec \"$_[0]\": $errstr";
+        } else {
+            return $pid;
+        }
     } else {
         no warnings;
         close $read or die $!;
