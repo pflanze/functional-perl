@@ -59,6 +59,12 @@ parameter for <>+ chars at the beginning, and either croak if they
 don't match the purpose of the function, or prepend the right chars if
 missing.
 
+=item stdin, stdout, stderr
+
+The functions with these names call C<glob_to_fh(*STD..., "utf-8")> by
+default. If given an argument, it is used as the encoding instead of
+"utf-8".
+
 =back
 
 =head1 BUGS
@@ -88,6 +94,9 @@ our @EXPORT_OK = qw(xopen_write xopen_append xopen_update
     devnull devzero
     glob_to_fh
     fd_to_fh
+    stdin
+    stdout
+    stderr
     inout_fd_to_fh
     input_fd_to_fh
     output_fd_to_fh
@@ -107,6 +116,24 @@ sub glob_to_fh {
     my $fh = bless(*{$glob}{IO}, "Chj::IO::File");
     $fh->perhaps_set_layer_or_encoding($maybe_layer_or_encoding);
     $fh
+}
+
+sub stdin {
+    @_ <= 1 or fp_croak_arity "0-1";
+    my $encoding = @_ ? $_[0] : "utf-8";
+    glob_to_fh(*STDIN, $encoding)
+}
+
+sub stdout {
+    @_ <= 1 or fp_croak_arity "0-1";
+    my $encoding = @_ ? $_[0] : "utf-8";
+    glob_to_fh(*STDOUT, $encoding)
+}
+
+sub stderr {
+    @_ <= 1 or fp_croak_arity "0-1";
+    my $encoding = @_ ? $_[0] : "utf-8";
+    glob_to_fh(*STDERR, $encoding)
 }
 
 # --------------------------------------------------
