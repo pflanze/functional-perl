@@ -210,6 +210,7 @@ use Chj::NamespaceClean;
 use FP::Show qw(show);
 use FP::Interface qw(require_package package_check_possible_interface);
 use FP::Carp;
+use Safe::Isa;    # $_can
 
 sub all_fields {
     my ($isa) = @_;
@@ -258,6 +259,33 @@ sub field_has_predicate {
 }
 
 our $immutable = 1;    # only used if also is_pure
+
+my $warned_once;
+
+sub unacceptable_value_error {
+    my ($failure, $fieldname, $value) = @_;
+    my $failstr = ref($failure)
+        ? do {
+
+        # quack like a duck, as long as there's no
+        # `FP::Abstract::Failure` protocol
+        if (my $message = $failure->$_can("message")) {
+            my $str = $message->($failure);
+            chomp $str;
+            " ($str)"
+        } else {
+            unless ($warned_once) {
+                warn
+                    "warning once: got an falsey object with no `message` method: $failure";
+                $warned_once++;
+            }
+            ""
+        }
+        }
+        : "";
+    @_ = ("unacceptable value for field '$fieldname'$failstr: " . show($value));
+    goto \&fp_croak;
+}
 
 sub import {
     my $_importpackage = shift;
@@ -321,9 +349,9 @@ sub import {
         @_ <= @$allfields or fp_croak "too many arguments to ${package}::new";
         for (@$allfields_i_with_predicate) {
             my ($pred, $name, $i) = @$_;
-            &$pred($_[$i])
-                or fp_croak "unacceptable value for field '$name': "
-                . show($_[$i]);
+            my $possibly_fail = &$pred($_[$i]);
+            $possibly_fail
+                or unacceptable_value_error($possibly_fail, $name, $_[$i]);
         }
         my %s;
         for (my $i = 0; $i < @_; $i++) {
@@ -342,9 +370,9 @@ sub import {
         @_ <= @$allfields or fp_croak "too many arguments to ${package}::new";
         for (@$allfields_i_with_predicate) {
             my ($pred, $name, $i) = @$_;
-            &$pred($_[$i])
-                or fp_croak "unacceptable value for field '$name': "
-                . show($_[$i]);
+            my $possibly_fail = &$pred($_[$i]);
+            $possibly_fail
+                or unacceptable_value_error($possibly_fail, $name, $_[$i]);
         }
         my %s;
         for (my $i = 0; $i < @_; $i++) {
@@ -392,9 +420,9 @@ sub import {
         }
         for (@$allfields_with_predicate) {
             my ($pred, $name) = @$_;
-            &$pred($$s{$name})
-                or fp_croak "unacceptable value for field '$name': "
-                . show($$s{$name});
+            my $possibly_fail = &$pred($$s{$name});
+            $possibly_fail
+                or unacceptable_value_error($possibly_fail, $name, $$s{$name});
         }
         bless $s, $class;
         Internals::SvREADONLY %$s, 1 if $is_pure && $immutable;
@@ -445,10 +473,10 @@ sub import {
                 ? sub {
                     my $s = shift;
                     @_ == 1 or fp_croak "${name}_set: need 1 argument";
-                    my $v = shift;
-                    &$maybe_predicate($v)
-                        or fp_croak "unacceptable value for field '$name': "
-                        . show($v);
+                    my $v             = shift;
+                    my $possibly_fail = &$maybe_predicate($v);
+                    $possibly_fail
+                        or unacceptable_value_error($possibly_fail, $name, $v);
                     my $new = +{%$s};
                     $$new{$name} = $v;
                     bless $new, ref $s
@@ -468,10 +496,10 @@ sub import {
                 ? sub {
                     @_ == 2 or fp_croak "${name}_update: need 2 arguments";
                     my ($s, $fn) = @_;
-                    my $v = &$fn($s->{$name});
-                    &$maybe_predicate($v)
-                        or fp_croak "unacceptable value for field '$name': "
-                        . show($v);
+                    my $v             = &$fn($s->{$name});
+                    my $possibly_fail = &$maybe_predicate($v);
+                    $possibly_fail
+                        or unacceptable_value_error($possibly_fail, $name, $v);
                     my $new = +{%$s};
                     $$new{$name} = $v;
                     bless $new, ref $s
