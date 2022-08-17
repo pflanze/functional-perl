@@ -223,7 +223,7 @@ TEST { force($by_name)->{"FP::List"} }
 [Package('FP::List', 'lib/FP/List.pm', 127, '')];
 TEST { force($by_name)->{"FP::List::Pair"} } [
     Package('FP::List::Pair', 'lib/FP/List.pm', 325,  1),
-    Package('FP::List::Pair', 'lib/FP/List.pm', 2660, 1)
+    Package('FP::List::Pair', 'lib/FP/List.pm', 2663, 1)
 ];
 
 # ------------------------------------------------------------------
