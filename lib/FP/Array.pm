@@ -99,6 +99,7 @@ our @EXPORT_OK = qw(array
     array_sum
     array_last
     array_to_hash_group_by
+    array_merge
 );
 our %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
@@ -714,5 +715,57 @@ sub array_perhaps_find {
         ()
     }
 }
+
+sub array_merge {
+    @_ == 3 or fp_croak_arity 3;
+    my ($A, $B, $cmp) = @_;
+    my $aend = $#$A;
+    my $bend = $#$B;
+    my $ia   = 0;
+    my $ib   = 0;
+    my @r;
+    while (1) {
+        if ($ia <= $aend) {
+            if ($ib <= $bend) {
+                my $a   = $A->[$ia];
+                my $b   = $B->[$ib];
+                my $dir = $cmp->($a, $b);
+                if ($dir < 0) {
+                    push @r, $a;
+                    $ia++;
+                } elsif ($dir == 0) {
+                    push @r, $a, $b;
+                    $ia++;
+                    $ib++;
+                } else {
+                    push @r, $b;
+                    $ib++;
+                }
+            } else {
+                push @r, @$A[$ia .. $aend];
+                last;
+            }
+        } else {
+            if ($ib <= $bend) {
+                push @r, @$B[$ib .. $bend];
+                last;
+            } else {
+                last;
+            }
+        }
+    }
+    \@r
+}
+
+TEST {
+    require FP::Ops;
+    array_merge [-3, 1, 1, 3, 4], [-6, -4, -3, 0, 1, 2, 5, 6, 7],
+        \&FP::Ops::real_cmp
+}
+[-6, -4, -3, -3, 0, 1, 1, 1, 2, 3, 4, 5, 6, 7];
+TEST { array_merge [-3, 10], [1], \&FP::Ops::real_cmp }
+[-3, 1, 10];
+TEST { array_merge [-3], [1], \&FP::Ops::real_cmp }
+[-3, 1];
 
 1

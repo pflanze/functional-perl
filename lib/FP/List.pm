@@ -2589,10 +2589,10 @@ sub list_merge {
 
 TEST {
     require FP::Ops;
-    list_merge list(-3, 1, 1, 3, 4), list(-4, -3, 0, 1, 2, 5),
+    list_merge list(-3, 1, 1, 3, 4), list(-6, -4, -3, 0, 1, 2, 5, 6, 7),
         \&FP::Ops::real_cmp
 }
-list(-4, -3, -3, 0, 1, 1, 1, 2, 3, 4, 5);
+list(-6, -4, -3, -3, 0, 1, 1, 1, 2, 3, 4, 5, 6, 7);
 
 # Adapted copy-paste from FP/Stream.pm
 
