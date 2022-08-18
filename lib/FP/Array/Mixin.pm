@@ -231,6 +231,7 @@ sub FP_Sequence_length {
 *perhaps_find_tail = blessing flip \&array_perhaps_find_tail;
 *perhaps_find      = flip \&array_perhaps_find;
 *find              = perhaps_to_maybe(\&array_perhaps_find);
+*merge             = blessing \&array_merge;
 
 sub group {
     @_ >= 2 and @_ <= 3 or fp_croak_arity "2-3";
