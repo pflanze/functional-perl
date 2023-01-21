@@ -51,8 +51,10 @@ use Encode;
 sub url_decode {
     my ($str) = @_;
     my $u     = URI->new($str);
-    my $str2  = $u->uri_unescape;
-    decode("utf-8", $str2, Encode::FB_CROAK)
+    my $str2  = $u->uri_unescape . "";
+    my $res = decode("utf-8", $str2, Encode::FB_CROAK);
+    # use FP::Repl;repl;
+    $res
 }
 
 # escape [ ] for markdown; XX is this correct?
