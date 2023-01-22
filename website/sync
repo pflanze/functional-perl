@@ -1,4 +1,12 @@
 #!/bin/bash
+set -euo pipefail
+# enable job control consistently, not just when there is a tty:
+set -m
+IFS=
 
-rsync -auvz --delete --exclude .git /home/chrisperl/functional-perl/website/www/. servi:www/functional-perl.org/.
+mydir=$(dirname "$0")
+
+set -x
+
+rsync -auvz --delete --exclude .git --exclude lpw-talk --exclude london.pm-talk "$mydir"/www/. servi:www/functional-perl.org/.
 
