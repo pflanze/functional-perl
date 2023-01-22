@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.76 2023-1-22
+    - really do not depend on 'less' for tests
+
 0.72.75 2023-1-22
     - do not depend on 'less' for tests
 
