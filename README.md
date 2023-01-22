@@ -361,10 +361,10 @@ recommends unless you pass the `--with-recommends` option.
     git clone https://github.com/pflanze/functional-perl.git
     cd functional-perl
 
-    # to get the latest release, which is $FP_COMMITS_DIFFERENCE behind master:
+    # To get the latest release, which is $FP_COMMITS_DIFFERENCE behind master:
     git checkout -b $FP_VERSION_UNDERSCORES $FP_VERSION
 
-    # to verify the same against MitM attacks:
+    # To verify the same against MitM attacks:
     gpg --recv-key 04EDB072
     git tag -v $FP_VERSION
     # You'll find various pages in search engines with my fingerprint,
