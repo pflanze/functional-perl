@@ -2341,7 +2341,6 @@ sub make_split {
             if (is_null $s) {
                 $maybe_tail // null
             } else {
-                my ($a, $r) = $s->first_and_rest;
                 my $rec;
                 $rec = sub {
                     my ($s) = @_;
@@ -2381,7 +2380,7 @@ sub make_split {
                     }
                     $is_stream;
                 };
-                $rec->($r)
+                $rec->($s)
             }
         }
         $is_stream
