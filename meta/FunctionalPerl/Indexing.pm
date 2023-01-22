@@ -59,6 +59,7 @@ use FP::PureArray;
 use Chj::xopen qw(xopen_read);
 use FP::IOStream qw(xfile_lines);
 use FP::Lazy;
+use Digest::MD5 qw(md5_hex);
 
 use Chj::TEST ":all";
 
@@ -183,10 +184,18 @@ sub files_IdentifierInfos_by_name ($files, $acceptableP) {
 }
 
 sub perlfiles() {
-    my $in        = Chj::IO::Command->new_sender("meta/perlfiles");
-    my @perlfiles = <$in>;
+    my $newsum = md5_hex(xopen_read("MANIFEST")->xcontent);
+    my $in     = xopen_read(".perlfiles");
+    my $oldsum = $in->xreadline;
+    chomp $oldsum;
+    if ($newsum ne $oldsum) {
+        die ".perlfiles is outdated; please run, in the Git checkout, "
+            . "with chj-scripts installed (you're meant to be the maintainer):\n"
+            . "  meta/perlfiles \n ";
+    }
+    my @perlfiles = $in->xreadline;
+    $in->xclose;
     chomp @perlfiles;
-    $in->xxfinish;
     purearray @perlfiles
 }
 

@@ -11,7 +11,7 @@ IFS=
 
 perlfilespath=.perlfiles
 
-newsum=$(sha1sum MANIFEST | printfield 1)
+newsum=$(md5sum MANIFEST | printfield 1)
 
 oldsum=$(head -1 -- "$perlfilespath" || echo '')
 
