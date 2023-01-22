@@ -25,6 +25,9 @@ use File::Temp qw(tempdir);
 my $HOME = tempdir;
 $ENV{FP_REPL_HOME} = $HOME;
 
+# Avoid calling out to "less" as it's not always available
+$ENV{PAGER} = "cat";
+
 sub clean {
     @_ == 1 or fp_croak_arity 1;
     my ($s) = @_;
@@ -180,7 +183,7 @@ t '
 $FP::Repl::Repl::argsn
 ', q+
 main> $FP::Repl::Repl::argsn
-$VAR1 = [bless(['<HOME>/.fp-repl_history', undef, 500, undef, undef, 1, 1, undef, 1, ['less'], 'l', 's', 'a', 'X', bless( \*Symbol::GEN0, 'Chj::IO::Pipe' ), bless( \*Symbol::GEN1, 'Chj::IO::Pipe' )], 'FP::Repl::Repl'), undef];
+$VAR1 = [bless(['<HOME>/.fp-repl_history', undef, 500, undef, undef, 1, 1, undef, 1, ['cat'], 'l', 's', 'a', 'X', bless( \*Symbol::GEN0, 'Chj::IO::Pipe' ), bless( \*Symbol::GEN1, 'Chj::IO::Pipe' )], 'FP::Repl::Repl'), undef];
 +, $filterHOME;
 
 # The various scope positions (argsn, args, :0, :e, $x):
@@ -196,12 +199,12 @@ $x
 ', q+
 main> do {my $z=123; sub { my ($x)=@_; repl }}->(99)
 main 1> $FP::Repl::Repl::argsn
-$VAR1 = [bless(['<HOME>/.fp-repl_history', undef, 500, undef, undef, 1, 1, undef, 1, ['less'], 'l', 's', 'a', 'X'], 'FP::Repl::Repl'), undef];
+$VAR1 = [bless(['<HOME>/.fp-repl_history', undef, 500, undef, undef, 1, 1, undef, 1, ['cat'], 'l', 's', 'a', 'X'], 'FP::Repl::Repl'), undef];
 main 1> $FP::Repl::Repl::args
 $VAR1 = [99];
 main 1> ,0
 FP::Repl::Repl::run(
-  bless(['<HOME>/.fp-repl_history', undef, 500, undef, undef, 1, 1, undef, 1, ['less'], 'l', 's', 'a', 'X'], 'FP::Repl::Repl'),
+  bless(['<HOME>/.fp-repl_history', undef, 500, undef, undef, 1, 1, undef, 1, ['cat'], 'l', 's', 'a', 'X'], 'FP::Repl::Repl'),
   undef
 ) called at (eval 0) line 1
 main 1> ,e
