@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2023 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 

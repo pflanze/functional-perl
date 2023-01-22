@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 my $copyright = <<'COPYRIGHT';
-# Copyright 2021 by Christian Jaeger <ch@christianjaeger.ch>
+# Copyright 2021-2023 by Christian Jaeger <ch@christianjaeger.ch>
 # Published under the same terms as perl itself
 COPYRIGHT
 
