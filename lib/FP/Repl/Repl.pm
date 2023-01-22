@@ -337,7 +337,14 @@ our $term;    # local'ized but old value is reused if present.
 
 our $current_history;    # local'ized; array(s).
 
-my @pagercmd_a = qw(less --quit-if-one-screen --no-init); # XX really hard code?
+my $pagercmd_a = lazyLight {
+    my $p = force($pager);
+    if ($p->[0] =~ m{(^|/)less$}) {
+        [@$p, qw(--quit-if-one-screen --no-init)];
+    } else {
+        $pager
+    }
+};
 
 sub print_help {
     my $self      = shift;
@@ -360,8 +367,8 @@ sub print_help {
     my $M = &$selection(lexical_persistence => 'M');
     my $x = &$selection(lexical_persistence => 'x');
     my $X = &$selection(lexical_persistence => 'X');
-    my $pagercmd_pager = join(" ", @{ $$self[Pager] });
-    my $pagercmd_a     = join(" ", @pagercmd_a);
+    my $pagercmd_pager_str = join(" ", @{ $$self[Pager] });
+    my $pagercmd_a_str     = join(" ", @{ force $pagercmd_a });
     print $out qq{Repl help:
 If a command line starts with a ':' or ',', then the remainder of the
 line is interpreted as follows:
@@ -397,8 +404,8 @@ $S S  show from FP::Show (ditto), but reformatted via Perl::Tidy
 $d d  Data::Dumper (default)
   viewer:
 $V V  no pager
-$v v  pipe to pager ('$pagercmd_pager')
-$a a  pipe to '$pagercmd_a' (default)
+$v v  pipe to pager ('$pagercmd_pager_str')
+$a a  pipe to '$pagercmd_a_str' (default)
   lexical persistence:
    (Persisting lexicals means to carry over variables introduced with
    "my" into subsequent entries in the same repl. It prevents their
@@ -546,7 +553,7 @@ sub viewers {
                     print $OUTPUT $_[0] or die "print: $!";
                 },
                 v => $pager_with_pagercmd->(),
-                a => $pager_with_pagercmd->(@pagercmd_a),
+                a => $pager_with_pagercmd->(@{ force $pagercmd_a}),
             },
             $self->mode_viewer
         );
