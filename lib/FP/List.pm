@@ -2347,17 +2347,14 @@ sub make_split {
                     my ($s) = @_;
                     lazy_if {
                         my $s = $s;
-
-                        # ^ ? (Make a local variable for mutation? Not
-                        # really necessary, though, right?)
-                        my $group = [];
+                        my @group;
                     LP: {
                             FORCE $s;
                             if (is_null $s) {
-                                if (@$group) {
+                                if (@group) {
                                     cons(
                                         FP::PureArray::array_to_purearray(
-                                            $group),
+                                            \@group),
                                         ($maybe_tail // null)
                                     )
                                 } else {
@@ -2367,16 +2364,16 @@ sub make_split {
                                 my ($a, $r) = $s->first_and_rest;
                                 if ($pred->($a)) {
                                     if ($retain_item) {
-                                        push @$group, $a;
+                                        push @group, $a;
                                     }
                                     cons(
                                         FP::PureArray::array_to_purearray(
-                                            $group),
+                                            \@group),
                                         $rec->($r)
                                     )
                                 } else {
                                     $s = $r;
-                                    push @$group, $a;
+                                    push @group, $a;
                                     redo LP;
                                 }
                             }
