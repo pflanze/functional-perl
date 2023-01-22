@@ -42,17 +42,28 @@ use Chj::chompspace;
 use Chj::TEST ":all";
 use PXML::XHTML ":all";
 use FP::Show;
+use URI;
 
 # and for text display we need to *decode* URIs..
-# COPY from chj-bin's `urldecode`
-use URI;
+# COPY from chj-bin's `urldecode`, now modified by having our own
+# uri_escape
 use Encode;
+
+# Adapted copy from URI::Escape
+sub uri_unescape($str) {
+
+    # Note from RFC1630:  "Sequences which start with a percent sign
+    # but are not followed by two hexadecimal characters are reserved
+    # for future extension"
+    $str =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg if defined $str;
+    $str;
+}
 
 sub url_decode {
     my ($str) = @_;
-    my $u     = URI->new($str);
-    my $str2  = $u->uri_unescape . "";
-    my $res = decode("utf-8", $str2, Encode::FB_CROAK);
+    my $str2  = uri_unescape($str);
+    my $res   = decode("utf-8", $str2, Encode::FB_CROAK);
+
     # use FP::Repl;repl;
     $res
 }
