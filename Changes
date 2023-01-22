@@ -1,5 +1,8 @@
 Revision history for FunctionalPerl
 
+0.72.75 2023-1-22
+    - do not depend on 'less' for tests
+
 0.72.74 2023-1-22
     - fix https://rt.cpan.org/Public/Bug/Display.html?id=144932 this
       time?
