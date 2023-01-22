@@ -145,8 +145,12 @@ sub release ($maybe_version, $maybe_parsed_level) {
 
     #xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
 
-    xxsystem "perl",        "Makefile.PL";
-    xxsystem "make",        "test";
+    {
+        local $ENV{PATH}
+            = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games";
+        xxsystem "perl", "Makefile.PL";
+        xxsystem "make", "test";
+    }
     xxsystem "website/gen", "--trap";
     {
         my $outpath = "FunctionalPerl-$version.tar.gz";
