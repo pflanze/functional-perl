@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2022-2023 Christian Jaeger, copying@christianjaeger.ch
 #
 # This is free software, offered under either the same terms as perl 5
 # or the terms of the Artistic License version 2 or the terms of the
@@ -37,13 +37,15 @@ use FP::List;
 use FP::PureArray;
 use Chj::TEST;
 
-TEST { list(5, 7, 8, 9, 11, 13, 12, 10)->split(sub { not($_[0] % 2) }) }
+sub is_even { not($_[0] % 2) }
+
+TEST { list(5, 7, 8, 9, 11, 13, 12, 10)->split(\&is_even) }
 list(purearray(5, 7), purearray(9, 11, 13), purearray());
-TEST { list(5, 7, 8, 9, 11, 13, 12, 10)->split(sub { not($_[0] % 2) }, 1) }
+TEST { list(5, 7, 8, 9, 11, 13, 12, 10)->split(\&is_even, 1) }
 list(purearray(5, 7, 8), purearray(9, 11, 13, 12), purearray(10));
-TEST { list(12, 10, 11)->split(sub { not($_[0] % 2) }) }
+TEST { list(12, 10, 11)->split(\&is_even) }
 list(purearray(), purearray(), purearray(11));
-TEST { list(12, 10)->split(sub { not($_[0] % 2) }) }
+TEST { list(12, 10)->split(\&is_even) }
 list(purearray(), purearray());
 
 
