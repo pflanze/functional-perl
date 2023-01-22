@@ -1,5 +1,28 @@
 Revision history for FunctionalPerl
 
+0.72.72 2023-1-22
+    - Repl: add :S mode with Perl::Tidy
+    - Struct: allow to export constructors via _END_
+    - Struct: add all_field_names
+    - Struct: add ":defaults" base class feature
+    - Struct: display FP::Failure values from predicates
+    - List: add cartesian_product, nonempty_list_of, improper_map,
+        improper_filtermap, filtermap, improper_last, list_merge
+    - Array,Array/Mixin: add filtermap, merge
+    - List,Stream: add split
+    - HashSet: add hashset, is_hashset, is_uhashset, hashset_values,
+        hashset_map, hashset_filter, hash_to_...function
+    - Hash: add hash_map, hash_filter, hash_key_filter, hash_value_filter
+    - Abstract/Sequence: add hashset, uhashset
+    - Predicates: add is_path_string, is_path_segment_string, sequence_of
+    - Create FP::Cmp, move cmp_complement to it, add cmp_then
+    - xperlfunc: add maybe_getfile_utf8, improve spawn
+    - xopen: add stdin, stdout, stderr
+    - Htmlparse: handle XML namespaces (hack)
+    - Text/CSV: various improvements
+    - various fixes
+    - unfinished: Chj::xperlfunc::xlocaltime: add iso_week_number + more
+
 0.72.71 2021-6-1
     - revive meta/critic (perlcritic), apply fixes, leave
       `critic-todo` file for remaining issues to work on (and prevent
