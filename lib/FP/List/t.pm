@@ -36,8 +36,7 @@ use warnings FATAL => 'uninitialized';
 use FP::List;
 use FP::PureArray;
 use Chj::TEST;
-
-sub is_even { not($_[0] % 2) }
+use FP::Predicates qw(is_even);
 
 TEST { list(5, 7, 8, 9, 11, 13, 12, 10)->split(\&is_even) }
 list(purearray(5, 7), purearray(9, 11, 13), purearray());
