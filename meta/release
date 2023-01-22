@@ -143,8 +143,6 @@ sub release ($maybe_version, $maybe_parsed_level) {
 
     xxsystem "git", "commit", "-a", "-m", "Release $version";
 
-    #xxsystem "git", "tag", "-a", "-m", "release $tag", $tag, "HEAD";
-
     {
         local $ENV{PATH}
             = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games";
@@ -168,6 +166,8 @@ sub release ($maybe_version, $maybe_parsed_level) {
     # To make sure gitk doesn't show unclean status, and also as
     # a check everything went fine. XX same as cj-git-status-is-clean
     xxsystem qw"git status --porcelain";
+
+    xxsystem "git-sign", $tag, "Release $version";
 
     print "OK, ready to go.\n";
 }
