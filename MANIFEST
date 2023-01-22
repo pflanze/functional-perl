@@ -135,6 +135,7 @@ lib/Chj/xopen.pm
 lib/Chj/xopendir.pm
 lib/Chj/xoutpipe.pm
 lib/Chj/xperlfunc.pm
+lib/Chj/xperlfunc/t.pm
 lib/Chj/xpipe.pm
 lib/Chj/xtmpfile.pm
 lib/FP/AST/Perl.pm
@@ -153,6 +154,7 @@ lib/FP/Array_sort.pm
 lib/FP/BigInt.pm
 lib/FP/Carp.pm
 lib/FP/Char.pm
+lib/FP/Cmp.pm
 lib/FP/Collection.pm
 lib/FP/Combinators.pm
 lib/FP/Combinators2.pm
@@ -173,10 +175,12 @@ lib/FP/IOStream.pm
 lib/FP/Id.pm
 lib/FP/Interface.pm
 lib/FP/Interfaces.pm
+lib/FP/Iptables/Rules.pm
 lib/FP/JSON.pm
 lib/FP/Lazy.pm
 lib/FP/Lazy/t.pm
 lib/FP/List.pm
+lib/FP/List/t.pm
 lib/FP/Memoizing.pm
 lib/FP/Mixin/Utils.pm
 lib/FP/MutableArray.pm
