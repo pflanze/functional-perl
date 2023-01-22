@@ -90,7 +90,7 @@ sub release ($maybe_version, $maybe_parsed_level) {
 
     xxsystem "meta/t-check";
 
-    xxsystem "meta/critic  > critic-todo";
+#XX    xxsystem "meta/critic  > critic-todo";
     xxsystem "cj-git-status-is-clean";
 
     xxsystem "meta/update-manifest";
