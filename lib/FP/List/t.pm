@@ -34,7 +34,7 @@ use warnings FATAL => 'uninitialized';
 #use experimental 'signatures';
 
 use FP::List;
-use FP::Purearray;
+use FP::PureArray;
 use Chj::TEST;
 
 TEST { list(5, 7, 8, 9, 11, 13, 12, 10)->split(sub { not($_[0] % 2) }) }
