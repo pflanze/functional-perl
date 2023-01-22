@@ -1,5 +1,9 @@
 Revision history for FunctionalPerl
 
+0.72.73 2023-1-22
+    - fix https://rt.cpan.org/Public/Bug/Display.html?id=144932
+    - fix tests: Indexing: do not attempt to run meta/perlfiles
+
 0.72.72 2023-1-22
     - Repl: add :S mode with Perl::Tidy
     - Struct: allow to export constructors via _END_
