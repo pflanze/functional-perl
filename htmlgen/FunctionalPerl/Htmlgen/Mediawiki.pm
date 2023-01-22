@@ -61,11 +61,24 @@ sub uri_unescape($str) {
 
 sub url_decode {
     my ($str) = @_;
-    my $str2  = uri_unescape($str);
-    my $res   = decode("utf-8", $str2, Encode::FB_CROAK);
+    my $str2 = uri_unescape($str);
+    decode("utf-8", $str2, Encode::FB_CROAK)
+}
 
-    # use FP::Repl;repl;
-    $res
+# Hack to avoid failing tests because of changed URI behaviour. The
+# new URI behaviour is probably the correct one but don't want to fail
+# with older versions.
+sub possibly_unescape_brackets {
+    my ($str) = @_;
+
+    # warn "URI $URI::VERSION";
+    $URI::VERSION < 5.11
+        ? do {
+        $str =~ s{\%5B}{\[}sg;
+        $str =~ s{\%5D}{\]}sg;
+        $str
+        }
+        : $str
 }
 
 # escape [ ] for markdown; XX is this correct?
@@ -212,11 +225,21 @@ TEST {
 ];
 
 TEST { mediawiki_expand ' [[Foo#yah_Hey\\[1\\]]] ' }
-[' ', A({ href => '//Foo.md#yah_Hey[1]' }, 'Foo (yah Hey[1])'), ' '];
+[
+    ' ',
+    A(
+        { href => possibly_unescape_brackets '//Foo.md#yah_Hey%5B1%5D' },
+        'Foo (yah Hey[1])'
+    ),
+    ' '
+];
 
 TEST { mediawiki_expand ' [[Foo#(yah_Hey)\\[1\\]|Some \\[text\\]]] ' }
-[' ', A({ href => 'Foo#(yah_Hey)[1]' }, 'Some [text]'), ' ']
-;    # note: no // and .md added to Foo!
+[
+    ' ',
+    A({ href => possibly_unescape_brackets 'Foo#(yah_Hey)[1]' }, 'Some [text]'),
+    ' '
+];    # note: no // and .md added to Foo!
 
 TEST { mediawiki_expand 'foo [[bar]]' }
 ['foo ', A { href => "//bar.md" }, "bar"];
