@@ -184,7 +184,12 @@ sub files_IdentifierInfos_by_name ($files, $acceptableP) {
 }
 
 sub perlfiles() {
-    my $newsum = md5_hex(xopen_read("MANIFEST")->xcontent);
+    my $manifest = xopen_read("MANIFEST")->xcontent;
+
+    # Remove the entries again which are added by the relase process;
+    # they have whitespace in the lines.
+    $manifest =~ s{(?:^|\n)\S+[ \t]+[^\n]+}{}sg;
+    my $newsum = md5_hex($manifest);
     my $in     = xopen_read(".perlfiles");
     my $oldsum = $in->xreadline;
     chomp $oldsum;
