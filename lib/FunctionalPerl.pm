@@ -57,6 +57,8 @@ This is the list of supported import tags and the modules and other tags that th
 
 C<:all> -> C<:dev>, C<:io>, C<:most>, C<:rare>
 
+C<:all_sequences> -> C<:primary_sequences>, L<FP::SortedPureArray>, L<FP::StrictList>
+
 C<:ast> -> L<FP::AST::Perl>
 
 C<:autobox> -> L<FP::autobox>
@@ -81,7 +83,7 @@ C<:failures> -> L<FP::Either>, L<FP::Failure>
 
 C<:fix> -> L<FP::fix>
 
-C<:functions> -> C<:equal>, C<:failures>, C<:show>, L<FP::Combinators>, L<FP::Cmp>, L<FP::Combinators2>, L<FP::Currying>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>
+C<:functions> -> C<:equal>, C<:failures>, C<:show>, L<FP::Cmp>, L<FP::Combinators>, L<FP::Combinators2>, L<FP::Currying>, L<FP::Div>, L<FP::Memoizing>, L<FP::Ops>, L<FP::Optional>, L<FP::Predicates>, L<FP::Untainted>, L<FP::Values>
 
 C<:git> -> L<FP::Git::Repository>
 
@@ -103,7 +105,7 @@ C<:rare> -> C<:csv>, C<:dbi>, C<:fix>, C<:git>, C<:paths>, C<:trampolines>
 
 C<:repl> -> L<FP::Repl>, L<FP::Repl::AutoTrap>
 
-C<:sequences> -> C<:streams>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>, L<FP::SortedPureArray>, L<FP::StrictList>
+C<:sequences> -> C<:streams>, L<FP::Array>, L<FP::Array_sort>, L<FP::List>, L<FP::MutableArray>, L<FP::PureArray>
 
 C<:sets> -> L<FP::HashSet>, L<FP::OrderedCollection>
 
