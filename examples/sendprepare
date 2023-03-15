@@ -130,7 +130,7 @@ sub fixlines($lines) {
         cons "Return-Path: <$fromaddr>\n",
         cons "BCC: " . $bcc_values->strings_join(", ") . "\n",
         $head->filter_with_tail(
-            complement(regex_match("(?^i:^$drop_header_name_regex:)")),
+            complement(regex_match("(?^i:^(?:$drop_header_name_regex):)")),
             cons "Message-ID: <$messageid_uuid\@$fromdomain>\n",
             $body
         )
