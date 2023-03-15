@@ -82,18 +82,19 @@ sub header_value($header) {
 
 TEST { header_value "From:  <foo\@br>\t\n" } '<foo@br>';
 
-sub regex_from_strings {
-    join("|", map { quotemeta $_ } @_)
-}
-
-my $drop_header_name_regex = regex_from_strings(
+my $drop_header_name_regex = join("|",
     qw(
         Return-Path
         BCC
         X-K9mail-Identity
         User-Agent
         Date
-        Message-ID)
+        Message-ID
+        X-Claws-.*
+        S
+        SCF
+        RMID
+    )
 );
 
 sub fixlines($lines) {
