@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2015-2021 Christian Jaeger, copying@christianjaeger.ch
+# Copyright (c) 2015-2023 Christian Jaeger, copying@christianjaeger.ch
 # This is free software. See the file COPYING.md that came bundled
 # with this file.
 
@@ -117,8 +117,13 @@ sub fixlines($lines) {
                 )->string
         }
     };
-    my $bcc_values = cons $fromwhole,
-        head_get($head, "BCC")->map(\&header_value);
+    my $bcc_values = do {
+        my $v = cons $fromwhole,
+            head_get($head, "BCC")->map(\&header_value);
+        # make unique:
+        # XX improper split here
+        list sort keys %{+{ map { $_=> undef} map { split /,\s+/ } $v->values }}
+    };
 
     (
         cons "Return-Path: <$fromaddr>\n",
