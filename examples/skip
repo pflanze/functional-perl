@@ -42,7 +42,7 @@ sub usage {
    --bufsize n   use n instead of default $BUFSIZ as buffer size
    --silent      don't give error if the input is too short
 ";
-    exit @_ ? 1 : 0;
+    exit(@_ ? 1 : 0);
 }
 
 sub resource_rss {
